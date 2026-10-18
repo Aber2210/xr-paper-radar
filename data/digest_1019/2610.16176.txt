@@ -1,0 +1,56 @@
+【摘要】
+
+【方法】
+3.1 Preliminary
+3.2 Point-cloud language model
+3.3 Egocentric alignment 3.1 Preliminary
+Let a 3D scene be a colored point cloud 𝒫 = { ( 𝐩 i , 𝐜 i ) } i = 1 N \mathcal{P}=\{(\mathbf{p}_{i},\mathbf{c}_{i})\}_{i=1}^{N} in the scan’s default coordinate system, where 𝐩 i = ( x i , y i , z i ) \mathbf{p}_{i}=(x_{i},y_{i},z_{i}) and 𝐜 i = ( r i , g i , b i ) \mathbf{c}_{i}=(r_{i},g_{i},b_{i}) are the XYZ coordinates and RGB color of point i i , respectively.
+For an agent pose with position 𝐭 = ( x , y , z ) \mathbf{t}=(x,y,z) and heading θ \theta , we first transform 𝒫 \mathcal{P} into 𝒫 ego \mathcal{P}_{\mathrm{ego}} , where the agent is at the origin with + x +x forward, + y +y left, and + z +z up.
+Given an instruction q q and an optional situation description s s (or s = ∅ s=\varnothing when unavailable), the model predicts
+a ^ = f ϕ ​ ( 𝒫 ego , q , s ) , 𝒫 ego = { ( 𝐩 ~ i , 𝐜 i ) } i = 1 N , 𝐩 ~ i = R z ​ ( − θ ) ​ ( 𝐩 i − 𝐭 ) . \hat{a}=f_{\phi}(\mathcal{P}_{\mathrm{ego}},q,s),\quad\mathcal{P}_{\mathrm{ego}}=\{(\widetilde{\mathbf{p}}_{i},\mathbf{c}_{i})\}_{i=1}^{N},\quad\widetilde{\mathbf{p}}_{i}=R_{z}(-\theta)(\mathbf{p}_{i}-\mathbf{t}).
+(1)
+3.2 Point-cloud language model
+Figure 2: EgoAlign architecture with explicit coordinate fusion.
+The color branch is omitted for clarity.
+EgoAlign connects a pretrained point encoder to an LLM.
+The encoder compresses the transformed cloud into M ≪ N M\ll N semantic tokens { 𝐳 j } j = 1 M \{\mathbf{z}_{j}\}_{j=1}^{M} .
+Although the input cloud is expressed in the agent-centric frame, the compressed semantic tokens do not explicitly preserve the metric location of their supporting points. This information can be attenuated by point-cloud encoders designed to learn robust, translation and rotation invariant geometric representations ( Wu et al., 2025 ; Zhang et al., 2026 ) , yet it is essential for reasoning about the scene relative to the agent.
+To address this problem, we infuse metric coordinates explicitly.
+For token j j , we track the encoder’s pooling assignments to obtain ℐ j \mathcal{I}_{j} , the original input points contributing to that token.
+We mean-pool the coordinates and colors of the points in ℐ j \mathcal{I}_{j} , then project them alongside the semantic feature into the LLM’s embedding space:
+𝐞 j = 1 3 ​ [ f sem ​ ( 𝐳 j ) + f coord ​ ( avg i ∈ ℐ j 𝐩 ~ i ) + f rgb ​ ( avg i ∈ ℐ j 𝐜 i ) ] . \mathbf{e}_{j}=\frac{1}{\sqrt{3}}\left[f_{\mathrm{sem}}(\mathbf{z}_{j})+f_{\mathrm{coord}}\!\left(\operatorname*{avg}_{i\in\mathcal{I}_{j}}\widetilde{\mathbf{p}}_{i}\right)+f_{\mathrm{rgb}}\!\left(\operatorname*{avg}_{i\in\mathcal{I}_{j}}\mathbf{c}_{i}\right)\right].
+(2)
+We scale the sum by 1 / 3 1/\sqrt{3} to approximately preserve the feature variance when combining three independently projected branches.
+The fused point cloud embeddings are then processed by the LLM’s attention layers together with the regular text embeddings.
+Figure 3: Egocentric alignment supervision at a fixed scene and position.
+Rotating t
+
+【实验】
+4.1 Experimental setup 4.1 Experimental setup
+
+【结论/局限】
+References
+A Pose-shuffle evaluation and significance
+Pose-shuffle evaluation.
+B Training and implementation details
+Alignment data.
+Optimization.
+Point-cloud preprocessing.
+Task-specific fine-tuning.
+C Additional results
+C.1 Alignment dynamics of component ablations
+C.2 Complete model-scale results
+C.3 Complete yaw-noise results
+C.4 Additional qualitative examples
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.16176v1 [cs.CV] 12 Oct 2026
+EgoAlign: Situated 3D Understanding without Situation Descriptions
+Yiyang Li
+Tianyi Ma
+Zehong Wang
+Yanfang Ye *
+Affiliation:  Department of Computer Science and Engineering, University of Notre Dame
+Affiliation:  * Corresponding author
+Email:  {yli62,yye7}@nd.edu
+Affiliation:
+https://github.com/Yiyang-Ian-Li/EgoAlign We presented EgoAlign, a 3D language model for situated reasoning directly from numerical agent pose. Our experiments reveal pose insensitivity as an important failure mode of existing pose-conditioned models: even when textual situation description is unavailable, their predictions can remain largely unchanged when the numerical pose is corrupted. EgoAlign addresses this issue through an agent-centric point representat

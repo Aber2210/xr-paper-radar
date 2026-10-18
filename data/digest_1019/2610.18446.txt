@@ -1,0 +1,123 @@
+【摘要】
+
+【方法】
+3.1 Problem Setup
+3.2 Compact Scene Representation
+Backbone Instantiation.
+Camera Reference Conditioning.
+3.3 Gaussian Query Decoder
+3.4 Training Objective
+Auxiliary Regularization. Our method learns a compact latent representation that summarizes
+scene information across multiple unposed images. We learn this
+representation through pose-free 3D Gaussian reconstruction, using novel-view
+rendering supervision to optimize it end to end.
+Figure   2 summarizes the pipeline.
+Our model first encodes the input views,
+into a
+small set of scene tokens, which form the only source of visual scene
+content available to the Gaussian decoder. Learned queries shared across
+scenes then retrieve information from this memory and decode it into an
+explicit set of 3D Gaussians, which can be rendered from novel viewpoints.
+During training, the loss between rendered novel views and their corresponding
+ground-truth target views, together with the auxiliary terms in Sec.   3.4 ,
+is backpropagated through the decoder into the encoder and optimizes
+the scene representation itself.
+In the following, Section   3.1 formalizes the task setting.
+Section   3.2 describes how the encoder constructs
+the compact scene representation. Section   3.3
+presents the Gaussian query decoder, and Sec.   3.4 the
+training objective.
+Figure 2 : Method overview.
+Our method learns a compact latent representation through
+rendering-supervised 3D Gaussian reconstruction. The encoder
+E θ E_{\theta} , initialized from a pretrained geometry foundation model,
+encodes the unposed context images into one camera token and n n scene
+tokens per view. The camera information anchors the scene tokens to
+form the compact scene representation 𝐒 \mathbf{S} . Learned
+scene-independent queries 𝐐 \mathbf{Q} attend to this memory through
+stacked decoder blocks of cross- and self-attention, and a Gaussian
+head maps the final query features to an explicit 3D Gaussian scene.
+3.1 Problem Setup
+Given N N unposed context images
+ℐ = { I i } i = 1 N \mathcal{I}=\{I_{i}\}_{i=1}^{N} , our encoder produces a compact scene memory, from which a scene-agnostic Gaussian decoder 𝒟 ϕ \mathcal{D_{\phi}} predicts a set of 3D Gaussians 𝒢 \mathcal{G} by conditioning a set of shared, learnable queries 𝐐 ∈ ℝ M × d \mathbf{Q}\in\mathbb{R}^{M\times d} on this memory. This decoupling separates the scene-specific representation from the decoding mechanism:
+𝐒 = E θ ​ ( ℐ ) , 𝒢 = D ϕ ​ ( 𝐐 , 𝐒 ) , I ^ t = ℛ ⁡ ( 𝒢 , 𝝅 t ) , \mathbf{S}=E_{\theta}(\mathcal{I}),\quad\mathcal{G}=D_{\phi}(\mathbf{Q};\mathbf{S}),\quad\widehat{I}_{t}=\mathcal{R}(\mathcal{G},\boldsymbol{\pi}_{t}),
+(1)
+where E θ E_{\theta} denotes the multi-view encoder and 𝐒 \mathbf{S} represents the latent scene tokens. The decoder D ϕ D_{\phi} maps the queries 𝐐 \mathbf{Q} into the 3D Gaussian attributes 𝒢 \mathcal{G} conditioned on 𝐒 \mathbf{S} . Finally, a differentiable Gaussian splatting renderer ℛ \mathcal{R} synthesizes the target view I ^ t \widehat{I}_{t} given the camera pose 𝝅
+
+【实验】
+ on RealEstate10K and ACID show that the resulting compact, unstructured
+token set supports competitive novel-view synthesis and can serve as
+the latent space of a generative model for 3D Gaussian scene generation.
+Together, these results show that 3D Gaussian reconstruction is an
+effective objective for compact scene representation learning and
+the learned token space provides a basis for broader downstream tasks
+in 3D vision.
+1 1 footnotetext: Co-first author. 2 2 footnotetext: Co-corresponding author. across view counts show that the representation incorporates
+additional observations through a small, resolution-independent set of
+tokens per view.
+The RealEstate10K  [ 76 ] -trained model also supports
+novel-view synthesis on ACID  [ 31 ] without fine-tuning,
+providing evidence of zero-shot cross-dataset transfer. As a downstream
+proof of concept, we train a flow-matching model in the learned token space
+and decode its generated latents into explicit 3D Gaussian scenes using the
+frozen Gaussian decoder. Together, these results show that
+rendering-supervised 3D Gaussian reconstruction is an effective objective
+for compact scene representation learning and that the resulting latent
+space provides a basis for broader downstream tasks in 3D vision. We first describe the implementation, architecture, and training setup
+of CoTL in Sec.   4.1 . We then evaluate the novel-view
+synthesis quality supported by the learned compact scene representation
+and examine its zero-shot transfer to
+out-of-domain data in Sec.   4.2 . Next,
+Sec.   4.3 quantifies the compactness of the
+representation, and Sec.   4.4 demonstrates its downstream
+utility for 3D Gaussian scene generation. Finally,
+Sec.   4.5 studies the role of camera references in
+anchoring the latent scene features and the choice of scene
+normalization. Protocols and Metrics
+4.2.3 Baselines
+4.2.4 Reconstruction Quality
+4.3 Compactness Comparison
+4.4 3D Scene Generation
+4.5 Ablation Study
+4.5.1 Anchoring Latent Scene Features
+4.5.2 Scene Normalization Protocols and Metrics
+Following the C3G evaluation protocol  [ 1 ] , we start from
+the NoPoSplat  [ 64 ] two-view RealEstate10K  [ 76 ] index and
+uniformly insert frames between the two indexed context endpoints.
+This produces context sets of 6, 12, 24, and 36 views while keeping the
+three indexed target views unchanged. Novel-view rendering quality is
+evaluated using PSNR, SSIM, and LPIPS.
+4.2.3 Baselines
+To contextualize the novel-view rendering
+quality supported by the learned representation We report
+two pose-free methods for generalizable novel view synthesis
+t
+
+【结论/局限】
+References
+A Overview
+B Additional Implementation Details
+B.1 Gaussian Output Head
+B.2 Training Details
+C Evaluation Protocol
+C.1 Image Preprocessing
+C.2 Pose Alignment
+D Additional Qualitative Results
+E Scene Generation
+Latent Space.
+Flow-matching Network.
+Conditioning.
+Training.
+Sampling and Decoding.
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.18446v2 [cs.CV] 14 Oct 2026
+CoTL: Compact Token Learning for 3D Scene Representation
+Han Liang
+Affiliation:   TU Munich
+Sibo Wu
+Anpei Chen
+Rüdiger Westermann
+Affiliation:   TU Munich
+Affiliation:   MCML
+Affiliation:   Westlake University In this work, we present CoTL, a framework for learning a compact, view-scalable scene representation directly from unposed multi-view images via 3D Gaussian reconstruction. By compressing multi-view inputs into a concise set of view-wise tokens, CoTL establishes an explicit information bottleneck: the scene memory serves as the sole condition for a set of scene-agnostic queries, forcing it to retain only the essential scene tokens required for high-fidelity geometric and appearance reconstruction.
+Furthermore, we demonstrate that this compact token representation provides an effective la

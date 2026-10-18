@@ -1,0 +1,44 @@
+【摘要】
+
+【方法】
+III-A Notation and preliminaries
+III-B Visual-inertial initialisation
+III-C Model inference
+III-D Batch-to-batch relative scale estimation
+III-E Factor graph construction
+III-F Factor graph optimisation
+III-G Loop-closures Fig. 2: Component diagram of the proposed system. The factor graph contains per-batch scale l k = log ⁡ s k l_{k}=\log{s_{k}} and per-frame pose 𝐓 i \mathbf{T}_{i} , velocity 𝐯 i \mathbf{v}_{i} , and biases 𝐛 i \mathbf{b}_{i} as variables. IMU data, up-to-scale GFM pose predictions, and the batch-to-batch relative scale estimates are used as measurements for the IMU preintegration factor (red), GFM pose factor (yellow), and scale consistency factor (blue).
+Fig. 3: Top-down and perspective views of estimated SLAM trajectory and reconstruction on Christ-Church-03 sequence from Oxford Spires. Ground truth trajectory in red and TLS scan is visualised for reference.
+An overview of the proposed method is shown in Fig.  2 . We propose a factor-graph based design that takes IMU measurements, up-to-scale poses from GFM predictions, and relative scale measurements derived between consecutive predictions in order to create a natively metric scale trajectory and 3D reconstruction. GFMs such as MapAnything  [ 18 ] or DA3  [ 19 ] have a degree of real-world scale by training on datasets with known scale — however this merely improves their predictive capability and predictions are not constrained by physical measurements. Our method recovers real-world scale — as demonstrated in Fig. 3 — using IMU sensor measurements and is compatible with sensors typically used on drones, phones or AR glasses.
+III-A Notation and preliminaries
+We denote single object vectors or matrices in bold (e.g. image I as an array of RGB values) and sets of objects in calligraphic font (e.g., set of images ℐ \mathcal{I} ). A batch consists of a set of frames, where each frame corresponds to an input image I , pose T , depth map D , and confidence map C .
+In the results section we use models from Depth Anything 3 (DA3)  [ 19 ] and VGGT- Ω \Omega   [ 26 ] though any model that jointly infers predictions from a set of input images can be used  [ 17 , 18 ] . From model predictions, per-frame geometry can be obtained by backprojecting the depth map D with the camera intrinsics obtained either from a prior calibration or directly from model predictions.
+III-B Visual-inertial initialisation
+We begin each sequence with a visual-inertial initialisation phase aided by GFM predictions, similar to MASt3R-Fusion  [ 5 ] . Specifically, we adapt the visual-inertial initialisation method from VINS-Mono  [ 27 ] . This module uses Structure-from-Motion (SfM) to estimate the gyroscope biases and the gravity vector by aligning IMU preintegration to the SfM poses.
+We swap that SfM step with camera pose predictions from a GFM. This allows robust initialisation under conventionally degenerate conditions such as low texture or small parallax and negates the need for heuristic checks of non-ze
+
+【实验】
+IV-A Datasets
+IV-B Pose estimate accuracy as an odometry system
+IV-C Pose estimate accuracy as a SLAM system
+IV-D Reconstruction evaluation
+IV-E Real-time performance
+V Conclusion
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.14951v1 [cs.RO] 10 Oct 2026
+FoundationVIO: Enforcing Metric Scale
+in Feed-forward Visual-Inertial Odometry
+Jin Rhee
+Yuhao Zhang
+Frank Dellaert
+Maurice Fallon
+† † thanks:
+This project has been partly funded by the National Research Foundation of Korea (NRF) grant funded by the Korea government (MSIT)(No. RS-2024-00461409) and the UKRI Grant Mobile Robotic Inspector (EP/Z531212/1). For the purpose of open access, the authors have applied a Creative Commons Attribution (CC BY) license to any Accepted Manuscript version arising.
+(Corresponding author: Jin Rhee.) † † thanks: Jin Rhee, Yuhao Zhang, and Maurice Fallon are with Oxford Robotics Institute, University of Oxford, U.K. (e-mail: jin.rhee@oxfordrobotics.institute ). † † thanks: Frank Dellaert is with School of Interactive Computing, Georgia Institute of Technology, USA (e-mail: frank.dellaert@cc.gatech.edu ). We evaluate both the trajectory and reconstruction quality of FoundationVIO across three datasets.
+We first compare FoundationVIO’s pose estimation accuracy with respect to both classical and GFM-enabled methods. Results are presented both with the system configured in odometry mode and also in SLAM mode with loop-closures enabled.
+We then evaluate FoundationVIO’s dense 3D reconstructions against other state-of-the-art GFM-enabled SLAM methods. Finally, we evaluate the real-time performance of our method. All experiments are carried out on a laptop equipped with an Intel Core(TM) i7-13850HX and an RTX 3500 Ada Generation Laptop GPU with 12 GB VRAM for equal comparison.
+IV-A Datasets
+The three datasets consist of 1) a self-collected indoor dataset, 2) the Oxford Spires dataset  [ 32 ] , and 3) the ScaRF-SLAM dataset  [ 33 ] . Together, these datasets span different indoor and outdoor scenes and cover a wide range of sensor rigs and environments.
+The Aria Office dataset was self-collected using the Meta Aria glasses (Gen 1) which is equipped with two large-FoV greyscale cameras (HFoV = 150 ∘ \,=150^{\circ} ), a front-facing RGB camera (FoV = 110 ∘ \,=110^{\circ} , 15 Hz at 1408 x 1408 resolution), and two IMUs (1 kHz, 800 Hz). The sequences consist of head-worn trajectories touring several floors of an office environment in multiple loops and pass through narrow corridors, low-texture staircases, and office rooms.
+In our experiments, we use only pinho

@@ -1,0 +1,67 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+2.1 Study Design
+2.1.1 Variables
+2.1.2 Objects
+2.1.3 Selection Task
+2.1.4 Dual Audio Task
+2.1.5 Memory Recall Task
+2.2 Methodology
+2.3 Participants
+2.4 Analysis 2.1 Study Design
+Participants put on an AR headset in an object-rich (cluttered) office environment and completed a sequence of eight 45-second trials during which they were tasked to spot and select objects from a list displayed on one of the office walls.
+In each trial, participants completed a standing selection task from a fixed spot in the office. They were presented with a virtual list of 16 objects and must sequentially find and select, by pointing and clicking with the controller, as many objects as possible in the mixed reality office scene within 45 seconds. There were 8 trials total. Participants completed a surprise memory recall task after the 4th trial, were subsequently instructed to create a mental model of their environment through a verbal cue, and finally completed the cued memory recall task after the 8th trial.
+2.1.1 Variables
+We examined a number of independent variables in this study, including object-, user- and context-level factors.
+Our object-level factors of interest were the virtuality of an object [objects were either physical or virtual] and the size of the object [large, medium, small, very small]. Of the 32 objects in the scene in each trial, 16 were physical, and participants were tested for recall of 8 physical and 8 virtual objects at the end of their trials. The remaining physical and virtual objects were included in the primary selection task, to ensure that participants were not biased to recall of certain objects due to the selection task alone. The objects were also distributed across a range of sizes, though we could not achieve a perfectly balanced design with regards to the size variable, due to the physical constraints of the office-themed space.
+The user-level factors we were interested in were cueing (user alerted to the recall task) and dual task (additional audio task in half the trials). We define cueing as a verbal cue directing participants to remember objects in the scene. All participants complete the memory recall task after the first 4 trials without prior knowledge (no cue condition). Participants are then verbally cued (cue condition) to remember all objects in the scene, and complete another 4 trials in the environment. We use a secondary audio response task (participant pressing a controller button when they hear a certain radio alphabet letter) that goes on in conjunction with the selection task as a means of increasing cognitive load. 
+
+【结论/局限】
+Acknowledgements
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.18183v1 [cs.HC] 13 Oct 2026
+\onlineid
+0
+\vgtccategory Research
+\authorfooter Dirksen and Kumaran contributed equally to this paper.
+Sangita Kunapuli, Radha Kumaran, Shane Dirksen, Misha Sra and Tobias Höllerer are with the Department of Computer
+Science, University of California, Santa Barbara. E-mail:
+thollerer@ucsb.edu.
+Yanxiu Jin is with the Department of Electrical and Computer Engineering, University of California, Santa Barbara.
+You-Jin Kim is with the School of Computing, College of Engineering, University of Nebraska–Lincoln.
+This is a preprint version of this article. The final version of this paper can be found in IEEE TVCG (Vol. 32, 2026), presented at IEEE ISMAR 2026. For citation, please refer to the published version. This work was initially made available on the author’s personal website [yujnkm.com] in September 2026, and was subsequently uploaded to arXiv for broader accessibility.
+\teaser
+Overview of the data processing pipeline used to compute object-level saliency from participant viewpoints. (a) A captured video frame of the mixed-reality office environment, populated with

@@ -1,0 +1,137 @@
+【摘要】
+
+【方法】
+AbsRel ↓ \downarrow
+RMSE (m) ↓ \downarrow
+RynnWorld-4D
+0.1625
+0.2075
+Thinker-WM
+0.1360
+0.1790
+Impact on closed-loop control.
+Accurate depth generation alone does not establish its utility for
+action prediction. We therefore conduct a controlled ablation on the
+RoboTwin turn_switch task. All three configurations are trained
+for 8K steps under the same training recipe, using 24 video frames
+and a 48-step action horizon. At inference, video and action are each
+sampled with 10 denoising steps. We evaluate the 6K, 7K, and 8K
+checkpoints with 20 closed-loop trials per checkpoint. The RGB-only baseline removes the depth stream.
+RGB + Depth (One-way) adds depth generation but restricts
+RGB–depth interaction to one direction.
+Our full Thinker-WM enables bidirectional RGB–depth
+interaction within the shared generative backbone, allowing appearance
+and geometry to co-evolve before decoding. This comparison tests
+whether bidirectional interaction provides benefits beyond introducing
+a depth stream with restricted coupling.
+Table 9 :
+Closed-loop success on the RoboTwin turn_switch task.
+Interaction denotes RGB–depth information flow.
+Each checkpoint is evaluated over 20 trials; overall success
+aggregates the three checkpoints.
+Configuration
+Interaction
+6K
+7K
+8K
+Overall
+RGB-only
+None
+12/20
+12/20
+12/20
+60.0%
+RGB + Depth
+One-way
+12/20
+12/20
+14/20
+63.3%
+Thinker-WM
+Bidirectional
+15/20
+15/20
+15/20
+75.0%
+As shown in Table  9 , adding depth with one-way
+interaction increases overall success from 60.0 % 60.0\% to 63.3 % 63.3\% .
+Bidirectional interaction achieves 75.0 % 75.0\% , improving over the RGB-only
+and one-way variants by 15.0 15.0 and 11.7 11.7 percentage points,
+respectively. The full model also outperforms both variants at every
+evaluated checkpoint. These results suggest that the benefit of depth
+depends not only on its prediction objective, but also on how its
+latent representation interacts with RGB during joint generation.
+Together, these experiments demonstrate improved depth generation
+accuracy on the evaluated AgiBot subset and a closed-loop control
+benefit from bidirectional geometric interaction on RoboTwin.
+They support treating depth as a co-evolving generative state within
+the representation used for action generation.
+8.2.3 Gradient Compatibility across Function Modes
+The function modes of Thinker-WM are optimized with a shared set of UDT
+parameters. This design raises a basic optimization question: do the different
+modes provide compatible training signals, or do some objectives interfere with
+one another? We investigate this question directly through the geometry of the
+loss gradients on the shared UDT.
+For each function mode, we evaluate its loss on the same training batches and
+with the same noise realization, while forcing the modes to run independently
+on the shared weights. We compute pairwise cosine similarity between the
+resulting gradients with respect to the shared UDT parameters, together with
+the corresponding gradient norms. The m
+
+【实验】
+  on Benchmarks
+8.1.1 EWMBench Evaluation
+8.1.2 WorldOlympiad Evaluation
+8.1.3 WorldArena Track-1 Evaluation
+8.2 Ablation and Analysis
+8.2.1 Action Conditioning Controls Future Generation
+8.2.2 Depth as a Co-Evolving Generative State
+Depth generation accuracy.
+Impact on closed-loop control.
+8.2.3 Gradient Compatibility across Function Modes
+8.2.4 Motion Probe Evaluation
+8.3 Qualitative Capabilities and Generalization
+8.3.1 Training-Free Long-Horizon Generation
+8.3.2 Trajectory Transfer and Action Recovery
+8.3.3 Zero-Shot Generalization
+8.3.4 Zero-Shot Manipulation across Diverse Scenes on Benchmarks
+We report our evaluation results on three well-recognized world-model benchmarks.
+8.1.1 EWMBench Evaluation
+We first evaluate the quality of the generated world itself. EWMBench  [ 12 ]
+is a standard benchmark for embodied world models. It scores a generated video
+along eight dimensions covering visual scene consistency, end-effector motion
+correctness, and semantic alignment with the instruction, and reports their sum
+as Overall. Its standard evaluation set contains 21 episodes drawn from 7
+manipulation tasks. For every episode, the model produces three candidate videos
+conditioned on the ground-truth first frame and the official instruction, the best
+candidate is selected by Hausdorff distance, and each dimension is normalized to [ 0 , 1 ] [0,1] and averaged over all valid trials, 63 videos in total. Generation uses
+48 frames at a resolution of 480 × 640 480\times 640 with 50 denoising steps and a
+classifier-free guidance scale of 5.0. Since the benchmark computes its metrics
+at 30 FPS, generated results are upsampled from 5 FPS to 30 FPS so that the
+comparison follows the protocol on which the benchmark is defined.
+Table 4 : Generation quality on EWMBench. Every dimension is normalized to
+[ 0 , 1 ] [0,1] , the Overall column is the sum of the eight dimensions, and higher is
+better. Numbers for the baseline models are taken from
+Qwen-RobotWorld  [ 40 ] , which reports them on the same Orchestration
+6 Training Strategy
+6.1 Staged Training Curriculum
+6.2 Stage-wise Parameter and Geometry Schedule
+6.3 Function Mode and Noise Scheduling
+7 Motion Probe
+7.1 Probe Design and Offline Motion Teacher
+7.2 Probe Objective and Interpretation Orchestration runs every fixed number of steps on a fixed set of samples, with deterministic assignment to ranks derived from the same weights as the training mixture. To avoid competing with training for GPUs, a background process decodes evaluation clips into a shared-storage cache and writes a completion manifest. The foreground 
+
+【结论/局限】
+and Future Work
+Contributors
+Acknowledgments
+References
+License: CC BY-NC-SA 4.0
+arXiv:2610.18447v2 [cs.AI] 14 Oct 2026
+\companyname
+Thinker Team, Ubtech
+\doctype Technical Report
+\reptitle
+Thinker-WM: A Unified World Model with Shared Multimodal Backbone for Embodied Intelligence
+\productname Thinker-WM and Future Work
+This work presented Thinker-WM , a unified multimodal world model that jointly models RGB, depth, and robot action within a shared intermediate representation. Modality-specific encoders and decoders preserve the distinct structure of each modality, while a shared Unified Dynamics Transformer (UDT) models their joint evolution with a single set of weights. This design supports multiple world-action functions under one parameterization, including joint video-action generation, world modeling, policy inference, action-conditioned generation, video-to-action generation, and inverse dynamics. Trained on approximately 20K hours of egocentric video, 10K hours of robot data, and 1K hours of simulation data, about 4K hours with aligned depth, Thinker-WM uses a staged curriculum with replay to stabilize shared representations and specialize to the deployed robot. Across benc

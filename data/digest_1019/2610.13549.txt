@@ -1,0 +1,173 @@
+【摘要】
+
+【方法】
+Setting
+FID ↓ \downarrow
+R-P@3 ↑ \uparrow
+Diversity → \rightarrow
+Matching Score ↓ \downarrow
+GT
+–
+0.2141 ±0.0276
+0.4799 ±0.0094
+7.3122 ±0.1552
+4.5282 ±0.0686
+DoubleTake  ( Shafir et al., 2024 )
+T2M → \rightarrow T2M
+4.6364 ±0.1955
+0.1888 ±0.0070
+12.3785 ±0.0210
+8.0698 ±0.0875
+T2M → \rightarrow A2M
+5.1573 ±0.2301
+0.1841 ±0.0063
+12.1788 ±0.0348
+7.9091 ±0.1212
+A2M → \rightarrow A2M
+3.9539 ±0.1787
+0.1921 ±0.0072
+12.3355 ±0.0363
+8.0973 ±0.1091
+FlowMDM  ( Barquero et al., 2024 )
+T2M → \rightarrow T2M
+1.6257 ±0.0817
+0.4408 ±0.0076
+5.2090 ±0.0323
+7.7194 ±0.0864
+T2M → \rightarrow A2M
+1.9363 ±0.0906
+0.4211 ±0.0060
+5.3197 ±0.0313
+7.6015 ±0.0952
+A2M → \rightarrow A2M
+1.5287 ±0.0590
+0.4662 ±0.0083
+4.9234 ±0.0327
+8.1161 ±0.1122
+UniMotion  ( Li et al., 2025 )
+T2M → \rightarrow T2M
+18.2404 ±0.2049
+0.1968 ±0.0038
+6.4662 ±0.0599
+10.1040 ±0.0211
+T2M → \rightarrow A2M
+18.3490 ±0.2047
+0.1918 ±0.0053
+6.4454 ±0.0757
+10.0311 ±0.0285
+A2M → \rightarrow A2M
+19.0050 ±0.1546
+0.1850 ±0.0034
+6.5155 ±0.0569
+10.1076 ±0.0176
+Table 3 :
+Comparison between zero-shot inference and T2M-trained models.
+↑ \uparrow indicates higher is better, ↓ \downarrow indicates lower is better, and → \rightarrow indicates closer to GT is better. Setting
+FID ↓ \downarrow
+R-P@3 ↑ \uparrow
+Diversity → \rightarrow
+Matching Score ↓ \downarrow
+GT
+–
+0.2141 ±0.0276
+0.4799 ±0.0094
+7.3122 ±0.1552
+4.5282 ±0.0686
+DoubleTake  ( Shafir et al., 2024 )
+Zero-shot
+11.3440 ±0.1979
+0.1242 ±0.0041
+13.5424 ±0.0352
+8.8547 ±0.0950
+T2M
+4.6364 ±0.1955
+0.1888 ±0.0070
+12.3785 ±0.0210
+8.0698 ±0.0875
+FlowMDM  ( Barquero et al., 2024 )
+Zero-shot
+6.5967 ±0.1483
+0.2335 ±0.0073
+6.6178 ±0.0295
+6.8434 ±0.0798
+T2M
+1.6257 ±0.0817
+0.4408 ±0.0076
+5.2090 ±0.0323
+7.7194 ±0.0864
+UniMotion  ( Li et al., 2025 )
+Zero-shot
+21.6881 ±0.4150
+0.1049 ±0.0028
+3.7609 ±0.0626
+11.3797 ±0.0261
+T2M
+18.2404 ±0.2049
+0.1968 ±0.0038
+6.4662 ±0.0599
+10.1040 ±0.0211
+6.1 Baseline Methods
+We compare three representative models  ( Shafir et al., 2024 ; Barquero et al., 2024 ; Li et al., 2025 ) in long-term motion generation as our baselines. To adapt them to our specific task setting, we apply minimal necessary modifications. For a fair comparison, all models utilize CLIP as their text encoder. Under the Anaphoric Text-to-Motion (A2M) setting, the text condition for each baseline is modified to take the weighted sum of the current segment’s text embedding and all preceding segments’ text embeddings. This modification explicitly injects historical context into the current generation step, enabling the models to maintain awareness of previously established constraints without requiring complex architectural redesigns. All baselines are carefully retrained to accommodate this contextual input setting.
+6.2 Effectiveness of ELMA for Anaphoric Text-to-Motion
+Tab.  2 evaluates whether ELMA provides effective supervision for resolving cross-segment dependencies.
+For each baseline, we compare three settings: standard T2M training and inference, T2M training with A2M inferenc
+
+【实验】
+6.1 Baseline Methods
+6.2 Effectiveness of ELMA for Anaphoric Text-to-Motion
+6.3 Effectiveness of ELMA for In-Domain Text-to-Motion
+6.4 Qualitative Results on Anaphoric Text-to-Motion Table 2 :
+Comparison under different training and inference settings.
+↑ \uparrow indicates higher is better, ↓ \downarrow indicates lower is better, and → \rightarrow indicates closer to GT is better. settings: independent vs. anaphoric instructions
+5.4 Metrics settings: independent vs. anaphoric instructions
+To systematically analyze how models handle cross-segment dependencies, we consider two instruction formats:
+T2M (independent Text-to-Motion): The standard setting where text instructions are strictly independent. Each segment description is self-contained without referencing prior states.
+A2M (Anaphoric Text-to-Motion): Our proposed continuous setting where instructions exhibit anaphoric compositions. The model must resolve cross-dependencies and maintain constraints established in preceding segments.
+Using these formats, we report three configurations to isolate the effect of ELMA supervision:
+(1) T2M Train → \rightarrow T2M Inference serves as the standard baseline, evaluating the model’s original generative capacity without complex dependencies,
+(2) T2M Train → \rightarrow A2M Inference evaluates the zero-shot generalization of standard models when subjected to anaphoric instructions, exposing their inherent limitations in state propagation,
+and (3) A2M Train → \rightarrow A2M Inference evaluates models after fine-tuning on our ELMA training set, demonstrating their acquired capacity to explicitly learn and preserve anaphoric constraints.
+5.4 Metrics
+To evaluate motion quality, we report four widely used metrics. FID measures the Fréchet distance between the distribution of generated motions and that of the ground-truth (GT) motions. R-Precision@3 indicates how highly the generated motions are ranked with respect to the corresponding GT descriptions through retrieval within a mini-batch. In addition, Matching Score computes the distance between text and motion embedding vectors to evaluate their alignment. Finally, Diversity measures the variance of the generated motion features across all sequences, reflecting the model’s ability to produce varied movements.
+
+【结论/局限】
+and Limitations
+References
+A Data collection Pipeline Details
+A.1 Data collection
+A.1.1 Online video Search
+A.1.2 Scene Segmentation
+A.1.3 Hierarchical Multi-Person Detection and Tracking
+A.1.4 MLLM-based Verification
+A.2 Postprocessing
+A.2.1 PoseFiltering.
+A.2.2 MotionFiltering+.
+B Dataset Details
+B.1 Semantic Diversity
+B.2 Postprocessing Analysis
+B.2.1 Filtering Ratios at Each Processing Stage
+B.2.2 Effect of AMASS-based Filtering on Semantic Diversity
+C Text Annotation and Anaphora Judgment Details
+C.1 Prompt Design
+C.2 Different Model Comparison
+C.3 Annotation Quality
+D Training Details
+D.1 Implementation Details.
+E Broader Impact
+E.1 Positive Societal Impact
+E.2 Negative Societal Impact and Mitigations
+Risk of misuse for impersonation.
+Privacy of in-the-wild video subjects.
+Demographic and cultural bias.
+Surveillance and tracking concerns.
+Annotator welfare.
+F License
+F.1 ELMA Dataset License
+F.2 Compliance with Source Video Platforms
+F.3 Compliance with Source Video Platforms
+F.4 Third-Party Assets and Their Licenses
+License: CC BY 4.0
+arXiv:2610.13549v1 [cs.CV] 09 Oct 2026
+ELMA: Benchmarking Anaphoric Compositions for Long-Term Text-to-Motion Generation
+Shun Kato,
+Dixin Yang

@@ -1,0 +1,365 @@
+【摘要】
+
+【方法】
+MAE ∘ ↓ \downarrow
+ACC ↓ \downarrow
+car
+ball
+helmet
+teapot
+toaster
+coffee
+mean
+car
+helmet
+toaster
+coffee
+mean
+Geo-NeuS*  [ 18 ]
+12.15
+1.04
+4.12
+19.77
+16.23
+9.79
+10.52
+0.72
+0.74
+4.14
+0.90
+1.63
+Neuralangelo*  [ 7 ]
+12.34
+35.63
+9.23
+4.98
+14.14
+8.61
+14.16
+1.89
+1.71
+2.99
+0.63
+1.81
+Ref-NeRF*  [ 65 ]
+14.93
+1.55
+29.48
+9.23
+42.87
+12.24
+18.38
+–
+–
+–
+–
+–
+NMF  [ 64 ]
+7.74
+0.72
+2.40
+5.67
+6.66
+13.17
+6.06
+–
+–
+–
+–
+–
+Ref-NeuS*  [ 4 ]
+7.68
+0.50
+1.94
+10.25
+5.95
+5.73
+5.34
+0.50
+0.53
+0.54
+1.83
+0.85
+UniSDF*  [ 5 ]
+6.88
+0.45
+1.72
+2.80
+8.71
+8.00
+4.76
+0.58
+0.46
+2.02
+1.17
+1.06
+Ours
+7.15
+0.51
+1.77
+3.60
+7.92
+6.55
+4.58
+0.35
+0.24
+0.90
+0.94
+0.61
+TABLE IV: Ablation on microfacet normals sampling (MS), reflective direction of Vanilla MLP (RD), and detection-based color blend weighting strategy (DC). All metrics are reported in Chamfer Distance (mm) ↓ \downarrow (lower is better). Red and orange denote top and second-best results. When DC= × \times , blending weights are learned via MLP as in UniSDF  [ 5 ] .
+MS
+RD
+DC
+24
+37
+40
+55
+63
+65
+69
+83
+97
+105
+106
+110
+114
+118
+122
+Mean
+× \times
+✓
+✓
+0.95
+0.62
+0.32
+0.51
+0.92
+0.58
+0.52
+1.37
+1.01
+0.51
+0.50
+0.69
+0.35
+0.43
+0.39
+0.65
+✓
+× \times
+✓
+0.74
+0.75
+0.35
+0.54
+0.84
+0.70
+0.58
+1.33
+0.99
+0.50
+0.50
+0.68
+0.34
+0.41
+0.39
+0.64
+✓
+✓
+× \times
+0.60
+0.73
+0.31
+0.53
+0.89
+0.51
+0.52
+1.35
+0.92
+0.50
+0.47
+0.75
+0.38
+0.37
+0.39
+0.615
+✓
+✓
+✓
+0.53
+0.64
+0.31
+0.44
+0.88
+0.62
+0.56
+1.34
+1.00
+0.52
+0.48
+0.66
+0.33
+0.39
+0.40
+0.607
+TABLE V: Ablation study on detection-based color blending (DC) strategies on Shiny Blender dataset. Lower is better for both MAE ∘ and ACC. Red and orange denote the best and the second-best results, respectively. Stable : StableDelight detection scores; All Ones : all blending weights 1 (fully specular branch); All Zeros : all 0 (fully diffuse branch); MLP : weights learned via auxiliary MLP as in UniSDF  [ 5 ] .
+DC Config
+MAE ∘ ↓ \downarrow
+ACC ↓ \downarrow
+car
+ball
+helmet
+teapot
+toaster
+coffee
+mean
+car
+helmet
+toaster
+coffee
+mean
+Stable
+7.60
+0.54
+1.84
+3.44
+9.88
+8.92
+5.37
+0.44
+0.29
+1.37
+1.10
+0.80
+All Zeros
+7.44
+0.54
+1.84
+3.30
+8.38
+7.28
+4.80
+0.42
+0.29
+1.26
+0.85
+0.71
+MLP
+7.09
+0.59
+1.71
+3.16
+8.25
+6.76
+4.59
+0.35
+0.23
+1.16
+0.86
+0.65
+All Ones
+7.15
+0.51
+1.77
+3.60
+7.92
+6.55
+4.58
+0.35
+0.24
+0.90
+0.94
+0.61
+TABLE VI: Ablation study on detection-based color blending (DC) strategies on DTU dataset (Chamfer Distance (mm) ↓ \downarrow , lower is better). Red and orange denote the best and second-best per column. Stable : StableDelight detection scores; All Ones : all blending weights set to 1 (fully using the specular branch); All Zeros : all blending weights set to 0 (fully using the diffuse branch); MLP : weights learned via auxiliary MLP as in UniSDF  [ 5 ] .
+DC Config
+24
+37
+40
+55
+63
+65
+69
+83
+97
+105
+106
+110
+114
+118
+122
+Mean
+All Ones
+0.60
+0.69
+0.37
+0.59
+0.87
+0.58
+0.61
+1.46
+1.06
+0.53
+0.48
+0.72
+0.34
+0.38
+0.40
+0.65
+All Zeros
+0.64
+0.73
+0.31
+0.51
+0.83
+0.54
+0.55
+1.37
+1.05
+0.52
+0.46
+0.76
+0.38
+0.41
+0.39
+0.63
+MLP
+0.60
+0.73
+0.31
+0.53
+0.89
+0.51
+0.52
+1.35
+0.92
+0.50
+0.47
+0.75
+0.3
+
+【实验】
+IV-A Implementation Settings
+IV-B Comparison with the State-of-the-Art
+IV-C Ablation Studies
+V Conclusion
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.19681v1 [cs.CV] 14 Oct 2026
+MicroSDF: Microfacet-Driven Hybrid Neural SDFs for Mixed-Reflectance Surface Reconstruction
+Lejia Ye
+Yuhua Xu
+Yulan Guo
+Lian Xu
+Xiaohu Zhang
+† † thanks: Published in IEEE Transactions on Image Processing, vol.˜35, pp.˜4106–4121, Apr.˜2026, doi: https://doi.org/10.1109/TIP.2026.3678096 . † † thanks:
+Lejia Ye and Xiaohu Zhang are with the School of Aeronautics and Astronautics, Sun Yat-sen University, Shenzhen Campus, Shenzhen
+518107, China. (e-mail: yelj8@mail2.sysu.edu.cn;zhangxiaohu@mail.sysu.edu.cn.)
+Yuhua Xu is with Orbbec Inc., Orbbec Technology Building, No. 88 High-tech North 1st Road, Nanshan District, Shenzhen 518052, China(e-mail: xuyuhua@orbbec.com).
+Yulan Guo is with the School of Electronics and Communication Engineering, Sun Yat-sen University, Shenzhen Campus, Shenzhen
+518107, China (e-mail: guoyulan@sysu.edu.cn)
+Lian Xu is with the Department of Computer Science and Software Engineering, The University of Western Australia, Perth, WA 6009, Australia (e-mail: lian.xu@uwa.edu.au).
+(Corresponding author: Xiaohu Zhang and Lian Xu.) IV-A Implementation Settings
+Datasets. Following prior works  [ 5 , 3 , 16 , 7 , 10 ] , we evaluate the proposed method on three widely used benchmarks:
+( i ) DTU [ 75 ] : The DTU multi-view dataset contains 15 real-world scenes, each captured from 49 or 64 viewpoints with high-resolution images. Each scene contains objects with diverse materials and complex geometries, including both reflectance and non-reflectance surfaces. DTU provides ground-truth 3D models and camera trajectories, making it a standard benchmark for quantitative evaluation of point cloud reconstruction.( ii ) Shiny Blender [ 65 ] : The Shiny Blender dataset is a synthetic benchmark consisting of 6 reflective objects rendered under controlled settings. We use it to provide additional quantitative evaluation on reflective surfaces.
+( iii ) Ref-NeRF [ 65 ] : The Ref-NeRF dataset is designed to evaluate reconstruction quality for reflective objects in uncontrolled real-world scenarios. It includes three challenging scenes, i.e., “sedan”, “garden spheres”, and “toycar”, each featuring multi-view images of highly reflective surfaces. Ref-NeRF specifically tests an algorithm’s robustness to specular reflections.
+( iv ) DeepVoxels [ 76 ] : To evaluate performance in more realistic settings, we select two scenes (a glossy sphere and a coffee cup) from

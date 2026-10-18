@@ -1,0 +1,84 @@
+【摘要】
+
+【方法】
+3.1 Correspondence-Guided Geometric Optimization
+3.2 In-the-Wild Generative Prior Adaptation
+3.3 Generative Trajectory Densification
+3.4 Automated Spatial Data Curation Figure 2:
+Framework overview. DA3 correspondences anchor 3DGS optimization; adapted DiFix and Wan-VACE  ( Jiang et al., 2025 ) densify trajectories;
+verified RGB-D groundings yield 3D instances, captions, and spatial QA.
+3.1 Correspondence-Guided Geometric Optimization
+Sparse panoramic inputs provide limited overlap and often contain large
+textureless regions, where conventional feature matching yields too few
+reliable constraints for 3DGS optimization. We therefore leverage a frozen
+feed-forward large reconstruction model (LRM) as an offline correspondence
+teacher. As shown in Appendix Tab.  7 , conventional feature-based matchers such as i3dgs  ( Meuleman et al., 2026 ) and COLMAP  ( Pan et al., 2024 ) are insensitive to the number of input views because they operate pairwise, but produce too few reliable correspondences on sparsely textured indoor surfaces. LRMs provide substantially denser matches, although the number of forward–backward-consistent correspondences decreases when additional context views are jointly processed. We therefore select nearby view pairs with sufficient co-visibility and process each pair independently with DA3  ( Lin et al., 2025 ) , yielding a dense set of reliable correspondence anchors for subsequent 3DGS optimization.
+Given a candidate pair ( I i , I j ) (I_{i},I_{j}) , the LRM predicts dense geometry, relative
+camera transformation 𝐓 ~ j ← i \widetilde{\mathbf{T}}_{j\leftarrow i} , and per-pixel
+confidence. For each source point 𝐩 \mathbf{p} , we obtain its target coordinate
+and forward–backward error as
+𝐪 ~ i → j \displaystyle\widetilde{\mathbf{q}}_{i\rightarrow j}
+= π j ​ ( 𝐓 ~ j ← i ​ π i − 1 ​ ( 𝐩 , D ~ i ​ ( 𝐩 ) ) ) , \displaystyle=\pi_{j}\!\left(\widetilde{\mathbf{T}}_{j\leftarrow i}\pi_{i}^{-1}(\mathbf{p},\widetilde{D}_{i}(\mathbf{p}))\right),
+(1)
+e i ​ j fb ​ ( 𝐩 ) \displaystyle e_{ij}^{\mathrm{fb}}(\mathbf{p})
+= d π ​ ( 𝐩 , 𝐩 ~ i → j → i ) . \displaystyle=d_{\pi}\!\left(\mathbf{p},\widetilde{\mathbf{p}}_{i\rightarrow j\rightarrow i}\right).
+We retain only valid, confident correspondences satisfying
+e i ​ j fb < τ fb e_{ij}^{\mathrm{fb}}<\tau_{\mathrm{fb}} and collect them as fixed anchors
+ℳ i ​ j = { ( 𝐩 , 𝐪 , w i ​ j ) } \mathcal{M}_{ij}=\{(\mathbf{p},\mathbf{q},w_{ij})\} , where w i ​ j w_{ij} is determined by the LRM confidence and forward–backward error. These correspondences are computed once before training and held fixed during the initial 3DGS optimization. Similar to the multi-view geometric
+regularization used in GaussianPro  ( Cheng et al., 2024 ) and
+PGSR  ( Chen et al., 2024 ) , we use them as fixed cross-view references
+for geometric supervision. Because the correspondences are not
+re-estimated from the evolving 3DGS, they help stabilize optimization
+in texture-poor regions.
+3.2 In-the-Wild Generative Prior Adaptation
+Figu
+
+【实验】
+4.1 Out-of-Distribution Rendering Quality
+4.2 Geometric Reconstruction
+4.3 3D Grounding and VLM Fine-Tuning
+5 Ablations Figure 4: Interpolated-view generation from trajectory endpoints.
+Ours better preserves scene identity and temporal consistency than existing reconstruction and restoration methods.
+Table 1: Novel-view synthesis on three room-random batches. ↑ / ↓ \uparrow/\downarrow indicate better. ∗ denotes models fine-tuned on our data.
+Room-Random Batch 1
+Room-Random Batch 2
+Room-Random Batch 3
+
+【结论/局限】
+References
+A Implementation Details
+Data collection and splits.
+RealSee evaluation.
+Reconstruction initialization.
+B Ablation visualization
+C Additional Visualizations and QA templates
+License: CC BY 4.0
+arXiv:2610.19502v1 [cs.CV] 14 Oct 2026
+Holi-Spatial 360: Generative Reconstruction from Sparse Panoramas for Spatial Rendering and Intelligence
+Yuanyuan Gao
+Affiliation:  The Hong Kong University of Science and Technology
+Zhirui Liu
+Affiliation:  ShanghaiTech University
+Yuning Gong
+Affiliation:  Tencent
+Yifei Liu
+Affiliation:  Shanghai Artificial Intelligence Laboratory
+Yifan Zhan
+Affiliation:  The University of Tokyo
+Kuixuan Jiao
+Affiliation:  Northwestern Polytechnical University
+Xiaolong Zhou
+Affiliation:  Shanghai Artificial Intelligence Laboratory
+Yifan Yang
+Affiliation:  Shanghai Jiao Tong University
+Project Page: visionary-laboratory.github.io/Holi-spatial-360/
+Hongjie Zhang
+Affiliation:  Shanghai Artificial Intelligence Laboratory
+Xue Yang
+Affiliation:  Shanghai Jiao Tong University
+Project Page: visionary-laboratory.github.io/Holi-spatial-360/
+Dan Xu
+Affiliation:  The Hong Kong University of Science and Technology
+Zhihang Zhong
+Affiliation:  Shanghai Jiao Tong University
+P

@@ -1,0 +1,203 @@
+【摘要】
+
+【方法】
+Compilation
+Success (%)
+Time (s)
+Token
+Animation Quality
+SUA
+MPA
+CGA
+End-to-End
+Input
+Output
+All
+OLM
+PLM
+OPC
+Avg.
+95% CI
+p Holm p_{\mathrm{Holm}}
+r r
+Direct2C
+100.00
+–
+–
+30.42
+30.66
+2,220
+1,715
+3,934
+4.02 ± \pm 1.42
+3.53 ± \pm 1.90
+3.53 ± \pm 1.75
+3.69 ± \pm 1.62
+[ 3.09 , 4.30 ] [3.09,4.30]
+.0024 .0024
+0.63 0.63
+All-in-One
+100.00
+–
+–
+47.84
+48.66
+8,103
+3,079
+11,181
+4.22 ± \pm 1.51
+3.70 ± \pm 1.64
+3.72 ± \pm 1.65
+3.88 ± \pm 1.52
+[ 3.31 , 4.45 ] [3.31,4.45]
+.0021 .0021
+0.64 0.64
+w/o SUA
+100.00
+–
+20.59
+50.66
+72.38
+4,805
+4,579
+9,384
+4.47 ± \pm 1.35
+3.97 ± \pm 1.71
+4.00 ± \pm 1.58
+4.14 ± \pm 1.47
+[ 3.59 , 4.69 ] [3.59,4.69]
+.0042 .0042
+0.58 0.58
+w/o MPA
+100.00
+19.93
+–
+42.20
+62.67
+5,704
+3,450
+9,154
+2.97 ± \pm 1.38
+2.23 ± \pm 1.25
+2.43 ± \pm 1.28
+2.54 ± \pm 1.17
+[ 2.11 , 2.98 ] [2.11,2.98]
+6.155 × 10 − 5 6.155\times 10^{-5}
+0.81 0.81
+SUA w/o SF
+100.00
+16.40
+14.08
+51.09
+82.41
+6,016
+5,354
+11,370
+5.00 ± \pm 1.50
+4.82 ± \pm 1.47
+4.68 ± \pm 1.55
+4.83 ± \pm 1.43
+[ 4.30 , 5.37 ] [4.30,5.37]
+.0667 .0667
+0.39 0.39
+MPA w/o GE
+100.00
+18.10
+11.49
+46.81
+77.24
+6,191
+5,195
+11,387
+5.32 ± \pm 1.38
+4.98 ± \pm 1.51
+4.92 ± \pm 1.64
+5.07 ± \pm 1.46
+[ 4.53 , 5.62 ] [4.53,5.62]
+.1304 .1304
+0.28 0.28
+Full (Ours)
+100.00
+21.09
+15.94
+52.86
+91.38
+6,439
+5,457
+11,896
+5.77 ± \pm 1.15
+5.47 ± \pm 1.45
+5.48 ± \pm 1.56
+5.57 ± \pm 1.35
+[ 5.07 , 6.08 ] [5.07,6.08]
+–
+–
+•
+Note: Ratings range from 1 = Does-Not-Match-At-All to 7 = Fully-Matches and are reported as mean ± \pm SD over 30 case-level means. 95% CIs are reported for Avg.
+Note: Statistical comparisons against Full use two-sided paired Wilcoxon signed-rank tests with Holm correction p Holm p_{\mathrm{Holm}} ; r r denotes the corresponding effect size. listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from Details
+4 Technical Evaluation Details
+MotionAnimator was implemented in Unity 3 3
+3
+\url https://unity.com/products/unity-engine 2022.3.58f1 using C# and deployed on a Meta Quest 3 4 4
+4
+\url https://www.meta.com/quest/quest-3/ . The Meta XR All-in-One SDK and OpenXR support XR interaction. Speech is recorded in Unity and transcribed through the OpenAI transcriptio
+
+【实验】
+4.4 Code and Runtime Realization Evaluation 4.5 End-to-End Animation Evaluation 4.6 Failure Analysis
+5 User Study
+5.1 Study Goals
+5.2 Participants
+5.3 Procedure
+5.4 Measures and Data Analysis and Findings As shown in Table 2 , the Semantic Understanding Agent (SUA) achieved consistently high performance across object identity (97.78%), part labeling (96.90%), and semantic direction-frame grounding (99.26%). The near-perfect direction-frame accuracy indicates that MotionAnimator can robustly establish functional object directions despite variations in asset structure and imported orientation, while the remaining part-labeling errors primarily involved visually or structurally similar components.
+A clearer gap emerged in the Motion Planning Agent (MPA), which achieved 99.16% MPF1 but 87.77% MAA, indicating that identifying “ which parts should move ” was substantially easier than grounding “ how they should move ”. Motion-axis errors were most pronounced for Aerial Mobility (75.00%) and Articulated & Sliding Objects (70.00%), whereas Rotating Appliances achieved 100.00% on both metrics. Human judgments of the complete motion plans showed a similar pattern, with an overall Intent-to-Motion Alignment (IMA) of 5.83 ± 1.16 5.83\pm 1.16 and the lowest rating for Aerial Mobility ( 5.30 ± 1.40 5.30\pm 1.40 ). Inter-rater reliability was good for IMA, with five-rater average-measure absolute agreement of I ​ C ​ C ​ ( 2 , 5 ) = .794 ICC(2,5)=.794 . Overall, these results suggest that MotionAnimator reliably identifies object semantics and behaviorally relevant parts, while precise motion-axis and articulation grounding remains the primary challenge for geometrically complex behaviors.
+4.4 Code and Runtime Realization Evaluation
+To evaluate TQ4 , we evaluated both the generated Unity C# code and the resulting runtime animations from two complementary perspectives.
+(i) Human Animation Evaluation :
+We recruited five independent human raters, including two VR developers, two instructors, and one student, to evaluate the generated animations. For each test case, raters viewed the animation from three complementary viewpoints and assessed four dimensions on a 7-point scale:
+OLM ( Object-Level Motion ) measures the correctness of the object’s overall motion;
+PLM ( Part-Level Motion ) measures whether the required parts move appropriately;
+MD ( Motion Direction ) measures whether the motion directions or axes are correct; and
+OPC ( Object–Part Coordination ) measures whether object- and part-level motions are properly coordinated.
+We first averaged the five ratings for ea
+
+【结论/局限】
+References
+License: CC BY-NC-ND 4.0
+arXiv:2610.15074v1 [cs.HC] 10 Oct 2026
+\vgtcinsertpkg \manuscriptnote \teaser
+Overview of MotionAnimator. \tiny1⃝ Given a user’s animation intent, the structured XR scene context, and a target-focused capture of the object, \tiny2⃝ MotionAnimator performs semantic-to-motion reasoning to identify the object and its functional parts, infer part-specific motion affordances, and construct a parameterized motion plan that coordinates object- and part-level behaviors. \tiny3⃝ It then generates Unity C# code, compiles it at runtime, and produces an executable XR animation. In the illustrated example, the go-kart follows an S-shaped path with coordinated steering-wheel motion, front-wheel steering, and wheel rotation.
+MotionAnimator: Semantic-to-Motion Reasoning for Animating Part-Structured 3D Assets in XR
+Jianan Jiang
+The Pennsylvania State University
+jnjiang@psu.edu
+Bin Li
+The Pennsylvania State University
+binli@psu.edu In this work, we introduce MotionAnimator, which reframes XR object animation as semantic motion grounding: resolving high-level user intent into explicit asset semantics and coordinated object- and part-level motion before runtime rea

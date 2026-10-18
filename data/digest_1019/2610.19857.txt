@@ -1,0 +1,66 @@
+【摘要】
+
+【方法】
+3.1 Motion Representation
+3.2 Cross-Modal Masking and Masked Conditioning Encoder
+Masked Conditioning Encoder
+3.3 Generative Architecture and Training
+Conditional Flow Matching.
+Decoupled Architecture
+Training Objectives
+Local Stream Losses.
+Global Stream Losses. Recovering 3D human motion from sparse, heterogeneous, and occluded observations remains fundamentally ill-posed. Different sensor modalities (e.g. sparse IMU readings, head-mounted egocentric cameras, monocular RGB detectors, optical trackers, or partial motion capture) provide only a narrow and noisy window into the full-body state.
+Our key insight is that regardless of sensor modality, all observations can be cast as partial views of the same canonical body representation, and the completion of unobserved degrees of freedom can be formulated as a unified generative conditioning problem.
+In the following, we first define the unified motion representation ( Sec.   3.1 ).
+We then introduce the cross-modal masking mechanism and the Masked Conditioning Encoder (MCE) that converts masked observations into a joint-aware conditioning signal ( Sec.   3.2 ).
+Finally, we present the Conditional Flow Matching formulation, the decoupled generative architecture, and the training objectives ( Sec.   3.3 ).
+Figure 2 : Overview of OmniPoser. Heterogeneous observations (multi-modal 3D keypoints and rotations) are unified through a cross-modal masking mechanism and processed by Masked Conditioning Encoder (MCE) ( Sec.   3.2 ). A decoupled dual-stream architecture( Sec.   3.3 ) (a temporal convolutional UNet for global trajectory and a cross-attention Diffusion Transformer (DiT) for local body pose) generates SMPL parameters via Conditional Flow Matching( Sec.   3.3 ), achieving real-time inference in a single ODE step. Best viewed in color.
+3.1 Motion Representation
+We represent a motion clip of T T frames as a time series 𝐗 ∈ ℝ T × D \mathbf{X}\in\mathbb{R}^{T\times D} , where each row 𝐱 ( t ) ∈ ℝ D \mathbf{x}^{(t)}\in\mathbb{R}^{D} is a concatenation of semantically distinct feature groups , describing a different aspect of the body state at time t t . D D is the sum of each feature group’s dimension.
+In this work, we use feature groups based on the SMPL  [ 22 ] model, including the global root trajectory (root translation 𝒓 \boldsymbol{r} and root rotation 𝝉 \boldsymbol{\tau} ), 3D joint positions 𝐉 ∈ ℝ T × J × 3 \mathbf{J}\in\mathbb{R}^{T\times J\times 3} and 6D rotations 𝐑 𝐰 \mathbf{R^{w}} or 𝐑 𝐫 ∈ ℝ T × J × 6 \mathbf{R^{r}}\in\mathbb{R}^{T\times J\times 6} (in the world frame or in the root frame), body shape parameters 𝜷 ∈ ℝ 10 \boldsymbol{\beta}\in\mathbb{R}^{10} , and binary foot contact labels 𝐜 \mathbf{c} . These features are concatenated to form the complete motion representation 𝐱 ( t ) \mathbf{x}^{(t)} at each frame, serving as both the partial input and the fully recovered output.
+The full representation vector is thus 𝐱 ( t ) = [ 𝒓 ; 𝝉 ; vec ⁡ ( 𝐉 ) ; vec ⁡ ( 𝐑 w ) ; vec ⁡ ( 𝐑 r ) ; 𝜷 ; 
+
+【实验】
+ In this section, we validate three claims: (i) OmniPoser performs on par with state-of-the-art methods across heterogeneous sparse-observation settings, (ii) Flow Matching enables diversity in generation, and (iii) cross-modal masking mechanism and Masked Conditioning Encoder is essential for generalization. show our method performs on par with state-of-the-art methods, while maintaining a processing speed over 700 FPS, as illustrated in Fig.   1 .
+The main contributions of this paper can be summarized as:
+(1) We propose OmniPoser, a Conditional Flow Matching-based framework for human motion recovery that accepts heterogeneous sparse observations, such as 3D keypoint positions, joint rotations, and their combinations, as input.
+(2) We introduce a cross-modal masking mechanism paired with a Masked Conditioning Encoder (MCE) that replaces unobserved joints with learnable per-joint embeddings, enabling the network to distinguish which joints are missing rather than treating all of them identically.
+(3) We demonstrate competitive performance compared to state-of-the-art methods and real-time inference capabilities across diverse configurations and highly challenging in-the-wild datasets. Protocols
+Benchmarks and Baseline Methods
+Metrics
+4.3 Quantitative Results
+Setting 1: Sparse Observation
+Setting 1: Sparse Observation (Upper-body joint positions).
+Setting 1: Sparse Observation (Random joint masking).
+Setting 2: Egocentric Head 6D Pose
+Setting 3: Mocap Data from 6 IMUs with Keypoint Positions
+AIST++.
+TotalCapture.
+Nymeria.
+4.4 Qualitative Results
+4.5 Ablation Studies
+MCE learnable embeddings.
+Diversity, input constraints, and inference steps. Protocols
+Benchmarks and Baseline Methods
+To demonstrate the unified capability of OmniPoser as discussed in Sec.   1 , we categorize different sensor configurations and baseline methods into four settings.
+Setting 1 (Sparse Observation): Only a sparse subset of joints is observed. We evaluate two schemes: (1) upper-body joint positions, evaluated on AMASS  [ 24 ] and Nymeria  [ 23 ] ; and (2) a random joint masking regime, evaluated on AMASS. The baseline methods are RoHM  [ 46 ] and HuMoR  [ 29 ] . AMASS evaluations use AMASS training, and Nymeria evaluation uses Nymeria training.
+Setting 2 (Egocentric Head 6D Pose): Only head position and rotation are available from HMD signals. We compare against EgoEgo  [ 15 ] and EgoAllo  [ 40 ] across AMASS, RICH  [ 9 ] , and Nymeria. AMASS and RICH evaluations use AMASS training, and Nymeria evaluation uses Nymeria training.
+Setting 3 (Mocap data from 6 IMUs with keypoint posi
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.19857v1 [cs.CV] 14 Oct 2026
+OmniPoser: Flexible Human Motion Recovery in the Wild with Masked Flow Matching
+Minghao Liu
+Affiliation:  Shanghai Jiao Tong University, China
+Affiliation:  Shanghai Artificial Intelligence Laboratory, China
+E-mail  {lmh209,tttang}@sjtu.edu.cn
+Tutian Tang
+Affiliation:  Shanghai Jiao Tong University, China
+Affiliation:  Shanghai Artificial Intelligence Laboratory, China
+E-mail  {lmh209,tttang}@sjtu.edu.cn OmniPoser treats various flexible inputs (e.g. partial keypoints, head-mounted 6-DoF poses, sparse IMUs) as partial views of one shared body model, making it unified for different settings.
+We achieve this through three components: modular masking with a Masked Conditioning Encoder, a decoupled dual-stream architecture, and Conditional Flow Matching, which altogether allow one model to cover diverse sensor setups while enabling real-time, single-step ODE inference.
+Across three settings and seven benchmarks, OmniPoser consistently performs on par with state-of-the-art methods while running at over 700 FPS.
+However, several limitations remain.
+First, OmniPoser models a single person and does not account for body-ob

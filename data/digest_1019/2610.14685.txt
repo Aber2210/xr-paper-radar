@@ -1,0 +1,96 @@
+【摘要】
+
+【方法】
+Overview.
+3.1 Memory-guided Appearance Video Diffusion
+3.2 Memory-consistent Video Depth Completion
+3.3 Memory-aware Dual-stream Warping
+3.4 Geometry-aware Video Refinement Overview.
+Given an input video 𝐕 0 = { 𝐈 t 0 } t = 1 T \mathbf{V}^{0}=\{\mathbf{I}^{0}_{t}\}_{t=1}^{T} and its camera trajectory 𝐂 0 = { 𝐂 t 0 } t = 1 T \mathbf{C}^{0}=\{\mathbf{C}^{0}_{t}\}_{t=1}^{T} , our goal is to rerender the observed scene along N N target trajectories
+{ 𝐂 i } i = 1 N \{\mathbf{C}^{i}\}_{i=1}^{N} , where t t indexes the T T video frames and i i indexes the target trajectories. To this end, Demiurge maintains an evolving 4D point-cloud memory
+ℳ i = { 𝒫 i , t } t = 1 T \mathcal{M}_{i}=\{\mathcal{P}_{i,t}\}_{t=1}^{T} as a persistent world state that retains historical geometry and appearance across autoregressive iterations, where 𝒫 i , t \mathcal{P}_{i,t} denotes the colored 3D point cloud accumulated at time t t after processing the i i -th trajectory. The initial memory ℳ 0 \mathcal{M}_{0} is reconstructed from the input video using a monocular video depth estimator. As illustrated in Fig.  2 , at iteration i i , the current memory ℳ i − 1 \mathcal{M}_{i-1} is rendered (via dual-stream warping in Sec.  3.3 ) along 𝐂 i \mathbf{C}^{i} to guide the synthesis of a novel-view video
+𝐕 i = { 𝐈 t i } t = 1 T \mathbf{V}^{i}=\{\mathbf{I}^{i}_{t}\}_{t=1}^{T} (via appearance video diffusion in Sec.  3.1 ) and its temporally coherent dense depth maps 𝐃 i = { 𝐃 t i } t = 1 T \mathbf{D}^{i}=\{\mathbf{D}^{i}_{t}\}_{t=1}^{T} (via video depth completion in Sec.  3.2 ). The generated appearance and recovered geometry are subsequently back-projected and fused into the memory to obtain ℳ i \mathcal{M}_{i} , which guides the next trajectory. By iterating this generate–recover–update process, Demiurge progressively constructs a navigable 4D world. Further details on the 4D memory representation and point-cloud warping are provided in Appendix  A .
+3.1 Memory-guided Appearance Video Diffusion
+Constructing a navigable 4D world requires progressively expanding the observed scene along new camera trajectories while preserving the appearance and geometry accumulated from previous observations. This, in turn, calls for a generative model capable of synthesizing photorealistic videos along a target trajectory while remaining grounded in the current world state. To this end, at the i i -th autoregressive step, we first render the 4D memory ℳ i − 1 \mathcal{M}_{i-1} along the target trajectory 𝐂 i \mathbf{C}^{i} to obtain a sequence of memory-derived visual conditions:
+( 𝐕 ~ i , 𝐃 ~ i , 𝐌 ~ i ) = ℛ dual ​ ( ℳ i − 1 , 𝐂 i ) , \left(\widetilde{\mathbf{V}}^{i},\widetilde{\mathbf{D}}^{i},\widetilde{\mathbf{M}}^{i}\right)=\mathcal{R}_{\mathrm{dual}}\left(\mathcal{M}_{i-1},\mathbf{C}^{i}\right),
+(1)
+where ℛ dual \mathcal{R}_{\mathrm{dual}} denotes our dual-stream warping operator presented in Sec.  3.3 (Eq.  13 ), and 𝐕 ~ i \widetilde{\mathbf{V}}^{i} , 𝐃 ~ i \widetilde{\mathbf{D}}^{i} , and 
+
+【实验】
+4.1 Experimental setups Table 1: Quantitative comparison of generated novel-view videos. Demiurge achieves the best perceptual quality, cross-trajectory consistency, and camera controllability. Red, orange, and yellow denote the best, second-best, and third-best results, respectively. . Training data composition, model backbones, video resolution, sequence
+length, and computational resources are also reported. Additional videos and supporting materials are available on our anonymous project page. We intend to release the source code, model checkpoints, and evaluation scripts to facilitate future reproduction and comparison.
+References
+Bahmani et al. (2025a)
+Sherwin Bahmani, Ivan Skorokhodov, Guocheng Qian, Aliaksandr Siarohin, Willi Menapace, Andrea Tagliasacchi, David B Lindell, and Sergey Tulyakov.
+Ac3d: Analyzing and improving 3d camera control in video diffusion transformers.
+In 2025 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pp. 22875–22889. IEEE, 2025a.
+Bahmani et al. (2025b)
+Sherwin Bahmani, Ivan Skorokhodov, Aliaksandr Siarohin, Willi Menapace, Guocheng Qian, Michael Vasilkovsky, Hsin-Ying Lee, Chaoyang Wang, Jiaxu Zou, Andrea Tagliasacchi, et al.
+Vd3d: Taming large video diffusion transformers for 3d camera control.
+In International Conference on Learning Representations , volume 2025, pp. 66712–66737, 2025b.
+Bai et al. (2025)
+Jianhong Bai, Menghan Xia, Xiao Fu, Xintao Wang, Lianrui Mu, Jinwen Cao, Zuozhu Liu, Haoji Hu, Xiang Bai, Pengfei Wan, et al.
+Recammaster: Camera-controlled generative rendering from a single video.
+In 2025 IEEE/CVF International Conference on Computer Vision (ICCV) , pp. 14834–14844. IEEE, 2025.
+Cai et al. (2026)
+Shengqu Cai, Ceyuan Yang, Lvmin Zhang, Yuwei Guo, Junfei Xiao, Ziyan Yang, Yinghao Xu, Zhenheng Yang, Alan Yuille, Leonidas Guibas, et al.
+Mixture of contexts for long video generation.
+In International Conference on Learning Representations , volume 2026, pp. 92075–92093, 2026.
+Chen et al. (2025a)
+Junyi Chen, Haoyi Zhu, Xianglong He, Yifan Wang, Jianjun Zhou, Wenzheng Chang, Yang Zhou, Zizun Li, Zhoujie Fu, Jiangmiao Pang, et al.
+Deepverse: 4d autoregressive video generation as a world model.
+arXiv preprint arXiv:2506.01103 , 2025a.
+Chen et al. (2025b)
+Luxi Chen, Zihan Zhou, Min Zhao, Yikai Wang, Ge Zhang, Wenhao Huang, Hao Sun, Ji-Rong Wen, and Chongxuan Li.
+Flexworld: Progressively expanding 3d scenes for flexiable-view synthesis.
+arXiv preprint arXiv:2503.13265 , 2025b.
+Edstedt et al. (2024)
+Johan Edstedt, Qiyu Sun, Georg Bökman, Mårten Wadenbäck, and Michael Felsberg.
+Roma: Robus
+
+【结论/局限】
+References
+A 4D Point-Cloud Memory
+A.1 4D Point-Cloud Representation
+A.2 Point-Cloud Warping
+Depth-aware bilinear splatting.
+Cross-trajectory z-buffer composition.
+B Additional Method Details
+B.1 Noise Monitor
+B.2 Cache-Guided Appearance Video Diffusion
+Latent condition encoding.
+Latent-space condition injection.
+Video diffusion backbone.
+B.3 Cache-Consistent Video Depth Completion
+Condition encoding.
+Geometry-anchored denoising branch.
+Auxiliary RGB guidance branch.
+Dense disparity decoding.
+Cache-supported region.
+Global affine alignment.
+Poisson refinement.
+B.4 Dual-Stream Warping
+Stream-specific source masks.
+Parallel point-cloud warping.
+Depth-conflict detection.
+Pixel-wise stream selection.
+B.5 Geometry-Aware Video Refinement
+Geometry-aware condition encoding.
+Latent-space condition injection.
+Memory update.
+C Training and Inference Details
+C.1 Training Data Construction
+Double reprojection.
+Appearance video diffusion.
+Video depth completion.
+Geometry-aware refinement.
+C.2 Training Configurations
+C.3 Inference Configurations
+D Evaluation Details
+D.1 Metric Definitions
+Fréchet Video Distance.
+Q-Align.
+Projection MSE.
+Camera trajectory estimation.
+Rotation error.
+Translation er

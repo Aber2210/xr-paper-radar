@@ -1,0 +1,99 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from -Interface Adapters
+4.5 Cost and Scalability Audit
+4.6 Splits and Leakage -Interface Adapters
+The same scene unit is packaged through standardized adapters rather than forcing every model into one API.
+For structured-control models, adapters provide a fixed budget of real appearance reference images and export the supported proxy RGB, depth, segmentation, edge, pose, and object-trajectory videos with fixed normalization.
+For general reference models, adapters provide the same appearance references and the proxy RGB geometry clip.
+Adapters never expose camera intrinsics, extrinsics, or trajectories; viewpoint change is encoded only through the rendered geometry videos.
+Every submission manifest records the information actually exposed to the model.
+Primary comparisons are made within matched information budgets; cross-track plots are descriptive rather than leaderboard ranks.
+4.5 Cost and Scalability Audit
+For every scene we log wall-clock construction time, human interaction time, model/API and GPU cost, number of agent iterations, repair count, and acceptance outcome.
+We compare the full pipeline against manual-from-scratch authoring and reconstruction without agentic assistance on a representative subset.
+The main construction result reports cost per accepted scene, not cost per attempted scene.
+4.6 Splits and Leakage
+Splits are disjoint in physical location, captured trajectory, asset identity, and human/robot motion.
+Appearance references are separated from scored target frames by viewpoint or time while preserving the scene’s material and illumination setting.
+For dynamic scenes, reference images exclude the scored motion interval, and the exact target camera path is never included among the references.
+We additionally reserve a held-out proxy renderer.
+If public assets or pretrained reconstruction models may have seen the capture location, this is disclosed; exact benchmark captures and camera paths remain held out.
+Table 2 : Paired-reference results against the aligned real target videos. Seedance 2.5 is evaluated usi
+
+【实验】
+6.1 Research Questions
+6.2 Digital-Twin Construction Evaluation
+6.3 Transfer Evaluation
+6.4 Paired-Scene Diagnostic Analysis
+6.5 Generalization and Human Validation 6.1 Research Questions
+Q1: Feasibility. Can the proposed workflow produce accepted real-scene digital twins at substantially lower human time and total cost than conventional authoring?
+Q2: Benchmark value. Do paired real-video and scene annotations reveal where similar aggregate scores arise from different transfer failures?
+Q3: Model capability. Which transfer models best reproduce the referenced real appearance while preserving the geometry and dynamics of the input video?
+Q4: Generalization. Do conclusions persist across unseen scenes, motions, and proxy renderers?
+6.2 Digital-Twin Construction Evaluation
+Table  1 reports the release scale, file-integrity checks, environment-edit audits, and proxy-quality diagnostics.
+Of 14 registered samples, 12 are released, yielding an 85.7% retention rate and 1,496 paired real–proxy frames at 30 fps.
+All released scenes pass frame-count, manifest-hash, background-coverage, shadow-response, visual-inspection, and edit-isolation checks.
+We additionally report scene-level intervals for estimated depth and instance agreement to expose variation hidden by aggregate proxy scores.
+6.3 Transfer Evaluation
+We evaluate representative structured-control and general video-reference systems: Cosmos-Transfer2.5  [ 10 ] , Wan2.2-VACE-Fun-A14B  [ 1 ] , MiniMax H3  [ 8 ] , and Seedance 2.5  [ 2 ] .
+The first two populate the structured-control track; H3 and Seedance populate the video-reference/editing track; any model supporting multiple interfaces is evaluated in each applicable track.
+Within each track, models receive identical appearance-reference budgets, source geometry renders, duration, resolution, and geometry-channel budgets; no model receives explicit camera information, and stochastic models use multiple runs.
+Primary results are reported in Table  2 .
+Figure  4 provides a qualitative comparison on representative scenes.
+Figure 4 : Qualitative comparison on representative paired scenes.
+The proxy input specifies geometry and motion, while the held-out real target provides the ground-truth video for evaluation.
+Zoomed regions highlight structural, articulation, and appearance failures that may be obscured by aggregate scores.
+6.4 Paired-Scene Diagnostic Analysis
+We use accepted scene annotations to partition paired-reference errors by object size, visibility, articulation, and motion.
+Controlled perturbations to camera pose, object placement, joint angle, b
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.08684v1 [cs.CV] 06 Oct 2026
+RenderBench: Benchmarking Render-to-Real Video Transfer with Reconstructed Digital Twins
+Dicong Qiu
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou)
+Zhiyuan Xu
+Affiliation:  Jacobi.ai
+Yaosheng Liu
+Affiliation:  Southeast University
+Feng Han
+Affiliation:  Independent Researcher dqiu570@hkust-gz.edu.cn  zhiyuan.xu@jacobi.ai  220266580@seu.edu.cnTerrancehan25@gmail.com  yeb@seu.edu.cn * Equal contribution
+Bo Ye
+Affiliation:  Southeast University Render-to-real generation has advanced faster than the data needed to evaluate it.
+We introduced RenderBench around the missing substrate: held-out real appearance references and ground-truth target videos paired with validated, editable, and dynamically registered 3D twins.
+Recent visual-geometry, neural-reconstruction, and assisted authoring systems reduce the cost of producing candidate scenes.
+Independent geometric gates then provide distinct appearance conditions, paired real-video targets, and renderer-native scene annotations.
+We evaluate transfer quality against paired real target videos, retain PAI-Bench-C-compatible structural projections

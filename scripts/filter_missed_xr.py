@@ -8,7 +8,7 @@ def norm_title(v):
         t = t[1] if len(t) > 1 else ""
     return t
 
-missed = json.load(open("data/missed_listing.json", encoding="utf-8"))
+missed = json.load(open("data/missed_listing_1019.json", encoding="utf-8"))
 print("=== 漏网论文 · XR 关键词标题过滤 ===")
 tot_all = 0; tot_xr = 0
 xr_all = {}

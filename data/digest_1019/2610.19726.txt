@@ -1,0 +1,26 @@
+【摘要】
+
+【方法】
+4.1 JING-Experience Model
+4.2 JING-Model Training
+4.3 DAO-World Engine 4.1 JING-Experience Model
+4.2 JING-Model Training
+4.3 DAO-World Engine 4.1  JING-Experience Model
+JING is an Egocentric Interactive Experience Model built on MiniMax-H3  [ 6 ] that generates continuous audiovisual content autoregressively. As shown in Figure  4 , at generation step k k , the model takes a set of reference images ℛ \mathcal{R} , a text instruction p k p_{k} , camera trajectory 𝐂 k \mathbf{C}_{k} , and the previously generated audiovisual history ℋ < k \mathcal{H}_{<k} , and predicts the next video and audio latent chunk:
+( 𝐙 k v , 𝐙 k a ) ∼ P θ ( ⋅ ∣ ℛ , p k , 𝐂 k , ℋ < k ) , (\mathbf{Z}_{k}^{v},\mathbf{Z}_{k}^{a})\sim P_{\theta}\!\left(\,\cdot\mid\mathcal{R},p_{k},\mathbf{C}_{k},\mathcal{H}_{<k}\right),
+(1)
+where v v and a a denote video and audio, respectively. The corresponding VAEs decode these latents into synchronized frames and audio, and the generated chunk becomes part of the history for subsequent generation.
+Reference images are jointly encoded with text by Qwen3-VL  [ 41 ] into semantic conditioning tokens 𝐓 k \mathbf{T}_{k} and separately encoded by the video VAE into reference tokens 𝐑 z \mathbf{R}_{z} , providing semantic conditioning and visual reference information, respectively.
+Figure 4: JING architecture. (a) Reference images provide visual conditions through the video VAE encoder and (b) the Qwen3-VL conditioner, which also encodes text instructions. Camera trajectories are processed by a separate control encoder. (c) Current tokens attend to cached keys and values (K/V) from reference and historical context. (d) Camera features modulate video tokens within each Transformer block. (e) Retrieved audiovisual memories supplement the persistent first chunk and recent context. The diffusion sampler produces clean audiovisual latents, which the video and audio VAE decoders convert into synchronized output.
+To further support streaming generation, we preserve the temporal order of the latent sequence and reorganize H3’s temporal partition from ( 5 , 5 , … , 2 ) (5,5,\ldots,2) to ( 2 , 5 , 5 , … ) (2,5,5,\ldots) . The initial 2 + 5 2+5 video latent frames form an initialization chunk, followed by chunks of five latent frames each. This layout aligns generation boundaries with the VAE’s overlapping decoding windows, enabling incremental decoding as new chunks become available.
+Camera conditions enter the Transformer through a dedicated control encoder. Relative translations and rotations between consecutive camera poses form a six-dimensional motion representation, which the encoder converts into control features 𝐜 k \mathbf{c}_{k} aligned with the video tokens in space and time. In Transformer block ℓ \ell , these features modulate the video hidden states through feature-wise linear modulation (FiLM):
+𝐡 ~ k , v ℓ = ( 1 + γ ℓ ​ ( 𝐜 k ) ) ⊙ 𝐡 k , v ℓ + β ℓ ​ ( 𝐜 k ) , \widetilde{\mathbf{h}}_{k,v}^{\,\ell}=\left(1+\gamma_{\ell}(\mathbf{c}_{k})\right)\
+
+【结论/局限】
+References
+7 Contributors and Acknowledgments
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.19726v1 [cs.CV] 14 Oct 2026
+Generative World Simulation with DAO and JING
+XGEN Team References
+7 Contributors and Acknowledgments We present XGEN, a Generative World Simulation framework for sustained human and agent interaction that integrates DAO, a computable world engine, with JING, an Egocentric Interactive Experience Model. DAO maintains and updates shared world state while preserving the consequences of actions; JING generates continuous first-person audiovisual experiences conditioned on references, observation history, and current actions. Together, they connect actions, state updates, and observations in a continuous loop, enabling exploration, object manipulation, and character communication grounded in prior interactions. By coupling world-state evolution with individual experiences, DAO and JING extend audiovisual generation toward simulation of the world behind it. Our long-term goal is the persistent shared world envisioned in OASIS, where encounters carry history, choices have lasting consequences, and social activity continues beyond any individual’s presence

@@ -1,0 +1,369 @@
+【摘要】
+
+【方法】
+Anchors
+Body points ↓ \downarrow
+Non-tracked ↓ \downarrow
+PA-MPJPE ↓ \downarrow
+Root ↓ \downarrow
+Velocity ↓ \downarrow
+AvatarPoser ( Jiang et al., 2022 )
+3
+128.5
+122.5
+86.3
+99.5
+106.1
+AGRoL ( Du et al., 2023 )
+3
+119.6
+114.0
+81.0
+89.6
+113.0
+EgoPoser ( Jiang et al., 2024b )
+3
+155.5
+143.2
+89.3
+121.2
+113.2
+AvatarJLM ( Zheng et al., 2023 )
+3
+117.9
+113.3
+78.6
+95.0
+105.9
+SAGE ( Feng et al., 2024 )
+3
+114.7
+109.5
+81.4
+83.4
+110.3
+SparsePoser ( Ponton et al., 2023 ) †
+6 †
+219.2
+189.9
+134.4
+84.3
+119.1
+AvatarPoser ‡
+3
+235.3
+239.9
+93.0
+251.1
+109.6
+AGRoL ‡
+3
+227.5
+230.0
+88.7
+232.0
+148.8
+AvatarPoser ∗
+5
+64.1
+62.1
+21.0
+61.7
+96.8
+HMD-Poser ( Dai et al., 2024 ) ∗
+5
+136.7
+131.5
+71.3
+107.8
+152.1
+EgoExplorer
+5
+18.0
+20.3
+13.3
+25.9
+83.0
+Table 3 : Hand capture quality on the Evaluation Subset.
+Tip/Hold RMS: mm; Missing/Success: %; Gap: s. Tip ↓ \downarrow
+Hold RMS ↓ \downarrow
+Missing ↓ \downarrow
+Gap p95 ↓ \downarrow
+Success ↑ \uparrow
+HaWoR ( Zhang et al., 2025 )
+27.1
+4.5
+7.9
+2.13
+47
+HandFlow ( Xu et al., 2026 )
+30.7
+11.3
+7.8
+2.09
+67
+Ours
+9.5
+0.4
+0.0
+0.00
+100
+Table 4 : Contact quality on the Evaluation Subset using frame-region labels.
+Input
+IoU ↑ \uparrow
+F1 ↑ \uparrow
+RGB (HACO ( Jung and Lee, 2025 ) )
+0.621
+0.766
+Hand pose only
+0.324
+0.490
+Ours
+0.915
+0.956
+Table 5 : Expert review of model-generated text annotations (%).
+Annotation
+Fact error ↓ \downarrow
+Unsupported ↓ \downarrow
+Missed steps ↓ \downarrow
+Extra steps ↓ \downarrow
+Boundary error ↓ \downarrow
+Unjudgeable ↓ \downarrow listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from / example
+Sensing arrangement
+Deployment requirement
+Multi-view RGB
+External RGB cameras
+Overlapping views, synchronization, camera calibration
+HOT3D
+Optical markers on hands and objects
+Calibrated infrared-camera volume
+Nymeria
+Inertial body suit and Aria devices
+Wearable sensors; no external camera array
+ParaHome
+IMU suit, gloves, and 70 RGB cameras
+Instrumented camera volume
+EgoExplorer
+Five inside-out trackers, ego camera, gloves
+Body–sensor calibration; no external array or base stations
+Deployment and sensing.
+Multi-view RGB reconstruction provides an affordabl
+
+【实验】
+5.1 Annotation Reliability
+5.2 Preliminary Training Study
+5.3 Ablation Study We organize evaluation around annotation quality, preliminary training
+utility, and key design choices. setup.
+Our purpose-built Evaluation Subset covers whole-body motion, hand
+articulation, and regional contact. Evaluation addresses three aspects:
+kinematic accuracy , through end-point and full-body point errors;
+temporal quality , through tracking continuity and trajectory smoothness;
+and contact accuracy , through regional IoU and F1. References are
+modality-specific, with full-body errors measured against tracker-fitted labels.
+The remaining Natural Recordings lack matched accuracy references and are assessed for sensor agreement, temporal quality, and geometric consistency.
+Subsets, metrics, and full-body references are detailed in Secs.   F.1 , F.4 and  F.2 .
+5.1 Annotation Reliability
+Whole-body reconstruction.
+Tab.   2 compares three baseline settings: public pretrained
+checkpoints with calibrated sensor-to-anchor conversion, direct use of raw
+tracker poses, and fine-tuning with five tracker anchors. EgoExplorer outperforms
+all three settings across every reported metric, achieving 18.0 mm body-point
+error and 20.3 mm at non-tracked points. Its lowest errors extend beyond the
+observed anchors to other body points, including elbows and knees, indicating
+better recovery of full-body articulation.
+Visual comparisons are provided in Fig.   20 .
+Table 2 : Body reconstruction on the Evaluation Subset (mm; velocity: mm/s). Non-tracked: 17 unobserved joints.
+† Reconstructed pelvis; ‡ raw tracker poses;
+∗ locally trained variants. Natural
+Avg. ↓ \downarrow
+L1
+L2
+L3
+Body pts ↓ \downarrow
+Non-trk. ↓ \downarrow
+PA ↓ \downarrow
+Velocity ↓ \downarrow
+Tracker ↓ \downarrow
+Crossing ↓ \downarrow
+Floor ↓ \downarrow
+Jerk
+Slide ↓ \downarrow
+Full (1+2+3)
+✓
+✓
+✓
+18.0
+20.3
+13.3
+83.0
+10.5
+38.1
+6.0
+37.6
+29.1
+28.4
+Full, mean body
+✓
+✓
+✓
+59.5
+66.3
+27.3
+96.9
+12.3
+71.4
+50.9
+49.0
+37.5
+52.3
+Full, no mount calibration
+✓
+✓
+✓
+95.0
+96.6
+33.7
+91.6
+41.4
+41.3
+3.5
+46.0
+52.3
+55.7
+Full, uncalib. at test
+✓
+✓
+✓
+98.1
+99.6
+38.8
+97.3
+27.5
+23.1
+0.6
+51.0
+54.9
+54.5
+Layer 1
+✓
+16.1
+18.2
+11.9
+81.4
+9.9
+72.8
+57.3
+33.5
+27.1
+36.5
+Layer 1+2
+✓
+✓
+18.1
+20.4
+13.2
+82.3
+10.1
+38.7
+61.4
+34.4
+28.7
+34.1
+Layer 1+3
+✓
+✓
+15.9
+18.0
+11.9
+82.0
+10.3
+73.0
+5.9
+36.6
+27.3
+31.2
+Proposal only
+79.0
+75.1
+29.2
+125.6
+109.6
+82.6
+29.5
+19.8
+117.6
+74.2
+Figure 7 : Geometric refinement reduces self-intersection and floor
+penetration.
+5.2 Preliminary Training Study
+We adapt Cosmos3-Edge ( NVIDIA, 2026 ) to generate video,
+SMPL-X-derived action, and touch
+( Tab. 
+
+【结论/局限】
+References
+A Capture Hardware
+B Data Format
+C Whole-Body Reconstruction from Sparse Measurement
+C.1 Protocol-guided calibration
+C.2 Prior-guided motion completion
+C.3 Constraint layer 1: skeletal motion
+C.4 Constraint layer 2: surface clearance
+C.5 Constraint layer 3: body-ground consistency
+C.6 Joint refinement
+D Multimodal Integration and Annotation
+D.1 Hand and touch fusion
+D.2 Expert-provided procedural context
+D.3 Example text prompt
+D.4 Human verification and experimental interpretation
+E Data Statistics
+F Experiments
+F.1 Evaluation setup
+F.2 Whole-body reconstruction: inputs and references
+F.3 Hand motion and contact capture
+F.4 Evaluation metrics
+F.5 Expert review of text annotations
+F.6 Preliminary training study
+F.7 Calibration and layered reconstruction ablations
+F.8 Professional-skill ablation
+F.9 Humanoid retargeting
+F.10 Qualitative examples
+G Discussion on Capture Trade-offs
+License: CC BY-NC-SA 4.0
+arXiv:2610.18872v1 [cs.RO] 13 Oct 2026
+EgoExplorer : A Vision-Motion-Touch Observatory for Human Loco-Manipulation In Situ
+Yunsong Zhou
+Affiliation: Shanghai AI Laboratory
+Xuekun Jiang
+Affiliation: Shanghai AI Laboratory
+Haiqi Shen
+Affiliation: Shanghai AI Laboratory
+Hang

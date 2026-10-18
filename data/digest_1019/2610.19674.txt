@@ -1,0 +1,232 @@
+【摘要】
+
+【方法】
+Replica (centimetres)
+ScanNet++ (centimetres)
+Acc. ↓ \downarrow
+Comp. ↓ \downarrow
+Overall ↓ \downarrow
+Acc. ↓ \downarrow
+Comp. ↓ \downarrow
+Overall ↓ \downarrow
+Feed-forward
+DUSt3R
+Baseline
+12.85 ± \pm 1.15
+11.20 ± \pm 1.05
+12.02 ± \pm 1.10
+32.40 ± \pm 3.85
+30.15 ± \pm 3.50
+31.27 ± \pm 3.65
++ SMoRe
+3.85 ± \pm 0.22
+3.24 ± \pm 0.19
+3.55 ± \pm 0.20
+8.51 ± \pm 0.72
+7.88 ± \pm 0.65
+8.20 ± \pm 0.68
+Fast3R
+Baseline
+14.15 ± \pm 1.30
+12.45 ± \pm 1.20
+13.30 ± \pm 1.25
+36.50 ± \pm 4.10
+34.20 ± \pm 3.90
+35.35 ± \pm 4.00
++ SMoRe
+4.21 ± \pm 0.25
+3.55 ± \pm 0.28
+3.88 ± \pm 0.26
+9.22 ± \pm 0.85
+8.45 ± \pm 0.80
+8.84 ± \pm 0.82
+MASt3R
+Baseline
+5.88 ± \pm 0.31
+4.75 ± \pm 0.25
+5.32 ± \pm 0.27
+13.55 ± \pm 1.05
+12.82 ± \pm 1.10
+13.19 ± \pm 1.08
++ SMoRe
+3.15 ± \pm 0.18
+2.92 ± \pm 0.15
+3.04 ± \pm 0.16
+7.45 ± \pm 0.60
+6.95 ± \pm 0.55
+7.20 ± \pm 0.58
+VGGT
+Baseline
+9.50 ± \pm 0.85
+8.80 ± \pm 0.75
+9.15 ± \pm 0.80
+25.80 ± \pm 2.95
+24.10 ± \pm 2.75
+24.95 ± \pm 2.85
++ SMoRe
+2.55 ± \pm 0.15
+2.42 ± \pm 0.12
+2.49 ± \pm 0.13
+6.25 ± \pm 0.52
+5.85 ± \pm 0.48
+6.05 ± \pm 0.50
+VGGT- Ω \Omega
+Baseline
+7.80 ± \pm 0.65
+7.20 ± \pm 0.60
+7.50 ± \pm 0.62
+21.50 ± \pm 2.20
+20.10 ± \pm 2.05
+20.80 ± \pm 2.12
++ SMoRe
+2.05 ± \pm 0.11
+1.94 ± \pm 0.10
+2.00 ± \pm 0.10
+5.15 ± \pm 0.41
+4.75 ± \pm 0.38
+4.95 ± \pm 0.39
+π 3 \pi^{3}
+Baseline
+4.55 ± \pm 0.25
+3.85 ± \pm 0.22
+4.20 ± \pm 0.23
+10.25 ± \pm 0.90
+9.75 ± \pm 0.85
+10.00 ± \pm 0.88
++ SMoRe
+2.25 ± \pm 0.14
+2.12 ± \pm 0.12
+2.19 ± \pm 0.13
+5.55 ± \pm 0.45
+5.25 ± \pm 0.42
+5.40 ± \pm 0.43
+Streaming
+StreamVGGT
+Baseline
+6.90 ± \pm 0.55
+6.40 ± \pm 0.50
+6.65 ± \pm 0.52
+18.40 ± \pm 1.85
+17.20 ± \pm 1.70
+17.80 ± \pm 1.75
++ SMoRe
+1.92 ± \pm 0.09
+1.75 ± \pm 0.08
+1.84 ± \pm 0.08
+4.65 ± \pm 0.35
+4.35 ± \pm 0.32
+4.50 ± \pm 0.33
+STream3R
+Baseline
+3.55 ± \pm 0.15
+3.25 ± \pm 0.12
+3.40 ± \pm 0.13
+8.25 ± \pm 0.62
+7.65 ± \pm 0.58
+7.95 ± \pm 0.60
++ SMoRe
+1.72 ± \pm 0.08
+1.64 ± \pm 0.07
+1.68 ± \pm 0.07
+4.25 ± \pm 0.31
+3.95 ± \pm 0.28
+4.10 ± \pm 0.29
+3.3 Simultaneous Localization and Mapping
+Problem setting and dataset.
+We evaluate SLAM on all seven indoor scenes of
+7-Scenes  ( Shotton et al., 2013 ) , where the objective is to estimate the
+camera trajectory while reconstructing the environment from an incoming
+video stream. Each sequence contains 17–33 s of continuous video,
+providing long trajectories for evaluating accumulated drift and
+revisit-driven correction.
+Baselines.
+We compare against published calibrated and uncalibrated SLAM methods:
+NICER-SLAM  ( Zhu et al., 2024 ) ,
+DROID-SLAM  ( Teed and Deng, 2021 ) ,
+MASt3R-SLAM  ( Murai et al., 2025 ) ,
+GLUEMAP  ( Pan et al., 2026 ) ,
+TALO  ( Zhang et al., 2026a ) ,
+VGGT-SLAM++  ( Mandal et al., 2026 ) ,
+ViSTA-SLAM  ( Zhang et al., 2026b ) ,
+SLAM-Former  ( Yuan et al., 2026 ) ,
+CUT3R  ( Wang et al., 2025b ) ,
+VGGT-SLAM  ( Maggio et al., 2025 ) with Sim(3) and L(4),
+VGGSfM  ( Wang et al., 2024a ) , and
+VGGT- Ω \Omega   ( Wang et al., 2026a ) .
+Published baselines retain their reported protocols. Calibrated methods
+receive g
+
+【实验】
+3.1 Camera Pose Estimation
+Problem setting and datasets.
+3.2 Multi-view Depth Estimation and 3D Point-Cloud Reconstruction We evaluate all competitive baselines with and without SMoRe across five
+downstream tasks: camera pose estimation, multi-view depth estimation,
+3D point-cloud reconstruction, simultaneous localization and mapping
+(SLAM), and novel view synthesis. We perform three runs per experiment
+and aggregate results across runs. For each task, we describe the problem
+setting and datasets, followed by the compared methods, metrics, and . A Gaussian decoder converts the stored geometry into
+rendered images. The datasets and evaluation splits are described in
+Appendix  H.5 .
+I.1 Source Views and Geometry
+We render each held-out target from eight nearby input keyframes.
+Source views are selected using the sum of camera-centre distance and
+viewing-direction angle, computed from the ground-truth cameras.
+The target itself is excluded. Baseline and + SMoRe +\textsc{SMoRe}{} use identical
+source views.
+Each source keyframe retains the depth, confidence, and camera intrinsics
+predicted when it first enters a window. Its depth is unprojected into
+3D points in that window’s local coordinate system
+(Appendix  C ). Baseline places these points in the global
+map using chained window transformations T k T_{k} . SMoRe uses the window
+transformations obtained after online revision. We fit a similarity
+transformation between the estimated and ground-truth input cameras.
+We use this alignment to express the target camera in each map’s
+coordinate system.
+Before decoding, we centre the source points at the centre of the source
+cameras and normalize their scale by the median source depth. We discard
+the lowest-confidence 30% of points in each frame. We also remove points
+at depth discontinuities, defined by a relative depth difference above
+5% between neighbouring pixels. Both systems use the same filtering
+procedure. Images are rendered at 384 × 288 384\times 288 resolution with a 4:3
+aspect ratio. Portrait CO3Dv2 sequences retain their original orientation.
+I.2 Gaussian Decoder and Training
+We use a Gaussian decoder to predict rendering parameters from the
+source images and their geometry. Each source pixel provides eleven
+input channels:
+3 ⏟ RGB + 3 ⏟ map position + 1 ⏟ depth + 1 ⏟ log-confidence + 3 ⏟ ray direction = 11 . \underbrace{3}_{\text{RGB}}+\underbrace{3}_{\text{map position}}+\underbrace{1}_{\text{depth}}+\underbrace{1}_{\text{log-confidence}}+\underbrace{3}_{\text{ray direction}}=11.
+A four-level U-Net with approximately 7M parameters predicts a positi
+
+【结论/局限】
+and Future Work
+References
+A Appendix Roadmap
+B Camera-Pose Alignment
+Similarity transformation.
+Estimating the alignment.
+Making the alignment robust.
+Additional scale check for consecutive windows.
+Two-camera limitation.
+C Window Ownership and Geometric Invariance
+Source-window storage.
+What changes after a placement correction?
+Relative poses within one source window.
+When this property does not apply.
+D Scaffold Construction, Storage, and Retrieval
+Representing the global camera pose.
+Representing camera orientation.
+From the scaffold state to a compact memory address.
+Recovering a scaffold state from an address.
+Associating visual content with the same address.
+Why are these mappings learned online?
+The complete associative pathway.
+Retrieving a stored frame from a current observation.
+E Scaffold Dynamics and Controlled Memory Diagnostics
+Continuous attractor fields.
+Maintaining and moving the represented pose.
+Returning from an address to a valid scaffold state.
+What these diagnostics establish.
+F Geometric Verification of Retrieved Revisits
+Forming a retrieved pair.
+Why use two different source windows?
+Joint prediction with the current window.
+Obtaining a global-placement p

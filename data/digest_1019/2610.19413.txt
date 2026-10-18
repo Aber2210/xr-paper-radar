@@ -1,0 +1,113 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from -derived signals calculated from virtual deformation and proximity
+cues.
+IV-C Dual-mode Control Validation
+The dual-mode controller was evaluated through an equal-distance
+traversal test using command-dispatch records from a representative
+session. The test examined the stepwise output characteristics of
+the velocity gears and position mode. Gear 1, Gear 3, Gear 5, and
+position mode each moved the guidewire over the same prescribed
+distance, and their activation and dispatch intervals were analyzed.
+Fig.  5 shows distinct dispatch patterns
+and traversal durations for equal-distance movements. Lower gears were
+used early in the session, followed by higher gears and position
+increments, demonstrating mode changes within one workflow.
+Fig. 5: Command dispatch for equal-distance guidewire movements using
+Gears 1, 3, and 5 and Position Mode.
+The record provides a functional demonstration that the different gear
+settings and position mode can be used to complete equal-distance
+guidewire movements within one training session.
+IV-D Curvature-Based Interaction Response Evaluation
+A hybrid simulation scene containing a straight glass tube and an
+anatomical vascular model was used to examine the response of the
+curvature-derived interaction component. The glass tube provided a
+low-bending reference segment, while the vascular model introduced curved
+paths that constrained guidewire deformation. This configuration allowed
+the guidewire to pass from a nearly straight configuration into
+progressively bent configurations within the same navigation sequence.
+To examine the repeatability of the curvature-derived interaction
+response, the navigation experiment was repeated 20 times under the
+same simulation settings. Each recorded trajectory was divided into
+three representative stages: straight-tube insertion, entry into the
+curved vascular segment, and navigation within the deeper curved segment.
+For each trial and stage, the curvature-derived response
+F curv , k F_{\mathrm{curv},k} was averaged over all simulation samples within
+that stage
+
+【实验】
+verified the operation of the dual-mode controller,
+qualitative agreement between physical and virtual guidewire
+configurations, the deformation-sensitive interaction response, and the
+trajectory-linked review functions.
+In the preliminary study with 15 novice participants, physical-phantom
+task success increased from 53.3% before VR training to 93.3% after
+training, accompanied by a reduction in mean completion time. More
+importantly, the improved post-training performance in the physical
+robotic task suggests that the proposed system can support the transfer
+of navigation and manipulation skills practiced in VR to a corresponding
+physical intervention environment. The interaction feedback and
+trajectory-based review may further help trainees recognize potentially
+unsafe manipulation patterns rather than focusing solely on task
+completion.
+These findings provide preliminary support for the proposed framework
+as a training and performance-review tool. Because the participant used a single-group pre–post design, however, the observed
+improvements cannot be attributed exclusively to VR training. Future
+work will validate the interaction estimates against measured forces
+and evaluate training effectiveness through randomized controlled
+studies with independent training and assessment tasks.
+References
+[1]
+W. Duan, T. Akinyemi, W. Du, J. Ma, X. Chen, F. Wang, O. Omisore, J. Luo, H. Wang, and L. Wang (2023)
+Technical and clinical progress on robot-assisted endovascular interventions: a review .
+Micromachines 14 ( 1 ), pp. 197 .
+Cited by: §I .
+[2]
+Y. Kim, E. Genevriere, P. Harker, J. Choe, M. Balicki, R. W. Regenhardt, J. E. Vranic, A. A. Dmytriw, A. B. Patel, and X. Zhao (2022)
+Telerobotic neurovascular interventions with magnetic manipulation .
+Science Robotics 7 ( 65 ), pp. eabg9907 .
+Cited by: §I .
+[3]
+G. Dagnino, D. Kundrat, T. M. Y. Kwok, M. E. M. K. Abdelaziz, W. Chi, A. Nguyen, C. Riga, and G. Yang (2023)
+In-vivo validation of a novel robotic platform for endovascular intervention .
+IEEE Transactions on Biomedical Engineering 70 ( 6 ), pp. 1786–1794 .
+Cited by: §I .
+[4]
+S. Cao, S. Guo, J. Guo, J. Wang, Y. Zhang, Y. Zhang, P. Yang, and J. Liu (2024)
+A reciprocating delivery device-based endovascular intervention robot with multimanipulators collaboration .
+IEEE Transactions on Instrumentation and Measurement 73 , pp. 1–12 .
+External Links: Document
+Cited by: §I .
+[5]
+X. Bao, S. Guo, C. Yang, and L. Zheng (2024)
+Haptic interface with force and torque feedback for robot-assisted endovascular catheterization .
+IEEE/ASME Transactions on Mechatronics 29 ( 2 

@@ -1,0 +1,88 @@
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+ Fig. 5 . JOD values tabulated with pwcmp  ( Perez-Ortiz and Mantiuk, 2017 ) over 4,362 comparisons. The Y axis represents JOD values. A difference of 1 JOD corresponds to a 75% chance of preferring one stimulus over another. Higher JOD values are better. JOD values by stimuli are in Supplementary Material S8. JOD values and uncertainty bars for the benchmarked loss functions. From left to right: \proj, Spatial \proj, MSE LAB, MSE, SCCGH. Each benchmarked loss function is further split into separate FPS columns: 60 fps, 120 fps, 240 fps, and 480 fps.
+A total of 4,362 pairwise comparisons were performed across 12 participants.
+Pairwise comparison results were converted into Just Objectionable Difference (JOD) scores via the pwcmp library  ( Perez-Ortiz and Mantiuk, 2017 ) .
+1 unit of JOD corresponds to a 75% chance of a participant preferring one stimulus over another.
+We used 1,000 bootstrap samples to generate the fit.
+One participant was classified as an outlier by pwcmp and excluded from the data analysis (dist_L of 2.0 2.0 , which exceeds the customary threshold of 1.5).
+Fig.  5 compares the JOD value across all methods (reference has a JOD of 10) across all stimuli; Supplementary Material S8 shows the JOD results for each individual stimulus.
+Fig.  7 visually compares different methods using one stimulus;
+Supplementary Material S7 shows more results of other stimuli.
+Sample SLM patterns for the benchmarked loss functions are in Supplementary Material S16.
+Our method significantly outperforms other benchmarks at their respective frame rates ( p < 0.05 p<0.05 , with some p < 0.001 p<0.001 ).
+Supplementary Material S9 shows the hypothesis test results.
+Spatial HoOPOE outperforms MSE LAB, which demonstrates the effectiveness of spatial and chromatic weighting.
+HoOPOE outperforms Spatial HoOPOE, which demonstrates the value of temporal weighting.
+While more performance can be gained from increasing the frame rate of the holographic display, there are diminishing returns.
+The jump from 120 fps to 240 fps represents the greatest improvement in visual quality.
+Users prefer the 240 fps rendering over the 120 fps rendering 74% of the time.
+However, users are only 50.7% likely to prefer the 480 fps rendering over the 240 fps rendering.
+Since display power consumption is a function of refresh rate, our results point to opportunities to make a calculated power-vs-quality trade-off.
+To confirm that HoOPOE ’s advantage is not dependent on temporal multiplexing, we conduct a user study (N=18) with single-frame stimuli.
+HoOPOE continues to significantly outperform b
+
+【结论/局限】
+Acknowledgements
+References
+License: CC BY 4.0
+arXiv:2610.17474v1 [cs.GR] 12 Oct 2026
+HoOPOE: A Holography-Optimized Perceptual ObjectivE function
+Conference:  SIGGRAPH Asia 2026 Conference Papers; December 01–04, 2026; Kuala Lumpur, Malaysia SIGGRAPH Asia 2026 Conference Papers (SA Conference Papers ’26), December 01–04, 2026, Kuala Lumpur, Malaysia DOI:  10.1145/3829340.3842313 ISBN:  979-8-4007-2842-6/2026/12 CCS:  Computing methodologies Perception CCS:  Computing methodologies Mixed / augmented reality CCS:  Hardware Displays and imagers
+Ethan Chen
+email: echen48@ur.rochester.edu
+Affiliation:  University of Rochester , Rochester , New York , USA
+Affiliation:  Meta , Sunnyvale , California , USA
+,
+Xi Peng
+email: xipeng@cs.unc.edu
+Affiliation:  University of North Carolina at Chapel Hill , Chapel Hill , North Carolina , USA
+,
+Alexandre Chapiro
+email: achapiro@meta.com
+Affiliation:  Meta , Sunnyvale , California , USA
+,
+Dario Seyb
+email: dario.seyb@gmail.com
+Affiliation:  Meta , Redmond , Washington , USA
+,
+Michael Grundmann
+email: mgrundmann@meta.com
+Affiliation:  Meta , Menlo Park , California , USA
+,
+Carl Marshall
+email: csmarshall@meta.com
+Affiliation:  Meta , Redmond , Washi

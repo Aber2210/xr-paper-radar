@@ -1,0 +1,119 @@
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from for robust manipulation.
+In RSS , 2024.
+Wang et al. [2004]
+Zhou Wang, Alan C. Bovik, Hamid R. Sheikh, and Eero P. Simoncelli.
+Image quality assessment: From error visibility to structural
+similarity.
+IEEE Transactions on Image Processing , 13(4):600–612, April 2004.
+URL https://ece.uwaterloo.ca/~z70wang/research/ssim/ .
+Wang et al. [2024]
+Zirui Wang, Wenjing Bian, and Victor Adrian Prisacariu.
+CrossScore: Towards multi-view image evaluation and scoring.
+In ECCV , 2024.
+Wei et al. [2022]
+Xinyue Wei, Minghua Liu, Zhan Ling, and Hao Su.
+Approximate convex decomposition for 3D meshes with collision-aware
+concavity and tree search.
+ACM Transactions on Graphics , 41(4):1–18,
+2022.
+doi: 10.1145/3528223.3530103 .
+URL https://doi.org/10.1145/3528223.3530103 .
+Xiang et al. [2025]
+Jianfeng Xiang, Xiaoxue Chen, Sicheng Xu, Ruicheng Wang, Zelong Lv, Yu Deng,
+Hongyuan Zhu, Yue Dong, Hao Zhao, Nicholas Jing Yuan, and Jiaolong Yang.
+Native and compact structured latents for 3D generation.
+arXiv preprint arXiv:2512.14692 , 2025.
+doi: 10.48550/arXiv.2512.14692 .
+URL https://arxiv.org/abs/2512.14692 .
+Zhang et al. [2025]
+Kaifeng Zhang, Shuo Sha, Hanxiao Jiang, Matthew Loper, Hyunjong Song, Guangyan
+Cai, Zhuo Xu, Xiaochen Hu, Changxi Zheng, and Yunzhu Li.
+Real-to-sim robot policy evaluation with gaussian splatting
+simulation of soft-body interactions.
+arXiv preprint arXiv:2511.04665 , 2025.
+Zhang et al. [2018]
+Richard Zhang, Phillip Isola, Alexei A. Efros, Eli Shechtman, and Oliver Wang.
+The unreasonable effectiveness of deep features as a perceptual
+metric.
+In Proceedings of the IEEE Conference on Computer Vision and
+Pattern Recognition (CVPR) , 2018.
+URL https://richzhang.github.io/PerceptualSimilarity/ .
+Zhang et al. [2026]
+Shujie Zhang, Jingkun Yi, Weipeng Zhong, Zirui Zhou, Yangkun Zhu, Hanqing Wang,
+Xudong Xu, Weinan Zhang, and Chunhua Shen.
+RoboSnap: One-shot real-to-sim scene generation for generalizable
+robot learning and evaluation.
+arXiv preprint arXiv:2607.06699 , 2026.
+Zhu et al. [2020]
+Yuke Zhu, Josiah Wong, Ajay Mandlekar, Robert
+
+【实验】
+setting.
+We consider three scenes on two bimanual platforms. Duo and
+Flat are scenes on a dual Franka FR3 setup and differ in their table
+and background. The third scene uses a TX-G2 (AgiBot-G2-compatible) platform
+and is denoted TX-G2 . Both platforms carry a YUBI gripper with a fisheye
+camera on each wrist. The task inventory comprises three tasks: Cup (cup
+pick-and-place), Tape (placing tape into a box), and Pen (placing a pen into a
+box). The current ranking results use all three tasks; evaluation details
+appear in Sec.  IV .
+Capture.
+Reconstructing the environment for two independently moving fisheye wrist
+cameras requires visual coverage beyond the immediate manipulation target.
+Narrow-angle capture can leave surrounding regions poorly observed even
+though they later appear in policy inputs. We therefore use an Insta360
+camera to obtain broad angular coverage with a compact source-frame set,
+keeping reconstruction optimization practical. Reconstruction uses only its
+left fisheye lens ( Insta360 v6 in the camera metadata).
+Videos contain two 3840 × 3840 3840\times 3840 tracks at 50 fps (HEVC). Capture durations
+are 213.06 s (Duo), 254.88 s (Flat), and 243.50 s (TX-G2).
+We partition each video temporally and select one source frame per interval
+that maximizes the minimum left/right Laplacian variance, without an explicit
+manual blur-rejection threshold. The same source timestamps also support a
+controlled comparison between the full fisheye-derived projections and a
+central pinhole view (Sec.  V-C ).
+Reconstruction.
+Using OpenCV fisheye calibration, each source frame is reprojected into nine
+2048 × 2048 2048\times 2048 pinhole views with 90 ∘ × 90 ∘ 90^{\circ}\times 90^{\circ} FOV and focal
+length 1024 px: one forward view and eight views tilted 55 ∘ 55^{\circ} from
+forward, spaced at 45 ∘ 45^{\circ} azimuth intervals.
+We estimate poses with COLMAP  Schönberger and Frahm [2016] ; Schönberger et al. [2016] through pycolmap 4.1.1, generate a dense seed
+point cloud with OpenMVS Cernea [2020] , and train Gaussian
+Wrapping  Gomez et al. [2026] at full resolution for 30,000–60,000 iterations using an NVIDIA H200 GPU.
+The initial dense seed is capped at 40 million points with seed 0.
+Exposure compensation, normal fields, fast multiview regularization, and
+masked rendering loss are enabled.
+The single-lens reconstruction has arbitrary scale. A stored transformation
+registers it to MuJoCo world coordinates. All embodiments
+are manually aligned to robot visual meshes, and the tabletop collision
+surface is modeled as the plane z = 0 z=0 .
+Collision OBJ meshes a

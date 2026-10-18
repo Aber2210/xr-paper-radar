@@ -1,0 +1,104 @@
+【摘要】
+
+【方法】
+Data Representation
+Human and Object Motion Representation.
+Interaction Representation.
+Text Description.
+HOI Latent Representation
+Multipart Encoding.
+Residual Vector Quantization.
+Conditional Joint Decoding.
+Codec Training.
+Conditional MeanFlow in the HOI Latent Space
+Conditional MeanFlow Objective.
+Spatio-Temporal Attention Modeling.
+One-Step HOI Generation.
+Optional Contact-Guided Refinement
+Object-Only Refinement.
+Upper-Body Noise Optimization.
+Pose-Driven 3DGS Realistic Rendering Given the initial poses of a human and an object, the object geometry, and a
+textual instruction, our goal is to generate a complete 3D human–object
+interaction (HOI) sequence, including whole-body human motion, articulated
+finger motion, and object motion over time. As shown in
+Figure  2 , MFlowHOI consists of three main modules. In
+HOI Latent Representation, we design a contact-aware multipart
+RVQ-VAE to encode multipart human motion, object motion, and contact information into a temporal multipart-based HOI latent representation. In Conditional MeanFlow, we employ an ST-DiT with spatial–temporal and cross-part attention to generate the HOI latent sequence in a single transport evaluation, conditioned on the textual instruction, initial poses, and object geometry. In Realistic Rendering, we develop a pose-driven 3D Gaussian Splatting framework to produce high-fidelity renderings of the generated 3D HOI sequences.
+Data Representation
+Human and Object Motion Representation.
+Following DiffGrasp  ( Zhang et al. 2025 ) , we use SMPL-X to represent human
+motion. A human motion sequence is denoted by
+𝐇 ∈ ℝ T × D h \mathbf{H}\in\mathbb{R}^{T\times D_{h}} , where each state is represented as
+𝐇 ( t ) = { 𝐫 ( t ) , Δ ​ 𝐝 ( t ) , 𝜽 ( t ) } \mathbf{H}^{(t)}=\{\mathbf{r}^{(t)},\Delta\mathbf{d}^{(t)},\boldsymbol{\theta}^{(t)}\} . Here,
+𝐫 ( t ) ∈ ℝ 6 \mathbf{r}^{(t)}\in\mathbb{R}^{6} is the global root orientation,
+𝜽 ( t ) ∈ ℝ 52 × 6 \boldsymbol{\theta}^{(t)}\in\mathbb{R}^{52\times 6} contains the local
+rotations of 52 full-body joints, and Δ ​ 𝐝 ( t ) \Delta\mathbf{d}^{(t)} is the root
+translation relative to the previous frame. The initial translation
+𝐝 ( 1 ) ∈ ℝ 3 \mathbf{d}^{(1)}\in\mathbb{R}^{3} is represented separately.
+Similarly, an object motion sequence is denoted by
+𝐎 ∈ ℝ T × D o \mathbf{O}\in\mathbb{R}^{T\times D_{o}} , where
+𝐎 ( t ) = { 𝐑 ( t ) , Δ ​ 𝐨 ( t ) } \mathbf{O}^{(t)}=\{\mathbf{R}^{(t)},\Delta\mathbf{o}^{(t)}\} .
+Here, 𝐑 ( t ) ∈ ℝ 6 \mathbf{R}^{(t)}\in\mathbb{R}^{6} is the global rotation and
+Δ ​ 𝐨 ( t ) \Delta\mathbf{o}^{(t)} is the translation relative to the previous frame.
+The initial object translation 𝐨 ( 1 ) ∈ ℝ 3 \mathbf{o}^{(1)}\in\mathbb{R}^{3} is
+represented separately. The human and object shapes are represented by the
+SMPL-X shape parameters 𝜷 \boldsymbol{\beta} and the BPS descriptor
+𝐁 ∈ ℝ K × 3 \mathbf{B}\in\mathbb{R}^{K\times 3} , respectively. Overall, the human and
+object representations are
+( 𝐇 , 𝐝 ( 1 ) , 𝜷 ) (\mathbf{H},\mathbf{d}^{(1)}
+
+【实验】
+Evaluations
+Dataset. demonstrate that MFlowHOI outperforms existing base
+generators in motion quality and text alignment while substantially reducing
+inference time.
+1 Institute of Software, Chinese Academy of Sciences
+2 University of Chinese Academy of Sciences
+3 Google , we find that directly applying one-step MeanFlow to existing HOI representations leads to degraded motion and unstable contact.
+In this paper, we propose MFlowHOI, a one-step framework for contact-aware
+whole-body HOI generation. Its Contact-Aware Multipart RVQ-VAE decomposes an
+interaction into functional body parts, object motion, contact probabilities,
+and object-local contact positions. Stream-specific temporal encoders capture
+fine-grained dynamics, while a shared decoder preserves global coordination,
+forming a structured time–part latent space.
+In this latent space, a conditional Spatio-Temporal Diffusion Transformer
+(ST-DiT) learns the MeanFlow velocity field. It models temporal dependencies
+within each stream and cross-part interactions among the body, hands, object,
+and contacts. A single evaluation generates a complete interaction latent,
+which is decoded into whole-body and finger motion, object trajectories, and
+contact cues. The resulting contact correspondences also enable geometric
+refinement and interaction-preserving transfer to photorealistic 3D Gaussian
+avatars with different body proportions. on GRAB demonstrate improved distributional quality and
+text–motion alignment with substantially faster inference than existing HOI
+generators. Ablations confirm the importance of the multipart latent space and its temporal and cross-part modeling.
+The main contribution of our method can be summarized as follows.
+1) We present a new one-step framework that jointly generates coordinated whole-body and finger motion, object trajectories, and time-varying contact cues with a single network.
+2) To enable stable conditional MeanFlow generation, we design a temporal multipart–based HOI latent representation to model temporal dependencies between different body parts and objects, and introduce a spatio-temporal diffusion transformer to balance heterogeneous HOI components.
+3) We predict contact correspondences between object and body parts that support geometric refinement and interaction-preserving transfer to photorealistic 3D Gaussian avatars with different body proportions. Evaluations
+Dataset.
+We evaluate on GRAB  ( Taheri et al. 2020 ) , which contains full-body
+interaction sequences captured from 10 subjects interacting with 51 rigid
+objects. Following prior work  ( Pi et al. 
+
+【结论/局限】
+and Limitations
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.16252v1 [cs.CV] 12 Oct 2026
+MFlowHOI: Whole-Body Human-Object Interaction Generation
+via Part-Aware MeanFlow
+Qiang He
+Yonghao Zhang
+Yinda Zhang
+Chenyu Meng
+Liufei Ouyang
+Haoxiang Hu
+Cangjun Gao
+Xiaoming Deng
+Cuixia Ma
+Hongan Wang and Limitations
+We presented MFlowHOI, a one-step framework for whole-body HOI generation. Its contact-aware multipart codec balances body, hand, object, and contact signals while preserving global coordination. Operating on the resulting time–part latent grid, ST-DiT generates complete interactions with a single MeanFlow evaluation. Experiments demonstrate improved distributional quality and text alignment compared with other generators, at substantially lower latency. Predicted object-local contacts further facilitate efficient geometric correction and avatar deployment. Although promising results were achieved, our evaluation is limited to interactions with a single rigid object. Extending the method to articulated/deformable objects remains future work.
+References
+Braun et al. (2024)
+Braun, J.; Christen, S.; Kocabas, M.; Aksan, E.; and Hilliges, O. 2024.
+Physically

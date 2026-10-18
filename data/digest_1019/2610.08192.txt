@@ -1,0 +1,136 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from jointly queries both annotation sets within each 19.2 s untrimmed
+observation containing multiple overlapping audio-visual events. Each forward pass contains 8.59 annotations on average, comprising
+4.55 Epic-Kitchens and 4.04 Epic-Sounds annotations. Epic-Kitchens targets occupy a mean/median
+16.7%/9.8% of the observation, compared with 21.4%/6.4% for Epic-Sounds, whose
+median event spans only about 1.2 s. Despite fewer queries, Epic-Sounds presents the
+denser attribution problem: 49.4% temporally overlap another sound event,
+compared with 40.5% on Epic-Kitchens. Since query-to-query attention is blocked, each
+query must resolve its target independently from shared content. Longer context aids outage
+recovery but introduces distractor suppression and multi-instance attribution
+absent from clip-based evaluation. Thus, TIM matches our observation
+protocol, while MMT and MiDl match our observation-level missingness protocol.
+No prior reference matches both.
+Missing video and audio are evaluated separately. Video is dominant for Epic-Kitchens and
+audio for Epic-Sounds, with the reverse defining auxiliary-modality removal. We report
+annotation-level top-1 accuracy. All Epic-Kitchens heads share one valid-annotation set,
+and action accuracy uses the compositional head’s own argmax rather than the
+conjunction of separate verb and noun predictions.
+C.2 Dataset
+Epic-Kitchens-100 contains 100 hours of unscripted, head-mounted recordings from 45
+kitchens, comprising 700 untrimmed videos, approximately 20 million frames, and
+90,000 fine-grained action segments
+( Damen et al., 2022 ) . Each action is annotated by its temporal extent,
+verb, and noun. The label space contains 97 verbs, 300 nouns, and 3,806
+verb–noun action classes present across the training and validation sets.
+Epic-Sounds adds temporally localized acoustic annotations to the same underlying
+videos  ( Huh et al., 2023 ) . It contains 78.4K categorized audible events
+across 44 classes, together with 39.2K non-categorized sound segments. We use
+only the categorized training
+
+【实验】
+4.1 Experimental Setup
+4.2 What Produces Missing-Modality Robustness in MacJEPA?
+4.3 MacJEPA Queries Reroute Attention Around Local Outages
+4.4 Comparison with Prior Work
+4.4.1 Full-modality Recognition
+4.4.2 Missing-Modality Robustness For all experiments, we set Δ = 16 / 30 ​ s \Delta=16/30\,\mathrm{s} , ω = 32 / 30 ​ s \omega=32/30\,\mathrm{s} , T = 36 T=36 , w = 4 w=4 , d c = 768 d_{c}=768 , d t = 256 d_{t}=256 , π = 0.7 \pi=0.7 . This gives S = 19.2 ​ s S=19.2\,\mathrm{s} , K = 9 K=9 , τ = 2.13 ​ s \tau=2.13\,\mathrm{s} , n = 72 n=72 , and d = 1024 d=1024 .
+Following the setup in Section   4.1 , we examine how MacJEPA
+learns missing-modality robustness through controlled design hypotheses
+( Section   4.2 ) and qualitative evidence-routing analysis
+( Section   4.3 ), then compare the same fixed checkpoint with published
+benchmarks under complete input and across the missingness spectrum
+( Section   4.4 ).
+4.1 Experimental Setup
+Data.
+We jointly evaluate visual actions from Epic-Kitchens-100 and acoustic events from Epic-Sounds, which
+annotate the same 100 hours of untrimmed egocentric video with distinct temporal
+intervals  ( Damen et al., 2022 ; Huh et al., 2023 ) . Epic-Kitchens contains 97 verbs
+and 300 nouns; we classify the 3,806 verb–noun pairs or action labels present in the training and validation sets, while
+Epic-Sounds contains 44 sound classes. We use the official training and validation
+annotations. We evaluate 9,668 Epic-Kitchens validation and 8,045 Epic-Sounds validation
+segments.
+Setup.
+We concatenate frozen Omnivore Swin-B and VideoMAE-L features into a
+2,048 2{,}048 -D visual input and use 2,304 2{,}304 -D Auditory SlowFast R50 audio
+features  ( Girdhar et al., 2022 ; Tong et al., 2022 ; Kazakos et al., 2021b ) . Each
+19.2 s observation has 36 aligned rows grouped into nine 2.13 s windows.
+768-D content and 256-D time representations form 1,024-D tokens for a
+6-layer, 8-head transformer with MLP ratio 2. Training uses AdamW for 50
+epochs with batch size 256, learning rate 3 × 10 − 4 3\times 10^{-4} , weight decay
+10 − 4 10^{-4} , two-epoch warm-up, and cosine decay. During training, each observation window independently drops one uniformly chosen modality with probability 0.7. use the final epoch-50 online checkpoint. The same checkpoint evaluates
+Epic-Kitchens and Epic-Sounds, and no early stopping or task-specific checkpoint selection is
+used.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedb
+
+【结论/局限】
+References
+A MacJEPA Framework: Extended Discussion
+A.1 Window-Local Modality Dropout and Typed, Timed Masking
+A.2 EMA Teacher, Predictor, and JEPA
+A.3 Task-Specific Prediction Heads
+A.4 VICReg and Complete Objective
+B Additional Ablations
+B.1 Effect of Training-Time Modality-Drop Probability
+B.2 Effect of Outage Granularity or Window Length
+B.3 Effect of Observation Length
+B.4 Effect of Encoder Capacity
+B.5 Robustness across Visual Feature Sources
+C Extended Implementation Details
+C.1 Evaluation Protocol
+C.2 Dataset
+C.3 Indexing and Observation Construction
+C.4 Frozen Feature Extraction
+C.5 Temporal Encoding and Sequence Assembly
+C.6 Encoder, Attention, and Task Readouts
+C.7 Mask Sampling and Objective Schedule
+C.8 Optimization and Regularization
+License: CC BY-NC-SA 4.0
+arXiv:2610.08192v2 [cs.CV] 09 Oct 2026
+MacJEPA: Missingness-Robust Audio-Visual Recognition from Untrimmed Egocentric Videos
+Souptik Sen
+Affiliation:  Peter L. Reichertz Institute for Medical Informatics, Hannover Medical School, Germany
+Email:  Sen.Souptik@mh-hannover.de
+Zahra Ahmadi
+Affiliation:  Peter L. Reichertz Institute for Medical Informatics, Hannover Medical School, Germany
+Affiliation:  Lower Saxony Cen
