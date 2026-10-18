@@ -1,0 +1,36 @@
+{
+ "2026-10-14": {
+  "2610.17936": {
+   "cat": "cs.CV",
+   "title": "PUGS: Physics-Guided Uncertainty Modeling for Underwater Dynamic 3D Gaussian Splatting"
+  },
+  "2610.16292": {
+   "cat": "cs.CV",
+   "title": "3D Gaussian Splatting for Fine-grained Urban Scene Reconstruction via Semantic-guided Density Control and Loss Design"
+  },
+  "2610.14963": {
+   "cat": "cs.CV",
+   "title": "AD-GS: Anatomical Density-guided 3D Gaussian Splatting for Sparse-View Dental CBCT Reconstruction"
+  },
+  "2610.18479": {
+   "cat": "cs.RO",
+   "title": "RTISSLAM: In-air Imaging Sonar SLAM using a Robust Pose Graph and Occupancy Grid Mapping"
+  }
+ },
+ "2026-10-15": {
+  "2610.20397": {
+   "cat": "cs.CV",
+   "title": "Where Should the Gaussians Go? Reusable Label-Aware Allocation for Budget-Constrained Gaussian Splatting of Cinematic CT"
+  },
+  "2610.19742": {
+   "cat": "cs.CV",
+   "title": "HyperLoop: Hyperspectral-Assisted Loop Closure Detection in 3D-SLAM for Planetary Exploration"
+  },
+  "2610.19120": {
+   "cat": "cs.CV",
+   "title": "DoReMe: Dual optimization of Reconstruction and Motion estimation for self-navigated free-breathing abdominal MRI using Gaussian Splatting"
+  }
+ },
+ "2026-10-16": {},
+ "2026-10-9": {}
+}
