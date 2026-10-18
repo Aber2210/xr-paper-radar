@@ -1,0 +1,137 @@
+# 2607.17790  [感知与认知]
+
+## Abstract
+
+
+## Introduction
+
+
+## Method
+4.1 Problem Formulation
+4.2 Unified Discrete Representation
+4.3 Masked Generative Egocentric Transformer
+
+## Methods
+Input Cam Traj
+GA-MPJPE ↓ \downarrow
+PA-MPJPE ↓ \downarrow
+Similarity ↑ \uparrow
+FID ↓ \downarrow
+Time (s) ↓ \downarrow
+EgoAllo  [ 58 ]
+None
+–
+–
+–
+–
+–
+VIPE  [ 17 ]
+227.6
+167.5
+0.529
+1.069
+101.0
+GT Cam
+198.4
+136.8
+0.556
+1.160
+72.5
+UniEgoMotion  [ 37 ]
+None
+–
+–
+–
+–
+–
+VIPE  [ 17 ]
+130.5
+98.4
+0.572
+1.087
+37.6
+GT Cam
+105.8
+88.7
+0.591
+1.098
+9.1
+Ours
+None
+111.5
+88.6
+0.751
+0.442
+0.7
+Baselines.
+We compare ReViV against EgoAllo  [ 58 ] and UniEgoMotion  [ 37 ] , two recent SOTA diffusion-based models for egocentric full-body motion recovery.
+
+## Model
+Capacity.
+A lightweight variant (ReViV-Tiny, ∼ \sim 127M parameters) exhibits noticeably degraded performance across body motion, camera tracking, and depth estimation. This confirms that the more parameters is critical for approximating the complex joint distribution underlying our large-scale multimodal dataset, and that reconstruction quality scales with model capacity.
+Masking Strategy.
+We trained an independent 1-to-1 modality masking by setting Dirichlet α \alpha to 0.001 0.001 (ReViV-1to1Mask), missing deep cross-modal info. Another ablation using uniform sampling on all modalities (ReViV-Uniform), which causes sparse body tokens with unbalanced dense video tokens, collapsing accuracy. Our sampling strategy mitigates both by producing all possible mask permutations for an ensemble of arbitrary conditional distributions.
+Data Scaling.
+To disentangle data volume, we incrementally removed training datasets (Nymeria, and Nymeria + HoloAssist), yielding ReViV-w/oNy and ReViV-w/oNy&Holo . Experiment results confirm performance scales with data volume. Models (ReViV-BodyData) only trained on datasets with body annotations degrade accuracy compared to our full model. This demonstrates that even without explicit annotations, joint training on massive datasets significantly enhances reconstruction by enriching generalized cross-modal priors.
+
+## Experiment
+5.1 Egocentric Body Motion Reconstruction
+5.2 Egocentric Hand Motion Reconstruction
+5.3 Egocentric Camera Tracking
+5.4 Egocentric Gaze Estimation
+5.5 Egocentric Video Depth Estimation
+5.6 Ablation Studies
+
+## Results
+.
+As shown in Table  2 , ReViV establishes a new SOTA for monocular egocentric body motion reconstruction. Compared to baselines using estimated camera trajectories from VIPE [ 17 ] , our method dominates across all metrics while being 100 × \times faster than EgoAllo and over 10 × \times faster than UniEgoMotion during inference. We attribute this to our unified framework: unlike baselines that suffer from compounding camera-tracking errors, ReViV directly models the joint distribution p ⁡ ( 𝒳 , 𝒴 ) p(\mathcal{X},\mathcal{Y}) , bypassing error-prone intermediate tracking entirely.
+Notably, even without camera trajectories as input, ReViV outperforms baselines that rely on ground-truth cameras across local pose accuracy ( PA-MPJPE ), semantic correspondence ( Similarity ), and motion realism ( FID ). This advantage stems from our discrete tokenization and multimodal masking objective, which forces the model to learn robust, biomechanically plausible kinematic priors rather than over-relying on rigid trajectory inputs. While baselines equipped with perfect external tracking yield slightly better global alignment ( GA-MPJPE ), ReViV remains highly competitive, demonstrating that global ego-motion can be effectively learned implicitly from pure monocular video.
+See additional qualitative visualizations in Supplementary Material Sec. E.2.
+5.2 Egocentric Hand Motion Reconstruction
+T …[截断]
+
+## Evaluation
+Details. For all experiments, we split each sequence into 2-second clips. For video modalities (RGB and depth), we downsample the original 30 FPS to 8 FPS, and resize spatial resolution to 256 × \times 256. For non-video modalities, including camera, gaze, body and hand, we retain the original 30 FPS.
+5.1 Egocentric Body Motion Reconstruction
+Table 2 :
+Egocentric Body Motion Reconstruction on ADT  [ 35 ] . ReViV achieves SOTA performance and efficiency purely from monocular video. Even without explicit camera tracking, ReViV yields superior motion quality (FID), pose accuracy (PA-MPJPE), and pose similarity compared to baselines utilizing either estimated (VIPE) or ground-truth camera trajectories. ↓: lower is better; ↑: higher is better.
+
+## Conclusion
+
+
+## Limitations
+and Future Directions.
+References
+0.A Tokenizer Details
+0.B Masked Generative Egocentric Transformer Details
+0.C Inference Details
+0.D Ego-body anchored depth scale optimization
+0.E Additional Experiment Results
+0.E.1 Egocentric Camera Tracking
+0.E.2 Egocentric Gaze Estimation
+0.E.3 Egocentric Body Motion Reconstruction
+0.F Additional Ablation Studies
+0.F.1 Egocentric Hand Motion Reconstruction Ablation
+0.F.2 Vision Transformer Encoding Branch
+0.F.3 VQ-VAE Ablation
+License: arXiv.org perpetual non-exclusive license
+arXiv:2607.17790v2 [cs.CV] 31 Aug 2026
+ReViV: Reconstructing the Viewer and the View in 4D from Monocular Egocentric Video
+Xiaozhong Lyu
+† † thanks: Equal contribution; order interchangeable. See Acknowledgements. .
+Affiliation:  ETH Zurich, Switzerland
+Gen Li ⋆ \star
+Affiliation:  ETH Zurich, Switzerland
+Zhiyin Qian
+Affiliation:  ETH Zurich, Switzerland
+Xucong Zhang
+Affiliation:  ETH Zurich, Switzerland
+Affiliation:  Delft University of Technology, Netherlands
+Marc Pollefeys
+Affiliation:  ETH Zurich, Switzerland
+Affiliation:  Microsoft, Switzerland
+Siyu Tang
+Affiliation:  ETH Zurich, Switzerland
+Affiliation:  ETH Zurich, Switzerland
+Affiliation:  Delft University of Technology, Netherlands
+Affiliation:  Microsoft, Switzerland

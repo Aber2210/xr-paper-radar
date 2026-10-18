@@ -1,0 +1,87 @@
+【摘要】
+
+【方法】
+3.1 Overview
+3.2 Tetris3D: Geometrically and Physically Coherent 3D Scene Generation
+3.2.1 Pose-Aligned Object Generation in the Scene
+3.2.2 Object Interaction-Aware Generation
+Spatial Context.
+Relation Type.
+Interaction Condition.
+3.2.3 Voxel-Aligned Condition Injection
+3.3 V2I Attention: Amodal Completion via Visible-to-Invisible Attention
+3.4 ComOb: Simulation-Based Composited Object Scene Dataset
+3.5 Inference Pipeline 3.1 Overview
+We propose Tetris3D , a generative framework for object-centric 3D scene reconstruction from a single image. Our goal is to reconstruct a scene in which objects are physically and geometrically coherent with one another by explicitly conditioning generation on surrounding geometry and physical relationships. To achieve this, we incorporate object interactions into the generation process in two forms: spatial context and relation type . The spatial context captures the geometric arrangement of neighboring objects relative to the target object, helping recover geometry spatially compatible with the surroundings and avoid physically invalid configurations such as penetration. The relation type specifies the physical relationship between the target object and its neighbors, guiding the generated shape to reflect the interactions depicted in the input scene. Furthermore, to reconstruct the scene without a separate per-object pose-estimation stage, we generate each object directly in the pose observed in the scene image using the depth map and image feature back-projection. We also introduce a visible-to-invisible (V2I) cross-attention that guides the completion of occluded regions using information aggregated from visible tokens. To generate a scene, we generate objects autoregressively in a physical dependency order inferred by a VLM, so that each object is generated after the neighbors it depends on. We describe the overall pipeline in Fig.  2 .
+In the following, we first describe pose-aligned and interaction-aware object generation in the scene (Sec.  3.2 ).
+Next, we present visible-to-invisible cross-attention introduced for faithful completion of occluded parts (Sec.  3.3 ). Finally, we present ComOb , a physically consistent simulation-based scene dataset (Sec.  3.4 ), and describe the inference pipeline (Sec.  3.5 ).
+3.2 Tetris3D: Geometrically and Physically Coherent 3D Scene Generation
+Figure 3: Schematic of object grid 𝒢 \mathcal{G} and pose-aligned generation.
+3.2.1 Pose-Aligned Object Generation in the Scene
+Unlike previous methods that separately estimate poses of generated shapes  ( Shi et al., 2026 ; Chen et al., 2026b ) or require post-alignment  ( Li et al., 2026a ; Zhou et al., 2026 ) , we directly generate shapes in scene space with poses aligned with the input scene image. Here, scene space refers to the input camera’s 3D coordinate system, shared by all objects in the image. As shown in Fig.  3 , we first define an object grid from the depth map (sensor-captured or estimated), where the target object is generated. Inspired by Pixal3D  ( Li et al., 2026a ) , we back-project image features into this grid along camera rays to guide shape generation in alignment with the input scene image. Specifica
+
+【实验】
+Baselines. We describe implementation details in Appendix  B and evaluation details in Appendix  C . We further provide additional analyses in Appendix  D , including results with estimated depth and VLM-based relation reasoning. Finally, we compare our method with agentic generation using GPT-6 Astra  ( OpenAI, 2026 ) in Appendix  D.3 .
+Baselines.
+We compare Tetris3D against scene generation methods, including SAM-3D  ( Chen et al., 2026b ) , ShapeR  ( Siddiqui et al., 2026 ) , WorldSculpt  ( Niu et al., 2026 ) , SceneMaker  ( Shi et al., 2026 ) , SceneGen  ( Meng et al., 2026 ) , and MIDI  ( Huang et al., 2025 ) . We compare against amodal generation methods, Amodal3R  ( Wu et al., 2025 ) and GENA3D  ( Zhou and Tai, 2025 ) , paired with FoundationPose  ( Wen et al., 2024 ) for placement in the scene. Protocol.
+Metrics.
+4.1 Comparisons
+Quantitative Comparison.
+Qualitative Comparison.
+4.2 Ablation Study
+Analysis on Interaction Conditioning.
+Attention Design for Amodal Generation. with Estimated Depth. with VLM-Inferred Relations.
+D.2 Qualitative Results
+D.3 Comparison with Agentic Scene Generation
+E Discussion and Limitations
+F Prompt Examples
+License: CC BY 4.0
+arXiv:2610.10539v1 [cs.CV] 07 Oct 2026
+Tetris3D: 3D Scene Generation with Objects
+That Fit Together
+Jaeyeong KimJinhyuk JangJongmin LeeKyehong Park
+Seungryong KimKAIST AIProject page: https://cvlab-kaist.github.io/Tetris3D Protocol.
+We evaluate Tetris3D on Toys4K  ( Stojanov et al., 2021 ) , whose object sources are disjoint from those used for training.
+To evaluate reconstruction under object interaction and occlusion, we compose evaluation scenes by arranging primitives around each Toys4K object with our ComOb generator.
+On these scenes, all methods receive the ground-truth depth maps; results with depth estimated by MoGe3  ( Kong et al., 2026 ) are reported in Appendix  D . We further compare Tetris3D against baselines on Picasso  ( Yu et al., 2026 ) and MessyKitchens  ( Ansari et al., 2026 ) , which contain real and contact-rich scenes, to assess generalization beyond ComOb -generated settings. We use estimated depth from MoGe3 and physical relations inferred by a VLM  ( Bai et al., 2025 ) and follow our inference pipeline described in Sec.  3.5 . We evaluate the reconstructed scenes from three perspectives: (i) scene-level quality , measuring how accurately object shapes and poses are jointly recovered in scene space; (ii) object-level quality , measuring the geometric fidelity of each object in the object canonical space; and (iii) physical stability , measuring the physical consistency of the reconstructed scene through inter-object penetration and post-simulation stability. The simulation stability evaluates whether objects remain in place without falling or drifting when the reconstructed scene is simulated in a physics engine  ( Todorov et al., 2012 ) .
+Metrics.
+We measure scene-level quality using scene-level Chamfer Distance (CD-S) and F-Score (F1-S), bounding-box IoU (IoU-B),
+
+【结论/局限】
+References
+A Related Works
+3D generative models.
+3D scene generation.
+B Implementation Details
+B.1 Model Details
+Overall Model Architecture.
+Image Condition Masking.
+Visible-to-Invisible Attention.
+B.2 Training Details
+Curriculum Training with Occlusion.
+Depth Augmentation.
+B.3 Dataset Generator Details
+Primitive Selection.
+Primitive Sizing.
+Interaction-specific Placement.
+Physical Settling.
+Relation Annotations.
+Rendering Details.
+B.4 Inference Pipeline Details
+Data Preprocessing.
+Physical Dependency Graph Construction.
+C Evaluation Details
+C.1 Evaluation Protocol Details
+C.2 Evaluation Metric Details
+Chamfer Distance (CD-S, CD-O).
+F-Score (F1-S, F1-O).
+Bounding-box IoU (IoU-B).
+Rotation Error (ICP-Rot).
+Penetration Depth (PD).
+Mean Displacement D mean D_{\mathrm{mean}} .
+Peak Kinetic Energy E peak E_{\mathrm{peak}} .
+MMD and COV.
+P-FID.
+ULIP and Uni3D.
+D Additional Results
+D.1 Quantitative Results We propose Tetris3D, a generative framework for single-image 3D scene reconstruction that explicitly conditions object generation on neighboring geometry and physical relations. We also introduce ComOb , a large-scale simulation-based dataset of diverse objects in physically stable configurations with interaction annotations. Experiments on synthetic and real-world benchmarks demonstrate improved reconstruction quality and physical consistency, even when interacting regions are occl

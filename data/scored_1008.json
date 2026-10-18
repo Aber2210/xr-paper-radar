@@ -1,0 +1,491 @@
+{
+ "PAPERS": [
+  {
+   "id": "arXiv:2610.07958",
+   "bid": "2610.07958",
+   "title": "DensiTok: Making Feed-Forward 3D Gaussian Splatting See More Views Than It Is Given",
+   "title_zh": "DensiTok：让前馈式 3D 高斯泼溅“看见”比输入更多的视角",
+   "track": "神经渲染",
+   "authors": "Minhyeok Lee; Jungho Lee; Minseok Kang et al.",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 5,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "DensiTok 指出前馈式 3DGS（单前向重建）质量受输入视角数限制，但瓶颈不是像素而是“几何 token”——于是用流匹配（flow-matching）在潜空间直接合成缺失视角的几何 token，而非用扩散模型生成更多像素再重拟合。在 AnySplat 骨架上把被遮挡/未观测视角“补”出来，ETH3D/ScanNet/Mip-NeRF360 上 PSNR 普遍提升约 1–3 dB（ScanNet 双视图 19.60→22.51），且可在单步微调下保持质量、降低推理成本。",
+   "problem": "前馈 3DGS 用网络跨场景训练、单次前向预测高斯；其质量随输入视图数增加而提升，但获取更多视角成本高。现有补救（多视图/视频扩散生成额外输入视图、或修复渲染后再重拟合）要跑大模型 + 二次编码，且像素不是共享 3D 表示、跨视图一致性只能“鼓励”无法“强制”。",
+   "method": "核心洞察——重建只需要缺失视角的几何 token，而非像素。DensiTok 把“几何 token 增强”限制在视角插值（在首末观测相机间插值虚拟相机），用流匹配 DiT 在潜空间预测未观测视图的 token；观测视图走干净分支、未观测走加噪分支，AdaLN 注入噪声水平与相机信息；Gaussian head 再用这些 token 解码高斯。训练用 flow-matching 预训练 + 单步微调，推理时 NFE=1 即可。",
+   "exp": "在 ETH3D、ScanNet、Mip-NeRF360 评测，输入视角 2/3/5/7；+DensiTok 在三数据集 PSNR 普遍 +1~3 dB，ScanNet 增益最大（双视图 19.60→22.51，七视图 23.25→25.20），相机/深度精度同步改善；表 9/10 给出多数据集一致改进与单步微调效果（N=16、NFE=1 即 22.56 PSNR），并在训练集外数据集也受益。",
+   "nov": "把“补视图”从像素空间（扩散生成图像）转到几何 token 潜空间，避免运行大模型与二次几何编码，且 token 是共享 3D 表示、一致性可被强制；与 LoCoSplat 等前馈 3DGS 路线互补（后者加速推理，DensiTok 提升少视图质量）。",
+   "limit": "当前仅做视角插值，不支持超出观测相机区间的外推（extrapolation）；虚拟相机仅在首末观测之间插值；训练依赖 AnySplat 类骨架（LAM-VAE + 相机条件 DiT）。",
+   "lib": "库内前馈 3DGS 线有 LoCoSplat（2610.04351，无 3D 网络极速前向）、PocketSplat（移动端预算重建）、SCION（组合基元）；DensiTok 解决“少视图质量塌陷”这一互补痛点，与 LoCoSplat 的“快”形成“质量 vs 速度”双维度增益，非取代。",
+   "repro": "AnySplat 骨架 + flow-matching；论文含完备实验与消融；倾向代码（以正文/项目页为准）。",
+   "action": "少视图/单目实时重建场景（AR 扫描、移动端）优先关注；与 LoCoSplat/PocketSplat 组合（质量补全 + 部署加速）。"
+  },
+  {
+   "id": "arXiv:2610.07729",
+   "bid": "2610.07729",
+   "title": "Foveated Compression: Selective High-Resolution Preservation for Token-Efficient VLMs",
+   "title_zh": "中央凹压缩：面向 Token 高效 VLM 的选择性高分辨率保留",
+   "track": "渲染与显示",
+   "authors": "Donghyun Han; Jangho Park; Yuseok Bae",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "把人类视觉系统的“中央凹（fovea）”机制引入 VLM 视觉 token 压缩：把每 9 个原生 token 对应的图像区域划分为 9 个粗粒度单元，学一个“中央凹选择器”预测哪个单元值得保留原生分辨率。基于 Qwen2.5-VL-7B，仅用 11.11% 的原生视觉 token 即可保留 86.1% 在原生分辨率下正确的预测；并给出跨 37,610 个样本的分辨率敏感性分析，证明任务对压缩的敏感度差异巨大（ChartQA 38.8% vs POPE 94.3%）。",
+   "problem": "VLM 的视觉 token 是推理成本主要来源，简单下采样仍是很强的基线；但不同任务/区域对高分辨率的敏感度差异显著，均匀下采样会丢失关键信息。",
+   "method": "把图像按原生 token 块划分为 9 个粗单元；Foveated Selector 用原生 token 均值、压缩 token、二者差值、空间位置四类描述子（512 维）经轻量注意力 + 卷积 + MLP 预测每个单元是否需要原生分辨率；推理时仅对选中单元保留高分辨率，其余用压缩 token，做单次 prefill-free 的选择。",
+   "exp": "在 Qwen2.5-VL-7B 上冻结主干训练 merger，在 GQA/TextVQA/DocVQA 等训练后用固定 K=1 选择器标签；评测 GQA/MMBench/MME/POPE/MMStar/OCRBench/ChartQA，几何匹配预处理；统一中央凹压缩用 11.11% token、K=1 用 20.99%；2,000 次配对 bootstrap 量化显著性（如 Foveated Selector − Matched-Budget Downsample −1.378，CI [−2.062,−0.707]）。",
+   "nov": "把“中央凹/注视点”这一 XR 渲染核心概念系统引入 VLM token 效率；给出可学习的单遍选择器与大规模分辨率敏感性诊断（任务级差异）。",
+   "limit": "仅做 3×3 九宫格单元的空间选择，粒度有限；选择器基于冻结主干、未端到端联合优化；结论聚焦 VLM 而非 XR 渲染，但机制可直接迁移到注视点渲染（foveated rendering）省 GPU。",
+   "lib": "库内“渲染与显示”赛道此前全为算法侧渲染（无真正中央凹/注视点渲染论文）；本篇虽是 VLM 应用，但其 foveation 机制与 XR 注视点渲染同源，是库内首次引入“中央凹”概念的工作，对 VR/AR 省算力渲染有直接启发。",
+   "repro": "冻结 Qwen2.5-VL-7B；方法清晰、消融完整；倾向代码（以正文为准）。",
+   "action": "XR 注视点渲染（foveated rendering）方向重点参考；关注“任务自适应分辨率分配”在 AR 实时渲染中的迁移。"
+  },
+  {
+   "id": "arXiv:2610.08179",
+   "bid": "2610.08179",
+   "title": "View Matters: Keyframe-Guided Text-Driven 3D Gaussian Editing",
+   "title_zh": "视角 Matters：关键帧引导的文本驱动 3D 高斯编辑",
+   "track": "内容生成",
+   "authors": "Kaizhe Zhang; Yijie Zhou; Weizhan Zhang et al.",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3.5,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "文本驱动 3DGS 编辑常被忽视“哪些视图更可靠”——不同视角提供的几何/语义/编辑证据差异巨大。View Matters 用 KIE（关键帧重要性估计）选出可靠视图，KGE（关键帧引导编辑）把编辑信号从关键帧传到非关键帧（避免噪声反向影响），IAO（重要性感知优化）在 3DGS 优化中保持同一可靠性偏好。默认 4 关键帧在 T-I/Dir 指标上最佳且几乎不增加开销。",
+   "problem": "现有文本驱动 3D 编辑要么对称交互、要么均匀监督，导致不可靠视图拖累可靠视图，最终编辑虽跨视图一致但弱于/偏离指令。",
+   "method": "KIE 判定哪些视图对请求编辑提供可靠证据；KGE 把可靠关键帧的编辑信号传播到非关键帧而不引入噪声反向影响；IAO 在 3DGS 优化阶段保持可靠性偏好，防止可靠监督被稀释。共享关键帧引导 + 局部传播维持跨视图一致性。",
+   "exp": "8 场景、23 个场景-提示对（身份/材质/外观/风格/颜色变换）；关键帧数消融（2/4/5/10），4 关键帧在 T-I/Dir 最佳且训练时间/显存几乎不变（如 4 关键帧 Training Time 266.04s vs 2 关键帧 263.46s）；与无公开实现的近期方法做定性对比；覆盖人物/物体/完整场景的泛化示例。",
+   "nov": "显式“关键帧可靠性引导”的 3DGS 编辑范式，把“选哪些视图编辑”从启发式变成可学习的可靠性估计，并贯穿编辑与优化两阶段。",
+   "limit": "指标以 CLIP T-I/Dir 为主（语义一致性），缺少更细的几何/量化基线；依赖 20 个编辑视图；与无公开实现的 SOTA 仅做定性对比。",
+   "lib": "库内 3DGS 编辑方向稀缺（10-07 报告含 ChromaGS/ManifoldSplat 为化身编辑，本批另含通用场景编辑）；与库内“高斯编辑”线互补（颜色/形状/通用语义三类）。",
+   "repro": "项目页/代码（以正文为准）；20 视图编辑设置清晰。",
+   "action": "XR 内容创作（3D 资产编辑）方向重点；关注与高斯化身编辑合并为统一编辑框架。"
+  },
+  {
+   "id": "arXiv:2610.07795",
+   "bid": "2610.07795",
+   "title": "Efficient Gaussian Splatting Sequence Compression with Standard Video Codecs",
+   "title_zh": "基于标准视频编解码的高效高斯泼溅序列压缩（GSCV）",
+   "track": "神经渲染",
+   "authors": "Qi Yang; Shuting Xia; Le Yang et al.",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "one": "提出 GSCV——用标准视频编解码器（HEVC）压缩动态/多帧 3DGS 序列。核心 Inter-PLAS：通过“原语排列（permutation）”建立帧间原语一一对应，使同一组高斯基元可当作视频帧送入现成视频编码器。在 MPEG GS 压缩工作组权威数据集（bartender/cinema/breakfast）上，RD 曲线明显优于工作组锚点 GSCodec Studio 与 GPCC v1。",
+   "problem": "3DGS 序列（动态场景/体积视频）体量巨大，XR 流式传输需要高效压缩；现有方法多依赖专用 3DGS 压缩网络，未充分利用成熟、硬件加速的标准视频编解码器。",
+   "method": "Inter-PLAS（帧间 PLAS）对每帧 GS 做块内像素排列以匹配参考帧的平滑图像，从而把逐帧 GS 的“属性图”对齐成可视频编码的帧序列；用 LightGaussian 剪枝保证同 GoP 内帧原语数一致；标准 HEVC 编码。",
+   "exp": "MPEG 工作组三个 GS 序列（32 帧、取首 8 帧为 1 GoP），含 tracked 与 semi-tracked 两种；对比 GSCodec Studio 与 GPCC v1（MPEG 锚点）；给出 R5/R3/R1 多码率快照（如 bartender R5 17.6MB/44.9PSNR、R1 4.0MB/28.7PSNR）与 RD 曲线；额外 dance/basketball 序列验证。",
+   "nov": "用“原语排列”桥接 3DGS 与标准视频编解码，工程上可借力硬件加速的 HEVC，无需训练专用压缩网络；对接 MPEG 标准化语境。",
+   "limit": "需帧间原语对应（依赖 tracked/semi-tracked 设定与剪枝对齐）；排列搜索为分组 4! 枚举，尺度受限；主投 MPEG 会议，公开代码/泛化性待确认。",
+   "lib": "库内 3DGS 压缩密集（COSA-GS/MoQSplat/TopoGS/Budgeted-GS/PocketSplat 等），但均为“静态场景单模型压缩/抽象”；本篇是首个对接标准视频编解码做“动态序列”压缩、且进 MPEG 工作组的，补“流式动态 3DGS”缺口，与静态压缩互补。",
+   "repro": "MPEG 数据集公开；方法基于 PLAS/HEVC，工程可复现；代码以正文为准。",
+   "action": "XR 体积视频/动态场景流式传输重点；关注与静态 3DGS 压缩组合（先压缩单帧再序列编码）。"
+  },
+  {
+   "id": "arXiv:2610.07477",
+   "bid": "2610.07477",
+   "title": "MRPilot: Supervising and Intervening LLM-Based Multi-Robot Teams through Mixed Reality",
+   "title_zh": "MRPilot：通过混合现实监督与介入 LLM 驱动的多机器人团队",
+   "track": "空间计算与UI",
+   "authors": "Xiaoran Yang; Xun Qian; Yang Zhan et al.",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3.5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3.5,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "MRPilot 是一套通过混合现实（MR）界面监督与介入 LLM 驱动的多机器人团队的框架，归纳出 8 类干预类型（信息澄清/计划优化/授权访问/失败恢复/能力缺口协助等）。用户研究（含配对统计）显示，MRPilot 在 7 类干预事件的完成时间上短于基线，系统支持的交互型任务完成最快。",
+   "problem": "用 LLM 以自然语言指挥异构多机器人系统（MRS）时，任务解释、机器人分配、协同困难；人类需要可干预的监督手段。",
+   "method": "MRPilot 把 LLM 规划/执行与 MR 可视化结合，把干预事件形式化为 8 类（T1–T8），支持人类在任务执行中澄清、重规划、授权、失败恢复、能力缺口协助等；MR 界面提供情境化的任务/机器人状态与干预入口。",
+   "exp": "用户研究，9 类干预事件；用 Shapiro–Wilk 检验正态性后，正态数据报均值±SD + 配对 t 检验，非正态报中位数±IQR + Wilcoxon；MRPilot 在 7 类干预完成时间上显著短于基线（如信息澄清 Mdn 102.24→67.49，W=23, p<.01, r=-0.78）。",
+   "nov": "把 MR 作为 LLM-MRS 的“可变自主性（variable autonomy）”干预层，并系统化干预类型学；实用 HCI 贡献。",
+   "limit": "以用户研究为主，缺乏大规模/真实部署；MR 界面的认知负荷与长时可用性的量化有限；依赖具体 LLM-MRS 栈。",
+   "lib": "库内“空间计算与UI”赛道有 MR/AR 工具（reVISit-XR、MR game analytics、VR relax），但无“MR + 多机器人监督”交叉；本篇补“MR 用于人机团队指挥”缺口。",
+   "repro": "用户研究设计清晰、统计完整；无代码（HCI 系统论文）。",
+   "action": "XR 用于人机协作/指挥控制方向参考；关注与 AR 远程协作结合。"
+  },
+  {
+   "id": "arXiv:2610.07569",
+   "bid": "2610.07569",
+   "title": "OpenSplatGraph: From Dense Semantic Maps to Structured Scene Graphs for Open-Vocabulary Robot Perception",
+   "title_zh": "OpenSplatGraph：从稠密语义地图到结构化场景图的开词汇机器人感知",
+   "track": "感知与认知",
+   "authors": "Binh Long Nguyen; Kien Nguyen; Clinton Fookes et al.",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "OpenSplatGraph 在在线（online）开放词汇 3D 语义建图过程中，同时维护“稠密语义场”与“持久 3D 场景图”：稠密场提供几何/语义基础，场景图增量累积物体级知识。在 ScanNet/Replica 上 mIoU 显著超过 ConceptFusion/OpenGS-Fusion（36.75 vs 27.09），并含真实机器人演示视频。",
+   "problem": "开放词汇 3D 感知多在 2D 用 VLM 推断物体关系，场景图弱接地于稠密 3D 几何；现有方法把稠密地图与场景图当作互斥的世界模型。",
+   "method": "统一框架在线联合维护稠密开放词汇语义场 + 持久 3D 场景图；语义场用“可靠性感知建模”（按投影协方差 + 像素贡献加权）做实例提取；场景图按需从查询分组空间/语义一致区域，关联持久节点并累积语义与关系；逐步加持久身份、场景图推理。",
+   "exp": "ScanNet/Replica（映射到 ScanNet20/NYUv2-40）；对比 LangSplat/OpenGaussian/InstanceGaussian（离线）与 ConceptFusion/OpenGS-Fusion（在线），mIoU/mAcc 领先在线方法；渐进消融（基线 30.97 → +可靠性 36.06 → +持久关联 R@1 0.36 → +场景图 R@1 0.50）；真实世界演示。",
+   "nov": "把稠密语义场与场景图在在线操作中显式双维护，而非二选一；可靠性感知语义场提升实例一致性。",
+   "limit": "物体提取为查询条件式、不维护查询无关的完整物体清单；关联依赖轻量语义/几何线索，密集/大视角变化场景可靠性下降；开放关系靠外部 VLM，有计算开销。",
+   "lib": "库内语义 3DGS/场景理解有 Post-Training Semantic Lifting（2610.08756，本批）、GS-Pool（2610.06688，物体级变化检测）、OpenGaussian 类；OpenSplatGraph 补“在线 + 场景图”方向，与离线语义提升互补。",
+   "repro": "ScanNet/Replica 基准 + 真实演示；倾向代码（以正文为准）。",
+   "action": "AR/机器人语义感知与“物体级推理”方向重点；关注与导航/操作闭环结合。"
+  },
+  {
+   "id": "arXiv:2610.08756",
+   "bid": "2610.08756",
+   "title": "Post-Training Semantic Lifting for 3D Gaussian Splatting: Separating Detector, Lifting and Representation",
+   "title_zh": "3D 高斯泼溅的训练后语义提升：解耦检测器、提升与表示",
+   "track": "感知与认知",
+   "authors": "Iván Verdugo Guerra; Ezequiel López Rubio; Jorge García González",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "训练后语义提升（post-training semantic lifting）把“2D 检测器预测 → 3D 表示”解耦为三部分：检测器（2D）、提升（跨视图聚合）、表示（3DGS 内语义分配），并证明三者应分离。用投影高斯协方差 + 像素贡献作为聚合权重，在 Replica/ScanNet++ 上把椅/桌/电视等类别 IoU 从 YOLO 参考的 0.44–0.76 提升到 0.91–0.98（Replica office_1 0.95 vs 0.44）。",
+   "problem": "同一 3DGS 高斯的多个视图对其语义类别常不一致（遮挡/分歧），传统“训练时联合学语义”或“2D 预测直接投影”都难处理视图矛盾。",
+   "method": "把语义提升拆为独立三阶段——检测器（任意 2D 模型，如 YOLO）、提升（用投影协方差与像素贡献加权的跨视图聚合，而非贝叶斯更新）、表示（在 3DGS 优化后给高斯分配语义）；引入“证据分数”与阈值、混合连通性、投票回退等后处理。",
+   "exp": "Replica 与 ScanNet++（YOLO 检测器）；逐类 IoU 与逐场景 mIoU（Nearest Gaussian / Radius vote 两种算子）；office_1..4、room_0..2、ScanNet++ 多场景；验证集调 β（hysteresis）等超参；在 Picasso 超算上运行。",
+   "nov": "形式化“检测器/提升/表示”解耦，证明训练期联合语义并非必须；用高斯投影权重（而非均匀/贝叶斯）做聚合，减少视图分歧误差。",
+   "limit": "依赖外部 2D 检测器质量；未与已发表基线在同一设定下直接数值对比（作者自述第 7 节数字不含公开基线对比）；参数（阈值/β）需验证集调。",
+   "lib": "库内 3DGS 语义方向有 OpenSplatGraph（2610.07569，在线场景图）、GS-Pool（物体级变化检测）、SAM3+语义高斯；本篇提供“训练后、解耦式”语义提升的通用框架，与训练期联合语义（Semantic-NeRF/语言特征高斯）互补。",
+   "repro": "Replica/ScanNet++ 公开；方法清晰；代码以正文为准。",
+   "action": "已建 3DGS 资产的语义标注/检索方向重点；关注与 OpenSplatGraph 的“后处理语义”组合。"
+  },
+  {
+   "id": "arXiv:2610.08726",
+   "bid": "2610.08726",
+   "title": "EgoLAP: Learning from Egocentric Human Data through Language-Action Reasoning",
+   "title_zh": "EgoLAP：通过语言-动作推理从第一视角人类数据学习",
+   "track": "感知与认知",
+   "authors": "Lihan Zha; Shresth Grover; Tenny Yin et al.",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "EgoLAP 是一个 VLA 预训练框架，把大规模第一视角人类运动知识迁移到机器人操作：把人手套/机器人末端轨迹映射到同一“语言化动作”接口，用 Mixture-of-Transformers（PaliGemma-2B + 300M 动作专家）做动作专家与 VLM 主干的知识绝缘。关键实验：若在人类样本上遮蔽动作专家损失，整体成功率掉 4.4 分（语言条件任务从 26% 跌到 10%），证明人类运动数据对动作专家同样有用。",
+   "problem": "第一视角人类数据丰富但具身鸿沟使原始轨迹对机器人监督差；需要可跨具身迁移的中间表示。",
+   "method": "把人类/机器人样本统一到语言化动作接口（离散动作 token 目标）；MoT 架构（VLM 主干 + 从零初始化的动作专家），结构化注意力使动作专家不依赖文本生成、推理无需生成语言；训练目标用流匹配损失同时监督人类与机器人动作块；“知识绝缘”阻断动作专家梯度进入 VLM。",
+   "exp": "双手机仿真基准（14 任务，每 checkpoint 1400 episode）+ 真实 YAM 双手机平台（5 任务，Realsense 基/腕相机）；消融“是否遮蔽人类动作损失”（遮蔽掉 4.4 分，语言条件任务 26%→10%）；数据混合、FAST/OAT 动作表示对比。",
+   "nov": "语言-动作推理接口实现跨具身迁移；动作专家与 VLM 知识绝缘的设计；并实证“人类运动数据对动作专家亦有增益”而非仅语言监督。",
+   "limit": "仍依赖第一视角数据质量；仿真→真实 Gap 未充分量化；主要针对操作，未覆盖导航等更广泛具身任务。",
+   "lib": "库内第一视角/具身方向有 WING（2610.03607，egocentric→机器人策略）、Ego2World（2610.02715，可执行世界）、MacJEPA（2610.08192，本批 egocentric AV）；EgoLAP 补“人类第一视角 → VLA 跨具身预训练”缺口，与 WING 的“跨具身低频对齐”互补。",
+   "repro": "仿真 14 任务 + 真实 5 任务；倾向代码（以正文为准）。",
+   "action": "数据高效机器人学习/遥操作方向重点；关注与 XR 第一视角采集（眼镜）结合做人类示范。"
+  },
+  {
+   "id": "arXiv:2610.06970",
+   "bid": "2610.06970",
+   "title": "EVFormer: An Egocentric Vision-EMG Bidirectional Attention Model for Bimanual Hand Pose Estimation",
+   "title_zh": "EVFormer：面向双手手姿估计的自我中心视觉-肌电双向注意力模型",
+   "track": "交互与输入",
+   "authors": "JiaCheng Ge; SiYu Zhang; ShengJie Li et al.",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "EVFormer 用第一视角视觉 + 表面肌电（EMG）的双向注意力估计双手手姿，面向虚拟现实交互、可穿戴控制与康复。其融合视觉（易受自遮挡退化）与 EMG（不受遮挡但噪声大）互补，试图提升手姿估计的鲁棒性。【全文抓取不完整（ar5iv 仅返回参考文献，约 5,120 字），以下基于摘要与标题评估，方法/实验细节未在正文核实。】",
+   "problem": "第一视角双手手姿估计对 VR 交互/可穿戴控制很关键，但视觉观测常因自遮挡、手-物交互而退化。",
+   "method": "（摘要级）双向注意力融合第一视角视觉特征与 EMG 信号，互补遮挡与噪声；具体架构细节未在可获取正文中核实。",
+   "exp": "（摘要级）面向虚拟交互、可穿戴控制、康复；具体数据集/指标未在可获取正文中核实，须以原文为准。",
+   "nov": "视觉 + EMG 双向注意力用于双手手姿，EMG 作为不受视觉遮挡影响的补充模态，对 XR 输入有启发。",
+   "limit": "全文经 ar5iv 降级仅含参考文献（约 5,120 字符），正文方法/实验无法核实；评分偏向摘要，待原文/代码放出后复核。证据等级 PARTIAL。",
+   "lib": "库内“交互与输入”赛道有 EVFormer 类第一视角手姿/手势（ViMoWear 2610 期 sEMG-IMU 手势、EVFormer 视觉-EMG）；与库内手势/手姿线互补（多模态融合输入方向）。",
+   "repro": "以原文/代码为准（当前不可核实）。",
+   "action": "XR 手姿/手势输入方向关注；待全文放出后复核 EMG 融合的具体增益与数据集。"
+  },
+  {
+   "id": "arXiv:2610.08305",
+   "bid": "2610.08305",
+   "title": "Hugging Suit: Pneumatically-Actuated System Design for Remote Haptic Experiences",
+   "title_zh": "Hugging Suit：面向远程触觉体验的气动驱动系统设计",
+   "track": "触觉与多模态",
+   "authors": "Luke Hespanhol et al. (首位作者名解析异常，以 arXiv 为准)",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "one": "Hugging Suit 是一套气动驱动的可穿戴系统，通过模块化、贴合身体的触觉作动模拟“远程拥抱”，用 Research-through-Design（RtD）方法开发。两项探索性用户研究中，>90% 参与者明确感受到触觉反馈，但仅 44.1% 认为像真实拥抱；局限来自覆盖不足、缺温度、不够柔软。",
+   "problem": "远程情感沟通缺乏触觉通道；视频通话维持视觉/听觉但无法传递身体接触。",
+   "method": "气动驱动可穿戴（Air Actuator Matrix 气动作动矩阵 + 纺织压力传感垫），模块化服装式设计；通过 RtD 迭代设计，分阶段评估触觉表现力与情境响应。",
+   "exp": "两项探索性研究，功能原型在布置环境中交互；收集舒适度、感知真实感、情感影响的主观反馈；参与者偏好低光私密环境、可见视频通话对方时情感共鸣更强；部分报告摘下后残留触觉感。",
+   "nov": "把“远程拥抱”作为气动可穿戴系统设计问题，模块化服装式支持后续改进；情境因素（私密/可见对方）对情感共鸣的影响。",
+   "limit": "仍为早期探索，真实感有限（44% 像真拥抱）；覆盖/温度/柔软度不足；无量化绩效基线，n 小、主观为主。",
+   "lib": "库内“触觉与多模态”赛道有 SEA-LM（空间音频）、Teleoperation 触觉遥操作类；Hugging Suit 补“情感触觉/远程存在”方向，与远程触觉遥操作互补。",
+   "repro": "RtD 原型 + 探索性研究；无代码（HCI 设计论文）。",
+   "action": "VR/远程存在/情感触觉方向参考；关注真实感提升（温度/柔软度）与量化评估。"
+  }
+ ],
+ "REF": [
+  [
+   "2610.07958",
+   "DensiTok：让前馈式 3DGS 看见更多视角",
+   "神经渲染",
+   {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 5,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.07729",
+   "中央凹压缩：面向 Token 高效 VLM 的选择性高分辨率保留",
+   "渲染与显示",
+   {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.08179",
+   "视角 Matters：关键帧引导的文本驱动 3DGS 编辑",
+   "内容生成",
+   {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3.5,
+    "TRL": 3,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.07795",
+   "基于标准视频编解码的高效 3DGS 序列压缩（GSCV）",
+   "神经渲染",
+   {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.07477",
+   "MRPilot：通过 MR 监督与介入 LLM 多机器人团队",
+   "空间计算与UI",
+   {
+    "IMP": 4,
+    "NOV": 3.5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3.5,
+    "TRL": 3,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.07569",
+   "OpenSplatGraph：稠密语义地图到结构化场景图",
+   "感知与认知",
+   {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.08756",
+   "3DGS 的训练后语义提升：解耦检测器/提升/表示",
+   "感知与认知",
+   {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "A"
+  ],
+  [
+   "2610.08726",
+   "EgoLAP：通过语言-动作推理从第一视角人类数据学习",
+   "感知与认知",
+   {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.06970",
+   "EVFormer：视觉-EMG 双向注意力的双手手姿估计",
+   "交互与输入",
+   {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.08305",
+   "Hugging Suit：远程触觉体验的气动驱动系统",
+   "触觉与多模态",
+   {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.08192",
+   "MacJEPA：去缺失鲁棒的音视自我中心识别",
+   "感知与认知",
+   {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.07507",
+   "声音型 VR 放松中血压与自评压力的关系",
+   "空间计算与UI",
+   {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.08339",
+   "数字孪生驱动的 Real2Sim2Real 仿真条件生成",
+   "内容生成",
+   {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.08619",
+   "空间无关的自适应空间重建 MR 游戏分析工具",
+   "空间计算与UI",
+   {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ],
+  [
+   "2610.08700",
+   "reVISit-XR：可嵌入/可追踪/可回放的 XR 可视化",
+   "空间计算与UI",
+   {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 3
+   },
+   "B"
+  ]
+ ]
+}

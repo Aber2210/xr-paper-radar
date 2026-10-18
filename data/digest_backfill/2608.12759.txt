@@ -1,0 +1,92 @@
+# 2608.12759  [空间计算与UI]
+
+## Abstract
+.
+
+## Introduction
+
+
+## Methods
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+## Model
+mAP50
+mAP75
+mAP
+YOLO11l-seg (baseline)
+0.256
+0.129
+0.136
+YOLO11l-seg-outdoor
+0.588
+0.305
+0.318
+Table 1 . Recognition accuracy of the fine-tuned and baseline models. The fine-tuned model outperformed the baseline YOLO11l-seg model on all three metrics in recognizing important outdoor objects for PLV. This table compares the recognition accuracy between the baseline YOLO11l-seg model, pre-trained on MS-COCO without fine-tuning, and the fine-tuned model. This table reports three metrics: mAP50 and mAP75 (mean average precision at intersection-over-union (IoU) thresholds of 50\% and 75\%) and mAP (averaged over IoU thresholds from 50\% to 95\% in 5\% steps). The fine-tuned model scores higher than the baseline on all three metrics.
+Prototype Implementation
+We implemented NavSight on iOS because iOS devices are most accessible and most widely used by BLV people ( Griffin-Shirley et al., 2017 ) .
+We used Unity 2022.3.20f1 for video capture, interface, and augmentation rendering, and Apple’s Core ML ( Apple Inc., 2025 ) for on-device object inference. From the video stream, NavSight captures the video frame, detects objects with our fine-tuned model, and renders the selected augmentations in Unity.
+NavSight will be open-sourced upon publication.
+We added a screenshot feature to enable participants in the diary study (Section  4 ) to report usage scenarios conveniently. Participants ca …[截断]
+
+## Conclusion
+References
+A Per-class Accuracy
+License: CC BY 4.0
+arXiv:2608.12759v2 [cs.HC] 19 Aug 2026
+NavSight in the Wild: Understanding Real-World Use of a Mobile Augmented Reality Application for People with Low Vision in Outdoor Navigation
+DOI:  XXXXXXX.XXXXXXX ISBN:  978-1-4503-XXXX-X/18/06 CCS:  Human-centered computing Empirical studies in accessibility CCS:  Human-centered computing Accessibility systems and tools
+Yuheng Wu
+Affiliation:  Department of Computer Sciences , University of Wisconsin-Madison , Madison , WI , USA
+email: yuheng.wu@wisc.edu
+,
+Kexin Zhang
+Affiliation:  Department of Computer Sciences , University of Wisconsin-Madison , Madison , WI , USA
+email: kzhang284@wisc.edu
+,
+Ben Kosa
+Affiliation:  Department of Computer Sciences , University of Wisconsin-Madison , Madison , Wisconsin , USA
+email: bkosa@cs.wisc.edu
+,
+Ru Wang
+Affiliation:  Department of Computer Sciences , University of Wisconsin-Madison , Madison , Wisconsin , USA
+email: ru.wang@wisc.edu
+,
+Sanbrita Mondal
+Affiliation:  School of Medicine and Public Health , University of Wisconsin-Madison , Madison , WI , USA
+email: smondal4@wisc.edu
+and
+Yuhang Zhao
+Affiliation:  Department of Computer Sciences , University of Wisconsin-Madison , Madison , WI , USA
+email: yuhang.zhao@cs.wisc.edu
+© cc
+
+## Limitations
+and Future Directions

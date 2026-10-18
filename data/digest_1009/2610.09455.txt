@@ -1,0 +1,99 @@
+【摘要】
+
+【方法】
+3.1 Clean-Latent Video Diffusion Encoder
+3.2 Pose Expert Stream
+Shape conditioning.
+Constrained pose parameterization.
+Output Heads.
+3.3 Tactile Expert Stream
+Bone tokens.
+LBS-based vertex readout.
+3.4 Training Given a monocular video, RLHND estimates both hand pose and tactile signals.
+The video is processed as a sequence of W W clips 𝒞 1 , … , 𝒞 W \mathcal{C}_{1},\dots,\mathcal{C}_{W} , each holding T T consecutive frames 𝒞 w = ( 𝐈 t ) t = 1 T \mathcal{C}_{w}=(\mathbf{I}_{t})_{t=1}^{T} .
+The pose output consists of MANO  ( Romero et al., 2017 ) parameters, i.e . , shape 𝜷 ^ w ∈ ℝ 10 \hat{\bm{\beta}}^{w}\in\mathbb{R}^{10} and anatomically constrained articulation 𝜽 ^ t \hat{\bm{\theta}}_{t} with the global wrist rotation, along with metric camera-space translation 𝝉 ^ t ∈ ℝ 3 \hat{\bm{\tau}}_{t}\in\mathbb{R}^{3} and per-frame hand presence and visibility.
+The tactile output consists of per-vertex tactile signals: contact probability 𝐜 ^ t ∈ [ 0 , 1 ] | V | \hat{\mathbf{c}}_{t}\in[0,1]^{|V|} and force 𝐟 ^ t ∈ ℝ ≥ 0 | V | \hat{\mathbf{f}}_{t}\in\mathbb{R}_{\geq 0}^{|V|} , where | V | = 778 |V|=778 is the number of MANO vertices.
+The RLHND architecture consists of three parts:
+the clean-latent encoder converts a pre-trained video-diffusion backbone into a deterministic video feature extractor,
+the pose expert stream predicts pose, shape, and translation in MANO parameter form from the video features,
+and the tactile expert stream estimates contact and force from the same video features with its own weights, trained with the pose stream frozen, thereby decoupling tactile prediction from pose prediction.
+Figure  2 illustrates the overall process of the proposed method.
+Figure 2: RLHND overview.
+A pre-trained Cosmos 3 backbone receives the clip through its conditioning-frame interface and is adapted with a trainable patch embedding and LoRA adapters.
+The pose expert stream, trained in stage-1, yields MANO parameters and a metric camera-space translation
+while the tactile expert stream is trained in stage-2 with the pose stream frozen.
+3.1 Clean-Latent Video Diffusion Encoder
+Since video diffusion models are known to internalize strong priors over hand motion and object interactions  ( Wang et al., 2026 ) , we use the pre-trained encoder of Cosmos 3  ( NVIDIA, 2026 ) .
+Its video tokenizer, i.e . , Wan2.2 VAE  ( Wan Team, 2025 ) , encodes each clip into a clean latent 𝐳 = ℰ VAE ​ ( 𝒞 w ) \mathbf{z}=\mathcal{E}_{\mathrm{VAE}}(\mathcal{C}_{w}) .
+We fine-tune the patch embedding and generation pathway with LoRA  ( Hu et al., 2022 ) , yielding a deterministic spatiotemporal feature grid 𝐅 ∈ ℝ T ′ × h × w × D f \mathbf{F}\in\mathbb{R}^{T^{\prime}\times h\times w\times D_{f}} .
+Our use of the pre-trained VAE differs from prior work  ( Wang et al., 2026 ; Liu et al., 2026 ) , which feeds clean videos to Wan2.2 through its denoising interface by setting the out-of-distribution noise level σ = 0 \sigma=0 .
+Instead, we use the conditioning interface of Cosmos 3 for clean context frames, keeping our input scheme aligned with pre-training.
+We also feed an empty prompt, since the video stream is already conditioned on the clean frames, whereas Liu et al. (2026) 
+
+【实验】
+Setup.
+4.1 Hand Pose Estimation
+4.2 Tactile Estimation
+4.3 Effectiveness on Robot Learning
+Real-robot experiments.
+Retargeting to robot hands.
+4.4 Ablation Studies Figure 3:
+Qualitative comparison of hand motion reconstruction.
+We visualize the reconstruction results from HOT3D (top), ARCTIC (middle), and EgoDex (bottom), with mesh overlays and trajectory visualizations.
+Extensive visualization results can be found on the project page.
+Figure 4:
+Qualitative comparison of contact and force estimation.
+We visualize the contact (left) and force (right) estimation from OpenTouch (first to third row) and PVDB (fourth row).
+Setup.
+Stage-1 is trained on a weighted mixture of egocentric and exocentric hand-video datasets, and stage-2 on force-labeled glove and pressure-pad recordings together with contact-only labels derived from hand–object meshes, which supervise only the contact head. The datasets and label generation are described in Appendix  A.2 , the schedules and hyperparameters in Appendix  A.5 , and the metrics in Appendix  A.4 .
+Motion reconstruction is evaluated on the held-out HOT3D and ARCTIC egocentric splits and, zero-shot for our method and every baseline, on EgoDex; tactile estimation on the OpenTouch and PressureVisionDB (PVDB) test splits of HOPE  ( Jeon et al., 2026 ) and, for contact only, on HOT3D, DexYCB, and ARCTIC with mesh-derived contact labels.
+All baselines use their official weights and inference code.
+4.1 Hand Pose Estimation
+Test set are shown for three human : robot ratios; only the 100 : 100 policies are deployed in Table  4 .
+Gray denotes DPP with its original human labels and teal denotes DPP + RLHND.
+Figure 12:
+Wrist depth of the human hand labels against the stereo depth.
+The top two rows show the right-wrist depth over one demonstration each of the plastic-bag and tissue tasks, for the stereo target , raw HaWoR , and raw RLHND , before the per-frame alignment.
+The bottom row shows the per-episode median absolute deviation from the stereo target over all 200 200 demonstrations, for both trackers before and after the alignment.
+Rollouts.
+Figure  10 shows one rollout of the DPP + RLHND policy per task of Table  4 . The pick-and-place rollouts share the same approach, grasp, lift, carry and release structure and differ only in the object; in the plastic-bag task the left hand picks up and flips the bag before handing it to the right hand, and in the tissue task the left hand removes the used core before the right hand places the new roll.
+Depth of the human hand labels.
+Figure  12 compares the wrist depth of the two trackers with the stereo depth that the DPP pipeline aligns them to.
+Even before the alignment, RLHND already follows the stereo trajectory closely.
+Over the 200 200 demonstrations, its right-wrist depth deviates from the stereo target by a median of 2.3 2.3 cm, which is 17.8% lower than HaWoR’s.
+In both cases the deviation is dominated by a constant offset, with a median bias of + 2.2 +2.2 cm for RLHND and
+
+【结论/局限】
+References
+A Implementation Details
+A.1 𝜷 \bm{\beta} -cache Inference Procedure
+A.2 Pseudo-Label Generation
+Pose label conversion.
+Contact label extraction.
+Force label extraction.
+A.3 Ray-Based Camera Solver
+A.4 Objective Function and Evaluation Metrics
+Rotations and shape.
+3D joints.
+2D terms.
+Translation, presence, smoothness, rays.
+Detection gate.
+F Acc .
+MPJPE-p and PA-p.
+EPE2D-p.
+MPJPE +OOS .
+Jitter.
+Shape jitter.
+Contact F1 and AUROC.
+Force MAE and RMSE.
+Tactile ground truth and evaluation protocol.
+Q-err.
+Jerk.
+A.5 Training and Evaluation
+Training. We presented RLHND, a physically grounded hand tracker built on a pre-trained video foundation model for robot learning.
+It achieves state-of-the-art motion reconstruction and tactile estimation, produces smooth retargeted commands across five dexterous hands, and lets Dexterous Point Policy outperform its original tracker without manual annotation.
+Reproducibility Statement
+The architecture and training procedure are specified in Section  3.1 – 3.4 , with implementation details, label construction, losses, evaluation metrics, training schedules, and baseline protocols provided in Appendix  A .
+All training and evaluation data come from publicly available datasets, and the retargeting solver and its settings are described in Section  4.3 .
+We will release the implementation of RLHND, along with the pre-trained weights.
+Ethics

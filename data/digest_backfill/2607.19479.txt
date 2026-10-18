@@ -1,0 +1,71 @@
+# 2607.19479  [交互与输入]
+
+## Abstract
+
+
+## Introduction
+
+
+## Method
+III-A ModPack Core
+III-B Extensible Modules
+III-B 1 Leader Arms
+III-B 2 Mobile Base
+III-B 3 Active Perception
+III-C Policy Learning
+
+## Methods
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+## Experiments
+IV-A Cloth Placement with Active Perception
+IV-B Box Transfer with Haptic Feedback
+IV-C Comparison to alternative data collection method
+V CONCLUSION
+VI AI ACKNOWLEDGMENT
+References
+License: CC BY 4.0
+arXiv:2607.19479v2 [cs.RO] 07 Oct 2026
+ModPack:
+Extensible Teleoperation Interface for Bimanual Mobile Manipulation
+Joshua Citron
+Renee Zbizika
+Zeyi Liu
+Shuran Song
+Affiliation:
+Stanford University
+Affiliation:  modpack-robotics.github.io
+
+## Results
+.
+We evaluate the task across scenarios with varying basket locations (left, right) and cloth colors (blue, pink). We compare three policies with different visual observation modalities: head camera only [Head Cam], wrist cameras only [Wrist Cam], and all cameras (head + both wrist cameras) [All Cam]. For each policy, we perform 25 rollouts with randomized cloth initial positions.
+Quantitative results are shown in Figure   5 c). [Head Cam] policy achieves the highest success rate, succeeding in 22/25 rollouts. [All Cam] policy succeeds in 20/25 rollouts, while [Wrist Cam] policy succeeds on only 3/25 rollouts. We hypothesize that the head camera performs best because the cloth admits many viable grasps, reducing the need for close-up wrist observations, while the head camera provides depth and a broader egocentric view for grasping and basket localization. Moreover, using only the head camera avoids potential out of distribution wrist camera observations caused by variations in wrist pose and cloth deformation. In contrast, [Wrist Cam] most often fails due to placement errors, as the policy lacks sufficient context of the basket location. Figure  5 d) shows a common failure mode for the [Wrist Cam] policy, which often dropped the cloth on the edge or out of the basket.
+Fig. 6: Summary of Box Transfer task. a) The robot picks up a box, rotates to observe the existing box on the  …[截断]

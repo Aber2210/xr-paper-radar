@@ -1,0 +1,47 @@
+【摘要】
+
+【方法】
+3.1 Data Acquisition
+3.2 Synchronization
+3.3 Facial Expression Encoding
+3.4 Predicting Expressions from HD-sEMG
+3.5 Correcting Eyelid Intersections 3.1 Data Acquisition
+(a)
+(b)
+(c)
+Figure 2: Synchronization and segmentation. (a) Tones detected in the audio track of the video. Top: the three tones that mark one trial. Below: each onset at millisecond scale, showing the raw audio sampled at 44.1 KHz, a band-passed copy (gray), and the detected onset (dashed). Note that the first cycle has some artifacts, likely due to the camera’s gain control hardware, but our method is immune to such artifacts. (b) The same tones recorded on an auxiliary channel of the EMG amplifier, sampled at 2048 Hz. (c) One recording of eight expressions, preceded by saccade trials marked by start tones only: tone envelopes in the camera audio (top) and in the EMG channel (bottom), and the timeline of events recovered from them (middle). Note that the detected onset marks the same phase of the first cycle in both recordings, so any fixed bias cancels in the offset between the two clocks.
+We developed a capture facility to record facial muscle activity and the resulting facial movements simultaneously, while the participant’s torso movement is restrained to keep the head in the camera’s field of view. Figure  1 a shows the capture setup.
+Participants.
+We report results from 25 participants, ages 19-70. All participants gave written informed consent. The protocol was approved by the University of British Columbia’s Behavioral Research Ethics Board, in advance. Each session took about 60 minutes.
+Surface EMG.
+We recorded facial muscle activity with two 32-channel textile HD-EMG electrode grids (TMSi), one on the forehead, which is typically occluded by an HMD, and one on the upper right cheek (Figure  1 b). To reduce skin-to-electrode impedance, the skin was first prepared with a mildly abrasive gel (Nuprep) and cleaned with an alcohol swab. The electrodes were then filled with conductive gel (ECI Electro-Gel), and a disposable ground electrode was placed over the right mastoid process. The grids were connected to an ANT Neuro amplifier (Refa Ext) by shielded leads. A strap around the forehead (Artinis HD-EMG Mini Cradle Strap) holds the leads in place, and the leads were taped to the participant for strain relief, to reduce movement artifacts. The signals were digitized at 2048 Hz.
+Video.
+The face was recorded by a front-facing camera (Sony DSC-RX0M2, 3840x2160 pixels at 29.97 fps), mounted on a rigid aluminum frame (item Industrietechnik). The participant sat in a chair with seat belts to stabilize the torso.
+Protocol.
+Instructions for each task were shown on the monitor, with auditory cues marking preparation, movement onset, and rest. The tasks included targeted facial movements (e.g., raising and furrowing the eyebrows, blinking, and smiling) and counting to five. Each movement was repeated up to eight times, as naturally and consistently as possible. To minimize fatigue, participants rested for about 5 s between repetitions and 15 s between blocks of tasks.
+3.2 Synchronization
+Accurate synchronization is a crucial challenge for multi-modal capture. We learn a frame-by-
+
+【实验】
+4.1 Performance and Validation
+4.2 Decoding with the Face Covered
+4.3 Decoding from the Forehead Alone
+4.4 Decoding Affect and Invisible Expressions
+4.5 Expression Transfer
+4.6 Adding Secondary Effects
+5 Conclusions
+References
+A EMG Signal Processing
+B Interpreting the Vertex Error
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.09304v1 [cs.GR] 07 Oct 2026
+emg2face:
+Expressive Facial Animation with High-Density Surface EMG We recorded HD-sEMG and video from 25 participants as they performed 8 facial expressions, mostly involving the upper face (e.g., brow raise/blink), plus smile and speech (reciting numbers 1 to 5). In this section we first evaluate how well facial expressions can be predicted from HD-sEMG alone. We then demonstrate applications that are difficult or impossible with optical face capture. Unless stated otherwise, all results are computed on the held-out trials of each participant (Section  3.4 ). Please see the accompanying video for animated results.
+4.1 Performance and Validation
+How well do predictions from HD-sEMG match the expressions tracked from video? We use two measures, computed on the held-out trials (Section  3.4 ). The first is the Pearson correlation r r between the predicted and fitted weights of each GNM expression blendshape, averaged over the blendshapes that vary in the test data. However, the blendshapes are far from equal: a unit weight moves the face by amounts that differ by a factor of about 500 between blendshapes.
+Our second measure is computed on the mesh itself. We reconstruct the GNM mesh from the predicted and from the fitted weights, and report the mean distance between corresponding vertices of the two meshes and the fraction R 2 R^{2} of the variance of the fitted facial motion that the prediction explains. Unlike r r , this weights each blendshape by how much it actually moves the face. We compute these and all other measures on the mesh over the visible face only: the 5,101 vertices of exterior skin that expression can move. The expression blendshapes also move the teeth, gums, and tongue, the inside of the mouth, and the eye sockets. No camera sees these parts and no landmark constrains them, so we exclude them, together with the eyeballs, which only rotate with gaze. Note that the fitted mesh is itself an estimate, so these measures are relative to the video-based fit and not to the true shape of the face.
+Figure 6: Prediction performance across participants, on the held-out cued expressions. Each box shows the distribution over the 25 participants, with open circles marking the seven recordings of lower signal quality. Left: correlation between predicted and fitted blendshape weights, for the eye-region blendshapes of GNM (in GNM, the eye region includes the forehead) and for the rest of the face (higher is better). Right: mean vertex error of the reconstructed mesh, over the whole face, in the eye region, and elsewhere, next to the error of holding each participant’s mean face 
+
+【结论/局限】
+and Future Work.
+There are several limitations that we hope to address in future work. Our processing is not causal: the filters are applied forward and backward (Appendix  A ), and the network combines 1.27 s of EMG after each frame with 1.27 s before it (Section  3.4 ). A prediction is therefore available about 1.3 s after the movement it describes. This delay is acceptable for many interactive applications, but not for real-time animation; a causal filter chain and a causal network would remove it, and we leave this to future work. A related point is that the recording was done in a laboratory setup, with bulky amplifiers and computing; turning this into a wearable system is feasible with current technology and significant engineering effort that is outside the scope of this paper. Each network is trained for one participant, from a session recorded with synchronized video. Decoding the expressions of a new person without such a session remains an open problem, since the electrodes lie over slightly different muscles every time the grids are applied. The network generalizes to new repetitions of the cued expressions, but not yet to free conversation. Including more data, with unscripted speech and expressions in training is the natural next step. Accuracy also depends strongly on the quality of the electrode contact (Section  4.1 ), which may get worse using dry electrodes. 

@@ -1,0 +1,112 @@
+【摘要】
+.
+
+【方法】
+3.1 Encoder
+3.2 Stream-Spatial Transformer
+Normalization Scale Token.
+Global Attention Layer.
+Scene-local Attention Layer.
+Frame-local Attention Layer.
+3.3 Learned Admission for Selective State Expansion
+Learnable Admission Module.
+Two-stage Learning Strategy.
+3.4 Hierarchical Decoder & Head
+3.5 Losses
+Rendering Loss.
+Chamfer Loss.
+Normalization Scale Loss.
+Class-weighted Binary Cross-entropy Loss.
+SCST Loss. Figure 2. S2Tok Pipeline. The encoder maps the new frame 𝐈 i \mathbf{I}_{i} to tokens 𝐟 i \mathbf{f}_{i} . The SS-Transformer jointly updates frame tokens and existing spatial tokens 𝐒 i − 1 \mathbf{S}_{i-1} . The admission module appends selected frame tokens to form 𝐒 i \mathbf{S}_{i} , which is carried to the next step. The Hierarchical Decoder and Gaussian Head decode and predict Gaussian attributes. ⊕ \oplus denotes concatenation.
+We process a stream of images sequentially. At step i i , the incoming image 𝐈 i ∈ ℝ H × W × 3 \mathbf{I}_{i}\in\mathbb{R}^{H\times W\times 3} is used to update the latent scene state and produce the current accumulated Gaussian reconstruction.
+As shown in Fig. 2 , we first encode 𝐈 i \mathbf{I}_{i} into frame tokens 𝐟 i \mathbf{f}_{i} 1 1
+1
+Such frame tokens are the representations implicitly encoded in their own frame’s camera coordinate system. . Secondly, we feed the existing latent spatial tokens 𝐒 i − 1 \mathbf{S}_{i-1} from the last step and the newly encoded 𝐟 i \mathbf{f}_{i} into the proposed Stream-Spatial (SS) Transformer. In the SS-Transformer, 𝐒 i − 1 \mathbf{S}_{i-1} is adapted to the new frames and viewpoints; meanwhile, 𝐟 i \mathbf{f}_{i} is implicitly aligned to the latent spatial space.
+We then apply the admission module to the updated 𝐟 i ′ \mathbf{f}^{\prime}_{i} and 𝐒 i − 1 ′ \mathbf{S}^{\prime}_{i-1} , and append the selected frame tokens to form 𝐒 i ∈ ℝ ( M + δ ) × D \mathbf{S}_{i}\in\mathbb{R}^{(M+\delta)\times D} ,
+where δ \delta is the number of admitted frame tokens. We then provide 𝐒 i \mathbf{S}_{i} and token sets from two other layers of the SS-Transformer as inputs to the Hierarchical Decoder and predict Gaussian candidates with the Gaussian Head. Each token corresponds to h h Gaussians. Finally, 𝐒 i \mathbf{S}_{i} is carried over to the next step.
+3.1. Encoder
+At each step (Fig.  2 ), a ViT encoder  ( Dosovitskiy et al., 2020 ) patchifies and encodes 𝐈 i \mathbf{I}_{i} as 𝐟 i = Encoder ⁡ ( 𝐈 i ) ∈ ℝ H w × W w × D \mathbf{f}_{i}=\mathrm{Encoder}(\mathbf{I}_{i})\in\mathbb{R}^{\frac{H}{w}\times\frac{W}{w}\times D} , where w w is the patch size and D D is the feature dimension.
+3.2. Stream-Spatial Transformer
+Figure 3. Stream-Spatial Transformer. Scale token s s , spatial tokens 𝐒 i − 1 \mathbf{S}_{i-1} , and frame tokens 𝐟 i \mathbf{f}_{i} attend to one another in 𝒜 global \mathcal{A}_{\text{global}} . Scene-local attention 𝒜 scene \mathcal{A}_{\text{scene}} then updates s s and 𝐒 i − 1 \mathbf{S}_{i-1} , while frame-local attention 𝒜 frame \mathcal{A}_{\text{frame}} updates 𝐟 i \mathbf{f}_{i} .
+The existing latent spatial tokens 𝐒 i − 1 ∈ ℝ M × D \mathbf{S}_{i-1}\in\mathbb{R}^{M\times D} , where M M is the number of spatial tokens, contain scene information accumulated from o
+
+【实验】
+DL3DV.
+RealEstate10K.
+Mip-NeRF 360.
+ScanNet++.
+Reconstruction across updates.
+4.1 Ablation Study We train S2Tok solely on DL3DV  ( Ling et al., 2024 ) and RealEstate10K  ( Zhou et al., 2018 ) . More training, testing, and implementation details can be found in Sec.  D in the Appendix.
+For evaluations, we show extensive quantitative and qualitative comparisons between S2Tok and other baselines.
+We get the rendering performance of pointmap prediction methods using point-splat rendering  ( Zwicker et al., 2001 ; Pfister et al., 2000 ) .
+Specifically, we hold out one target view between consecutive context
+views and evaluate reconstruction quality in two settings:
+1) Final : Render all target views using the final
+reconstruction after processing the whole context sequence.
+2) Intermediate : After each step, render the
+corresponding target view using the current reconstruction,
+based only on the context views observed so far.
+Streaming methods update the scene incrementally, whereas non-streaming step. StreamSplat is evaluated only under Intermediate , as its
+time-conditioned reconstruction does not produce a globally
+camera-aligned final scene.
+Table 1. Quantitative Comparison on DL3DV. Each metric cell reports PSNR ↑ \uparrow / SSIM ↑ \uparrow / LPIPS ↓ \downarrow . r = 1 r{=}1 denotes the default compression ratio of ZipSplat. † adjusts the ratio to match our token budget. Avg. represents the average across all sequences. Time and Mem. report per-view reconstruction time and peak GPU memory of the streaming methods in the 50-view setting, measured on a single NVIDIA A100 80GB. Notably, MonoGS is not feed-forward. Protocol
+F
+Detailed Comparison of Related 3D Reconstruction Methods
+G
+More Results
+H
+
+【结论/局限】
+References
+A Admission Pseudo-GT
+Pseudo-GT depth and cameras.
+Depth-reprojection novelty.
+Causality of the labels.
+Prefix scale for normalization.
+B Normalization Scale Pseudo-GT
+Normalization scale.
+Supervision-side normalization.
+C Opacity-Weighted Geometric Median of Gaussian Centers
+D Implementation Details
+D.1 Architecture Details
+D.2 Color-Skip Branch
+D.3 Training Details
+Timestep-indexed SCST objective.
+D.4 Hyperparameters
+D.5 Evaluation Protocol
+E Datasets
+Training datasets.
+Testing datasets.
+Preprocessing and streaming sampling.
+F Detailed Comparison of Related 3D Reconstruction Methods
+G More Results
+H Limitations
+License: CC BY 4.0
+arXiv:2610.08978v1 [cs.CV] 06 Oct 2026
+[NFSSFamily=ArxivBundledFontOne]
+[NFSSFamily=ArxivBundledFontTwo]
+[NFSSFamily=ArxivBundledFontThree]
+[NFSSFamily=ArxivBundledFontFour]
+[NFSSFamily=ArxivBundledFontFive]
+[NFSSFamily=ArxivBundledFontSix]
+[NFSSFamily=ArxivBundledFontSeven]
+[NFSSFamily=ArxivBundledFontEight]
+[NFSSFamily=ArxivBundledFontNine]
+[NFSSFamily=ArxivBundledFontTen]
+S2Tok: Streaming 3D Gaussian Reconstruction with Persistent Spatial Tokens
+Fang Li
+,
+Jiraphon Yenphraphai
+,
+Quentin Herau
+,
+Depu Meng
+,
+Yihan Hu
+,
+Tianshuo Xu
+,
+Narendra Ahuja
+and
+Wei Zhan
+© none We propose S2Tok , a feed-forward framework that maintains a size-adaptive latent scene state for 3D Gaussian reconstruction from uncalibrated image streams. By separating obs

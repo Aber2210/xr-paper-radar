@@ -1,0 +1,851 @@
+
+##########################################################################################
+# 2610.04007 | 神经渲染 | VolS-GS: Relightable Gaussian Splatting with Volumetric Subsurface Scattering
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1 Introduction Relighting a captured object requires predicting its appearance under lighting conditions that were not observed during capture. One-li
+ght-at-a-time (OLAT) capture provides a controlled setting for this task by recording each image under a known point light, and the model must render 
+the object from new viewpoints and under new light positions. Neural radiance fields made relighting practical by learning appearance as a function of
+ position and illumination ( Zeng et al., 2023 ; Jin et al., 2023 ) , and 3D Gaussian splatting ( Kerbl et al., 2023 ) replaced the implicit field wit
+h an explicit set of spatial primitives that renders far faster. Existing Gaussian approaches ( Bi et al., 2024 ; Dihlmann et al., 2024 ; Zheng et al.
+, 2026 ) give every primitive its own appearance model, evaluated from that primitive’s own attributes. Non-local transport is not beyond the represen
+tation. Radiosity-GS ( Jiang et al., 2025 ) transports light between primitives with a differentiable radiosity solve, and Ref-Gaussian ( Yao et al., 
+2025 ) traces inter-reflections among them. Both route light around the object, through the space outside it. Subsurface scattering routes light throu
+gh it. The light enters at one surface point, travels inside the medium, and leaves at another. No Gaussian method solves for that interior path. SSS-
+GS ( Dihlmann et al., 2024 ) conditions a scattering term on the light direction and SSD-GS ( Zheng et al., 2026 ) evaluates a closed-form diffusion k
+ernel at each primitive, so in both the subsurface response remains a function of one primitive’s own attributes. A BSSRDF couples light entering the 
+object to radiance emerging elsewhere, which introduces a surface integral and makes direct evaluation expensive. Classical diffusion models reduce th
+is coupling to a local kernel under assumptions such as a homogeneous medium and a simple boundary ( Jensen et al., 2001 ; Donner and Jensen, 2005 ; H
+abel et al., 2013 ) . A per-primitive evaluation of such a kernel therefore has no interior path (Figure 2 ). Figure 2: Per-primitive kernels versus t
+ransport through the medium. Top: where each method computes its subsurface response. Bottom: a C-shaped medium lit at the opening. The dipole depends
+ on Euclidean distance, so its support crosses the gap, while our solve aggregates the subsurface response through the learned medium. The Gaussian re
+presentation already provides the spatial support on which subsurface scattering can be computed. We turn that into an occupancy field on a coarse gri
+d and solve on the occupied cells. Each Gaussian then reads the solved field back at its own position. The grid carries no parameters of its own, so t
+he domain is the Gaussians themselves rather than an extracted mesh. VolS-GS learns scattering and absorption properties over this domain and uses the
+m in a finite-volume transport solve. The solve produces the multiply scattered field, while a separate single-scattering term adds the once-scattered
+ light integrated along the view chord, which the angle-averaged fluence cannot represent. An adjoint formulation makes the solver differentiable with
+out unrolling its iterations, so the medium is learned end to end from images alone. Shadow modeling shares transmittance cues with the transport solv
+e, and a regularizer discourages the specular branch from absorbing transported light. In summary, we present VolS-GS, a relightable Gaussian splattin
+g method, with the following contributions. (1) A differentiable volumetric subsurface scattering defined on the Gaussian scene’s occupancy, allowing 
+light to propagate across primitives. (2) A shadow term that reads the same transport field and a regularizer on the specular branch, which together k
+eep the learned shadow and the learned specular from trading against each other. A full discussion of related work is deferred to Appendix A . 2 Metho
+d Figure 3: Overview of VolS-GS. (A) A render is the sum of a shadowed surface response and a subsurface term, compared against the captured frame. (B
+) The shadow is predicted from two cues gathered along the ray to the light, the fraction the Gaussians block and the fraction the medium transmits. (
+
+##########################################################################################
+# 2610.04013 | 重建与SLAM | Return-to-Home Feasible Micro-Aerial Vehicle Exploration for 3D Gaussian Splatting Reconstruction
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+II Related Work Autonomous Exploration and Informative Path Planning High-Fidelity Scene Reconstruction UAV-Based Indoor Reconstruction and Unresolved
+ Gaps III Methodology III-A Method Overview III-B Gaussian Splatting III-C 3D Voronoi Roadmap Construction III-C 1 Volumetric Fusion and Space Carving
+ III-C 2 Obstacle Sites III-C 3 Voronoi Tessellation III-C 4 Graph Sparsification III-C 5 Free-Space Node Injection and Bridging III-D Viewpoint Selec
+tion III-D 1 Return-to-Home Feasibility Filters III-D 2 Frontier Indicator III-D 3 Information Gain III-D 4 Objective Function III-D 5 Receding-Horizo
+n Next-Best-View (NBP) Search IV Experiments and Results IV-A Simulation Setup and Execution Model IV-B Baseline Comparison IV-B 1 ActiveSplat IV-B 2 
+ActiveGS IV-B 3 Ours (with and without RTH constraint) IV-B 4 Metrics IV-B 5 Baseline Results IV-B 6 Return-to-Home Budget Utilization IV-C Ablation S
+tudy IV-D Computational Cost Analysis V Conclusion References License: arXiv.org perpetual non-exclusive license arXiv:2610.04013v1 [cs.RO] 02 Oct 202
+6 Return-to-Home Feasible Micro-Aerial Vehicle Exploration for 3D Gaussian Splatting Reconstruction Prajit KrisshnaKumar Fan Yang Koichiro Niinuma † †
+ thanks: All authors are affiliated with Fujitsu Research. † † thanks: © 2026 IEEE. Personal use of this material is permitted. Permission from IEEE m
+ust be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional pur
+poses, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other wo
+rks. Abstract Micro aerial vehicles (MAVs) enable rapid indoor 3D reconstruction for inspection and time-critical situational awareness, but must oper
+ate under strict flight-time budgets and safety constraints that require explicit return-to-home (RTH) feasibility with a conservative margin. We pres
+ent a topology-first active reconstruction framework that decouples high-fidelity rendering from navigation. A dense 3D Gaussian Splatting (3DGS) map 
+is optimized as the reconstruction target, while a lightweight Truncated Signed Distance Field (TSDF)/occupancy scaffold supports conservative collisi
+on checking and online construction of a sparse 3D Voronoi skeleton roadmap. Since directly extracting roadmaps from TSDF geometry can be unstable und
+er noisy and incomplete online fusion, we validate nodes and edges using carved free-space consistency and dense visibility checks, which suppress beh
+ind-wall phantom structure and stabilize planning. Viewpoints are selected on the roadmap using a flight-time-budget-aware objective and a lightweight
+ receding-horizon lookahead to improve non-myopic exploration behavior. We evaluate on photorealistic indoor simulation benchmarks (ReplicaCAD, Gibson
+, and HM3D), reporting reconstruction coverage/error, RTH success, and computational cost. Results demonstrate improved or competitive performance rel
+ative to recent GS-based baselines under identical flight-time budgets. I Introduction Micro aerial vehicles (MAVs) are increasingly attractive for in
+door search-and-rescue (SAR) and first-responder missions because they can quickly enter confined or hazardous spaces and provide situational awarenes
+s before humans are deployed [ 1 ] . In these environments, autonomy must handle cluttered, GPS-denied navigation through narrow doorways and corridor
+s under strict flight-time limits. If the MAV exhausts its battery deep inside a structure, safe recovery is not guaranteed and the mission may fail p
+rematurely. Consequently, a central operational requirement is return-to-home (RTH) feasibility. In multi-room indoor layouts, return cost is highly n
+on-Euclidean, and straight-line distance can severely underestimate the true time required to navigate around walls and through doorways. Therefore, v
+iewpoint selection must trade off expected reconstruction gain against travel time while maintaining a conservative safety margin for possible interru
+ptions during the return flight (Fig. 1 ). Beyond geometric coverage, responders often require high-fidelity reconstructions that preserve appearance 
+
+##########################################################################################
+# 2610.04076 | 神经渲染 | VCURF: Virtual Camera-based Uncertainty of Radiance Fields
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+5 Discussion and Future work Rendering error is not equivalent to view utility. 6 Conclusion References S.1 Ablation Studies S.1.1 Sampling Radius S.1
+.2 Number of Virtual Cameras S.1.3 Components of the Uncertainty Estimate S.2 Storage and Time Complexity Analysis S.3 Qualitative Results License: CC
+ BY 4.0 arXiv:2610.04076v1 [cs.CV] 02 Oct 2026 VCURF: Virtual Camera-based Uncertainty of Radiance Fields Liyan Chen Nathaniel Burgdorfer Philippos Mo
+rdohai Affiliation: Stevens Institute of Technology Affiliation: {lchen39, nburgdor, pmordoha@stevens.edu} Abstract Radiance fields, implemented with 
+either implicit (NeRF) or explicit (Gaussian Splatting) representations, are advancing the state of the art in novel view synthesis at a rapid pace. E
+ven though the rendered views they generate are often compelling, they are not free of errors. In this paper, we propose a new approach for pixel-wise
+ uncertainty quantification based on measuring the inconsistencies among renderings by the radiance field model in virtual cameras sampled near the ta
+rget viewpoint. We named our approach VCURF for Virtual Camera-based Uncertainty of Radiance Fields. VCURF treats the radiance field model as a black 
+box, only assuming that it is capable of rendering color and depth on demand. This property makes our approach applicable to both NeRF and GS models w
+ithout any modification. Our experiments on a combination of datasets, radiance field models and baselines demonstrate VCURF’s effectiveness in pixel-
+wise uncertainty estimation. We conclude the paper with findings that question the way view selection is tackled by the majority of the current litera
+ture. 1 Introduction Neural Radiance Fields (NeRFs) [ 32 ] have had tremendous impact on Novel View Synthesis (NVS). This is due to their ability to s
+ynthesize plausible images without striking artifacts under adverse imaging conditions and errors in camera geometry estimation. More recently, 3D Gau
+ssian Splatting (3DGS) [ 20 ] emerged as an alternative to NeRF. Unlike NeRF, which relies on implicit representations, Gaussian Splatting employs an 
+explicit representation in the form of a set of 3D Gaussian splats. Following recent literature, we will use the term Radiance Fields (RF) to describe
+ both. (We will also use GS to denote Gaussian Splatting in general, and 3DGS for the method of Kerbl et al. [ 20 ] .) Despite their success, RF-based
+ maps are not perfect in practice: limited views, appearance challenges, dynamics, and pose errors can cause local failures in geometry and appearance
+. This motivates pixel-wise uncertainty estimation that predicts the expected rendering error without ground truth. Such estimates provide useful sign
+als for identifying unreliable regions, filtering artifacts, and assessing local reconstruction quality. They have also been widely used as proxies fo
+r information gain in next-best-view (NBV) selection and active reconstruction. However, these two uses should be distinguished. Pixel-wise uncertaint
+y characterizes where the current model is likely to be wrong, whereas the utility of a candidate view additionally depends on whether it contributes 
+novel and non-redundant observations relative to the existing training set. A highly uncertain view is therefore not necessarily the view that will mo
+st improve the RF after retraining. We revisit this distinction experimentally after establishing the accuracy of our uncertainty estimator. In practi
+ce, we seek an uncertainty module that is easy to deploy as a plug-in , is training-free , memory-friendly , and avoids modifying or accessing interna
+l RF parameters, which simplifies integration across diverse backbones. In this paper, we use black-box to denote estimators that require only outputs
+ and no knowledge of model parameters, and white-box to denote methods that require modifying the RF model and/or introducing additional training obje
+ctives. Figure 1 : Overview of our approach. Top Left: virtual cameras are sampled around the reference camera. Top Right: uncertainty predicted by VC
+URF. Bottom: (a) real image, (b-c) depth and color rendered by the RF model, and (d) rendered color image warped from a virtual camera to the referenc
+
+##########################################################################################
+# 2610.04139 | 空间计算与UI | From Sight to Foresight: Predictive Spatial Reasoning in Vision-Language Models
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+F Relationship to Other Spatiotemporal Tasks A connected progression from spatial states to prediction. Driving and everyday first-person settings. Tr
+aceable geometric targets. G Limitations and Future Work H Visualizations H.1 A Worked Example of Reference-Answer Computation H.2 The Full Compute Ch
+ain for the Same Example License: CC BY 4.0 arXiv:2610.04139v1 [cs.CV] 02 Oct 2026 From Sight to Foresight: Predictive Spatial Reasoning in Vision-Lan
+guage Models Feiran Wang † † thanks: This work was done during an internship at Bosch. ‡ Project lead. Affiliation: University of Illinois at Chicago,
+ Xiaoqi Wang ‡ Affiliation: Bosch Research North America Affiliation: Bosch Center for Artificial Intelligence (BCAI) Ziwei Li Affiliation: Bosch Rese
+arch North America Affiliation: Bosch Center for Artificial Intelligence (BCAI) Wenbin He Affiliation: Bosch Research North America Affiliation: Bosch
+ Center for Artificial Intelligence (BCAI) Yan Yan Affiliation: University of Illinois at Chicago, Liu Ren Affiliation: Bosch Research North America A
+ffiliation: Bosch Center for Artificial Intelligence (BCAI) Abstract Predicting future spatial states supports collision avoidance and timely decision
+-making in dynamic environments. However, existing vision-language models (VLMs) and benchmarks for spatial reasoning primarily focus on observed scen
+es, leaving predictive spatial reasoning beyond the observed interval underexplored. To this end, we introduce SpatialMind, a metric-scale VLM for spa
+tial reasoning and future prediction. Its metric depth adapter anchors spatial reasoning to real-world scale, while its progressive state chain establ
+ishes current spatial states and observed dynamics as the foundation for future prediction. Given a video prefix, SpatialMind predicts distances, moti
+on directions, and spatial relations in both observed and unseen future frames. For training and evaluation, we build a scalable data engine that grou
+nds entity descriptions in metric geometry to generate question-answer pairs and state supervision. Using this engine, we construct the SpatialMind-30
+K dataset and the SpatialMind-2K benchmark, both covering driving and everyday egocentric scenes. The benchmark spans eight tasks across three levels:
+ current-state understanding, observed-dynamics understanding, and future prediction. Experiments show that SpatialMind substantially outperforms both
+ general and spatially specialized models on our benchmark while achieving competitive zero-shot performance on VSI-Bench, OSI-Bench, and VLM4D. The p
+roject page and code are available at https://brack-wang.github.io/spatialmind/ . Figure 1: SpatialMind enables future spatial prediction by reasoning
+ progressively from observed evidence, which can help identify collision risks and support timely action to avoid hazards. By grounding prediction in 
+current geometry and observed dynamics, SpatialMind yields more accurate estimates than a proprietary VLM. (a) The 3D scene illustrates the spatial co
+ntext for anticipating future interactions between the ego vehicle and the white sedan. (b) Benchmark results show consistent improvements over the co
+mpared models across all eight spatial reasoning tasks. 1 Introduction Humans anticipate future changes in distances and spatial relations, enabling n
+avigation and interaction with the physical world. In dynamic environments, future prediction is important for assessing whether an action can be comp
+leted safely. In Figure 1 , a driver can instinctively anticipate the narrowing gap to the white car and assess whether sufficient clearance will rema
+in during braking. Cognitive studies associate this capacity with prospection : using observed experience to reason beyond immediate perception and an
+ticipate future changes ( Craik, 1967 ; Buckner & Carroll, 2007 ; Schacter et al., 2007 ) . While current VLMs have made substantial progress in under
+standing observed visual content, extending this understanding to physically grounded future spatial prediction remains challenging ( Ishihara et al.,
+ 2026 ; Zhou et al., 2025 ; Fan et al., 2026 ) . This raises a fundamental question: what spatial understanding does a VLM need for reliable future pr
+
+##########################################################################################
+# 2610.04203 | 神经渲染 | Sparse-GS2Mesh: 3D Gaussian Splatting Guided by Novel Stereo Views and 2DGS for Sparse View Surface Reconstruction}
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+3 Method 3.1 2D/3D Gaussian Splatting Warm-Up Stage 3.2 Adaptive Baseline Selection From Multi-View Feature Scores 3.3 Fine-Tuning with the Stereo Mat
+ching Network 3.4 2D/3D Co-Regularized Fine-Tuning 3.5 Total Training Losses 4 Experiments 4.1 Datasets 4.2 Implementation Details 4.3 Experiment Resu
+lts 4.4 Ablation Studies Adaptive Baseline Selection. Proposed Components in Fine-Tuning. 5 Conclusions References A Computational Report B Different 
+Initialization Strategies. C Stereo View Image Rendering. License: CC BY 4.0 arXiv:2610.04203v1 [cs.CV] 03 Oct 2026 Sparse-GS2Mesh: 3D Gaussian Splatt
+ing Guided by Novel Stereo Views and 2DGS for Sparse View Surface Reconstruction Younghyun Noh Affiliation: KT Email: younghyun.noh@kt.com Minje Kim A
+ffiliation: KAIST Email: minjekim@kaist.ac.kr Tae-Kyun Kim Affiliation: KAIST Email: kimtaekyun@kaist.ac.kr Abstract Surface reconstruction under spar
+se-view settings remains challenging due to limited geometric cues. Volume rendering methods based on signed distance functions often produce over-smo
+othed surfaces, while 3D Gaussian Splatting (3DGS), though time-efficient, suffers from incomplete geometry due to the lack of reliable depth supervis
+ion and the limitation of being optimized only from given input views. In this paper, we present Sparse-GS2Mesh, a stereo-aware framework for surface 
+reconstruction from sparse views. While 3DGS and stereo matching have been leveraged for surface reconstruction under dense view settings, we extend t
+hem to operate effectively under sparse view conditions by first initializing 3DGS using epipolar depth priors to mitigate the 3DGS overfitting proble
+m, followed by our three key components: (I) adaptive baseline selection, (II) fine-tuning with a stereo matching network, and (III) 2D/3D co-regulari
+zed fine-tuning. Given a warmed-up 3DGS initialized with epipolar depth, the adaptive baseline selection automatically determines a baseline to synthe
+size for each sparse view. We then fine-tune 3DGS by backpropagating depth-refining gradients from the stereo matching network, effectively specializi
+ng the 3DGS for stereo matching. The 2D/3D co-regularization further helps obtain stable reconstruction, addressing weak geometric cues in close stere
+o views. Sparse-GS2Mesh achieves a 15% improvement over state-of-the-art methods in little-overlap settings and comparable results in large-overlap se
+ttings. Codes will be publicly available. Figure 1: Given sparse views as input, our method reconstructs high fidelity 3D geometry with novel stereo-v
+iew rendering and 2D/3D GS co-regularization. 1 Introduction 3D surface reconstruction is a long-standing problem and plays a crucial role in various 
+domains such as autonomous driving Li et al. (2023a) ; Li et al. (2023b) , robotics Dai et al. (2023) ; Zhu et al. (2022) ; Moreau et al. (2021) , and
+ virtual reality (VR) Ye et al. (2021) ; Deitke et al. (2023) . Despite recent progress, reconstructing accurate geometry from sparse inputs remains c
+hallenging yet practically important, since real-world applications often allow only a limited number of images. Previous surface reconstruction metho
+ds Oechsle et al. (2021) ; Wu et al. (2023) ; Wang et al. (2023) are built upon neural radiance fields (NeRF) Mildenhall et al. (2020) , representing 
+a scene as continuous radiance/density fields and optimizing them via differentiable volume rendering. Although several studies Long et al. (2022) ; R
+en et al. (2023) ; Na et al. (2024) ; Huang et al. (2024b) have explored sparse-view reconstruction (i.e., only a few different view images as input) 
+and achieved promising results, their major bottleneck lies in long training time, which ranges from several hours to days per scene. Recent studies Y
+u et al. (2024b) ; Yu et al. (2024a) ; Zhang et al. (2024b) have extended 3D Gaussian Splatting (3DGS) Kerbl et al. (2023) to surface reconstruction. 
+2DGS Huang et al. (2024a) directly reconstructs surfaces from 3DGS by flattening Gaussian elements and applying additional geometric regularization. O
+n the other hand, GS2Mesh Wolf et al. (2024) generates stereo-aligned image pairs through 3DGS rendering and extracts accurate depth using a pre-train
+
+##########################################################################################
+# 2610.04336 | 世界模型与仿真 | A differentiable Lagrangian-coupled 3D Gaussian Splatting-SPH model for forward simulation and inverse analysis in solid mechanics
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+A.2 Matrix-free implicit solution B Numerical verification of the 3DGS–SPH model components B.1 Validation of the solid SPH discretization B.2 Validat
+ion of the Lagrangian SPH-GS transfer B.3 Automatic differentiation validation of the 3DGS-SPH coupled pipeline C Notation References License: arXiv.o
+rg perpetual non-exclusive license arXiv:2610.04336v1 [cs.CV] 03 Oct 2026 A differentiable Lagrangian-coupled 3D Gaussian Splatting–SPH model for forw
+ard simulation and inverse analysis in solid mechanics Tian Xu, Soroush Atashi, Tianju Xue ∗ 1 1 1 Corresponding author: Tianju Xue. Email: cetxue@ust
+.hk Department of Civil and Environmental Engineering, Hong Kong University of Science and Technology Abstract Recent advances in generative world mod
+els for physical artificial intelligence have increased interest in digital models that reproduce both the appearance of real objects and their respon
+se to physical interaction. Three-dimensional reconstruction techniques, including 3D Gaussian Splatting, capture detailed surface geometry and appear
+ance from images and videos, while physics-integrated representations extend these capabilities to simulating the mechanical response of deformable so
+lids. However, extending these representations beyond plausible animation to mechanically interpretable models for constitutive behavior, boundary con
+ditions, and inverse parameter identification remains less explored. In this work, a differentiable Lagrangian-coupled 3D Gaussian Splatting (3DGS)–sm
+oothed particle hydrodynamics (SPH) model is proposed for forward simulation and inverse analysis of deformable solids. The observed object is first r
+econstructed from multi-view calibrated visual dataset as a 3DGS rendering model. An envelope-based procedure then generates an independent SPH suppor
+t for the solid-mechanics model, avoiding the direct use of rendering primitives as mechanical particles. A reference-configuration Lagrangian transfe
+r maps SPH deformation to Gaussian positions and covariances, thereby coupling the physical model and the image observation model while preserving a d
+ifferentiable computational path. The SPH formulation supports linear elastic, hyperelastic, and Kelvin–Voigt viscoelastic responses, together with fi
+xed, free, and Robin-type boundary conditions. Numerical studies validate the SPH response against finite-element results, assess accuracy and efficie
+ncy against a conventional model using Gaussian centers as surface SPH particles, and demonstrate forward simulations on beam, bridge, and liver-shape
+d examples. Inverse analyses further estimate constitutive and boundary parameters from rendered deformation observations, including noisy cases, demo
+nstrating the feasibility of the proposed model for mechanics-based parameter identification from image data. Keywords: 3D Gaussian splatting, smoothe
+d particle hydrodynamics, inverse analysis 1 Introduction Recent advances in generative world models for physical artificial intelligence are extendin
+g visual scene generation toward interactive simulation for robot learning and action evaluation [ 1 ] . Alongside these developments, reconstructing 
+deformable objects from videos for subsequent physical simulation is bringing vision and mechanics into closer connection [ 2 ] . Translating these ca
+pabilities into mechanical analysis requires more than visually plausible motion: the deformation must be governed by constitutive relations and balan
+ce laws under specified boundary conditions, with physical parameters that can be inferred from observations [ 3 ] . This requires a physical model of
+ the solid coupled with a rendering model that relates its deformation to the observed appearance. In forward simulation, these models describe the me
+chanical response and its rendered appearance; in inverse analysis, they enable physical parameters to be estimated by comparing simulated and observe
+d images. A consistent and differentiable connection between vision and solid mechanics is therefore needed to support both deformation simulation and
+ parameter identification from images or videos. Modern visual reconstruction methods provide the geometric and appearance description required to sta
+
+##########################################################################################
+# 2610.04351 | 神经渲染 | LoCoSplat: Real-Time Feed-Forward 3D Gaussian Splatting with Minimal 3D Reasoning
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+C.1 The Path to the Two-Grid Model An eight-level grid without a 3D network. The coarse scale, not the level count, drives the gain. The coarse level 
+is a fixed geometric low-pass. The two-grid model. C.2 Design Notes Receptive field of the U-Net. The plain mean as default aggregator. C.3 Ablation T
+ables D The 24-View Drop in Detail D.1 The Drop Lies in the Depth Branch, Not the 3D Stage D.2 A Disparity-Resolution Account D.3 The Collapsed Depth 
+Head E Additional Qualitative Results E.1 Qualitative Results at 12 Input Views E.2 24-View Evaluation and Example Selection E.3 Qualitative Results o
+n ScanNet E.4 More Qualitative Comparisons on RealEstate10K License: CC BY 4.0 arXiv:2610.04351v1 [cs.CV] 03 Oct 2026 LoCoSplat: Real-Time Feed-Forwar
+d 3D Gaussian Splatting with Minimal 3D Reasoning Sinan Wang Email: swang3081@gatech.edu Jinjin He Yuchen Sun Affiliation: Georgia Institute of Techno
+logy Duowen Chen Affiliation: Georgia Institute of Technology Shenyifan Lu Affiliation: Georgia Institute of Technology Bo Zhu Affiliation: Georgia In
+stitute of Technology Abstract Feed-forward 3D Gaussian Splatting (3DGS) increasingly aggregates multi-view evidence with heavy learned 3D networks. W
+e propose LoCoSplat ( Lo cal- Co ntext Splat ting), motivated by the observation that a Gaussian is a local primitive: once depth is predicted, what t
+he 3D stage must add (scale, rotation, opacity) depends on the point cloud around each anchor, and a fixed local average of that neighbourhood is enou
+gh to supply it, no heavy network required. LoCoSplat realises exactly this average: it splats a 16-d linear projection of the point features into a f
+ine and a coarse grid and reads both back at each anchor with a 0.14M-parameter pointwise MLP; with no learned 3D network and no dynamic sparse comput
+ation, its whole encoder runs as one fp16 CUDA graph. On RealEstate10K, LoCoSplat outperforms every prior feed-forward method on PSNR, SSIM, and LPIPS
+ at 6, 12, and 24 views, with a margin that widens as views densify ( + 3.3 +3.3 PSNR over VolSplat, the prior voxel-aligned state of the art, at 24 v
+iews) and grows further under zero-shot transfer to ACID and fine-tuning on ScanNet. It reconstructs a 6-view scene in 33 ms on one NVIDIA RTX PRO 600
+0 GPU, the fastest of seven feed-forward methods and 4.2 × 4.2\times faster than the previous state of the art, trains 2.7 × 2.7\times faster ( 5.9 × 
+5.9\times at 24 views), and uses 6.7 × 6.7\times less inference memory. 1 1 footnotetext: Equal contribution. 1 Introduction Feed-forward 3D Gaussian 
+Splatting ( Charatan et al., 2024 ; Chen et al., 2024 ; Xu et al., 2025 ) predicts the Gaussian primitives of 3DGS ( Kerbl et al., 2023 ) from a handf
+ul of posed images in a single forward pass, replacing the per-scene optimization of NeRF and 3DGS ( Mildenhall et al., 2020 ; Kerbl et al., 2023 ) wi
+th a learned prior. Pixel-aligned prediction, the dominant approach, suffers from multi-view misalignment and resolution-bound Gaussian budgets, and t
+he field’s answer has been to reason with ever-heavier learned modules, mostly by moving prediction into 3D: sparse 3D U-Nets and CNNs ( Wang et al., 
+2026a ; Zhang et al., 2022 ) , 3D cost-volume networks, or long-sequence Mamba/transformer models over image tokens ( Ziwen et al., 2025 ) . VolSplat 
+( Wang et al., 2026a ) , the state of the art of the depth-guided voxel-aligned family, predicts depth, voxelizes the unprojected pixels into anchors,
+ and then refines the sparse volume with a 17M-parameter sparse 3D U-Net before decoding Gaussians. That U-Net is its largest inference cost ( ∼ \sim 
+7 scenes per second): a dynamic-shape sparse computation ( Choy et al., 2019 ) that cannot be captured in a CUDA graph and barely benefits from mixed 
+precision, and the dominant training memory as views grow (24-view training takes 159 hours). Behind this trajectory lies an implicit assumption: that
+ aggregating multi-view evidence in 3D requires substantial learned 3D capacity. Figure 1: LoCoSplat overview. Predicted depth and per-pixel features 
+are unprojected and voxelized into anchors; the 3D stage averages anchor features in a fine and a coarse grid and decodes each anchor pointwise. The w
+
+##########################################################################################
+# 2610.04506 | 评估与数据集 | EgoExo-Next:Benchmarking Vision-Language Models on Visual-Option Next-State and Cross-View Reasoning
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1 Introduction Vision-language models (VLMs) have demonstrated impressive reasoning capabilities across a wide range of multimodal tasks ( Yin et al.,
+ 2024 ; Zhang et al., 2024 ) . However, many existing evaluations still formulate reasoning through language-centered outputs, such as answering quest
+ions, describing events, or selecting among textual statements ( Zheng et al., 2025 ; Yu et al., 2025 ) . In physical environments, intelligent agents
+ must also reason about how visual states evolve. Given an ongoing action, a model should be able to infer how the observed scene progresses over time
+, determine how the same state appears from another viewpoint, and combine these abilities to reason about a future state across perspectives ( Ma et 
+al., 2026 ) . Humans perform such reasoning naturally. From first-person observations of a hand reaching for a tool or manipulating an object, we can 
+anticipate the subsequent object configuration and infer the corresponding body pose and scene layout from an external viewpoint ( Ramsey et al., 2021
+ ; Gardner, 2011 ) . This goes beyond recognizing what action is occurring: it requires reasoning about both temporal progression , i.e., how the obse
+rvable physical configuration changes over time, and viewpoint transformation , i.e., how the same state is represented from another viewpoint. Their 
+composition is particularly relevant to embodied intelligence, where an agent may perceive the environment egocentrically while demonstrations, superv
+ision, or collaborative observations are available from exocentric views ( Liu et al., 2025 ) . Figure 1: The EgoExo-Next benchmark. Main panels: Exam
+ples of four subtasks for next-state prediction and ego-exo view matching. Upper right: Comparison of model and human performance, showing a gap betwe
+en current VLMs and humans. Existing benchmarks have established important foundations for egocentric and ego–exo video reasoning. EgoSchema ( Mangala
+m et al., 2023 ) evaluates long-form temporal understanding in egocentric videos, EgoPlan ( Qiu et al., 2026 ) focuses on goal-conditioned next-action
+ planning, and EgoTempo ( Plizzari et al., 2025 ) probes fine-grained temporal understanding over egocentric video sequences. More closely related to 
+our setting, EgoExoBench ( He et al., 2026 ) evaluates cross-view understanding through semantic alignment, viewpoint association, and temporal reason
+ing, including action prediction, action ordering, sequence alignment, and cross-view matching. Despite this progress, these benchmarks mainly evaluat
+e whether models can recognize, predict, order, or align actions and events, or establish correspondence between ego–exo observations that are already
+ given. They do not directly test whether a model can identify how the underlying visual state itself progresses into an unobserved future state. Howe
+ver, reasoning about the future visual state requires a different level of understanding. Predicting what action happens next is not equivalent to ide
+ntifying what the scene should look like next: an ongoing action may pass through multiple visually similar yet physically distinct states that differ
+ in object configuration, body pose, contact relations, and spatial layout. A model may therefore correctly infer what happens next at the semantic le
+vel while still failing to identify what the scene looks like next. The distinction is even more pronounced in the ego–exo setting. Cross-view matchin
+g evaluates correspondence between already observed views, whereas EgoExo-Next requires a model to first infer an unobserved future state from precedi
+ng egocentric observations and then determine how that future state appears from an exocentric viewpoint. Thus, EgoExo-Next targets a distinct capabil
+ity beyond conventional ego–exo correspondence or temporal QA: dynamic visual-state reasoning, where models identify subsequent states directly in the
+ visual space and, in the composed setting, combine temporal progression with viewpoint transformation. To evaluate this capability directly, we intro
+duce EgoExo-Next , a visual-option benchmark in which the prediction target is the subsequent visual state itself. Rather than mapping visual evidence
+
+##########################################################################################
+# 2610.04606 | 神经渲染 | Sparse-View 4D Gaussian Splatting via Spatiotemporal Priors and Generative Assistance
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1. Introduction Dynamic 4D Gaussian Splatting (4DGS) ( Wu et al., 2024 ; Wang et al., 2025 ; Yang et al., 2026 ) enables real-time novel view synthesi
+s of dynamic scenes, but typically assumes dense multi-view coverage. The Sparse-View Track of the SIGGRAPH Asia 2026 Volumetric Video Challenge chall
+enges this reliance by requiring dynamic reconstruction from only six wide-baseline cameras. Under such sparse-view settings, 4DGS reconstruction face
+s three interrelated challenges. (1) Imbalanced capacity allocation : Uniform densification can overpopulate the background, which occupies most image
+ pixels, while leaving the dynamic foreground underrepresented. This imbalance can lead to background overfitting and degrade foreground rendering at 
+novel viewpoints. (2) Under-constrained motion : Rapid motion can produce blur and large inter-frame displacements, while residual timing differences 
+across cameras cause nominally simultaneous images to capture different motion states. These factors limit the reliability of photometric supervision 
+for continuous motion reconstruction. (3) Incomplete view coverage : Wide angular gaps and occlusions leave some regions weakly observed or unseen. Ho
+les and incomplete structures may therefore persist despite improved capacity allocation and motion regularization. To address these interrelated chal
+lenges, we combine three complementary components (Fig. 1 ): (1) Region-adaptive spatial priors (Sec. 2 ) use foreground masks to guide initialization
+, mask voting to adapt densification, and monocular depth aligned to metric scale to regularize background geometry. (2) Motion-consistent temporal pr
+iors (Sec. 3 ) provide supervision between captured frames through interpolation and constrain projected Gaussian velocities with estimated optical fl
+ow. (3) Generative assistance (Sec. 4 ) places virtual cameras in the widest angular gaps, restores their rendered images using ArtiFixer ( de Lutio e
+t al., 2026 ) , and iteratively incorporates the restored views into training as pseudo-supervision. Extensive validation confirms that our framework 
+effectively stabilizes sparse dynamic reconstruction, ultimately earning #1 place in the official Sparse-View Track. Figure 1. Overview of our sparse-
+view 4D Gaussian Splatting pipeline. Given videos from six cameras with wide baselines, our framework combines three components: (1) region-adaptive s
+patial priors use YOLO11 and SAM 2 masks for per-frame foreground initialization and mask voting during densification, and Depth Anything V2 predictio
+ns for background depth regularization; (2) motion-consistent temporal priors use RIFE interpolation to provide supervision at intermediate times and 
+VideoFlow estimates to constrain projected Gaussian motion; and (3) generative assistance restores images rendered from virtual cameras in wide angula
+r gaps using the ArtiFixer diffusion model ( de Lutio et al., 2026 ) , with the nearest training views in camera pose space as references. The restore
+d images are iteratively incorporated into training as pseudo-supervision, yielding the final 4DGS model for novel view synthesis. Pipeline from six w
+ide-baseline cameras to 4D Gaussian Splatting optimization. Spatial priors use foreground masks and monocular depth, temporal priors use interpolation
+ and optical flow, and generative assistance restores virtual views before pseudo-supervised re-injection. 2. Region-Adaptive Spatial Priors We build 
+on spatiotemporal Gaussians ( Yang et al., 2026 ) , where each primitive has a temporal center t i t_{i} , a temporal extent τ i \tau_{i} , and a 3D v
+elocity v i v_{i} . To address imbalanced capacity allocation, we introduce region-adaptive priors that support detailed foreground reconstruction whi
+le limiting excessive densification and overfitting in the static background. We precompute two scene priors: per-frame foreground masks M fg M_{\math
+rm{fg}} obtained using YOLO11 ( Jocher et al., 2023 ) and tracked with SAM 2 ( Ravi et al., 2024 ) , and monocular depth predictions D pred D_{\mathrm
+{pred}} from DA2 ( Yang et al., 2024 ) . The masks guide Gaussian initialization and densification separately for the foreground and background, while
+
+##########################################################################################
+# 2610.04689 | 化身与人体 | Neuroll: Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1. Introduction Strand-based representation of hair has become commonplace and proves to be important in numerous applications such as films, gaming a
+nd virtual reality. While strand-based groom creation is itself challenging, often requiring a mix of procedural processes and geometric manipulations
+ from artists ( Lin et al., 2018 ) or automatic reconstruction from images and videos ( Sklyarova et al., 2023 ; Zakharov et al., 2024 ) , generating 
+realistic hair animation poses an even greater challenge. Strand-based hair motion significantly elevates visual quality and perceived authenticity, i
+n both single-user experiences and multiple-user interactions. Fundamentally, time integration drives hair animation by solving PDEs at each time step
+. It computes the next hair state by factoring in previous states, boundary conditions, collisions, and external forces. While time integration has be
+en well established for decades in computer graphics, animation, visual effects and gaming, with numerous methods proposed for hair simulation ( Berta
+ils-Descoubes et al., 2011 ; Kaufman et al., 2014 ; Hsu et al., 2025 ; Daviet, 2023 ) , the quality of hair motion is still bounded by the available c
+omputational resources. To fit within strict computational limits while preserving artistic intent, practitioners often resort to reduced degrees of f
+reedom or simplified geometries, such as guide strands and mesh-based hair. However, even with significant simplification, additional measures such as
+ substepping are still needed to maintain motion quality, further increasing computational cost. Recent neural approaches such as GroomGen ( Zhou et a
+l., 2023 ) , Quaffure ( Stuyck et al., 2025 ) , and Neuralocks ( Lin et al., 2026 ) address the challenge by offloading the complex computations to ne
+ural networks and generating hair deformations in either latent or full space. GroomGen trains a network on limited synthetic data produced by artists
+ via simulation, requiring significant manual effort and data handling, making it less generalizable across hairstyles and motion ranges. Quaffure lea
+rns a mapping from body pose to hair deformation in full space, albeit only for quasi-static cases. Neuralocks uses a strand-based network and introdu
+ces an inertia loss in the training process, enabling dynamic strand simulation and generalization while maintaining a low memory footprint and high i
+nference efficiency. However, the inertia loss is highly sensitive to its weighting, trading overshooting against excessive stiffness with no satisfac
+tory middle ground. Moreover, none of these approaches feeds previous hair states to the network as input; dynamics are induced only through the train
+ing objective, so the resulting motion decays over long rollouts (Table 1, ℰ d ​ y ​ n \mathcal{E}_{dyn} ). In cloth simulation, several neural approa
+ches avoid precomputed datasets by minimizing physical energy potentials directly during training, mapping a body motion sequence to next-step states 
+( Bertiche et al., 2022 ; Santesteban et al., 2022 ) . HOOD ( Grigorev et al., 2023 ) leverages a graph-based garment representation that is processed
+ by a graph neural network to predict nodal accelerations. Once trained, the network autoregressively generates dynamic garment motions over long time
+ horizons while exhibiting good generalization. Transferring this recipe to hair is, however, not trivial due to the worse conditioned elastic energy 
+of the Cosserat rod models used for offline hair simulation ( Kugelstadt and Schömer, 2016 ; Hsu et al., 2025 ) including in Neuralocks. This has been
+ observed to significantly degrade convergence of the network training, rendering rod-based formulations impractical for training a neural hair integr
+ator. Supervised, data-driven approaches such as GroomGen ( Zhou et al., 2023 ) avoid this difficulty by regressing to precomputed simulations, yieldi
+ng a well-conditioned objective. In exchange, they require computationally demanding physics simulation, repeated for every hairstyle, body motion, bo
+dy type, and hair material. Simulated trajectories can also differ substantially between similar body motion, making the regression target noisy ( Ber
+
+##########################################################################################
+# 2610.04883 | 重建与SLAM | Reflection-Robust 6DoF Object Tracking with Light Fields
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1 Introduction Estimating the six degrees of freedom (6DoF) pose of a moving rigid object is fundamental to autonomous driving, dynamic simultaneous l
+ocalization and mapping (SLAM) , and aerial robotics. On reflective surfaces, however, the appearance of each pixel couples pose with the object’s geo
+metry, material, and the surrounding illumination. Many combinations of these unknowns explain the same observation, and pose cannot be recovered from
+ appearance alone without modeling the illumination. Figure 1 : Reflection as a pose signal. (a) A reflective surface patch 𝒫 \mathcal{P} in flatland,
+ with normal 𝒏 \boldsymbol{n} and center 𝒙 t \boldsymbol{x}_{t} , translates by Δ ​ 𝒙 \Delta\boldsymbol{x} under environment illumination. (b) The EPI
+s 𝑳 t ​ ( s , u ) \boldsymbol{L}_{t}(s,u) and 𝑳 t + 1 ​ ( s , u ) \boldsymbol{L}_{t+1}(s,u) are correlated ( ⋆ \star ), the loss minimum revealing 𝒙 t
+ + 1 \boldsymbol{x}_{t+1} . (c) Loss versus recovered translation x x . Monocular color (orange), the classical cue, gives only a shallow dip, the EPI
+s (blue) capture view-dependence but ignore re-illumination, and only the relit EPIs (red) drive the loss to zero at the true coordinate. Model-based 
+and model-free 6DoF trackers [ 45 , 17 , 20 , 44 , 14 ] assume stable object appearance and trustworthy depth, both of which break down on specular su
+rfaces. Relightable reconstruction methods [ 36 , 22 , 13 ] recover appearance under novel illumination but only offline, over many views. Work on the
+ dynamics of reflective surfaces [ 1 , 6 ] operates under assumptions that do not hold in unconstrained settings. Reflections are generally treated as
+ interference to be suppressed, although they encode the object’s geometry, motion, and surroundings, and no prior tracker turns them into an online c
+ue for pose. We show that the view-dependent reflection can serve as a pose cue for object tracking ( Fig. 1 ). Our method reconstructs and relights t
+he tracked object online from a single light field capture per frame. The tracking problem thus reduces to aligning a correctly illuminated model. We 
+make the following contributions: A 6DoF object tracking method that recovers pose while reconstructing the surrounding illumination and relighting th
+e object. It stays accurate on reflective surfaces, for which the tracking quality of the state-of-the-art RGB-D trackers drops. A relightable object 
+model of geometry, surface orientation, and material appearance, recovered from a single light field capture, whose appearance changes correctly as th
+e object moves. An online decomposition of appearance into the object’s diffuse color and its reflected environment, which gets updated as the object 
+moves. A light field tracking dataset built by re-rendering a robotic manipulation benchmark [ 43 ] at several reflectivity levels with geometry, ligh
+ting, and pose identical across levels. We pair each frame with simulated depth that reproduces the quality degradation of consumer RGB-D sensors on r
+eflective surfaces. Additionally, we provide two captured light field motion sequences of a diffuse and a reflective version of the same object (musta
+rd bottle). 2 Related Work 6DoF Pose Estimation and Tracking. Classical trackers recover inter-frame motion geometrically, registering point clouds wi
+th iterative closest point (ICP) and its colored variant [ 3 , 26 ] , or solving the perspective- n n -point (PnP) problem over matched keypoints with
+ random sample consensus (RANSAC) [ 18 , 12 ] . Learning-based methods align the observation to a known object model by direct regression, render-and-
+compare, and category-level variants [ 47 , 43 , 17 , 20 , 41 ] , unified by FoundationPose [ 45 ] into a single estimation and tracking framework. Mo
+del-free trackers such as BundleSDF [ 44 ] , initialized from LoFTR matches [ 38 ] , instead build the reference model online [ 44 , 14 ] . Whether La
+mbertian or view-dependent, these models are treated as invariant to illumination, capturing the object only under the illumination present at constru
+ction. To our knowledge, no tracker builds a relightable object model online. We close this gap by recovering the environment and relighting the model
+
+##########################################################################################
+# 2610.05013 | 评估与数据集 | EMBER-Bench: Benchmarking Cross-Event Causal Memory in Long-Horizon Embodied Tasks
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+4 Experiments 4.1 How Well Do Models Handle Each Memory Dependency? 4.2 Which Historical Information Changes Decisions? 4.3 Does Identifying a Cause C
+oincide with the Right Action? 4.4 Can Explicit Causal Reasoning Close the Gap? 5 Conclusion References A Action with Anomalies Annotation Schema Cons
+tructing paired causal traceback questions. B Evaluation Prompts B.1 Input descriptions B.2 Main evaluation: video input (V) B.3 Explicit-history abla
+tions B.4 Simple causal chain-of-thought guidance B.5 Current-frame-only control B.6 Answer parsing C Baseline Models Closed-source models. Open-sourc
+e models. API model versions. D Validation Test for Next-Action Prediction Questions E Additional Experimental Details E.1 Evaluation Protocol E.2 Ana
+lysis Samples and Statistical Method E.3 Temporal Analysis E.4 Information Ablation E.5 Joint Analysis Independence expectation. Model-adjusted differ
+ence. E.6 Causal CoT E.7 Human Evaluation F Limitations License: CC BY 4.0 arXiv:2610.05013v1 [cs.CV] 04 Oct 2026 EMBER-Bench: Benchmarking Cross-Even
+t Causal Memory in Long-Horizon Embodied Tasks Aoyang Cai 1,3,∗ Boning Zhao 2,3,∗ Shaoxuan Xie 3 Dahui Gao 3 Huan Yang 3 Zhongyuan Wang 3 Zhiwei Yu 3,
+† Guocai Yao 3,† 1 Tsinghua University 2 The University of Hong Kong 3 Beijing Academy of Artificial Intelligence * Equal contribution † Corresponding
+ authors Project Page: https://zhaoalexgoat.github.io/EMBER-Bench/ Abstract Lifelong physical agents must reason over extended interactions where past
+ events continue to shape the world long after they disappear from view. Beyond recalling what happened, agents must infer how history changes the cur
+rent state and constrains future actions. Yet existing embodied and video-memory benchmarks largely focus on historical retrieval and summary, leaving
+ such history-dependent causal reasoning underexplored. We introduce EMBER-Bench , an egocentric benchmark for cross-event causal reasoning in long-ho
+rizon embodied tasks, for which we newly created the task design, video recording, and data annotation. It contains 189 household tasks and 699 QA pai
+rs, spanning task progress, failure recovery, external interventions, and compound long-horizon tasks with distant dependencies and prerequisites, wit
+h fine-grained event and causal-chain annotations. EMBER-Bench evaluates reasoning in both directions: next-action prediction selects the next action 
+from history, and causal traceback, given that action, identifies the historical event that makes it necessary. Input ablations that add action logs o
+r privileged cause-and-consequence annotations to the video indicate which kind of historical information models fail to use. Among the 16 evaluated m
+odels, the highest overall accuracy is 61.2%, compared with a mean of 98.3% across two human evaluators. At paired decision points, correct traceback 
+is not associated with correct next-action prediction. Adding action logs yields a gain of 1.6 points, whereas cause-and-consequence annotations yield
+ an additional gain of 13.0 points on top of that. These results suggest that extracting causal information from past events and converting it into co
+nstraints on current actions remains a key difficulty for long-horizon embodied agents. Project Page: https://zhaoalexgoat.github.io/EMBER-Bench/ . 1 
+Introduction Figure 1: Overview of EMBER-Bench. (a) Four types of memory required for long-horizon task scenarios. (b) Paired next-action prediction a
+nd causal traceback assess history-grounded action selection and identification of the historical event supporting a given action. Lifelong agents int
+eracting with the physical world must operate in persistent environments where past events continue to shape later decisions, even across tasks. When 
+the consequences of past events cannot be inferred from the current observation, reliable long-horizon task execution fundamentally requires memory. R
+ecent advances in vision-language-action models (VLAs) offer one route toward this broader vision. π 0.5 \pi_{0.5} ( Physical Intelligence et al., 202
+5 ) has demonstrated its ability to perform multi-stage tasks such as kitchen and bedroom tidying in residences not covered by training. Such progress
+
+##########################################################################################
+# 2610.05081 | 触觉与多模态 | Now You Feel It, Now You See Me: Digital-Twin-based Teleoperation Interface for Dexterous Manipulation
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+III-C Occlusion Handling III-C 1 User-Controlled Virtual View Panel III-C 2 Occlusion-Aware Transparency Rendering III-D Hardware Setup IV Experiment 
+Design IV-A Participants IV-B Tasks IV-B 1 Task 1: Paper Cup Relocation IV-B 2 Task 2: Box Lifting V Results V-A Task 1: Paper Cup Relocation V-B Task
+ 2: Box Lifting VI Conclusion VII Limitations References License: arXiv.org perpetual non-exclusive license arXiv:2610.05081v1 [cs.RO] 04 Oct 2026 Now
+ You Feel It, Now You See Me: Digital-Twin-based Teleoperation Interface for Dexterous Manipulation Youngchan Shim Affiliation: Youngchan Shim, Kyutae
+ Lee, JooYun Kim, Jaeseong Hwang, and Yongseok Lee are with the Department of Robotics and Mechatronics Engineering, DGIST, Daegu, Korea. Kyutae Lee A
+ffiliation: Youngchan Shim, Kyutae Lee, JooYun Kim, Jaeseong Hwang, and Yongseok Lee are with the Department of Robotics and Mechatronics Engineering,
+ DGIST, Daegu, Korea. JooYun Kim Affiliation: Youngchan Shim, Kyutae Lee, JooYun Kim, Jaeseong Hwang, and Yongseok Lee are with the Department of Robo
+tics and Mechatronics Engineering, DGIST, Daegu, Korea. Jaeseong Hwang Affiliation: Youngchan Shim, Kyutae Lee, JooYun Kim, Jaeseong Hwang, and Yongse
+ok Lee are with the Department of Robotics and Mechatronics Engineering, DGIST, Daegu, Korea. Harim Ji Affiliation: Harim Ji is with the Department of
+ Mechanical Engineering, Seoul National University, Seoul, Korea. Yongseok Lee † † thanks: * These authors contributed equally. Corresponding author: 
+Yongseok Lee (email: yslee@dgist.ac.kr). Affiliation: Youngchan Shim, Kyutae Lee, JooYun Kim, Jaeseong Hwang, and Yongseok Lee are with the Department
+ of Robotics and Mechatronics Engineering, DGIST, Daegu, Korea. Abstract Teleoperation is becoming increasingly important for collecting high-quality 
+demonstrations to teach robots dexterous manipulation skills. For dexterous manipulation, bare-hand tracking provides a practical way to control robot
+ic hands and demonstrate coordinated finger movements without gloves or exoskeletons. However, this type of teleoperation faces two key feedback limit
+ations: a lack of force feedback and visual feedback of occluded region. The absence of force feedback hinders precise and safe manipulation, as opera
+tors must infer contact force visually rather than feel them directly. Occlusion by objects or other robot parts impairs the assessment of hand positi
+ons, approach distances, and pre-grasp configurations suited to the object’s shape. To address these limitations, we propose a digital-twin-based augm
+ented reality (AR) teleoperation interface that integrates bare-hand tracking, bimanual robotic hands, and virtual representations of the robot and ta
+sk objects. The interface renders tactile measurements on robot hand meshes as visuo-force feedback. Furthermore, it offers a user-controlled virtual 
+view panel or occlusion-aware transparency rendering to provide occlusion-mitigating visual feedback. We evaluated the interface through user studies 
+involving Task 1 and Task 2, examining how force visualization and visual assistance support demonstration collection in tasks requiring careful force
+ regulation and manipulation under occlusion. I Introduction Teleoperation has become a primary means of collecting high-fidelity demonstration data f
+or robot learning by recording robot actions and observations during human-guided manipulation. Specifically, for dexterous robot hand manipulation, h
+uman demonstrations provide high-dimensional joint trajectories during interactions with diverse objects for robot learning. Vision-based hand trackin
+g and motion retargeting enable operators to control robotic hands through bare-hand movements across different robot configurations [ 1 , 2 ] . By el
+iminating the need for gloves or exoskeletons for motion input, bare-hand interfaces provide a practical means of demonstrating coordinated finger mov
+ements. Despite these advantages, bare-hand teleoperation with typical visual feedback (i.e., bare-eyes or camera) provides limited information about 
+hand–object interactions. In a headset-based setup, operators control the robot through tracked hand movements while observing the physical workspace 
+
+##########################################################################################
+# 2610.05207 | 重建与SLAM | F$^2$ SLAM: Turning Feed-Forward Geometry into Persistent Factors for SLAM
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1 Introduction Online visual simultaneous localization and mapping (SLAM) estimates camera motion and scene geometry by maintaining an optimizable geo
+metric state that dense bundle adjustment (BA) continuously revisits, re-weights, and jointly refines as new observations arrive ( Mur-Artal and Tardó
+s, 2017 ; Teed and Deng, 2021 ; Zhao et al., 2026 ) . Because these measurements are drawn mainly from short temporal windows, online SLAM remains sen
+sitive to weak overlap, occlusion, viewpoint changes, and accumulated tracking error over long sequences. Recent feed-forward 3D foundation models (FM
+s) ( Wang et al., 2025a ) offer a complementary form of geometric reasoning. By jointly processing multiple images, they directly infer depth, point m
+aps, camera poses, and multi-view structure over much broader context than a local BA window ( Xu and Oishi, 2026b ) . This has motivated foundation-m
+odel-based SLAM (FM-SLAM) systems such as MASt3R-SLAM ( Murai et al., 2025 ) , VGGT-SLAM ( Maggio et al., 2025 ) , and VGGT-SLAM++ ( Mandal et al., 20
+26 ) , which exploit learned geometry for tracking, mapping, relocalization, loop closure, or submap alignment. These systems, however, typically comp
+ute feed-forward predictions over local windows or submaps and only afterwards reconcile them with the SLAM state through alignment, fusion, or state-
+level correction, as shown in Fig. 1 . Feed-forward geometry therefore remains an external state rather than evidence that the online optimizer can ac
+t on directly. This separation is costly in two ways. Broader multi-view evidence never enters the measurement set that dense BA actually optimizes. O
+nce a submap has been aligned, it also cannot be jointly re-weighted against subsequent local evidence, since the correction is applied only once. The
+ missing link is a way to make feed-forward geometric evidence directly and repeatedly participate in persistent SLAM optimization, rather than serve 
+as a one-time external correction. We address this with F 2 SLAM , which follows one guiding principle: feed-forward geometry should enter SLAM as opt
+imization-native measurements, not as a separate geometric state. F 2 SLAM converts multi-view feed-forward evidence into dense target-weight measurem
+ents attached directly to the existing factor graph, so that feed-forward reasoning and recurrent tracking constrain the same keyframe poses, dense in
+verse depths, and optional camera intrinsics through one dense BA backend. Doing so online requires updating these measurements at two different times
+cales. A high-frequency stream maintains local constraints and graph connectivity, while a low-frequency stream uses wider multi-view context to selec
+tively refresh existing measurements. Because feed-forward predictions can be unreliable under occlusion or weak overlap, the central difficulty is de
+ciding when a refresh should be trusted. F 2 SLAM addresses this with a state-consistency check that admits a candidate measurement only when it agree
+s with the current geometric state, and otherwise leaves the existing measurement unchanged. Feed-forward pose and depth predictions may also provide 
+gauge-aligned initialization, but subsequent geometric refinement remains entirely within the persistent BA state. Figure 1: Motivation and overview o
+f F 2 SLAM. Conventional dense SLAM (top) relies on local frame-to-frame measurements, while foundation-model-based approaches (middle) reconstruct an
+d align local submaps. In contrast, F 2 SLAM (bottom) integrates high-frequency tracking and low-frequency feed-forward geometry in a persistent dense
+ factor graph, where low-frequency predictions selectively refresh existing measurements for joint refinement through a single dense BA. The inset rep
+orts ATE RMSE on the TUM RGB-D dataset Sturm et al. (2012) . In summary, our contributions are as follows: We formulate feed-forward multi-view geomet
+ry as optimization-native target-weight measurements that directly participate in persistent dense BA. We develop a dual-timescale measurement-refresh
+ mechanism with state-consistent admission, enabling local tracking and broader multi-view reasoning to update a common factor representation within a
+
+##########################################################################################
+# 2610.05233 | 化身与人体 | PixReenact: Pixel-Conditioned Causal Video Diffusion for Streaming Head-Avatar Reenactment
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+A.9 Benchmark Construction Public cross-reenactment (75 pairs, Table ). NeRSemble (75 total pairs: 70 cross + 5 self, Tables and ). Extreme-condition 
+(68 pairs, Table ). Long-horizon streaming (28 pairs, Figure ). A.10 Baseline Implementation Details A.11 Evaluation Protocol A.12 Limitations of Eval
+uation Metrics B Additional Results Cross-identity reenactment. Sensitivity to the pseudo-target generator. Self-reenactment. Long-horizon streaming. 
+Single-window cross-reenactment. Extreme-condition breakdown. Qualitative ablations. Additional ablations. License: CC BY-NC-ND 4.0 arXiv:2610.05233v1
+ [cs.CV] 04 Oct 2026 PixReenact: Pixel-Conditioned Causal Video Diffusion for Streaming Head-Avatar Reenactment Gavriel Habib 1 , Dvir Samuel 2 , Or S
+himshi 1 , Rami Ben-Ari 1 1 OriginAI, Israel 2 NVIDIA Project page: gavriel-habib.github.io/pixreenact/ Abstract Streaming head-avatar reenactment aim
+s to animate a reference image according to a live driving video, requiring robust motion transfer, long-term identity stability, and low latency. Exi
+sting methods often rely on specialized identity or motion representations, which can discard useful visual information and inherit failure modes from
+ external extractors. In addition, many recent diffusion-based reenactment methods use offline, clip-based generation, jointly processing and denoisin
+g an entire video clip before producing its output, making continuous low-latency streaming difficult. We introduce PixReenact , a pixel-conditioned s
+treaming reenactment framework built on causal video diffusion. PixReenact conditions directly on VAE-encoded reference and driving frames, without sp
+ecialized identity or motion representations. To separate reference identity from driver motion, we train with cross-identity pseudo supervision toget
+her with corrective objectives anchored to the original reference and driving inputs. Long self-rollouts reduce autoregressive drift, while state-awar
+e dual-teacher distillation separately addresses cold-start and steady-state generation. Across three cross-identity benchmarks and a long-horizon str
+eaming benchmark, PixReenact demonstrates robust cross-identity reenactment, particularly under challenging conditions such as extreme viewpoints, occ
+lusions, and pronounced facial expressions, while maintaining the reference identity over long streams. A 4-NFE rolling student continuously emits fou
+r frames per update with a mean emission latency of 239 ms. 1 Introduction A streaming head-avatar or portrait-animation continuously animates a refer
+ence image from a live driving video, transferring the driver’s facial expressions and head motion while preserving the reference identity Li et al. (
+2026) . Such avatars provide a visual interface for interactive digital agents, with applications in video conferencing, telepresence, and conversatio
+nal interaction Ki et al. (2026) ; Grassal et al. (2022) ; Wang et al. (2021) . Interactive use requires low-latency, stable, and robust streaming ree
+nactment . Many existing head-avatar methods condition generation on specialized identity or motion representations, such as implicit keypoints Guo et
+ al. (2024) ; Li et al. (2026) , 3DMM or pose/expression parameters Chu and Harada (2024) , and learned identity or motion representations Zhao et al.
+ (2025) ; Xu et al. (2025) ; Cheng et al. (2025) . These representations provide effective and controllable conditioning. Moreover, motion representat
+ions that suppress appearance reduce identity information carried by the driving signal, supporting cross-identity reenactment. However, they can disc
+ard fine-grained visual information. In particular, methods that rely on external keypoint or motion extractors inherit their failure modes: under sev
+ere occlusions, challenging expressions, or large head-pose variations, inaccurate motion estimates can degrade the reenactment. This raises a natural
+ question: can head-avatar reenactment instead operate directly on the visual representations of the reference and driving frames, without specialized
+ identity or motion representations for conditioning ? Beyond robust conditioning, a second challenge is low-latency continuous generation. Many recen
+
+##########################################################################################
+# 2610.05289 | 神经渲染 | Mobile-4DGS: Unified Static-Dynamic Real-time Mobile Gaussian Splatting
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+I Introduction Recent advancements in 3D scene reconstruction [ 3 , 4 , 5 , 6 , 7 , 8 ] and novel view synthesis [ 9 , 10 , 11 , 12 , 13 , 14 ] have b
+een driven by 3D Gaussian Splatting (3DGS) [ 1 ] . By representing scenes as millions of explicit and differentiable 3D Gaussians, 3DGS delivers high-
+fidelity, real-time rendering on desktop hardware. This capability has enabled diverse applications across autonomous driving [ 15 , 16 , 17 ] , navig
+ation [ 18 , 19 , 20 ] , and virtual reality [ 21 , 22 , 23 , 24 ] . Despite these successes, efficiently deploying static and dynamic Gaussian Splatt
+ing on resource-constrained mobile devices remains a critical bottleneck. Mobile-GS [ 2 ] is the first to deploy 3DGS on mobile devices and achieves r
+eal-time rendering. It identifies the sorting process in the original volume rendering as causing slow rendering for mobiles. Therefore, it proposes a
+n order-independent rendering pipeline to replace the traditional volume rendering so as to achieve fast rendering on mobiles. However, removing the s
+orting process causes Gaussian rendering in an arbitrary order, causing transparency artifacts in regions with overlapping geometry. Although Flux-GS 
+[ 25 ] maintains the original sorting process and achieves faster rendering, it cannot support dynamic rendering [ 26 ] in our daily 4D space. The two
+ lines of work therefore leave the same tension unresolved: giving up the sort buys throughput at the price of correct compositing, whereas keeping it
+ means paying for a depth order that a 4D scene has to rebuild at every playback frame, together with the upload of the resulting index buffer. In our
+ experiments, we identified four primary bottlenecks that hinder the efficient deployment of Gaussian Splatting (3DGS) on mobile devices: (1) Third-Or
+der Spherical Harmonics Overhead: Prior methods [ 27 , 28 , 29 , 30 , 31 ] commonly rely on third-order Spherical Harmonics (SH) to model complex, vie
+w-dependent radiance. However, third-order SH requires 48 floating-point parameters per Gaussian primitive. Scaled across millions of Gaussians, this 
+creates prohibitive storage overhead and heavy memory bandwidth consumption during rasterization. (2) Redundant Primitive Densification: Lightweight 3
+DGS variants, such as Mobile-GS [ 2 ] and MEGS2 [ 32 ] , typically adopt standard single-view gradient-based densification [ 1 ] . This approach aggre
+ssively spawns excess primitives, leading to overfitting and inflated point counts. The resulting primitive redundancy severely impacts training effic
+iency, storage footprint, and inference latency on the resource-constrained edge devices. (3) MLP-based Dynamic Representation: Previous works [ 26 , 
+33 , 34 ] leverage neural networks to model temporal variation, introducing non-trivial per-frame deformation inference and limiting rendering efficie
+ncy on resource-constrained devices. (4) Per-Frame Depth Ordering under Motion: Primitive motion continuously changes the relative depth of Gaussians,
+ invalidating previously cached depth orders. As a result, the renderer must repeatedly re-project primitives, recompute their ordering, and update th
+e draw list during playback, introducing additional runtime and data-transfer overhead. Fig. 2: Gaussian parameter distribution and Spherical Harmonic
+ fidelity analysis. (a) Per Gaussian memory footprint across 3DGS variants. Mobile-4DGS achieves significant compression (61% and 26% reductions) by o
+ptimizing Spherical Harmonics (SH) coefficients and decoupling SH into the base and view-independent components. (b) Qualitative comparison demonstrat
+es that Mobile-4DGS with only first-order SH can render high-fidelity high-frequency details comparable to 3DGS. In this work, we present Mobile-4DGS,
+ a mobile real-time Gaussian Splatting method designed to deliver high-fidelity rendering with significantly fewer parameters. As illustrated in Fig. 
+1 , our proposed Mobile-4DGS achieves rendering quality comparable to existing baselines while utilizing fewer Gaussian primitives, thereby outperform
+ing Mobile-GS [ 2 ] in inference speed. Our framework is built upon four technical innovations: (1) Unified Mobile Static-Dynamic Representation : We 
+
+##########################################################################################
+# 2610.05526 | 空间计算与UI | Have I Scene This Before? Spatially Grounded Conversational Memory for Complex Queries in Egocentric Assistants
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+1 Introduction As personal assistants move beyond search and text interfaces toward egocentric multimodal systems, they must remain coherent with both
+ what the user sees and what they say over time ( Wang et al., 2023 ; Liang et al., 2026a ) . Users naturally refer to objects in view while expressin
+g facts such as ownership and preferences that cannot be inferred visually. As interactions span rooms, sessions, and days, tasks requiring object com
+parisons, alternative arrangements, or a complete inventory arise, even when the relevant evidence is no longer visible or recoverable. Thus, an effec
+tive assistant should preserve both spatial and conversational context to support ongoing tasks, without requiring the user to remember or revisit ear
+lier interactions. Figure 1 demonstrates how a user might identify friends’ belongings while moving through an apartment, then later ask a spatially g
+rounded question dependent on those references, such as “How much of my friend’s stuff on the tables earlier can I fit in this box?” Answering such co
+mplex cross-scene spatial queries requires more than retrieving a relevant frame: the assistant must recover conversational facts tied to persistent o
+bjects, combine them with prior geometric, qualitative relational, or counterfactual spatial evidence, and account for all relevant objects across the
+ history. We refer to this as Spatially grounded Conversational Reasoning ( SpaCR ) . Where Existing Approaches Fall Short. Direct vision-language mod
+els (VLMs) repeatedly process growing multimodal histories, exhausting context windows and incurring high inference costs ( Tang et al., 2025 ; Zhu et
+ al., 2026 ) . Keyframe selection and multimodal Retrieval-Augmented Generation (RAG) reduce context but may miss objects or evidence required for que
+stions requiring complete recall. Spatial scene memories primarily retain visual observations without evolving conversational context ( Gu et al., 202
+4 ; Yang et al., 2025b ) . Multimodal conversational memories such as M2A retain raw interactions alongside semantic records ( Feng et al., 2026 ) , b
+ut do not maintain the explicit object geometry needed for complex spatial reasoning. Existing datasets likewise lack key requirements of SpaCR (Table
+ 3 ). VideoQA approaches ( Yang et al., 2025a ; Yang et al., 2026 ; Gu et al., 2026 ) do not evaluate spatial reasoning over conversational facts, whi
+le situated dialogue datasets ( Wu et al., 2023 ) focus on single-scene interactions with limited spatial reasoning. Figure 1: SpaCR involves complex 
+spatial queries that require connecting user-stated facts to spatial evidence about the same physical objects across the interaction history. Here, id
+entifying which of Dana’s belongings could fit in a box requires recalling ownership established through conversation and checking previously observed
+ locations and object dimensions. SpaC-MEM links this conversational and spatial evidence through persistent objects in a unified working memory. A Sp
+atially Grounded Working Memory. To address this gap, we propose Spatially grounded Conversational Memory ( SpaC-MEM ), a unified object-centric worki
+ng memory that grounds user-specific conversational information to physical objects in historical egocentric interactions while preserving their spati
+al evidence (e.g., object size) via 3D geometric reconstruction with segmentation. SpaC-MEM compresses long frame-based histories into a compact repre
+sentation, while allowing conversational information to be accumulated and updated over time (e.g., changing a chair from discarded to kept). We furth
+er introduce Ego-SpaCR , a benchmark for SpaCR over egocentric video, augmented with task-oriented dialogue. Our experiments show that SpaC-MEM achiev
+es the highest overall answer accuracy among the evaluated methods and improves object recall while requiring substantially fewer reference input toke
+ns than native-video baselines. Removing explicit 3D spatial information substantially degrades performance, supporting the use of spatial evidence al
+ongside conversation in memory. Our contributions are summarized as follows: We introduce Spatially grounded Conversational Memory ( SpaC-MEM ), an ob
+
+##########################################################################################
+# 2610.05576 | 神经渲染 | SteadySplats: Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+2 Related Work 3D Gaussian Splatting and the Sorting Bottleneck. Order-Independent and Stochastic Transparency. Denoising and Resampling. 3 Preliminar
+ies 3.1 3D Gaussian Splatting (3DGS) 3.2 Stochastic and Order-Independent 3DGS Temporal Reuse. 4 Method 4.1 Color Variance Regularization 4.2 Spatial 
+Resampling Neighbor Reuse. Approximating 𝐰 𝐧 → 𝐱 , 𝐲 \mathbf{w_{n\rightarrow x,y}} . 4.3 Spatio-Temporal Resampling Temporal Importance Resampling. Mo
+ving Camera. Soft History Rejection. Per-Primitive Spatio-Temporal Blue Noise. 5 Evaluation Variance-Quality Trade-off. Spatial Reuse. Performance. ST
+BN. 5.1 Camera Motion Component Ablation. 6 Discussion Different Primitives. 6.1 Limitations 6.2 Future Work References 7 Pseudocode 8 Temporal Recurr
+ence and Soft Rejection Implementation Reprojection and History Fetch. Neighborhood Moments in Color Space. Velocity-Adaptive Confidence Scaling ( γ \
+gamma ). Statistical Distance and Soft History Blending. 9 Additional Experiments 9.1 Effects of ℒ var \mathcal{L}_{\text{var}} 9.2 Additional Quality
+ Metrics 9.3 Pareto Analysis 9.4 8-Neighborhood Resampling 10 Bias Self-Normalized Importance Sampling. Tile-Based Splatting. Early Exit. Finite Histo
+ry Buffer. 11 Gaussian Point Splatting Evaluation 12 Spatio-Temporal Blue Noise 13 Gradients of the Color Variance Loss 14 Spatio-Temporal Resampling 
+14.1 Proofs 14.2 Additional Ablations License: CC BY 4.0 arXiv:2610.05576v1 [cs.CV] 04 Oct 2026 SteadySplats: Resampling of Low-Variance Gaussians for
+ High-Fidelity Stochastic Rendering Felix Windisch* Affiliation: Graz University of Technology Email: felix.windisch@tugraz.at Thomas Köhler* Affiliat
+ion: Graz University of Technology Email: t.koehler@tugraz.at Lukas Radl Affiliation: Graz University of Technology Email: lukas.radl@tugraz.at Chris 
+Wyman Affiliation: NVIDIA Email: chris.wyman@acm.org Georgios Kopanas Affiliation: Google DeepMind Email: gkopanas@google.com Bernhard Kerbl Affiliati
+on: University of Copenhagen Email: beke@di.ku.dk Markus Steinberger Affiliation: Graz University of Technology Email: steinberger@tugraz.at Abstract 
+Stochastic order-independent transparency enables efficient and elegant rendering of primitive-based radiance fields like 3D Gaussian Splatting models
+, but remains impractical due to the inherent visible noise in the output. We propose a principled approach to minimize high-frequency noise, addressi
+ng its sources at the representation and image synthesis level. During stochastic rendering, our history-based spatial resampling scheme drastically a
+ccelerates image convergence, while temporal importance resampling ensures coherence under camera movement. During training, a color regularizer impli
+citly reduces the variance along view rays in the 3DGS models. With these properties, our optimized, Vulkan-based renderer effectively mitigates outpu
+t noise at low and high sample counts, achieving a substantial 13 dB PSNR increase in quality over previous stochastic methods at 1 sample per pixel a
+nd quickly converging to sorted 3DGS with an average L1 error of less than 10 − 4 10^{-4} . 1 1 footnotetext: Both authors contributed equally to this
+ work. Figure 1 : Through optimized training and inference, our stochastic OIT renderer achieves significantly better image quality than prior art wit
+h the same number of random samples. Our approach makes single-sample rendering a viable candidate for applications that demand high quality, as well 
+as extremely high frame rates. Measurements were performed using each method’s original implementation. 1 Introduction The rapid evolution of novel vi
+ew synthesis has been largely driven by the advent of radiance fields and, more recently, primitive-based representations in particular. Methods such 
+as 3D Gaussian Splatting (3DGS) [ 11 ] have demonstrated exceptional visual fidelity and real-time rendering capabilities by modeling complex scenes a
+s unstructured collections of volumetric primitives. Traditionally, fast rendering of these representations relies on alpha-blending sorted primitives
+ using a tile-based rasterizer. Stochastic order-independent transparency (OIT) presents an elegant, efficient alternative for rendering primitive-bas
+
+##########################################################################################
+# 2610.05610 | 触觉与多模态 | SEA-LM: Egocentric Spatial Audio Understanding for Wearable Microphone Arrays
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+3.2.2 Array Selection 3.2.3 Room Impulse Response (RIR) Generation 3.2.4 Source Audio Sampling and Mixing 3.3 SEA-LM: S patio-Temporal E gocentric A u
+dio L anguage M odel 3.3.1 Dual Audio Pathway 3.3.2 Learned Spatial Projector and LLM Injection 3.3.3 Spatial Audio Supervised Fine-Tuning 3.3.4 Spati
+o-Temporal Weighted Cross-Entropy 4 Evaluation 4.1 SEA-LM Evaluation Set 4.2 SEA-LM Evaluation Metrics 4.3 Baselines 5 Experiments 6 Results 6.1 SEA-L
+M Results 7 Conclusion, Limitations & Future Work 8 Ethics Statement 9 Reproducibility Statement References A Coordinate System B Ambisonic Signal Mat
+ching Beamforming Details C Beamforming Artifacts and Array Selection D FOACoder Training and Evaluation D.1 Training Objectives D.2 Training Setup fo
+r FOACoder . D.3 Evaluation Protocol D.4 Results E Glasses Microphone Arrays F Array Transfer Function Simulation Details F.1 Simulation Setup F.2 Pos
+t-processing G Ambisonic Signal Matching Simulation Study H Room Impulse Response Simulation Details H.1 Simulating External Sources H.2 Simulating th
+e Self Speech Source H.3 Simulation Parameters I Mixing Parameters J Question and Answer Generation Details and Examples K SEA-LM Evaluation Protocol 
+and Metrics K.1 Common Evaluation Protocol K.2 Metric Definitions K.3 Metrics by Task L Cohort Analysis M Categorical Direction Bins N Training Stages
+ for SEA-LM O Curriculum Ablation Studies O.1 SEA-LM Curriculum Ablation P Extended SEA-LM Evaluation Results Q AI Usage License: CC BY 4.0 arXiv:2610
+.05610v1 [cs.SD] 04 Oct 2026 SEA-LM: Egocentric Spatial Audio Understanding for Wearable Microphone Arrays Sonal Kumar Sinan Hersek Artem Dementyev Me
+ngzhen Pan Ishan Chatterjee Anurag Kumar Ramani Duraiswami Dinesh Manocha Andrea Colaco University of Maryland, College Park Google Google DeepMind Co
+rresponding authors: sonalkum@umd.edu, shersek@google.com Abstract Embodied, ego-centric intelligence fundamentally requires the ability to comprehend
+ spatial audio within complex environments. While large audio-language models excel at mono-channel reasoning, they lack spatial awareness, discarding
+ critical spatial cues that enable sound localization and that can improve the disentanglement of overlapping sound sources. To address this, we prese
+nt SEA-LM , a Spatial Audio Understanding model. First, we introduce FOACoder , a layout-flexible spatial audio encoder trained on source localization
+ and ego-centric voice activity detection objectives to encode First Order Ambisonics derived from variable-count, variable-position smart-glasses arr
+ays via beamforming. We train a Multimodal Large Language Model (MLLM) to understand these spatial audio embeddings through a two-stage curriculum spa
+nning six tasks, including sound localization and spatially selective transcription in settings with multiple speakers and overlapping sounds. To prev
+ent the transcription outputs from dominating the next token prediction loss and overwhelming the direction predictions, we introduce a Spatio-tempora
+l Weighted Cross-Entropy Loss . On our evaluation set, SEA-LM achieves lower azimuth and elevation MAE, higher temporal IoU, lower external-source hal
+lucination and missing-source rates, and lower WER on most transcription tasks than compared baselines, while remaining robust across 1,211 smart-glas
+ses array configurations with 4 to 9 microphones. 1 1 footnotetext: Equal contribution. 2 2 footnotetext: Work done while at Google XR. 3 3 footnotete
+xt: Now at Google DeepMind, work done while at Google XR. 4 4 footnotetext: Now at Meta, work done while at Google XR. 1 Introduction The advent of La
+rge Audio-Language Models ( Chu et al., 2023 ; Tang et al., 2024 ; Gong et al., 2023 ; Ghosh et al., 2026 ) built on robust audio encoders ( Radford e
+t al., 2023 ; Elizalde et al., 2023 ; Wu et al., 2023 ; Chen et al., 2022 ; Gong et al., 2021 ) has brought a paradigm shift to machine audition, enab
+ling complex semantic reasoning and open-ended conversational tasks. However, these systems are built on understanding monophonic audio discarding spa
+tial information in the soundscape. In both human psychoacoustics and machine audition, the spatial cues contained in spatial audio (e.g., inter-chann
+
+##########################################################################################
+# 2610.05757 | 重建与SLAM | Human-in-the-Loop Neuro-Symbolic Drift Anticipation for Reliable Visual SLAM
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+2.3 Neuro-Symbolic and Constraint-Aware Learning 3 Design of Hybrid DeepSEE (HDS) Framework 3.1 Problem Formulation 3.2 Neural Drift Risk Estimation 3
+.3 Language-Mediated Symbolic Encoding 3.4 Neuro-Symbolic Supervisory Integration 3.5 Supervisory Drift Monitoring and Decision Support 3.6 Quantitati
+ve Evaluation and Experimental Results 4 Conclusion 5 Future Works References License: arXiv.org perpetual non-exclusive license arXiv:2610.05757v1 [c
+s.RO] 05 Oct 2026 Human-in-the-Loop Neuro-Symbolic Drift Anticipation for Reliable Visual SLAM footnoteinfo This research was supported by Incheon Nat
+ional University Research Grant in 2025 (#2025-0391). Junhyun Nam 1 Address: 1 Department of Information and Telecommunication Engineering, Wonse Jo 1
+ Address: Incheon National University, Incheon, South Korea 22012. {namjunhyun,jow}@inu.ac.kr Abstract This paper introduces Hybrid DeepSEE (HDS), a H
+uman-in-the-Loop (HITL) neuro-symbolic framework for proactive drift anticipation in Visual SLAM (V-SLAM). While data-driven models offer predictive p
+ower, their “black-box” nature often yields physically inconsistent outputs in out-of-distribution (OOD) environments. To address this, HDS integrates
+ neural drift risk estimation with symbolic constraint reasoning. By utilizing a Large Language Model (LLM) as a reasoning bridge, the framework trans
+lates qualitative human context into interpretable symbolic constraints. Building upon this architecture, we propose a superior drift anticipation fra
+mework that ensures enhanced reliability and consistency in Visual SLAM 1 Introduction Reliable state estimation is a fundamental requirement for the 
+safe deployment of autonomous mobile robots in mission-critical domains such as industrial automation and defense operations. In such systems, localiz
+ation accuracy directly affects feedback control performance, trajectory tracking stability, and overall operational safety ( Kelly and Sukhatme, 2009
+ ) . Visual Simultaneous Localization and Mapping (V-SLAM) has become a widely adopted solution due to its ability to extract rich environmental infor
+mation using low-cost cameras ( Cadena et al., 2016 ) . Real-world V-SLAM systems, despite their advantages, experience cumulative drift, which refers
+ to the accumulated errors in pose estimation while driving ( Cadena et al., 2016 ) . As a result, there is a divergence between the estimated and tru
+e trajectories. From a control perspective, the estimation degradation can propagate through the feedback loop, leading to performance deterioration o
+r potential instability ( Radisavljevic-Gajic, 2024 ) . Drift is particularly pronounced in challenging environments characterized by repetitive textu
+res, abrupt illumination changes, and low-feature regions, where measurement reliability is significantly reduced ( Savinykh et al., 2022 ) . In safet
+y-critical domains, such as nuclear maintenance, defense operations, and human-robot collaboration, estimation failures can lead to catastrophic conse
+quences including human casualties or severe environmental damage. In these high-stakes contexts, even minor SLAM drift transcends simple positioning 
+errors, potentially triggering abrupt trajectory deviations that propagate into the control loop ( Cadena et al., 2016 ) . Therefore, it is essential 
+not only to correct errors after they occur but to anticipate degradation before significant drift compromises the system. Early awareness of drift ri
+sk enables proactive supervisory actions—such as motion regulation or re-localization triggers—thereby preserving closed-loop reliability and operatio
+nal integrity without relying solely on post-hoc, reactive correction ( Zhang et al., 2026 ) . To address this need, we propose a conceptual Neuro-Sym
+bolic Drift Anticipation Framework that introduces a constraint-aware supervisory layer above a conventional V-SLAM estimator using Human-in-the-Loop 
+approach. It monitors drift risk and evaluates consistency under predefined constraints without altering the estimated pose. This supervisory evaluati
+on aims to prevent physically implausible or high-risk estimation conditions. The main contributions of this work are summarized as follows: Designing
+
+##########################################################################################
+# 2610.05772 | 空间计算与UI | Smart Navigation for Visual Prostheses in Virtual Reality: An End-to-End Framework for Priority-Based Scene Translation and Path Guidance
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+2.2.1 Navigation-based preprocessing Sidewalk segmentation and free-path extraction Obstacle detection 2.2.2 Priority scoring and translation 2.2.3 En
+d-to-end stimulation parameter learning and phosphene map generation Encoder Simulator Pipeline Training 2.3 Dawn Pilot: The VR Research Platform 2.3.
+1 Distributed Architecture and Latency Mitigation 3 Experimental Environment, and Setup 3.1 Participants 3.2 Virtual environment and task objectives 3
+.3 Visual conditions 3.4 Experimental protocol 3.5 Evaluation and subject assessment 4 Results 4.1 Comparing conventional and proposed solutions using
+ the Friedman test 4.2 Generalized linear mixed model (GLMM) analysis for multi-trial performance evaluation 4.2.1 Task success 4.2.2 Navigational saf
+ety: Collision analysis 4.2.3 Navigational efficiency: Task completion duration 4.3 Qualitative analysis of user feedback 5 Discussion 5.1 Task succes
+s and metric validity 5.2 Navigational collision safety vs. system stability 5.3 Temporal efficiency 5.4 Experimental limitations 5.4.1 Sample size 5.
+4.2 Wireless connectivity 5.4.3 Lack of environment dynamics 5.4.4 Lack of eye-tracking 5.4.5 Lack of temporal perceptual modeling 6 Conclusion and Fu
+ture Work References License: arXiv.org perpetual non-exclusive license arXiv:2610.05772v1 [cs.HC] 05 Oct 2026 * * footnotetext: These authors contrib
+uted equally to this work. Smart Navigation for Visual Prostheses in Virtual Reality: An End-to-End Framework for Priority-Based Scene Translation and
+ Path Guidance Mohamed H. Abdellatif ∗ Affiliation: Department of Biomedical Engineering and Systems, Faculty of Engineering, Cairo University, Giza, 
+Egypt Fatma S. Elsharkawy ∗ Affiliation: Department of Biomedical Engineering and Systems, Faculty of Engineering, Cairo University, Giza, Egypt Noura
+n H. Qassem ∗ Affiliation: Department of Biomedical Engineering and Systems, Faculty of Engineering, Cairo University, Giza, Egypt Talal M. Emara Affi
+liation: Department of Biomedical Engineering and Systems, Faculty of Engineering, Cairo University, Giza, Egypt Nada K. Kotb Affiliation: Department 
+of Biomedical Engineering and Systems, Faculty of Engineering, Cairo University, Giza, Egypt Muhammad Rushdi Affiliation: Department of Biomedical Eng
+ineering and Systems, Faculty of Engineering, Cairo University, Giza, Egypt Affiliation: School of Information Technology, New Giza University, Giza, 
+Egypt Reham H. Elnabawy Affiliation: School of Information Technology, New Giza University, Giza, Egypt Abstract Visual prosthetics provide a promisin
+g direction for partial restoration of functional vision for people with total retinal blindness. However, existing systems face significant challenge
+s in translating complex visual scenes into meaningful perceptions due to limited spatial resolution, leading to difficulties in scene understanding. 
+Furthermore, existing solutions don’t adequately account for user requirements and concerns, and this creates a significant gap between user expectati
+ons and the developed solutions. To address these gaps, we conducted interviews with 10 blind human subjects. These interviews essentially indicated t
+hat the main key challenge for these people is outdoor navigation. In this paper, we present an end-to-end smart navigation system for visual prosthes
+es users. Our approach employs a three-stage framework. First, an object detector is implemented to identify and localize points of interest for navig
+ation tasks in pedestrian environments, and simultaneously generate the safest paths available to the users. Second, the detected objects are abstract
+ed into simple geometric shapes suitable for low-spatial-resolution vision. The detected objects are filtered based on a multi-criteria priority scori
+ng function. Finally, this information is encoded into optimized stimulation parameters, which are fed into the visual prosthesis implants to generate
+ enhanced phosphene representations for obstacle avoidance and path planning. This whole system is validated with sighted participants using virtual r
+eality to simulate outdoor navigation. Our smart navigation system improves user independence while taking into account the limitations of visual pros
+
+##########################################################################################
+# 2610.06472 | 神经渲染 | MaRO-GS: Mask-Robust Object-Centric Gaussian Splatting from Inconsistent Multi-view Masks
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+4.4 Additional Evaluation for Object-centric Reconstruction Robustness Evaluation under Mask Errors. Object-centric Viewpoint Evaluation. 5 Ablation S
+tudy 5.1 Ablations on Each Module 5.2 Effect of Object-supported Gaussian Density Control 5.3 Efficiency of Object-centric Reconstruction 6 Limitation
+s 7 Conclusion References 0.A Implementation Details 0.B Experimental Details 0.B.1 Rendered Results of Object-centric 3D Gaussian Splatting (Sec 4.2)
+ Datasets and Mask Annotation Evaluation Metrics 0.B.2 Evaluation of Object Boundary Quality (Sec 4.3) Datasets and Mask Annotation Evaluation Metrics
+ 0.B.3 Robustness Evaluation under Mask Errors. (Sec 4.4.1) Datasets and Mask Annotation Evaluation Metrics 0.B.4 Object-centric Viewpoint Evaluation 
+(Sec 4.4.2) Camera Trajectory Generation Evaluation Metrics 0.C Additional Experiments and Analysis 0.C.1 Comparison Across Evaluation Settings 0.C.2 
+Additional Ablation Studies 0.C.3 Analysis of Mask-Reliability View Filtering Ablation under Mask Errors Filtering Statistics Sparse-view Analysis Sen
+sitivity to Filtering Schedules Sensitivity to Hit-Ratio Threshold τ hit \tau_{\mathrm{hit}} 0.C.4 Object-supported Gaussian Density Control Analysis 
+0.C.5 Gaussian Merging Hyperparameter Analysis 0.C.6 Effect of Gaussian Merging and Mask-guided Pruning 0.C.7 Silhouette-aligned Object Loss 0.D Probl
+em Analysis: Challenges in Object-Centric 3D Gaussian Splatting 0.D.1 Challenges Under Inconsistent Supervision 0.D.2 Background Removal Artifacts 0.E
+ Detailed Comparison with Related Work 0.E.1 Comparison with ObjectGS 0.E.2 Comparison with PUP 3D-GS 0.E.3 Comparison with LongSplat 0.F Limitations 
+and Failure Case Analysis 0.F.1 Challenging Cases and Limitations of MaRO-GS 0.F.2 Failure Cases of Existing Methods 0.G Robustness Across Segmentatio
+n Models 0.H Seed Variance 0.I More Qualitative Results License: arXiv.org perpetual non-exclusive license arXiv:2610.06472v1 [cs.CV] 05 Oct 2026 MaRO
+-GS: Mask-Robust Object-Centric Gaussian Splatting from Inconsistent Multi-view Masks Eunji Kim ∗ Gahyeon Kim ∗ Gianella Cravioto Dong-hun Lee Chaewon
+ Moon Chae-yeong Song Sang-hyo Park † Affiliation: School of Computer Science and Engineering Kyungpook National University, Daegu, Republic of Korea 
+https://eunjikim02.github.io/marogs/ E-mail {now0104, hwang190190, gianellacrv9, hy05205, moonchaewon2, yeongsong, s.park}@knu.ac.kr Abstract We addre
+ss the challenge of accurate 3D object reconstruction from multi-view images in Gaussian Splatting. Existing object-level 3DGS methods reconstruct the
+ entire scene rather than directly optimizing the target object, even when only the target object is needed, which incurs substantial computational ov
+erhead. They also rely on 2D segmentation masks to associate Gaussians with objects, but these masks are often inconsistent across views. Such inconsi
+stencies corrupt Gaussian optimization and produce incorrectly supervised Gaussians that degrade object reconstruction fidelity. To overcome these lim
+itations, we propose MaRO-GS, a 3DGS framework that directly optimizes target-object Gaussians from object-masked multi-view images and remains robust
+ to inconsistent supervision. For reliable supervision, mask-reliability view filtering excludes unreliable views. Object-supported Gaussian density c
+ontrol suppresses Gaussians irrelevant to the target object and prevents background densification, while Silhouette-aligned Object Loss maintains obje
+ct-focused optimization. Extensive experiments across diverse datasets demonstrate that MaRO-GS improves PSNR, segmentation accuracy, and computationa
+l efficiency, with the largest PSNR gain of 2.05 dB on the small-object LERF-Mask dataset. Keywords: 3D Gaussian Splatting, Object-centric Reconstruct
+ion, Mask Supervision † † footnotetext: ∗ Equal contribution † Corresponding author Figure 1 : Comparison between MaRO-GS and ObjectGS on a single obj
+ect from LERF-Mask. (a) MaRO-GS directly reconstructs the target object from object-masked multi-view images (top), whereas ObjectGS reconstructs the 
+entire scene with its native full-scene pipeline before extracting the target object (bottom). This leads to longer training time (6,824 s vs. 323 s).
+
+##########################################################################################
+# 2610.06688 | 神经渲染 | GS-Pool: Object-Level Change Detection in 3D Gaussian Splatting
+##########################################################################################
+
+[ABSTRACT]
+
+
+[BODY]
+L Per-cell results License: arXiv.org perpetual non-exclusive license arXiv:2610.06688v1 [cs.CV] 05 Oct 2026 GS-Pool : Object-Level Change Detection i
+n 3D Gaussian Splatting Boaz Keren-Gil James Gain Patrick Marais Affiliation: University of Cape Town Abstract Factories, museums and surveyors photog
+raph the same space months apart and need to know which objects changed. When each visit is reconstructed with 3D Gaussian Splatting (3DGS) [ 1 ] , a 
+direct comparison of the two reconstructions does not answer this. Training is stochastic, so two reconstructions of an unchanged space never coincide
+, and the second visit is often a quick re-scan with far fewer photographs. We propose GS-Pool , which takes two independently reconstructed Gaussian 
+fields of the same space and returns the changed objects in each, together with their masks. SAM2 masks of each visit’s photographs are lifted onto th
+e Gaussians that render them and merged into an object pool , so every decision is taken once per object in 3D. We introduce a photographic carrier , 
+the 3DGS training loss of each input reconstruction against the other visit’s photographs, backpropagated to the Gaussians that rendered each pixel. W
+e combine it with GS-Diff ’s geometry and colour terms and our distilled DINOv3 features. This evidence is compared with that of the objects present i
+n both visits, which sets a change threshold for each scene. On PASLCD [ 2 ] , GS-Pool reaches mIoU/F1 scores of 0.751/0.846 against 0.644/0.758 for G
+S-Diff , the strongest prior method, a gain of 17%/12%. Its mIoU is also 36%, 40% and 57% above that of O-SCD , PlenoCI [ 3 ] and MV-3DCD , and it rea
+ches 0.855 mIoU on CL-Splats, 33% above MV-3DCD . Each changed object is returned as a set of Gaussians with the evidence behind its decision, which a
+n inspector can review in 3D. 1 Introduction Consider a room photographed on two visits, several months apart. Between the visits, objects in this roo
+m have changed, the light is different and the camera path is different. We assume that the two reconstructions of the room are built independently wi
+th 3D Gaussian Splatting (3DGS). They share no primitives, and their primitives differ in number and placement. The goal is to report only which objec
+ts changed, a question many factories, museums and surveyors ask. Change detection in 3D Gaussian Splatting is usually posed as a dense problem. For e
+xample, MV-3DCD and O-SCD fuse per-view cues into a change field over the Gaussians. GS-Diff [ 4 ] , the strongest prior method, compares the two prim
+itive sets directly, renders a change score per primitive and thresholds the rendered score at a fixed 0.5 0.5 in every pixel. These methods make pixe
+l-level decisions, with a threshold fixed in advance, about objects that may span thousands of primitives. Two reconstructions of the same unchanged s
+pace never coincide, because 3DGS training is stochastic and each visit is photographed along a different camera path. We refer to this difference as 
+drift , as GS-Diff [ 4 ] does. A difference computed between the two reconstructions therefore mixes change with drift. Unlike the primitives, the pho
+tographs that were used for training carry no reconstruction drift. GS-Pool therefore lets the reconstructions propose a set of candidate object chang
+es directly from the primitive space, and the photographs of the other visit confirm or reject them. Geometry and colour alone can miss a different ob
+ject in the same place, so we also distill a semantic field , generated from a foundation model, into the primitives. GS-Pool keeps GS-Diff ’s drift m
+odel, geometry and colour kernels and observability weight unchanged. We contribute: an object pool : SAM2 masks of each visit’s photographs, assigned
+ to the primitives that render them ( lifted ) and merged across views into objects, so evidence is aggregated and decided once per object and not per
+ primitive (Appendix B ). a photographic carrier : the 3DGS training loss of each input reconstruction against the other visit’s photographs, backprop
+agated through the rasteriser to the primitives that rendered each pixel (Figure 3 ). a change threshold set on each scene: each object’s evidence is 

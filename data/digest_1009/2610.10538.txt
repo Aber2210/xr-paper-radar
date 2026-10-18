@@ -1,0 +1,406 @@
+【摘要】
+
+【方法】
+3.1 Offline memory construction
+3.2 Query-time reasoning Handled
+objects
+Untouched
+objects
+Motion
+history
+Path &
+places
+RGB
+only
+Scene
+changes
+≥ \geq 20-min
+video
+No frames
+at query
+Language
+queries
+3D
+location
+ConceptGraphs  [ 18 ]
+✗
+✓
+✗
+✗
+✗
+✗
+N.A.
+✓
+✓
+✓
+3D-Mem  [ 57 ]
+✗
+✓
+✗
+✗
+✗
+✗
+N.A.
+✗
+✓
+✓
+ReMEmbR  [ 2 ]
+✗
+✗
+✗
+✓
+✗
+N.A.
+✓
+✓
+✓
+∘ \circ
+VideoAgent  [ 14 ]
+∘ \circ
+✓
+✗
+✗
+✓
+✗
+✗
+✗
+✓
+✗
+AMEGO  [ 16 ]
+✓
+✗
+∘ \circ
+✓
+✓
+✗
+✓
+✓
+✗
+✗
+OSNOM  [ 36 ]
+✓
+✗
+✓
+✗
+∘ \circ
+✗
+✓
+N.A.
+✗
+✓
+Emb. VideoAgent  [ 15 ]
+✓
+✓
+∘ \circ
+✗
+✗
+✗
+✗
+✗
+✓
+✓
+EgoRAG  [ 54 ]
+∘ \circ
+✗
+✗
+✗
+✓
+✓
+✓
+✗
+✓
+✗
+VL-KnG  [ 1 ]
+✗
+✓
+∘ \circ
+✓
+✓
+✗
+✓
+∘ \circ
+✓
+✗
+DirectMe  [ 49 ]
+∘ \circ
+✓
+∘ \circ
+✓
+✓
+✗
+✓
+✗
+✓
+✓
+R4DSG a   [ 29 ]
+∘ \circ
+∘ \circ
+✓
+∘ \circ
+✓
+∘ \circ
+✓
+✓
+✓
+✗
+Ledger (ours)
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+a R4DSG’s objects enter through a per-segment controlled vocabulary and its places through location segments, both taken from released segment records whose source the paper does not state; anchors are found per location window, and the authors report limited cross-day persistence.
+Recent works have developed object memories that retain identities and locations after objects
+leave the view  [ 36 , 6 , 16 , 33 ] .
+Object-centric maps and scene graphs organize observations through the spatial relationships between
+objects  [ 18 , 40 ] . Language-model agents, in contrast, write their
+observations into a structured record of objects, places, and their states, which the model later reads to
+answer questions  [ 2 , 15 , 58 , 49 ] .
+Another line of work simply uses video-language models to answer from frames
+sampled from the recording at question time without explicitly maintaining a record of the scene  [ 11 , 60 , 61 , 44 ] , including models trained particularly for spatial
+reasoning  [ 52 , 55 ] . Streaming models compress past frames in a
+memory of visual tokens  [ 59 , 38 , 23 ] .
+Visual query localization methods search the recording again for every
+query  [ 17 , 30 ] . Table  1 compares what these
+memories keep and what they need at query time.
+To guide memory design, we need to decide which retained evidence supports later questions and to
+distinguish failures of representation from retrieval and reasoning failures.
+For example, restricting memory to objects involved in hand
+interactions  [ 16 , 36 ] can exclude visible objects that still affect the agent or are relevant later on.
+Although retaining an object’s position may support a location question, it does not
+preserve its contents or its movement history. Even a sequence of positions can mislead when
+localization noise is recorded as movement. Further failures can arise across scenes when
+storing observations into memory or while retrieving relevant records. These examples
+motivate us to address our core question: what must an agent preserve from past observations to answer spatial
+questions it could not anticipate?
+To this end, we present Ledger (Long-horizon Egocentric Descriptions, Geometry, and Event Records), a persistent 3D object memory that combines geometric
+observations with contextual descriptions. We construct the memory offline from sampled
+egocentric recordings, using supplied or estimated camera poses. We detect objects with an
+open-voca
+
+【实验】
+, on 206 recordings of up to 20 minutes (Table  36 ).
+No memory changes with length, and neither does the blind control; the 48-frame
+reader, the only arm that sees video, loses accuracy with every doubling of
+length. The bins are not balanced across sources (the 11–13-minute bin is mostly
+EgoLife and holds 63% of the questions), so we repeat the fit within
+EPIC-Kitchens, the one source present in every bin (45 recordings, 801
+questions): the frame reader still declines ( p = 0.05 p=0.05 ) and no memory does
+(Table  38 ).
+Table 36: UCS-Bench accuracy (%) by recording length (minutes), single recordings.
+Ledger
+Length
+Videos
+Questions
+single-shot
+agent
+ReMEmbR
+DirectMe
+Blind
+48 frames
+< < 2
+16
+236
+36.0
+41.5
+37.7
+31.4
+33.1
+61.4
+2–6
+23
+370
+38.1
+43.5
+42.4
+28.6
+32.4
+50.0
+6–11
+18
+321
+45.8
+49.5
+46.1
+29.9
+34.9
+55.1
+11–13
+123
+2,050
+38.6
+40.4
+40.8
+29.3
+32.6
+44.5
+13–20
+26
+287
+37.3
+44.3
+41.5
+36.2
+35.2
+48.1
+All
+206
+3,264
+39.0
+42.1
+41.4
+30.1
+33.1
+47.7
+VQ3D.
+The validation clips come in two lengths, about 5 and
+about 8 minutes, so this is not a length sweep (Table  37 ). The
+measure is the share of all 164 queries localized within 1 m, with an
+unanswered query counted as a miss.
+Table 37: VQ3D: queries localized within 1 m (%) by clip length (minutes).
+Ledger
+Length
+Clips
+Queries
+single-shot
+agent
+ReMEmbR
+DirectMe
+OSNOM
+Clip centroid
+≈ \approx 5
+16
+66
+56.1
+59.1
+22.7
+10.6
+34.8
+7.6
+≈ \approx 8
+26
+93
+43.0
+45.2
+23.7
+21.5
+30.1
+11.8
+16
+2
+5
+20.0
+0.0
+20.0
+40.0
+0.0
+20.0
+All
+44
+164
+47.6
+49.4
+23.2
+17.7
+31.1
+10.4
+Table 38: Change in the log-odds of a correct answer per doubling of recording
+length, with its p p -value in parentheses.
+Arm
+HD-EPIC
+UCS-Bench
+UCS-Bench, EPIC-Kitchens only
+Ledger , single-shot reader
+− 0.072 -0.072 (0.028)
++ 0.013 +0.013 (0.69)
++ 0.021 +0.021 (0.74)
+Ledger agent {}_{\text{agent}}
+− 0.054 -0.054 (0.12)
+− 0.007 -0.007 (0.82)
++ 0.022 +0.022 (0.72)
+ReMEmbR
+− 0.060 -0.060 (0.099)
++ 0.016 +0.016 (0.63)
++ 0.086 +0.086 (0.17)
+DirectMe
+− 0.072 -0.072 (0.044)
++ 0.013 +0.013 (0.71)
++ 0.010 +0.010 (0.89)
+AMEGO (adapted)
+− 0.076 -0.076 (0.029)
+–
+–
+OSNOM (adapted)
+− 0.084 -0.084 (0.016)
+–
+–
+Blind
+− 0.155 -0.155 ( < < 10 -4 )
++ 0.008 +0.008 (0.82)
+− 0.066 -0.066 (0.3)
+48 frames
+–
+− 0.157 -0.157 ( < < 10 -4 )
+− 0.122 -0.122 (0.05)
+Appendix G Failure Analysis and Qualitative Example
+G.1  When an answer is wrong, where was it lost?
+Table  39 follows the evidence through the pipeline. The largest
+measured losses happen before the answerer reads the record: on development
+videos, giving GPT-5.4 the ground-truth trajectory of the queried object in place of
+the stored one adds 12 points, and naming the fixtures it rested on adds another
+25, whereas a fixed rule improves on the answerer’s reasoning by only 3 points on
+fixture location (Appendices  B.7 and  B.2 ). Each weak category of
+RQ1 (Section  4 ) maps to one row: stationary localization and
+fixture-interaction counting to what the record keeps about rest and hands,
+counting to association, and long recordings t
+
+【结论/局限】
+and Limitations
+References
+A Memory Construction Details
+A.1 Sampling, vocabulary, and detection
+A.2 Camera poses and object lifting
+Geometry-estimator analysis.
+A.3 Association and consolidation
+A.4 Persistence and contextual descriptions
+A.5 Multi-view refinement
+B HD-EPIC Details
+B.1 Evaluation scope and per-prototype results
+B.2 Implementation and query adapters
+B.3 Published baselines and aggregation
+B.4 Memories rebuilt on our setup
+B.5 Component ablations
+B.6 Design ablations
+B.7 Earlier retrieval, oracle, and geometry analyses
+B.8 Movement and stationary-state analysis
+B.9 Development data and cost
+C VQ3D Localization and Discovery Analysis
+C.1 Protocol and interpretation
+C.2 Implementation settings
+C.3 Localization across memory variants
+C.4 Triangulated against monocular positions
+C.5 Published methods on the validation split
+C.6 Memories built by prior methods on the same clips
+C.7 Detector and vocabulary analysis
+D UCS-Bench Details
+D.1 Benchmark, construction, and answering protocol
+Memory construction.
+Answering conditions.
+Paired tests.
+The published setting.
+By dataset and recording length.
+D.2 Counting
+D.3 Development pilot and causal construction
+D.4 Implementation settings
+E Multi-Scene UCS-Bench Streams
+E.1 Stream design
+E.2 Where the loss appears
+E.3 Construction and retrieval
+E.4 Scene-cut detection and per-scene construction
+E.5 Event lines
+E.6 Leave-one-

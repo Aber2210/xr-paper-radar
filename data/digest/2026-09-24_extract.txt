@@ -1,0 +1,257 @@
+
+================================================================================
+##### 2609.25604  (chars=78238)
+================================================================================
+
+-- Method (前1400字) --
+
+
+-- Experiments (前1400字) --
+and Ablations
+
+-- 关键数值摘录 --
+  • achieving temporally stable, visually compelling outputs during free camera navigation, all while r
+  • gaining more compact scenes or more accurate geometry  ( Ye et al. 2025 ; Ye et al. 2026 ) . O
+  • achieves significant speedup by avoiding the expensive Gaussian depth sort and α \alpha -blending
+  • improve the view consistency of splatting by refining the sorting strategy  ( Radl et al. 2024 ;
+  • achieving real-time radiance-field rendering with high visual quality.
+  • gain, but also brings severe Monte Carlo noise.
+  • 1 dB to vanilla 2DGS on average. We deliberately keep the dense, unpruned reconstruction so th
+  • improves with history, while the denoised path is stable but blurry; the variance gate blends the
+  • . PSNR is computed on the zoomed region.
+  • gain, pulling output to the denoised path.
+  • gainst spurious disocclusion resets from depth jitter (details in the appendix).
+  • 3 × 3 3\times 3 neighbourhood, falling back to the far plane if the neighbourhood is empty.
+  • 1 × 1 1\times 1 encoder, two depthwise 3 × 3 3\times 3 + pointwise 1 × 1 1\times 1 blocks wit
+  • 5 × 5 5\times 5 receptive field captures local motion boundaries cheaply, and the head bias i
+
+================================================================================
+##### 2609.26795  (chars=43400)
+================================================================================
+
+-- 关键数值摘录 --
+  • increase matched F1 at 20 mm from 0.336 to 0.383 at fixed retention. Further tests demonstrate ass
+  • gains over a single-generator baseline, and the visual cost of conversion. Together, these resu
+  • reduces the residual lighting and shadow mismatch illustrated in the teaser (Fig.  (c), Sec.  III
+  • gainst independent references, and separately quantify the visual cost of conversion on held-ou
+  • gainst the edited-image targets optimizes only these new
+  • 5 mm
+  • 20 mm and symmetric Chamfer distance (CD, centimeters) on independent
+  • 224 × 224 224\times 224 camera inputs
+  • increases F1 from 0.336 to 0.348, and retry raises it to 0.383.
+  • gains have 95% intervals of [0.001, 0.022]
+  • reduces CD by 25.1%, although retry increases construction time
+  • 70.82 minutes per scene. These gains reflect improved
+  • 1.144 dB PSNR loss
+  • gain is 11.46 percentage
+
+================================================================================
+##### 2609.25422  (chars=47620)
+================================================================================
+
+-- Experiment (前1400字) --
+Design
+
+-- Results (前1400字) --
+
+
+-- 关键数值摘录 --
+  • reduce comfort, impair performance, and limit the duration of immersive experiences [ 23 ] . Alt
+  • improve our knowledge of cybersickness development while informing gaze-based user-state assessme
+  • 5 minutes) are associated with subsequent trajectories of self-reported discomfort throughout
+  • reduce user comfort, impair task performance, and shorten the duration of immersive experiences
+  • reduce visual stimuli associated with cybersickness while attempting to preserve immersion [ 12
+  • improve user comfort, they often introduce trade-offs with visual fidelity and immersion, motivat
+  • improve our understanding of the temporal development of cybersickness while informing gaze-based
+  • up to 20 minutes, allowing repeated measurements of discomfort throughout VR exposure. The data
+  • 20 minutes while remaining stationary in the physical space, using an Xbox 360 controller for
+  • 11 male, 11 female; mean age = 23.45 years, SD = 3.9). The present analysis included data from
+  • 11 male, 8 female; mean age = 22.8 years, SD = 3.6) who completed the study.
+  • 75 ms were linearly interpolated to preserve temporal continuity, and the resulting gaze signa
+  • reduce high-frequency measurement noise.
+  • 75 ms and an angular distance below 0.5 ∘ 0.5^{\circ} were merged to account for brief interru
+
+================================================================================
+##### 2609.26203  (chars=109503)
+================================================================================
+
+-- 关键数值摘录 --
+  • gainst a previously published in-lab dataset and a demographically matched subset of the remote
+  • increase demographic diversity, and capture more ecologically valid usage conditions.
+  • increases in both subjective and physiological stress measures, alongside declines in working memor
+  • improved observation of non-verbal behaviors, and access to specialized technologies that may oth
+  • reduce participant anxiety and researcher-participant power differentials  [ 64 , 65 , 66 , 67 ,
+  • up to host its own backend [ 74 ] .
+  • gainst the in-lab reference sample, whose data the original authors shared with us, and against
+  • 15 minutes later.
+  • increased in speed automatically every 30 seconds, following the protocol of the in-lab study  [ 37
+  • 30 minutes.
+  • 10 minutes).
+  • 28.8%).
+  • 41.8%
+  • 75.6%
+
+================================================================================
+##### 2609.24531  (chars=54879)
+================================================================================
+
+-- Method (前1400字) --
+
+
+-- Experiments (前1400字) --
+
+
+-- 关键数值摘录 --
+  • achieves high-fidelity spatiotemporal reconstruction of both appearance and temperature. Our code
+  • improved high-fidelity novel view synthesis and 3D reconstruction. Building on them, numerous stu
+  • achieves state-of-the-art dynamic thermal field reconstruction.
+  • achieves state-of-the-art performance across both thermal and RGB modalities, establishing a solid
+  • improve thermal edges; and MMOne ( Gu and Wang, 2025 ) unifies multimodal inputs in 3DGS.
+  • improve appearance, stability, and storage, respectively.
+  • improves modeling stability.
+  • up to 640 × 480 640\times 480 and 30 ​ Hz 30\,\mathrm{Hz} , with a measurable range of − 20 ∘ ​
+  • 640 × 480 640\times 480 for resolution-consistent paired processing.
+  • 320 × \times 240.
+  • achieves the best averages of 32.24 dB PSNR, 0.947 SSIM, and 0.119 LPIPS, exceeding the strongest
+  • 1.52 dB in PSNR. In dynamic scenes, static multimodal methods fit mixed temporal states rather th
+  • improve dynamic detail recovery but still show clear distortions in high-temperature or rapidly v
+  • improves not only thermal reconstruction but also RGB dynamic reconstruction. Table  1 shows that
+
+================================================================================
+##### 2609.25527  (chars=45695)
+================================================================================
+
+-- 关键数值摘录 --
+  • increase the teleoperation workspace and to improve the robustness and stability of instrument con
+  • outperforms a state-of-the-art HoloLens 2 mixed reality baseline, reducing path length by 86% and jer
+  • by 95%, while achieving depth perception confidence comparable to or exceeding the traditional c
+  • improve ergonomics and flexibility, recent research has explored “console-free” teleoperation usi
+  • outperforms a state-of-the-art MR baseline in trajectory quality, with spatial judgment comparable to
+  • achieved MTM-comparable performance using sensory gloves and external trackers, but the system req
+  • 200 ms latency.
+  • improve portability, their reliance on video-based rendering restricts the operator to a single v
+  • improve bookkeeping when multiple similar objects are present.
+  • reduce ID switches among similar instances.
+  • reduces sensitivity to tracking jitter, yielding smoother trajectories. Second, because teleopera
+  • gainst two established paradigms: the traditional stationary console (MTM) of the da Vinci Rese
+  • 9 males, 6 females). Among them, 9 had prior dVRK experience, and 11 had prior VR/AR exposure
+  • 59.7 ms.
+
+================================================================================
+##### 2609.25746  (chars=35824)
+================================================================================
+
+-- 关键数值摘录 --
+  • gainst map Gaussians, using each primitive’s covariance for both rendering and registration. Th
+  • gainst surfaces, while robust registration typically benefits from measurement uncertainty. We
+  • achieve robust tracking performance across multiple scenes and reduced odometry drift, while trac
+  • 60 FPS.
+  • improvement across multiple datasets and camera types, reduced odometry drift, and good mapping q
+  • improve observability.
+  • reduced odometry drift.
+  • 97.5% of cases when measured on the TUM RGB-D dataset. In contrast, prior work [ 6 ] has found
+  • gainst the surface ( λ 3 / λ 2 → 0 \lambda_{3}/\lambda_{2}\to 0 ), thus the target term assigns
+  • improve observability, rather than act as a primary tracker. In practice, our ablations show this
+  • increase in tracking robustness when applied in conjunction with the tracking covariance.
+  • achieves the lowest ATE on average and lower than other methods on the fast-motion desk scene. Fur
+  • 30 FPS to evaluate ATE. We report the FPS, uncapped, as a separate run. G2S-ICP SLAM does not re
+  • 30 FPS.
+
+================================================================================
+##### 2609.26315  (chars=48093)
+================================================================================
+
+-- 关键数值摘录 --
+  • .masini@mail.polimi.it ; {name.surname}@polimi.it .
+  • .masini@mail.polimi.it ; {name.surname}@polimi.it .
+  • .masini@mail.polimi.it ; {name.surname}@polimi.it .
+  • achieves high photometric fidelity. However, its optimization remains appearance-driven, and trans
+  • reduced budgets, increases training-view accuracy on tree classes. We evaluate the approach on a
+  • 0.5 m on all 12 traversals. On shared 301-frame segments, it exceeds SGS-SLAM and GS3LAM by 0.2
+  • 0.15 m of the local ground (10), updating the semantic point cloud after every keyframe.
+  • improves training-view tree accuracy only under reduced budgets.
+  • gainst state-of-the-art AgriGS-SLAM and three semantic Gaussian SLAM systems.
+  • gain.
+  • 0.1 m voxels: only Gaussians sharing a voxel with the current keyframe’s stereo points stay act
+  • reduced budgets, floors increase training-view accuracy on tree classes, whereas at the full bud
+  • reduce it (Sec.  V-C ), so the main configuration, which uses the full budget, allocates without
+  • increases with segmentation confidence and decreases with range beyond 3 3  m, and π c \pi_{c} is c
+
+================================================================================
+##### 2609.25036  (chars=204809)
+================================================================================
+
+-- Method (前1400字) --
+
+
+-- Experiment (前1400字) --
+1: path supervision and temporal composition Metrics. Temporal composition improves consistency without sacrificing accuracy. Path supervision reduces recursive rollout drift. Composition generalizes to unseen temporal decompositions.
+
+-- Experiments (前1400字) --
+
+
+-- 关键数值摘录 --
+  • improves consistency without sacrificing accuracy.
+  • reduces recursive rollout drift.
+  • reduces residual path dependence.
+  • improved consistency is not explained by trivial motion.
+  • reduces latent path dependence while retaining predictive accuracy, geometry-level composition im
+  • up to a context endpoint t t , and optionally a specified future action sequence, the goal is t
+  • up to t t :
+  • up to each target endpoint,
+  • up token z m , t O z_{m,t}^{O} represents group m m , and the Gaussian token z i , t G z_{i,t}^
+  • up tokens, which subsequently aggregate into the global scene token. By default, the predictive
+  • reduce to reproducing exact appearance.
+  • . m_{O}=\sum_{m,n}\Pi^{O}_{mn},\qquad m_{G}=\sum_{i,j}\Pi^{G}_{ij}.
+  • reduces the mismatch between direct training and recursive inference.
+  • reduces dependence on the temporal path used to reach a future state. Composition alone is insuff
+
+================================================================================
+##### 2609.25466  (chars=4394)
+================================================================================
+
+-- 关键数值摘录 --
+  • improvement in gesture classification accuracy. Building on this, we outline how the approach can
+
+================================================================================
+##### 2609.25633  (chars=95845)
+================================================================================
+
+-- Experiments (前1400字) --
+
+
+-- 关键数值摘录 --
+  • achieve gains on tracked sets ( − 42.0 % -42.0\% to − 71.8 % -71.8\% BD-rate) over per-frame codi
+  • achieves gains in each setting. For each codec, concatenated coding is compared with a per-frame b
+  • improve compression efficiency substantially, especially for tracked and semi-tracked sequences.
+  • increases the Gaussian count, but also allows the static codec to exploit correlation in geometry a
+  • reduce prediction
+  • improve the codec substantially overall.
+  • 1.1 million Gaussians for G-PCC, without changing the GoF.
+  • gains are consistent with our correlation pattern analysis in Sec.  2.1 .
+  • gains from − 42.0 % -42.0\% (LGSCV) to − 71.8 % -71.8\% (L-GSC).
+  • achieves a 46.2 % 46.2\% overall BD-rate reduction over D-FCGS, albeit not reaching the performanc
+  • gains for
+  • gain slightly ( − 1.4 % -1.4\% and − 3.5 % -3.5\% ), while L-GSC and HGSC
+  • gainst 12 12 – 23 % 23\% with first-order SH (App.  H ). Excluding it changes the BD-rate of co
+  • gain comes from grouping just a few frames: GoF- 5 5 already
+
+================================================================================
+##### 2609.15795  (chars=54911)
+================================================================================
+
+-- 关键数值摘录 --
+  • 17.24 m on KITTI, 5.11 to 4.74 m on Oxford Spires, and 31.37 to 28.58 m on VBR, with further impr
+  • 22.12 m when incorporating loop-closure refinement. Project page: https://mingkai-liu.github.io/p
+  • gainst streaming efficiency. SLAM-hybrid systems  [ 9 , 10 ] integrate feed-forward geometric p
+  • improve context retention: LongStream  [ 39 ] analyzes degradation from attention sink and state
+  • improves long-range consistency with compact geometric context and large-scale long-sequence train
+  • improved scalability, bounded context leaves incremental pose estimation vulnerable to ambiguitie
+  • improve dense geometry and long-horizon trajectory consistency while preserving streaming efficie
+  • reduce pose errors from ambiguous observations.
+  • 518 × 392 518\times 392 and AdamW with a learning rate of 10 − 4 10^{-4} .
+  • gainst streaming feed-forward reconstruction methods  [ 17 , 18 , 36 , 15 , 16 , 37 , 19 , 38 ]
+  • reduces segment-wise drift through online correction alone.
+  • improves accuracy and F-score while largely preserving completeness.
+  • decreases from 11.68 11.68 to 9.17 9.17 FPS. Despite the slight FPS reduction, SURE-Map still prese
+  • reduces accumulated drift, while uncertainty-weighted optimization provides complementary local p

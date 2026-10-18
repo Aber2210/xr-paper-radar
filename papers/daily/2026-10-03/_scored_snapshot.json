@@ -1,0 +1,558 @@
+{
+ "top10": [
+  {
+   "base_id": "2609.11434",
+   "title": "Hologram Representation via Quadratic Phase Gaussian Splatting",
+   "title_zh": "CVQPG：基于二次相位高斯泼溅的全息图表示",
+   "track": "渲染与显示",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-10-02",
+   "flags": [
+    "⚠️ 填补硬件类渲染（全息显示）缺口；v2 于 10-01 公告，本次新入馆"
+   ],
+   "new": true
+  },
+  {
+   "base_id": "2610.01863",
+   "title": "LiteReality-Agent: An Agentic System for Interactable 3D Indoor Scene Reconstruction",
+   "title_zh": "LiteReality-Agent：面向可交互 3D 室内场景重建的智能体系统",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-10-02",
+   "flags": [],
+   "new": true
+  },
+  {
+   "base_id": "2610.00195",
+   "title": "GS-PQM: A Parameter-Domain Quality Metric for Compressed Gaussian Splatting",
+   "title_zh": "GS-PQM：面向压缩高斯泼溅的参数域质量度量",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-10-02",
+   "flags": [],
+   "new": true
+  },
+  {
+   "base_id": "2610.00040",
+   "title": "DSSR-3D: Decoupled Reasoning for View-Dependent Referring in 3D Gaussians",
+   "title_zh": "DSSR-3D：3D 高斯中视角依赖指代的解耦推理",
+   "track": "神经渲染",
+   "value": 3.55,
+   "grade": "B",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-10-02",
+   "flags": [],
+   "new": true
+  },
+  {
+   "base_id": "2609.09158",
+   "title": "TANGO: Humanoid Navigation in Cluttered Environments with a Whole-Body Vision-Language-Action Model",
+   "title_zh": "TANGO：基于全身视觉-语言-动作模型的人形机器人杂乱环境导航",
+   "track": "重建与SLAM",
+   "value": 3.3,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-10-02",
+   "flags": [
+    "⚠️ 偏具身机器人导航，XR 相关度中等"
+   ],
+   "new": true
+  }
+ ],
+ "xr_recs": [
+  {
+   "base_id": "2610.02207",
+   "title_zh": "GALA：基于线性混合形变的实时 3D 高斯化身动画蒸馏",
+   "track": "化身与人体",
+   "value": 3.93,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2609.11434",
+   "title_zh": "CVQPG：基于二次相位高斯泼溅的全息图表示",
+   "track": "渲染与显示",
+   "value": 3.85,
+   "grade": "A",
+   "new": true,
+   "flags": [
+    "⚠️ 填补硬件类渲染（全息显示）缺口；v2 于 10-01 公告，本次新入馆"
+   ]
+  },
+  {
+   "base_id": "2610.00195",
+   "title_zh": "GS-PQM：面向压缩高斯泼溅的参数域质量度量",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "new": true,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01013",
+   "title_zh": "VASC：价值感知稀疏注意力的高效 3D 重建",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01056",
+   "title_zh": "HierGF：稀疏视图 3D 重建的层次高斯场",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01210",
+   "title_zh": "EgoFound3R：世界坐标端到端自中心手重建",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01286",
+   "title_zh": "Dyna3：VLM 引导的无训练 4D 重建",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01863",
+   "title_zh": "LiteReality-Agent：面向可交互 3D 室内场景重建的智能体系统",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "new": true,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01876",
+   "title_zh": "EvenSplat：曝光与光照变化下的耦合 2D-3D 分解高斯泼溅",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00718",
+   "title_zh": "面向建筑的人形机器人遥操作可行性研究（XR 上身控制）",
+   "track": "化身与人体",
+   "value": 3.78,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01744",
+   "title_zh": "3DROID：带逐场景可靠性度量的可渲染 3DGS 数据集",
+   "track": "神经渲染",
+   "value": 3.77,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00677",
+   "title_zh": "VLM 驱动的 AR 感知质量评估与内容自适应",
+   "track": "空间计算与UI",
+   "value": 3.7,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01092",
+   "title_zh": "Ego2Act：自中心视频生成中的目标导向操作评测",
+   "track": "感知与认知",
+   "value": 3.7,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01461",
+   "title_zh": "NextMe-800：从数月自中心视频预判个人行为",
+   "track": "感知与认知",
+   "value": 3.7,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01707",
+   "title_zh": "MEGA：3DGS 物体级网格提取的空间视觉蒸馏",
+   "track": "神经渲染",
+   "value": 3.7,
+   "grade": "A",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00040",
+   "title_zh": "DSSR-3D：3D 高斯中视角依赖指代的解耦推理",
+   "track": "神经渲染",
+   "value": 3.55,
+   "grade": "B",
+   "new": true,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01914",
+   "title_zh": "DecomVoxel：引导原位去噪的分解式场景重建",
+   "track": "重建与SLAM",
+   "value": 3.55,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01943",
+   "title_zh": "TouchTherm：面向触觉与热渲染的多模态物体数字孪生",
+   "track": "触觉与多模态",
+   "value": 3.55,
+   "grade": "B",
+   "new": false,
+   "flags": [
+    "⚠️ 以 Isaac Gym 仿真为主，缺真人实验验证"
+   ]
+  },
+  {
+   "base_id": "2610.00628",
+   "title_zh": "过渡感知的 VR 控制器运动自适应（体态稳定）",
+   "track": "交互与输入",
+   "value": 3.38,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00643",
+   "title_zh": "感知不稳定自适应场景的实时 VR 运动平滑设计框架",
+   "track": "空间计算与UI",
+   "value": 3.38,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00822",
+   "title_zh": "TRACE：分布式 3DGS 地图的隐私保护下一最佳视角选择",
+   "track": "神经渲染",
+   "value": 3.35,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01114",
+   "title_zh": "Affine-Aligned Atlas：视频表示中的规范高斯构建",
+   "track": "神经渲染",
+   "value": 3.35,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.01206",
+   "title_zh": "混合单光子 LiDAR 前景-隐藏场景重建",
+   "track": "重建与SLAM",
+   "value": 3.35,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2609.09158",
+   "title_zh": "TANGO：基于全身视觉-语言-动作模型的人形机器人杂乱环境导航",
+   "track": "重建与SLAM",
+   "value": 3.3,
+   "grade": "B",
+   "new": true,
+   "flags": [
+    "⚠️ 偏具身机器人导航，XR 相关度中等"
+   ]
+  },
+  {
+   "base_id": "2610.00731",
+   "title_zh": "实到仿机器人评估中的资产与场景重建效应",
+   "track": "重建与SLAM",
+   "value": 3.3,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2609.39841",
+   "title_zh": "DyRAD：动态驾驶场景雷达新视角合成",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2609.40177",
+   "title_zh": "Social-WM：机器人社交导航的安全感知世界模型",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00438",
+   "title_zh": "通用人形 locomanipulation 模型（自中心预训练）",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00618",
+   "title_zh": "Dirichlet Splatting：波基逆问题的可微渲染",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.02054",
+   "title_zh": "UniWAM：统一世界-动作模型",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.02110",
+   "title_zh": "GlassGuard：机器人导航的玻璃平面建图",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.02196",
+   "title_zh": "InterEvolve：人形 locomanipulation 的测试时演化",
+   "track": "—（非 XR）",
+   "value": 3.15,
+   "grade": "B",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2610.00749",
+   "title_zh": "亮度主导 3DGS 几何形成机理研究",
+   "track": "神经渲染",
+   "value": 3.0,
+   "grade": "B",
+   "new": false,
+   "flags": [
+    "⚠️ 机理分析，实验偏弱"
+   ]
+  },
+  {
+   "base_id": "2610.01512",
+   "title_zh": "VoxelSynth3D：金属伪影削减（CT）",
+   "track": "—（非 XR）",
+   "value": 2.95,
+   "grade": "C",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "2609.18737",
+   "title_zh": "Geometry beneath the Waves：水下稀疏 3DGS 稠密先验",
+   "track": "神经渲染",
+   "value": 2.77,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "※ 摘要被 arXiv 截断，评分可信度低"
+   ]
+  },
+  {
+   "base_id": "2610.00069",
+   "title_zh": "面向自/外中心程序性理解的时序分割与语义抽象框架",
+   "track": "感知与认知",
+   "value": 2.4,
+   "grade": "C",
+   "new": true,
+   "flags": [
+    "⚠️ 仅为框架/立场论文，无实验；C 级仅入馆不解读"
+   ]
+  },
+  {
+   "base_id": "2610.01906",
+   "title_zh": "水下机器人辅助潜水员（受限空间）",
+   "track": "—（非 XR）",
+   "value": 2.35,
+   "grade": "C",
+   "new": false,
+   "flags": []
+  },
+  {
+   "base_id": "1911.09605",
+   "title_zh": "A brief chronology of virtual reality: from laboratory systems to ubiquitous spatial computing",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2504.10416",
+   "title_zh": "Region Based SLAM-Aware Exploration: Efficient and Robust Autonomous Mapping Strategy That Can Scale",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2511.14661",
+   "title_zh": "M-CALLM: Multi-level Context Aware LLM Framework for Group Interaction Prediction",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2602.14929",
+   "title_zh": "Wrivinder: Towards Spatial Intelligence for Geo-locating Ground Images onto Satellite Imagery",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2603.04349",
+   "title_zh": "FocusGraph: Graph-Structured Frame Selection for Embodied Long Video Question Answering",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2603.20169",
+   "title_zh": "EgoForge: Goal-Directed Egocentric World Simulator",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2605.12413",
+   "title_zh": "Beyond Localization: A Comprehensive Benchmark of Perspective-Conditioned Spatial Reasoning in MLLMs from Omnidirectional Images",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  },
+  {
+   "base_id": "2605.30320",
+   "title_zh": "MonoPhysics: Estimating Geometry, Appearance, and Physical Parameters from Monocular Videos",
+   "track": "—",
+   "value": 2.0,
+   "grade": "C",
+   "new": false,
+   "flags": [
+    "⚠️ 评分缺失"
+   ]
+  }
+ ],
+ "gate1": true,
+ "gate2": false,
+ "gate3": false,
+ "max_sim": 0.222,
+ "sim_pair": "2609.11434 vs arXiv:2609.23005",
+ "top_tracks": [
+  "渲染与显示",
+  "神经渲染",
+  "重建与SLAM"
+ ],
+ "today_top_mean": 3.68,
+ "today_max": 3.85,
+ "lib_top_mean": 4.338,
+ "added": 6,
+ "total": 304
+}

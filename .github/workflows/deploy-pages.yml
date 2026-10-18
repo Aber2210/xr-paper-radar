@@ -1,0 +1,62 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 22 * * *"   # 每日 UTC 22:00（北京时间 06:00）兜底同步一次
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 双模式：仓库内已提交 web/xr-paper-hub.html 则直接使用；
+      # 否则（大文件未入仓库时）在构建时从 WorkBuddy 托管链接拉取，保证两渠道同源。
+      - name: Prepare hub page
+        run: |
+          mkdir -p web
+          if [ -f web/xr-paper-hub.html ] && grep -q "const DATA" web/xr-paper-hub.html; then
+            echo "using committed hub: $(wc -c < web/xr-paper-hub.html) bytes"
+          else
+            echo "hub not committed, fetching from WorkBuddy hosting..."
+            URL="https://xr-paper-hub.app.workbuddy.host/xr-paper-hub.html"
+            ok=0
+            for i in 1 2 3 4 5; do
+              if curl -fsSL --retry 3 --connect-timeout 20 --max-time 120 "$URL" -o web/xr-paper-hub.html; then
+                ok=1; break
+              fi
+              echo "fetch attempt $i failed, retrying in 15s..."; sleep 15
+            done
+            if [ "$ok" != "1" ]; then echo "::error::hub fetch failed"; exit 1; fi
+            if ! grep -q "const DATA" web/xr-paper-hub.html; then echo "::error::fetched file is not the hub"; exit 1; fi
+            echo "hub fetched: $(wc -c < web/xr-paper-hub.html) bytes"
+          fi
+          cp web/xr-paper-hub.html web/index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

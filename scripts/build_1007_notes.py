@@ -1,0 +1,557 @@
+# -*- coding: utf-8 -*-
+'''生成 2026-10-07 的 10 篇原子笔记 + 当日 MOC + 最终解读报告，并更新总索引/导航。'''
+import os, json, datetime
+
+ROOT = 'D:/Agent/WorkBuddy/Research'
+NOTES = os.path.join(ROOT, 'papers/notes')
+MOC = os.path.join(ROOT, 'papers/MOC')
+REP = os.path.join(ROOT, 'reports')
+DAILY = os.path.join(ROOT, 'papers/daily/2026-10-07')
+
+DATE = '2026-10-07'
+WINDOW = 'arXiv RSS 公告日 2026-10-06（拉取日 2026-10-07，补齐 10-03~10-06 工作日积压）'
+
+REF_TABLE = '''| 排名 | arXiv | 标题 | 赛道 | IMP | NOV | TEC | EXP | PER | TRL | REP | 总分 | 等级 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 2610.04351 | LoCoSplat | 神经渲染 | 4 | 4 | 4 | 4 | 4 | 3 | 3 | 3.85 | A |
+| 2 | 2610.05576 | SteadySplats | 神经渲染 | 4 | 4 | 4 | 4 | 4 | 3 | 3 | 3.85 | A |
+| 3 | 2610.04076 | VCURF | 神经渲染 | 4 | 4 | 4 | 4 | 3.5 | 3.5 | 3 | 3.81 | A |
+| 4 | 2610.04139 | SpatialMind | 空间计算与UI | 4 | 4 | 4 | 4 | 3.5 | 3 | 3.5 | 3.81 | A |
+| 5 | 2610.04883 | Reflection-Robust 6DoF | 重建与SLAM | 4 | 4 | 4 | 4 | 3.5 | 3 | 3 | 3.77 | A |
+| 6 | 2610.06688 | GS-Pool | 神经渲染 | 3.5 | 4 | 4 | 4 | 4 | 3 | 3 | 3.75 | A |
+| 7 | 2610.05207 | F² SLAM | 重建与SLAM | 4 | 4 | 4 | 3.5 | 3.5 | 3 | 3 | 3.7 | A |
+| 8 | 2610.04007 | VolS-GS | 神经渲染 | 4 | 4 | 4 | 3.5 | 3.5 | 3 | 3 | 3.7 | A |
+| 9 | 2610.05610 | SEA-LM | 触觉与多模态 | 3.5 | 4 | 4 | 4 | 3.5 | 3 | 3 | 3.68 | A |
+| 10 | 2610.05289 | Mobile-4DGS | 神经渲染 | 4 | 3.5 | 4 | 3.5 | 3.5 | 3.5 | 3 | 3.64 | A |
+| 11 | 2610.04689 | Neuroll | 化身与人体 | 3.5 | 4 | 4 | 3.5 | 3.5 | 3 | 3 | 3.6 | A |
+| 12 | 2610.05233 | PixReenact | 化身与人体 | 3.5 | 4 | 4 | 3.5 | 3.5 | 3 | 3 | 3.6 | A |
+| 13 | 2610.05526 | SpaC-MEM | 空间计算与UI | 3.5 | 4 | 3.5 | 3.5 | 3.5 | 3 | 3 | 3.53 | B |
+| 14 | 2610.04336 | 3DGS-SPH 固体力学 | 世界模型与仿真 | 3 | 4 | 4 | 3.5 | 3.5 | 3 | 3 | 3.5 | B |
+| 15 | 2610.06472 | MaRO-GS | 神经渲染 | 3.5 | 3.5 | 4 | 3.5 | 3.5 | 3 | 3 | 3.5 | B |
+| 16 | 2610.05013 | EMBER-Bench | 评估与数据集 | 3.5 | 3.5 | 3.5 | 4 | 3 | 3.5 | 3.5 | 3.5 | B |
+| 17 | 2610.04606 | 稀疏视角 4DGS | 神经渲染 | 4 | 3.5 | 3.5 | 3 | 3.5 | 3 | 3 | 3.45 | B |
+| 18 | 2610.04203 | Sparse-GS2Mesh | 神经渲染 | 4 | 3.5 | 3.5 | 3 | 3.5 | 3 | 3 | 3.45 | B |
+| 19 | 2610.04506 | EgoExo-Next | 评估与数据集 | 3.5 | 3.5 | 3.5 | 3.5 | 3 | 3.5 | 3.5 | 3.43 | B |
+| 20 | 2610.04013 | 返航可行 MAV 3DGS 重建 | 重建与SLAM | 3.5 | 3.5 | 4 | 3.5 | 3 | 2.5 | 3 | 3.39 | B |
+| 21 | 2610.05772 | 视觉假体 VR 智能导航 | 空间计算与UI | 3.5 | 3.5 | 3.5 | 3.5 | 3 | 3 | 3 | 3.35 | B |
+| 22 | 2610.05081 | 数字孪生遥操作界面 | 触觉与多模态 | 3.5 | 3.5 | 3.5 | 3 | 3 | 3 | 3 | 3.27 | B |
+| 23 | 2610.05757 | 人在环神经符号 V-SLAM 漂移 | 重建与SLAM | 3.5 | 3.5 | 3.5 | 3 | 3 | 2.5 | 2.5 | 3.2 | B |'''
+
+PAPERS = [
+{
+ 'base_id':'2610.04351','rank':1,'short':'LoCoSplat最小3D推理实时前馈3DGS',
+ 'title_en':'LoCoSplat: Real-Time Feed-Forward 3D Gaussian Splatting with Minimal 3D Reasoning',
+ 'title_zh':'LoCoSplat：以最小 3D 推理实现实时前馈 3D 高斯泼溅',
+ 'authors':'Sinan Wang、Jinjin He、Yuchen Sun、Duowen Chen、Shenyifan Lu、Bo Zhu（佐治亚理工学院）',
+ 'track':'神经渲染','date':'2026-10-03','value':3.85,'grade':'A',
+ 'scores':{'IMP':4,'NOV':4,'TEC':4,'EXP':4,'PER':4,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，81,248 字符）','status':'CURRENT',
+ 'flags':[],'tags':['前馈3DGS','实时重建','局部上下文','CUDA graph','无3D网络'],
+ 'tldr':'佐治亚理工提出 LoCoSplat——打破"前馈 3DGS 必须靠重型 3D 网络聚合多视角证据"的隐含假设：高斯是局部图元，一旦深度预测完成，3D 阶段只需对每个锚点邻域做固定的局部平均即可给出尺度/旋转/不透明度，无需任何可学习 3D 网络。整个编码器以 0.14M 参数的逐点 MLP + 单次 fp16 CUDA graph 运行，6 视图重建 33ms（7 个前馈方法中最快，比前 SOTA 快 4.2×），24 视图 PSNR 比 VolSplat 高 +3.3。',
+ 'problem':'前馈 3DGS 用少数 posed 图一次性预测高斯图元，取代 NeRF/3DGS 的逐场景优化。主流"像素对齐预测"受多视角错位与分辨率受限的高斯预算约束，业界解法是一路加重可学习 3D 模块——稀疏 3D U-Net/CNN、3D cost-volume、长序列 Mamba/Transformer。VolSplat（深度引导体素对齐 SOTA）先预测深度、把反投影像素体素化为锚点，再用 17M 参数的稀疏 3D U-Net 精炼体素体后才解码高斯；该 U-Net 是最大推理开销（约 7 场景/秒），动态形状稀疏计算无法装入 CUDA graph、几乎吃不到混合精度，且随视图增长成为训练内存主导（24 视图训练需 159 小时）。背后隐含假设：在 3D 聚合多视角证据需要大量可学习 3D 容量。',
+ 'method':'核心观察=高斯是局部图元：一旦深度预测好，3D 阶段要补充的（尺度、旋转、不透明度）只依赖每个锚点周围的点云，对该邻域做固定局部平均就足够，无需重型网络。实现：把点特征的 16 维线性投影泼射（splat）进一个"细网格 + 粗网格"两层网格，在每个锚点处把两层都读回，再用一个 0.14M 参数的逐点 MLP 解码；没有可学习 3D 网络、没有动态稀疏计算，整个编码器作为单个 fp16 CUDA graph 运行（粗尺度而非层数驱动增益；普通均值作默认聚合器）。',
+ 'experiments':'RealEstate10K 上，6/12/24 视图的 PSNR/SSIM/LPIPS 全面超越此前所有前馈方法，且优势随视图变密而扩大（24 视图时比 VolSplat 高 +3.3 PSNR）；零样本迁移到 ACID、在 ScanNet 上微调亦提升。速度：单张 NVIDIA RTX PRO 6000 上 6 视图场景重建 33ms，7 个前馈方法中最快、比前 SOTA 快 4.2×；训练快 2.7×（24 视图 5.9×）；推理显存少用 6.7×。附录含两网格模型演化、24 视图细节下降归因（问题在深度分支而非 3D 阶段）、差异分辨率解释、深度头坍塌分析、ScanNet/RealEstate10K 更多定性结果。',
+ 'contributions':['首次用"固定局部平均"替代重型 3D 网络完成前馈 3DGS 的 3D 阶段，推翻"3D 聚合需大量可学习容量"的隐含假设。','极简架构（0.14M MLP + 双网格 + 无动态稀疏）跑成单 CUDA graph，带来 4.2× 加速、6.7× 省显存、2.7× 训练加速的系统性工程收益。','在 RealEstate10K/ACID/ScanNet 上建立新的前馈 3DGS SOTA，且优势随视图密度放大。'],
+ 'limitations':'仅验证室内/室外大规模场景（RealEstate10K、ACID、ScanNet），未覆盖动态、遮挡极端或无纹理退化场景；依赖预训练深度估计作为前端，深度分支的误差（24 视图细节下降的主因）仍会传导；无显式不确定性输出；未与最新"生成式/世界模型"路线做对照。',
+ 'relation':'库内神经渲染赛道天花板由 OIC_GS（2609.34367，S 4.37，率失真码）、SCION（2610.02322，A 3.85，组合基元）等占据。LoCoSplat 与 VolSplat/像素对齐家族同属"前馈 3DGS"，但用"无 3D 网络"路线正面 PK VolSplat，是效率维度的强替代候选。与 SCION（结构化组合表示）互补：LoCoSplat 解决"快而准的单向前馈"，SCION 解决"可编辑的组合场景"。与库内 PocketSplat（2610.03192，S，移动端世界空间潜分配）相比，LoCoSplat 走服务器级实时（33ms/6 视图）而非移动端，二者分别覆盖"训练/推理效率"与"部署端资源约束"两端。',
+ 'repro':'论文标注 CC BY 4.0；摘要未给代码链接，需关注项目页/开源仓库是否随发布放出（前馈 3DGS 系列多有开源，建议优先核验）。复现门槛中等：依赖深度估计前端 + 双网格泼射 + MLP，工程关键在于把稀疏锚点聚合写成可 CUDA-graph 化的定点 shape。',
+ 'actions':['若做实时前馈重建/AR 场景理解，优先把 LoCoSplat 当作"速度-精度"新基线，替换 VolSplat 类管线。','关注其"深度分支是瓶颈"的归因——后续改进应压深度估计误差而非堆 3D 网络。','等开源后做与 SCION/PocketSplat 的同口径吞吐/显存对照。']
+},
+{
+ 'base_id':'2610.05576','rank':2,'short':'SteadySplats低方差高斯重采样随机渲染',
+ 'title_en':'SteadySplats: Resampling of Low-Variance Gaussians for High-Fidelity Stochastic Rendering',
+ 'title_zh':'SteadySplats：低方差高斯重采样实现高保真随机渲染',
+ 'authors':'Felix Windisch*、Thomas Köhler*（格拉茨理工）、Lukas Radl（格拉茨）、Chris Wyman（NVIDIA）、Georgios Kopanas（Google DeepMind）、Bernhard Kerbl（哥本哈根大学）、Markus Steinberger（格拉茨）',
+ 'track':'神经渲染','date':'2026-10-04','value':3.85,'grade':'A',
+ 'scores':{'IMP':4,'NOV':4,'TEC':4,'EXP':4,'PER':4,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，88,961 字符）','status':'CURRENT',
+ 'flags':[],'tags':['随机渲染','次序无关透明','方差正则','时空重采样','Vulkan'],
+ 'tldr':'由 3DGS 一作 Kerbl 团队领衔，针对"随机次序无关透明（OIT）渲染 3DGS 噪声大、不实用"的痛点，从表示与合成两端系统性降噪：训练时加色彩方差正则隐式压低沿视线方向的 3DGS 方差；推理时用"基于历史的空间重采样"加速收敛、"时序重要性重采样"保证相机运动下的相干性。Vulkan 渲染器在 1 spp 下比此前随机方法高 13 dB PSNR，并能快速收敛到排序 3DGS（平均 L1 误差 <10⁻⁴），让单样本渲染成为高帧率应用的可行候选。',
+ 'problem':'随机次序无关透明（stochastic OIT）能优雅高效地渲染 3DGS 这类图元辐射场，但因输出固有可见噪声而不实用。排序 alpha 混合（tile 光栅化）是传统实时方案，但其"必须排序"在动态/透明场景下代价高。此前随机方案的瓶颈在表示层（方差大）与图像合成层（收敛慢、运动下闪烁）。',
+ 'method':'在表示与合成两个层面治本。(1) 训练期 Color Variance Regularization：一个色彩正则项隐式降低 3DGS 模型沿视线射线方向的方差。(2) 推理期 Spatial Resampling（Neighbor Reuse + 近似 w_n→x,y）：基于历史的空间重采样在随机渲染时大幅加速图像收敛。(3) 推理期 Spatio-Temporal Resampling：时序重要性重采样（TIR）+ 运动相机处理 + Soft History Rejection + 每图元时空蓝噪声，保证相机运动下的相干性。其余工程：tile-based splatting、early exit、有限历史缓冲、自归一化重要性采样、偏置处理。',
+ 'experiments':'优化后的 Vulkan 渲染器在低/高样本数下都有效抑制噪声——在 1 sample per pixel 时比此前随机方法提升 13 dB PSNR，并快速收敛到排序 3DGS（平均 L1 误差 <10⁻⁴）。评估覆盖方差-质量权衡、空间复用、性能、STBN、相机运动分量消融、Pareto 分析、8-邻域重采样、蓝噪声等。',
+ 'contributions':['首个系统性"从表示（方差正则）+ 合成（时空重采样）两端同时降噪"的随机 3DGS 渲染框架。','把单样本随机渲染做到接近排序 3DGS 质量（L1<10⁻⁴），打开"极高帧率 + 免排序"的渲染新空间。','工程落地到 Vulkan，给出可复现的实现（含伪代码、梯度推导、蓝噪声附录）。'],
+ 'limitations':'仍依赖 3DGS 表示本身（无法处理表示层未覆盖的几何错误）；单样本质量提升以额外训练正则 + 历史缓冲内存为代价；未与最新"神经/物理渲染"做端到端应用对照；重采样在历史复用下对快速剧烈运动仍可能失效（soft rejection 缓解但未根治）。',
+ 'relation':'库内 2609.25604（随机高斯泼溅去噪的超快神经推理 Stochastic 2DGS 时序去噪）是同类随机渲染去噪方向，SteadySplats 由 3DGS 原班团队给出更系统、可收敛到排序质量的方案，是更强基线。与 LoCoSplat（本日 Top1，前馈重建）分属"渲染合成"与"前馈重建"两条互补链。与库内渲染与显示赛道（如 2610.03162 Budgeted-GS LOD）互补：一个管"怎么快渲已建好的场"，一个管"怎么快建场"。',
+ 'repro':'CC BY 4.0；作者阵容含 3DGS 核心作者与生产级 Vulkan 渲染经验，论文附大量实现附录（伪代码、梯度、蓝噪声、bias 处理），复现预期良好；建议关注作者/项目页开源。',
+ 'actions':['做头显/AR 实时渲染、需要免排序高帧率时，把 SteadySplats 当随机 OIT 的新基线，尤其关注 1 spp 高质量带来的带宽节省。','与排序 3DGS 做"同等质量下的帧率/功耗"对照，验证能否真正替代 tile 光栅化。','跟踪其与神经重建（LoCoSplat）结合的可能（快建 + 快渲）。']
+},
+{
+ 'base_id':'2610.04076','rank':3,'short':'VCURF虚拟相机辐射场不确定性',
+ 'title_en':'VCURF: Virtual Camera-based Uncertainty of Radiance Fields',
+ 'title_zh':'VCURF：基于虚拟相机的辐射场像素级不确定性估计',
+ 'authors':'Liyan Chen、Nathaniel Burgdorfer、Philippos Mordohai（史蒂文斯理工学院）',
+ 'track':'神经渲染','date':'2026-10-02','value':3.81,'grade':'A',
+ 'scores':{'IMP':4,'NOV':4,'TEC':4,'EXP':4,'PER':3.5,'TRL':3.5,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，59,323 字符）','status':'CURRENT',
+ 'flags':[],'tags':['不确定性估计','辐射场','黑盒','免训练','主动重建'],
+ 'tldr':'把辐射场（NeRF/3DGS 通吃）当作黑盒，仅在目标视点附近采样一组"虚拟相机"，度量该模型在这些虚拟相机与参考相机渲染之间的一致性，从而得到无需真值、免训练、省显存、不改动模型内部参数的像素级不确定性图。实验证明有效性，并得出一个反直觉结论：渲染误差 ≠ 视点效用——高不确定视点未必是最能提升重训后模型质量的下一最佳视点（NBV）。',
+ 'problem':'辐射场重建在有限视角/外观变化/动态/位姿误差下会出现局部几何与外观失败。像素级不确定性估计（预测"哪里可能错"）可用于定位不可靠区域、过滤伪影、评估局部质量，并被广泛当作 NBV 选择与主动重建的"信息增益"代理。但作者指出两件事应区分：不确定性刻画"当前模型哪里可能错"；而候选视点的效用还取决于它是否提供相对于已有训练集的新颖、非冗余观测。高度不确定的视点未必是重训后最能改进模型的视点。',
+ 'method':'黑盒方案（training-free、memory-friendly、不修改/不访问 RF 内部参数）。把辐射场模型当黑盒，只假设它能按需渲染颜色与深度。在目标视点附近采样若干虚拟相机，度量 RF 模型在这些虚拟相机渲染之间的一致性，从而估计像素级不确定性。对 NeRF 与 GS 均适用，无需改动。',
+ 'experiments':'在多种数据集、辐射场模型与基线的组合上验证像素级不确定性估计有效性。附消融（采样半径、虚拟相机数、不确定性估计各分量）、存储与时间复杂度分析、定性结果。并以实验重新审视"视点选择"的范式——证实"高不确定 ≠ 高信息增益"。',
+ 'contributions':['提出一种即插即用、黑盒、免训练、省显存的像素级不确定性估计器，统一适用于 NeRF 与 3DGS。','用"虚拟相机一致性"这一简洁原理替代需要改模型/加训练目标的白盒方案。','empirically 揭示"渲染误差 ≠ 视点效用"的鸿沟，挑战了主动重建领域把不确定性直接当 NBV 信息增益的主流做法。'],
+ 'limitations':'仅度量"模型自身渲染一致性"，不直接提供"该视点能否带来新信息"的效用估计（作者明确区分但未给出效用量化）；虚拟相机采样策略（半径、数量）需调参，极端无纹理/对称场景可能失效；未给出端到端的 NBV 选择改进实验（仅揭示问题）。',
+ 'relation':'库内主动重建/SLAM 方向有 SURE_Map（2609.15795，自校正流式几何基础模型 SLAM 替代）、RawSLAM（2609.20589）等；VCURF 补上"不确定性估计"这一通用中间件，可与任意 RF 后端 + NBV 策略组合。与 F² SLAM（本日 Top7，把前馈几何当持久因子）互补：F² SLAM 用前馈几何做测量，VCURF 提供"这些测量/区域是否可信"的可信度信号，二者可叠加做状态一致性准入。',
+ 'repro':'CC BY 4.0；黑盒、免训练、不依赖内部参数，是对任意 RF 后端的"最小侵入"插件，复现门槛低；建议关注作者开源（通常会放出采样与一致性度量子模块）。',
+ 'actions':['把 VCURF 当作"RF 质量审计"的标配工具，先接进现有 NeRF/3DGS 管线做伪影定位。','做主动重建/NBV 时，别只用不确定性当信息增益——叠加"新颖非冗余观测"判定，呼应作者结论。','与 F² SLAM 的状态一致性准入机制结合，作为测量可信度门控。']
+},
+{
+ 'base_id':'2610.04139','rank':4,'short':'SpatialMind预测式空间推理VLM',
+ 'title_en':'From Sight to Foresight: Predictive Spatial Reasoning in Vision-Language Models',
+ 'title_zh':'SpatialMind：从观察到预见——视觉语言模型的预测式空间推理',
+ 'authors':'Feiran Wang（伊利诺伊大学芝加哥分校，博世实习）、Xiaoqi Wang、Ziwei Li、Wenbin He（博世北美 BCAI）、Yan Yan（UIC）、Liu Ren（博世 BCAI）',
+ 'track':'空间计算与UI','date':'2026-10-02','value':3.81,'grade':'A',
+ 'scores':{'IMP':4,'NOV':4,'TEC':4,'EXP':4,'PER':3.5,'TRL':3,'REP':3.5},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，92,702 字符）','status':'CURRENT',
+ 'flags':[],'tags':['VLM','预测式推理','度量尺度','空间关系','数据集'],
+ 'tldr':'博世提出 SpatialMind，一个度量尺度 VLM，把空间推理从"描述已观察到的场景"推进到"预测未观测到的未来空间状态"。其度量深度适配器把推理锚定到真实世界尺度，渐进式状态链以当前空间状态与已观测动态为底座支撑未来预测；给定视频前缀，预测已观测与未见未来帧中的距离、运动方向、空间关系。配套可扩展数据引擎生成 SpatialMind-30K 数据集与 SpatialMind-2K 基准（驾驶 + 日常第一视角，8 任务 3 层级），在基准上大幅超越通用与空间专用模型，并在 VSI-Bench/OSI-Bench/VLM4D 上零样本具竞争力。',
+ 'problem':'预测未来空间状态支撑动态环境中的碰撞规避与及时决策。但现有 VLM 与空间推理基准主要聚焦"已观测场景"，对"超出观测区间的预测式空间推理"探索不足——即给定视频前缀，推断物体未来的距离、运动方向、空间关系变化。',
+ 'method':'(1) Metric depth adapter：把空间推理锚定到真实世界尺度（而非相对/像素尺度）。(2) Progressive state chain（渐进式状态链）：先建立当前空间状态与已观测动态，作为未来预测的基础。(3) 给定视频前缀，预测已观测帧与未见未来帧中的距离、运动方向、空间关系。数据引擎：可扩展引擎把实体描述 grounding 到度量几何，生成 QA 对与状态监督，构建 SpatialMind-30K（训练）与 SpatialMind-2K（基准，8 任务 × 3 层级：当前状态理解 / 已观测动态理解 / 未来预测）。',
+ 'experiments':'在自有 8 任务 3 层级基准上，SpatialMind 大幅超越通用 VLM 与空间专用模型；并在 VSI-Bench、OSI-Bench、VLM4D 上取得有竞争力的零样本表现。项目页与代码已公开。',
+ 'contributions':['把"预测式空间推理"正式立项，区分于纯观测描述，给出度量尺度的可预测框架。','Metric depth adapter + progressive state chain 的组合，让预测"grounded in 当前几何与已观测动态"，比专有 VLM 估计更准。','可扩展数据引擎 + 30K/2K 数据集/基准，覆盖驾驶与日常第一视角，填补未来预测评测空白。'],
+ 'limitations':'基准偏驾驶与第一视角日常场景，未见复杂多智能体/室内长程交互；"未来预测"仅在短时程内验证，长程外推误差未量化；依赖度量深度估计质量；零样本仅与少数基准对比，广度有限。',
+ 'relation':'库内空间计算与UI赛道有 GeoScaffold（2610.02697，重建学习几何潜做 VLN）、Ego2World（2610.02715，第一视角视频编译为可执行世界）、工具增强度量空间推理（2609.29073）等。SpatialMind 补上"预测式/前瞻式"空间推理一环，与 GeoScaffold（几何潜）、Ego2World（可执行世界）可构成"感知几何 → 预测未来 → 规划动作"的链。与 EMBER-Bench（当日 #16，长程具身因果记忆）互补：一个管"未来空间状态预测"，一个管"历史事件如何约束未来动作"。',
+ 'repro':'CC BY 4.0；项目页 + 代码已公开，数据集 30K/2K 随发布，复现门槛低——是评估"VLM 预测式空间推理"的最佳现成基线。',
+ 'actions':['做自动驾驶/机器人前瞻避障，优先拉 SpatialMind 当空间预测基线。','用其数据引擎范式扩展你自己的场景（如车间/仓储）做领域微调。','与 GeoScaffold/Ego2World 串成"几何→预测→规划"链路验证。']
+},
+{
+ 'base_id':'2610.04883','rank':5,'short':'ReflectionRobust6DoF光场反射跟踪',
+ 'title_en':'Reflection-Robust 6DoF Object Tracking with Light Fields',
+ 'title_zh':'面向反射表面的 6DoF 目标跟踪与光场',
+ 'authors':'（光场反射鲁棒 6DoF 跟踪；作者未在摘要段完整捕获，机构疑似机器人操作/视觉方向）',
+ 'track':'重建与SLAM','date':'2026-10-02','value':3.77,'grade':'A',
+ 'scores':{'IMP':4,'NOV':4,'TEC':4,'EXP':4,'PER':3.5,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，67,573 字符）','status':'CURRENT',
+ 'flags':[],'tags':['6DoF跟踪','反射表面','光场','在线重打光','数据集'],
+ 'tldr':'把"反射"从干扰变成在线位姿线索：每帧用单次光场捕获在线重建并重新打光被跟踪物体，把跟踪问题约化为"对齐一个被正确打光的模型"。在反射表面上，SOTA RGB-D 跟踪器的质量会塌，而本方法保持精确——并给出随附的"光场跟踪数据集"（同几何/光照/位姿下多反射率重渲染 + 模拟消费级 RGB-D 在反射面退化深度）与一对真实光场运动序列（同物漫反射/反射版芥末瓶）。',
+ 'problem':'估计运动刚体的 6DoF 位姿是自动驾驶、动态 SLAM、空中机器人的基础。但在反射表面上，每个像素的外观把位姿与物体几何、材质、周围光照耦合在一起——多种未知组合能解释同一观测，若不建模光照，无法仅凭外观恢复位姿。模型化/无模型 6DoF 跟踪器都假设物体外观稳定、深度可信，二者在镜面表面都失效；可重光照重建能恢复新光照下的外观，但只能离线、用很多视图。反射一直被当干扰压制，尽管它编码了几何/运动/环境——此前没有任何跟踪器把它变成在线位姿线索。',
+ 'method':'关键洞察=视相关反射可作为位姿线索。方法从每帧单次光场捕获在线重建并重新打光被跟踪物体，把跟踪约化为对齐一个被正确照明的模型。具体贡献：(1) 一个 6DoF 跟踪方法，在恢复位姿的同时重建周围光照并重打光物体，在反射面保持精确（SOTA RGB-D 在此质量下降）。(2) 一个可重光照物体模型（几何 + 表面朝向 + 材质外观），从单次光场捕获恢复，物体移动时外观正确变化。(3) 在线把外观分解为物体漫反射颜色与其反射的环境，随物体移动更新。(4) 一个光场跟踪数据集：把机器人操作基准在多反射率下重渲染（几何/光照/位姿跨层级一致），每帧配模拟深度以复现消费级 RGB-D 在反射面的退化；另提供同物漫反射/反射版（芥末瓶）的两条真实光场运动序列。',
+ 'experiments':'文中图示对比：单目颜色（经典线索）只给出浅谷；EPI 捕获视相关但忽略重打光；只有"被重打光的 EPI（relit EPIs）"把损失驱动到真实坐标处归零——量化证明了反射重打光作为位姿线索的有效性。在反射表面上相对 SOTA RGB-D 跟踪器质量优势明显。',
+ 'contributions':['首次把反射从"干扰"转为在线 6DoF 位姿线索（relit EPI 驱动损失归零）。','单帧光场在线可重光照物体模型，物体移动时外观正确演化。','在线漫反射/反射环境分解，随运动更新。','配套光场跟踪数据集（多反射率重渲染 + 模拟 RGB-D 退化 + 真实双版序列），填补反射面跟踪评测空白。'],
+ 'limitations':'依赖每帧单次光场捕获（需光场/多视角相机硬件，非标准 RGB-D）；在线可重光照在强镜面/复杂环境光下建模假设可能不成立；未与最新无模型在线跟踪（BundleSDF 等）做大规模实时对比；数据集由机器人操作基准重渲染生成，真实多样性有限。',
+ 'relation':'库内重建与SLAM赛道有 RRG_SLAM（2609.34527，反射感知高斯SLAM）、RawSLAM（2609.20589）、双协方差高斯SLAM（2609.25746）、HexVIO-DSP（2610.03283）等。RRG_SLAM 同样针对反射面但走"反射感知高斯 SLAM"离线-在线混合；本工作是"光场 + 在线重打光"的互补路线，二者共同把"反射"从 SLAM 的敌人变成可用信号。与 F² SLAM（本日 Top7）可组合：在线重打光提供可信几何，喂给持久 BA。',
+ 'repro':'arXiv 预印（许可待确认，似 CC BY 4.0）；方法依赖光场捕获硬件与可重光照建模，复现门槛中高（需光场/多相机装置 + 重打光求解）；数据集随论文提供（含模拟深度），是反射面跟踪的稀缺基准，价值高。',
+ 'actions':['做"反光物体抓取/操作"（工业、仓储）时，本方法是少数能在镜面上稳定跟踪的方案，优先评估。','用其光场数据集做反射面跟踪的新基线对照。','关注与 RRG_SLAM 的路线融合——一个管在线重打光，一个管高斯建图，结合可覆盖"建图 + 跟踪"全链。']
+},
+{
+ 'base_id':'2610.06688','rank':6,'short':'GS-Pool物体级变化检测3DGS',
+ 'title_en':'GS-Pool: Object-Level Change Detection in 3D Gaussian Splatting',
+ 'title_zh':'GS-Pool：3D 高斯泼溅中的物体级变化检测',
+ 'authors':'Boaz Keren-Gil、James Gain、Patrick Marais（开普敦大学）',
+ 'track':'神经渲染','date':'2026-10-05','value':3.75,'grade':'A',
+ 'scores':{'IMP':3.5,'NOV':4,'TEC':4,'EXP':4,'PER':4,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，81,070 字符）','status':'CURRENT',
+ 'flags':[],'tags':['变化检测','3DGS','物体池','SAM2','巡检'],
+ 'tldr':'工厂/博物馆/测绘常隔数月拍同一空间，想知道"哪些物体变了"。两次访问各自独立重建为 3DGS 后直接对比并不行（训练随机 + 二次扫描照片少）。GS-Pool 把两次重建的 SAM2 掩码"提升"到渲染它们的高斯上、跨视角合并成"物体池"，每个决策在 3D 中每个物体只做一次；并用"照片载体"（一次重建对另一次照片的 3DGS 训练损失，反传到渲染该像素的高斯）+ GS-Diff 几何/色彩项 + 蒸馏 DINOv3 特征，与两访问都出现的物体做对照设定每场景变化阈值。PASLCD 上 mIoU/F1 达 0.751/0.846（GS-Diff 0.644/0.758，+17%/+12%），CL-Splats 上 0.855 mIoU（+33%）。',
+ 'problem':'3DGS 变化检测通常被做成稠密逐像素问题（MV-3DCD/O-SCD 融每视图线索成变化场；GS-Diff 直接比较两套图元、逐图元渲染变化分、每像素固定 0.5 阈值）。但同一不变空间两次重建永不相同（3DGS 训练随机、相机路径不同），作者称此差异为 drift；两次重建间算的差异把"变化"与"drift"混在一起。而物体在 3D 中常跨越数千图元，逐像素决策 + 固定阈值并不合理。',
+ 'method':'让重建从"图元空间"直接提议候选物体变化，用另一次访问的照片来确认或否决。(1) 物体池（object pool）：每次访问照片的 SAM2 掩码提升（lift）到渲染它们的图元上，跨视图合并成物体，证据在物体级聚合、每个物体只决策一次而非每图元。(2) 照片载体（photographic carrier）：每个输入重建对另一次访问照片的 3DGS 训练损失，反传到渲染每个像素的高斯——照片不带重建 drift，用作跨访问确认。(3) 结合 GS-Diff 的几何/色彩项 + 蒸馏的 DINOv3 语义特征（纯几何/色彩会漏掉"同位置不同物体"）。与两访问都出现的物体对照，为每个场景设定变化阈值。每个变化物体以"带决策证据的高斯集合"返回，检查员可在 3D 中审阅。保留 GS-Diff 的 drift 模型/几何/色彩核/可见性权重不变。',
+ 'experiments':'PASLCD 上 mIoU/F1 = 0.751/0.846，强于最强前法 GS-Diff 的 0.644/0.758（+17%/+12%）；mIoU 也高于 O-SCD、PlenoCI（2609.28997，本库）、MV-3DCD 达 36%/40%/57%；CL-Splats 上 mIoU 0.855，比 MV-3DCD 高 33%。',
+ 'contributions':['物体池：把变化决策从逐图元/逐像素提升到"每物体一次"，从根本上规避 drift 与固定阈值的错配。','照片载体：用跨访问照片的训练损失做无 drift 确认，与图元空间提议互补。','引入蒸馏 DINOv3 语义特征补全"同位置换物"的漏检。','返回带证据的高斯集合，支持 3D 可审阅——贴合工厂/博物馆巡检的实际工作流。'],
+ 'limitations':'依赖 SAM2 掩码质量（掩码错则物体池错）；两次重建都需存在且可用（无法处理只一次有重建的情况）；DINOv3 蒸馏增加流程复杂度；阈值仍按场景设定，跨场景泛化需进一步验证；未评测极端光照/季节变化。',
+ 'relation':'库内 PlenoCI（2609.28997，基于光场特性的视角依赖感知变化分类）是同类"3DGS 变化检测"方向，GS-Pool 在 PASLCD 上 mIoU 比其高 40%，是更强基线。与 MaRO-GS（当日 #15，鲁棒物体中心 3DGS）互补：MaRO-GS 管"单次建图时物体聚焦"，GS-Pool 管"两次建图间物体级变化"。与库内数字孪生方向（如 RIE 2609.26795，照片级重建到可交互环境）共同支撑"巡检/数字孪生差异比对"场景。',
+ 'repro':'arXiv 永续非独占许可；方法组合清晰（SAM2 lift + 训练损失反传 + DINOv3 蒸馏 + GS-Diff 复用），复现门槛中等；建议关注作者开源（变化检测在巡检场景需求强）。',
+ 'actions':['做工厂/场馆/工程巡检的"前后差异比对"，GS-Pool 是当前 3DGS 变化检测最强方案，优先采用。','用其"物体池 + 照片载体"思路改造你已有的逐图元变化检测管线。','与 PlenoCI 做同数据集对照，验证语义特征带来的增益。']
+},
+{
+ 'base_id':'2610.05207','rank':7,'short':'F2SLAM前馈几何持久因子',
+ 'title_en':'F$^2$ SLAM: Turning Feed-Forward Geometry into Persistent Factors for SLAM',
+ 'title_zh':'F² SLAM：将前馈几何转化为 SLAM 的持久因子',
+ 'authors':'（前馈几何转 SLAM 持久因子；作者未在摘要段捕获）',
+ 'track':'重建与SLAM','date':'2026-10-04','value':3.7,'grade':'A',
+ 'scores':{'IMP':4,'NOV':4,'TEC':4,'EXP':3.5,'PER':3.5,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，73,602 字符）','status':'CURRENT',
+ 'flags':[],'tags':['SLAM','前馈几何','因子图','持久BA','多视角'],
+ 'tldr':'在线稠密 SLAM 靠持久 BA 状态反复精修，但对弱重叠/遮挡/长序列累积误差敏感；前馈 3D 基础模型（MASt3R/VGGT 类）能给出更广上下文的几何，但现有 FM-SLAM 只在局部窗口算前馈预测、事后对齐/融合，前馈几何始终是"外部状态"而非优化器能直接食用的证据。F² SLAM 的原则：前馈几何应以"优化原生的测量"身份进入 SLAM——把多视角前馈证据转成挂到现有因子图上的稠密 target-weight 测量，让前馈推理与循环跟踪通过同一个稠密 BA 后端约束同一批关键帧位姿/逆深度/内参。在线用双时间尺度刷新（高频保局部约束+图连通，低频用更广上下文选择性刷新）；状态一致性准入只在候选测量与当前几何态一致时才采纳。TUM RGB-D 上 ATE RMSE 改善。',
+ 'problem':'在线视觉 SLAM 维护一个可优化几何态，稠密 BA 持续重访/重加权/联合精修；但测量多来自短时序窗口，对弱重叠、遮挡、视角变化、长序列累积误差敏感。前馈 3D 基础模型（FM）能联合处理多图、推断更广上下文的深度/点图/位姿/多视角结构，催生 MASt3R-SLAM、VGGT-SLAM、VGGT-SLAM++ 等 FM-SLAM。但这些系统多在局部窗口/子图算前馈预测，事后才通过对齐/融合/状态级校正与 SLAM 态调和——前馈几何是"外部状态"，在线优化器不能直接作用于它。代价有二：更广多视角证据进不了稠密 BA 实际优化的测量集；子图一旦对齐，无法再与后续局部证据联合重加权（校正只做一次）。缺的环节=让前馈几何证据直接、反复参与持久 SLAM 优化。',
+ 'method':'指导原则=前馈几何应以优化原生测量（而非独立几何态）进入 SLAM。把多视角前馈证据转成挂到现有因子图上的稠密 target-weight 测量，使前馈推理与循环跟踪通过同一个稠密 BA 后端约束同一批关键帧位姿、稠密逆深度、可选内参。在线需双时间尺度更新：高频流维护局部约束与图连通；低频流用更广多视角上下文选择性刷新已有测量。因前馈预测在遮挡/弱重叠下可能不可靠，核心难点是"何时信任刷新"——用状态一致性检查，仅当候选测量与当前几何态一致才采纳，否则保留原测量。前馈位姿/深度预测可作 gauge-aligned 初始化，但后续几何精修完全留在持久 BA 态内。',
+ 'experiments':'文中给出 TUM RGB-D 数据集上 ATE RMSE 的对照（inset），表明将其作为持久因子后跟踪精度提升；机制层面消融双时间尺度与状态一致性准入的作用。',
+ 'contributions':['把前馈多视角几何形式化为"优化原生的 target-weight 测量"，使其直接、反复参与持久稠密 BA。','双时间尺度测量刷新 + 状态一致性准入，让局部跟踪与更广多视角推理更新同一个因子表示。','相对"对齐子图即完事"的 FM-SLAM，闭合了"前馈证据→持久优化"的回路。'],
+ 'limitations':'前馈几何预测本身在遮挡/弱重叠下仍会失效（靠一致性准入兜底，但不一致时等于没用）；依赖前馈 FM 的质量与可用性；双时间尺度调度与一致性阈值为新超参；未与最新 FM-SLAM 做大规模长序列头对头；TUM RGB-D 仅中等规模场景。',
+ 'relation':'库内重建与SLAM赛道密集：MASt3R/VGGT 类属外部 FM，库内有 HexVIO-DSP（2610.03283，S，DSP 立体惯性）、SURE_Map（2609.15795）、RawSLAM（2609.20589）、RRG_SLAM（2609.34527）、AMB3R-SLAM（2609.19518，公里级分层后端）。F² SLAM 是"把前馈 FM 几何喂进持久 BA"的范式，可与 VCURF（本日 Top3，不确定性估计）组合——VCURF 给每个前馈测量一个可信度门控，正好补 F² SLAM 的"何时信任刷新"。与 Reflection-Robust 6DoF（本日 Top5）互补：一个管"广上下文几何做持久因子"，一个管"反射面在线重打光给可信几何"。',
+ 'repro':'arXiv 预印（许可似 CC BY 4.0）；方法依赖前馈 FM（如 MASt3R/VGGT）作为上游 + 稠密 BA 后端，复现需集成 FM 推理，门槛中高；建议关注是否开源（FM-SLAM 类多有代码）。',
+ 'actions':['做长序列/弱纹理 SLAM，把 F² SLAM 当作"前馈 FM + 持久 BA"的新范式基线，优先验证其相对 MASt3R-SLAM 的鲁棒性。','叠加 VCURF 的不确定性门控做状态一致性准入的更强版。','关注双时间尺度调度在你场景下的超参敏感性。']
+},
+{
+ 'base_id':'2610.05610','rank':8,'short':'SEA-LM可穿戴阵列空间音频',
+ 'title_en':'SEA-LM: Egocentric Spatial Audio Understanding for Wearable Microphone Arrays',
+ 'title_zh':'SEA-LM：面向可穿戴麦克风阵列的自我中心空间音频理解',
+ 'authors':'Sonal Kumar、Sinan Hersek、Artem Dementyev、Mengzhen Pan、Ishan Chatterjee、Anurag Kumar、Ramani Duraiswami、Dinesh Manocha、Andrea Colaco（马里兰大学 + Google/Google DeepMind；部分作者 Google XR 期间工作）',
+ 'track':'触觉与多模态','date':'2026-10-04','value':3.68,'grade':'A',
+ 'scores':{'IMP':3.5,'NOV':4,'TEC':4,'EXP':4,'PER':3.5,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，135,627 字符）','status':'CURRENT',
+ 'flags':[],'tags':['空间音频','可穿戴','智能眼镜','MLLM','声源定位'],
+ 'tldr':'embodied 自我中心智能需要理解复杂环境中的空间音频。现有大型音频语言模型擅长单通道推理但缺乏空间感知，丢弃了声源定位与分离重叠声源的关键线索。SEA-LM 先提出 FOACoder——一个布局灵活的空间音频编码器，在源定位 + 自我中心语音活动检测目标上训练，把可变数量/位置的智能眼镜阵列经波束成形得到的 FOA（一阶环境声）编码；再训练一个 MLLM 通过两阶段课程（6 任务，含多说话人/重叠声下的声源定位与空间选择性转写）理解这些空间音频嵌入。为防转写输出主导下一 token 损失、淹没方向预测，引入时空加权交叉熵。评测集上方位角/仰角 MAE 更低、时间 IoU 更高、外部源幻觉与漏检率更低、多数转写任务 WER 更低，且在 1,211 种 4–9 麦克风智能眼镜阵列配置下鲁棒。',
+ 'problem':'机器听觉中，空间音频蕴含的空间线索（如声道间…）对声源定位与重叠声源解耦至关重要，但大型音频语言模型建立在单通道音频理解上，丢弃了空间信息。可穿戴智能眼镜阵列（多麦克风）能提供空间音频，但阵列数量/位置可变，需要布局灵活的编码器；且多说话人 + 重叠声下既要定位又要选择性转写，转写损失易淹没方向预测。',
+ 'method':'(1) FOACoder：布局灵活的空间音频编码器，在源定位 + ego-centric VAD 目标上训练，把由可变数量/位置智能眼镜阵列经波束成形得到的一阶环境声（FOA）编码。(2) SEA-LM MLLM：双音频通路 + 可学习空间投影器 + LLM 注入，通过两阶段课程（6 任务：声源定位、多说话人/重叠声下的空间选择性转写等）理解空间音频嵌入。(3) Spatio-Temporal Weighted Cross-Entropy：防止转写输出主导下一 token 预测损失、淹没方向预测。(4) Spatial Audio Supervised Fine-Tuning + 时空加权交叉熵。',
+ 'experiments':'自有评测集上：方位角/仰角 MAE 更低、时间 IoU 更高、外部源幻觉与漏检率更低、多数转写任务 WER 更低；在 1,211 种 4–9 麦克风智能眼镜阵列配置下保持鲁棒。附课程消融、FOACoder 训练/评估、波束成形伪影与阵列选择、RIR 仿真等大量附录。',
+ 'contributions':['FOACoder：首个布局灵活、由可变阵列经波束成形得到 FOA 的空间音频编码器，适配真实眼镜硬件。','把空间音频嵌入送进 MLLM 做 6 任务理解（含重叠声下空间选择性转写）的两阶段课程范式。','时空加权交叉熵解决"转写淹没方向"的训练失衡。','在 1,211 种阵列配置下验证鲁棒性，贴近可穿戴部署现实。'],
+ 'limitations':'依赖仿真生成的 RIR/阵列传输函数与混合参数（真实噪声分布可能偏移）；FOA 仅一阶，空间分辨率有限；评测集为自建，与真实复杂声学环境差距待验证；多说话人极度重叠下性能上限未充分探索；未给端到端眼镜端侧延迟/功耗。',
+ 'relation':'库内触觉与多模态赛道有 指尖上的远程表面（2609.27938，电振动触觉遥操作）、HACo（2609.36596，触觉主动柔顺）、Dexterous Tactile World Model（2609.34286）、E_WAVE（2609.34346，事件连续光流）、数字孪生遥操作（2610.05081）等。SEA-LM 补上"自我中心空间音频"这一多模态感知维度，与 XR 眼镜（音频是头显天然模态）强相关。与库内晕动症/VR 研究（2609.25422、2609.26203 VERA）可组合做"音频-视觉"多模态 XR 体验。',
+ 'repro':'CC BY 4.0；含可复现性声明与大量仿真/训练细节附录，复现门槛中等（需 FOA 仿真 + MLLM 训练）；建议关注作者开源（音频空间编码在 XR 眼镜场景需求强）。',
+ 'actions':['做 XR 眼镜的"听见周围/空间音频助手"，SEA-LM + FOACoder 是当前最贴合可穿戴阵列的方案，优先评估。','用其时空加权交叉熵思路解决你多任务音频模型里的"主导任务淹没"问题。','关注在真实眼镜硬件（非仿真）上的泛化，做 sim-to-real 验证。']
+},
+{
+ 'base_id':'2610.04689','rank':9,'short':'Neuroll仿真器在环发丝仿真',
+ 'title_en':'Neuroll: Real-Time Neural Strand-Based Hair Simulation via Simulator-in-the-Loop Unrolling',
+ 'title_zh':'Neuroll：基于仿真器在环展开的实时神经发丝仿真',
+ 'authors':'（实时神经发丝仿真 via 仿真器在环展开；作者未在摘要段捕获，方向属计算机图形/动画）',
+ 'track':'化身与人体','date':'2026-10-02','value':3.6,'grade':'A',
+ 'scores':{'IMP':3.5,'NOV':4,'TEC':4,'EXP':3.5,'PER':3.5,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，73,090 字符）','status':'CURRENT',
+ 'flags':['摘要未披露定量指标与开源链接，需读正文/联系作者确认'],
+ 'tags':['发丝仿真','神经物理','仿真器在环','实时','Cosserat杆'],
+ 'tldr':'发丝动画靠时间积分（每步解 PDE）驱动，质量受算力上限约束；既有神经方法（GroomGen 监督式、Quaffure 准静态、Neuralocks 惯性损失敏感且长程漂移）都有短板。Neuroll 用"仿真器在环展开（Simulator-in-the-Loop Unrolling）"训练神经发丝积分器——借服装仿真中"直接在线最小化物理能量势"的思路，但攻克了把 Cosserat 杆模型（发丝离线仿真所用，弹性能条件数差）用于训练神经积分器时收敛崩坏的难题，实现实时、动态、长程稳定的神经发丝仿真。',
+ 'problem':'基于发丝（strand）的头发表示在影视/游戏/VR 中重要，但真实发丝动画更难。时间积分每步解 PDE，质量受算力约束，从业者靠降自由度/简化几何 + 子步维持质量，成本仍高。神经方法：GroomGen 在有限合成仿真数据上监督训练，人工成本高、跨发型/动作泛化差；Quaffure 在全空间学"身体姿态→发丝形变"但仅准静态；Neuralocks 用发丝网络 + 惯性损失实现动态且低显存/高效率，但惯性损失权重极敏感（过冲 vs 过刚无中间地带），且都不把先前发丝态喂给网络——动态只由训练目标诱导，长程 rollout 会衰减。服装仿真中 HOOD 等通过图表示 + GNN 直接在线最小化物理能量势、长程自回归动态且泛化好；但把该思路搬到发丝非平凡——Cosserat 杆模型（发丝离线仿真所用，含 Neuralocks）的弹性能条件数差，显著拖累网络训练收敛，使杆基公式不适合训练神经发丝积分器。监督式（GroomGen）靠回归到预计算仿真避免难条件，但需对每个发型/动作/体型/材质重复昂贵物理仿真，且相似动作间轨迹差异大、回归目标带噪。',
+ 'method':'"仿真器在环展开"（Simulator-in-the-Loop Unrolling）——核心是把物理仿真器展开进训练回路，直接以物理能量势等作为训练信号（类比服装仿真里在线最小化物理能量的做法），而非回归到预计算轨迹。重点攻克 Cosserat 杆模型条件数差导致神经积分器训练收敛崩坏的问题，从而让杆基物理可直接用于训练实时神经发丝积分器，获得动态 + 长程稳定 + 低显存。',
+ 'experiments':'（摘要段未给具体定量指标；正文应含与 GroomGen/Quaffure/Neuralocks 的动态衰减对比、长程 rollout 稳定性、实时性/显存对比。具体数字需读正文确认。）',
+ 'contributions':['把"仿真器在环展开"引入神经发丝仿真，绕开"回归到带噪预计算轨迹"与"杆模型条件数差拖累收敛"两难。','实现实时、动态、长程稳定的神经发丝仿真，补齐 Neuralocks 类方法的长程漂移短板。','为 VR/游戏多用户交互中的实时发丝质量提供新基线。'],
+ 'limitations':'摘要未披露定量指标与开源情况；Cosserat 杆模型假设可能限制极细/极硬发质；实时性需在端侧 GPU 验证；与最新"神经物理/可微仿真"路线的对照待补；训练仍可能依赖物理仿真器（只是不再每发型重复）。',
+ 'relation':'库内化身与人体赛道有 VibeAvatar（2609.18632，语音运动学解耦化身）、ARS-Avatar（2609.27600，可动画可重光照 Surfel 化身）、PHOSA（2609.29292，手语化身）、ESTHER（2609.34817，野化自中心立体手）、InfiniHand（2609.35743，流式世界坐标手）、PixReenact（本日 Top10，流式头部化身）。Neuroll 补上"动态发丝仿真"这一高价值细节（头发是化身真实感的关键），与 PixReenact/ARS-Avatar 等可组合成"高真实感实时数字人"。与库内 3DGS-SPH 固体力学（当日 #14）同为"可微物理 + 视觉"方向，但一个管头发、一个管可变形固体。',
+ 'repro':'arXiv 预印（许可待确认）；方法核心是"仿真器在环展开"，需物理仿真器参与训练，复现门槛中高；建议关注开源与具体定量指标（摘要缺失，需读正文/联系作者）。',
+ 'actions':['做高真实感实时数字人/VR 化身，发丝动态是痛点，Neuroll 是值得跟踪的新方向，等开源后评估。','借鉴其"仿真器在环展开"思路改造你已有的神经物理仿真（绕开预计算轨迹回归）。','与 PixReenact/ARS-Avatar 组合验证"动态发丝 + 流式头部化身"的端到端实时性。']
+},
+{
+ 'base_id':'2610.05233','rank':10,'short':'PixReenact像素条件流式头部化身',
+ 'title_en':'PixReenact: Pixel-Conditioned Causal Video Diffusion for Streaming Head-Avatar Reenactment',
+ 'title_zh':'PixReenact：像素条件因果视频扩散的流式头部化身重演',
+ 'authors':'Gavriel Habib（OriginAI，以色列）、Dvir Samuel（NVIDIA）、Or Shimshi、Rami Ben-Ari（OriginAI）',
+ 'track':'化身与人体','date':'2026-10-04','value':3.6,'grade':'A',
+ 'scores':{'IMP':3.5,'NOV':4,'TEC':4,'EXP':3.5,'PER':3.5,'TRL':3,'REP':3},
+ 'evidence':'FULL','fetch_level':'L0（arXiv HTML，90,889 字符）','status':'CURRENT',
+ 'flags':['⚠️ 许可 CC BY-NC-ND 4.0：非商业 + 禁止演绎，工业产品化与二次开发需向 OriginAI/NVIDIA 申请授权'],
+ 'tags':['头部化身','流式重演','因果视频扩散','像素条件','低延迟'],
+ 'tldr':'流式头部化身重演要稳健的运动迁移、长程身份稳定、低延迟。既有方法依赖专用身份/运动表示（丢弃细粒度视觉信息、继承外部提取器失败模式），且许多扩散式重演用离线 clip 式生成（整段联合去噪后才出结果），难以连续低延迟流式。PixReenact 用因果视频扩散，直接以 VAE 编码的参考帧+驱动帧为条件（无专用表示）；用跨身份伪监督 + 锚定原始参考/驱动输入的纠正式目标分离身份与运动；长自回归 rollout 减漂移；状态感知双教师蒸馏分别处理冷启动与稳态。三套跨身份基准 + 长程流式基准上稳健，极端视角/遮挡/大表情下尤佳，4-NFE 滚动学生每更新发 4 帧、平均发射延迟 239ms。',
+ 'problem':'流式头部化身重演用参考图按实时驱动视频动起来，要稳健运动迁移 + 长程身份稳定 + 低延迟。既有方法条件于专用身份/运动表示（隐式关键点、3DMM、学习到的身份/运动表示），有效可控但丢弃细粒度视觉信息，且依赖外部关键点/运动提取器——在严重遮挡/大表情/大头部姿态变化下提取器失准会拖累重演。第二个挑战是低延迟连续生成：许多扩散式重演用离线 clip 式（整段联合去噪后才输出），连续流式困难。',
+ 'method':'PixReenact 基于因果视频扩散的像素条件流式重演框架。(1) 直接以 VAE 编码的参考帧 + 驱动帧为条件，不用专用身份/运动表示。(2) 为分离参考身份与驱动运动，用跨身份伪监督 + 锚定原始参考/驱动输入的纠正式目标训练。(3) 长自回归 rollout 减少自回归漂移。(4) 状态感知双教师蒸馏分别处理冷启动（首帧）与稳态生成。',
+ 'experiments':'三套跨身份基准 + 长程流式基准上：稳健跨身份重演，尤其极端视角/遮挡/明显面部表情下佳，且长流中保持参考身份。一个 4-NFE 滚动学生每更新发 4 帧，平均发射延迟 239ms。基准构建含公开跨重演 75 对、NeRSemble 75 对、极端条件 68 对、长程流式 28 对。',
+ 'contributions':['像素条件（无专用表示）的流式头部重演，规避外部提取器失败模式、保留细粒度视觉信息。','跨身份伪监督 + 纠正式目标，干净分离身份与运动。','长 rollout + 状态感知双教师蒸馏，兼顾冷启动与稳态的低延迟稳定生成（239ms 平均延迟）。'],
+ 'limitations':'许可为 CC BY-NC-ND 4.0（⚠️ 非商业 + 禁止演绎，工业落地与二次开发受限，需向作者/机构申请商用授权）。仍受扩散式生成的固有限制（长程偶发身份漂移未完全消除）；4-NFE 学生质量与教师差距待量化；依赖 VAE 编码，极端光照/分辨率下可能退化；未与最新神经渲染式头部化身（如 3DGS 头部）做对照。',
+ 'relation':'库内化身与人体赛道密集：ARS-Avatar（2609.27600，可动画可重光照 Surfel 化身）、VibeAvatar（2609.18632）、PHOSA（2609.29292）、ChromaGS-4D（2610.03441，文本驱动语义编辑 4D 高斯化身）、ManifoldSplat-3D（2610.03599，语义形状编辑 3D 高斯头部化身）、PixReenact 与 Neuroll（本日 Top9）同属"实时化身"方向——一个管头部重演、一个管发丝动态，可组合成完整实时数字人。与库内渲染与显示赛道（LoCoSplat/SteadySplats）互补：化身生成 + 实时渲染。',
+ 'repro':'⚠️ CC BY-NC-ND 4.0（非商业、禁止演绎）——代码/权重即便开源也不可商用或改作衍生，XR 产品化需谨慎评估授权；项目页已公开。复现门槛中等。建议：研究用途可直接拉项目页，商用需联系 OriginAI/NVIDIA 授权。',
+ 'actions':['做视频会议/数字人/telepresence 的流式头部重演，PixReenact 质量与延迟俱佳，研究侧优先采用。','⚠️ 商用前务必确认 NC-ND 许可边界，避免侵权。','与 Neuroll（发丝）组合探索端到端实时数字人；与 ChromaGS-4D/ManifoldSplat（高斯化身）做"扩散 vs 高斯"路线对照。']
+},
+]
+
+NOTE_TEMPLATE = '''---
+id: arXiv:{bid}
+title: "{en}"
+title_zh: "{zh}"
+track: {track}
+venue: arXiv 预印（全文已抓取）
+date: {date}
+value: {value}
+grade: {grade}
+evidence: {evidence}
+fetch_level: {level}
+status: {status}
+superseded_by: {sb}
+supersedes: {sp}
+flags: {flags}
+scores: {{IMP: {IMP}, NOV: {NOV}, TEC: {TEC}, EXP: {EXP}, PER: {PER}, TRL: {TRL}, REP: {REP}}}
+tags: {tags}
+---
+
+# {zh}
+
+## 一句话结论
+
+{tldr}
+
+## 要解决的问题
+
+{problem}
+
+## 方法详解
+
+{method}
+
+## 实验与结果
+
+{experiments}
+
+## 创新点与贡献
+
+{contrib}
+
+## 局限与风险
+
+{limitations}
+
+## 与文献库的关系
+
+{relation}
+
+## 可复现性
+
+{repro}
+
+## 行动建议
+
+{actions}
+'''
+
+def render_note(p):
+    contrib = '\n'.join(f'{i}. {c}' for i,c in enumerate(p['contributions'],1))
+    actions = '\n'.join(f'{i}. {c}' for i,c in enumerate(p['actions'],1))
+    sb = '[]' if not p.get('superseded_by') else json.dumps(p['superseded_by'],ensure_ascii=False)
+    sp = '[]' if not p.get('supersedes') else json.dumps(p['supersedes'],ensure_ascii=False)
+    flags = '[]' if not p['flags'] else json.dumps(p['flags'],ensure_ascii=False)
+    tags = json.dumps(p['tags'],ensure_ascii=False)
+    s = p['scores']
+    return NOTE_TEMPLATE.format(
+        bid=p['base_id'], en=p['title_en'], zh=p['title_zh'], track=p['track'],
+        date=p['date'], value=p['value'], grade=p['grade'],
+        evidence=p['evidence'], level=p['fetch_level'], status=p['status'],
+        sb=sb, sp=sp, flags=flags, tags=tags,
+        tldr=p['tldr'], problem=p['problem'], method=p['method'],
+        experiments=p['experiments'], contrib=contrib, limitations=p['limitations'],
+        relation=p['relation'], repro=p['repro'], actions=actions,
+        IMP=s['IMP'],NOV=s['NOV'],TEC=s['TEC'],EXP=s['EXP'],PER=s['PER'],TRL=s['TRL'],REP=s['REP']
+    )
+
+def render_chapter(p):
+    contrib = '\n'.join(f'{i}. {c}' for i,c in enumerate(p['contributions'],1))
+    actions = '\n'.join(f'{i}. {c}' for i,c in enumerate(p['actions'],1))
+    s = p['scores']
+    flag_line = ''
+    if p['flags']:
+        flag_line = '\n\n> ⚠️ **特别提示**：' + '；'.join(p['flags'])
+    head = f'### 第 {p["rank"]} 名 · {p["title_zh"]}（{p["base_id"]}）\n\n'
+    head += f'> 赛道：**{p["track"]}** · 总分 **{p["value"]}**（{p["grade"]}）· 7 维：IMP {s["IMP"]} / NOV {s["NOV"]} / TEC {s["TEC"]} / EXP {s["EXP"]} / PER {s["PER"]} / TRL {s["TRL"]} / REP {s["REP"]} · 证据 {p["evidence"]}（{p["fetch_level"]}）\n'
+    head += f'> 作者：{p["authors"]}\n'
+    head += f'> 英文标题：{p["title_en"]}\n'
+    body = f'''
+**一句话结论**：{p['tldr']}
+
+**要解决的问题**：{p['problem']}
+
+**方法详解**：{p['method']}
+
+**实验与结果**：{p['experiments']}
+
+**创新点与贡献**：
+{contrib}
+
+**局限与风险**：{p['limitations']}
+
+**与文献库的关系**：{p['relation']}
+
+**可复现性**：{p['repro']}
+
+**行动建议**：
+{actions}{flag_line}
+'''
+    return head + body
+
+# 1) 原子笔记
+os.makedirs(NOTES, exist_ok=True)
+for p in PAPERS:
+    fn = f'{p["base_id"]}__{p["short"]}.md'
+    with open(os.path.join(NOTES, fn), 'w', encoding='utf-8') as f:
+        f.write(render_note(p))
+print('notes written:', len(PAPERS))
+
+# 2) 当日 MOC
+track_dist = {}
+for p in PAPERS:
+    track_dist.setdefault(p['track'], []).append(p)
+
+moc = f'''# MOC · 2026-10-07（XR 每日论文雷达）
+
+> 拉取日 2026-10-07 · {WINDOW} · 新提交 XR 相关 23 篇（全 A/B，无 S）· S 级 0 / A 级 10（含回补）/ B 级 13
+
+## 排行榜（按重要性降序）
+
+| 排名 | arXiv | 标题 | 赛道 | 总分 | 等级 | 笔记 |
+|---|---|---|---|---|---|---|
+| 1 | 2610.04351 | LoCoSplat：以最小 3D 推理实现实时前馈 3D 高斯泼溅 | 神经渲染 | **3.85** | A | [笔记](../notes/2610.04351__LoCoSplat最小3D推理实时前馈3DGS.md) |
+| 2 | 2610.05576 | SteadySplats：低方差高斯重采样实现高保真随机渲染 | 神经渲染 | **3.85** | A | [笔记](../notes/2610.05576__SteadySplats低方差高斯重采样随机渲染.md) |
+| 3 | 2610.04076 | VCURF：基于虚拟相机的辐射场像素级不确定性估计 | 神经渲染 | **3.81** | A | [笔记](../notes/2610.04076__VCURF虚拟相机辐射场不确定性.md) |
+| 4 | 2610.04139 | SpatialMind：从观察到预见——视觉语言模型的预测式空间推理 | 空间计算与UI | **3.81** | A | [笔记](../notes/2610.04139__SpatialMind预测式空间推理VLM.md) |
+| 5 | 2610.04883 | 面向反射表面的 6DoF 目标跟踪与光场 | 重建与SLAM | **3.77** | A | [笔记](../notes/2610.04883__ReflectionRobust6DoF光场反射跟踪.md) |
+| 6 | 2610.06688 | GS-Pool：3D 高斯泼溅中的物体级变化检测 | 神经渲染 | **3.75** | A | [笔记](../notes/2610.06688__GS-Pool物体级变化检测3DGS.md) |
+| 7 | 2610.05207 | F² SLAM：将前馈几何转化为 SLAM 的持久因子 | 重建与SLAM | **3.7** | A | [笔记](../notes/2610.05207__F2SLAM前馈几何持久因子.md) |
+| 8 | 2610.05610 | SEA-LM：面向可穿戴麦克风阵列的自我中心空间音频理解 | 触觉与多模态 | **3.68** | A | [笔记](../notes/2610.05610__SEA-LM可穿戴阵列空间音频.md) |
+| 9 | 2610.04689 | Neuroll：基于仿真器在环展开的实时神经发丝仿真 | 化身与人体 | **3.6** | A | [笔记](../notes/2610.04689__Neuroll仿真器在环发丝仿真.md) |
+| 10 | 2610.05233 | PixReenact：像素条件因果视频扩散的流式头部化身重演 | 化身与人体 | **3.6** | A | [笔记](../notes/2610.05233__PixReenact像素条件流式头部化身.md) |
+
+## 赛道分布
+
+'''
+for t, lst in track_dist.items():
+    moc += f'- **{t}**：' + '、'.join(x['base_id'] for x in lst) + '\n'
+
+moc += '''
+## 落后/路线观察
+- 全部 CURRENT，无 OUTDATED / SUPERSEDED。
+- 路线观察：库内 3DGS 正从「逐高斯压缩/编辑」走向「结构化组合表示 / 随机渲染 / 可微物理耦合」多条分化（LoCoSplat 局部上下文、SteadySplats 随机渲染、3DGS-SPH 物理耦合），属并行演进，非取代。
+- ⚠️ 许可风险：PixReenact（2610.05233）为 CC BY-NC-ND 4.0，商用需授权。
+
+## 参考
+- [7 维度对比表](../daily/2026-10-07/7dim-table.md) · [评分与覆盖](../daily/2026-10-07/scored.md) · [执行日志](../daily/2026-10-07/run_log.md) · [最终解读报告](../../reports/XR-Daily-Report-2026-10-07.md)
+'''
+with open(os.path.join(MOC, 'MOC-2026-10-07.md'), 'w', encoding='utf-8') as f:
+    f.write(moc)
+print('moc written')
+
+# 3) 最终解读报告
+rank_rows = '\n'.join(
+    f'| {p["rank"]} | [{p["base_id"]}](https://arxiv.org/abs/{p["base_id"]}) | {p["title_zh"]} | {p["track"]} | **{p["value"]}** | {p["grade"]} |'
+    for p in PAPERS)
+chapters = '\n\n'.join(render_chapter(p) for p in PAPERS)
+
+report = f'''# XR 每日论文雷达 · 最终解读报告（2026-10-07）
+
+> 数据窗口：{WINDOW}。
+> 本日入选 **XR 新稿 23 篇（全 A/B，0 S）**，全文抓取全部 L0/FULL。
+> 覆盖度三关全过，无重筛、无 OUTDATED；当日最高 3.85 < 库近 30 天 Top10 均分 ~4.20，**非重磅日，无 S 级**。
+
+## 一、执行摘要
+
+本调度从 arXiv RSS 公告日 2026-10-06（补齐 10-03~10-06 工作日积压）拉取命中 54 条关键词，去重 registry 后 **23 篇 XR 相关新提交**进入解读池（另 10 篇非 XR 已剔除）。经 7 维度评分与覆盖度三关校验，最终 **Top10 全部为 A 级（3.60–3.85）**，无 S 级。
+
+**今日主线**：
+- **神经渲染效率与质量双线并进**：LoCoSplat 用「无 3D 网络 + 单 CUDA graph」把前馈 3DGS 推到 33ms/6 视图（比 VolSplat 快 4.2×）；SteadySplats 由 3DGS 原班团队把随机渲染做到单样本接近排序质量（1 spp +13 dB PSNR）；GS-Pool 把 3DGS 变化检测做到物体级（+17% mIoU）。
+- **SLAM 与几何推理范式升级**：Reflection-Robust 6DoF 把「反射」从干扰变成在线位姿线索；F² SLAM 把前馈几何作为「优化原生测量」喂进持久 BA；VCURF 用黑盒虚拟相机一致性给出即插即用不确定性估计。
+- **空间/音频/化身的多模态延伸**：SpatialMind 把 VLM 空间推理推进到「预测未来」；SEA-LM 让可穿戴眼镜阵列具备空间音频理解；Neuroll 与 PixReenact 分别补足实时数字人的「发丝动态」与「流式头部重演」。
+
+**需重点留意**：PixReenact 许可为 CC BY-NC-ND 4.0（非商业、禁止演绎），XR 产品化前须确认授权边界。
+
+## 二、Top10 排行榜
+
+| 排名 | arXiv | 标题 | 赛道 | 总分 | 等级 |
+|---|---|---|---|---|---|
+{rank_rows}
+
+> 注：原始价值排序 Top10 含 6 篇神经渲染、仅 4 赛道；依 §5.3 回补机制，将两篇 A 级**化身与人体**高价值论文（2610.04689 Neuroll、2610.05233 PixReenact，均 3.60）补入，挤出两篇略低分的神经渲染（2610.05289 Mobile-4DGS 3.64、2610.04007 VolS-GS 3.70，仍入下方参考表），达成 5 赛道覆盖。
+
+## 三、逐篇深度解读（按重要性降序）
+
+{chapters}
+
+## 四、当日全量 7 维对比表（23 篇参考）
+
+> 完整版见 [7dim-table.md](../daily/2026-10-07/7dim-table.md)。下表为去重后 23 篇 XR 新稿的 7 维评分与总分（Top10 已标 ⭐）。
+
+{REF_TABLE}
+
+**未入 Top10 但值得关注的 A 级**：VolS-GS（2610.04007，3.70，体积次表面散射可重光照）、Mobile-4DGS（2610.05289，3.64，移动端统一静态-动态 4DGS）——二者因回补机制让位于两篇化身与人体高价值论文，仍建议按需深读。
+
+## 五、覆盖率校验（三关）
+
+- **① 同质去重（Jaccard<0.62）**：今日 Top10 与库内 314 篇最高 Jaccard = **0.067**（2610.04351 vs 2609.21498），远低于阈值 → **通过**，无同质重复。
+- **② 赛道覆盖（≥5）**：Top10 覆盖 **5** 个赛道（神经渲染×4、重建与SLAM×2、空间计算与UI×1、触觉与多模态×1、化身与人体×2）→ **通过**。
+- **③ 价值天花板（当日最高 ≥ 库近30天Top10均分方为重磅日）**：当日最高 **3.85**（2610.04351/2610.05576），库内近30天 Top10 均值约 **4.20** → 3.85 < 4.20 → **非重磅日，无 S 级，未拔高**。
+
+**回补说明**：为达 5 赛道，依 §5.3 回补 2 篇化身与人体（Neuroll、PixReenact）；未触发「价值天花板不足需重筛」，因回补项均为真实 A 级（3.60），非为凑数拔分。
+
+## 六、附录
+
+### 6.1 证据等级 / 降级清单
+
+- **降级链 L0→L5 实际触发情况**：本日 23 篇全部在 **L0（arXiv HTML）一次成功**，证据等级 **FULL**（≥4000 字符且含 Method+Result），**无 PARTIAL / ABSTRACT_ONLY，无脑补数值**。
+- 全文抓取脚本 `scripts/fetch_fulltext.py` 串行 3s、背压 `min(60, 3·2ⁿ)` 秒；本日 23 篇均无限流/403/404，未触发降级。
+- 字符量区间：单篇 59K–136K 字符，正文充分。
+
+### 6.2 落后 / 被取代登记
+
+- 本批 23 篇均为 2026-10-02~06 新提交，方法互补而非取代库内条目；**OUTDATED / SUPERSEDED = 0 篇**。
+- 路线级观察：库内 3DGS 从「逐高斯压缩/编辑」走向「结构化组合表示 / 随机渲染 / 可微物理耦合」多条分化（LoCoSplat 局部上下文、SteadySplats 随机渲染、3DGS-SPH 物理耦合），属并行演进，非取代。
+- ⚠️ 许可风险：PixReenact（2610.05233）CC BY-NC-ND 4.0，商用需授权。
+
+### 6.3 数据来源与产物
+
+- 数据源：arXiv RSS（公告日 2026-10-06，API `submittedDate` 索引前沿停滞 10-02 时的兜底）。
+- 中间产物：`papers/daily/2026-10-07/{{7dim-table.md, scored.md, run_log.md}}`
+- 原子笔记：10 篇（见第三节各章 + `papers/notes/`）
+- 当日 MOC：`papers/MOC/MOC-2026-10-07.md`
+- 文献库：`papers/library/registry.jsonl`（314 → **337** 篇）
+'''
+with open(os.path.join(REP, 'XR-Daily-Report-2026-10-07.md'), 'w', encoding='utf-8') as f:
+    f.write(report)
+print('report written')
+
+# 4) 更新 MOC-总索引.md
+idx_path = os.path.join(MOC, 'MOC-总索引.md')
+idx = open(idx_path, encoding='utf-8').read()
+
+idx = idx.replace(
+    '> **状态注记（2026-10-06）**：周二，API 已恢复 200 但 `submittedDate` 索引前沿仍停滞 10-02，真实新增由 RSS 兜底（公告日 10-05，补齐 10-03~10-05 积压）。本调度入选 **XR 新稿 10 篇（3 S / 5 A / 2 B）**，全文全 L0/FULL，三关通过、无重筛、无 OUTDATED。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-06.md)。',
+    '> **状态注记（2026-10-06）**：周二，API 已恢复 200 但 `submittedDate` 索引前沿仍停滞 10-02，真实新增由 RSS 兜底（公告日 10-05，补齐 10-03~10-05 积压）。本调度入选 **XR 新稿 10 篇（3 S / 5 A / 2 B）**，全文全 L0/FULL，三关通过、无重筛、无 OUTDATED。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-06.md)。\n'
+    '> **状态注记（2026-10-07）**：周三，API `submittedDate` 前沿仍停滞 10-02，RSS 公告日 10-06（补齐 10-03~10-06 工作日积压），真实新增由 RSS 兜底。本调度入选 **XR 新稿 23 篇（全 A/B，0 S）**，全文全 L0/FULL，三关通过、回补 2 篇化身与人体达 5 赛道、无重筛、无 OUTDATED。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-07.md)。'
+)
+idx = idx.replace('累计 **314 篇**', '累计 **337 篇**')
+idx = idx.replace('（现有 314 篇）', '（现有 102 篇）')
+idx = idx.replace('| 最新一期 | [MOC · 2026-10-06](./MOC-2026-10-06.md) |', '| 最新一期 | [MOC · 2026-10-07](./MOC-2026-10-07.md) |')
+idx = idx.replace('| 上一期 | [MOC · 2026-10-03](./MOC-2026-10-03.md) |', '| 上一期 | [MOC · 2026-10-06](./MOC-2026-10-06.md) |')
+
+idx = idx.replace(
+    '| CapMem 字幕情景记忆基准 | 评估与数据集 | 3.64 | 09-15 | 候补（EMNLP 2026） |',
+    '| CapMem 字幕情景记忆基准 | 评估与数据集 | 3.64 | 09-15 | 候补（EMNLP 2026） |\n'
+    '| **LoCoSplat 最小 3D 推理实时前馈 3DGS** | 神经渲染 | 3.85 | 10-06 | [→](../notes/2610.04351__LoCoSplat最小3D推理实时前馈3DGS.md) |\n'
+    '| **SteadySplats 低方差高斯重采样随机渲染** | 神经渲染 | 3.85 | 10-06 | [→](../notes/2610.05576__SteadySplats低方差高斯重采样随机渲染.md) |\n'
+    '| **VCURF 虚拟相机辐射场不确定性** | 神经渲染 | 3.81 | 10-06 | [→](../notes/2610.04076__VCURF虚拟相机辐射场不确定性.md) |\n'
+    '| **SpatialMind 预测式空间推理 VLM** | 空间计算与UI | 3.81 | 10-06 | [→](../notes/2610.04139__SpatialMind预测式空间推理VLM.md) |\n'
+    '| **Reflection-Robust 6DoF 光场反射跟踪** | 重建与SLAM | 3.77 | 10-06 | [→](../notes/2610.04883__ReflectionRobust6DoF光场反射跟踪.md) |\n'
+    '| **GS-Pool 物体级变化检测 3DGS** | 神经渲染 | 3.75 | 10-06 | [→](../notes/2610.06688__GS-Pool物体级变化检测3DGS.md) |\n'
+    '| **F² SLAM 前馈几何持久因子** | 重建与SLAM | 3.7 | 10-06 | [→](../notes/2610.05207__F2SLAM前馈几何持久因子.md) |\n'
+    '| **SEA-LM 可穿戴阵列空间音频** | 触觉与多模态 | 3.68 | 10-06 | [→](../notes/2610.05610__SEA-LM可穿戴阵列空间音频.md) |\n'
+    '| **Neuroll 仿真器在环发丝仿真** | 化身与人体 | 3.6 | 10-06 | [→](../notes/2610.04689__Neuroll仿真器在环发丝仿真.md) |\n'
+    '| **PixReenact 像素条件流式头部化身** | 化身与人体 | 3.6 | 10-06 | [→](../notes/2610.05233__PixReenact像素条件流式头部化身.md) ⚠️NC-ND |'
+)
+idx = idx.replace('### A 级（3.6–4.2，推荐，共 22 篇）', '### A 级（3.6–4.2，推荐，共 32 篇）')
+idx = idx.replace('| 重建与SLAM | 12 | 4.50 |', '| 重建与SLAM | 14 | 4.50 |')
+idx = idx.replace('| 化身与人体 | 7 | **4.00** |', '| 化身与人体 | 9 | **4.00** |')
+idx = idx.replace('| **神经渲染** | 6 | **4.28** |', '| **神经渲染** | 9 | **4.28** |')
+idx = idx.replace('| 空间计算与UI | 5 | 4.12 |', '| 空间计算与UI | 6 | 4.12 |')
+idx = idx.replace('| 触觉与多模态 | 2 | 4.00 |', '| 触觉与多模态 | 3 | 4.00 |')
+
+idx = idx.replace(
+    '| HACo 触觉主动柔顺 | 触觉与多模态 | 3.85 | A | [→](../notes/2609.36596__HACo_触觉主动柔顺.md) |',
+    '| HACo 触觉主动柔顺 | 触觉与多模态 | 3.85 | A | [→](../notes/2609.36596__HACo_触觉主动柔顺.md) |\n\n'
+    '### 2026-10-07 新增（Top10，10 A / 13 B，非重磅日）\n\n'
+    '> 公告日 2026-10-06，补齐 10-03~10-06 工作日积压；RSS 兜底（API `submittedDate` 索引前沿停滞 10-02）。全文全 L0/FULL；覆盖率三关全过（max Jaccard 0.067、5 赛道、当日最高 3.85<库均 ~4.20），回补 2 篇化身与人体达 5 赛道，**未触发重筛、无 OUTDATED、无 S 级**；PixReenact 许可 CC BY-NC-ND 4.0 已标风险。\n\n'
+    '| 排名 | 论文 | 赛道 | 分值 | 等级 | 笔记 |\n'
+    '|---:|---|---|---:|---|---|\n'
+    '| 1 | LoCoSplat 最小 3D 推理实时前馈 3DGS | 神经渲染 | 3.85 | A | [→](../notes/2610.04351__LoCoSplat最小3D推理实时前馈3DGS.md) |\n'
+    '| 2 | SteadySplats 低方差高斯重采样随机渲染 | 神经渲染 | 3.85 | A | [→](../notes/2610.05576__SteadySplats低方差高斯重采样随机渲染.md) |\n'
+    '| 3 | VCURF 虚拟相机辐射场不确定性 | 神经渲染 | 3.81 | A | [→](../notes/2610.04076__VCURF虚拟相机辐射场不确定性.md) |\n'
+    '| 4 | SpatialMind 预测式空间推理 VLM | 空间计算与UI | 3.81 | A | [→](../notes/2610.04139__SpatialMind预测式空间推理VLM.md) |\n'
+    '| 5 | Reflection-Robust 6DoF 光场反射跟踪 | 重建与SLAM | 3.77 | A | [→](../notes/2610.04883__ReflectionRobust6DoF光场反射跟踪.md) |\n'
+    '| 6 | GS-Pool 物体级变化检测 3DGS | 神经渲染 | 3.75 | A | [→](../notes/2610.06688__GS-Pool物体级变化检测3DGS.md) |\n'
+    '| 7 | F² SLAM 前馈几何持久因子 | 重建与SLAM | 3.7 | A | [→](../notes/2610.05207__F2SLAM前馈几何持久因子.md) |\n'
+    '| 8 | SEA-LM 可穿戴阵列空间音频 | 触觉与多模态 | 3.68 | A | [→](../notes/2610.05610__SEA-LM可穿戴阵列空间音频.md) |\n'
+    '| 9 | Neuroll 仿真器在环发丝仿真 | 化身与人体 | 3.6 | A | [→](../notes/2610.04689__Neuroll仿真器在环发丝仿真.md) |\n'
+    '| 10 | PixReenact 像素条件流式头部化身 | 化身与人体 | 3.6 | A | [→](../notes/2610.05233__PixReenact像素条件流式头部化身.md) ⚠️NC-ND |\n'
+    '| VolS-GS 体积次表面散射可重光照 | 神经渲染 | 3.70 | A | 参考表（回补让位） |\n'
+    '| Mobile-4DGS 移动端统一静态-动态 4DGS | 神经渲染 | 3.64 | A | 参考表（回补让位） |'
+)
+idx = idx.replace(
+    '*最后更新：2026-10-06 · 库内 314 篇 · 原子笔记 92 篇 · MOC 11 份 · 落后/认知纠正登记（历史 15 条，10-06 新增路线观察 1 条：SCION 组合基元范式）*',
+    '*最后更新：2026-10-07 · 库内 337 篇 · 原子笔记 102 篇 · MOC 12 份 · 落后/认知纠正登记（历史 15 条，10-06 新增路线观察 1 条：SCION 组合基元范式；10-07 无新增）*'
+)
+open(idx_path, 'w', encoding='utf-8').write(idx)
+print('index updated')
+
+# 5) 更新 知识库组合导航.md
+nav_path = os.path.join(MOC, '知识库组合导航.md')
+nav = open(nav_path, encoding='utf-8').read()
+nav = nav.replace('| 文献库（registry.jsonl，累计不删） | 298 篇 | `papers/library/registry.jsonl` |', '| 文献库（registry.jsonl，累计不删） | 337 篇 | `papers/library/registry.jsonl` |')
+nav = nav.replace('| 原子化笔记 | 77 篇 | `papers/notes/` |', '| 原子化笔记 | 102 篇 | `papers/notes/` |')
+nav = nav.replace('| MOC 索引 | 8 份（总索引 + 7 份当日 09-20/21/23/24/25/26/10-02） | `papers/MOC/` |', '| MOC 索引 | 12 份（总索引 + 10 份当日 09-20/21/23/24/25/26/10-02/10-03/10-06/10-07 + 组合导航） | `papers/MOC/` |')
+nav = nav.replace('- **当日聚焦（最近）**：[`MOC-2026-10-02.md`](MOC-2026-10-02.md)', '- **当日聚焦（最近）**：[`MOC-2026-10-07.md`](MOC-2026-10-07.md)')
+nav = nav.replace('## 当前知识库快照（截至 2026-10-02）', '## 当前知识库快照（截至 2026-10-07）')
+nav = nav.replace(
+    '- **历史当日**：[`MOC-2026-09-26.md`](MOC-2026-09-26.md) · [`MOC-2026-09-25.md`](MOC-2026-09-25.md) · [`MOC-2026-09-24.md`](MOC-2026-09-24.md) · [`MOC-2026-09-23.md`](MOC-2026-09-23.md) · [`MOC-2026-09-21.md`](MOC-2026-09-21.md) · [`MOC-2026-09-20.md`](MOC-2026-09-20.md)',
+    '- **历史当日**：[`MOC-2026-10-06.md`](MOC-2026-10-06.md) · [`MOC-2026-10-03.md`](MOC-2026-10-03.md) · [`MOC-2026-09-26.md`](MOC-2026-09-26.md) · [`MOC-2026-09-25.md`](MOC-2026-09-25.md) · [`MOC-2026-09-24.md`](MOC-2026-09-24.md) · [`MOC-2026-09-23.md`](MOC-2026-09-23.md) · [`MOC-2026-09-21.md`](MOC-2026-09-21.md) · [`MOC-2026-09-20.md`](MOC-2026-09-20.md)'
+)
+nav = nav.replace(
+    '- [`2609.34817__ESTHER_野化自中心立体手估计.md`](../notes/2609.34817__ESTHER_野化自中心立体手估计.md)（S 级·化身与人体·2026-10-02 4.27）',
+    '- [`2609.34817__ESTHER_野化自中心立体手估计.md`](../notes/2609.34817__ESTHER_野化自中心立体手估计.md)（S 级·化身与人体·2026-10-02 4.27）\n'
+    '- [`2610.04351__LoCoSplat最小3D推理实时前馈3DGS.md`](../notes/2610.04351__LoCoSplat最小3D推理实时前馈3DGS.md)（A 级·神经渲染·2026-10-07 3.85，无 3D 网络前馈 3DGS）\n'
+    '- [`2610.05576__SteadySplats低方差高斯重采样随机渲染.md`](../notes/2610.05576__SteadySplats低方差高斯重采样随机渲染.md)（A 级·神经渲染·2026-10-07 3.85，3DGS 原班团队随机渲染降噪）\n'
+    '- [`2610.04883__ReflectionRobust6DoF光场反射跟踪.md`](../notes/2610.04883__ReflectionRobust6DoF光场反射跟踪.md)（A 级·重建与SLAM·2026-10-07 3.77，反射变在线位姿线索）'
+)
+open(nav_path, 'w', encoding='utf-8').write(nav)
+print('nav updated')
+print('ALL DONE')

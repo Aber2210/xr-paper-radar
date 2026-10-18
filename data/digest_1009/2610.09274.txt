@@ -1,0 +1,62 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+IV-A Approximation Evaluation
+IV-B Latency Performance
+V Ablation Studies
+V-A Error compensation
+V-B Block Sizes Choice
+VI Conclusion
+References
+License: CC BY-NC-SA 4.0
+arXiv:2610.09274v1 [cs.CV] 07 Oct 2026
+Hardware-aware Calibrated Clustered Attention for Efficient Visual Geometric Transformers
+Weitian Wang
+† † thanks: Emails: {weitian.wang, shubham.rai, cecilia.delaparra}@bosch.com, akash.kumar@ruhr-uni-bochum.de
+Affiliation:  Robert Bosch GmbH, Germany
+Affiliation:  Ruhr University Bochum, Germany
+Rai Shubham
+Affiliation:  Robert Bosch GmbH, Germany
+Cecilia De La Parra
+Affiliation:  Robert Bosch GmbH, Germany
+Akash Kumar
+Affiliation:  Ruhr University Bochum, Germany (a) Standard Attention (Baseline)
+(b) Calibrated Blockwise Clustered Attention
+(c) Random Blockwise Clustered Attention
+Fig. 6 : Comparison of reconstruction results using standard attention, blockwise clustered attention with calibrated and random hyperplanes. The reconstruction result using random hyperplanes exhibits noticeable noise compared to the other two results.
+IV-A Approximation Evaluation
+We replace the 24 global attention layers in the pretrained VGGT-1B model with our BC attention and compare its task performance on ETH3D  [ 25 ] for point map estimation and DTU  [ 26 ] for dense Multi-View Stereo (MVS) estimation with the standard VGGT. For point map estimation on ETH3D, we use the depth and camera heads (i.e., unprojecting the predicted depth maps to 3D using the predicted camera parameters) because it yields higher accuracy, as stated in the VGGT  [ 1 ] paper. We report the Accuracy, Completeness, and Overall (Chamfer distance) for both tasks. Note that these metrics are relative distances that depend on the alignment and thresholding of point clouds, so the numbers we report here are not exactly the same as in the original VGGT [ 1 ] paper. However, we employ the same point cloud processing method for all the experiments for fairness.
+As shown in Table  II , on ETH3D, VGGT with calibrated BC attention shows negligible overall performance loss (1%) with a compression factor γ = 3 \gamma=3 (compress the query length by 3 × \times ) and small overall performance loss (<5%) with a compression factor γ = 4 \gamma=4 . On the other hand, when using random hyperplanes, BC attention introduces rather large loss (>17%). We show one example in Fig.  6 for qualitative evaluation. It can be observed that the reconstruction result using random hyperplanes exhibits noticeable noise compared to the baseline and calibrated results.
+The DTU dataset contains ground-truth geometry of small objects obtained with a structured-light scanner at millimeter-level accuracy under controlled lab conditions. We evaluate BC attention on DTU to show that the overall performance loss introduced by calibrated BC attention is negligible (<0.05mm) under this high-fidelity setup as well.
+In the last row of Table  II , we also compared BC attention with ToMeSD  [ 27 ] . We use ToMeSD to merge simila

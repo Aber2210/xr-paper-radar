@@ -1,0 +1,9 @@
+#  regenerable cache & local-only artifacts
+data/fulltext/
+__pycache__/
+*.pyc
+.workbuddy/
+.wbapp_*.genie
+*.bak-*
+*.bak-2026*
+.DS_Store

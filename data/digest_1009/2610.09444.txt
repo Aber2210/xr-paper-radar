@@ -1,0 +1,68 @@
+【摘要】
+
+【方法】
+3.1 Problem formulation
+3.2 Transformer-based Query Decoder
+3.3 Attention-guided forward lifting
+3.4 Occupancy Forecasting
+3.5 Optimization 3.1 Problem formulation
+Let 𝑰 t v \bm{I}_{t}^{v} denote the RGB image captured by camera v ∈ { 1 , … , V } v\in\{1,\ldots,V\} at time t ∈ { − T p , … , 0 } t\in\{-T_{p},\ldots,0\} , where T p T_{p} is the number of past frames preceding the present and t = 0 t=0 denotes the present frame. Following prior camera-only occupancy forecasting methods  ( Ma et al., 2024a ; Xu et al., 2025 ; Chen et al., 2025 ) , we focus on the occupancy evolution of general movable objects (GMOs). Given the multi-view image history and the corresponding camera intrinsics, extrinsics, and ego poses, the task is to predict the present and future voxel occupancy states:
+{ 𝑶 ^ k } k = 0 T f , 𝑶 ^ k ∈ [ 0 , 1 ] X × Y × Z . \{\hat{\bm{O}}_{k}\}_{k=0}^{T_{f}},\qquad\hat{\bm{O}}_{k}\in[0,1]^{X\times Y\times Z}.
+(1)
+Here, 𝑶 ^ k ​ ( x , y , z ) \hat{\bm{O}}_{k}(x,y,z) denotes the probability that voxel ( x , y , z ) (x,y,z) is occupied at time k k , where k = 0 k=0 corresponds to the present and k > 0 k>0 to the future. We set T p = 2 T_{p}=2 and forecast T f = 4 T_{f}=4 frames.
+Unlike conventional dense approaches that construct voxel-wise features over a discretized 3D grid, LighTROcc represents movable objects with a compact set of instance queries. Each query predicts confidence, depth, Gaussian mixture parameters, and a future trajectory. The resulting continuous Gaussian volumes are rasterized into the occupancy sequence { 𝑶 ^ k } k = 0 T f \{\hat{\bm{O}}_{k}\}_{k=0}^{T_{f}} .
+3.2 Transformer-based Query Decoder
+As illustrated in Fig.  2 , a shared image encoder extracts multi-scale context features 𝑭 t , ℓ v ∈ ℝ H ℓ × W ℓ × D \bm{F}_{t,\ell}^{v}\in\mathbb{R}^{H_{\ell}\times W_{\ell}\times D} from each surrounding image 𝑰 t v \bm{I}_{t}^{v} . Since the shared encoder processes each image independently, the resulting visual features do not explicitly encode their spatial locations, camera viewpoints, or acquisition times. We therefore augment each image token with a 2D sinusoidal positional encoding, a camera embedding derived from the corresponding camera parameters and ego pose, a learned camera-ID embedding, and a temporal embedding representing the observation time. For decoder layer ℓ \ell , the augmented tokens from all cameras are flattened to form the multi-view context features 𝑭 t , ℓ \bm{F}_{t,\ell} .
+We initialize the decoder with N q N_{q} learned instance queries 𝑸 ∈ ℝ N q × D \bm{Q}\in\mathbb{R}^{N_{q}\times D} . For each observed frame, the queries sequentially interact with the multi-view features through cross-attention and are refined by self-attention and a feed-forward network. At decoder layer ℓ \ell , the update is formulated as
+𝑸 ¯ t ℓ \displaystyle\bar{\bm{Q}}_{t}^{\ell}
+= LN ⁡ ( 𝑸 t ℓ − 1 + CA ℓ ⁡ ( 𝑸 t ℓ − 1 , 𝑭 t , ℓ ) ) , \displaystyle=\operatorname{LN}\!\left(\bm{Q}_{t}^{\ell-1}+\operatorname{CA}_{\ell}(\bm{Q}_{t}^{\ell-1},\bm{F}_{t,\ell})\right),
+(2)
+𝑸 ~ t ℓ \displaystyle\widetilde{\bm{Q}}_{t}^{\ell}
+= LN ⁡ ( 𝑸 ¯ t ℓ + SA ℓ ⁡ ( 𝑸 ¯ t ℓ ) ) , \displaystyle=\operatorname{LN}\!\left(\bar{\bm{Q}}_{t}^{\el
+
+【实验】
+4.1 Experimental Setup
+Datasets. 4.1 Experimental Setup
+Datasets.
+We train and evaluate LighTROcc and the baseline models using nuScenes  ( Caesar et al., 2020 ) and nuScenes-Occupancy  ( Wang et al., 2023b ) . We obtain multi-view RGB images, camera parameters, and ego poses from nuScenes, and use the fine-grained voxel occupancy annotations from nuScenes-Occupancy for supervision. Following the prior work  ( Ma et al., 2024a ; Xu et al., 2025 ; Chen et al., 2025 ) , we use 700 scenes for training and 150 for evaluation, yielding 23,930 and 5,119 sequences, respectively. Each sequence contains two past observations, one present observation, and four future occupancy targets. Since the nuScenes keyframes are sampled at 2 Hz, these targets correspond to prediction horizons of 0.5, 1.0, 1.5, and 2.0 seconds. The evaluation range is [ − 51.2 , 51.2 ] [-51.2,51.2] m along both horizontal axes and [ − 5 , 3 ] [-5,3] m vertically, discretized into a [ 512 × 512 × 40 ] [512\times 512\times 40] grid with a voxel size of 0.2 0.2 m. Since the LiDAR-derived nuScenes-Occupancy annotations are highly sparse, we supplement them with auxiliary assets. Further details are provided in the Appendix. protocols and metrics.
+4.2 Experimental Results
+Forecasting General Movable Object Occupancy.
+Qualitative results.
+4.3 Computational Efficiency and Model Compactness
+4.4 Ablation Studies
+Ablation on 3D center localization.
+Query scaling and efficiency-accuracy trade-off.
+Statistical analysis of query scaling. protocols and metrics.
+Following prior works  ( Ma et al., 2024a ; Xu et al., 2025 ; Chen et al., 2025 ) , we evaluate foreground general movable object (GMO) instances in both the present and future frames. For current-only methods, we follow Cam4DOcc and EfficientOCF by using current-frame predictions for all future steps. To assess occupancy forecasting performance, we report voxel-wise IoU against the fine-grained 3D occupancy ground truth. For instance-level evaluation, we additionally report average precision (AP) based on the voxel IoU between predicted and ground-truth instance occupancy masks. Following GUIDE  ( Hu et al., 2026 ) , we compute AP at IoU thresholds of 0.1, 0.2, and 0.3 and report the mean. For dense voxel-wise methods, we recover instance masks using the official flow-based grouping and compute AP using an evaluation scheme inspired by Panoptic-DeepLab  ( Cheng et al., 2020 ) . For center localization, we report AP ctr \mathrm{AP}_{\mathrm{ctr}} and Recall loc \mathrm{Recall}_{\mathrm{loc}} at a 1 1 m threshold, measuring confidence-ranked center localization and active-query GT coverage, respectively. All baseline models are reproduced using their official code, and all methods are evaluated on a single NVIDIA RTX Pro 6000 GPU. Further details are provided in the Appendix.
+4.2 Experimental Results
+Figure 4:
+Qualitative comparison of GMO occupancy predictions from multi-view RGB images. LighTROcc more faithfully captures object locations an
+
+【结论/局限】
+References
+A Evaluation Protocol and Dataset Analysis
+A.1 Evaluation Metrics
+Occupancy and instance evaluation.
+Center localization evaluation.
+A.2 Dataset Analysis and Ground Truth Supplementation
+A.3 Geometric Consistency of Supplemented Annotations
+A.4 Robustness to Ground-Truth Annotation Protocol
+B Implementation Details
+B.1 Network Architecture
+B.2 Training Details
+C Additional Experiments and Analysis
+C.1 Flow-Based Instance Recovery in Dense Voxel-wise Models
+C.2 Temporal Shape Consistency
+C.3 Performance at Different Forecasting Horizons
+D Additional Qualitative Results
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.09444v1 [cs.CV] 07 Oct 2026
+LighTROcc: Lightweight 4D Occupancy Forecasting via Instance-Centric 3D Gaussians
+Hwanhee Jung
+SeungHyeon Kim
+Inkyu Koo
+Qixing Huang
+Affiliation:  Korea University   University of Texas at Austin
+Sang Ho Yoon
+Affiliation:  Korea Advanced Institute of Science & Technology
+Sangpil Kim We presented LighTROcc, a lightweight instance-centric framework for camera-based 4D occupancy forecasting. LighTROcc represents movable objects with a compact set of learned queries, avoiding dense spatiotemporal feature processing and large sets of spatially initialized candidates. Each query is localized through attention-guided forward lifting, modeled with a mixture of 3D Gaussians, and propagated to future frames using predicted d

@@ -1,0 +1,778 @@
+{
+ "top10": [
+  {
+   "base_id": "2609.29603",
+   "title": "MoSign: Challenge-Response Motion-Watermark Authentication for Anonymous Virtual-Reality Users",
+   "title_zh": "MoSign：面向匿名 VR 用户的挑战-应答式运动水印身份认证",
+   "track": "交互与输入",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "VR安全",
+    "运动水印",
+    "匿名认证",
+    "隐写",
+    "重识别"
+   ]
+  },
+  {
+   "base_id": "2609.29292",
+   "title": "PHOSA: Photorealistic 3D Sign Avatar Modeling and Benchmark",
+   "title_zh": "PHOSA：照片级真实 3D 手语化身建模与基准（MVSign 数据集）",
+   "track": "化身与人体",
+   "value": 3.92,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "手语化身",
+    "SMPL-X",
+    "多视角",
+    "可访问性",
+    "基准"
+   ]
+  },
+  {
+   "base_id": "2609.28645",
+   "title": "PePESeg3D: Perception Prior Enhances Multi-Scale Segmentation for 3D Gaussian Splatting",
+   "title_zh": "PePESeg3D：感知先验增强的多尺度 3D 高斯泼溅分割",
+   "track": "感知与认知",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "语义分割",
+    "感知先验",
+    "单体深度",
+    "多尺度"
+   ]
+  },
+  {
+   "base_id": "2609.28930",
+   "title": "PlenoCI: Plenoptic CharacterIstics for View Dependence Aware Change Classification",
+   "title_zh": "PlenoCI：基于光场特性的视角依赖感知变化分类",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "变化检测",
+    "光场特性",
+    "解析导数",
+    "误报抑制"
+   ]
+  },
+  {
+   "base_id": "2609.28997",
+   "title": "Only What Was Seen: Observation-Gram Compaction of View-Dependent Appearance in 3D Gaussian Splatting",
+   "title_zh": "Observation-Gram：3D 高斯泼溅视角依赖外观的观测压缩度量",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "3DGS压缩",
+    "球谐",
+    "观测Gram",
+    "率失真",
+    "Compressed3D"
+   ]
+  },
+  {
+   "base_id": "2609.29073",
+   "title": "Seeing Is Not Measuring: Tool-Augmented Metric Spatial Reasoning for Vision-Language Models",
+   "title_zh": "工具增强的度量空间推理：给小 VLM 配上几何求解器",
+   "track": "空间计算与UI",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "VLM",
+    "空间推理",
+    "度量深度",
+    "工具增强",
+    "ReVSI-Bench"
+   ]
+  },
+  {
+   "base_id": "2609.29106",
+   "title": "WildHSR: Metric Feed-Forward 4D People-Scene Reconstruction from a 3D Foundation Model",
+   "title_zh": "WildHSR：基于 3D 基础模型的度量前馈 4D 人-景重建",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "4D重建",
+    "人-景",
+    "基础模型",
+    "度量尺度",
+    "前馈"
+   ]
+  },
+  {
+   "base_id": "2609.29836",
+   "title": "SplatLabel: Pseudo-Labelling through 4D Gaussian Splatting",
+   "title_zh": "SplatLabel：基于 4D 高斯泼溅的伪标注（动态语义占据）",
+   "track": "感知与认知",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "4DGS",
+    "伪标注",
+    "语义占据",
+    "动态跟踪",
+    "LiDAR"
+   ]
+  },
+  {
+   "base_id": "2609.30245",
+   "title": "Towards Practical Compression of 3D Gaussian Splatting",
+   "title_zh": "COSA-GS：面向实用部署的 3D 高斯泼溅压缩（锚点因果分解上下文）",
+   "track": "系统与平台",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "3DGS压缩",
+    "锚点",
+    "因果上下文",
+    "跨平台一致性",
+    "熵编码"
+   ]
+  },
+  {
+   "base_id": "2609.29374",
+   "title": "FMCW-LIO: A Doppler LiDAR-Inertial Odometry",
+   "title_zh": "FMCW-LIO：基于多普勒 FMCW 激光雷达-惯导里程计",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-25",
+   "flags": [],
+   "tags": [
+    "SLAM",
+    "LiDAR",
+    "多普勒",
+    "运动补偿",
+    "LIO"
+   ]
+  }
+ ],
+ "xr_recs": [
+  {
+   "base_id": "2609.29603",
+   "title_zh": "MoSign：面向匿名 VR 用户的挑战-应答式运动水印身份认证",
+   "track": "交互与输入",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "VR安全",
+    "运动水印",
+    "匿名认证",
+    "隐写",
+    "重识别"
+   ]
+  },
+  {
+   "base_id": "2609.29292",
+   "title_zh": "PHOSA：照片级真实 3D 手语化身建模与基准（MVSign 数据集）",
+   "track": "化身与人体",
+   "value": 3.92,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "flags": [],
+   "tags": [
+    "手语化身",
+    "SMPL-X",
+    "多视角",
+    "可访问性",
+    "基准"
+   ]
+  },
+  {
+   "base_id": "2609.28645",
+   "title_zh": "PePESeg3D：感知先验增强的多尺度 3D 高斯泼溅分割",
+   "track": "感知与认知",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "语义分割",
+    "感知先验",
+    "单体深度",
+    "多尺度"
+   ]
+  },
+  {
+   "base_id": "2609.28930",
+   "title_zh": "PlenoCI：基于光场特性的视角依赖感知变化分类",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "变化检测",
+    "光场特性",
+    "解析导数",
+    "误报抑制"
+   ]
+  },
+  {
+   "base_id": "2609.28997",
+   "title_zh": "Observation-Gram：3D 高斯泼溅视角依赖外观的观测压缩度量",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS压缩",
+    "球谐",
+    "观测Gram",
+    "率失真",
+    "Compressed3D"
+   ]
+  },
+  {
+   "base_id": "2609.29073",
+   "title_zh": "工具增强的度量空间推理：给小 VLM 配上几何求解器",
+   "track": "空间计算与UI",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "VLM",
+    "空间推理",
+    "度量深度",
+    "工具增强",
+    "ReVSI-Bench"
+   ]
+  },
+  {
+   "base_id": "2609.29106",
+   "title_zh": "WildHSR：基于 3D 基础模型的度量前馈 4D 人-景重建",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "4D重建",
+    "人-景",
+    "基础模型",
+    "度量尺度",
+    "前馈"
+   ]
+  },
+  {
+   "base_id": "2609.29836",
+   "title_zh": "SplatLabel：基于 4D 高斯泼溅的伪标注（动态语义占据）",
+   "track": "感知与认知",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "4DGS",
+    "伪标注",
+    "语义占据",
+    "动态跟踪",
+    "LiDAR"
+   ]
+  },
+  {
+   "base_id": "2609.30245",
+   "title_zh": "COSA-GS：面向实用部署的 3D 高斯泼溅压缩（锚点因果分解上下文）",
+   "track": "系统与平台",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS压缩",
+    "锚点",
+    "因果上下文",
+    "跨平台一致性",
+    "熵编码"
+   ]
+  },
+  {
+   "base_id": "2609.29374",
+   "title_zh": "FMCW-LIO：基于多普勒 FMCW 激光雷达-惯导里程计",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "SLAM",
+    "LiDAR",
+    "多普勒",
+    "运动补偿",
+    "LIO"
+   ]
+  },
+  {
+   "base_id": "2609.30187",
+   "title_zh": "Ego-Exo4D-HM：面向自我-外部捕获的 4D 人体运动重建数据集",
+   "track": "化身与人体",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 4,
+    "REP": 4
+   },
+   "flags": [],
+   "tags": [
+    "数据集",
+    "4D人体",
+    "自我中心",
+    "动作重建",
+    "基准"
+   ]
+  },
+  {
+   "base_id": "2609.29041",
+   "title_zh": "双阶段 Morton 排序的高斯泼溅高效编码（面向 MPEG 视频编码）",
+   "track": "系统与平台",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS编码",
+    "Morton",
+    "视频编码",
+    "MPEG",
+    "投影映射"
+   ]
+  },
+  {
+   "base_id": "2609.28539",
+   "title_zh": "Heartian：生理感知的可重光照高斯头部化身（内嵌 rPPG 心率）",
+   "track": "化身与人体",
+   "value": 3.57,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 2,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "头部化身",
+    "可重光照",
+    "rPPG",
+    "心率",
+    "生理信号"
+   ]
+  },
+  {
+   "base_id": "2609.28976",
+   "title_zh": "ReVNM：基于远程摄像头的视觉导航（免预建地图）",
+   "track": "重建与SLAM",
+   "value": 3.5,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "视觉导航",
+    "远程相机",
+    "仿真合成",
+    "移动机器人",
+    "隐式地图"
+   ]
+  },
+  {
+   "base_id": "2609.29963",
+   "title_zh": "AdaTex4D：面向 4D 高斯泼溅的自适应纹理容量分配",
+   "track": "神经渲染",
+   "value": 3.45,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "4DGS",
+    "纹理压缩",
+    "自适应分配",
+    "三平面",
+    "显存"
+   ]
+  },
+  {
+   "base_id": "2609.29985",
+   "title_zh": "OceanXL：基于分块与自适应剪枝的大规模水下 3D 高斯泼溅重建",
+   "track": "神经渲染",
+   "value": 3.3,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "水下",
+    "大规模",
+    "分块",
+    "剪枝"
+   ]
+  },
+  {
+   "base_id": "2609.28812",
+   "title_zh": "VR 中具身对话智能体的幻觉感知提示设计（N=24 被试）",
+   "track": "空间计算与UI",
+   "value": 2.85,
+   "grade": "C",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "VR",
+    "对话智能体",
+    "幻觉提示",
+    "用户研究",
+    "可解释性"
+   ]
+  },
+  {
+   "base_id": "2609.29173",
+   "title_zh": "视频透视 XR 中人-系统视角错配的形式化与测量",
+   "track": "空间计算与UI",
+   "value": 2.83,
+   "grade": "C",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 2,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 2
+   },
+   "flags": [
+    "⚠️ 仍为 pilot 级边界测量，实验强度偏弱"
+   ],
+   "tags": [
+    "VST",
+    "视频透视",
+    "视角错配",
+    "Quest3",
+    "AR显示"
+   ]
+  },
+  {
+   "base_id": "2609.29686",
+   "title_zh": "TransCAVE-E：面向自适应车外人机界面的分布式 VR 试验台",
+   "track": "空间计算与UI",
+   "value": 2.7,
+   "grade": "C",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 2,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "VR试验台",
+    "eHMI",
+    "自动驾驶",
+    "人因",
+    "分布式"
+   ]
+  },
+  {
+   "base_id": "2609.30076",
+   "title_zh": "超越驾驶：以体验为中心设计探索未来自动驾驶舱内活动",
+   "track": "空间计算与UI",
+   "value": 2.25,
+   "grade": "C",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 2,
+    "EXP": 2,
+    "PER": 1,
+    "TRL": 2,
+    "REP": 2
+   },
+   "flags": [
+    "⚠️ 定性设计研究，无量化实验，价值偏低"
+   ],
+   "tags": [
+    "自动驾驶",
+    "XR设想",
+    "体验设计",
+    "参与式",
+    "非驾驶活动"
+   ]
+  }
+ ],
+ "non_xr": [
+  {
+   "base_id": "2609.29638",
+   "title_zh": "SpectralCTGaussians：基于 3DGS 的光谱 CT 重建与基材料分解"
+  },
+  {
+   "base_id": "2609.29644",
+   "title_zh": "大型空间结构无标记多模态自主机器人巡检"
+  }
+ ],
+ "gate1_pass": true,
+ "gate2_pass": true,
+ "gate3_note": "未超：当日最高 4.05 < 库内近30天Top10均分 4.298 → 非重磅日，无 S 级",
+ "top_tracks": [
+  "交互与输入",
+  "化身与人体",
+  "感知与认知",
+  "神经渲染",
+  "空间计算与UI",
+  "系统与平台",
+  "重建与SLAM"
+ ],
+ "today_top_mean": 3.877,
+ "today_max": 4.05,
+ "lib_top_mean": 4.298,
+ "added": 0,
+ "total": 170,
+ "max_sim": 0.235
+}

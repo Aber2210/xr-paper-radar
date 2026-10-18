@@ -1,0 +1,1128 @@
+{
+ "batch": "backfill-1012-1015",
+ "gate": {
+  "jaccard": [
+   0.429,
+   "2610.20590",
+   "arXiv:2609.33330"
+  ],
+  "tracks": {
+   "化身与人体": 3,
+   "空间计算与UI": 1,
+   "神经渲染": 1,
+   "世界模型与仿真": 1,
+   "感知与认知": 2,
+   "渲染与显示": 1,
+   "重建与SLAM": 1
+  },
+  "max": 4.0,
+  "mean30": 4.434,
+  "n30": 383
+ },
+ "top10": [
+  "2610.16277",
+  "2610.19998",
+  "2610.16256",
+  "2610.17605",
+  "2610.19290",
+  "2610.18950",
+  "2610.13309",
+  "2610.13498",
+  "2610.16143",
+  "2610.16177"
+ ],
+ "included": [
+  {
+   "id": "2610.16277",
+   "title": "FlowAvatar: Real-Time Full-Body Avatars from Sparse Egocentric Inputs on Consumer XR Devices",
+   "title_zh": "FlowAvatar：消费级 XR 设备上稀疏第一视角输入的实时全身化身",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 4
+   },
+   "value": 4.0,
+   "grade": "A",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.16256",
+   "title": "EgoWholeView: Camera-Only Head-Mounted Capture of Body and Bimanual Hand Motion for Embodied Demonstrations",
+   "title_zh": "EgoWholeView：六相机头戴装置的全身+双手运动捕捉（角色专业化流水线）",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "value": 3.93,
+   "grade": "A",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.19998",
+   "title": "ShadAR: Real-time Prompting On-demand Visual Augmentation in Augmented Reality",
+   "title_zh": "ShadAR：AR 中按需实时视觉增强（提示词驱动 shader）",
+   "track": "空间计算与UI",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "value": 3.93,
+   "grade": "A",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.HC",
+   "published": "2026-10-14"
+  },
+  {
+   "id": "2610.17605",
+   "title": "PLEDGE: Progressive Lossy Error-Bounded Compression of 3D Gaussian Splatting",
+   "title_zh": "PLEDGE：渐进有损误差有界 3DGS 压缩编解码器",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.72,
+   "grade": "A",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.19290",
+   "title": "Kandinsky S2V 1.0: Audio-Driven Avatar Video Generation",
+   "title_zh": "Kandinsky S2V 1.0：音频驱动化身视频生成（开源模型家族）",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.72,
+   "grade": "A",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.CV",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.18950",
+   "title": "$λ_0$: Scaling Open-World Egocentric Human Data for Humanoid Loco-Manipulation",
+   "title_zh": "λ0/HumanVerse：500 小时开放世界第一视角人类数据（人形机器人）",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 4,
+    "REP": 4
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.RO",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2602.03538",
+   "title": "Constrained Dynamic Gaussian Splatting",
+   "title_zh": "约束动态高斯泼溅（预算内致密化-剪肢协同）",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1009",
+   "cat": "cs.CV",
+   "published": "2026-02-03"
+  },
+  {
+   "id": "2610.13177",
+   "title": "CompactSplat: Spatially Adaptive Gaussian Distribution for Feedforward Scene Reconstruction",
+   "title_zh": "CompactSplat：空间自适应高斯分布的前馈场景重建",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.13309",
+   "title": "NovaSplat: Model-Free 6D Object Pose Estimation via 3D Gaussian Splatting Onboarding and Refinement",
+   "title_zh": "NovaSplat：免模型 6D 物体位姿估计（3DGS 引导+精化）",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.13498",
+   "title": "A Hybrid and Hierarchical Ray Tracing Method for Efficient 3D Gaussian Rendering",
+   "title_zh": "混合层级光线追踪：高效 3D 高斯渲染",
+   "track": "渲染与显示",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.AR",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.13860",
+   "title": "Make It Flow: Animating Water in 3D Gaussian Splatting Scenes",
+   "title_zh": "Make It Flow：3DGS 场景的水流动画生成",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.16143",
+   "title": "All-St3R SLAM: Real-time RGB Dynamic SLAM with Pixel-wise Motion Masking",
+   "title_zh": "All-St3R SLAM：像素级运动掩蔽的实时动态 RGB SLAM",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.16177",
+   "title": "DIGS: Distribution-Informed Gaussian Splatting for Training-Free Open-Vocabulary 3D Segmentation",
+   "title_zh": "DIGS：分布信息引导的免训练开放词汇 3D 高斯分割",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.18822",
+   "title": "EgoMatrix: Physically Faithful Dexterous Robot Demonstrations from Egocentric Human Videos",
+   "title_zh": "EgoMatrix：从第一视角人类视频生成物理可信的灵巧机器人示范",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.RO",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.19847",
+   "title": "VisibilitySplat: Ray-Traced Occlusion for Relighting with 3D Gaussian Splatting",
+   "title_zh": "VisibilitySplat：光线追踪遮挡的 3DGS 重光照",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.CV",
+   "published": "2026-10-14"
+  },
+  {
+   "id": "2610.20590",
+   "title": "Feed-Forward Multi-View Feature Coding for 3D Gaussian Splatting",
+   "title_zh": "前馈多视图特征编码的 3D 高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.65,
+   "grade": "A",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.CV",
+   "published": "2026-10-14"
+  },
+  {
+   "id": "2607.25234",
+   "title": "WHTMix: Efficient Stereo Depth Estimation via Walsh-Hadamard Token Mixing",
+   "title_zh": "WHTMix：Walsh-Hadamard Token 混合的高效立体深度估计",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "value": 3.53,
+   "grade": "B",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1016",
+   "cat": "cs.CV",
+   "published": "2026-07-28"
+  },
+  {
+   "id": "2610.17513",
+   "title": "Gaussian Splatting for Real-Time Scene Reconstruction: Methods, Systems, and Trade-offs",
+   "title_zh": "高斯泼溅实时场景重建：方法、系统与权衡（综述）",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 4,
+    "REP": 4
+   },
+   "value": 3.5,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.17260",
+   "title": "Physical SLAM: Physics-aware Simultaneous Localisation and Mapping",
+   "title_zh": "Physical SLAM：物理感知的同步定位与建图（4D 高斯场+动力学预测）",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.5,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.RO",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.17302",
+   "title": "TouchTwin: Human-AI Haptic Authoring for 3D-Scanned Tabletop Scenes through Language and Touch",
+   "title_zh": "TouchTwin：语言+触控的人机协同触觉场景创作",
+   "track": "触觉与多模态",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.5,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.HC",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2512.00667",
+   "title": "Active Learning of Fractional-Order Viscoelastic Model Parameters for Realistic Haptic Rendering",
+   "title_zh": "分数阶粘弹性模型参数主动学习用于真实感触觉渲染",
+   "track": "触觉与多模态",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1016",
+   "cat": "eess.SY",
+   "published": "2025-11-29"
+  },
+  {
+   "id": "2604.11142",
+   "title": "Naka-GS: Naka-Guided Chroma Correction and Point-Prior Compaction for Low-Light 3D Gaussian Splatting",
+   "title_zh": "Naka-GS：低光 3D 高斯泼溅的色度校正与点先验压缩",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1016",
+   "cat": "cs.CV",
+   "published": "2026-04-13"
+  },
+  {
+   "id": "2610.13503",
+   "title": "SplatQ: Interaction-Aware Pruning of 3D Gaussian Splatting via Quadratic Selection",
+   "title_zh": "SplatQ：交互感知的二次选择式 3DGS 剪枝",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.13757",
+   "title": "Gaussian Splatting with Reflections Guided by What is Seen",
+   "title_zh": "可见性引导的反射增强高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.14663",
+   "title": "TETRIS-4DGS: Efficient Post-Training Compression of 4D Gaussian Splatting",
+   "title_zh": "TETRIS-4DGS：4D 高斯泼溅的高效训练后压缩",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-10"
+  },
+  {
+   "id": "2610.15157",
+   "title": "RootSLAM: Square Root Bundle Adjustment for Visual-Inertial SLAM",
+   "title_zh": "RootSLAM：视觉惯性 SLAM 的平方根束调整",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.RO",
+   "published": "2026-10-10"
+  },
+  {
+   "id": "2610.19538",
+   "title": "RDCompGS: Rate-Distortion Optimization for Compression of 3D Gaussian Splatting with Image Codecs",
+   "title_zh": "RDCompGS：图像编解码器的率失真优化 3DGS 压缩",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.45,
+   "grade": "B",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.CV",
+   "published": "2026-10-14"
+  },
+  {
+   "id": "2610.20226",
+   "title": "Smart Fusion for Adaptive Visual-IMU Weighting in cuVSLAM Sparse Bundle Adjustment",
+   "title_zh": "cuVSLAM 稀疏束调整中视觉-IMU 自适应加权",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 4,
+    "REP": 3
+   },
+   "value": 3.38,
+   "grade": "B",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.RO",
+   "published": "2026-10-14"
+  },
+  {
+   "id": "2606.26046",
+   "title": "RoboAtlas: Contextual Active SLAM",
+   "title_zh": "RoboAtlas：上下文主动 SLAM（几何探索+语义推理协同）",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.3,
+   "grade": "B",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1016",
+   "cat": "cs.RO",
+   "published": "2026-06-24"
+  },
+  {
+   "id": "2610.18373",
+   "title": "DR-VLA: Learning Human-Like Quadruped Navigation from Egocentric Web Videos via Domain-Invariant Scene Representations",
+   "title_zh": "DR-VLA：从第一视角网络视频学习类人四足导航",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.3,
+   "grade": "B",
+   "flags": [
+    "⚠️ 四足配送机器人，XR 相关度为第一视角数据源"
+   ],
+   "src": "d1014",
+   "cat": "cs.RO",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.21152",
+   "title": "KODA: Kinematics--Observation Data Alignment for Humanoid Learning from Human Egocentric Demonstration",
+   "title_zh": "KODA：人类第一视角示范的运动学-观测数据对齐（人形机器人）",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.3,
+   "grade": "B",
+   "flags": [],
+   "src": "d1016",
+   "cat": "cs.RO",
+   "published": "2026-10-15"
+  },
+  {
+   "id": "2610.19199",
+   "title": "Moving Beyond the Flat Screen: Opportunities and Challenges of Extended Reality for Studying Human Brain and Behavior",
+   "title_zh": "超越平板屏幕：XR 研究人脑与行为的机会与挑战",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.27,
+   "grade": "B",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.HC",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2603.20428",
+   "title": "Benchmarking Efficient &amp; Effective Camera Pose Estimation Strategies for Novel View Synthesis",
+   "title_zh": "新视角合成相机位姿估计策略的高效基准测试",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.22,
+   "grade": "B",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1016",
+   "cat": "cs.CV",
+   "published": "2026-03-20"
+  },
+  {
+   "id": "2605.27820",
+   "title": "EgoBench: An Interactive Egocentric Multimodal Benchmark for Tool-Using Agents",
+   "title_zh": "EgoBench：工具使用智能体的交互式第一视角多模态基准",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.22,
+   "grade": "B",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1009",
+   "cat": "cs.AI",
+   "published": "2026-05-27"
+  },
+  {
+   "id": "2610.17128",
+   "title": "EgoProbe: Benchmarking Long-Range and Exact Memory in Streaming Egocentric Videos",
+   "title_zh": "EgoProbe：流式第一视角视频的长程精确记忆基准",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.22,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.17728",
+   "title": "Safety for Whom? Benchmarking Understanding Beyond Refusal in Egocentric Multimodal Assistants",
+   "title_zh": "Safety for Whom：第一视角多模态助手「拒绝之外」的安全理解基准",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.22,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.AI",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.18499",
+   "title": "EgoOmniWorld: Unifying Egocentric Understanding via Ego-Action-World Interactions",
+   "title_zh": "EgoOmniWorld：以自我-动作-世界交互统一第一视角理解",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "value": 3.22,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-13"
+  },
+  {
+   "id": "2610.12926",
+   "title": "What Egocentric Video Embeddings Encode and How to Combine Them with Inertial Sensors for Human Activity Recognition",
+   "title_zh": "第一视角视频嵌入编码什么：与惯性传感融合的人体活动识别",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.15,
+   "grade": "B",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.15422",
+   "title": "A Reinforcement Learning Framework for Safety-Aware Haptic Shared Control in Surgical Robotics",
+   "title_zh": "手术机器人安全感知触觉共享控制的强化学习框架",
+   "track": "触觉与多模态",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.15,
+   "grade": "B",
+   "flags": [
+    "⚠️ 手术机器人应用，触觉共享控制方法可迁移"
+   ],
+   "src": "d1014",
+   "cat": "cs.RO",
+   "published": "2026-10-11"
+  },
+  {
+   "id": "2610.17094",
+   "title": "Particle Selection in Virtual Reality",
+   "title_zh": "虚拟现实中的粒子选择（点云交互方式对比）",
+   "track": "交互与输入",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.15,
+   "grade": "B",
+   "flags": [],
+   "src": "d1014",
+   "cat": "cs.HC",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.19641",
+   "title": "\"The Rose Garden Is a Cemetery\": Spatial Dissonance and Divergent Public Experiences of an Indigenous Augmented Reality Tour",
+   "title_zh": "「玫瑰园是墓地」：原住民 AR 导览的空间失谐与公众体验差异",
+   "track": "空间计算与UI",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.15,
+   "grade": "B",
+   "flags": [],
+   "src": "d1015",
+   "cat": "cs.HC",
+   "published": "2026-10-14"
+  },
+  {
+   "id": "2610.17356",
+   "title": "Brain2Face: A Study on the Relation of EEG Signals and Spatio-temporal Head Avatars",
+   "title_zh": "Brain2Face：EEG 信号与时空头部化身的关系研究",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 3
+   },
+   "value": 3.12,
+   "grade": "B",
+   "flags": [
+    "⚠️ 探索性研究，无公开数据"
+   ],
+   "src": "d1014",
+   "cat": "cs.CV",
+   "published": "2026-10-12"
+  },
+  {
+   "id": "2610.12999",
+   "title": "EgoReveal: Learning Active Vision and Object Manipulation under Partial Occlusions from Egocentric Demonstrations",
+   "title_zh": "EgoReveal：部分遮挡下从第一视角示范学习主动视觉与操作",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 3.0,
+   "grade": "B",
+   "flags": [],
+   "src": "d1012",
+   "cat": "cs.RO",
+   "published": "2026-10-09"
+  },
+  {
+   "id": "2610.14090",
+   "title": "When pose graphs are not enough: a failure analysis of pose-graph-based camera estimation for Gaussian splatting",
+   "title_zh": "位姿图何时不够：高斯泼溅相机估计的失败分析",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 2,
+    "NOV": 2,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "value": 2.75,
+   "grade": "C",
+   "flags": [
+    "※ 实证失败分析"
+   ],
+   "src": "d1014",
+   "cat": "cs.RO",
+   "published": "2026-10-08"
+  },
+  {
+   "id": "2610.12735",
+   "title": "Reference-Free Food Volume Estimation from Egocentric Stereo Video",
+   "title_zh": "免参考食物体积估计：可穿戴第一视角立体视频",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 2,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 2
+   },
+   "value": 2.73,
+   "grade": "C",
+   "flags": [
+    "※ 膳食监测应用，XR 相关限于可穿戴感知"
+   ],
+   "src": "d1012",
+   "cat": "cs.CV",
+   "published": "2026-10-08"
+  },
+  {
+   "id": "2605.22342",
+   "title": "4D-GSW: Kinematic-Aware Spatio-Temporal Consistent Watermarking for 4D Gaussian Splatting",
+   "title_zh": "4D-GSW：运动学感知的 4D 高斯泼溅时空水印",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 2,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 2
+   },
+   "value": 2.65,
+   "grade": "C",
+   "flags": [
+    "BACKFILL"
+   ],
+   "src": "old1009",
+   "cat": "cs.CV",
+   "published": "2026-05-21"
+  }
+ ],
+ "excluded": [
+  {
+   "id": "2610.19742",
+   "title": "HyperLoop: Hyperspectral-Assisted Loop Closure Detection in 3D-SLAM for Planetary Exploration",
+   "cat": "cs.CV",
+   "src": "d1015",
+   "reason": "行星探测高光谱辅助回环，环境专用"
+  },
+  {
+   "id": "2610.13143",
+   "title": "Measurable Semantic 3D Gaussian Splatting with Joint Region and Depth Supervision for Interactive Building Inspection",
+   "cat": "cs.CV",
+   "src": "d1012",
+   "reason": "建筑检测可测量 3DGS，工业应用域"
+  },
+  {
+   "id": "2610.16292",
+   "title": "3D Gaussian Splatting for Fine-grained Urban Scene Reconstruction via Semantic-guided Density Control and Loss Design",
+   "cat": "cs.CV",
+   "src": "d1014",
+   "reason": "城市场景细粒度 3DGS 重建，应用域非 XR"
+  },
+  {
+   "id": "2505.15737",
+   "title": "RUSplatting: Robust 3D Gaussian Splatting for Sparse-View Underwater Scene Reconstruction",
+   "cat": "cs.CV",
+   "src": "old1016",
+   "reason": "水下场景 3DGS 重建，应用域非 XR"
+  },
+  {
+   "id": "2608.13586",
+   "title": "The Tool-to-Entity Threshold: Parasocial Dynamics of Personalised AI Agents in Shared Social Spaces",
+   "cat": "cs.HC",
+   "src": "old1016",
+   "reason": "消息平台 AI 拟社会关系框架，非 XR 载体"
+  },
+  {
+   "id": "2607.06768",
+   "title": "AirPASS: Over-the-Air Federated Learning via Pinching Antenna Systems",
+   "cat": "cs.IT",
+   "src": "old1016",
+   "reason": "空中联邦学习/天线系统，无线通信方向"
+  },
+  {
+   "id": "2610.20397",
+   "title": "Where Should the Gaussians Go? Reusable Label-Aware Allocation for Budget-Constrained Gaussian Splatting of Cinematic CT",
+   "cat": "cs.CV",
+   "src": "d1015",
+   "reason": "影视 CT 高斯预算分配，医学影像"
+  },
+  {
+   "id": "2603.13833",
+   "title": "ImagiNav: Scalable Embodied Navigation via Generative Visual Prediction and Inverse Dynamics",
+   "cat": "cs.RO",
+   "src": "old1009",
+   "reason": "具身导航/VLN 机器人策略，非 AR/VR 头显场景"
+  },
+  {
+   "id": "2602.16511",
+   "title": "Unified Perceptive Fall Safety for Humanoids",
+   "cat": "cs.RO",
+   "src": "old1016",
+   "reason": "人形机器人跌倒安全，无 XR 关联"
+  },
+  {
+   "id": "2610.18479",
+   "title": "RTISSLAM: In-air Imaging Sonar SLAM using a Robust Pose Graph and Occupancy Grid Mapping",
+   "cat": "cs.RO",
+   "src": "d1014",
+   "reason": "空气中成像声呐 SLAM，传感模态专用且非 XR 感知"
+  },
+  {
+   "id": "2610.11547",
+   "title": "OX-NeRF: 3D X-ray Tomography Reconstruction from Sparse Views Using Implicit Neural Representation",
+   "cat": "cs.CV",
+   "src": "d1009",
+   "reason": "X 射线断层稀疏视角 NeRF，医学影像（10-10 运行已甄别为非 XR）"
+  },
+  {
+   "id": "2610.14963",
+   "title": "AD-GS: Anatomical Density-guided 3D Gaussian Splatting for Sparse-View Dental CBCT Reconstruction",
+   "cat": "cs.CV",
+   "src": "d1014",
+   "reason": "口腔 CBCT 稀疏视角重建，医学影像"
+  },
+  {
+   "id": "2610.19120",
+   "title": "DoReMe: Dual optimization of Reconstruction and Motion estimation for self-navigated free-breathing abdominal MRI using Gaussian Splatting",
+   "cat": "eess.IV",
+   "src": "d1015",
+   "reason": "自由呼吸腹部 MRI 重建，医学影像"
+  },
+  {
+   "id": "2610.17936",
+   "title": "PUGS: Physics-Guided Uncertainty Modeling for Underwater Dynamic 3D Gaussian Splatting",
+   "cat": "cs.CV",
+   "src": "d1014",
+   "reason": "水下动态 3DGS，应用域非 XR"
+  }
+ ]
+}

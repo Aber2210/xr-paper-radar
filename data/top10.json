@@ -1,0 +1,82 @@
+[
+ {
+  "base_id": "2609.19750",
+  "zh": "DELUGE 实时粒子流压缩",
+  "track": "系统与平台",
+  "value": 4.65,
+  "grade": "S",
+  "title": "DELUGE: Decomposed Entropy-coded Live Unstructured Geometry Exchange for Real-time Particle Streaming"
+ },
+ {
+  "base_id": "2609.20589",
+  "zh": "RawSLAM 在线HDR高斯SLAM",
+  "track": "重建与SLAM",
+  "value": 4.5,
+  "grade": "S",
+  "title": "RawSLAM: Online HDR Gaussian SLAM from Linear Radiance"
+ },
+ {
+  "base_id": "2609.19518",
+  "zh": "AMB3R-SLAM 公里级分层后端",
+  "track": "重建与SLAM",
+  "value": 4.5,
+  "grade": "S",
+  "title": "AMB3R-SLAM: Kilometer-scale SLAM with Hierarchical Backend"
+ },
+ {
+  "base_id": "2609.20034",
+  "zh": "Astronex-World 1.0 实时世界模型",
+  "track": "世界模型与仿真",
+  "value": 4.32,
+  "grade": "S",
+  "title": "Astronex-World 1.0: Real-Time Interactive World Model Foundation"
+ },
+ {
+  "base_id": "2609.20818",
+  "zh": "SplashSplat 飞溅液体多视角重建",
+  "track": "内容生成",
+  "value": 4.22,
+  "grade": "S",
+  "title": "SplashSplat: Reconstructing Splashing Liquids from Real-World Multi-View Videos"
+ },
+ {
+  "base_id": "2609.20330",
+  "zh": "RoboFind 多智能体个性化寻物",
+  "track": "交互与输入",
+  "value": 4.15,
+  "grade": "A",
+  "title": "RoboFind: Multi-Agent Personalized Object Search for People Who Are Blind or Have Low Vision"
+ },
+ {
+  "base_id": "2609.19815",
+  "zh": "SnapPhysics 单图物理场景图",
+  "track": "空间计算与UI",
+  "value": 4.12,
+  "grade": "A",
+  "title": "SnapPhysics: A Physics-Aware Scene Graph from a Single View for Interactive Mixed Reality Scenes"
+ },
+ {
+  "base_id": "2609.19315",
+  "zh": "GAVEL 图世界模型LLM规划校验",
+  "track": "世界模型与仿真",
+  "value": 4.1,
+  "grade": "A",
+  "title": "GAVEL: Graph World Models for Verified and Efficient Long-Horizon LLM Task Planning"
+ },
+ {
+  "base_id": "2609.20012",
+  "zh": "GRF-Recon 全局射线场长序列重建",
+  "track": "重建与SLAM",
+  "value": 4.07,
+  "grade": "A",
+  "title": "GRF-Recon: Global Ray-Field Optimization for Long-Sequence Feed-forward Reconstruction"
+ },
+ {
+  "base_id": "2609.20649",
+  "zh": "DexTouch-WM 人类触觉世界模型",
+  "track": "触觉与多模态",
+  "value": 4.0,
+  "grade": "A",
+  "title": "DexTouch-WM: Learning Action-Conditioned Tactile World Models from Human Touch for Dexterous Robot Manipulation"
+ }
+]

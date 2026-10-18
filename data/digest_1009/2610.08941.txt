@@ -1,0 +1,196 @@
+【摘要】
+
+【方法】
+Δ \Delta Rot.  ↓ \downarrow
+TDE  ↓ \downarrow
+RE  ↓ \downarrow
+RPE R   ↓ \downarrow
+ATE  ↓ \downarrow
+MA  ↑ \uparrow
+PSNR  ↑ \uparrow
+LPIPS  ↓ \downarrow
+FVD  ↓ \downarrow
+NWM [ 4 ]
+82.74
+84.79
+83.87
+19.18
+23.48
+0.064
+9.90
+N/A
+1216.1
+OmniRoam [ 28 ]
+13.00
+62.07
+13.46
+1.603
+4.75
+0.256
+11.47
+0.654
+694.9
+PanoWorld-C. [ 23 ]
+13.19
+63.36
+13.22
+1.517
+4.25
+0.264
+11.29
+0.645
+638.5
+PanoWorld-A. [ 23 ]
+12.76
+63.03
+12.99
+1.545
+4.13
+0.257
+11.14
+0.633
+628.8
+SPW-Nav
+1.45
+56.66
+3.02
+0.780
+6.28
+0.305
+15.69
+0.398
+351.6
+W/o navigation fine-tuning
+0.79
+100.74
+3.84
+1.379
+10.34
+0.028
+15.23
+0.413
+410.7
+Table 1 shows that SPW-Nav leads on every measure except ATE, where the keyword-matched presets give PanoWorld a predefined trajectory shape while SPW-Nav infers the trajectory from the instruction and the scene. SPW-Nav reaches a TDE of 56.66 ∘ 56.66^{\circ} against at least 62.07 ∘ 62.07^{\circ} and an FVD of 351.6 against at least 628.8, and its RE is less than one quarter of that of any baseline, since SRD applies the interpreted rotation exactly while the baselines rotate only slightly. Both PanoWorld variants also lose about 5 dB of PSNR relative to Table 2 , whereas SPW-Nav loses less than 1 dB. Replacing the fine-tuned backbone with its base model raises TDE to 100.74 ∘ 100.74^{\circ} and lowers MA to 0.028, since the base model often misreads the commanded direction.
+Navigation accuracy.
+On the navigation instructions of SPW-NavBench (40 explicit and 60 goal instructions, see appendix), the vision-language backbone interprets all explicit instructions correctly and localizes 62% of the visible targets. On the held-out test scene, fine-tuning raises the accuracy from 0.663 to 0.925 for explicit instructions and from 0.154 to 0.692 for goal instructions. Without the panorama, goal localization drops to zero, which indicates that goals are located in the image rather than guessed from the words. On the motion instructions, it matches the commanded direction for 98% of the instructions with a mean distance error of 0.03 m relative to the commanded distance.
+5.3 Camera-controlled generation
+We then isolate the video backbone by giving every method the ground-truth camera trajectory instead of language. SPW-Nav and OmniRoam take the full trajectory, the PanoWorld variants take its translation with a fixed heading, NWM takes the corresponding actions with three ground-truth past views, and CubeComposer takes a perspective video rendered along the commanded rotation.
+Table 2 :
+Camera-controlled panoramic generation from ground-truth trajectories. Δ \Delta Rot.  ↓ \downarrow
+TDE  ↓ \downarrow
+RE  ↓ \downarrow
+RPE R   ↓ \downarrow
+ATE  ↓ \downarrow
+MA  ↑ \uparrow
+PSNR  ↑ \uparrow
+LPIPS  ↓ \downarrow
+FVD  ↓ \downarrow
+NWM [ 4 ]
+82.55
+86.19
+85.64
+19.12
+22.89
+0.081
+10.68
+N/A
+1176.1
+CubeComposer [ 24 ]
+13.97
+91.40
+13.97
+1.521
+22.60
+0.073
+14.61
+0.565
+973.1
+OmniRoam [ 28 ]
+12.30
+77.12
+15.07
+2.042
+10.40
+0.111
+15.36
+0.489
+610.5
+PanoWorld-C. [ 23 ]
+13.46
+26.28
+13.47
+1.528
+4.24
+0.688
+16.12
+0.460
+462.0
+PanoWorld-A. [ 23 ]
+13.61
+24.26
+13.62
+1.530
+3.93
+0.726
+16.24
+0.425
+384.2
+Matrix-Game 3.0 + CubeComposer
+13.13
+92.91
+13.14
+1.479
+20.24
+0.080
+14.59
+0.587
+892.8
+SPW-Nav
+0.42
+24.30
+1
+
+【实验】
+5.1 Experimental setup
+5.2 Language-guided navigation
+5.3 Camera-controlled generation
+5.4 Applications
+5.5 Ablation study 5.1 Experimental setup protocols
+8.1 Protocol
+8.2 Metric definitions protocols
+8.1 Protocol
+The navigation table evaluates the vision-language backbone on a held-out test scene and
+on SPW-NavBench, which contains 40 displacement instructions and 60 visible-target
+instructions. The streaming and long-horizon experiments use 20 scenes. The long-horizon experiment runs
+two closed routes of twelve chunks per scene whose final pose equals the initial one. The first
+moves forward, turns around, walks back, and turns around again. The second moves forward and
+back, then turns right and left by the same angle. Matrix-Game 3.0 receives each route as keyboard and mouse actions under its official calibration, and CubeComposer completes its perspective video into a panorama for the panoramic evaluation. Unless noted otherwise, video metrics are computed at the
+source timestamps after aligning each prediction to the evaluated view.
+8.2 Metric definitions
+We use two groups of metrics. For the video-generation metrics, camera motion is
+estimated from forward crops of the generated video with a VGGT-based estimator.
+Trajectory direction error (TDE) is the angle between the commanded and estimated
+translation directions, rotation error (RE) is the error of the cumulative rotation, and
+RPE R is the rotation error per interval. Δ \Delta Rot. is the absolute
+difference between the mean estimated cumulative rotation and the mean commanded rotation. ATE is a scale-free trajectory shape
+error, and motion accuracy (MA) is the fraction of evaluation intervals whose motion follows
+the commanded direction. PSNR on the forward view, LPIPS averaged over four viewing directions, and FVD measure
+video quality. Memory gain compares
+a revisited view with its earlier observation, relative to a non-revisiting view at the same
+time gap, and closure errors compare the final estimated pose with the initial one. The navigation-target metrics evaluate the vision-language backbone alone. A
+displacement target is correct when its path is within max ⁡ ( 0.15 ​ m , 10 % ) \max(0.15\,\text{m},10\%) of the
+commanded excursion and its heading within 5 ∘ 5^{\circ} . A goal target is correct when its box
+overlaps the annotated target with an IoU of at least 0.3 and its center bearing is within
+20 ∘ 20^{\circ} . The Action and Goal columns of the navigation table report these accuracies.
+
+【结论/局限】
+References
+7 Additional results
+7.1 Zero-shot generalization to unseen scenes
+7.2 One-minute streams
+7.3 Navigation accuracy
+7.4 Streaming generation
+7.5 Comparison with perspective generators
+7.6 Guidance weight We present SPW-Nav, a streaming panoramic world model that interprets each language instruction in the previously generated panorama and streams one minute of 2K 360° video at 26.6 FPS. Spherical rotation decoupling makes rotation exact, pose-aligned conditioning keeps translation inputs bounded, and noise-tail trajectory learning with opposite-trajectory guidance strengthens translation following. SPW-Nav outperforms existing panoramic generators in camera-following accuracy and video quality and closes long routes with near-exact rotation, making language a practical interface for exploring generated worlds. Since generation runs faster than playback, new instructions can be issued while the stream plays. Consistency on distant revisits and the trajectory shape of translation remain open. In future work, a pose-indexed 3D memory could make distant revisits more consistent, and more diverse training trajectories could improve the shape of translation. Motion targets could also come from clicks on the panorama or external planners, since the video backbone receives camera trajectories rather than language.
+Acknowledgments
+This study was carried out using the TSUBAME4.0

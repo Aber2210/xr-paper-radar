@@ -1,0 +1,146 @@
+【摘要】
+
+【方法】
+3.1 Preliminaries
+3.2 Iterative Gaussian Refinement
+3.3 Geometry-Guided Residual Encoding
+3.4 Delta Decoder
+Dual-branch mixer.
+Per-attribute head.
+3.5 Training and Inference 3.1 Preliminaries
+Given a set of N N images
+{ I i ∈ ℝ H × W × 3 } i = 1 N \{I_{i}\in\mathbb{R}^{H\times W\times 3}\}_{i=1}^{N} , we
+partition them into context views
+𝒞 = { 1 , … , N ctx } \mathcal{C}=\{1,\dots,N_{\text{ctx}}\} and target
+views 𝒯 = { N ctx + 1 , … , N } \mathcal{T}=\{N_{\text{ctx}}+1,\dots,N\} . A pose-free
+feed-forward predictor f θ f_{\theta}
+directly maps the context images to a global 3D scene
+representation and its associated camera geometry:
+( 𝒢 ff , { p i } i ∈ 𝒞 ) \displaystyle\big(\mathcal{G}_{\text{ff}},\;\{p_{i}\}_{i\in\mathcal{C}}\big)
+= f θ ​ ( { I i } i ∈ 𝒞 ) , \displaystyle=f_{\theta}\big(\{I_{i}\}_{i\in\mathcal{C}}\big),
+(1)
+𝒢 ff \displaystyle\mathcal{G}_{\text{ff}}
+= { ( μ g , α g , q g , s g , c g ( 0 ) ) } g = 1 G . \displaystyle=\big\{(\mu_{g},\,\alpha_{g},\,q_{g},\,s_{g},\,c_{g}^{(0)})\big\}_{g=1}^{G}.
+(2)
+The predicted collection 𝒢 ff \mathcal{G}_{\text{ff}} comprises G G
+3D Gaussians, where each primitive g g is characterized by its
+spatial mean μ g ∈ ℝ 3 \mu_{g}\in\mathbb{R}^{3} , opacity
+α g ∈ ( 0 , 1 ) \alpha_{g}\in(0,1) , and anisotropic shape defined via rotation
+q g ∈ 𝕊 3 q_{g}\in\mathbb{S}^{3} and scale
+s g ∈ ℝ + 3 s_{g}\in\mathbb{R}^{3}_{+} . Additionally,
+each Gaussian carries a degree-0 spherical harmonic (SH)
+coefficient c g ( 0 ) c_{g}^{(0)} to capture its view-independent color.
+These primitives are
+pixel-aligned with each context view, resulting in a total count
+of G = N ctx ​ H ​ W G=N_{\text{ctx}}HW . Each camera p i = [ K i , R i , t i ] p_{i}=[K_{i},R_{i},t_{i}] encapsulates the intrinsics
+K i ∈ ℝ 3 × 3 K_{i}\in\mathbb{R}^{3\times 3} and the extrinsic pose
+composed of a rotation R i ∈ SO ⁡ ( 3 ) R_{i}\in\mathrm{SO}(3) and a
+translation t i ∈ ℝ 3 t_{i}\in\mathbb{R}^{3} ; both the intrinsics and the
+pose are predicted by f θ f_{\theta} , though either may instead be
+supplied when calibration is available.
+To synthesize a novel view, a differentiable rasterizer
+ℛ \mathcal{R} renders the Gaussian collection 𝒢 \mathcal{G} at a
+target camera p i p_{i} expressed in the coordinate frame of the
+prediction:
+I ^ i = ℛ ⁡ ( 𝒢 , p i ) for  ​ i ∈ 𝒯 . \hat{I}_{i}=\mathcal{R}\big(\mathcal{G};\,p_{i}\big)\qquad\text{for }i\in\mathcal{T}.
+(3)
+3.2 Iterative Gaussian Refinement
+To bridge the quality gap caused by single-pass prediction and camera estimation errors, we introduce a refinement module h ϕ h_{\phi} that
+progressively improves the Gaussian representation, as
+illustrated in Figure  2 . We define
+𝒢 ( k ) \mathcal{G}^{(k)} as the Gaussian set at the k k -th refinement
+step, initializing the process with the backbone’s feed-forward
+output, 𝒢 ( 0 ) = 𝒢 ff \mathcal{G}^{(0)}=\mathcal{G}_{\text{ff}} .
+At each iteration k ∈ { 0 , … , K − 1 } k\in\{0,\dots,K{-}1\} , the current state
+𝒢 ( k ) \mathcal{G}^{(k)} is rendered from the predicted context
+cameras p i p_{i} , yielding a rendering residual r i ( k ) r_{i}^{(k)} that
+captures the pixel-wise discrepancy between the current
+rendered image I ^ i ( k ) \hat{I}_{i}^{(k)} and the input
+
+【实验】
+4.1 Experimental Setup
+Dataset. on DL3DV  ( Ling et al., 2024 ) demonstrate that DeltaSplat substantially outperforms YoNoSplat  ( Ye et al., 2026 ) , a state-of-the-art pose-free feed-forward 3DGS method. With six context views, predicted poses, and known intrinsics, DeltaSplat achieves 26.64 dB PSNR, improving YoNoSplat by +1.75  dB under the same evaluation protocol, and surpassing every baseline evaluated with ground-truth cameras. The margins persist at 12 and 24 views and in the fully uncalibrated setting, and DeltaSplat likewise improves the backbone by about 2 2  dB when ground-truth cameras are supplied. These results demonstrate the effectiveness of geometrically guided residual refinement for high-quality pose-free reconstruction without per-scene optimization. 4.1 Experimental Setup
+Dataset.
+We train on the DL3DV-10K  ( Ling et al., 2024 ) trainset
+and evaluate on 140-scene testset. All images are
+processed at a resolution of 224 × 224 224\times 224 , and experiments
+are conducted with 6, 12, and 24 context views. metrics.
+4.2 Main Results
+Pose-free comparison.
+Fully uncalibrated setting.
+Qualitative results.
+Efficiency.
+4.3 Ablation Study
+Geometric conditioning.
+Mixer and head design.
+Refinement iterations.
+Cross-dataset generalization. metrics.
+We report PSNR, SSIM  ( Wang et al., 2004 ) , and
+LPIPS  ( Zhang et al., 2018 ) (VGG), averaged over the test
+scenes. We follow the evaluation protocol of
+YoNoSplat  ( Ye et al., 2026 ) , where target camera poses in
+the pose-free settings are estimated by photometric optimization
+before rendering. Unless otherwise specified, results use the
+refined Gaussians after K = 3 K{=}3 iterations.
+4.2 Main Results
+Pose-free comparison.
+Table  1 summarizes the main results. In the pose-free
+setting with known intrinsics, DeltaSplat reaches 26.64 dB PSNR
+at 6 views, improving its feed-forward backbone by + 1.75 +1.75  dB,
+with consistent margins of + 1.90 +1.90 and + 1.86 +1.86  dB at 12 and 24
+views; SSIM and LPIPS improve accordingly. Notably, DeltaSplat
+also surpasses every baseline supplied with ground-truth cameras
+(26.64 vs. at best 24.72 dB at 6 views): the gain from
+refinement exceeds what the backbone gains from access to exact
+cameras.
+Fully uncalibrated setting.
+When the intrinsics are also predicted, DeltaSplat attains
+25.69 dB at 6 views, again above every baseline supplied with
+ground-truth cameras, and the margin over the backbone widens
+with more views ( + 1.16 +1.16 to + 1.49 +1.49  dB).
+Ground Truth
+AnySplat
+YoNoSplat
+DeltaSplat
+(Ours)
+Figure 4: Qualitative results on DL3DV scenes.
+Qualitative results.
+Figure  4 compares DeltaSplat with the baselines on
+DL3DV scenes.
+Table 2: Cross-dataset generalization to ScanNet++  ( Yeshwanth et al., 2023 ) at 224 2 224^{2}
+with 32 / 64 / 128 context views and known intrinsics.
+All models are trained on DL3DV.
+32 views
+64 views
+128 views
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.09853v1 [cs.CV] 07 Oct 2026
+DeltaSplat: Iterative Gaussian Refinement
+for Pose-Free Feed-Forward
+3D Gaussian Splatting
+Chanung Park
+Affiliation:  Department of Electrical and Computer Engineering, Sungkyunkwan University
+Seunghyeon Song
+Affiliation:  Department of Electrical and Computer Engineering, Sungkyunkwan University
+Joo Chan Lee
+Affiliation:  Department of Artificial Intelligence, Sungkyunkwan University
+Eunbyung Park
+Affiliation:  Department of Artificial Intelligence, Yonsei University
+Jong Hwan Ko
+Affiliation:  Department of Electrical and Computer Engineering, Sungkyunkwan University We introduced DeltaSplat, a lightweight Gaussian refinement
+module for pose-free feed-forward 3DGS. Conditioning image-space
+residuals on per-pixel Plücker rays and rendered depth, it
+lifts 2D evidence into 3D updates that progressively refine the
+position, opacity, and color of the predicted Gaussians. With
+∼ 2.2 % {\sim}2.2\% additional parameters and a fully feed-forward
+inference path, DeltaSplat consistently improves a
+state-of-the-art backbone across camera regimes, view counts,
+and datasets, offering a general plug-in quality stage for
+pose-free feed-forward reconstruction. A natural next step is to
+extend the refinement to higher resolutions and to other
+feed-forward backbones.
+References
+Charatan et al. (2

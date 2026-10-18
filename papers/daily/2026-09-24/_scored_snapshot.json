@@ -1,0 +1,457 @@
+{
+ "top10": [
+  {
+   "base_id": "2609.25527",
+   "title": "Digital Twin-Driven VR Teleoperation with Multi-View Spatial Perception for Surgical Robots",
+   "title_zh": "数字孪生驱动的 VR 手术机器人遥操作（多视角空间感知）",
+   "track": "空间计算与UI",
+   "value": 4.08,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.25633",
+   "title": "Robust, Estimator-Agnostic Dynamic 3DGS Compression",
+   "title_zh": "鲁棒、估计器无关的动态 3DGS 压缩",
+   "track": "系统与平台",
+   "value": 4.07,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 5,
+    "TRL": 3,
+    "REP": 4
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.25746",
+   "title": "Dual Covariance Gaussian Splatting SLAM: Decoupling Rendering and Registration for Robust Real-Time Tracking",
+   "title_zh": "双协方差高斯泼溅 SLAM：解耦渲染与配准",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.15795",
+   "title": "SURE-Map: Self-Correcting Streaming Geometric Foundation Models",
+   "title_zh": "SURE-Map：自校正流式几何基础模型（SLAM 替代）",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.25604",
+   "title": "Ultra-fast Neural Inference for Stochastic Gaussian Splatting Denoising",
+   "title_zh": "随机高斯泼溅去噪的超快神经推理（Stochastic 2DGS 时序去噪）",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.26795",
+   "title": "\\phi-RIE: From Photorealistic Reconstruction to Interactive Environments",
+   "title_zh": "φ-RIE：从照片级重建到可交互环境（3DGS→可移动仿真资产）",
+   "track": "内容生成",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.26315",
+   "title": "ArborSplat: Online Semantic Gaussian Splatting SLAM for Orchards",
+   "title_zh": "ArborSplat：面向果园的在线语义高斯泼溅 SLAM",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.25036",
+   "title": "4DGS-JEPA: Temporally Compositional Joint-Embedding Prediction for Dynamic Gaussian Splatting",
+   "title_zh": "4DGS-JEPA：动态高斯泼溅的时间组合联合嵌入预测",
+   "track": "世界模型与仿真",
+   "value": 3.82,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 2,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.25422",
+   "title": "How Early Can You Tell? Early Eye Gaze Dynamics and Cybersickness Progression in Virtual Reality",
+   "title_zh": "VR 晕动症早期眼动动态与不适进展预测",
+   "track": "感知与认知",
+   "value": 3.7,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  },
+  {
+   "base_id": "2609.26203",
+   "title": "Beyond the Lab: Large-Scale Remote Cybersickness Research in Virtual Reality Using the VERA Platform",
+   "title_zh": "基于 VERA 平台的大规模远程 VR 晕动症研究（N=263）",
+   "track": "感知与认知",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-23",
+   "flags": []
+  }
+ ],
+ "xr_recs": [
+  {
+   "base_id": "2609.25527",
+   "title_zh": "数字孪生驱动的 VR 手术机器人遥操作（多视角空间感知）",
+   "track": "空间计算与UI",
+   "value": 4.08,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25633",
+   "title_zh": "鲁棒、估计器无关的动态 3DGS 压缩",
+   "track": "系统与平台",
+   "value": 4.07,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 5,
+    "TRL": 3,
+    "REP": 4
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25746",
+   "title_zh": "双协方差高斯泼溅 SLAM：解耦渲染与配准",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.15795",
+   "title_zh": "SURE-Map：自校正流式几何基础模型（SLAM 替代）",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25604",
+   "title_zh": "随机高斯泼溅去噪的超快神经推理（Stochastic 2DGS 时序去噪）",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.26795",
+   "title_zh": "φ-RIE：从照片级重建到可交互环境（3DGS→可移动仿真资产）",
+   "track": "内容生成",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.26315",
+   "title_zh": "ArborSplat：面向果园的在线语义高斯泼溅 SLAM",
+   "track": "重建与SLAM",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25036",
+   "title_zh": "4DGS-JEPA：动态高斯泼溅的时间组合联合嵌入预测",
+   "track": "世界模型与仿真",
+   "value": 3.82,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 2,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25422",
+   "title_zh": "VR 晕动症早期眼动动态与不适进展预测",
+   "track": "感知与认知",
+   "value": 3.7,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.26203",
+   "title_zh": "基于 VERA 平台的大规模远程 VR 晕动症研究（N=263）",
+   "track": "感知与认知",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25466",
+   "title_zh": "基于 Transformer 的 OpenXR 实时手势识别",
+   "track": "交互与输入",
+   "value": 3.28,
+   "grade": "B",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 4,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24531",
+   "title_zh": "动态热高斯：多模态 4D 高斯泼溅（热成像动态重建）",
+   "track": "神经渲染",
+   "value": 3.2,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 2
+   },
+   "flags": [
+    "⚠️ 应用为热成像/军事，XR 相关度偏弱但 4DGS 技术相关"
+   ]
+  }
+ ],
+ "non_xr": [
+  {
+   "base_id": "2609.22277",
+   "title_zh": "面向视障用户的多模态智能盲杖"
+  },
+  {
+   "base_id": "2609.22332",
+   "title_zh": "AffordanceWAM：可供性感知的联合世界-动作模型"
+  },
+  {
+   "base_id": "2609.25558",
+   "title_zh": "HABILIS Brain 0：几何变化监督的 VLA 与残差流恢复"
+  },
+  {
+   "base_id": "2609.25614",
+   "title_zh": "Astrobee 自由飞行遥操作四指载荷（VR 接口）"
+  },
+  {
+   "base_id": "2609.25627",
+   "title_zh": "MachEmbodied-U0：具身智能统一理解-生成模型"
+  },
+  {
+   "base_id": "2609.25653",
+   "title_zh": "PhyVisGen：物理-视觉高保真机器人操作数据生成"
+  },
+  {
+   "base_id": "2609.26007",
+   "title_zh": "Skytopia：动作条件潜在世界模型的单目无人机导航"
+  },
+  {
+   "base_id": "2609.25932",
+   "title_zh": "2D 点云配准的无符号距离图（激光里程计/SLAM）"
+  },
+  {
+   "base_id": "2609.26766",
+   "title_zh": "TM-APR：热成像时序记忆定位（VPR）"
+  }
+ ],
+ "gate1_pass": true,
+ "gate2_pass": true,
+ "top_tracks": [
+  "世界模型与仿真",
+  "内容生成",
+  "感知与认知",
+  "神经渲染",
+  "空间计算与UI",
+  "系统与平台",
+  "重建与SLAM"
+ ],
+ "today_top_mean": 3.897,
+ "today_max": 4.08,
+ "lib_top_mean": 4.298,
+ "added": 21,
+ "total": 133,
+ "max_sim": 0.286
+}

@@ -1,0 +1,848 @@
+{
+ "top10": [
+  {
+   "base_id": "2609.21502",
+   "title": "Adaptive World Memory 3D Foundation Model for Scalable 3D Mapping, Localization, and Rendering",
+   "title_zh": "Adaptive World Memory：可扩展 3D 建图/定位/渲染的记忆型 3D 基础模型",
+   "track": "世界模型与仿真",
+   "value": 4.12,
+   "grade": "A",
+   "scores": {
+    "IMP": 5,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "published": "2026-09-18",
+   "flags": []
+  },
+  {
+   "base_id": "2609.21347",
+   "title": "Cube-Splat: High-Fidelity 360° Gaussian Splatting SLAM via Cubemap Factorization and Adjoint-Consistent Optimization",
+   "title_zh": "Cube-Splat：基于 cubemap 分解与伴随一致优化的 360° 高斯泼溅 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-18",
+   "flags": []
+  },
+  {
+   "base_id": "2609.24140",
+   "title": "BayesianGS-SLAM: Uncertainty-Aware Neural Rendering SLAM via Probabilistic Formulation",
+   "title_zh": "BayesianGS-SLAM：概率化不确定度感知的神经渲染 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-21",
+   "flags": []
+  },
+  {
+   "base_id": "2609.22913",
+   "title": "AVTR-1: Open Stack for Real-Time Interactive Avatars",
+   "title_zh": "AVTR-1：实时交互式虚拟化身的开源全栈系统",
+   "track": "化身与人体",
+   "value": 4.0,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 4
+   },
+   "published": "2026-09-19",
+   "flags": []
+  },
+  {
+   "base_id": "2609.24253",
+   "title": "OpenFlyScan: A Quality-Guided Aerial Reconstruction System for Consumer Drones",
+   "title_zh": "OpenFlyScan：消费级无人机的质量引导航拍重建系统",
+   "track": "重建与SLAM",
+   "value": 3.93,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "published": "2026-09-21",
+   "flags": []
+  },
+  {
+   "base_id": "2609.23005",
+   "title": "Compressing 3D Gaussian Splatting via Cross-Representation Priors",
+   "title_zh": "CRP-GS：跨表示先验的 3DGS 压缩",
+   "track": "系统与平台",
+   "value": 3.93,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "published": "2026-09-19",
+   "flags": []
+  },
+  {
+   "base_id": "2609.21498",
+   "title": "VoxelTTO: Voxel-Aligned Feed-Forward 3D Gaussian Splatting with Test-Time Optimization",
+   "title_zh": "VoxelTTO：体素对齐的前馈 3DGS + 测试时优化",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-18",
+   "flags": []
+  },
+  {
+   "base_id": "2609.21176",
+   "title": "4DGS-Fixer: Generative Sparse-View 4D Gaussian Splatting with Iterative Refinement Guided by Video Diffusion Priors",
+   "title_zh": "4DGS-Fixer：视频扩散先验引导的稀疏视图 4DGS 迭代精修",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-18",
+   "flags": []
+  },
+  {
+   "base_id": "2609.24158",
+   "title": "Relightable 3D Avatar Reconstruction with Semantic-Adaptive Motion-Illumination Responses",
+   "title_zh": "Relightable 3D Avatar：语义自适应运动-光照响应的单目可重光照化身",
+   "track": "化身与人体",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-21",
+   "flags": []
+  },
+  {
+   "base_id": "2609.25002",
+   "title": "Passthrough Rigidity: The Behavioral and Visuomotor Costs of Mediated Perception",
+   "title_zh": "Passthrough Rigidity：中介式感知（VR 穿透显示）的行为与视动代价",
+   "track": "空间计算与UI",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-21",
+   "flags": []
+  }
+ ],
+ "xr_recs": [
+  {
+   "base_id": "2609.21502",
+   "title_zh": "Adaptive World Memory：可扩展 3D 建图/定位/渲染的记忆型 3D 基础模型",
+   "track": "世界模型与仿真",
+   "value": 4.12,
+   "grade": "A",
+   "scores": {
+    "IMP": 5,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21347",
+   "title_zh": "Cube-Splat：基于 cubemap 分解与伴随一致优化的 360° 高斯泼溅 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24140",
+   "title_zh": "BayesianGS-SLAM：概率化不确定度感知的神经渲染 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.22913",
+   "title_zh": "AVTR-1：实时交互式虚拟化身的开源全栈系统",
+   "track": "化身与人体",
+   "value": 4.0,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 4
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24253",
+   "title_zh": "OpenFlyScan：消费级无人机的质量引导航拍重建系统",
+   "track": "重建与SLAM",
+   "value": 3.93,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23005",
+   "title_zh": "CRP-GS：跨表示先验的 3DGS 压缩",
+   "track": "系统与平台",
+   "value": 3.93,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21498",
+   "title_zh": "VoxelTTO：体素对齐的前馈 3DGS + 测试时优化",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21176",
+   "title_zh": "4DGS-Fixer：视频扩散先验引导的稀疏视图 4DGS 迭代精修",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24158",
+   "title_zh": "Relightable 3D Avatar：语义自适应运动-光照响应的单目可重光照化身",
+   "track": "化身与人体",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.25002",
+   "title_zh": "Passthrough Rigidity：中介式感知（VR 穿透显示）的行为与视动代价",
+   "track": "空间计算与UI",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.22941",
+   "title_zh": "D3GS：深度-DINO-RGB 扩散协同引导的稀疏视图 3DGS",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23049",
+   "title_zh": "VDGS：可见性驱动的大规模航拍 3DGS 重建",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23182",
+   "title_zh": "GrapeSplat：几何扎根的无姿态前馈 3DGS",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23436",
+   "title_zh": "GAPS：稀疏视图 3DGS 的生成式主动伪视图选择",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23509",
+   "title_zh": "GARO：面向实时高保真动态 GS 的几何感知冗余优化",
+   "track": "神经渲染",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21480",
+   "title_zh": "OpenSAL360：全景视频显著性众包开源平台",
+   "track": "空间计算与UI",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 4,
+    "REP": 4
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23027",
+   "title_zh": "3DGS 质量评估：失真、基准与开放挑战",
+   "track": "评估与数据集",
+   "value": 3.77,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23380",
+   "title_zh": "LiteTex-GS：面向高斯泼溅的快速轻量纹理化",
+   "track": "神经渲染",
+   "value": 3.73,
+   "grade": "A",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23755",
+   "title_zh": "HapticWAM：无需推理时触觉传感的世界-动作模型中想象触觉蒸馏",
+   "track": "触觉与多模态",
+   "value": 3.7,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24868",
+   "title_zh": "DualWAM：异步全局规划与局部精修的双系统世界-动作模型",
+   "track": "世界模型与仿真",
+   "value": 3.7,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21114",
+   "title_zh": "Noctif3R：嵌入式光受限场景的前馈单目实时 SLAM",
+   "track": "重建与SLAM",
+   "value": 3.7,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21869",
+   "title_zh": "VR 物体交互中手部追踪与控制器触觉反馈对比",
+   "track": "触觉与多模态",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23425",
+   "title_zh": "Elevator-VIGS：电梯运动中视觉-惯性高斯泼溅 SLAM",
+   "track": "重建与SLAM",
+   "value": 3.5,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21597",
+   "title_zh": "HAT：假设锚定的视频单目航天器位姿估计",
+   "track": "感知与认知",
+   "value": 3.5,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [
+    "⚠️ 航天器位姿，XR 相关度偏弱"
+   ]
+  },
+  {
+   "base_id": "2609.21799",
+   "title_zh": "VR 中手部/控制器化身与输入方式的一致性研究",
+   "track": "化身与人体",
+   "value": 3.45,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.22849",
+   "title_zh": "LINGO：深度-DINO 初始化的稀疏视图 X 射线 NVS 与 CT 重建 3DGS",
+   "track": "神经渲染",
+   "value": 3.42,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 2,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23386",
+   "title_zh": "ProxyBuild：网格锚定程序化代理的文本引导结构化 3D 建筑生成",
+   "track": "内容生成",
+   "value": 3.35,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.23796",
+   "title_zh": "Mira-Scene：生成式 3D 场景的像素对齐布局",
+   "track": "内容生成",
+   "value": 3.35,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21516",
+   "title_zh": "2D GauSS-MI：视觉与几何质量平衡的主动场景重建",
+   "track": "神经渲染",
+   "value": 3.35,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21226",
+   "title_zh": "AirSplan：3D 高斯泼溅场景中的风险感知四旋翼运动规划",
+   "track": "系统与平台",
+   "value": 3.35,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.21107",
+   "title_zh": "基于单帧扫描高斯泼溅的示教合成用于视觉运动策略学习",
+   "track": "神经渲染",
+   "value": 3.35,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [
+    "⚠️ 偏向机器人策略学习"
+   ]
+  },
+  {
+   "base_id": "2609.24899",
+   "title_zh": "EMooly：AR+GenAI 辅助自闭症儿童社交情绪学习的看护者参与系统",
+   "track": "空间计算与UI",
+   "value": 3.3,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24846",
+   "title_zh": "Range-Aided SLAM 初始化：利用精确航向信息的可分离结构",
+   "track": "重建与SLAM",
+   "value": 3.15,
+   "grade": "B",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": []
+  },
+  {
+   "base_id": "2609.24955",
+   "title_zh": "Generative Tutorial：面向物理任务实时情境化视觉指令的概念框架",
+   "track": "空间计算与UI",
+   "value": 2.6,
+   "grade": "C",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 2,
+    "EXP": 2,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 2
+   },
+   "flags": [
+    "※ 概念框架论文，TEC/EXP 偏弱"
+   ]
+  }
+ ],
+ "non_xr": [
+  {
+   "base_id": "2609.21005",
+   "title_zh": "SCOUT：周界防御拦截无人机"
+  },
+  {
+   "base_id": "2609.21015",
+   "title_zh": "低成本 AUV 被动传感器视觉-惯性 SLAM"
+  },
+  {
+   "base_id": "2609.21026",
+   "title_zh": "MAPLE-RF：部分探索环境中的概率 RF 源定位"
+  },
+  {
+   "base_id": "2609.21112",
+   "title_zh": "从沉浸式人体示教学习 3D 杂波场景感知双足运动"
+  },
+  {
+   "base_id": "2609.21316",
+   "title_zh": "NaViRrator：从人类可读地图的机器人导航"
+  },
+  {
+   "base_id": "2609.21461",
+   "title_zh": "AtomEgo：具身基础模型预训练的 ego-机器人融合"
+  },
+  {
+   "base_id": "2609.22809",
+   "title_zh": "360° 视频室内几何半自动重建用于 CFD 气流分析"
+  },
+  {
+   "base_id": "2609.22868",
+   "title_zh": "PAVER：动作条件稀疏目标的 BEV 表示规划对齐预训练"
+  },
+  {
+   "base_id": "2609.24411",
+   "title_zh": "Zeva-Ego：上下文因果学习的自我中心机器人操作中期训练"
+  },
+  {
+   "base_id": "2609.24413",
+   "title_zh": "基于反作用力矩反馈的机器人阀门转动轴向校正"
+  },
+  {
+   "base_id": "2609.24708",
+   "title_zh": "SPARSER：利用可分离结构的机器人感知稀疏变量投影"
+  },
+  {
+   "base_id": "2609.24756",
+   "title_zh": "单光源镜面反射平面视差估计（提及 VR）"
+  },
+  {
+   "base_id": "2609.24825",
+   "title_zh": "ZVeC：零样本实例级车辆抽取与生成式点云补全"
+  }
+ ],
+ "gate2_pass": true,
+ "top_tracks": [
+  "世界模型与仿真",
+  "化身与人体",
+  "神经渲染",
+  "空间计算与UI",
+  "系统与平台",
+  "重建与SLAM"
+ ],
+ "today_top_mean": 3.948,
+ "today_max": 4.12,
+ "lib_top_mean": 4.296,
+ "added": 47,
+ "total": 112
+}

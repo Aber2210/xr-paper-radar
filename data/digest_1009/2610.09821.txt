@@ -1,0 +1,134 @@
+【摘要】
+
+【方法】
+3.1 Preliminaries 3.1 Preliminaries
+3D Gaussian Splatting:
+3D Gaussian Splatting  [ 23 ] is an explicit representation for 3D scenes that uses a collection of 3D Gaussians to represent geometry and appearance.
+Each Gaussian is defined by its position μ \mu , scale s s , rotation r r , opacity α \alpha , and colour attributes c c .
+The colour c c of a pixel is determined by alpha-blending the contributions of N N ordered Gaussians overlapping the pixel:
+c = ∑ i = 1 N c i ​ α i ​ ∏ j = 1 i − 1 ( 1 − α j ) c=\sum_{i=1}^{N}c_{i}\alpha_{i}\prod_{j=1}^{i-1}(1-\alpha_{j})
+(1)
+where c i c_{i} is the colour of the i i -th Gaussian and α i \alpha_{i} is its opacity at the pixel location.
+The term ∏ j = 1 i − 1 ( 1 − α j ) \prod_{j=1}^{i-1}(1-\alpha_{j}) represents the transmittance, accounting for the visibility of the i i -th Gaussian.
+View-dependent appearance is represented using spherical harmonics, whose coefficients are evaluated according to the viewing direction.
+Gaussian Attribute Maps:
+The attributes for each Gaussian are represented as a C C -channel vector a = [ μ , r , s , α , c ] ⊤ ∈ ℝ C a=[\mu,r,s,\alpha,c]^{\top}\in\mathbb{R}^{C} in a UV map.
+Here μ , r , s ∈ ℝ 3 \mu,r,s\in\mathbb{R}^{3} represent position, rotation and scale respectively, α ∈ ℝ \alpha\in\mathbb{R} is the opacity, and c ∈ ℝ d c c\in\mathbb{R}^{d_{c}} denotes colour attributes.
+We use C = 13 C=13 ( d c = 3 d_{c}=3 ) for our final model and C = 22 C=22 ( d c = 12 d_{c}=12 ) for the variant incorporating view-dependent effects via first-degree spherical harmonics.
+The UV maps are generated at U ​ V ∈ ℝ 256 × 256 UV\in\mathbb{R}^{256\times 256} resolution by a StyleGAN2 backbone as a function of a latent code z z and a camera pose p p , where p ∈ ℝ 25 p\in\mathbb{R}^{25} and z ∈ ℝ 512 z\in\mathbb{R}^{512} .
+FLAME Model:
+The FLAME (Faces Learned with an Articulated Model and Expressions) model  [ 29 ] is a parametric model of facial shape, expression and pose.
+We use FLAME as a geometric prior for the generated Gaussian representation.
+The Gaussians are samlped over the mesh surface and a positional zero convolution is used to predict offsets.
+The zero convolution allows the Gaussians to be initialised near the mesh surface and to gradually learn their displacement.
+This provides a soft geometric regularisation that encourages consistent head geometry across views and poses.
+The complete pipeline is shown in Figure  2 . FID ↓ \downarrow
+FLOP (G) ↓ \downarrow
+Params (M) ↓ \downarrow
+Train ↓ \downarrow
+Size ↓ \downarrow
+CPU ↓ \downarrow
+Pixel 10 ↓ \downarrow
+Pixel 10 ↓ \downarrow
+(hrs)
+(MB)
+(ms)
+(ms)
+(ms)
+AGORA ( 512 2 512^{2} )  [ 13 ]
+3.17
+212
+33
+50
+241
+323
+2381
+32
+Ours ( 512 2 512^{2} )
+4.15
+13
+10
+29
+46
+148
+453
+32
+Figure 4 : A pixel level comparison of our proposed model’s inference in PyTorch
+against an onnx-runtime implementation. Please note the pixel differences are
+enhanced by 10 × 10\times for better visibility.
+Figure 5 : Our animation model can drive avatar expression based on FLAME parameters. In each row the expression is interpolated from the outermost images.
+Our proposed method achieves a 70% reduction in parameter count and a 94% reduction in FLOPs compared to
+
+【实验】
+and Evaluation
+4.1 Quantitative Comparison
+4.2 Ablations
+4.3 Qualitative Results and Evaluation
+Dataset:
+We use the FFHQ dataset  [ 20 ] for training and evaluation.
+The dataset consists of 70k high-quality images of human faces with a wide variety of pose, expression, and lighting conditions.
+MODNet  [ 22 ] is used to remove the background and isolate the head region for training our model. Metrics and Baselines:
+We use FID, FLOPs, inference latency and file size as our primary evaluation metrics.
+FID  [ 17 ] is used to measure the visual quality of the generated head avatars, while FLOPs and inference latency measure the computational cost of our model at runtime.
+File size measures the storage and transfer requirements of the model, which are important for deployment on resource-constrained devices.
+For our main results in Table  1 , we use 50K real and generated samples for FID calculation.
+For the ablation studies in Table  3 and Table  2 , we calculate FID using 10K generated samples and 10K real samples from FFHQ.
+We also report FID 3D \text{FID}_{\text{3D}}   [ 4 ] with 10K images, which measures generation quality under large deviations from the conditioning view.
+The heads are conditioned on a frontal view while the rendering viewpoints are randomly sampled from the dataset, exposing view-conditioning bias and geometric inconsistency.
+We measure PSNR MV \text{PSNR}_{\text{MV}} and SSIM MV \text{SSIM}_{\text{MV}} following the protocol of  [ 51 ] and GGHead  [ 25 ] , generating 30 multi-view images of 100 random heads, and reconstructing the surface using  [ 50 ] .
+These multi-view metrics measure agreement between renderings of the same identity across viewpoints.
+We compare our proposed approach against AGORA  [ 13 ] , which adds an expression deformation branch to the same synthesis backbone.
+Our static generator is compared against  [ 25 ] which is the baseline adopted by various methods in this subdomain like  [ 52 , 13 ] . are performed entirely on the mobile device.
+All dependencies are also sent over the network, so we additionally report the
+overall transfer size.
+Transferring the full model, comprising the weight files, the SVD basis of the
+animation network, the onnx runtime and the FLAME data, amounts to
+75.59 75.59  MiB across 24 24 files in total, which is quick to transfer to a mobile
+device over a stable internet connection, and restarting the application is
+considerably faster once these files are cached.
+For FLOP calculation we report the Forward MACs reported by
+onnx-tool  [ 46 ] , where one MAC is defined as
+1 MAC = float(a) * float(b) + float(c).
+The reported parameter and FLOP counts cover the exported generator only, and
+therefore exclude the discriminator, which is not used at inference time, and
+the Gaussian rasteriser, which is not part of the exported graph.
+Appendix B Architecture for Full Resolution
+Table  1 reports FID at 512 2 512^{2} rasterisation resolution while
+retaining the generator and deployment mea
+
+【结论/局限】
+References
+A Implementation and Evaluation Details
+A.1 Training and Measurement Protocol
+A.2 Computational Cost Evaluation
+B Architecture for Full Resolution
+C Architecture Details
+C.1 Depth-wise Separable Convolutions
+C.2 Spherical Harmonics, Channel Width and Precision
+C.3 Generator and Feature Map Sizes
+C.4 Generator Output Heads
+D Quantisation Sensitivity
+E ONNX Export Ablation
+F Additional Qualitative Results
+G Analysis of Learned Variation
+G.1 Latent Space Variation
+G.2 Gaussian Attribute Sensitivity
+H Additional Animation Results
+License: CC BY 4.0
+arXiv:2610.09821v1 [cs.CV] 07 Oct 2026
+Efficient 3D Gaussian Head Avatars for Edge Devices
+Umar Farooq
+Jean-Yves Guillemaut
+Adrian Hilton
+Marco Volino
+Affiliation:  CVSSP, University of Surrey Summary:
+We introduce an efficient generator architecture that substantially reduces
+the computational requirements of 3D Gaussian head synthesis while retaining
+competitive generation quality.
+Our approach reduces parameter count by 70% and computational cost by 94%
+compared with the baseline, while reducing model size by up to 81%.
+Crucially, these gains enable the complete synthesis of new 3D Gaussian head
+avatars on CPUs and mobile devices through a web browser, without
+requiring dedicated GPU acceleration or application-specific software.
+Beyond efficient rendering or re-animation of existing avatars, our approach
+makes the generati

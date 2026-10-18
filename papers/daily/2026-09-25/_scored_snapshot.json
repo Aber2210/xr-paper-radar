@@ -1,0 +1,605 @@
+{
+ "top10": [
+  {
+   "base_id": "2609.27702",
+   "title": "DAVIO: Dense Monocular-Inertial SLAM with Feed-Forward Initialization and Pose-Conditioned Mapping",
+   "title_zh": "DAVIO：前馈初始化 + 位姿条件映射的稠密单目-惯性 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 5,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "VIO",
+    "3DGS",
+    "Depth-Anything-3",
+    "稠密重建",
+    "AR定位"
+   ]
+  },
+  {
+   "base_id": "2609.28131",
+   "title": "DEAL-Grasp: Decoupled Alignment Representation for Geometry-Aware Dexterous Grasp Generation",
+   "title_zh": "DEAL-Grasp：解耦对齐表示下的几何感知灵巧抓取生成",
+   "track": "化身与人体",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "灵巧抓取",
+    "VR",
+    "数字人",
+    "流匹配",
+    "Procrustes"
+   ]
+  },
+  {
+   "base_id": "2609.27509",
+   "title": "Know-Your-Scene (KYS)-SLAM: Hierarchical Semantic-Motion Priors for Feature Matching in Stereo Visual SLAM",
+   "title_zh": "KYS-SLAM：层级语义-运动先验驱动的特征匹配立体视觉 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.0,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "立体SLAM",
+    "语义先验",
+    "动态物体",
+    "ORB-SLAM3",
+    "特征调制"
+   ]
+  },
+  {
+   "base_id": "2609.27778",
+   "title": "Visibility-Guided Structured Measure Flow for Class-Conditioned 3D Gaussian Generation",
+   "title_zh": "VISTA-GS：可见性引导的结构化测度流类别条件 3D 高斯生成",
+   "track": "内容生成",
+   "value": 3.92,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "生成式",
+    "测度流",
+    "多视角一致性",
+    "基准"
+   ]
+  },
+  {
+   "base_id": "2609.27779",
+   "title": "Fusion-Aware Direct 3D Gaussian Generation with Structured Patch Latent Flows",
+   "title_zh": "融合感知的分层高斯块隐空间直接 3D 高斯生成（Rectified Flow）",
+   "track": "内容生成",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "生成式",
+    "Rectified-Flow",
+    "高斯块",
+    "渲染反馈"
+   ]
+  },
+  {
+   "base_id": "2609.27560",
+   "title": "When Visual Quality Misleads: Intent Recognition under Rendered Avatar Distortions",
+   "title_zh": "渲染化化身畸变下的意图识别：视觉质量为何会误导",
+   "track": "化身与人体",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "化身",
+    "质量评估",
+    "用户研究",
+    "IQS",
+    "行为实验"
+   ]
+  },
+  {
+   "base_id": "2609.27595",
+   "title": "ViMoWear: Visual Motion-Guided sEMG-IMU Representation Learning for Subject-Independent Thumb Gesture Recognition",
+   "title_zh": "ViMoWear：视觉运动引导的 sEMG-IMU 跨被试拇指手势识别",
+   "track": "交互与输入",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "手势识别",
+    "AR输入",
+    "sEMG",
+    "IMU",
+    "跨被试"
+   ]
+  },
+  {
+   "base_id": "2609.27600",
+   "title": "ARS-Avatar: Animatable and Relightable Surfel Avatars with Learnable Ambient Occlusion",
+   "title_zh": "ARS-Avatar：可动画可重光照的 Surfel 化身（可学习环境光遮蔽）",
+   "track": "化身与人体",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "化身",
+    "重光照",
+    "Surfel",
+    "PBR",
+    "环境光遮蔽"
+   ]
+  },
+  {
+   "base_id": "2609.27850",
+   "title": "GaussianDS: Depth-supervised Semantic Gaussian Splatting for Scene Understanding",
+   "title_zh": "GaussianDS：深度监督的语义高斯泼溅场景理解",
+   "track": "感知与认知",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "语义3DGS",
+    "深度监督",
+    "SAM2",
+    "场景理解",
+    "几何锚定"
+   ]
+  },
+  {
+   "base_id": "2609.27868",
+   "title": "TopoGS: Topology-Aware Anchor Feature Aggregation for Large-Scale 3D Gaussian Splatting",
+   "title_zh": "TopoGS：面向大规模 3D 高斯泼溅的拓扑感知锚点特征聚合",
+   "track": "神经渲染",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "published": "2026-09-24",
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "八叉树",
+    "大规模",
+    "特征聚合",
+    "PSNR"
+   ]
+  }
+ ],
+ "xr_recs": [
+  {
+   "base_id": "2609.27702",
+   "title_zh": "DAVIO：前馈初始化 + 位姿条件映射的稠密单目-惯性 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 5,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "VIO",
+    "3DGS",
+    "Depth-Anything-3",
+    "稠密重建",
+    "AR定位"
+   ]
+  },
+  {
+   "base_id": "2609.28131",
+   "title_zh": "DEAL-Grasp：解耦对齐表示下的几何感知灵巧抓取生成",
+   "track": "化身与人体",
+   "value": 4.05,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 5,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "灵巧抓取",
+    "VR",
+    "数字人",
+    "流匹配",
+    "Procrustes"
+   ]
+  },
+  {
+   "base_id": "2609.27509",
+   "title_zh": "KYS-SLAM：层级语义-运动先验驱动的特征匹配立体视觉 SLAM",
+   "track": "重建与SLAM",
+   "value": 4.0,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "立体SLAM",
+    "语义先验",
+    "动态物体",
+    "ORB-SLAM3",
+    "特征调制"
+   ]
+  },
+  {
+   "base_id": "2609.27778",
+   "title_zh": "VISTA-GS：可见性引导的结构化测度流类别条件 3D 高斯生成",
+   "track": "内容生成",
+   "value": 3.92,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 4
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "生成式",
+    "测度流",
+    "多视角一致性",
+    "基准"
+   ]
+  },
+  {
+   "base_id": "2609.27779",
+   "title_zh": "融合感知的分层高斯块隐空间直接 3D 高斯生成（Rectified Flow）",
+   "track": "内容生成",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "生成式",
+    "Rectified-Flow",
+    "高斯块",
+    "渲染反馈"
+   ]
+  },
+  {
+   "base_id": "2609.27560",
+   "title_zh": "渲染化化身畸变下的意图识别：视觉质量为何会误导",
+   "track": "化身与人体",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "化身",
+    "质量评估",
+    "用户研究",
+    "IQS",
+    "行为实验"
+   ]
+  },
+  {
+   "base_id": "2609.27595",
+   "title_zh": "ViMoWear：视觉运动引导的 sEMG-IMU 跨被试拇指手势识别",
+   "track": "交互与输入",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "手势识别",
+    "AR输入",
+    "sEMG",
+    "IMU",
+    "跨被试"
+   ]
+  },
+  {
+   "base_id": "2609.27600",
+   "title_zh": "ARS-Avatar：可动画可重光照的 Surfel 化身（可学习环境光遮蔽）",
+   "track": "化身与人体",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "化身",
+    "重光照",
+    "Surfel",
+    "PBR",
+    "环境光遮蔽"
+   ]
+  },
+  {
+   "base_id": "2609.27850",
+   "title_zh": "GaussianDS：深度监督的语义高斯泼溅场景理解",
+   "track": "感知与认知",
+   "value": 3.85,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "语义3DGS",
+    "深度监督",
+    "SAM2",
+    "场景理解",
+    "几何锚定"
+   ]
+  },
+  {
+   "base_id": "2609.27868",
+   "title_zh": "TopoGS：面向大规模 3D 高斯泼溅的拓扑感知锚点特征聚合",
+   "track": "神经渲染",
+   "value": 3.65,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "八叉树",
+    "大规模",
+    "特征聚合",
+    "PSNR"
+   ]
+  },
+  {
+   "base_id": "2609.27264",
+   "title_zh": "GaussPDE：基于图的偏微分方程驱动的 3D 高斯泼溅渲染",
+   "track": "神经渲染",
+   "value": 3.62,
+   "grade": "A",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "3DGS",
+    "PDE",
+    "图拉普拉斯",
+    "动态可视化",
+    "相机感知正则"
+   ]
+  },
+  {
+   "base_id": "2609.27938",
+   "title_zh": "指尖上的远程表面：基于电振动触觉的机器人遥操作触感反馈",
+   "track": "触觉与多模态",
+   "value": 3.35,
+   "grade": "B",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [
+    "⚠️ 方法为电振动触觉在遥操作中的应用型工作，非基础方法突破"
+   ],
+   "tags": [
+    "触觉",
+    "电振动",
+    "遥操作",
+    "触摸屏"
+   ]
+  },
+  {
+   "base_id": "2609.27235",
+   "title_zh": "CoBranchMR：混合现实中并行设计与冲突解决的支撑系统",
+   "track": "空间计算与UI",
+   "value": 3.05,
+   "grade": "B",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 3
+   },
+   "flags": [],
+   "tags": [
+    "MR",
+    "协同设计",
+    "分支合并",
+    "空间计算"
+   ]
+  }
+ ],
+ "non_xr": [
+  {
+   "base_id": "2609.27104",
+   "title_zh": "当直接操控变成猜测：AI 中介多感官可视化中的生产性摩擦"
+  },
+  {
+   "base_id": "2609.28296",
+   "title_zh": "Talk2Escape：视觉-语言导航的对话式闭环接地"
+  }
+ ],
+ "gate1_pass": true,
+ "gate2_pass": true,
+ "gate3_note": "未超：当日最高 4.05 < 库内近30天Top10均分 4.298 → 非重磅日，无 S 级",
+ "top_tracks": [
+  "交互与输入",
+  "内容生成",
+  "化身与人体",
+  "感知与认知",
+  "神经渲染",
+  "重建与SLAM"
+ ],
+ "today_top_mean": 3.892,
+ "today_max": 4.05,
+ "lib_top_mean": 4.298,
+ "added": 15,
+ "total": 148,
+ "max_sim": 0.308
+}
