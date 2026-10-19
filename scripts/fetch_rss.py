@@ -34,6 +34,20 @@ KW = [
     "accommodation-vergence",
 ]
 
+# 缩写层（2026-10-19 漏网根因：标题里大量使用 VR/AR/MR/XR 缩写而全称关键词不命中）。
+# 裸子串匹配会误伤（ar⊂area/search），必须词边界正则。
+ABBREV_RE = re.compile(
+    r"\b(?:VR|AR|MR|XR|HMD|OST|SLAM|VIO|IMU|DoF|FOV|JND|IPD|VAC|MTF|CGH)\b"
+)
+
+
+def kw_match(text):
+    """KW 子串 + 缩写词边界双层匹配（大小写不敏感）。"""
+    t = text.lower()
+    if any(k.lower() in t for k in KW):
+        return True
+    return bool(ABBREV_RE.search(text))
+
 
 def fetch_url(url, timeout=30, tries=4):
     last = None
@@ -137,14 +151,11 @@ def main():
         print(f"  {c}: {len(recs)} 条，累计去重 {len(seen)}")
         time.sleep(2)
 
-    # 关键词过滤
+    # 关键词过滤（KW 全称子串 + VR/AR/MR/XR 缩写词边界双层）
     if args.no_filter:
         filtered = list(seen.values())
     else:
-        def match(r):
-            blob = (r["title"] + " " + r["abstract"]).lower()
-            return any(k.lower() in blob for k in KW)
-        filtered = [r for r in seen.values() if match(r)]
+        filtered = [r for r in seen.values() if kw_match(r["title"] + " " + r["abstract"])]
 
     with open(args.out, "w", encoding="utf-8") as f:
         for r in filtered:

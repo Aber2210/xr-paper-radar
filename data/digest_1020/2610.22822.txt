@@ -1,0 +1,185 @@
+【摘要】
+
+【方法】
+Score
+Rubric components
+Response type
+EG
+AC
+TC
+ACom
+Scene
+Q&A
+Guidance
+Pretrained
+2.75
+0.96
+0.91
+0.54
+0.35
+3.77
+3.19
+1.96
+2B
+VISTA (ours)
+3.54   (+28.7%)
+1.24
+1.20
+0.68
+0.42
+3.82
+3.78
+3.28
+Pretrained
+3.16
+1.09
+1.07
+0.64
+0.38
+3.72
+3.48
+2.69
+InternVL3
+8B
+VISTA (ours)
+3.72   (+17.7%)
+1.29
+1.27
+0.73
+0.44
+4.03
+4.07
+3.39
+Pretrained
+3.22
+1.11
+1.10
+0.68
+0.38
+3.78
+3.69
+2.65
+4B
+VISTA (ours)
+3.95   (+22.7%)
+1.39
+1.36
+0.76
+0.44
+4.25
+4.18
+3.69
+Pretrained
+3.31
+1.15
+1.13
+0.69
+0.39
+3.76
+3.69
+2.85
+Qwen3-VL
+8B
+VISTA (ours)
+3.93   (+18.7%)
+1.39
+1.35
+0.76
+0.44
+4.19
+4.04
+3.74
+Pretrained
+3.07
+1.04
+1.05
+0.66
+0.36
+3.41
+3.76
+2.48
+Gemma 3
+12B
+VISTA (ours)
+3.24   (+5.5%)
+1.08
+1.10
+0.64
+0.43
+3.00
+3.30
+3.32
+Main results.
+Table  3 shows that VISTA improves the overall score of every backbone. The largest gains are for InternVL3-2B (2.75 to 3.54, +28.7% ) and Qwen3-VL-4B (3.22 to 3.95, +22.7% ), followed by Qwen3-VL-8B ( +18.7% ) and InternVL3-8B ( +17.7% ); for these four models, all rubric components and all three response forms improve. With VISTA, Qwen3-VL-4B obtains the highest score in our evaluation, above both the best zero-shot open-source model, InternVL3-14B (3.33), and the best proprietary model (3.75) in Table  2 . Guidance improves the most, from 1.96 to 3.28 for InternVL3-2B and from 2.65 to 3.69 for Qwen3-VL-4B. In InternVL3 and Qwen3-VL, the combined adaptation and sensor-fusion procedure produces larger score gains for the smaller of the two evaluated backbones, and after adaptation Qwen3-VL-4B matches Qwen3-VL-8B (3.95 vs. 3.93).
+Task-level trade-offs.
+Gemma 3-12B shows a smaller gain, from 3.07 to 3.24 (+5.5%). Its guidance score improves from 2.48 to 3.32 and accessible communication from 0.36 to 0.43, whereas scene description and question answering drop from 3.41 to 3.00 and from 3.76 to 3.30. The adapted Gemma 3 model therefore shifts toward guidance at the cost of descriptive and question-answering quality, unlike the InternVL3 and Qwen3-VL models, which improve on all three response forms. Guidance scores improve for every backbone. listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support f
+
+【实验】
+  Setting
+5.2 Zero-shot Results
+5.3 Multimodal Enhancement
+Main results.
+Task-level trade-offs. Setting
+VISTA evaluates three response forms: scene description, visual question answering, and goal-conditioned guidance. We test InternVL3  ( Zhu et al., 2025 ) , Qwen3-VL  ( Bai et al., 2025 ) , Gemma 3  ( Gemma Team et al., 2025 ) , and VideoLLaMA3  ( Zhang et al., 2025a ) across model scales, together with Gemini 3.1 Flash-Lite  ( Google, 2026 ) and GPT-Realtime Mini  ( OpenAI, 2025 ) as proprietary zero-shot baselines. All experiments share the VISTA test split, task prompts, eight uniformly sampled frames, and a maximum output length of 4,096 tokens. As an external reference, we evaluate ten of these models (eight open-source and both proprietary) on EgoBlind (setup in Appendix  B , results in Appendix  C.2 ).
+The evaluation protocol is shared by the RGB zero-shot baselines and the multimodal model experiments. GPT-6 Luna  ( OpenAI, 2026 ) scores each prediction against the input frames and reference annotations on evidence grounding (0–1.75), answer correctness (0–1.75), task completion (0–1), and accessible communication (0–0.5), yielding a total from 0 to 5. Predictions containing potentially harmful instructions are flagged, with the final score capped at 1.95. The multimodal experiments change only the available sensor inputs or adaptation configuration; prompts, test data, judge, and rubric remain fixed. Appendix  B gives the judge prompt, inference settings, and reproducibility details.
+5.2 Zero-shot Results
+Table 2: Zero-shot results on VISTA. Judge scores (0–5). EG: evidence grounding (0–1.75); AC: answer correctness (0–1.75); TC: task completion (0–1); ACom: accessible communication (0–0.5); Scene, Q&A, Guidance: mean score per annotation type. Bold / underline : best/second-best per column within each model group; –: size not disclosed.
+
+【结论/局限】
+References
+A VISTA Benchmark Details
+A.1 Task Categories
+A.2 Recorded Sensor Streams
+A.3 Annotation Examples
+A.4 Annotation Statistics
+B Evaluation Protocol
+B.1 Inference Protocol
+B.2 Judge Model and Scoring
+Judge.
+Prompt structure.
+Score.
+Flags.
+B.3 Fairness and Reproducibility
+Shared protocol.
+Judge variance.
+B.4 Judge Prompt
+C Additional Results
+C.1 VISTA Zero-Shot Results by Response Type and Task Category
+C.2 EgoBlind Zero-Shot Results
+D Failure Analysis
+D.1 Failure Statistics
+D.2 Qualitative Failure Cases
+License: CC BY-NC-SA 4.0
+arXiv:2610.22822v1 [cs.CV] 16 Oct 2026
+VISTA: A Multimodal Egocentric Benchmark for Goal-Oriented Perception and Assistance to Blind and Low-Vision Users
+Noé Mosca   Mohamed Rayan Barhdadi   Muhammad Hamza   Joshua Yeh   Suryodaya Bikram Shahi   Zhiyan Li   Selim-Antoine Lali   Weiyue Li   Hasan Kurban   Erchin Serpedin   Gang Luo Yue Zhang   Minghan Li   Mengyu Wang
+Harvard AI and Robotics Lab, Harvard University  Télécom Paris, Institut Polytechnique de Paris  Texas A&M University  University of Toronto  Hamad Bin Khalifa University
+* Contributed equally as co-first authors.   † Contributed equally as co-senior authors. VISTA introduces a multimoda

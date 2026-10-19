@@ -1,0 +1,218 @@
+【摘要】
+
+【方法】
+MAE ↓ \downarrow
+MAE act \text{MAE}_{\textbf{act}} ↓ \downarrow
+Temporal Pearson ↑ \uparrow
+EgoTac
+0.004
+0.056
+0.506
+w/o temporal context
+0.005
+0.056
+0.463
+w/o active-region loss
+0.004
+0.097
+0.482
+w/o force supervision
+0.322
+0.108
+0.240
+Table 3: In-domain contact evaluation. Results are averaged across timestamps on all test splits of each component dataset. EgoTac maintains strong contact localization accuracy despite the additional force regression objectives.
+Benchmark AUROC ↑ \uparrow
+IoU ↑ \uparrow
+Precision ↑ \uparrow
+Recall ↑ \uparrow
+F1 ↑ \uparrow
+HOT3D  Banerjee et al. (2025)
+EgoTac-i
+0.976
+0.587
+0.656
+0.771
+0.702
+EgoTac
+0.976
+0.593
+0.667
+0.767
+0.706
+H2O  Kwon et al. (2021)
+EgoTac-i
+0.989
+0.647
+0.725
+0.846
+0.777
+EgoTac
+0.989
+0.743
+0.804
+0.904
+0.850
+ARCTIC  Fan et al. (2023)
+EgoTac-i
+0.972
+0.676
+0.716
+0.905
+0.790
+EgoTac
+0.977
+0.669
+0.732
+0.897
+0.795
+5.2 In-Domain Performance and Ablations
+In-domain tactile-based evaluation.
+We first evaluate calibrated force prediction on held-out EgoTac-SC episodes. Because non-contact vertices dominate the MANO surface, global averages can underestimate errors on physically meaningful regions; therefore, we prioritize MAE act \text{MAE}_{\textbf{act}} and use global MAE and temporal correlation as complementary signals.
+Table  2 shows three main trends. First, incorporating temporal visual context improves temporal consistency.
+Second, adding the active-region loss enhances force fidelity in interacting areas.
+Third, relying on contact-only supervision is insufficient for realistic force estimation, confirming that contact logits do not directly encode the force scale.
+Table 4: Out-of-domain contact evaluation. Results are averaged across timestamps on OAKINK2  Zhan et al. (2024) and FPHA  Garcia-Hernando et al. (2018) . EgoTac yields superior performance compared with previous methods.
+Benchmark AUROC ↑ \uparrow
+IoU ↑ \uparrow
+Precision ↑ \uparrow
+Recall ↑ \uparrow
+F1 ↑ \uparrow
+Oakink2  Zhan et al. (2024)
+BSTRO  Huang et al. (2022)
+0.537
+0.076
+0.172
+0.139
+0.134
+DECO  Tripathi et al. (2023)
+0.655
+0.144
+0.291
+0.329
+0.243
+HACO  Jung and Lee (2025)
+0.772
+0.259
+0.356
+0.568
+0.400
+EgoTac
+0.844
+0.285
+0.498
+0.441
+0.435
+FPHA  Garcia-Hernando et al. (2018)
+BSTRO  Huang et al. (2022)
+0.535
+0.017
+0.080
+0.033
+0.032
+DECO  Tripathi et al. (2023)
+0.635
+0.041
+0.161
+0.092
+0.075
+HACO  Jung and Lee (2025)
+0.699
+0.160
+0.187
+0.716
+0.268
+EgoTac
+0.758
+0.178
+0.304
+0.401
+0.290
+Figure 5 : Qualitative comparison of OOD contact estimation (right-hand). EgoTac produces cleaner contact status separation than HACO  Jung and Lee (2025) on OAKINK2  Zhan et al. (2024) and FPHA  Garcia-Hernando et al. (2018) .
+Figure 6 : Data scaling and OOD force prediction. (a) Scaling training data volume improves force dynamics prediction on OpenTouch  Song et al. (2025) . (b) Comparison of normalized total force over time, showing EgoTac effectively tracks ground-truth temporal trends.
+In-domain contact-based evaluation.
+Since EgoTac jointly predict
+
+【实验】
+statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer: [No]
+Justification: The results are obtained from standard randomly seeded runs without cherrypicking, offering a fair and representative evaluation despite not including error bars.
+Guidelines:
+•
+The answer [N/A] means that the paper does not include experiments.
+•
+The authors should answer [Yes] if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+•
+The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+•
+The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+•
+The assumptions made should be given (e.g., Normally distributed errors).
+•
+It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+•
+It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis of Normality of errors is not verified.
+•
+For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+•
+If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text. 5.1 Experimental Overview
+Datasets.
+Baselines.
+Metrics.
+5.2 In-Domain Performance and Ablations
+In-domain tactile-based evaluation.
+In-domain contact-based evaluation.
+5.3 Out-of-Domain Generalization
+OOD contact-based benchmarks.
+OOD force-sensitive benchmark on OpenTouch.
+Qualitative results on diverse HOI scenes.
+5.4 Effects of Data Scaling
+5.5 Understanding Heterogeneous Supervision
+Complementary roles of force and contact supervision.
+Interaction between contact and force supervision. demonstrate strong performance: in-domain prediction achieves an average force error below 0.06N. On out-of-domain contact prediction benchmarks, EgoTac consistently outperforms the state-of-the-art contact estimator. It also captures the rise and fall patterns of real tactile data and enables zero-shot predictions 
+
+【结论/局限】
+References
+A Appendix Overview
+B Details of the self-collected dataset (EgoTac-SC)
+B.1 Dataset collection
+Hardware.
+Collection procedure.
+Raw tactile channel organization.
+B.2 Tactile post-processing and MANO hand mapping
+Temporal alignment and interpolation.
+RGB decoding and synchronization.
+Coordinate normalization.
+Tactile-to-MANO mapping.
+B.3 Visualization of samples
+C Details of other datasets
+C.1 MANO hand contact label deriving
+Unified conversion protocol.
+C.2 OpenTouch dataset process
+C.3 Visualization of samples
+D Details of EgoTac implementation
+D.1 Data augmentation
+D.2 Dataset sampling
+D.3 Training objective
+D.4 Hyperparameter settings
+E Details of metrics
+E.1 Tactile-related metrics
+Global MAE.
+Active-region MAE.
+Temporal Pearson correlation.
+E.2 Contact-related metrics
+E.3 OpenTouch OOD force-dynamics metrics
+Force-cosine.
+Rise F1 and Fall F1.
+E.4 Frequency-domain metrics
+DFT log-magnitude Pearson correlation.
+Spectral convergence.
+Dominant-frequency error.
+F More experimental results
+Frequency-domain evaluation.
+EgoTac-SC dataset ablation.
+ℒ cons \mathcal{L}_{\mathrm{cons}} ablation.
+Additional in-domain results.
+Additional visualizations.
+G More discussions
+Visual-d

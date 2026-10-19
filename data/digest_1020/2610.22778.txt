@@ -1,0 +1,350 @@
+【摘要】
+
+【方法】
+#Gauss
+Time ↓ \downarrow
+FPS ↑ \uparrow
+FPS CUDA {}_{\text{CUDA}} ↑ \uparrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+STATIC
+NeRF
+Synthetic
+N-DGS
+300
+10.43
+183.58
+348.95
+34.04
+0.973
+0.027
+d GS ( Ours )
+300
+10.26
+245.18
+593.94
+34.34
+0.973
+0.026
+UBS
+300
+6.80
+155.96
+306.33
+34.48
+0.975
+0.026
+d BS ( Ours )
+300
+5.48
+239.09
+415.66
+34.53
+0.975
+0.025
+Mip-NeRF
+360
+N-DGS
+2,852
+51.23
+35.69
+75.31
+26.88
+0.775
+0.263
+d GS ( Ours )
+2,574
+49.85
+42.49
+200.56
+27.67
+0.794
+0.227
+UBS
+3,057
+28.59
+40.94
+76.18
+28.50
+0.841
+0.183
+d BS ( Ours )
+3,057
+24.42
+62.05
+157.45
+28.70
+0.842
+0.185
+6DGS-PBR
+N-DGS
+163
+54.80
+328.75
+476.79
+40.06
+0.976
+0.039
+d GS ( Ours )
+163
+47.54
+356.15
+551.02
+40.34
+0.976
+0.038
+UBS
+163
+8.70
+239.87
+348.63
+39.53
+0.975
+0.042
+d BS ( Ours )
+163
+8.47
+305.33
+401.93
+39.72
+0.976
+0.042
+DYNAMIC
+D-NeRF
+N-DGS
+150
+10.31
+306.51
+501.52
+34.63
+0.976
+0.033
+d GS ( Ours )
+150
+10.61
+407.40
+746.65
+34.64
+0.976
+0.030
+UBS
+150
+8.37
+229.83
+371.81
+32.91
+0.967
+0.040
+d BS ( Ours )
+150
+9.34
+323.75
+463.09
+33.55
+0.972
+0.033
+7DGS-PBR
+N-DGS
+175
+28.44
+294.48
+511.12
+29.20
+0.944
+0.063
+d GS ( Ours )
+175
+31.12
+366.06
+577.38
+29.90
+0.948
+0.061
+UBS
+175
+9.90
+232.17
+396.33
+30.61
+0.951
+0.057
+d BS ( Ours )
+175
+8.79
+347.93
+539.57
+31.87
+0.955
+0.053 #Gauss
+Time ↓ \downarrow
+FPS CUDA {}_{\text{CUDA}} ↑ \uparrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+STATIC
+NeRF
+Synthetic
+N-DGS
+171
+6.35
+615.57
+33.38
+0.970
+0.032
+d GS-O ( Ours )
+201
+5.83
+754.98
+33.84
+0.971
+0.030
+d GS ( Ours )
+201
+6.84
+704.84
+33.91
+0.972
+0.029
+Mip-NeRF
+360
+N-DGS
+1273
+27.09
+147.46
+26.40
+0.739
+0.316
+d GS-O ( Ours )
+2363
+25.58
+279.30
+27.18
+0.779
+0.252
+d GS ( Ours )
+2463
+28.21
+237.82
+27.37
+0.781
+0.251
+6DGS-PBR
+N-DGS
+84
+26.77
+678.40
+37.11
+0.971
+0.054
+d GS-O ( Ours )
+118
+30.72
+696.31
+36.54
+0.965
+0.059
+d GS ( Ours )
+134
+33.80
+653.44
+37.75
+0.972
+0.052
+DYNAMIC
+D-NeRF
+N-DGS
+69
+14.08
+852.01
+33.13
+0.968
+0.038
+d GS-O ( Ours )
+70
+13.20
+948.77
+30.92
+0.959
+0.044
+d GS ( Ours )
+85
+15.56
+818.41
+33.59
+0.971
+0.032
+7DGS-PBR
+N-DGS
+162
+38.14
+709.83
+31.75
+0.955
+0.055
+d GS-O ( Ours )
+227
+34.58
+835.24
+31.70
+0.955
+0.053
+d GS ( Ours )
+226
+36.96
+753.77
+32.18
+0.956
+0.050
+Static Scenes.
+On NeRF Synthetic, both variants improve quality: d GS-O by +0.46 dB and d GS by +0.53 dB, with rendering speedups of 23% and 15% respectively. On Mip-NeRF 360, efficiency gains are most pronounced: d GS-O achieves 89% faster rendering with +0.78 dB improvement, while d GS achieves 61% faster rendering with +0.97 dB improvement. Notably, d GS-O uses 86% more primitives (2363K vs 1273K) yet remains faster, demonstrating that per-primitive computation cost dominates over primitive count. On 6DGS-PBR, d GS-O shows modest 3% speedup but -0.57 dB quality drop, while d GS recovers and exceeds baseline quality (+0.64 dB).
+Dynamic Scenes.
+Position conditioning proves essential for temporal dynamics. On D-NeRF, d GS-O suffers -2.21 dB quality drop despite 11% faster rendering, while d GS with learnable coupling via Λ \Lambda exceeds N-DGS by +0.46 dB, demonstrating adaptive coupl
+
+【实验】
+statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer: [Yes]
+Justification: Appendix  G reports means and sample standard deviations across three matched seeds for the NeRF Synthetic dBS/UBS comparison and coupling ablation. Other benchmark results are single-run scene averages; the repeated runs do not establish variability across all five datasets. 5.1 Experimental Setup 5.1 Experimental Setup
+Datasets.
+We evaluate the d -splatting family across five diverse datasets covering both static and dynamic scenes:
+•
+Static scenes: (1) NeRF Synthetic   ( Mildenhall et al., 2020 ) with 8 synthetic scenes under controlled lighting for evaluating geometric reconstruction; (2) Mip-NeRF 360   ( Barron et al., 2022 ) with 9 challenging unbounded real-world scenes for evaluating view synthesis; and (3) 6DGS-PBR   ( Gao et al., 2025a ) featuring 7 physically-based scenes with complex view-dependent effects.
+•
+Dynamic scenes: (4) D-NeRF   ( Pumarola et al., 2021 ) with 8 synthetic sequences featuring various deformation types; and (5) 7DGS-PBR   ( Gao et al., 2025b ) containing 6 physically-based dynamic scenes with complex spatio-temporal-angular correlations. compute resources
+Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
+Answer: [Yes]
+Justification: The paper states that experiments use a single NVIDIA A100 GPU and reports training time, Gaussian count, and rendering speeds in the main and appendix tables. Kernel benchmarks also report slicing-only forward-pass timing on 1M Gaussians.
+9.
+Code of ethics
+Question: Does the research conducted in the paper conform, in every respect, with the NeurIPS Code of Ethics https://neurips.cc/public/EthicsGuidelines ?
+Answer: [Yes]
+Justification: The work uses public benchmark datasets and does not involve human subjects, private data collection, or deployment in user-facing decision systems. The paper also discusses societal impact in the supplement.
+10.
+Broader impacts
+Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
+Answer: [Yes]
+Justification: Supplemental Section  I discusses beneficial uses such as simulation, telepresence, robotics, and content creation, as well as potential misuse such as unauthorized reconstruction of private spaces.
+11.
+Safeguards
+Question: Does
+
+【结论/局限】
+References
+A Comparison with State-of-the-art Methods
+B Conditional Slicing Algorithms
+C Direct Conditional Coordinates for Joint Gaussian Primitives
+Parameter count.
+C.1 Determinant Structure
+C.2 Volume-Element Jacobian of the Coordinate Transformation
+Interpretation.
+D Covariance-Derived versus Direct Regression Coordinates
+Block-Cholesky derivation.
+A valid cross-covariance bound.
+Cross-covariance is not displacement.
+Invariant Gaussian bound.
+Direct regression coordinates in d GS.
+E Results with Standard Densification
+F UBS Formulation
+G Parameterization and Evaluation Controls
+H Conditioning and End-to-End Efficiency We presented direct conditional parameterization for N-dimensional splatting. Whereas N-DGS derives rendered quantities from a joint covariance through inversion and Schur complementation, d GS directly parameterizes conditional quantities with explicit spatial-scale and coupling priors. Unrestricted conditional coordinates preserve the joint Gaussian covariance family, while the structured factorization makes rendering parameters explicit and gives optimization direct control over their coupling. Across five benchmarks and two kernels, the resulting methods match

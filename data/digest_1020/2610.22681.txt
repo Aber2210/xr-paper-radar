@@ -1,0 +1,130 @@
+【摘要】
+
+【方法】
+3.1 Specialist Teachers
+3.2 MoE Initialization
+3.3 Segment-Level MOPD Figure 2: Overview of EgoP 2 C.
+The framework integrates planning, perception, and composition into a single VLM.
+(a) Planner (PC) and Perception (V) teachers share a frozen backbone and use separate LoRA adapters trained with SFT followed by GRPO.
+(b) Teacher-generated sequences initialize corresponding MoE experts through separate role training followed by joint SFT.
+z t z_{t} denotes the t t -th token.
+(c) Segment-level MOPD trains the student on its own interactions, with PC supervising subquestions and composition and V supervising observations.
+(d) At inference, the Planner expert either answers directly using the General expert ( DIRECT ) or iteratively requests subquestion answers from Perception before composing the final answer ( PLAN ).
+Given an input x = ( v , q ) x{=}(v,q) , which consists of an egocentric video v v and a spatial question q q , the task is to predict the corresponding answer a a .
+Under our protocol, the question is answered either directly or by following a plan-perceive-compose process.
+The Planner first selects a mode
+b ∈ { DIRECT , PLAN } b\in\{\texttt{DIRECT},\texttt{PLAN}\} .
+With DIRECT , the model answers the original question without requesting observations.
+With PLAN , the Planner requests spatial observations over one or more rounds before composing the answer.
+At round j j , it generates a request u j u_{j} containing one or more self-contained spatial subquestions.
+Perception answers each from the video, producing a list of textual observations o j o_{j} .
+The Planner uses the accumulated requests and observations to either request further subquestions or compose the final answer.
+Perception receives only the video and its current subquestion.
+Let J J denote the number of planning rounds and c c the final composition, including the answer a a .
+The output is y = a y{=}a for DIRECT and y = ( u 1 , o 1 , … , u J , o J , c ) y{=}(u_{1},o_{1},\ldots,u_{J},o_{J},c) for PLAN .
+Appendix  B.3 provides the full execution details and probabilistic formulation.
+Figure  2 (a-c) summarizes three training stages.
+We train Planner and Perception teachers in a Dual-LoRA configuration (Section  3.1 ).
+These teachers provide supervision for initializing the corresponding roles in a MoE student (Section  3.2 ).
+We then apply segment-level MOPD, where each teacher supervises its corresponding segments of student-generated trajectories (Section  3.3 ).
+At inference, the student’s Planner expert selects the General expert for direct answering or iteratively asks the Perception expert to answer subquestions before composing the final answer (Figure  2 (d)).
+3.1 Specialist Teachers
+The Dual-LoRA teachers share a pretrained VLM backbone, π B \pi_{\mathrm{B}} (Figure  2 (a)).
+Its vision encoder, visual-language aligner, and base language parameters remain frozen.
+Separate LoRA adapters in the language model  ( Hu et al., 2022 ) define the Planner policy, π PC \
+
+【实验】
+4.1 Experimental setup We evaluate EgoP 2 C on egocentric spatial reasoning benchmarks and analyze inference efficiency, teacher specialization, and the effects of MoE initialization and segment-level MOPD.
+4.1 Experimental setup show consistent improvements over both general and spatially trained backbones. Future work will explore adaptive frame selection for longer videos and training objectives that balance answer accuracy with inference cost.
+References
+Agarwal et al. (2024)
+R. Agarwal, N. Vieillard, Y. Zhou, P. Stanczyk, S. Ramos, M. Geist, and O. Bachem
+On-policy distillation of language models: learning from self-generated mistakes .
+In Proceedings of the International Conference on Learning Representations (ICLR) ,
+Cited by: §2.3 .
+Bai et al. (2025)
+S. Bai, Y. Cai, R. Chen, K. Chen, X. Chen, Z. Cheng, L. Deng, W. Ding, C. Gao, C. Ge, et al.
+Qwen3-VL technical report .
+arXiv preprint arXiv:2511.21631 .
+Cited by: §4.1 ,
+Table 1 ,
+Table 1 .
+Cai et al. (2025)
+W. Cai, I. Ponomarenko, J. Yuan, X. Li, W. Yang, H. Dong, and B. Zhao
+SpatialBot: precise spatial understanding with vision language models .
+In Proceedings of the IEEE International Conference on Robotics and Automation (ICRA) ,
+Cited by: §2.1 .
+Cai et al. (2026a)
+Z. Cai, Z. Liu, Y. Xiong, Z. Liu, V. Chandra, and Y. Shi
+VLM3: vision language models are native 3D learners .
+arXiv preprint arXiv:2605.30561 .
+Cited by: §2.1 .
+Cai et al. (2026b)
+Z. Cai, R. Wang, C. Gu, F. Pu, J. Xu, Y. Wang, W. Yin, Z. Yang, C. Wei, Q. Sun, T. Zhou, J. Li, H. E. Pang, O. Qian, Y. Wei, Z. Lin, X. Shi, K. Deng, X. Han, Z. Chen, X. Fan, H. Deng, L. Lu, L. Pan, B. Li, Z. Liu, Q. Wang, D. Lin, and L. Yang
+Scaling spatial intelligence with multimodal foundation models .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+Cited by: §2.1 ,
+§4.1 ,
+Table 1 .
+Chen et al. (2024)
+B. Chen, Z. Xu, S. Kirmani, B. Ichter, D. Sadigh, L. Guibas, and F. Xia
+SpatialVLM: endowing vision-language models with spatial reasoning capabilities .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+Cited by: §1 ,
+§2.1 .
+Chen et al. (2026)
+S. Chen, M. A. Uy, C. H. Song, F. Ladhak, A. Murali, Q. Qu, S. Birchfield, V. Blukis, and J. Tremblay
+SpaceTools: tool-augmented spatial reasoning via double interactive RL .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+Cited by: §1 ,
+§2.1 .
+Cheng et al. (2025)
+A. Cheng, Y. Ji, Z. Yang, Z. Gongye, X. Zou, J. Kautz, E. Biyik, H. Yin, S. Liu, and X. Wang
+NaVILA: legged robot visio
+
+【结论/局限】
+References
+A Training Data Generation
+A.1 Data Construction
+A.2 Data Composition
+B Additional Implementation Details
+B.1 Teacher Training
+Training order.
+Objective perception rewards.
+Answer margins.
+Observation utilities without ground-truth subquestion answer.
+Planner reward.
+B.2 Student Training
+Experts and trainable parameters.
+Initialization supervision.
+Teacher assignment and scoring.
+Local reverse-KL interpretation.
+Context boundaries.
+B.3 Inference
+Routing and interaction.
+Interaction distribution.
+Common prefix and KV reuse.
+C Additional Experimental Details and Results
+C.1 Statistical Analysis
+C.2 Results by Subtask
+C.3 Comparison with Direct-Answer Training
+C.4 Additional Inference Efficiency Analysis
+C.5 Gradient Analysis of Multi-Teacher Distillation
+D Prompt Templates
+E Qualitative Examples
+License: CC BY 4.0
+arXiv:2610.22681v1 [cs.CV] 15 Oct 2026
+EgoP 2 C: Internalizing Plan-Perceive-Compose for Spatial Reasoning in Egocentric Video
+Chaoyu Li
+Affiliation:  Arizona State University
+Affiliation:  Meta
+Work done during an internship at Meta.
+Arka Sadhu
+Affiliation:  Meta
+Yuliang Li
+Affiliation:  Meta
+Hyo Jin Kim
+Affiliation:  Meta
+Yuning Chai
+Affiliation:  Meta
+Pooyan F

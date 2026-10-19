@@ -1,0 +1,194 @@
+【摘要】
+
+【方法】
+uses the Hilbert traversal as part of the conditioning signal itself: we serialize
+multi-scale voxel measures along the curve, extract both global multifractal summaries and
+local Hilbert-window embeddings, and feed these descriptors into the denoiser as explicit
+global structural priors.
+3 Preliminaries
+We review denoising diffusion probabilistic models for 3D point cloud generation and then introduce the Hilbert curve as the locality-preserving space-filling curve used in our conditioning framework.
+3.1 Denoising Diffusion Probabilistic Model (DDPM) for 3D Point Clouds
+Following   Mo et al. [18] and   Guan et al. [6] ,
+we model 3D point cloud generation using a conditional denoising diffusion
+probabilistic model (DDPM)  [ 8 ] . Let
+X 0 ∈ ℝ N × 3 X_{0}\in\mathbb{R}^{N\times 3} denote a clean point cloud containing N N
+points, and let 𝒞 \mathcal{C} denote its associated conditioning information.
+In our model, 𝒞 \mathcal{C} includes the Hilbert–Multifractal Conditioning
+(HMC) representation introduced in Section 4. Gaussian distributions and
+Euclidean norms below are understood on the 3 ​ N 3N vectorized point
+coordinates, with I I denoting the corresponding identity matrix.
+The forward process gradually perturbs X 0 X_{0} using a prescribed variance
+schedule { β t } t = 1 T ⊂ ( 0 , 1 ) \{\beta_{t}\}_{t=1}^{T}\subset(0,1) :
+q ( X 1 : T ∣ X 0 ) = ∏ t = 1 T q ( X t ∣ X t − 1 ) , q ( X t ∣ X t − 1 ) = 𝒩 ( X t ; α t X t − 1 , β t I ) , q(X_{1:T}\mid X_{0})=\prod_{t=1}^{T}q(X_{t}\mid X_{t-1}),\qquad q(X_{t}\mid X_{t-1})=\mathcal{N}\!\left(X_{t};\sqrt{\alpha_{t}}X_{t-1},\beta_{t}I\right),
+where α t = 1 − β t \alpha_{t}=1-\beta_{t} . Writing
+α ¯ t = ∏ i = 1 t α i \bar{\alpha}_{t}=\prod_{i=1}^{t}\alpha_{i} and α ¯ 0 = 1 \bar{\alpha}_{0}=1 , we can sample
+any intermediate state directly as
+X t = α ¯ t ​ X 0 + 1 − α ¯ t ​ ε , ε ∼ 𝒩 ⁡ ( 0 , I ) . X_{t}=\sqrt{\bar{\alpha}_{t}}X_{0}+\sqrt{1-\bar{\alpha}_{t}}\,\varepsilon,\qquad\varepsilon\sim\mathcal{N}(0,I).
+The schedule is chosen so that the terminal distribution is approximately
+standard Gaussian.
+Generation reverses this corruption through a learned conditional Markov
+chain:
+p θ ( X 0 : T ∣ 𝒞 ) \displaystyle p_{\theta}(X_{0:T}\mid\mathcal{C})
+= p ⁡ ( X T ) ​ ∏ t = 1 T p θ ​ ( X t − 1 ∣ X t , 𝒞 ) , \displaystyle=p(X_{T})\prod_{t=1}^{T}p_{\theta}(X_{t-1}\mid X_{t},\mathcal{C}),
+p θ ​ ( X t − 1 ∣ X t , 𝒞 ) \displaystyle p_{\theta}(X_{t-1}\mid X_{t},\mathcal{C})
+= 𝒩 ⁡ ( X t − 1 , μ θ ​ ( X t , t , 𝒞 ) , σ t 2 ​ I ) , \displaystyle=\mathcal{N}\!\left(X_{t-1};\mu_{\theta}(X_{t},t,\mathcal{C}),\sigma_{t}^{2}I\right),
+where p ⁡ ( X T ) = 𝒩 ⁡ ( 0 , I ) p(X_{T})=\mathcal{N}(0,I) and σ t 2 \sigma_{t}^{2} is a prescribed reverse
+variance. For t ≥ 2 t\geq 2 , common choices are σ t 2 = β t \sigma_{t}^{2}=\beta_{t} and
+σ t 2 = β t ​ ( 1 − α ¯ t − 1 ) / ( 1 − α ¯ t ) \sigma_{t}^{2}=\beta_{t}(1-\bar{\alpha}_{t-1})/(1-\bar{\alpha}_{t})   [ 8 ] .
+Rather than predicting the reverse mean directly, we use a neural network
+ε θ 
+
+【实验】
+Setup
+Dataset. Setup
+Dataset.
+In line with most prior work  [ 26 , 16 , 1 , 32 , 29 , 18 , 6 ] , we use the ShapeNet dataset as the benchmark for 3D point cloud generation  [ 3 ] . ShapeNet comprises 51,127 51,127 shapes across 55 55 classes. Following prior work, we train HilbertGen-3D on the Chair, Airplane, and Car categories. We show further results on Lamp and Vessel in Appendix   A .  Figure 3 : HilbertGen-3d results compared with DiT-3D and TopoDiT-3D. All experiments are conducted under same scale.
+In this section, we evaluate HilbertGen-3D and conduct sensitivity experiments to investigate the effectiveness of the bottleneck structure and topological information within the point cloud data. .
+Overall, these additional-category experiments support the
+effectiveness of HMC conditioning with either a learned
+condition prior or a training-set condition bank. The VAE
+variant achieves better CD-based 1-NNA on both categories,
+while the bank variant achieves higher EMD-based coverage
+on both and higher CD-based coverage on Vessel.
+Neither conditioning source is uniformly superior across
+the reported metrics. The full visualizations of these experiments appear in Figure   8 and Figure   7 .
+Appendix B Full Parameter Sensitivity Results
+Table 4 : Parameter sensitivity analysis on the Airplane category (mean over four evaluation seeds: 0, 11, 12, 13). All runs use the normalized training recipe with a batch size of 128 for 2000 epochs; conditions are sampled from the train-split HMC bank (Ours-Bank) and scored under the validation protocol with N = 664 N=664 samples, exact EMD, and no size correction. The baseline setting of each group is marked with † \dagger . 1-NNA is better when closer to 50, while higher COV is better. The best entry in each column within a group is shown in bold, including ties. All values are multiplied by 100 for readability.
+Parameter
+Setting
+1-NNA ( 50 50 optimal)
+COV( ↑ \uparrow )
+CD
+EMD
+CD
+EMD
+Resampler depth
+1
+63.67
+55.75
+55.35
+56.88
+2
+66.03
+64.99
+48.58
+46.10
+3
+59.45
+53.09
+56.77
+57.98
+4 †
+55.57
+53.66
+60.98
+59.27
+MLP ratio
+2.5
+55.96
+53.01
+61.02
+59.02
+3
+55.46
+52.27
+61.17
+59.58
+3.5
+56.32
+53.53
+61.19
+59.35
+4 †
+55.57
+53.66
+60.98
+59.27
+Bottleneck latents
+32
+56.72
+55.40
+60.98
+58.81
+64
+56.57
+52.43
+59.19
+58.65
+96
+55.58
+51.95
+60.75
+59.48
+128 †
+55.57
+53.66
+60.98
+59.27
+Scale set
+{3,4}
+56.15
+52.52
+60.52
+59.10
+{3,5}
+56.04
+51.91
+60.33
+58.79
+{3,4,5} †
+55.57
+53.66
+60.98
+59.27
+q q orders
+{1}
+56.08
+53.11
+61.31
+59.17
+{1,2}
+57.80
+55.59
+61.17
+57.77
+{1,2,3} †
+55.57
+53.66
+60.98
+59.27
+{1,2,3,4}
+56.99
+52.65
+59.31
+58.29
+We provide the complete sensitiv
+
+【结论/局限】
+7 Acknowledgement
+References
+A Additional results
+B Full Parameter Sensitivity Results
+Resampler depth.
+MLP ratio.
+Number of bottleneck latents.
+Scale selection.
+Moment-order selection.
+Interpretation and scope.
+C HMC-DiT3D for multi-category generation.
+D Computational Cost Analysis
+E Result Visualization
+F Qualitative visualizations of denoising process
+License: CC BY 4.0
+arXiv:2610.22720v1 [cs.CV] 15 Oct 2026
+HilbertGen-3D:Hilbert–Multifractal Conditioning for Topology-Aware 3D Generation
+Ziyi Zhang
+Affiliation:  Department of Electrical and Computer Engineering, Carnegie Mellon University
+Shixuan Li
+Affiliation:  Ming Hsieh Department of Electrical and Computer Engineering, University of Southern California
+Yorie Nakahira
+Affiliation:  Department of Electrical and Computer Engineering, Carnegie Mellon University
+Paul Bogdan
+Affiliation:  Ming Hsieh Department of Electrical and Computer Engineering, University of Southern California
+Guannan Qu
+Affiliation:  Department of Electrical and Computer Engineering, Carnegie Mellon University In this work, we presented HilbertGen-3D, a diffusion framework for point cloud generation based on Hilbert–Multifractal Conditioning (HMC). Experi

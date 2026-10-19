@@ -1,0 +1,93 @@
+【摘要】
+
+【方法】
+3.1 Overview
+3.2 Feed-forward Gaussian-generation representation
+3.3 Depth-guided multi-view feature refinement
+3.4 Latent feature coding
+3.5 Depth and Gaussian decoding
+3.6 Two-stage optimization
+Stage 1: codec-free Gaussian generation.
+Stage 2: codec-aware latent coding. 3.1 Overview
+Existing 3DGS compressors typically start from explicit Gaussian primitives, which lie in an irregular 3D space and contain heterogeneous attributes.
+In FF3DGS, Gaussian primitives are the outputs of a learned image-to-Gaussian pipeline. Before Gaussian attributes are predicted, the network has organized scene-specific geometry and appearance cues into dense, view-aligned features on regular 2D grids. Since compression seeks compact and structured representations that expose redundancy, we encode this intermediate 2D feature representation rather than the final irregular Gaussian primitives. This gives the codec a compact and regular target that is directly tied to the feed-forward Gaussian generation process.
+Given N N posed context views
+𝒞 = { ( 𝐈 i , K i , T i , n i , f i ) } i = 1 N \mathcal{C}=\{(\mathbf{I}_{i},K_{i},T_{i},n_{i},f_{i})\}_{i=1}^{N} ,
+where 𝐈 i ∈ ℝ H × W × 3 \mathbf{I}_{i}\in\mathbb{R}^{H\times W\times 3} is a context image,
+K i K_{i} and T i T_{i} denote camera intrinsics and extrinsics, and
+n i , f i n_{i},f_{i} are near and far bounds, CodecSplat produces a self-contained scene bitstream ℬ \mathcal{B} .
+The decoder reconstructs from ℬ \mathcal{B} a Gaussian representation 𝒢 ^ \hat{\mathcal{G}} that can be rendered from target cameras.
+The overall pipeline is illustrated in Fig.  1 . The encoder first performs multi-view matching and feature extraction, then compresses the resulting feed-forward feature by latent encoding, including analysis transform, quantization, and entropy coding. The encoded latent features and compressed context-view cameras are packed into a scene bitstream. On the decoder side, CodecSplat entropy-decodes the latent representation, reconstructs the feature with a synthesis transform, and recovers the camera metadata. The decoded feature is then used for depth prediction, feature refinement, Gaussian parameter prediction, and 2D-to-3D mapping.
+Figure 1: Main architecture of CodecSplat.
+3.2 Feed-forward Gaussian-generation representation
+CodecSplat is built on a DepthSplat-style FF3DGS backbone  ( Xu et al., 2025 ) .
+Given posed context views 𝒞 \mathcal{C} , the backbone extracts multi-view features and predicts context-view depth:
+( F mv , D enc , P depth ) = MVEnc ⁡ ( 𝒞 ) , (F_{\mathrm{mv}},D_{\mathrm{enc}},P_{\mathrm{depth}})=\operatorname{MVEnc}(\mathcal{C}),
+(1)
+where F mv F_{\mathrm{mv}} denotes image and cross-view matching features,
+D enc ∈ ℝ N × H × W D_{\mathrm{enc}}\in\mathbb{R}^{N\times H\times W} is the encoder-side depth prediction, and
+P depth P_{\mathrm{depth}} contains depth matching-probability features.
+These cues are converted into a dense Gaussian-generation feature:
+F g = FeatHead ( 𝐈 1 : N , F mv ,
+
+【实验】
+statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer: [No]
+Justification: The paper reports benchmark averages under standard evaluation protocols but does not include repeated runs, confidence intervals, or error bars due to computational cost. The main conclusions are based on consistent rate–distortion trends and large differences in scene size.
+Guidelines:
+•
+The answer [N/A] means that the paper does not include experiments.
+•
+The authors should answer [Yes] if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+•
+The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+•
+The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+•
+The assumptions made should be given (e.g., Normally distributed errors).
+•
+It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+•
+It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis of Normality of errors is not verified.
+•
+For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+•
+If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text. 4.1 Experimental setup
+Datasets.
+Training setup.
+Baselines.
+Bitstream accounting and timing.
+4.2 Main compression results
+4.3 Coding-time analysis
+4.4 Ablation and transfer studies
+Codec-free Gaussian generation.
+Naive tensor compression.
+Pre- and post-codec refinement.
+Transfer to ZPressor. on DL3DV and RealEstate10K show that this design yields KB-level scene bitstreams while preserving controllable rate–distortion behavior.
+Our contributions are summarized as follows:
+•
+We introduce an integrated compression paradigm for feed-forward 3D Gaussian splatting. By placing the coding bottleneck inside the feed-forward image-to-Gaussian pipeline, the proposed formulation directly produces a co
+
+【结论/局限】
+ We presented CodecSplat, an ultra-compact latent coding framework for feed-forward 3D Gaussian splatting. Instead of compressing generated Gaussian primitives, CodecSplat encodes an intermediate Gaussian-generation feature and decodes it into Gaussian primitives, allowing the codec to operate on a compact and regular 2D representation before it is mapped to irregular 3D primitives. and future work.
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2605.25563v2 [cs.CV] 15 Oct 2026
+CodecSplat: Ultra-Compact Latent Coding for Feed-Forward 3D Gaussian Splatting
+Pengpeng Yu
+Affiliation:  Sun Yat-sen University, China
+Affiliation:  Pengcheng Laboratory, China
+Email:  yupp5@mail2.sysu.edu.cn
+Runqing Jiang
+Affiliation:  Sun Yat-sen University, China
+Qi Zhang
+Affiliation:  Pengcheng Laboratory, China
+Affiliation:  Peking University, China
+Dingquan Li
+Affiliation:  Pengcheng Laboratory, China
+Jing Wang
+Yulan Guo
+Affiliation:  Sun Yat-sen University, China and future work.
+CodecSplat prioritizes compactness over peak novel-view synthesis quality, and its PSNR is still limited by the underlying FF3DGS backbone and the current latent-to-Gaussian decoder.
+Since the codec is in

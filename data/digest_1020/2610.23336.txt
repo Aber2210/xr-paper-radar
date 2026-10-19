@@ -1,0 +1,57 @@
+【摘要】
+
+【方法】
+3.1 System Architecture
+3.2 Participants
+3.3 Ethical Considerations
+3.4 Materials
+3.5 Procedure Figure 1: Experiment Overview
+3.1 System Architecture
+The experimental environment was developed in Unity 6 (Editor v6000.2.9f1) and deployed on the Meta Quest 2 headset via Oculus Air Link for high-fidelity PC-VR rendering (Figure  1 ). The virtual character, “Alex” was created using a ReadyPlayerMe avatar. We gave him full-body movements (IK) and idle and speaking animations to make him look and feel more life-like. The setting was a casual cafe, chosen to make the interaction feel like a real-world encounter. In this scenario, Alex was participant’s childhood friend who studies at UC Berkeley but has traveled to Mohali, India to visit the participant. The goal as the participant was to talk to Alex and learn a few specific facts about his life.
+We utilized the Google Gemini 2.5 Flash API for intelligence. User speech was transcribed via Google Cloud STT, processed by the LLM (with regex cleaning to remove markdown/emojis), and synthesized via Google Cloud TTS. Average system round-trip latency was approximately 2.0 seconds ( S ​ D = 0.4 ​ s SD=0.4s ). To enhance realism and enforce reliance on verbal cues, no visual transcriptions of the dialogue were displayed to the user.
+3.2 Participants
+We recruited 18 participants ( M a ​ g ​ e = 21.28 M_{age}=21.28 years, S ​ D = 2.42 SD=2.42 , range: 19–30 years; 9 male, 9 female) following two pilot sessions conducted to refine the experimental procedure. The majority of participants (61.1%, n = 11 n=11 ) had no prior VR experience (first or second time using VR), while 27.8% ( n = 5 n=5 ) had tried VR a handful of times, and 11.1% ( n = 2 n=2 ) used VR occasionally (once every few months). All participants provided informed consent before beginning the study.
+3.3 Ethical Considerations
+This study was conducted in accordance with ethical research principles. All participants provided informed consent via digital waiver forms prior to participation. Participants were informed that their involvement would require wearing a VR headset and interacting with a 3D avatar in a virtual environment, engaging in conversations across multiple experimental conditions, completing questionnaires and surveys, and participating in a brief debriefing session. The total time commitment was approximately 30 minutes in a single session.
+Data collection included automatically tracked data (response times and session logs with timestamps and conversation logs) and self-reported data (demographic information including age, gender, and VR experience level, as well as questionnaire responses regarding perceived latency, immersion, and user experience).
+To protect participant privacy, personal information was kept separate from research data. All data were stored securely on an encrypted, password-protected database with access limited to the research team.
+Participants were informed of potential risks including temporary symptoms suc
+
+【实验】
+4.1 Latency Consistency Verification
+4.2 Agent Animacy and Anthropomorphism
+4.2.1 Animacy
+4.2.2 Anthropomorphism
+4.3 Likeability and Perceived Intelligence
+4.4 Distraction and Perceived Naturalness
+4.5 Perception of Latency Masking
+4.6 Influence of Prior VR Experience We analyzed subjective perceptions of the agent across four feedback conditions using the Godspeed Questionnaire and custom measures. Given the relatively small sample and ordinal data, we employed non-parametric tests (Friedman tests for global effects, Wilcoxon signed-rank tests for pairwise comparisons) alongside standard paired-sample t t -tests for transparency. Pairwise p p -values were Holm-corrected within each dimension ( p a ​ d ​ j p_{adj} ).
+4.1 Latency Consistency Verification
+To verify that network-dependent LLM latency fluctuations did not systematically bias our feedback condition comparisons, we analyzed the actual response times logged for each condition. The mean response latencies were: No Feedback ( M = 1.94 ​ s M=1.94s , S ​ D = 0.58 ​ s SD=0.58s ), Gestures ( M = 1.98 ​ s M=1.98s , S ​ D = 0.62 ​ s SD=0.62s ), Visual ( M = 2.02 ​ s M=2.02s , S ​ D = 0.51 ​ s SD=0.51s ), and Verbal ( M = 1.92 ​ s M=1.92s , S ​ D = 0.60 ​ s SD=0.60s ). A Friedman test showed no significant difference in actual latency across conditions ( χ 2 ​ ( 3 ) = 1.13 \chi^{2}(3)=1.13 , p = 0.769 p=0.769 ), confirming that our randomized session ordering successfully distributed network variance evenly across all feedback types. This allows us to attribute perceptual differences to the feedback mechanisms themselves rather than to systematic latency variations.
+4.2 Agent Animacy and Anthropomorphism
+A Friedman test revealed significant main effects for both animacy ( χ 2 ​ ( 3 ) = 9.44 \chi^{2}(3)=9.44 , p = 0.024 p=0.024 ) and anthropomorphism ( χ 2 ​ ( 3 ) = 9.66 \chi^{2}(3)=9.66 , p = 0.022 p=0.022 ). These dimensions capture whether users perceived the agent as alive and as having human-like qualities—core aspects of social presence.
+4.2.1 Animacy
+Pairwise comparisons showed that embodied gestures ( M = 4.22 M=4.22 , S ​ D = 0.65 SD=0.65 ) significantly enhanced perceived animacy relative to both the visual spinner ( M = 3.39 M=3.39 , S ​ D = 1.04 SD=1.04 ; t ⁡ ( 17 ) = 3.07 t(17)=3.07 , p = 0.007 p=0.007 , p a ​ d ​ j = 0.034 p_{adj}=0.034 ) and verbal fillers ( M = 3.44 M=3.44 , S ​ D = 0.98 SD=0.98 ; t ⁡ ( 17 ) = 3.76 t(17)=3.76 , p = 0.002 p=0.002 , p a ​ d ​ j = 0.009 p_{adj}=0.009 ). The comparison against no feedback ( M = 3.67 M=3.67 , S ​ D = 0.97 SD=0.97 ) trended toward significance 
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.23336v1 [cs.HC] 16 Oct 2026
+Wait for It: A Component-Level Analysis of Latency Feedback Mechanisms for LLM Agents in VR
+Pratham Arora
+Affiliation:  Human Technology Interaction Lab
+Affiliation:  Plaksha University
+Affiliation:  Mohali, Punjab, India
+Email:  pratham.arora@plaksha.edu.in
+Abhinav Lodha
+Affiliation:  Human Technology Interaction Lab
+Affiliation:  Plaksha University
+Affiliation:  Mohali, Punjab, India
+Email:  abhinav.lodha@plaksha.edu.in
+Siddharth Siddharth
+† † thanks: Corresponding author
+Affiliation:  Human Technology Interaction Lab
+Affiliation:  Plaksha University
+Affiliation:  Mohali, Punjab, India
+Email:  siddharth.s@plaksha.edu.in In this paper, we decomposed the black box of multimodal latency feedback to evaluate its individual components’ impact on user immersion in VR. Explicit visual indicators, while functional, distract users and significantly reduce the sense that the agent is human-like. In contrast, subtle, embodied gestures successfully mask latency while enhancing the agent’s perceived animacy.
+As VR agents become ubiquitous in our lives, handling their latency and processing time will be just as critical as ge

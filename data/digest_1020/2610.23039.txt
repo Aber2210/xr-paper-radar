@@ -1,0 +1,96 @@
+【方法】
+4.1 Pose Analysis
+Rotation Analysis via Procrustes Alignment.
+Translation Scale Analysis.
+Robustness of the ratio estimate.
+4.2 Deterministic Integration
+4.3 Coordinate Convention Conversion
+4.4 Frame Consistency
+4.5 Scale Correction 4.1 Pose Analysis
+Rotation Analysis via Procrustes Alignment.
+VGGT and COLMAP predict camera poses in independent world frames, so their extrinsics cannot be compared directly. To isolate per-camera rotation error, we first align the two pose sets with a similarity transform (Sim(3): a shared scale, rotation, and translation) fitted by Procrustes alignment on the camera centers, then measure rotation after this alignment.
+Given VGGT camera-to-world poses { P i V } i = 1 N \{P_{i}^{V}\}_{i=1}^{N} and COLMAP poses { P i C } i = 1 N \{P_{i}^{C}\}_{i=1}^{N} , we solve for the similarity transform ( s , 𝐑 , 𝐭 ) (s,\mathbf{R},\mathbf{t}) that best aligns the VGGT camera centers to COLMAP:
+min ⁡ ∑ i = 1 N s , 𝐑 , 𝐭 ⁡ ‖ s ​ 𝐑𝐜 i V + 𝐭 − 𝐜 i C ‖ 2 , \min_{s,\mathbf{R},\mathbf{t}}\sum_{i=1}^{N}\left\|s\mathbf{R}\mathbf{c}_{i}^{V}+\mathbf{t}-\mathbf{c}_{i}^{C}\right\|^{2},
+(1)
+where scale s ∈ ℝ + s\in\mathbb{R}^{+} , rotation 𝐑 ∈ S ​ O ​ ( 3 ) \mathbf{R}\in SO(3) , translation 𝐭 ∈ ℝ 3 \mathbf{t}\in\mathbb{R}^{3} and 𝐜 i = P i [ : 3 , 3 ] \mathbf{c}_{i}=P_{i}[:3,3] is the i i -th camera center. Eq. ( 1 ) is solved in closed form by the Umeyama
+algorithm  [ 21 ] , which returns the optimal
+( s , 𝐑 , 𝐭 ) (s,\mathbf{R},\mathbf{t}) from the two sets of camera centers. After solving for ( s , 𝐑 , 𝐭 ) (s,\mathbf{R},\mathbf{t}) , we apply the recovered rotation 𝐑 \mathbf{R} to each VGGT camera rotation ( 𝐑 i V \mathbf{R}_{i}^{V} ) to bring it into the COLMAP frame:
+𝐑 ~ i V = 𝐑𝐑 i V , \tilde{\mathbf{R}}_{i}^{V}=\mathbf{R}\mathbf{R}_{i}^{V},
+(2)
+and measure the residual per-camera rotation error as the geodesic distance
+θ i = arccos ⁡ ( tr ⁡ ( 𝐑 ~ i V ⊤ ​ 𝐑 i C ) − 1 2 ) . \theta_{i}=\arccos\left(\frac{\operatorname{tr}\left(\tilde{\mathbf{R}}_{i}^{V\top}\mathbf{R}_{i}^{C}\right)-1}{2}\right).
+(3)
+Here tr ⁡ ( ⋅ ) \operatorname{tr}(\cdot) denotes the matrix trace, 𝐑 ~ i V \tilde{\mathbf{R}}_{i}^{V} denotes the aligned VGGT rotation and 𝐑 i C \mathbf{R}_{i}^{C} is the corresponding COLMAP rotation. Crucially, this alignment is used only for measurement ; it is never part of our reconstruction pipeline, which requires no ground-truth poses.
+Across 100 DL3DV and 7 MipNeRF360 scenes, the residual rotation error is small and consistent (median 1.60 ∘ 1.60^{\circ} and 1.32 ∘ 1.32^{\circ} , respectively; Fig.  2 , left). TokenGS is explicitly designed to be robust to pose noise and multiview inconsistencies  [ 17 ] . Notably, the scale factor s s recovered by the same alignment is large (median 7.0 7.0 on DL3DV), foreshadowing the translation scale mismatch we examine next.
+Translation Scale Analysis.
+The Procrustes scale s s recovered in Eq. ( 1 ) already points to a
+large VGGT–COLMAP translation mismatch. To quantify this discrepancy independe
+
+【实验】
+5.1 Setup
+Datasets.
+Backbone and poses.
+Pose settings.
+Metrics.
+Baseline.
+5.2 Main Results
+Inference cost.
+5.3 Component Ablation
+5.4 Intrinsics
+5.5 Qualitative Results Figure 3 : Qualitative comparison on DL3DV. From left to
+right: naïve integration, with convention conversion added, with
+frame-consistent inference added, our full method (with scale
+correction), the COLMAP-pose reference, and ground truth.
+Insets show a magnified region for closer comparison.
+Naïve integration collapses under the coordinate-frame mismatch;
+each deterministic fix progressively restores structure, and our
+full pipeline produces renderings visually indistinguishable from
+the COLMAP reference, using no ground-truth poses.
+5.1 Setup
+Datasets.
+We evaluate on the DL3DV  [ 12 ]
+benchmark using the standard 4-view protocol, with context frames
+selected by the DepthSplat evaluation indices  [ 28 ] .
+Our main results use 140 benchmark scenes; each scene provides 4
+context views and up to 50 target views for rendering. We evaluate
+end-to-end reconstruction on DL3DV because the TokenGS checkpoint
+is publicly released only for this dataset. For the pose and scale
+analysis (§ 4.1 ), we use a separate set of 100 DL3DV
+scenes drawn from the training split, disjoint from the 140 scenes, and additionally 7 scenes from
+MipNeRF360  [ 1 ] . Our scale constant is calibrated on
+these training scenes and never on the evaluation set. The scale
+offset persists on MipNeRF360, indicating the failure modes are
+not DL3DV-specific.
+Backbone and poses.
+We use the publicly released TokenGS
+4-view checkpoint  [ 17 ] as a frozen reconstruction backbone
+and VGGT-1B  [ 22 ] as a frozen pose estimator. Neither model is
+finetuned. Camera poses are obtained either from COLMAP (upper-bound
+reference) or from VGGT with our integration fixes.
+Pose settings.
+We report two settings, both reconstructing
+the Gaussians from only the four context views. In the all scene
+views setting, VGGT estimates poses from all scene views in a single
+forward pass; this validates the composition against COLMAP under
+matched information. In the sparse setting, following the
+standard pose-free protocol, each target’s pose is obtained from a
+forward pass over the four context views together with that target;
+the target is used only for its pose, and reconstruction remains sparse.
+Metrics.
+We report PSNR, SSIM  [ 25 ] , and
+LPIPS  [ 30 ] on rendered target views, averaged across all scenes,
+and end-to-end inference time on a single RTX 3090 GPU.
+Baseline.
+Our reference is the COLMAP ceiling : since
+DL3DV provides COLMAP poses by default
+
+【结论/局限】
+Why not joint training? We revisited the problem of connecting feed-forward pose estimation to feed-forward 3D reconstruction and showed that the apparent difficulty is not due to pose inaccuracy but to two overlooked, deterministically fixable integration failures: coordinate frame inconsistency and translation scale mismatch. With a convention conversion, all-frame inference, and a simple scale correction—no training, no ground-truth poses, no per-scene optimization—frozen VGGT poses drive a frozen TokenGS backbone to within 0.51 dB of the COLMAP-initialized ceiling at identical inference speed. Our per-camera and cross-dataset analyses establish that rotation error is small and scale offset is systematic, reframing a problem previously attributed to pose quality as one of integration design.
+Why not joint training?
+A natural alternative is to train VGGT and TokenGS jointly, as in
+AnySplat  [ 7 ] and TokenSplat  [ 11 ] . We
+deliberately avoid this: joint training is costly and, most
+importantly, would obscure the diagnosis. By keeping both models
+frozen, we isolate the integration failures and show they are
+fixable without any learning—a finding that transfers to future
+pose esti

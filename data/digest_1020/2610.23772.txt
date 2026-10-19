@@ -1,0 +1,263 @@
+【摘要】
+
+【方法】
+PSNR  ↑ \uparrow
+LPIPS  ↓ \downarrow
+JOD  ↑ \uparrow
+ID  ↑ \uparrow
+Expr  ↑ \uparrow
+AKD  ↓ \downarrow
+ID  ↑ \uparrow
+Expr  ↑ \uparrow
+AKD  ↓ \downarrow
+LAM
+18.95/19.83
+0.408/0.415
+2.00/1.92
+0.295/0.334
+0.670/0.528
+0.103/0.114
+0.314
+0.623
+0.091
+FlexAvatar
+20.55/19.45
+0.327/0.364
+2.28/2.33
+0.624 / 0.645
+0.890 / 0.850
+0.086/0.092
+0.570
+0.700
+0.130
+UIKA
+20.37/20.76
+0.327/0.332
+2.34 / 2.41
+0.532/0.571
+0.865 /0.805
+0.076/0.072
+0.493
+0.775
+0.084
+MMDM
+20.85 /21.02
+0.283 / 0.270
+1.56/1.35
+0.555/ 0.608
+0.853/ 0.840
+0.058 /0.063
+0.522
+0.780
+0.069
+MVP4D
+20.16/ 21.64
+0.282 / 0.273
+1.85/1.64
+0.490/0.531
+0.831/0.828
+0.063/ 0.060
+0.480
+0.755
+0.074
+CAP4D
+20.73 / 21.40
+0.322/0.303
+2.40 / 2.49
+0.562 / 0.608
+0.852/0.826
+0.059 / 0.059
+0.529
+0.770
+0.070
+Ours
+22.43 / 22.56
+0.202 / 0.201
+3.99 / 3.49
+0.699 / 0.719
+0.920 / 0.862
+0.055 / 0.057
+0.623
+0.808 PSNR  ↑ \uparrow
+LPIPS  ↓ \downarrow
+ID  ↑ \uparrow
+Expr  ↑ \uparrow
+JOD  ↑ \uparrow
+AKD  ↓ \downarrow
+LAM
+20.4
+0.050
+0.605
+0.791
+3.0
+0.037
+FlexAvatar
+22.2
+0.043
+0.804
+0.835
+3.3
+0.038
+UIKA
+19.8
+0.053
+0.736
+0.842
+3.0
+0.043
+MMDM
+22.2
+0.040
+0.793
+0.834
+3.3
+0.034
+MVP4D
+22.2
+0.040
+0.749
+0.824
+3.4
+0.031
+Ours
+24.9
+0.024
+0.852
+0.931
+5.0
+0.028
+Table 4: 3DGS distillation ( n = 13 n=13 ): Evaluated against 16 G.T. cameras. PSNR  ↑ \uparrow
+LPIPS  ↓ \downarrow
+ID  ↑ \uparrow
+Expr  ↑ \uparrow
+UIKA
+21.96
+0.244
+0.697
+0.868
+FlexAvatar
+23.28
+0.203
+0.753
+0.941
+MMDM
+23.28
+0.242
+0.722
+0.871
+MVP4D
+21.99
+0.275
+0.687
+0.889
+FaceCam
+18.86
+0.292
+0.731
+0.922
+Ours
+23.69
+0.192
+0.869
+0.968
+Cross-reenactment.  Results appear in Figure   5 and the rightmost
+block of Table   2 . Without a ground-truth target, pixel
+metrics are not applicable. Thus we measure identity similarity to the reference and expression and keypoint distance to the driver as seen from the target camera.
+Reference Driving LAM FlexAvatar UIKA MMDM MVP4D CAP4D Ours Driver (target)
+Figure 5: Cross-reenactment on BecomingLit. The reference identity is driven
+by a different person’s expression and rendered to the target camera; the
+last column shows the driver from that camera.
+Reference GT Ours MMDM MVP4D FaceCam   Reference GT Ours MMDM MVP4D FaceCam
+Figure 6: Multi-view consistency probe: each method’s generation along a novel-view
+ellipse is fit into a static 3DGS and re-rendered at a rig camera (vs. GT).
+Quantitative results in Table   4 .
+Reference Driving MMDM MVP4D FlexAvatar Ours   Reference Driving MMDM MVP4D FlexAvatar Ours
+Figure 7: In-the-wild novel-view reenactment: the camera sweeps a wide arc,
+isolating viewpoint consistency from expression transfer.
+Reference
+Ours
+MVP4D
+FaceCam
+FlexAvatar
+0 ∘ 0^{\circ} 30 ∘ 30^{\circ} 60 ∘ 60^{\circ} 90 ∘ 90^{\circ} 120 ∘ 120^{\circ} 150 ∘ 150^{\circ} 180 ∘ 180^{\circ}
+Reference
+Ours
+MVP4D
+FaceCam
+FlexAvatar
+0 ∘ 0^{\circ} 30 ∘ 30^{\circ} 60 ∘ 60^{\circ} 90 ∘ 90^{\circ} 120 ∘ 120^{\circ} 150 ∘ 150^{\circ} 180 ∘ 180^{\circ}
+Figure 8: 360° novel-view synthesis from a single reference
+image: the camera orbits from the front ( 0 ∘ 0^{\circ} 
+
+【实验】
+ Table 2: Quantitative results (BecomingLit/Multiface per cell). MMDM is
+CAP4D’s diffusion component. Cross-reenactment on BecomingLit only; colours
+rank within each dataset.
+Self-reenactment ( n BecomingLit n_{\text{BecomingLit}} =25 / n Multiface n_{\text{Multiface}} =22)
+Cross-reenact. ( n n =13)  Human perception of faces is highly sensitive to temporal artifacts such
+as flicker, identity drift, and unnatural motion, which single frames
+cannot convey. We therefore strongly encourage viewing the supplementary
+video alongside the figures below.
+Self-reenactment.  VDAs outperform every baseline on every metric of both datasets
+( Table   2 ), as well as on VFHQ-test  ( Xie et al., 2022 )
+( Table   3 , Figure   18 in the appendix),
+an in-the-wild single-view benchmark testing generalization beyond the
+multi-view training distribution. Qualitatively ( Figure   4 ),
+our results retain sharper identity detail and transfer subtle
+expressions and micro-expressions, as well as rare expressions outside
+the FLAME space, which limits the baselines.
+Reference Driving LAM FlexAvatar UIKA MMDM MVP4D CAP4D Ours Ground truth
+Figure 4: Self-reenactment on BecomingLit and Multiface.
+Table 3: Quantitative results on the VFHQ-test  ( Xie et al., 2022 ) dataset. . Training is affordable and accessible, taking 34 hours on a single
+GPU with public multi-view data only. Because the prior is preserved rather
+than distilled into 3D, VDAs render what explicit renderers struggle with
+(shadows, reflections, refractions, hair dynamics, and clothing that
+deforms with motion) and generalize to subjects, effects, and viewpoints
+absent from the training data. We see this as evidence that controllable
+video models are a practical foundation for photorealistic avatars.
+Ethics Statement
+VDAs turn a single photograph into a photo-realistic, controllable video of
+the depicted person. The same capability enables impersonation and
+non-consensual synthetic media. We train and evaluate only on multi-view
+datasets whose participants gave informed consent and which their authors
+released for research use
+(NeRSemble  ( Kirschstein et al., 2023 ) ,
+AVA-256  ( Martinez et al., 2024 ) ,
+BecomingLit  ( Schmidt et al., 2025 ) ,
+Multiface  ( Wuu et al., 2022 ) ) and on the public VFHQ
+benchmark  ( Xie et al., 2022 ) .
+Reproducibility Statement
+We will release our full code, covering data preprocessing, training,
+inference, and evaluation, together with the trained model checkpoints at
+https://github.com/SimonGiebenhain/video-diffusion-avatars . All
+training data (NeRSemble  ( Kirschstein et al., 2023 ) ,
+
+【结论/局限】
+References
+A Evaluation Metrics
+B Evaluation Protocol Details
+DISTRACT.
+Reenactment evaluation.
+3DGS consistency probe.
+C Baseline Details
+Baselines.
+Ablation variants.
+D FactorPortrait Comparison Details
+E Implementation Details
+Data and preprocessing.
+Training and inference.
+F Proxy-Mesh Conditioning Details
+F.1 Pelvis-Anchored Kinematic Fitting
+F.2 Pose-Aware Proxy-Mesh Coloring
+G Disentanglement Module Details
+H Disentanglement Training Details
+H.1 Disentanglement Training We showed that an avatar does not have to be a 3D asset: by making a video
+diffusion model controllable in expression, pose, and camera viewpoint,
+VDAs turn its internet-scale prior into a single-image avatar that is
+multi-view consistent and more faithful than both 3DGS-based and
+diffusion-based avatars. Central to this is expression control through
+learned latent spaces: our recipe works with different expression spaces,
+and those of image encoders capture expressions with higher fidelity than
+3DMMs, but must first be disentangled from camera viewpoint for the best and Future Work and Future Work
+Unlike a 3DGS avatar, which renders in real time once built, VDAs pay
+the cost of VDM inference for every clip (

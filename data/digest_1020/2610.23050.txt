@@ -1,0 +1,83 @@
+【摘要】
+Recent progress in 3D generation has motivated growing interest in compact generative representations of complex 3D scenes. For native 3D Gaussian scenes, however, learning such representations remains challenging due to widely varying primitive counts, nonuniform spatial density, and differences in geometry and appearance even among spatially neighboring primitives.
+In this work, we introduce TriFold , a native 3D Gaussian VAE that encodes Gaussian scenes into a fixed-layout triplane latent and jointly reconstructs their geometry and appearance.
+The key insight is to impose structural regularity on the latent space while preserving the spatial adaptivity of the underlying Gaussians.
+During encoding, we use cell-wise learned queries to aggregate projected Gaussians into multiple slots per cell, reducing the information loss caused by single-feature pooling.
+During decoding, occupancy prediction identifies active regions, where query-based set prediction and candidate selection reconstruct local Gaussian sets with spatially varying primitive counts.
+Building on this representation, we train a latent flow-matching model for conditional scene-level 3DGS generation, enabling point-cloud-conditioned synthesis and single-image-conditioned amodal generation.
+
+【方法】
+3.1 Unified Geometry–Appearance Gaussian Latent Space
+3.2 Triplane Encoder
+3.3 Triplane Decoder
+3.4 Joint Supervision for Gaussian VAE Training
+Occupancy supervision.
+Gaussian decoder supervision.
+Phantom-voxel supervision.
+3.5 Scene Generation over Gaussian Latents Figure 2 : Overview of TriFold. The triplane encoder maps a variable-cardinality Gaussian set to a fixed-layout variational latent, and the triplane decoder reconstructs spatially adaptive local Gaussian sets. The learned latent further supports image-conditioned scene generation with flow matching.
+3.1  Unified Geometry–Appearance Gaussian Latent Space
+3DGS scenes are unordered, variable-cardinality sets
+𝒢 = { g i } i = 1 N \mathcal{G}=\{g_{i}\}_{i=1}^{N} , where
+g i = ( x i , ℓ i , q i , α i , 𝐜 i ) g_{i}=(x_{i},{\ell}_{i},q_{i},\alpha_{i},\mathbf{c}_{i})
+denotes position, log-scale, rotation, opacity, and spherical-harmonic appearance. We learn a Gaussian-to-triplane VAE,
+𝐳 ∼ q ϕ ​ ( 𝐳 ∣ 𝒢 ) , 𝒢 ^ = D ψ ​ ( 𝐳 ) , 𝐳 ∈ ℝ 3 ​ C z × Q × R p × R p . \mathbf{z}\sim q_{\phi}(\mathbf{z}\mid\mathcal{G}),\qquad\widehat{\mathcal{G}}=D_{\psi}(\mathbf{z}),\qquad\mathbf{z}\in\mathbb{R}^{3C_{z}\times Q\times R_{p}\times R_{p}}.
+(1)
+The difficulty is asymmetric: several spatially distinct Gaussians can project
+to one plane cell, while one decoded cell can correspond to zero, one, or many
+Gaussians. Our encoder therefore retains multiple features per projected cell,
+and our decoder predicts a local Gaussian set only where the scene is occupied.
+The fixed latent jointly represents geometry and appearance while the decoded
+set remains spatially adaptive. We use Q = 4 Q=4 , C z = 16 C_{z}=16 , and R p = 256 R_{p}=256 .
+3.2  Triplane Encoder
+We use a modified PTv3 backbone  [ 57 ] , augmented with 3D rotary positional encoding, to extract a context-aware feature 𝐡 i \mathbf{h}_{i} for each Gaussian g i g_{i} .
+For each plane p ∈ { x ​ y , x ​ z , y ​ z } p\in\{xy,xz,yz\} , we project the center of Gaussian onto the plane, assign the projection to grid cell 𝐣 i p \mathbf{j}_{i}^{p} , and concatenate 𝐡 i \mathbf{h}_{i} with its continuous projected coordinates, yielding the plane-conditioned feature 𝐡 ~ i p \widetilde{\mathbf{h}}_{i}^{p} . For any cell 𝐣 {\mathbf{j}} , let
+ℐ 𝐣 p = { i : 𝐣 i p = 𝐣 } \mathcal{I}_{{\mathbf{j}}}^{p}=\{i:{\mathbf{j}}_{i}^{p}={\mathbf{j}}\} denote the indices of Gaussians projected to cell 𝐣 \mathbf{j} . Rather than pooling these features into a single descriptor, a query-based set aggregator produces Q Q feature slots:
+𝐓 𝐣 p = Agg Q ⁡ ( { 𝐡 ~ i p } i ∈ ℐ 𝐣 p ) ∈ ℝ Q × C . \mathbf{T}_{\mathbf{j}}^{p}=\operatorname{Agg}_{Q}\bigl(\{\widetilde{\mathbf{h}}_{i}^{p}\}_{i\in\mathcal{I}_{\mathbf{j}}^{p}}\bigr)\in\mathbb{R}^{Q\times C}.
+(2)
+Within the aggregator, local geometric contextualization captures the relational topology among the projected features, after which Q Q learned queries adaptively extract these features into discrete slots independently on each plane.
+The spatial pr
+
+【实验】
+4.1 Datasets and Evaluation Protocol
+Datasets and View Sampling. demonstrate that TriFold achieves high-fidelity reconstruction and generation from a single image that provides only a partial observation of the scene, validating its effectiveness for native
+3D Gaussian representation learning.
+https://fantasy-amap.github.io/TriFold 4.1  Datasets and Evaluation Protocol
+Datasets and View Sampling.
+We evaluate on InteriorGS  [ 59 ] , which contains large-scale structured indoor 3D Gaussian scenes, and the Aria Synthetic Environments (ASE) 3DGS subset of SceneSplat-49K  [ 60 ] . Since InteriorGS scenes span large spatial regions, we crop them into smaller training samples following the procedure in Appendix  A.1 , yielding over 19,600 crops. Aria scenes are used directly without cropping, yielding approximately 8,600 samples. InteriorGS and Aria scenes are split 9:1 into training and test sets before cropping to avoid scene overlap. To construct single-image-to-amodal-3DGS pairs, we sample candidate conditioning views and use Qwen3-VL-8B  [ 61 ] to filter out uninformative views.
+Figure 4 : Adaptive 3DGS allocation. Visualization of the target scene, VAE reconstruction, and retained Gaussian count per occupied voxel.
+Table 1 : Quantitative comparison with existing 3D Gaussian representation methods. Chamfer Distance (CD) values are multiplied by 10 3 10^{3} . Best results are in bold , second-best are underlined .
+
+【结论/局限】
+References
+A Appendix
+Challenges of Native Scene-level 3DGS Modeling.
+A.1 Data Preparation
+Gaussian Scene Normalization.
+Occupancy Targets Caching.
+A.2 Gaussian VAE Architecture
+Multi-slot Writing and Cross-plane Aggregation.
+Occupancy-guided Support Proposal.
+DETR-style set decoder.
+A.3 Objectness-Aware Set Prediction and OT Matching
+Objectness and Differentiable Selection Supervision.
+Optimal-transport matching.
+Phantom Voxels Regularization.
+A.4 Baseline Implementation and Training
+Geometric evaluation of degenerate predictions.
+A.5 Conditional Latent Flow Matching
+Condition Injection.
+Image-condition preprocessing and coordinate alignment.
+Point-cloud conditioning.
+A.6 Training and Evaluation Details
+Gaussian VAE training.
+Gaussian Generation Training.
+Generation Inference and Evaluation.
+A.7 Additional VAE Reconstruction Results
+A.8 Expanded Ablation Results and Analysis
+Local Matching and Spatial Resolution.
+Slot Capacity and Latent Width.
+Local Gaussian Decoder Capacity.
+A.9 Latent Representation Analysis
+A.10 Additional Conditional Generation Results
+Point-cloud Conditioned Generation.
+Single-image Conditioned Generation. We introduced TriFold , a native scene-level 3D Gaus

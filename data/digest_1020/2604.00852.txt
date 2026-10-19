@@ -1,0 +1,298 @@
+【摘要】
+
+【方法】
+Settings
+Cloudy
+Sunny
+Night
+Avg.
+Succ.
+Sensor
+LC
+Seq1
+Seq2
+Seq3
+Seq4
+Seq5
+Seq6
+Seq7
+Seq8
+Seq9
+Seq10
+Seq11
+Seq12
+Seq13
+Seq14
+Seq15
+Seq16
+Seq17
+ORB-SLAM3 [ 1 ]
+FI
+✓
+0.800
+0.596
+✗
+3.969
+✗
+0.403
+0.293
+0.633
+1.874
+3.503
+0.907
+1.019
+0.868
+4.539
+3.030
+✗
+1.637
+✗
+83%
+VINS-mono [ 2 ]
+FI
+✓
+0.555
+1.085
+1.889
+2.835
+2.816
+0.359
+0.344
+1.153
+3.417
+✗
+✗
+✗
+✗
+✗
+✗
+✗
+10.930
+✗
+59%
+Droid-SLAM * [ 47 ]
+P
+—
+0.243
+0.369
+0.435
+✗
+1.211
+0.423
+0.253
+11.387
+1.046
+0.519
+3.970
+0.675
+0.373
+✗
+✗
+✗
+15.425
+✗
+76%
+OpenVSLAM * [ 15 ]
+O
+✓
+0.370
+0.535
+0.496
+0.703
+0.758
+0.722
+0.449
+0.544
+1.294
+0.478
+0.864
+✗
+0.593
+0.382
+0.755
+0.799
+1.397
+✗
+94%
+360DVO * [ 28 ]
+O
+✗
+0.388
+1.199
+1.119
+1.677
+3.677
+1.259
+0.247
+0.893
+3.927
+1.044
+0.978
+0.696
+0.298
+0.828
+0.984
+2.582
+1.963
+1.398
+100%
+360-VIO [ 18 ]
+OI
+✗
+4.912
+4.282
+3.513
+13.587
+11.867
+1.501
+1.804
+4.343
+9.585
+✗
+✗
+10.675
+✗
+✗
+✗
+✗
+✗
+✗
+59%
+OpenVINS [ 61 ]
+OI
+✗
+1.384
+1.618
+3.012
+9.772
+13.900
+1.300
+0.403
+2.452
+5.171
+2.082
+✗
+10.419
+✗
+19.701
+4.148
+6.613
+6.926
+✗
+88%
+Ours
+OI
+✓
+0.300
+0.265
+0.433
+0.824
+2.204
+0.343
+0.239
+0.438
+1.205
+0.933
+0.690
+0.838
+0.476
+0.500
+0.875
+0.827
+1.170
+0.739
+100%
+•
+Best results and second-best results are highlighted as first and second . ’✗’ indicates failure. ’*’ indicates scale-aligned with ground truth.
+•
+F= Fisheye, P= Pinhole, O= Omnidirectional, I= IMU, LC= LoopClosure. DROID-SLAM uses dense global BA instead of LC.
+TABLE V: Repeated-run statistics for failed cases in Table IV Sequence
+Successful Runs
+ATE RMSE (m)
+ORB-SLAM3  [ 1 ]
+Seq3
+2/5
+4.129 ± 0.122 4.129\pm 0.122
+Seq5
+1/5
+4.383 4.383
+Seq16
+2/5
+1.463 ± 0.283 1.463\pm 0.283
+VINS-Mono  [ 2 ]
+Seq10
+0/5
+–
+Seq11
+0/5
+–
+Seq12
+0/5
+–
+Seq13
+0/5
+–
+Seq14
+1/5
+10.677 10.677
+Seq15
+0/5
+–
+Seq16
+0/5
+–
+DROID-SLAM  [ 47 ]
+Seq4
+0/5
+–
+Seq14
+0/5
+–
+Seq15
+0/5
+–
+Seq16
+0/5
+–
+OpenVSLAM  [ 15 ]
+Seq12
+0/5
+–
+360-VIO  [ 18 ]
+Seq10
+0/5
+–
+Seq11
+0/5
+–
+Seq13
+0/5
+–
+Seq14
+0/5
+–
+Seq15
+0/5
+–
+Seq16
+0/5
+–
+Seq17
+0/5
+–
+OpenVINS  [ 61 ]
+Seq11
+0/5
+–
+Seq13
+0/5
+–
+A TE RMSE is reported as mean ± \pm standard deviation
+over successful runs. For a single successful run, only the RMSE is
+reported; “–” indicates no successful run.
+V Experiments
+Extensive experiments are conducted to demonstrate that: (1) the omnidirectional FoV and the proposed panoramic feature extraction provide stronger feature constraints and improve performance; (2) the proposed panoramic loop closure corrects
+accumulated drift and improves global consistency; and (3) the evaluation of our panoramic VI-SLAM on an embedded platform demonstrates its feasibility for onboard UAV deployment.
+V-A Experiment Setup
+1) Dataset:
+Currently, there are very few publicly accessible and usable real-world panoramic visual-inertial SLAM datasets. We conducted comparative experiments on two real-world visual-inertial SLAM datasets, both of which include panoramic images with IMU measurements: (a) Our panoramic dataset, captured during UAV flight scenarios, consists of a total of 17 sequences under three conditions ( Cloudy, Sunny, and Night ), along with two additional handh

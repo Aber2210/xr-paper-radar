@@ -1,4 +1,58 @@
 {
- "2026-10-16": {},
- "2026-10-9": {}
+ "2026-10-16": {
+  "2610.21292": {
+   "cat": "cs.RO",
+   "title": "MR-MPCC: Model Predictive Contouring Control for Robotic Manipulator Tracking under Moving Reference Frames"
+  }
+ },
+ "2026-10-19": {
+  "2610.23772": {
+   "cat": "cs.CV",
+   "title": "Video Diffusion Avatars: Taming Video Diffusion Models into Controllable 3D Avatars"
+  },
+  "2610.23237": {
+   "cat": "cs.CV",
+   "title": "X-Splat: Unified Gaussian Splatting for Joint RGB and X-ray 3D Reconstruction"
+  },
+  "2610.23050": {
+   "cat": "cs.CV",
+   "title": "TriFold: Folding irregular 3D Gaussians into structured latents for 3D Scene Generation"
+  },
+  "2610.23039": {
+   "cat": "cs.CV",
+   "title": "Frame-Consistent Feed-Forward 3D Gaussian Splatting from Sparse Unposed Images"
+  },
+  "2610.22822": {
+   "cat": "cs.CV",
+   "title": "VISTA: A Multimodal Egocentric Benchmark for Goal-Oriented Perception and Assistance to Blind and Low-Vision Users"
+  },
+  "2610.22681": {
+   "cat": "cs.CV",
+   "title": "EgoP$^{2}$C: Internalizing Plan-Perceive-Compose for Spatial Reasoning in Egocentric Video"
+  },
+  "2610.22505": {
+   "cat": "cs.CV",
+   "title": "KFS$^4$LAM: Adaptive KeyFrame Selection with Structure-Aware Mapping for Endoscopic Gaussian Splatting SLAM"
+  },
+  "2610.23833": {
+   "cat": "cs.HC",
+   "title": "Sensory Comfort Across Multisensory XR Prototypes for Autistic Adults"
+  },
+  "2610.23336": {
+   "cat": "cs.HC",
+   "title": "Wait for It: A Component-Level Analysis of Latency Feedback Mechanisms for LLM Agents in VR"
+  },
+  "2610.23496": {
+   "cat": "cs.RO",
+   "title": "FLoTS-SLAM: Optical Flow-Derived Uncertainty for Monocular Dynamic SLAM with Two-Stage Optimization"
+  },
+  "2610.22932": {
+   "cat": "cs.RO",
+   "title": "Ego2Contact: Predicting Touch from Egocentric Human Video for Contact-Rich Robot Manipulation"
+  },
+  "2610.22552": {
+   "cat": "cs.RO",
+   "title": "RTISSLAM-3D: Full 6-DoF SLAM With an In-Air 3D Imaging Sonar"
+  }
+ }
 }

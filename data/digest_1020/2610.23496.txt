@@ -1,0 +1,137 @@
+【摘要】
+
+【方法】
+III-A System Overview
+III-B Dense Tracking with Per-Pixel Uncertainty
+III-C Motion Uncertainty Estimation
+III-D Two-Stage Optimization with Dynamic-Pixel Re-Anchor Fig. 2: System Overview.
+FLoTS-SLAM takes a sequence of monocular RGB images as input and
+jointly estimates camera poses and scene geometry.
+A pre-trained update operator from DROID-SLAM  [ 27 ] predicts the
+dense correspondence target 𝐩 ∗ \mathbf{p}^{*} and its confidence 𝐖 \mathbf{W} .
+DINOv2  [ 15 ] extracts the features 𝐟 \mathbf{f} , and
+Metric3D  [ 39 ] predicts the depth prior 𝐝 ^ \hat{\mathbf{d}} .
+All three networks remain frozen.
+In the uncertainty branch (Sec.  III-C ), the per-pixel uncertainty
+𝝈 \bm{\sigma} is derived from the residual between the optical flow
+and the camera motion induced flow. The estimated uncertainty varies with the
+frame alignment accuracy.
+In the tracking branch (Sec.  III-D ), the pose is first estimated
+from low uncertainty pixels 𝒮 \mathcal{S} with the depths fixed. The high
+uncertainty pixels 𝒟 \mathcal{D} are then reprojected using the first-stage
+pose before joint refinement. The two branches alternate within each
+Gauss–Newton iteration.
+III-A System Overview
+Fig.  2 illustrates the overall architecture of FLoTS-SLAM.
+Given a monocular RGB sequence, our system estimates camera poses and
+scene depth for robust tracking and dense reconstruction in dynamic
+environments (Sec.  III-B ).
+To identify moving objects from motion rather than from appearance,
+we derive motion uncertainty from the residual between optical flow
+and camera motion induced flow (Sec.  III-C ).
+The estimation varies with frame alignment accuracy to reduce false
+motion detections caused by misalignment.
+For robust tracking, we perform optimization in two stages, both using the
+estimated uncertainty (Sec.  III-D ).
+The first stage estimates poses from low uncertainty pixels with
+depths fixed.
+The second stage jointly refines poses and depths, replacing the
+correspondence targets of high uncertainty pixels with reprojections
+computed using the first-stage poses.
+This reduces the influence of object motion on both pose and depth
+updates.
+III-B Dense Tracking with Per-Pixel Uncertainty
+Differentiable Dense Bundle Adjustment.
+Given an RGB sequence { 𝐈 i } i = 0 N \{\mathbf{I}_{i}\}_{i=0}^{N} with each frame of resolution H × W H\times W , the tracker maintains
+a frame graph ( 𝒱 , ℰ ) (\mathcal{V},\mathcal{E}) , where
+𝒱 ⊆ { 0 , … , N } \mathcal{V}\subseteq\{0,\ldots,N\} denotes the set of keyframe indices and each edge
+( i , j ) ∈ ℰ (i,j)\in\mathcal{E} connects two co-visible keyframes.
+For each keyframe i ∈ 𝒱 i\in\mathcal{V} , the tracker maintains two state variables, a camera pose
+𝐆 i ∈ SE ⁡ ( 3 ) \mathbf{G}_{i}\in\mathrm{SE}(3) and an inverse depth map
+𝐝 i ∈ ℝ ( H / 8 ) × ( W / 8 ) \mathbf{d}_{i}\in\mathbb{R}^{(H/8)\times(W/8)} .
+We denote the sets of these variables by
+𝐆 = { 𝐆 i } i ∈ 𝒱 \mathbf{G}=\{\mathbf{G}_{i}\}_{i\in\mathcal{V}} and
+𝐝 = { 𝐝 i } i ∈ 𝒱 \mathbf{d}=\{\mathbf{d}_
+
+【实验】
+IV-A Evaluation of Dynamic Masks
+IV-B Impact of Dynamic-Mask Accuracy on Downstream Tasks
+IV-C Evaluation of Camera Tracking Performance
+IV-D Ablation Study
+IV-E Runtime Analysis
+V Conclusion
+References
+License: CC BY-SA 4.0
+arXiv:2610.23496v1 [cs.RO] 16 Oct 2026
+FLoTS-SLAM: Optical Flow-Derived Uncertainty for Monocular
+Dynamic SLAM with Two-Stage Optimization
+Haorui Du
+Affiliation:  The authors are with the School of Instrument Science and Opto-electronics Engineering, Beihang University, Beijing 100191, China (e-mail: duhr_buaa@buaa.edu.cn , zhoulipu@buaa.edu.cn ).
+Lipu Zhou
+† † thanks: ∗ Corresponding author. Datasets. We evaluate on three public benchmarks. The Bonn RGB-D
+Dynamic dataset  [ 29 ] and the dynamic sequences of TUM RGB-D  [ 41 ] assess camera
+localization robustness under moving foreground interference. DAVIS  [ 42 ]
+provides pixel-level annotations of moving objects for evaluating the quality of the predicted dynamic masks.
+Baselines. We compare with baselines from four categories:
+(a) semantic-/geometry-based dynamic SLAM: DynaSLAM (N+G)  [ 7 ] ;
+(b) general-purpose deep SLAM: DROID-SLAM  [ 27 ] ;
+(c) dynamic Gaussian-splatting SLAM: DG-SLAM  [ 43 ] , UP-SLAM  [ 14 ] , ADD-SLAM  [ 44 ] ,
+Flow4DGS-SLAM  [ 45 ] , and WildGS-SLAM  [ 13 ] ;
+(d) robust dynamic-scene methods: DynaMoN (MS&SS)  [ 19 ] and DROID-W  [ 12 ] .
+We also include MonST3R  [ 40 ] as a feed-forward baseline.
+Metrics.
+We evaluate the accuracy of dynamic object identification and camera localization,
+as well as processing speed. For localization, we report the Absolute Trajectory Error (ATE RMSE)  [ 41 ] after
+Sim ⁡ ( 3 ) \mathrm{Sim}(3) alignment.
+For efficiency, we report frames per second (FPS).
+We introduce Dynamic Mask IoU (DM-IoU) as the spatial agreement between
+predicted and ground-truth dynamic masks,
+DM ​ - ​ IoU = | ℳ ^ dyn ∩ ℳ dyn gt | | ℳ ^ dyn ∪ ℳ dyn gt | , \mathrm{DM\text{-}IoU}=\frac{|\widehat{\mathcal{M}}_{\mathrm{dyn}}\cap\mathcal{M}_{\mathrm{dyn}}^{\mathrm{gt}}|}{|\widehat{\mathcal{M}}_{\mathrm{dyn}}\cup\mathcal{M}_{\mathrm{dyn}}^{\mathrm{gt}}|},
+(14)
+where ℳ ^ dyn \widehat{\mathcal{M}}_{\mathrm{dyn}} and
+ℳ dyn gt \mathcal{M}_{\mathrm{dyn}}^{\mathrm{gt}} denote predicted and ground-truth
+masks. A high DM-IoU requires both complete coverage and low background
+contamination.
+TABLE I: Quantitative comparison of DM-IoU on DAVIS scene types.
+Type
+Seq.
+MonST3R
+WildGS
+SLAM
+DROID
+W
+Ours
+Ani-
+mals
+camel
+0.23
+0.00
+0.66
+0.74
+cows
+0.04
+0.27
+0.75
+0.84
+koala
+0.13
+0.36
+0.76
+0.59
+mean
+0.13
+0.21
+0.73
+0.72
+Pedes-
+trians
+drone
+0.47
+0.32
+0.36
+0.75
+lucia
+0.78
+0.19
+0.64
+0.

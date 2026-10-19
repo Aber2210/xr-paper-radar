@@ -1,0 +1,152 @@
+【摘要】
+
+【方法】
+III-A System Overview
+III-B Keypoint-Aware Local Descriptor Generation
+III-C Plane-Based Geometrical Transformer Encoder
+III-D Network Training and Loss Functions
+III-E Loop Closure Detection and Registration In this section, we present our proposed framework for geometric feature extraction, enabling both loop closure detection (i.e., place recognition) and registration.
+The framework consists of three components: (i) a keypoint-aware downsampling module that extracts sparse keypoints and descriptors, (ii) a plane-based geometric self-attention module that enhances the descriptiveness of local features, and (iii) a local-descriptor-based loop closure detection and registration module.
+We first provide an overview of the pipeline, followed by detailed descriptions of each component.
+III-A System Overview
+An overview of the proposed pipeline is shown in Fig.   2 .
+It takes dense point clouds as input, either individual point clouds from, e.g., a LiDAR sensor, or keyframes extracted by a keyframe-based SLAM algorithm (e.g., DLIO [ 3 , 20 ] ).
+Point clouds are first voxelized to reduce computational complexity.
+The voxelized point clouds are then passed to a keypoint-aware downsampling module that extracts keypoints and computes multi-resolution features for keypoints and upsampled dense points.
+The self-attention module takes these keypoints and local features as input and applies a plane-based geometric self-attention mechanism to exploit spatial relationships among keypoints.
+In the loop closure detection and registration module, loop-closure candidates are identified by thresholding the mean of the smallest local descriptor distances between scans.
+The initial relative transformation between the candidate frames is estimated by minimizing point-to-point distances between descriptor-based keypoint correspondences and is further refined using GICP [ 19 ] .
+Finally, false loop-closure candidates are rejected by verifying that both the inlier ratios and the relative pose errors—quantified by the Mahalanobis distance produced by GICP—remain within predefined thresholds.
+We now describe each module in our pipeline in more detail.
+III-B Keypoint-Aware Local Descriptor Generation
+Keypoints capture distinctive geometric features of the surrounding 3D structure or scene that are nearly viewpoint-invariant.
+This distinctiveness and invariance make keypoints well-suited for robust loop closure detection.
+A locally consistent keypoint representation reduces variability in the neighborhood used for discriminative local descriptor generation; furthermore, it decreases the Euclidean error during point correspondence estimation, thereby enhancing the robustness of place recognition and accuracy of the relative transformation estimation between point clouds.
+We propose a keypoint-aware local descriptor generation framework that incorporates a keypoint detection module to produce consistent keypoints and local descriptors.
+The network structure is illustrated in t
+
+【实验】
+IV-A Implementation and Training Details
+IV-B Place Recognition
+IV-C Relative Pose Estimation
+IV-D Map Alignment
+IV-E Single-Shot Localization
+IV-F Ablation Studies
+V Conclusion
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2606.28637v2 [cs.RO] 02 Jul 2026
+PinNet: Keypoint-Aware Learned Local Descriptors with
+Geometric Embedding for Loop Closure in LiDAR SLAM
+Yanlong Ma
+Nakul S. Joshi
+Christa S. Robison
+Philip R. Osteen
+Brett T. Lopez
+† † thanks: *This research was sponsored by the DEVCOM Army Research Laboratory (ARL) under SARA CRA W911NF-24-2-0017. Distribution Statement A: Approved for public release; distribution is unlimited. We quantitatively evaluated the proposed method on the public KITTI dataset and compared our approach with handcrafted and learning-based methods to demonstrate the effectiveness of the learned descriptors for both place recognition and registration.
+We qualitatively evaluated loop closure performance through map alignment on datasets collected on the UCLA campus and using custom ground vehicles at the ARL Graces Quarters test facility (see Fig.   1 ).
+Moreover, we showed the versatility of the learned descriptors via the task of single-shot localization in a prebuilt point-cloud map.
+TABLE I : Evaluation of Place Recognition on KITTI Dataset
+Sequence
+KITTI 00
+KITTI 02
+KITTI 05
+KITTI 06
+KITTI 07
+Average
+F1 MAX
+AP
+F1 MAX
+AP
+F1 MAX
+AP
+F1 MAX
+AP
+F1 MAX
+AP
+F1 MAX
+AP
+BTC
+0.9670
+0.9838
+0.6418
+0.5680
+0.8895
+0.9623
+0.9869
+0.9926
+0.9106
+0.9576
+0.8792
+0.8929
+Scan Context
+0.9183
+0.9388
+0.8151
+0.7762
+0.8679
+0.8699
+0.9811
+0.9836
+0.4319
+0.3861
+0.8029
+0.7909
+OverlapTransformer
+0.9309
+0.9715
+0.8229
+0.8267
+0.8553
+0.9211
+0.9544
+0.9818
+0.5022
+0.4922
+0.8131
+0.8387
+LoGG3D-Net
+0.9352
+0.9733
+0.8440
+0.8637
+0.9819
+0.9918
+0.9871
+0.9922
+0.8291
+0.9038
+0.9155
+0.9450
+LCDNet
+0.9693
+0.9936
+0.9186
+0.9599
+0.9503
+0.9778
+0.9945
+0.9939
+0.7757
+0.8204
+0.9217
+0.9491
+PinNet (Ours)
+0.9813
+0.9967
+0.9518
+0.9849
+0.9406
+0.9788
+1.0000
+0.9939
+0.9262
+0.9461
+0.9600
+0.9800
+IV-A Implementation and Training Details
+We trained the model on KITTI sequences 00 00 – 09 09 using a leave-one-out cross-validation strategy.
+Training was conducted on a desktop equipped with an NVIDIA RTX 4090 GPU using the ADAM optimizer with an initial learning rate of 5 × 10 − 5 5\times 10^{-5} , which was decayed by a factor of 0.05 0.05 every 7 steps.
+The local descriptors ℱ \mathcal{F} had a dimension of 256.
+We set s = 256 s=256 when selecting corresponding keypoints and computing pairwise distances to evaluate matching scores and transformations.
+All the point clouds were vox

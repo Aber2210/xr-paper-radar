@@ -1,0 +1,26 @@
+registry: 492
+cs.CV attempt1: days=['2026-10-14', '2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+cs.GR attempt1: days=['2026-10-12', '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+cs.HC attempt1: days=['2026-10-12', '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+cs.MM attempt1: days=['2026-10-12', '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+cs.RO attempt1: days=['2026-10-14', '2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+cs.AI attempt1: days=['2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+eess.IV attempt1: days=['2026-10-12', '2026-10-14', '2026-10-15', '2026-10-16', '2026-10-19'] pages=1 incomplete=[]
+
+=== 完整性校验（只列缺口）===
+  cs.AI 2026-10-16: SHORT 235/286
+  cs.GR 2026-10-16: SHORT 4/11
+  cs.HC 2026-10-16: SHORT 17/19
+  cs.MM 2026-10-16: SHORT 5/6
+  cs.RO 2026-10-16: SHORT 86/102
+  eess.IV 2026-10-16: SHORT 7/10
+  cs.AI 2026-10-19: SHORT 153/174
+  cs.GR 2026-10-19: SHORT 2/4
+  cs.HC 2026-10-19: SHORT 22/24
+  cs.MM 2026-10-19: SHORT 1/4
+  cs.RO 2026-10-19: SHORT 61/68
+  eess.IV 2026-10-19: SHORT 8/17
+2026-10-16: total=519 | missed=501
+2026-10-19: total=373 | missed=373
+TOTAL MISSED: 874
+saved data/missed_listing.json

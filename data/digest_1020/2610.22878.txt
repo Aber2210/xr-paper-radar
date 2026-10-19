@@ -1,0 +1,101 @@
+【摘要】
+1 Background
+1.1 Immersive Analytics
+1.2 VR in a Forestry Data Context
+1.3 Focus+Context
+2 Study 1: Point Cloud Comprehension on Desktop Versus VR
+2.0.1 Task
+2.0.2 Independent Variables
+2.0.3 Dependent Variables
+2.0.4 Hypothesis
+2.0.5 Apparatus
+2.0.6 Procedure
+2.0.7 Participants
+2.1 Study 1 Results
+2.1.1 Correctness and Tree Counting Accuracy
+2.1.2 Cloud Observation Time
+2.1.3 Frame-of-Reference Transformation
+2.1.4 Participant Feedback
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from 4 Study 2: VR F+C Techniques
+4.0.1 Task
+4.0.2 Study 2 Dataset Generation
+4.0.3 Control
+4.0.4 Independent Variables
+4.0.5 Dependent Variables
+4.0.6 Hypothesis
+4.0.7 Apparatus
+4.0.8 Procedure
+4.0.9 Participants
+4.1 Study 2 Results
+4.1.1 Tree Identification and Error
+4.1.2 Participant Movement
+4.1.3 Interaction Technique Usage
+4.2 Participant Feedback Our techniques are implemented in Unity game engine 2021.3.16f1.
+The techniques utilise forestry point clouds in a .las [ 28 ] file containing a high resolution point cloud of the forest plot.
+For the purposes of our study, a LiDAR scan of a production Pinus radiata 1 1
+1
+Data is publicly available from \url https://osf.io/hqc9u. forest in the Green Triangle region of South Australia was capturedthe data from which is shown in Figure Immersive Focus+Context Techniques to Assist in Interpretation of High Density Forest Point Clouds a.
+The context data is processed using FSCT as described in Section 3.2.2 . Once the focus and context point clouds are imported into Unity, Point Cloud Tools [ 31 ] is utilised to convert each cloud into a mesh.
+A custom material shader is then used to selectively filter the mesh.
+The shader takes as input the transformation matrix of the current focus object.
+It then calculates if each vertex within the tree mesh is inside or outside of the focus area, storing this result in the vertex’s UV coordinates system.
+The fragment shader then assesses the values stored in the UVs and discards fragments of the context mesh or focus mesh accordingly.
+This results in the full point cloud being drawn within the focus area, and the synthetic data being drawn outside of it, as illustrated Figure Immersive Focus+Context Techniques to Assist in Interpretation of High Density Forest Point Clouds c.
+A different version of this material exists for each of the selection states of the cloud, allowing subsets (in our case, individual trees) to be drawn in different colours reflecting their state.
+4 Study 2: VR F+C Techniques
+Following our formative study (Section 2 ) and de
+
+【结论/局限】
+of Study 1 Results
+3 Focus+Context Techniques for Point Cloud Forest Assessment
+3.1 Requirements
+3.2 Visualisation Design
+3.2.1 Frame-of-Reference
+3.2.2 Context
+3.2.3 Focus
+3.2.4 Techniques of Study 2 Results
+5 Conclusions
+Acknowledgements
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.22878v1 [cs.HC] 16 Oct 2026
+\onlineid
+0
+\vgtccategory Research
+\vgtcinsertpkg \teaser
+Focus+Context techniques for dense forest point cloud data: \hl (a) An example of a dense forest scan. (b) The AI derived abstract tree model, with a callout depicting a single tree. Perspective views for the (c) lantern and (d) wedgelight techniques. of Study 1 Results
+VR was found to outperform the Desktop in all three performance metrics, supporting hypothesis H1 .
+Participants were more likely to determine the correct answer to tasks, perform faster, and achieve better accuracy in the counting task.
+The depth perception afforded to VR from its stereoscopic view and structure-from-motion outperforms the manual manipulation required by Desktop displays.
+Participants greatly preferred the VR display over the Desktop display, supporting hypothesis H2 .
+VR was the majority choice for every f

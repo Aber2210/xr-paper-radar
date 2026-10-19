@@ -1,0 +1,165 @@
+【摘要】
+
+【方法】
+Machine Hall (MH)
+Vicon Room (V)
+Avg.
+01
+02
+03
+04
+05
+101
+102
+103
+201
+202
+203
+w/ LC
+ORB-SLAM3
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.04 ± 0.01 0.04{\pm}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.07 ± 0.04 0.07{\pm}0.04
+0.06 ± 0.01 0.06{\pm}0.01
+0.09 ± < 0.01 0.09{\pm}{<}0.01
+0.06 ± < 0.01 0.06{\pm}{<}0.01
+0.11 ± 0.05 0.11{\pm}0.05
+0.20 ± 0.05 0.20{\pm}0.05
+0.08 ± 0.05 0.08{\pm}0.05
+–
+–
+DROID-SLAM
+0.01 ± < 0.01 0.01{\pm}{<}0.01
+0.01 ± < 0.01 0.01{\pm}{<}0.01
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.01 ± < 0.01 0.01{\pm}{<}0.01
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.01 ± < 0.01 0.01{\pm}{<}0.01
+0.01 ± < 0.01 0.01{\pm}{<}0.01
+0.02
+MASt3R-SLAM
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.06 ± < 0.01 0.06{\pm}{<}0.01
+0.11 ± < 0.01 0.11{\pm}{<}0.01
+0.07 ± < 0.01 0.07{\pm}{<}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.03 ± < 0.01 0.03{\pm}{<}0.01
+0.02 ± < 0.01 0.02{\pm}{<}0.01
+0.03 ± < 0.01 0.03{\pm}{<}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.04
+ViSTA-SLAM
+2.52 ± 0.02 2.52{\pm}0.02
+1.11 ± 0.05 1.11{\pm}0.05
+1.49 ± < 0.01 1.49{\pm}{<}0.01
+3.97 ± 0.04 3.97{\pm}0.04
+4.06 ± 0.01 4.06{\pm}0.01
+0.90 ± < 0.01 0.90{\pm}{<}0.01
+1.51 ± 0.01 1.51{\pm}0.01
+1.43 ± < 0.01 1.43{\pm}{<}0.01
+1.01 ± < 0.01 1.01{\pm}{<}0.01
+1.65 ± 0.01 1.65{\pm}0.01
+1.86 ± 0.01 1.86{\pm}0.01
+1.96
+VGGT-SLAM(Sim3)
+1.05 ± 0.04 1.05{\pm}0.04
+2.93 ± 0.04 2.93{\pm}0.04
+2.30 ± < 0.01 2.30{\pm}{<}0.01
+3.46 ± 0.01 3.46{\pm}0.01
+3.54 ± < 0.01 3.54{\pm}{<}0.01
+0.68 ± < 0.01 0.68{\pm}{<}0.01
+1.67 ± < 0.01 1.67{\pm}{<}0.01
+0.59 ± < 0.01 0.59{\pm}{<}0.01
+0.53 ± < 0.01 0.53{\pm}{<}0.01
+0.94 ± < 0.01 0.94{\pm}{<}0.01
+1.16 ± < 0.01 1.16{\pm}{<}0.01
+1.71
+VGGT-SLAM(SL4)
+2.63 ± < 0.01 2.63{\pm}{<}0.01
+1.76 ± < 0.01 1.76{\pm}{<}0.01
+2.51 ± 0.16 2.51{\pm}0.16
+6.74 ± 0.14 6.74{\pm}0.14
+3.03 ± 0.12 3.03{\pm}0.12
+0.71 ± 0.13 0.71{\pm}0.13
+–
+–
+0.43 ± 0.01 0.43{\pm}0.01
+–
+–
+–
+VGGT-SLAM2.0
+0.76 ± < 0.01 0.76{\pm}{<}0.01
+0.93 ± < 0.01 0.93{\pm}{<}0.01
+1.63 ± < 0.01 1.63{\pm}{<}0.01
+1.88 ± < 0.01 1.88{\pm}{<}0.01
+2.76 ± < 0.01 2.76{\pm}{<}0.01
+0.57 ± < 0.01 0.57{\pm}{<}0.01
+0.56 ± < 0.01 0.56{\pm}{<}0.01
+0.54 ± < 0.01 0.54{\pm}{<}0.01
+0.40 ± < 0.01 0.40{\pm}{<}0.01
+0.57 ± < 0.01 0.57{\pm}{<}0.01
+0.73 ± < 0.01 0.73{\pm}{<}0.01
+1.03
+w/o LC
+(Odom.)
+DSO
+0.05 ± 0.01 0.05{\pm}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.17 ± 0.02 0.17{\pm}0.02
+0.18 ± 0.01 0.18{\pm}0.01
+0.11 ± 0.01 0.11{\pm}0.01
+0.16 ± 0.08 0.16{\pm}0.08
+0.80 ± 0.72 0.80{\pm}0.72
+0.92 ± 0.22 0.92{\pm}0.22
+0.07 ± 0.01 0.07{\pm}0.01
+0.11 ± 0.03 0.11{\pm}0.03
+–
+–
+ORB-SLAM3
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.03 ± < 0.01 0.03{\pm}{<}0.01
+0.04 ± < 0.01 0.04{\pm}{<}0.01
+0.08 ± 0.02 0.08{\pm}0.02
+0.25 ± 0.05 0.25{\pm}0.05
+0.09 ± < 0.01 0.09{\pm}{<}0.01
+0.10 ± 0.01 0.10{\pm}0.01
+0.48 ± 0.08 0.48{\pm}0.08
+0.27 ± 0.06 0.27{\pm}0.06
+0.07 ± 0.05 0.07{\pm}0.05
+–
+–
+DROID-SLAM
+0.16 ± 0.01 0.16{\pm}0.01
+0.12 ± 0.02 0.12{\pm}0.02
+0.24 ± 0.01 0.24{\
+
+【实验】
+IV-A Experimental Setup
+IV-B Dataset Evaluation
+IV-C Ablation Study
+IV-D Real-time Performance and Efficiency
+V Conclusion
+References
+License: CC BY 4.0
+arXiv:2604.02107v2 [cs.RO] 16 Oct 2026
+HyVGGT-VO: Hybrid Dense Visual Odometry With Classical VO and Feed-Forward Model
+Junxiang Pang
+Lipu Zhou
+Baojie Chen
+Zhenzhong Wei
+† † thanks: Manuscript received: April 1, 2026; Revised: August 14, 2026; Accepted: July 30, 2026. This paper was recommended for publication by Editor Ayoung Kim upon evaluation of the Associate Editor and Reviewers’ comments. This work was supported in part by the Fundamental Research Funds for the Central Universities under Grant
+501GWJH2024117003 and in part by the National Science Foundation
+of China under Grant 52127809. (Corresponding author: Lipu Zhou.) † † thanks: The authors are with the Key Laboratory of Precision
+Opto-Mechatronics Technology, Ministry of Education, Beijing 100191, China, and also with the School of Instrumentation and Optoelectronic Engineering, Beihang University, Beijing 100191, China (e-mail: pangjunxiang@buaa.edu.cn; zhoulipu@buaa.edu.cn;
+chenbaojie@buaa.edu.cn; zhenzhongwei@buaa.edu.cn). † † thanks: Digital Object Identifier (DOI): 10.1109/LRA.2026.3728304 IV-A Experimental Setup
+We evaluate all methods on the same server equipped with an Intel Xeon Gold 6342 CPU and an NVIDIA RTX 4090 GPU with 24GB VRAM to ensure a consistent evaluation. Experiments are conducted on EuRoC MAV  [ 38 ] and TUM RGB-D for indoor scenes, and on KITTI  [ 39 ] for large-scale outdoor scenarios. We report ATE on EuRoC MAV and TUM RGB-D, and the relative pose error metrics on KITTI. For monocular methods, all trajectory-based metrics are computed after 7-DoF Sim(3) alignment with the ground-truth trajectory. All results are reported as mean ± \pm standard deviation over five runs, where “ < 0.01 <0.01 ” denotes standard deviation below the displayed precision in the table. For methods that provide official loop-closure options, we use their official source-code interfaces to enable or disable these modules. In the tables, “w/o LC” denotes odometry-only results, while “w/ LC” denotes results with loop closure when available. We also include a method, VO+DA3 , in Tabs.  I – III to evaluate a simpler design that directly combines the classical VO pose with Depth-Anything 3.
+IV-B Dataset Evaluation
+Indoor Evaluation on EuRoC MAV and TUM RGB-D:
+We evaluate indoor trajectory accuracy on the EuRoC MAV and TUM RGB-D datasets, with the ATE results summarized in Tables  I and  II . TUM RGB-D results are reported in centimeters, while EuRo

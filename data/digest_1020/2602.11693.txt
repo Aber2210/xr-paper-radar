@@ -1,0 +1,185 @@
+【摘要】
+.
+
+【方法】
+Representation
+One-Shot
+360 ∘ 360^{\circ} Full-Head
+Animatable
+Rodin ( Wang et al., 2023 )
+Tri-plane
+✓
+✓
+✗
+PanoHead ( An et al., 2023 )
+Tri-plane
+✗ ∗
+✓
+✗
+SphereHead ( Li et al., 2024 )
+Tri-plane
+✗ ∗
+✓
+✗
+FaceLift ( Han et al., 2024 )
+3DGS
+✓
+✓
+✗
+FATE ( Zhang et al., 2025 )
+3DGS
+✗
+✓
+✓
+GAGAvatar ( Chu and Harada, 2024 )
+3DGS
+✓
+✗
+✓
+LAM ( He et al., 2025 )
+3DGS
+✓
+✗
+✓
+SOAP ( Liao et al., 2025 )
+Mesh
+✓ (Slow Recon. Speed)
+✓
+✓
+Ours
+3DGS
+✓
+✓
+✓
+∗ Denotes methods requiring per-instance GAN inversion prior to reconstruction.
+Figure 2. Pipeline Overview. Given the source and target images, we leverage diffusion models to synthesize multi-view RGB images and corresponding normal maps. These normal maps are used for semantic-aware mesh deformation, while pixel-wise features are extracted from multi-view RGB images. Multi-view features are subsequently aggregated into a canonical UV feature map through the multi-view feature splatting module. The UV features and vertex features extracted from the deformed mesh are decoded and anchored to the mesh via UV mapping. For animation, the expression and pose derived from the target image are injected into the deformed mesh. Finally, the rendered output is enhanced by a neural refiner to generate the final full-head avatar. A schematic pipeline diagram illustrating the full-head avatar generation process. The diagram shows source and target images as inputs, followed by diffusion-based synthesis of multi-view RGB images and normal maps. The normal maps guide mesh deformation, while features extracted from the multi-view images are aggregated into a canonical UV feature map through a feature splatting module. The UV features and mesh vertex features are decoded and mapped onto the deformed mesh. Expression and pose information from the target image are then applied to the mesh for animation, and the final rendered result is refined by a neural refinement module. PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+CSIM ↑ \uparrow
+DS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+CSIM ↑ \uparrow
+DS ↓ \downarrow
+PanoHead
+17.995
+0.5932
+0.2592
+0.4556
+0.1663
+17.151
+0.6098
+0.2706
+0.5742
+0.1082
+SphereHead
+18.932
+0.6238
+0.2436
+0.4714
+0.1509
+17.446
+0.6183
+0.2628
+0.5781
+0.1053
+GAGAvatar
+22.802
+0.7714
+0.1719
+0.4682
+0.1762
+22.556
+0.8027
+0.1505
+0.6867
+0.1033
+SOAP
+21.335
+0.7287
+0.1948
+0.5783
+0.1890
+19.539
+0.7471
+0.1975
+0.6855
+0.1128
+LAM
+21.802
+0.7314
+0.1997
+0.4842
+0.1818
+20.263
+0.7465
+0.1853
+0.6321
+0.1118
+Ours
+23.244
+0.7734
+0.1592
+0.5403
+0.1651
+23.221
+0.8051
+0.1435
+0.6714
+0.0950
+Hierarchical UV Mapping.
+A critical challenge in splatting is the resolution mismatch between screen space and texture space, which often results in sparse coverage and "holes" in the UV map.
+To address this issue, we introduce a hierarchical UV map representation. Instead of splatting features only at the target UV resolution, we splat them onto a pyramid of UV maps with progressively lower resolutions.
+At each pyramid level l l , bilinear splatt
+
+【实验】
+4.1 Experimental Setting
+4.2 Main Results
+4.3 Ablation Studies 4.1. Experimental Setting
+We compare with five recent works: PanoHead ( An et al., 2023 ) , SphereHead  ( Li et al., 2024 ) , GAGAvatar  ( Chu and Harada, 2024 ) , LAM  ( He et al., 2025 ) , and SOAP  ( Liao et al., 2025 ) . PanoHead and SphereHead are state-of-the-art methods for 3D full-head reconstruction using 3D GANs. GAGAvatar and LAM are one-shot animatable avatar reconstruction methods based on 3D Gaussian Splatting. SOAP is a diffusion-based method for reconstructing the full head by remeshing a FLAME mesh. For evaluation metrics, please refer to the Supplementary Material.
+Regarding computational cost, on a single NVIDIA RTX 4090, mesh fitting takes approximately 30 s per input, feed-forward Gaussian decoding takes 468.24 ms once per avatar. FLAME expression driving and rendering take 7.73 ms and 13.60 ms per frame, respectively, resulting in a total animation cost of 21.33 ms per frame (46.88 FPS), with 6.6 GB of GPU memory.
+Figure 6. Qualitative Ablation on the NeRSemble dataset. We compare results for models trained: (1) without multi-view diffusion, (2) without using the semantic-aware Laplacian term, (3) without differentiable bilinear splatting, (4) without hierarchical UV mapping, (5) without visibility-aware fusion. Ablation
+4.2. Main Results
+To evaluate our method’s 3D consistency and novel view synthesis, we leverage two public multi-view datasets: NeRSemble  ( Kirschstein et al., 2023 ) and Avatar-256  ( Martinez et al., 2024 ) . For both datasets, reconstruction is performed from a single input image, while multi-view observations are used only for evaluation; full details of the dataset splits, view selection, and camera settings are provided in the supplementary material. All novel-view synthesis results are evaluated using raw 3D renderings without the 2D neural refiner.
+For animation quality, we conduct expression transfer experiments on VFHQ  ( Xie et al., 2022 ) and evaluate on the held-out HDTF  ( Zhang et al., 2021 ) dataset to assess cross-dataset generalization, comparing against SOAP  ( Liao et al., 2025 ) , the leading 360 ∘ 360^{\circ} animatable baseline.
+Additional comparisons with the frontal-oriented one-shot animatable baselines GAGAvatar ( Chu and Harada, 2024 ) and LAM ( He et al., 2025 ) are provided in the supplementary material, while SOAP is used as the primary baseline here due to its more closely matched 360 ∘ 360^{\circ} full-head setting.
+To further assess generalization, we collect in-the-wild face images for qualitative evaluation.
+Qualitati
+
+【结论/局限】
+and Limitations
+References
+A Training Details
+B Expression Reenactment
+C Experimental Details
+D MORE RECONSTRUCTION RESULTS
+License: arXiv.org perpetual non-exclusive license
+arXiv:2602.11693v2 [cs.GR] 16 Oct 2026
+OMEGA-Avatar: One-shot Modeling of 360 ∘ 360^{\circ} Gaussian Avatars
+Journal:  TOG 2004 CCS:  Computing methodologies Reconstruction CCS:  Computing methodologies Neural networks CCS:  Computing methodologies Animation
+Zehao Xia
+email: 5445687d@gmail.com
+Affiliation:  Chongqing University , China
+,
+Yiqun Wang
+Note:  Corresponding author.
+email: csyqwang@hotmail.com
+Affiliation:  Chongqing University , China
+,
+Zhengda Lu
+email: luzhengda@ucas.ac.cn
+Affiliation:  University of Chinese Academy of Sciences , China
+,
+Kai Liu
+email: liukai0807@gmail.com
+Affiliation:  Chongqing University , China
+,
+Jun Xiao
+email: xiaojun@ucas.ac.cn
+Affiliation:  University of Chinese Academy of Sciences , China
+and
+Peter Wonka
+email: pwonka@gmail.com
+Affiliation:  KAUST , Saudi Arabia
+Figure 1. Given a single portrait image across diverse styles (left), our method performs one-shot reconstruction of a high-fidelity full-head Gaussian avatar (middle). The reconstructed avatars include the back 

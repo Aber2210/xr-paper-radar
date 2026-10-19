@@ -1,0 +1,78 @@
+【摘要】
+
+【方法】
+3.1 Preliminary & Problem Formulation
+3.1.1 Task Instantiation
+3.1.2 Bottleneck & Scaling Source
+Supervised Regime (Bottleneck)
+Weakly-Supervised Regime (Scaling Source)
+3.1.3 Optimization Objective
+3.2 Scaling with Spatio-Temporal Weak Supervision
+3.2.1 Spatiotemporal Sampling from Videos
+3.2.2 Sparse Geometric Anchors
+3.2.3 Dense Differentiable Consistency
+3.3 Regularization against Catastrophic Forgetting Figure 2: Illustration of SAGE. For each video sequence, we sample context frames as model inputs and designate target frames for novel-view supervision, providing photometric constraints to refine the reconstructed 3D point cloud. Furthermore, we incorporate sparse 3D point clouds that provide consistent geometric constraints, complementing the photometric supervision from the target views.
+We address the problem of scaling up a pre-trained geometric foundation model, f θ f_{\theta} , by adapting it to the domain of unlabelled Internet videos. We formulate this as a weakly-supervised optimization problem, where the goal is to leverage intrinsic spatiotemporal consistency to refine the model without requiring ground-truth 3D annotations.
+3.1 Preliminary & Problem Formulation
+We formulate the training of geometric foundation models as a scalable optimization problem, transitioning from a data-scarce supervised regime to a
+data-abundant weakly-supervised regime.
+3.1.1 Task Instantiation
+We focus on unconstrained sparse-view 3D reconstruction .
+Definition 3.1 (pose-free sparse-view 3D reconstruction) .
+Let f θ : ℐ N → 𝒳 f_{\theta}:\mathcal{I}^{N}\to\mathcal{X} denote a geometric foundation model parameterized by θ \theta . Given a set of unposed RGB images I ∈ ℐ N I\in\mathcal{I}^{N} , the model directly predicts a dense 3D representation 𝒳 \mathcal{X} (specifically, pixel-aligned 3D pointmaps) without requiring ground-truth camera poses.
+Our objective is to leverage the abundance of static-scene Internet video to push the generalization limits of f θ f_{\theta} .
+3.1.2 Bottleneck & Scaling Source
+Supervised Regime (Bottleneck)
+Existing models are typically initialized on a supervised dataset 𝒟 s ​ u ​ p = { ( I , Y ) } \mathcal{D}_{sup}=\{(I,Y)\} , where Y Y represents expensive GT 3D annotations (e.g., depth, poses).
+While 𝒟 s ​ u ​ p \mathcal{D}_{sup} offers high-fidelity supervision, it is fundamentally non-scalable due to the prohibitive cost of 3D data acquisition. Consequently, | 𝒟 s ​ u ​ p | |\mathcal{D}_{sup}| remains small, restricting the model’s exposure to a narrow distribution of scenes and limiting its zero-shot generalization capabilities
+to in-the-wild scenarios.
+Weakly-Supervised Regime (Scaling Source)
+To address this bottleneck, we introduce a large collection of static-scene Internet videos, denoted as 𝒟 v ​ i ​ d ​ e ​ o = { V j } \mathcal{D}_{video}=\{V_{j}\} .
+In contrast to 𝒟 s ​ u ​ p \mathcal{D}_{sup} , this dataset is scalable ( | 𝒟 v ​ i ​ d ​ e ​ o | ≫ | 𝒟 s ​ u ​ p | |\mathcal{D}_{video}|\gg|\mathcal{D}_{sup}| ) b
+
+【实验】
+statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer: [No]
+Justification: We did not report error bars or confidence intervals in the paper.
+Guidelines:
+•
+The answer [N/A] means that the paper does not include experiments.
+•
+The authors should answer [Yes] if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+•
+The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+•
+The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+•
+The assumptions made should be given (e.g., Normally distributed errors).
+•
+It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+•
+It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis of Normality of errors is not verified.
+•
+For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+•
+If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text. 4.1 Sparse 3D Reconstruction from Multi Inputs
+4.2 Ablations
+Effect of Hybrid Supervision
+Number of Rendered Views
+Frame Sampling Strategy We use the pretrained MV-DUSt3R  [ 29 ] and VGGT  [ 31 ] as our baseline, originally trained on 3D ground-truth annotated datasets, and we fine-tune them with Internet video data to enhance its 3D reconstruction performance. Video preprocessing is a one-time, cacheable sparse-SfM pass ( ∼ 15 {\sim}15  s per clip; over 13K clips in 5–6 hours on four RTX 4090 GPUs), and adaptation completes in under two days on the same hardware. For more details about dataset, Implementation details and Evaluation metrics, please refer to App.  B.2 .
+Table 1:
+8-view reconstruction results on four benchmarks at 224 × 224 224\times 224 resolution.
+Group (A) includes feed-forward foundation models trained from scratch with full 3D supervision, while Groups (B,C) adapt pretrained 
+
+【结论/局限】
+References
+A Preliminary
+A.1 Common Paradigm of 3D Geometric Foundation Models
+B Experimental Details
+B.1 Video Data Processing Pipeline
+Pipeline statistics at scale.
+B.2 Experimental Setup
+Datasets We introduce SAGE , a framework that unlocks the scalability of geometric foundation models by exploiting the intrinsic consistency of Internet video.
+By formulating adaptation as a regularized weakly-supervised optimization, SAGE balances structural bias (from sparse anchors) and variance reduction (from dense differentiable consistency) to robustly learn from noisy data.
+Our experiments show log-linear scaling laws in geometric performance, reducing zero-shot Chamfer Distance by 20–42% on MV-DUSt3R with consistent gains on VGGT.
+This work establishes a scalable paradigm for evolving general-purpose 3D models using abundant static-scene video, turning the data scarcity bottleneck into a data abundance opportunity.
+Acknowledgments and Disclosure of Funding
+This work was in part supported by National Natural Science Foundation of China (No. 62576315), National Research Foundation, Singapore under its National Research Foundation Fellowship in Artificial Intelligence (NRF Award NRFFIAI1-2

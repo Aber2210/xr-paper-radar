@@ -1,0 +1,236 @@
+【摘要】
+
+【方法】
+Matterport3D (Indoor)
+Stanford2D3D (Indoor)
+Deep360 (Outdoor)
+3D Metrics
+2D Metrics
+3D Metrics
+2D Metrics
+3D Metrics
+2D Metrics listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from Input
+Chamfer ↓ \downarrow
+F-Score ↑ \uparrow
+IoU ↑ \uparrow
+AbsRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1 \delta_{1} ↑ \uparrow
+Chamfer ↓ \downarrow
+F-Score ↑ \uparrow
+IoU ↑ \uparrow
+AbsRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1 \delta_{1} ↑ \uparrow
+Chamfer ↓ \downarrow
+F-Score ↑ \uparrow
+IoU ↑ \uparrow
+AbsRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1 \delta_{1} ↑ \uparrow
+PanDA
+ERP
+0.553
+26.270
+15.710
+0.0888
+0.3325
+0.9209
+0.727
+15.990
+8.850
+0.1648
+0.2364
+0.7326
+2.350
+18.420
+10.810
+0.3319
+10.7668
+0.4498
+DA 2
+0.180
+77.450
+67.700
+0.0667
+0.2882
+0.9561
+0.145
+80.310
+69.360
+0.0723
+0.1400
+0 .9545
+4.036
+3.520
+1.920
+0.1991
+12.3898
+0.8155
+DAP
+0.269
+63.260
+49.930
+0.1186
+0.7510
+0.8518
+0.487
+33.120
+20.600
+0.0921
+0.3820
+0.9135
+2.214
+34.180
+21.850
+0.1213
+7.2308
+0.9159
+PanoVGGT
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+1.537
+69.094
+55.587
+0.1618
+6.1886
+0.7561
+360MonoDepth
+Pinhole
+0.632
+28.050
+16.990
+0.2083
+0.7909
+0.6558
+0.576
+25.230
+14.670
+0.1650
+0.2823
+0.7456
+3.761
+25.450
+15.080
+1.5836
+17.2300
+0.1412
+RPG360
+0.337
+58.810
+44.910
+0.2030
+0.6670
+0.8590
+0.206
+73.910
+61.880
+0.1016
+0.1924
+0.9104
+3.430
+62.990
+48.110
+0.2375
+10.0562
+0.6377
+Ours
+0.153
+82.250
+72.920
+0.0597
+0.2695
+0.9648
+0.127
+85.040
+75.670
+0.06361
+0.1326
+0.9539
+1.202
+80.560
+68.710
+0.1130
+5.5837 details.
+For training, each model is trained using four NVIDIA A800 GPUs for 20 epochs, with each epoch consisting of 1,000 iterations. During evaluation, inference is performed on a single A800 GPU, while monitoring GPU memory usage and runtime performance.
+4.2 Qualitative and Quantitative Evaluation
+Comparative Baselines.
+We compare GeoPano with recent state-of-the-art panoramic approaches. We consider both methods operating directly on the equirectangular projection (ERP) format (PanDA ( Cao et al., 2025b ) , DA 2 ( Li et al., 2025 ) , DAP ( Lin et al., 2025 ) , and PanoVGGT ( Guo et al., 2026 ) ) and those relying on view decomposition into pinhole projections (360MonoDepth ( Rey-Area et al., 202
+
+【实验】
+Setup
+4.2 Qualitative and Quantitative Evaluation
+4.3 Ablation Studies Setup
+Training Datasets.
+For training, we use Holo360D ( Ou et al., 2026 ) , a large-scale real-world panoramic 3D dataset comprising 75 indoor and outdoor scenes. It provides panoramic RGB images with corresponding depth maps, each captured at a resolution of 2880 × 1440. We train our model using 23,000 panoramic frames.   Datasets and Evaluation Metrics.
+For evaluation, following prior work ( Lin et al., 2025 ) , we test our model on three 360 ∘ depth datasets: Matterport3D ( Chang et al., 2017 ) (indoor) and Stanford2D3D ( Armeni et al., 2017 ) (indoor), and Deep360 ( Li et al., 2022a ) (outdoor).
+To comprehensively assess model performance, we evaluate both point cloud using 3D metrics ( Jung et al., 2025 ) such as Chamfer Distance, F-Score, and Intersection over Union (IoU), and depth using standard 2D metrics including Absolute Relative Error (AbsRel), Root Mean Squared Error (RMSE), and the accuracy under a threshold δ i \delta_{i} with i i =1.25. .
+As reported in Tab.  1 , GeoPano establishes a new state-of-the-art, demonstrating superior performance across all 3D and 2D metrics. Additionally, as illustrated in Fig.  5 and Fig.  6 , our approach significantly mitigates spherical distortions and preserves geometric consistency, yielding high-fidelity 3D structures across diverse indoor and outdoor environments.
+As shown in the first two rows of Fig.  5 , GeoPano achieves accurate geometric reconstructions even in challenging outdoor long-range scenes.
+Figure 5: Qualitative comparison in outdoor scenarios. We compare GeoPano against DA 2 , DAP, and RPG360. As illustrated, our model produces more precise 3D geometry and significantly mitigates structural distortions in long-range regions.
+Figure 6: Qualitative comparison in indoor scenes. Compared to DA 2 , DAP, and RPG360, our method achieves superior global structural coherence and recovers fine-grained local geometries.
+4.3 Ablation Studies
+Main Ablation.
+To evaluate the contribution of each proposed component of GeoPano, we conduct a ablation study conducted on Matterport3D, summarized in Tab.  2 . We start from a panoramic
+fine-tuing version of π 3 \pi^{3} on our training data as the baseline and add: (1) dropping early global attention, Pano-Attention, and (3) hybrid loss. All introduced modules effectively improve reconstruction accuracy; notably, Pano-Attention intrinsically maintains spatial consistency across the decomposed views, with qualitative comparisons shown in Fig.  7 .
+Table 2: Ablation study of the proposed co
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.21297v1 [cs.CV] 15 Oct 2026
+GeoPano: Towards Geometrically Accurate 3D Reconstruction from a Single Panorama
+Jing OU
+Zidong Cao
+Liaoyuan Fan
+Affiliation:  The Hong Kong University, Hong Kong * Equal contribution † Corresponding author
+Zhuoxiao Li
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou), China
+Shuai Zhang
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou), China
+Yinrui Ren
+Affiliation:  Sun Yat-sen University, Guangzhou, China
+Dongli Wu
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou), China
+Haoang Li
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou), China
+Hui Xiong
+Wufan Zhao We proposed GeoPano, a feed-forward framework for single-view panoramic 3D reconstruction, featuring a Panoramic-Aware Attention Aggregator that leverages spherical geometry to improve cross-view consistency. A hybrid supervision strategy combines local and global point cloud losses, ensuring fine-grained details and holistic structural coherence. Experiments show that GeoPano outperforms prior single-view panoramic methods in accuracy, consistency, and
