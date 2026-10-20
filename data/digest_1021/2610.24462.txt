@@ -1,0 +1,153 @@
+【摘要】
+
+【方法】
+LF
+PA
+MV
+mIoU
+F1
+FPS
+O-SCD (offline)  [ 10 ]
+✓
+✓
+✓
+0.556
+0.700
+–
+ChangeSim (CS)  [ 11 ]
+–
+–
+–
+0.018
+0.034
+11.5
+CS+CYWS2D  [ 4 ]
+–
+–
+–
+0.243
+0.360
+8.2
+CS+GeSCF  [ 23 ]
+✓
+–
+–
+0.181
+0.270
+< < 1
+FastGeSCF  [ 43 ]
+–
+–
+–
+0.122
+0.198
+1.43
+SplatPose  [ 32 ]
+✓
+✓
+–
+0.173
+0.281
+< < 1
+SplatPose+  [ 45 ]
+✓
+✓
+–
+0.237
+0.358
+< < 1
+O-SCD  [ 10 ]
+✓
+✓
+✓
+0.489
+0.643
+11.8
+O-SCD++
+✓
+✓
+✓
+0.575
+0.715
+25.6
+Table   I compares O-SCD++ with online SCD methods on PASLCD  [ 5 ] . O-SCD++ achieves the highest mIoU and F1 of all methods and the highest throughput, more than twice that of any existing approach . Fig.   4 shows a qualitative comparison. mIoU
+F1
+mIoU
+F1
+ChangeSim (CS)  [ 11 ]
+0.010
+0.019
+0.130
+0.212
+CS+CYWS2D  [ 4 ]
+0.372
+0.519
+0.271
+0.408
+CS+GeSCF  [ 23 ]
+0.520
+0.630
+0.348
+0.484
+FastGeSCF  [ 43 ]
+0.183
+0.252
+0.315
+0.458
+SplatPose  [ 32 ]
+0.224
+0.320
+0.061
+0.108
+SplatPose+  [ 45 ]
+0.556
+0.700
+0.115
+0.186
+O-SCD  [ 10 ]
+0.657
+0.773
+0.404
+0.535
+O-SCD++
+0.703
+0.807
+0.474
+0.605
+The same ordering holds on CL-Splats and ChangeSim ( Table   II ), although the margin over methods without multi-view fusion narrows. Each CL-Splats scene contains a single, well-defined object change in a scene of small extent, close to the setting that pairwise detectors and pose-agnostic AD methods are designed for: CS+GeSCF reaches 0.520 0.520 mIoU and SplatPose+ 0.556 0.556 , against at most 0.243 0.243 on PASLCD. On ChangeSim, the revisit closely follows the reference trajectory, so the retrieved reference frame is nearly aligned with the inference image and the near-identical-viewpoint assumption of pairwise methods largely holds. Nevertheless, O-SCD and O-SCD++ surpass all baselines on both datasets, and O-SCD++ achieves the highest mIoU and F1 on CL-Splats and ChangeSim. On ChangeSim, the absolute accuracy of both methods is limited by the pose front end rather than the change stage. XFeat  [ 55 ] , designed for real images, matches less reliably on the synthetic imagery, and some inference images fail to register. Each unregistered image receives an empty mask that scores zero IoU, which lowers the overall accuracy. Appendix  C shows that a small modification to the pose front end, lifting the reference keypoints with depth rendered from the reference map instead of triangulating them, registers every image and raises O-SCD++ to 0.558 0.558 mIoU while preserving its margin over O-SCD.
+V-B Ablations
+TABLE III: Ablations of O-SCD++ on PASLCD  [ 5 ] . Each block varies one component while the others are fixed. The oracle selects, per frame, the threshold that maximizes IoU against the ground truth and serves as an upper bound.
+Variant
+mIoU
+F1
+Current-view prediction ( Sec.   IV-E )
+Cue only (no fusion)
+0.454
+0.595
+Map only
+0.526
+0.676
+Map and cue (ours)
+0.575
+0.715
+Aggregation weight ( Sec.   IV-D )
+Unbounded mass, ρ g , t = m g , t \rho_{g,t}=m_{g,t}
+0.562
+0.701
+Bounded weight, Eq.   13 (ours)
+0.575
+0.715
+Decision rule ( Sec.   IV-F )
+Fixed cutoff 0.5 0.5   [ 10 ]
+0.522
+0.671
+Otsu  [ 66 ]
+0.313
+0.422
+Exact scan (ours)
+0.575
+0.715
+Oracle, per frame (not label-free)
+0.640
+0.770
+Current-view prediction. Table   III shows that neither term of Eq.   17 suffices alone. Deciding from the c

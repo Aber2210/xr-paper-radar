@@ -1,0 +1,169 @@
+【摘要】
+
+【方法】
+Avg.
+Obj.
+Cnt.
+Abs.
+Dist.
+Obj.
+Size
+Room
+Size
+Rel.
+Dist.
+GPT-o3
+Video input
+Video
+53.2
+53.1
+40.6
+70.0
+51.4
+50.9
+Ground-truth perception
+Serialized Graph
+89.3
+91.1
+73.3
+98.5
+91.1
+92.7
+GraFT (Ours)
+95.2
+89.9
+97.5
+99.5
+91.1
+98.2
+Realistic perception
+Serialized Graph
+56.5
+49.3
+45.5
+69.9
+72.3
+45.5
+GraFT (Ours)
+58.0
+49.5
+43.2
+66.5
+83.4
+47.3
+Qwen2.5-VL-7B
+Video input
+Video
+36.8
+33.2
+15.5
+51.6
+43.4
+40.0
+Ground-truth perception
+Serialized Graph
+55.4
+80.0
+29.7
+59.2
+88.3
+20.0
+GraFT (Ours)
+92.3
+85.3
+96.5
+97.8
+91.1
+90.9
+Realistic perception
+Serialized Graph
+39.3
+45.0
+17.9
+46.9
+72.3
+14.5
+GraFT (Ours)
+56.0
+44.6
+41.5
+67.5
+83.4
+43.2
+Table 1: The five metric subtasks of VSI-Bench under three
+input forms (raw Video , direct reasoning over the 3DSG serialized as text ( Serialized Graph ), and our symbolic tools ( GraFT )), each evaluated with a ground-truth and a realistic-perception 3DSG. Within each perception block the higher Avg. of Serialized Graph vs. GraFT is in bold .
+Perception. We evaluate under three perception settings. (i) Video input : the backbone receives the raw video alone, without a 3DSG. (ii) Ground-truth perception : the 3DSG is constructed from the ground-truth object annotations of ScanNet  ( Dai et al. 2017a ) , ScanNet++  ( Yeshwanth et al. 2023 ) , and ARKitScenes  ( Baruch et al. 2021 ) . (iii) Realistic perception : the 3DSG is instead built by an offline perception pipeline; following prior work  ( Dai et al. 2017b ; Zhu et al. 2025 ; Huang et al. 2024 ) , we reconstruct the scene and detect objects with Mask3D  ( Schult et al. 2023 ) and UniDet3D  ( Kolodiazhnyi et al. 2025 ) . Further construction details are provided in Appendix  A .
+4.2 Symbolic Tools for Metric Estimation
+Table  1 asks in what form geometry should reach the backbone:
+serialized as text for the model to compute over ( Serialized Graph ), or
+computed outside and passed as values ( GraFT ). Both are
+compared against the Video input on the five VSI-Bench subtasks whose
+answers follow from scene geometry, under both perception settings and on two
+backbones.
+Both Serialized Graph and GraFT improve over the Video input ,
+showing that the 3DSG helps in either form; we then isolate the contrast between
+the two. First, GraFT is the more accurate on
+every setting: on GPT-o3 it improves over Serialized Graph by + 5.9 +5.9 points
+under ground-truth perception and + 1.5 +1.5 under realistic perception ,
+and on Qwen2.5-VL-7B the gains are larger, + 36.9 +36.9 and + 16.7 +16.7 ; deterministic
+functions ( GraFT ) thus outperform in-context arithmetic ( Serialized
+Graph ). Second, GraFT makes accuracy far less dependent on the backbone:
+under Serialized Graph the weaker Qwen2.5-VL-7B trails GPT-o3 by 33.9 33.9
+points on ground-truth perception and 17.2 17.2 on realistic perception ,
+but under GraFT it comes within 2.9 2.9 and 2.0 2.0 . By computing the answer
+over the 3DSG, GraFT lets a weaker backbone nearly match a stronger one.
+4.3 BEV Rendering for Egocentric-to-Allocentric Reasoning
+Table  2 evaluates the BEV module, whose single
+task-conditioned rendering turns an egocentric video into one allocentric view
+for reasoning. We test this on two directional VSI-Bench subtasks, r
+
+【实验】
+4.1 Experimental Setup
+4.2 Symbolic Tools for Metric Estimation
+4.3 BEV Rendering for Egocentric-to-Allocentric Reasoning
+4.4 Egocentric Frame Retrieval on ScanQA
+4.5 GraFT versus Prior Work This section evaluates GraFT on VSI-Bench and ScanQA.
+Section  4.1 describes the experimental settings. We then isolate each capability under a fixed backbone: the symbolic
+tools on the metric subtasks of VSI-Bench (Section  4.2 ), the
+BEV rendering on its directional subtasks (Section  4.3 ), and the
+egocentric retrieval on ScanQA (Section  4.4 ). Finally, Section  4.5 compares the composed system with prior work, on the VSI-Bench subsets that Struct2D  ( Zhu et al. 2025 ) reports and on the complete benchmark.
+4.1 Experimental Setup
+Benchmarks. We use VSI-Bench  ( Yang et al. 2025 ) and ScanQA  ( Azuma et al. 2022 ) . The per-module
+studies use VSI-Bench’s five metric subtasks for the symbolic tools, the two
+directional subtasks of the 422-question subset Struct2D reports
+on  ( Zhu et al. 2025 ) for the BEV, and ScanQA for the egocentric module; the
+composed system is evaluated on the complete VSI-Bench. Following the official protocols, VSI-Bench numerical tasks are scored by mean relative accuracy and multiple-choice tasks by exact-match accuracy. ScanQA answers are open-ended text, scored by four standard caption metrics, BLEU, METEOR, ROUGE, and CIDEr, which all measure word and phrase overlap with the reference answers (higher is better).
+Backbones. GraFT is run on frozen, off-the-shelf backbones with no task-specific training: a frontier closed model (GPT-o3) and an open-weight MLLM (Qwen2.5-VL-7B  ( Bai et al. 2025 ) ) in the per-module studies (Tables  1 – 4 ), joined by Qwen2.5-VL-3B and InternVL2-8B  ( Chen et al. 2024b ) on the complete VSI-Bench (Table  5 ).
+
+【结论/局限】
+References
+A Implementation Details
+A.1 3DSG Construction
+A.2 Router
+A.3 Symbolic Tools
+A.4 BEV for Relative Direction
+A.5 BEV for Route Planning
+A.6 Egocentric Frame Retrieval
+Appearance order on VSI-Bench.
+B Additional Experiments
+B.1 Comparison with Struct2D
+B.2 Single-Module Ablation
+B.3 Egocentric Frame Budget
+B.4 Upper Bound with Ground-Truth Perception
+License: CC BY 4.0
+arXiv:2609.03892v2 [cs.CV] 16 Oct 2026
+GraFT: A Training-Free Framework for Spatial Reasoning in Multimodal Large Language Models via 3D Scene Graphs
+Junqing Du
+Fernando Ropero
+Erkin Turkoz
+Yanfeng Zhang
+† † thanks: Corresponding author: zhangyanfeng8@huawei.com
+Lu Liu We introduced GraFT, a training-free framework that gives a frozen MLLM 3D
+spatial reasoning by operating over a single 3DSG. From this 3DSG, GraFT
+derives three forms in which the scene’s 3D structure reaches the backbone,
+each supplying the evidence its task demands. Per-module studies validate each
+capability on its target tasks, and GraFT lifts three open-source backbones by
+37% to 65% on VSI-Bench, reaching 51.4 and surpassing
+several models fine-tuned for spatial reasoning; even a 3B backbone overtakes
+the strongest 72B baseline.
+A froze

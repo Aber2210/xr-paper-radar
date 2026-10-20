@@ -1,0 +1,215 @@
+【摘要】
+
+【方法】
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Vanilla 3DGS
+27.58
+0.65
+0.20
+25.24
+0.75
+0.29
+22.70
+0.59
+0.17
+18.18
+0.48
+0.16
+23.68
+0.74
+0.18
+23.47
+0.59
+0.25
+30.63
+0.77
+0.22
+28.03
+0.86
+0.16
+CoCoGaussian
+27.31
+0.64
+0.19
+24.57
+0.71
+0.30
+18.72
+0.39
+0.20
+17.97
+0.48
+0.15
+20.02
+0.62
+0.19
+18.60
+0.51
+0.30
+29.51
+0.75
+0.22
+27.01
+0.83
+0.15
+Deblurring 3DGS
+26.32
+0.62
+0.21
+23.30
+0.66
+0.29
+18.83
+0.41
+0.21
+17.53
+0.46
+0.17
+22.78
+0.74
+0.18
+19.25
+0.51
+0.29
+29.93
+0.77
+0.22
+24.64
+0.79
+0.17
+BAGS
+29.48
+0.70
+0.17
+27.21
+0.79
+0.26
+22.78
+0.59
+0.16
+19.77
+0.56
+0.14
+26.59
+0.79
+0.16
+26.29
+0.68
+0.20
+32.70
+0.80
+0.19
+30.64
+0.89
+0.14
+Ours
+33.49
+0.96
+0.06
+37.45
+0.98
+0.02
+36.06
+0.97
+0.04
+39.53
+0.99
+0.01
+32.17
+0.95
+0.06
+41.68
+0.99
+0.01
+45.39
+0.99
+0.01
+45.13
+1.00
+0.01
+Table 1: Quantitative comparisons across all samples in the synthetic dataset. Top three per metric are colored red, orange, and yellow respectively.
+III-E Reconstruction
+Our reconstruction consists of COLMAP and 3DGS processes, both adjusted for better accuracy.
+III-E 1 Bundle Adjustment
+We use COLMAP  [ 26 , 27 ] to refine the camera intrinsics and extrinsics, and to generate a sparse point cloud for initializing the 3DGS optimization.
+First, SIFT  [ 19 ] features are extracted and exhaustively matched across all views.
+COLMAP’s incremental mapper is then seeded with our initial camera intrinsics and the robot’s reported end-effector poses.
+We let COLMAP refine these further, accounting for errors in intrinsics, as well as small, unmodeled pose offsets from the custom microscope mount.
+III-E 2 3D Gaussian Splatting
+We use the gsplat library’s  [ 34 ] implementation of 3DGS  [ 15 ] .
+To suppress floater artifacts while preserving fine structural details, we adjust the default densification hyperparameters, increasing the opacity pruning threshold to τ α = 0.10 \tau_{\alpha}=0.10 and the 2D gradient growth threshold to τ ∇ = 4 × 10 − 4 \tau_{\nabla}=4\times 10^{-4} .
+Additionally, we introduce a background alpha regularization term that
+penalizes rendered opacity in pixels outside the generated sample masks:
+ℒ bg = 1 | ℬ | ​ ∑ ( u , v ) ∈ ℬ α ^ u ​ v , \mathcal{L}_{\mathrm{bg}}=\frac{1}{|\mathcal{B}|}\sum_{(u,v)\,\in\,\mathcal{B}}\hat{\alpha}_{uv},
+(10)
+where ℬ \mathcal{B} represents the set of background pixels defined by our segmentation masks, and α ^ u ​ v \hat{\alpha}_{uv} is the rendered alpha value at pixel location ( u , v ) (u,v) . This background drives the opacity of background Gaussians toward zero, ensuring most floaters are removed during the pruning phase. We set the background loss scaling factor λ b ​ g = 0.2 \lambda_{bg}=0.2 .
+Combined with the standard 3DGS photometric objective, the complete loss minimized during training is:
+ℒ = ( 1 − λ ssim ) ​ ℒ 1 + λ ssim ​ ℒ SSIM + λ bg ​ ℒ bg , \mathcal{L}=(1-\lambda_{\mathrm{ssim}})\,\mathcal{L}_{1}+\lam
+
+【实验】
+IV-A Runtime
+IV-B 3DGS Training Parameters
+IV-C Datasets
+IV-C 1 Real-World Dataset
+IV-C 2 Synthetic Dataset
+IV-D Ablation Study
+IV-D 1 Object-Centering Experiment
+IV-D 2 SfM Initialization Priors
+IV-E Comparisons
+IV-F Real-World Results
+V Conclusion
+References
+License: CC BY 4.0
+arXiv:2610.23899v1 [cs.RO] 28 Sep 2026
+MicroSplat: Towards Automating 3D Small-Scale Reconstruction
+Roman Mineyev †
+Robert Azarcon †
+Suvrat Jain
+Chuizheng Kong
+Shreyas Kousik
+† † thanks: † Equal contribution. † † thanks: All authors are with the Georgia Institute of Technology. Corresponding author: Roman Mineyev, rmineyev3@gatech.edu . Fig. 6: Qualitative comparison on a pinecone from our synthetic dataset.
+Fig. 7: Qualitative real-world reconstruction results.
+We now experimentally validate the MicroSplat pipeline. First, we ablate the object-centering step to see how well it can localize and keep an object centered during data collection. Second, we test various SfM initialization methods to see which version produces the best results.
+We also benchmark against vanilla 3DGS [ 15 ] (trained on images that neither focus-stacked or masked) and three state-of-the-art deblurring approaches in 3DGS: BAGS [ 23 ] , CoCoGaussian [ 18 ] , and Deblurring 3DGS [ 17 ] .
+IV-A Runtime
+On average, the full MicroSplat pipeline takes 134 minutes per object on a single NVIDIA L40S: 2 minutes for object-centering, 39 minutes for data collection, 33 minutes for pre-processing (focus-stacking and masking), and 60 minutes for the reconstruction (COLMAP and 3DGS).
+IV-B 3DGS Training Parameters
+We follow the original 3DGS  [ 15 ] training configuration,
+optimizing for 30,000 iterations from the COLMAP sparse point cloud with
+input images downsampled by a factor of 4 from the microscope’s
+1920 × 1080 1920\times 1080 resolution, and use identical settings for both the real and
+synthetic datasets.
+We deviate from the defaults in two places, both chosen to help with suppressing floater
+artifacts: the opacity pruning threshold τ α \tau_{\alpha} is doubled from 0.05 0.05
+to 0.10 0.10 , and the 2D
+gradient growth threshold τ ∇ \tau_{\nabla} also doubled from 2 × 10 − 4 2\times 10^{-4} to
+4 × 10 − 4 4\times 10^{-4} .
+IV-C Datasets
+IV-C 1 Real-World Dataset
+To qualitatively evaluate the system, we selected eight samples (almond, circuit, blueberry, bolt, rock, pinecone, hydrangea, and seashell) spanning surface appearance (matte to slightly specular), brightness, geometric complexity, texture frequency, and depth extent.
+Each sample’s maximum width is 15- 27   mm 27\text{\,}\mathrm{mm} .
+IV-C 2 Synthetic Dataset
+We quantitatively evaluate focus stacking in simulation because no reliable ground truth exists for the real captures: every real image is degraded by the shallow DoF the pipeline is designed to co

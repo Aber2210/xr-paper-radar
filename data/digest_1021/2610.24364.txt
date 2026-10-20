@@ -1,0 +1,51 @@
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【结论/局限】
+References
+A VLM Prompting Framework
+A.1 Task 1: Candidate-Event Validation
+A.2 Task 2: ROI/Keypoint Localization
+A.3 Qwen3.5-35B-A3B Inference Resource Profile
+Context window.
+Memory and request payload.
+Latency.
+B Recall-Oriented Candidate Detection Algorithm
+C Statistical Analysis and Detector Operating Characteristics
+Behavioral comparisons.
+D Exploratory EEG Analysis of PVA Events
+Synchronization and preprocessing.
+Epoch quality control.
+ERP analysis.
+Single-trial and spectral analyses. We presented GazeAgent, a VLM-guided implicit gaze-calibration pipeline that derives pseudo-targets from naturally occurring PVA events in egocentric AI glasses. GazeAgent combines behavioral sensing with a fine-tuned VLM to detect PVA events and localize functional-target ROIs. In a 10-participant scripted protocol with 820 predefined PVA opportunities, candidate detection achieved 100% recall and VLM validation achieved 95.9% recall and 92.3% precision; implicit calibration achieved 2.84 ∘ 2.84^{\circ} median error under device disturbance, 44.1% lower than explicit calibration. In a five-participant case study, autonomous calibration reduced workload and interruption, and all participants pr

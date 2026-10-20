@@ -1,0 +1,51 @@
+【摘要】
+
+【方法】
+III-A Framework Overview and Problem Formulation
+III-B Neural Skinning Fields Autoencoder
+III-C Physics-Informed Self-Supervised Learning
+III-D Skinning-Based Real-Time Animation
+III-E Rig-Complementary Animation
+III-F Discretization-Agnostic Animation Binding III-A Framework Overview and Problem Formulation
+PhysSkin++ is a generalizable physics-informed framework for real-time physics-based animation across diverse 3D shapes and discretizations. As illustrated in Fig.  2 , our neural skinning fields autoencoder predicts continuous skinning fields from static geometry to define a deformation subspace mapping. The autoencoder is trained through Physics-Informed Self-Supervised Learning (PISSL) under physical and numerical constraints. At runtime, we advance reduced coordinates to animate objects with boundary conditions, interactive control, and contact. Beyond purely physics-driven animation, PhysSkin++ also supports rig-complementary animation by learning complementary deformation subspaces for prescribed rigs. Moreover, the continuous deformation map supports binding to mesh vertices, sampled points, and 3D Gaussians.
+Fig. 2: Given a static 3D shape, we first sample volumetric cubature points for animation and surface points for shape encoding. A shape encoder processes the surface points to produce shape latents, from which a set of learnable queries extract handle latents via cross-attention. Subsequently, spatial queries attend to the handle latents through another cross-attention block to derive point-wise features, which are decoded into neural skinning fields. A geometry-only, physics-informed learning strategy optimizes the network in a self-supervised manner under physical and orthogonality constraints, enabling the learned skinning fields to support real-time, physics-based animation.
+Classical full-space physics-based animation methods  [ 51 , 38 , 27 , 61 , 31 , 63 ] typically use explicit or implicit time integrators to update the object’s motion state. Explicit time integrators are often constrained by stability conditions  [ 33 ] , while implicit time integrators require solving a large nonlinear optimization problem in the high-dimensional full space. PhysSkin++ instead represents the deformation using continuous neural skinning fields and advances only the corresponding reduced-order subspace coordinates through implicit time integration. This lower-dimensional optimization reduces computational cost  [ 6 ] , enabling real-time physics-based animation.
+Continuous Skinning-Based Deformation Representation.
+To model full-space 3D object deformations within a reduced-order subspace, in the spirit of Linear Blend Skinning (LBS)  [ 43 ] , we represent the deformation map 𝒙 = ϕ ⁡ ( 𝐗 , 𝐳 ⁡ ( t ) ) \bm{x}=\phi(\mathbf{X},\mathbf{z}(t)) using a weighted sum of m m affine displacement transformations:
+ϕ ⁡ ( 𝐗 , 𝐳 ) = 𝐗 + ∑ i = 1 m 𝑾 i ​ ( 𝐗 ) ​ 𝐙 i ​ [ 𝐗 1 ] . \phi(\mathbf{X},\mathbf{z})=\mathbf{X}+\sum_{i=1}^{m}\bm{W}_{\!i}(\mathbf{X})\mathbf{Z}_{i}\begin{bmatrix}\mathbf{X}\\
+1\end{bmatrix}.
+(1)
+Here, 𝐗 ∈ ℝ 3 \mathbf{X}\in\mathbb{R}^{3} is a point in undeformed space and 𝒙 ∈ ℝ 3 \bm{x}\in\mathbb{R}^{3} is its deformed position, m m 
+
+【实验】
+IV-A Implementation Details
+IV-B Evaluation of Learned Skinning Fields
+IV-C Ablation Studies
+IV-D Diverse Real-Time Physics-Based Animation
+V Conclusion
+References
+License: CC BY 4.0
+arXiv:2610.26067v1 [cs.CV] 19 Oct 2026
+PhysSkin++: Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning
+Yuanhang Lei
+Baofei Liu
+Xingxuan Li
+Tao Cheng
+Zixuan Wang
+Boming Zhao
+Yujun Shen
+Siyuan Huang
+Ruizhen Hu
+Peter Yichen Chen
+Hujun Bao
+and Zhaopeng Cui
+† † thanks: $†$ Corresponding author. † † thanks: Yuanhang Lei, Baofei Liu, Xingxuan Li, Tao Cheng, Zixuan Wang, Boming Zhao, Hujun Bao, and Zhaopeng Cui are with the State Key Laboratory of CAD&CG, Zhejiang University. † † thanks: Yujun Shen is with Ant Group, Hangzhou 310000, China. † † thanks: Siyuan Huang is with the Beijing Institute for General Artificial Intelligence (BIGAI). † † thanks: Ruizhen Hu is with Shenzhen University. † † thanks: Peter Yichen Chen is with the University of British Columbia. on various datasets evaluate the learned skinning fields and demonstrate real-time physics-based animation across diverse shapes, controls, interactions, and spatial discretizations. Our contributions are:
+•
+We present PhysSkin++ , a generalizable physics-informed framework for real-time physics-based animation across diverse 3D shapes and discretizations by learning neural skinning fields directly from static geometries. Its Neural Skinning Fields Autoencoder employs a transformer-based shape encoder and a cross-attention decoder to predict continuous skinning fields.
+•
+We develop a Physics-Informed Self-Supervised Learning (PISSL) strategy that incorporates on-the-fly skinning-field normalization and conflict-aware gradient correction, enabling stable joint optimization of multiple self-supervised loss terms.
+•
+We develop a controllable and collision-aware reduced dynamics formulation that supports Dirichlet boundary conditions, interactive control, environmental interaction, and multi-object contact, together with discretization-agnostic binding of the continuous deformation map to meshes, point clouds, and 3D Gaussian representations.
+•
+We support rig-complementary animation by extending the self-supervised objective with a rig-space complementarity term defined by the rig Jacobian. This enables physics-based complementary elastic responses under interactive rig control and user-authored animation sequences without enforcing the rig-space complementarity constraint at runtime.
+A preliminary version of this work has been published as PhysSkin  [ 30 ] . The present article extends the conference version in four aspects. First, we develop a reduced dynamics formulation for controllable and collision-aware animation, supporting prescribed boundary displacements, interactive control, en

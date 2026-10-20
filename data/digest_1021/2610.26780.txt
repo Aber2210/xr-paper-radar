@@ -1,0 +1,340 @@
+【摘要】
+
+【方法】
+3.1 Problem formulation As illustrated in Figure  2 , V-JEPA Hand reads a raw video clip and
+emits, in a single forward pass, the complete bilateral hand trajectory of that
+clip together with the camera motion and focal lengths.
+The model has two components: a self-supervised video encoder that turns the
+clip into a spatio-temporal token grid (Section  3.2 ), and a
+query-based trajectory predictor that decodes one output token per frame into
+the per-frame state defined below. Section  3.3 describes
+our single-stage training with multi-source supervision, combining large-scale
+pseudo-labelled video with high-quality data under a shared
+training objective.
+Figure 2: Overview of V-JEPA Hand. A V-JEPA 2.1 encoder extracts
+spatio-temporal features from an egocentric video clip. A ViT predictor jointly
+processes these features, one learnable hand-pose query per frame, and an
+intrinsics token. The output queries predict bilateral MANO pose, hand
+presence probability, and camera motion. The entire clip is
+reconstructed in a single forward pass; blue and orange meshes denote the reconstructed
+left and right hands, respectively.
+3.1 Problem formulation
+The input is a clip of T T RGB frames 𝐕 = ( 𝐈 1 , … , 𝐈 T ) \mathbf{V}=(\mathbf{I}_{1},\dots,\mathbf{I}_{T}) , 𝐈 t ∈ ℝ 3 × H × W \mathbf{I}_{t}\in\mathbb{R}^{3\times H\times W} , recorded by a
+freely moving egocentric camera. Here t ∈ { 1 , … , T } t\in\{1,\dots,T\} indexes frames,
+and H H and W W are the image height and width in pixels, respectively.
+We write 𝒞 t \mathcal{C}_{t} for the camera
+coordinate frame of frame t t and index the two hands by
+s ∈ { L , R } s\in\{\mathrm{L},\mathrm{R}\} , where L \mathrm{L} and R \mathrm{R} denote the
+camera wearer’s left and right hand. Hats denote model predictions. Acc ↑ \uparrow
+Rec ↑ \uparrow
+F1 ↑ \uparrow
+MP-p ↓ \downarrow
+MP ↓ \downarrow
+PA-p ↓ \downarrow
+PA ↓ \downarrow
+EP-p ↓ \downarrow
+EP ↓ \downarrow
+GO-p ↓ \downarrow
+GO ↓ \downarrow
+CT-p ↓ \downarrow
+CT ↓ \downarrow
+Jit ↓ \downarrow
+ARCTIC
+WiLoR
+0.909
+0.949
+0.971
+21.11
+15.52
+12.74
+6.70
+65.56
+28.84
+17.68
+11.74
+0.077
+0.050
+25.97
+HaMeR
+0.873
+0.943
+0.958
+30.78
+25.10
+16.02
+9.44
+64.85
+28.45
+25.14
+18.67
+0.093
+0.063
+14.78
+WildHands
+0.874
+0.944
+0.958
+27.07
+21.29
+15.99
+9.55
+65.44
+29.58
+22.54
+16.05
+0.070
+0.039
+12.28
+HaWoR
+0.853
+0.953
+0.945
+31.52
+26.94
+14.48
+9.07
+44.32
+16.24
+24.38
+18.82
+0.076
+0.050
+19.37
+ViDiHand
+0.997
+0.999
+0.999
+21.67
+-
+9.82
+-
+12.41
+-
+14.64
+-
+0.047
+-
+3.18
+Ours
+0.996
+0.998
+0.999
+15.59
+15.36
+6.84
+6.59
+8.99
+8.85
+12.46
+12.18
+0.032
+0.031
+6.09
+HOT3D
+WiLoR
+0.810
+0.879
+0.922
+39.38
+26.09
+23.10
+7.57
+79.90
+22.11
+32.51
+16.49
+0.103
+0.048
+17.19
+HaMeR
+0.719
+0.880
+0.886
+67.09
+57.96
+25.09
+10.26
+70.66
+15.40
+50.01
+36.35
+0.106
+0.055
+21.09
+WildHands
+0.425
+0.600
+0.609
+80.23
+42.99
+61.89
+12.40
+275.39
+37.14
+84.35
+38.82
+0.250
+0.076
+25.30
+HaWoR
+0.733
+0.895
+0.875
+28.79
+16.71
+20.68
+7.64
+66.60
+8.16
+25.01
+10.50
+0.086
+0.039
+13.41
+ViDiHand
+0.948
+0.974
+0.983
+21.51
+-
+11.38
+-
+14.95
+-
+15.83
+-
+0.040
+-
+3.74
+Ours
+0.971
+0.979
+0.980
+14.42
+12.04
+8.24
+5.72
+16.81
+5.71
+9.90
+6.52
+0.026
+0.014
+5.74
+EgoStandard
+WiLoR
+0.949
+0.971
+0.982
+35.19
+32.16
+11.11
+7.35
+37.09
+12.74
+25.88
+22.13
+0.089
+0.080
+15.53
+HaMeR
+0.986
+0.992
+0.994
+37.37
+36.60
+8.27
+7.26
+
+【实验】
+4.1 Experimental setup
+Datasets.
+Metrics.
+4.2 Comparison with prior work
+From occlusion and blur to unseen scenes.
+World-frame reconstruction through unified prediction.
+4.3 Ablation studies
+Effect of pseudo-labelled training data.
+Loss ablation.
+Pretraining and temporal context.
+Encoder ablation. We evaluate V-JEPA Hand on egocentric two-hand reconstruction. We first describe
+the datasets and evaluation protocol (Section  4.1 ), then compare
+with prior work (Section  4.2 ). Our ablations test the training
+data, the loss terms, encoder pretraining and temporal context, and encoder choice
+(Section  4.3 ). We also report model size and inference cost
+(Section  4.4 ), and show qualitative results
+(Section  4.5 ).
+4.1 Experimental setup
+Datasets.
+We evaluate on three egocentric hand benchmarks:
+ARCTIC tests reconstruction under severe
+occlusion during two-hand object manipulation, while
+HOT3D tests robustness to motion blur
+from rapid head and hand movements. We additionally evaluate on
+EgoStandard , a commercially annotated egocentric dataset spanning
+diverse scenes. Its 3D motion annotations are produced by a pipeline that
+combines hardware-assisted capture with multi-stage optimization. We exclude
+EgoStandard entirely from training and use it to assess generalization to
+unseen egocentric data.
+The EgoStandard evaluation covers approximately 60 60 minutes of video.
+For HOT3D, we follow the HaWoR validation split, covering approximately
+49 49 minutes of video.
+Table  2 uses the same evaluation splits,
+with all world methods rescored on their common true-positive support.
+Metrics.
+Metrics follow the coverage-aware evaluation by showing where methods miss hands or produce visibly misaligned
+meshes.
+Figure  4 extends the comparison to challenging in-the-wild
+videos, including very low light, outdoor pruning, painting, and household
+activities. In the low-light scenes in the first and sixth rows of
+Figure  4 , V-JEPA Hand reconstructs a hand that all three baselines
+miss. In the outdoor pruning scene (second row), V-JEPA Hand reconstructs both
+hands against a background of dense foliage. The painting scene (fourth
+row) and the sink scene (eighth row) show hand reconstructions during
+object manipulation in cluttered indoor environments.
+Across these settings, V-JEPA Hand recovers plausible
+hand configurations despite substantial changes in lighting, appearance,
+and scene layout. These examples provide qualitative evidence of
+generalization beyond laboratory settings.
+Appendix B Encoder Feature Visualization
+Figure  5 visualizes encoder features after
+end-to-end training for hand and camera trajectory recovery.
+V-JEPA 2.1 learns dense representations that capture fine-grained spatial
+structure as well as global visual information  ( Mur-Labadia et al., 2026 )
+
+【结论/局限】
+References
+A Additional qualitative comparisons
+B Encoder Feature Visualization
+C Hyperparameters
+D Training objective details
+Hand parameters.
+Forward kinematics.
+Reprojection.
+Temporal smoothness.
+Hand presence.
+Camera motion.
+Intrinsics loss.
+Loss weights.
+E Evaluation protocols and baseline setup
+Baseline implementations.
+Hand evaluation.
+World-coordinate comparison.
+World-coordinate metrics.
+Training-data comparison.
+HOT3D evaluation split.
+F Evaluation metrics and table conventions
+Coverage-aware and true-positive-only evaluation.
+Table notation and units.
+G Ablation implementation details
+G.1 Training setup
+G.2 World-coordinate evaluation
+G.3 Encoder configurations
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26780v1 [cs.CV] 19 Oct 2026
+V-JEPA Hand: Simple, Accurate and Fast 3D Hand and Camera Trajectory Recovery from Egocentric Videos
+Ruicheng Li  Qixiu Li  Yu Deng  Sicheng Xu  Jiaolong Yang  Baining Guo
+Affiliation:  Tsinghua University
+Affiliation:  Microsoft Research We presented V-JEPA Hand, a simple model that jointly reconstructs bilateral
+hand motion, camera motion and intrinsics from egocentric video in one forward
+pass, without hand detection, SLAM

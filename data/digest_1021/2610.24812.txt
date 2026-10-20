@@ -1,0 +1,83 @@
+【摘要】
+.
+
+【方法】
+Terminology
+3.1 State-aware Gaussian Splat
+Test-time rendering
+3.2 Differentiable slot table
+Train-time rendering
+3.3 Initialization
+3.4 Optimization
+3.5 Training objective
+Sparsity loss
+Compactness loss SwitchSplat learns a state-aware 3D representation from casual captures by decomposing the scene into controllable, state-conditioned components.
+In the following subsections, we detail our methodology by first formulating our state-conditioned Gaussian primitives and describing their integration within volume rendering ( Sec.   3.1 ).
+We then introduce the parameterization of the differentiable slot-table ( Sec.   3.2 ), followed by our slot initialization procedure ( Sec.   3.3 ).
+Finally, we describe our training pipeline and objectives that facilitate granular, state-controlled visualization during inference ( Secs.   3.4 and  3.5 ).
+Terminology
+A slot corresponds to one interactable object and holds two 3D representations for its binary states: “off” (e.g., door closed) and “on” (e.g., door open).
+A slot activation is a per-frame binary variable indicating which state is currently observed.
+All parts of the scene that remain constant throughout the capture are handled by the static base , which is shared across all configurations.
+3.1. State-aware Gaussian Splat
+Each 3D Gaussian primitive in our model is defined by its standard geometric and appearance attributes: mean μ \mu , covariance Σ \Sigma , opacity α \alpha , and view-dependent appearance  𝐜 \mathbf{c} .
+To make our representation state-aware, we augment every Gaussian with a learnable categorical state distribution 𝐩 = softmax ⁡ ( ℓ ) \mathbf{p}=\operatorname{softmax}(\ell) over 1 + 2 ​ K 1+2K channels, where K K is the total number of object slots.
+These channels comprise a single static base channel ℓ ⁡ [ 0 ] \ell[0] , together with a pair of off ( ℓ ⁡ [ 2 ​ k − 1 ] \ell[2k{-}1] ) and on ( ℓ ⁡ [ 2 ​ k ] \ell[2k] ) channels for each slot k ∈ { 1 , … , K } k\in\{1,\dots,K\} .
+The two channels per slot — rather than one — let the softmax assign each Gaussian to a single configuration, so that disjoint subsets of primitives can independently model the geometry and appearance of an object in each of its two states (see  Figure   3 ).
+This separation is essential because the on/off configurations of an object generally differ not just in appearance, but also in spatial extent — a closed door and an open door, for instance, occupy different parts of the scene — which a single shared primitive simply cannot represent.
+Figure 3.
+State-aware Gaussian – (left) Each Gaussian carries a learnable logit vector  ℓ \boldsymbol{\ell} that defines a categorical distribution  𝐩 \mathbf{p} that softly assigns each primitive to the static base or “on”/“off” object states. (right)  At render time, user specifies list of states that are active
+or inactive
+, and the probability of each gaussian being present in the scene  ω ⁡ ( 𝐩 ~ ) \omega(\tilde{\mathbf{p}}) is computed via Eq. ( 1 ).
+An image of an open refrigerator is decomposed into three soft Gaussian-assignment layers representing the static base, the refrigerator's off state, and its on state. State-dependent binary weights of one, zero, and o
+
+【实验】
+4.1 Baselines
+4.2 Quantitative Results
+4.3 Qualitative Results
+4.4 Golden set comparisons
+4.5 Ablation study
+Slot representation
+Slot optimization
+Compactness regularization
+Sparsity regularization To validate the effectiveness of our proposed algorithm in the absence of an existing dataset with variable object interactions, we collected a custom dataset using a consumer-grade Insta360 X4 dual-fisheye 360 ∘ 360^{\circ} camera.
+This hardware choice reflects the typical setup of casual users.
+During capture, we emulated non-expert behaviors, moving through the scene and interacting with objects—transitioning them from resting to active states and back.
+Our dataset comprises 12 12 scenes organized into two groups.
+The standard set contains 10 10 casually captured scenes ( 8 8 indoor and 2 2 outdoor), each featuring 3 3 – 9 9 object interactions.
+The golden set contains 2 2 additional scenes for which we acquire controlled test sequences with novel camera trajectories and object-state combinations.
+We preprocess the raw dual-fisheye data following FullCircle  ( Foroutan et al., 2026 ) to mask the capturer.
+The calibration is performed in COLMAP using the masked fisheye frames, and then the fisheye images are undistorted into standard pinhole images.
+For evaluation, we adhere to standard NeRF procedures, holding out every 8th frame as a test set.
+Crucially , we exclude test samples that coincide with state transitions (i.e., frames where an object is actively being moved) to reduce noise in our metrics, though these transition frames are retained within the training set to measure whether models can learn robustly from casual capture data.
+For the golden set sequences, we additionally evaluate novel camera frames, which show state configurations observed during training from new camera trajectories, and novel state-combination frames, which contain object-state configurations not observed during training.
+This set is used to demonstrate our method’s ability to generalize beyond the training configurations, and provide true state-aware control.
+4.1. Baselines
+We evaluate our proposed method against several state-of-the-art scene representation baselines.
+For static modeling, we compare against FullCircle   ( Foroutan et al., 2026 ) , utilizing its underlying 3DGUT   ( Wu et al., 2025a ) architecture as our primary reference.
+To assess performance in dynamic contexts, we benchmark our framework against 4DGS   ( Yang et al., 2024b ) and DeGauss   ( Wang et al., 2025a ) .
+For all quantitative and qualitative assessments, we utilize every 8th frame of the captured sequences as our standard evaluation set.
+4.2. Quantitative Results
+In Table   1 , we present the quantitative performance of our method relative to both static and dynamic baselines on the undistort
+
+【结论/局限】
+ We presented SwitchSplat, a 3D Gaussian Splatting framework that learns state-aware scene representations directly from casual video captures.
+By decomposing the scene into a shared static base and a set of independently controllable slots, each modeling the binary “on”/“off” states of one interactable object, SwitchSplat decouples scene state from time – enabling a capability that time-conditioned dynamic methods fundamentally cannot provide: free composition of object configurations at inference, including combinations never observed during capture.
+The slot table is initialized via a VLM and jointly refined end-to-end through differentiable rendering, requiring no manual annotation. and future work
+Acknowledgements
+References
+A Supplementary Material
+A.1 Dataset Capture and Preprocessing
+A.2 Benchmark Construction and Evaluation Splits
+Dynamic-baseline evaluation.
+A.3 Additional Training Details
+A.4 Full Quantitative Evaluation
+A.5 VLM Performance
+Prompt and output format.
+A.6 Ablations on Slot Initialization
+Number of slots.
+Slot endpoints.
+A.7 Effect of Dynamic Moving Backgrounds
+A.8 Comparison with Articulation baselines
+License: CC BY 4.0
+arXiv:2610.24812v1 [cs.CV] 17 Oct 2

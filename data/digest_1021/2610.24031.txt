@@ -1,0 +1,51 @@
+【摘要】
+.
+
+【方法】
+3.1 Overview
+3.2 Conditional Feature Generation and Fusion
+3.3 Dyadic-Conditioned Flow Estimator and Context Injection
+Condition Vector Formulation and Projection.
+Spatiotemporal Trajectory Modeling.
+3.4 Impulse-Trend Synergistic Attention (ITSA)
+Trend Feature Gating (“What moves”):
+Impulse Temporal Gating (“When it moves”):
+Learnable Soft-Mixture with MHA:
+3.5 Contrastive Flow Matching Objective Figure 2. Architecture of SynerGest : (a) RVQ-based guide key-frame generation, (b) the ITSA-equipped dyadic flow estimator, and (c) audio–lip and audio–pose condition fusion. A detailed three-panel architecture diagram of the SynerGest framework featuring dyadic-conditioned flow matching.
+3.1. Overview
+We propose SynerGest , a high-fidelity co-speech gesture generator built on Contrastive Flow Matching (CFM), designed to model the interaction within a dyadic conversation. The generator synthesizes motion 𝐱 ∈ ℝ T × D \mathbf{x}\in\mathbb{R}^{T\times D} for the target avatar (acting as the listener in our joint-modeling scenario), where T T denotes the sequence length and D D represents the modality-specific spatial dimension. We first extract raw audio waveforms from both the target listener ( 𝐚 l ​ s ​ n \mathbf{a}_{lsn} ) and the conversational partner ( 𝐚 s ​ p ​ k \mathbf{a}_{spk} ). These are denoted as 𝐀 = ( 𝐚 l ​ s ​ n , 𝐚 s ​ p ​ k ) \mathbf{A}=(\mathbf{a}_{lsn},\mathbf{a}_{spk}) and jointly condition generation. A shared, pretrained wav2vec 2.0 backbone combined with mel-spectrogram features processes the two channels independently. To accommodate distinct kinetic properties, the flow estimator separates body and facial-expression pathways (“PoseOnly” and “FaceOnly” in Fig.  2 ). Rather than using a stochastic diffusion chain, we learn a step-size-conditioned velocity field v θ ​ ( 𝐱 t , t , d , 𝐜 ) v_{\theta}(\mathbf{x}_{t},t,d,\mathbf{c}) , where t t is the absolute flow time and d d is the requested integration step size. The field transports samples from a Gaussian prior p 0 ​ ( 𝐱 ) = 𝒩 ​ ( 0 , I ) p_{0}(\mathbf{x})=\mathcal{N}(0,I) to the empirical distribution p 1 ​ ( 𝐱 ) p_{1}(\mathbf{x}) . For fixed initial noise and audio, integrating from t = 0 t=0 to 1 1 gives a deterministic ODE trajectory; drawing a fresh initial sample yields a different plausible gesture for the same audio.
+3.2. Conditional Feature Generation and Fusion
+As illustrated in our overall architecture, the conditional pipeline follows a structured progression from raw unimodal extraction to multimodal interactive alignment. First, the raw audio waveforms of the target listener ( 𝐚 l ​ s ​ n \mathbf{a}_{lsn} ) and the speaker ( 𝐚 s ​ p ​ k \mathbf{a}_{spk} ) are independently routed through the frozen AudioRhythm Encoder . These embeddings are concatenated to jointly encode the dyadic conversational context, forming the base acoustic feature 𝐅 a \mathbf{F}_{a} . Crucially, to accommodate their distinct kinetic properties, our framework adopts a decoupled extraction strategy for body pose and facial expressions. For body dynamics, a Guide Transformer  ( Ng and others, 2024 ) autoregressively predicts discrete RVQ tokens from the audio stream, which are decoded to prov
+
+【实验】
+4.1 Experimental Settings
+4.2 Quantitative Results
+4.3 Qualitative Results
+4.4 Ablation Studies 4.1. Experimental Settings
+Datasets. We evaluate the proposed SynerGest framework on two extensive dyadic interaction datasets: the Audio2Photoreal dataset  ( Ng and others, 2024 ) and Seamless Interaction  ( Agrawal and others, 2025 ) . Audio2Photoreal offers high-fidelity, studio-captured dyadic conversations paired with photorealistic Codec Avatar assets. The acoustic input comprises 48 kHz dual-channel audio, explicitly capturing the independent waveforms of both the speaker and the listener. Additionally, we utilize the Naturalistic subset of the Seamless Interaction dataset, which encompasses unscripted, spontaneous recordings. For Seamless, the release provides a single-channel track for each participant. Using the interaction-partner mapping, we pair the target and partner tracks, resample them to 48 kHz, align them to their common duration, and stack them as a dual-channel input. Metrics. We adopt four metrics to comprehensively evaluate our framework: Fréchet Gesture Distance (FGD ↓ \downarrow ) for kinematic realism, Beat Consistency (BC ↑ \uparrow ) for audio-motion synchronization, Diversity (Div ↑ \uparrow ) for motion variance, and Inference Efficiency ( 𝒯 inf \mathcal{T}_{\text{inf}} ↓ \downarrow ), defined as the average wall-clock inference time per sample.
+Baselines. To rigorously demonstrate the superiority of our framework, we compare SynerGest against four recent state-of-the-art co-speech gesture generation methods. Specifically, we evaluate against three advanced monadic frameworks—EMAGE  ( Liu and others, 2024 ) , GestureLSM  ( Liu et al., 2025b ) , and TalkSHOW  ( Yi and others, 2023 ) —alongside one dedicated dyadic baseline, the Audio2Photoreal (A2P) model  ( Ng and others, 2024 ) . To ensure a fair comparison, all monadic baselines are adapted to our dyadic evaluation protocol under identical data processing conditions.
+4.2. Quantitative Results
+Table 1. Quantitative comparison on Audio2Photoreal and Seamless Interaction. 𝒯 inf \mathcal{T}_{\text{inf}} is the average inference time per sample; best generated results are bold.
+Dataset
+
+【结论/局限】
+Acknowledgements
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24031v1 [cs.CV] 16 Oct 2026
+\correspondingauthor
+SynerGest: Temporal-Spatial Synergistic Gesture Generation for Dyadic Conversations
+DOI:  10.1145/3767308.3836287 Conference:  Proceedings of the 34th ACM International Conference on Multimedia; November 10–14, 2026; Rio de Janeiro, Brazil Proceedings of the 34th ACM International Conference on Multimedia
+(MM ’26), November 10–14, 2026, Rio de Janeiro, Brazil ISBN:  979-8-4007-2213-4/2026/11 CCS:  Human-centered computing Human computer interaction (HCI) CCS:  Computing methodologies Motion processing
+Chengxiang Guo
+Alternate Affiliation:  Yunnan Key Laboratory of Artificial Intelligence , Kunming , China
+Affiliation:  Faculty of Information Engineering and Automation , Kunming University of Science and Technology , Kunming , China
+email: 20242204355@stu.kust.edu.cn
+,
+Jian Wang
+Affiliation:  Faculty of Information Engineering and Automation , Kunming University of Science and Technology , Kunming , China
+email: jianwang@kust.edu.cn
+,
+Lanmiao Liu
+Affiliation:  Utrecht University , Utrecht , Netherlands
+Affiliation:  The Max Planck Institute for P

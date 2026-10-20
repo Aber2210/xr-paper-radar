@@ -1,0 +1,59 @@
+【摘要】
+
+【方法】
+3.1 Gaussian Representation
+3.1.1 3D Gaussian Splatting
+3.1.2 BRDF-aware Gaussian Representation
+3.2 RxGS: Relightable Gaussian Stylization
+3.2.1 Albedo Parameterization
+3.2.2 Rendering Strategy
+3.2.3 Style Loss
+3.2.4 Spatial Smoothness Prior on the Gaussian Neighbourhood Graph The task is to modify the appearance of a 3D scene, reconstructed from posed multi-view images { I k , P k } k = 1 K \{I_{k},P_{k}\}_{k=1}^{K} , so that it matches the style of a reference image J J , while keeping both the scene geometry and the physical rendering components that are needed to render the scene under novel illumination.
+3.1 Gaussian Representation
+3.1.1 3D Gaussian Splatting
+3D Gaussian Splatting (3DGS) Kerbl et al. (2023) represents a scene with a set of anisotropic 3D Gaussian primitives placed in 3D space. Each Gaussian is parameterized by a centre 𝐱 i ∈ ℝ 3 \mathbf{x}_{i}\in\mathbb{R}^{3} , a scaling vector 𝐬 i ∈ ℝ 3 \mathbf{s}_{i}\in\mathbb{R}^{3} , a rotation quaternion 𝐪 i ∈ ℝ 4 \mathbf{q}_{i}\in\mathbb{R}^{4} , an opacity α i ∈ [ 0 , 1 ] \alpha_{i}\in[0,1] , and appearance-related attributes. The scaling vector and rotation quaternion together define the Gaussian covariance. The trainable parameters of the i i -th Gaussian are
+G i = { 𝐱 i , 𝐬 i , 𝐪 i , α i , ϕ i } , \displaystyle G_{i}=\{\mathbf{x}_{i},\mathbf{s}_{i},\mathbf{q}_{i},\alpha_{i},\phi_{i}\},
+(1)
+where ϕ i \phi_{i} denotes the appearance representation of the Gaussian.
+Because the Gaussian primitives are defined in 3D space, the appearance attributes of a Gaussian are shared by every viewpoint that observes the same spatial region. This gives a fixed correspondence between scene geometry and appearance during rendering, so a change to a Gaussian’s appearance attributes affects all views of that region in the same way, which is useful for keeping a stylization consistent across viewpoints.
+3.1.2 BRDF-aware Gaussian Representation
+GS-IR Liang et al. (2024) refines the 3DGS appearance attribute ϕ i \phi_{i} into a BRDF-aware decomposition consisting of diffuse albedo, roughness, metallicity, and surface normal, while jointly estimating a global environment lighting L L , represented as an environment map, that is, a function on the unit sphere of incident directions giving the incoming radiance from each direction. Specifically,
+ϕ i = { 𝐚 i , r i , m i , 𝐧 i } , \displaystyle\phi_{i}=\{\mathbf{a}_{i},r_{i},m_{i},\mathbf{n}_{i}\},
+(2)
+where 𝐚 i ∈ [ 0 , 1 ] 3 \mathbf{a}_{i}\in[0,1]^{3} is the diffuse albedo of the i i -th Gaussian, r i ∈ [ 0 , 1 ] r_{i}\in[0,1] is the roughness, m i ∈ [ 0 , 1 ] m_{i}\in[0,1] is the metallicity, and 𝐧 i ∈ ℝ 3 \mathbf{n}_{i}\in\mathbb{R}^{3} is the surface normal.
+In an RGB appearance representation a single per-point colour already combines material reflectance, the illumination together with the shading it produces, and view-dependent effects. The decomposition above instead stores the albedo 𝐚 i \mathbf{a}_{i} as a separate per-Gaussian coefficient, alongside r i r_{i} , m i m_{i} , 𝐧 i \mathbf{n}_{i} , and the global lighting L L .
+Although the diffuse albedo is represented separately, it still influences the colour of specular reflections under the me
+
+【实验】
+4.1 Experimental Setup
+Datasets. We evaluate RxGS from two angles: cross-view geometric consistency and relightable stylization. We first compare RxGS with existing reference-based 3D scene stylization methods using a geometric consistency metric, which measures how well scene structure is preserved across viewpoints after stylization. Because the existing methods do not support relighting, we then evaluate the relightable stylization of RxGS by rendering stylized scenes under different illumination conditions and examining how the appearance responds.
+4.1 Experimental Setup
+Datasets.
+We use NeRF-Synthetic Mildenhall et al. (2021) and NeRF-LLFF Mildenhall et al. (2019) for the geometric consistency comparison, and add TensorIR Jin et al. (2023) and Mip-NeRF 360 Barron et al. (2022) for the relightable stylization experiments. NeRF-Synthetic Mildenhall et al. (2021) is a synthetic multi-view dataset of eight object-centric scenes, each with 100 training images and 200 test images rendered at 800 × 800 800\times 800 , with camera poses and foreground masks. NeRF-LLFF Mildenhall et al. (2019) is a real-world forward-facing multi-view dataset captured by handheld cameras with calibrated poses; it contains more complex geometry, occlusions, and appearance variation than NeRF-Synthetic, and we downsample the input images by a factor of four, following prior work Zhang et al. (2023) ; Fridovich-Keil et al. (2022) ; Tang et al. (2023) . TensorIR Jin et al. (2023) is a multi-view dataset for inverse rendering and relighting, with diverse materials and illumination and with ground-truth geometry, material, and lighting; we use its Lego and Hotdog scenes for relightable stylization. Mip-NeRF 360 Barron et al. (2022) is a real-world multi-view dataset of unbounded indoor and outdoor scenes captured over 360-degree viewpoints, with larger extents and more complex structure than NeRF-Synthetic and LLFF; we use its Garden , Kitchen , and Bicycle scenes. Protocol.
+Metric.
+4.2 Cross-view Geometry Consistency
+4.2.1 Quantitative Comparison
+4.2.2 Qualitative Comparison
+4.3 Relightable Stylized Rendering
+4.4 Ablation Study
+4.4.1 Effect of the Style Supervision Strategy Protocol.
+To reduce bias toward a particular artistic appearance, we evaluate each scene with three different reference styles, and for the geometric consistency comparison we average the reported results over the three styles. For relighting, NeRF-Synthetic and LLFF scenes are rendered under several illumination conditions by rotating the estimated environment map while keeping all stylization parameters fixed. We additionally evaluate relightable stylization on TensorIR and Mip-NeRF 360 scenes to examine the behaviour of stylized scenes under varying illumination across different scene types.
+Metric.
+To 
+
+【结论/局限】
+6 Statements and Declarations
+6.1 Competing Interests
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25681v1 [cs.CV] 19 Oct 2026
+RxGS: Relightable Gaussian Stylization via BRDF Decomposition
+Wanrong Hong
+Affiliation:  School of Computer Science, University of Technology Sydney, Sydney, Australia
+Liu Jiang
+Affiliation:  Department of Civil and Environmental Engineering, Stanford University, Stanford, United State
+Mukesh Prasad
+Affiliation:  Australian Artificial Intelligence Institute, University of Technology Sydney, Sydney, 2007, Australia
+Jun Li
+Email:  jun.li@uts.edu.au
+Affiliation:  School of Computer Science, University of Technology Sydney, Sydney, Australia We presented RxGS, a relightable 3D scene stylization framework built on a BRDF-aware Gaussian scene representation. RxGS optimizes only the diffuse albedo field and leaves the roughness, metallicity, surface normals, and environment lighting fixed, so artistic appearance transfer does not alter the material or illumination parameters and the stylized scene keeps a representation that can be relit. RxGS preserves cross-view geometric consistency and produces illumination-dependent appearance unde

@@ -1,0 +1,67 @@
+【摘要】
+
+【方法】
+3.1 Problem Formulation
+3.2 Preprocessing and Representation
+Preprocessing
+Coordinate and Representation
+Global Alignment Figure 2 : Overview of our model. The model ℱ \mathcal{F} takes the head trajectory 𝐓 head 0 : T \mathbf{T}^{\text{head}}_{0:T} and intermittent hand observations 𝐇 0 : T \mathbf{H}_{0:T} , which are first converted into spatio-temporally invariant conditioning features 𝛀 1 : T \bm{\Omega}_{1:T} . The encoder ℰ \mathcal{E} processes 𝛀 1 : T \bm{\Omega}_{1:T} to predict a single body shape β \beta and per-frame summary features 𝓢 1 : T \bm{\mathcal{S}}_{1:T} . A diffusion decoder 𝒟 \mathcal{D} then conditions on these features to denoise a noisy canonicalized pose 𝐗 n 1 : T \mathbf{X}^{n}_{1:T} and, via global alignment, reconstruct the full-body motion 𝐌 1 : T \mathbf{M}_{1:T} .
+3.1 Problem Formulation
+Given an egocentric video input from an arbitrary device, our goal is to reconstruct the wearer’s 3D full-body motion.
+Let 𝐈 0 : T = { I t } t = 0 T \mathbf{I}_{0:T}=\{I_{t}\}_{t=0}^{T} denote the egocentric image stream.
+From 𝐈 \mathbf{I} , we compute the head poses 𝐓 0 : T head = { 𝐓 t head ∈ SE ( 3 ) } t = 0 T \mathbf{T}^{\text{head}}_{0:T}=\{\mathbf{T}_{t}^{\text{head}}\in\text{SE}(3)\}_{t=0}^{T} defined in world coordinates and intermittent wrist 6D pose observations 𝐇 0 : T = { 𝐇 t lHand , 𝐇 t rHand } t = 0 T \mathbf{H}_{0:T}=\{\mathbf{H}_{t}^{\text{lHand}},\mathbf{H}_{t}^{\text{rHand}}\}_{t=0}^{T} .
+Here, each 𝐇 t lHand/rHand = ( 𝐓 t lHand/rHand , v t lHand/rHand ) \mathbf{H}_{t}^{\text{lHand/rHand}}=(\mathbf{T}_{t}^{\text{lHand/rHand}},v_{t}^{\text{lHand/rHand}}) , where 𝐓 t lHand/rHand ∈ SE ​ ( 3 ) \mathbf{T}_{t}^{\text{lHand/rHand}}\in\text{SE}(3) is its 6-DoF pose defined in the head coordinates and v t lHand/rHand ∈ { 0 , 1 } v_{t}^{\text{lHand/rHand}}\in\{0,1\} is its binary visibility state. A non-visible state can occur due to occlusion, motion blur, or the wrist moving outside of camera’s field of view (FoV).
+Our model OmniEgoCap takes 𝐓 head 0 : T \mathbf{T}^{\text{head}}_{0:T} and 𝐇 0 : T \mathbf{H}_{0:T} as input, and produces the reconstructed human motion 𝐌 1 : T \mathbf{M}_{1:T} as output:
+𝐌 1 : T = O m n i E g o C a p ( 𝐓 0 : T head , 𝐇 0 : T ) , \mathbf{M}_{1:T}=OmniEgoCap\left(\mathbf{T}^{\text{head}}_{0:T},\mathbf{H}_{0:T}\right),
+(1)
+where 𝐌 1 : T = { β , 𝒓 1 : T , 𝚽 1 : T , 𝚯 1 : T } \mathbf{M}_{1:T}=\{\beta,\bm{r}_{1:T},\bm{\Phi}_{1:T},\bm{\Theta}_{1:T}\} is in SMPL format  [ 54 ] with the shape parameter β ∈ ℝ 16 \beta\in\mathbb{R}^{16} , root translation 𝒓 1 : T = { 𝒓 t ∈ ℝ 3 } t = 1 T \bm{r}_{1:T}=\{\bm{r}_{t}\in\mathbb{R}^{3}\}_{t=1}^{T} , root orientation 𝚽 1 : T = { ϕ t ∈ SO ( 3 ) } t = 1 T \bm{\Phi}_{1:T}=\{\bm{\phi}_{t}\in\text{SO}(3)\}_{t=1}^{T} . 𝚯 1 : T = { 𝜽 t = ( 𝜽 t 1 , … , 𝜽 t J − 1 ) ; 𝜽 t j ∈ SO ( 3 ) } t = 1 T \bm{\Theta}_{1:T}=\{\bm{\theta}_{t}=(\bm{\theta}_{t}^{1},\ldots,\bm{\theta}_{t}^{J-1});\bm{\theta}_{t}^{j}\in\text{SO}(3)\}_{t=1}^{T} are the joint angles, where J J is the number of body joints in SMPL. The root poses are defined in the world coordinate system, consistent with 𝐓 head \mathbf{T}^{\text{head}} .
+Note that we predict a single shape β \beta for a whole sequen
+
+【实验】
+Setting
+Dataset
+Training Details
+Metrics Setting
+Dataset
+We use the AMASS  [ 43 ] dataset for training and simulated evaluation. Sequences are resampled to 30fps and preprocessed following HuMoR  [ 51 ] , adjusting the floor and annotating foot contact labels. We train on the AMASS train split with stochastic augmentation (Sec.  3.4 ).
+We evaluate on AMASS validation and test splits. The validation split is included specifically to enable long-sequence evaluation, as the standard test split alone is relatively short.
+Training Details
+We train using AdamW optimizer with a learning rate 10 − 4 10^{-4} , weight decay 10 − 4 10^{-4} , and a batch size of 32 for 16 hours on 8 A5000 GPUs. Max training sequence length is 512 with attention horizon W = ± 63 W=\pm 63 , implemented via FlexAttention  [ 17 ] .
+Test-time optimization uses Theseus  [ 48 ] Levenberg-Marquardt optimizer.
+Additional details are provided in the supplementary material.
+Metrics
+We use Mean Per Joint Position Error ( MPJPE , mm), Mean Per Joint Velocity Error ( MPJVE , cm/s), and Jerk (km/s 3 ) (the third derivative of position) to evaluate motion quality.
+To assess hand observations 𝐇 \mathbf{H} , we use Hand Position Error ( Hand PE , mm) and Visible Hand Position Error ( Vis Hand PE , mm, Hand PE on visible frames).
+For shape, we use Height Error (cm) and Span Error (cm) for accuracy and Height Standard Deviation ( Height Std , cm) and Span Standard Deviation ( Span Std , cm) for consistency. Height and Span are defined as the maximum vertical and horizontal vertex distances in a T-pose.
+Runtime (sec) measures the average execution time per sequence, inclusive of optimization setup on an RTX3090Ti GPU.    4.4 Qualitative Results in the Wild
+4.5 Ablation Studies
+Necessity of Geometry-Aware Augmentation
+Importance of Sequence-Level Context
+Auxiliary Loss
+Root Representation Table  1 demonstrates that our method clearly outperforms the baselines in motion quality, shape accuracy, and consistency.
+While our feed-forward Vis Hand PE is slightly higher than EgoAllo’s optimized version, our overall Hand PE is significantly lower. This indicates that our approach robustly localizes hands even during prolonged occlusions. EgoAllo relies on a head-only prior that, due to its inherent ambiguity, frequently hallucinates invisible hands back into the FoV (Fig.  4 ). Because its test-time optimization cannot fully correct this error, it causes arms to unnaturally snap to observed positions upon re-entry. By conditioning on hand cues and the visibility-encoding global context 𝓖 \bm{\mathcal{G}} , our prior avoids this issue and accurately infers the position of unseen hands outside the FoV.
+Furthermore, our lightweight, timestep-adaptive optimization preserves physical plausibility by refining pose
+
+【结论/局限】
+References
+0.A Implementation Details
+Network Architecture
+Training and Inference
+0.B Augmentation Details
+Geometry-Aware Augmentation
+Temporal Drops and Pose Perturbation
+0.C Comparison with DSPoser
+0.D Qualitative Analysis on Ablation Studies
+0.E Representation Visualization
+0.F Calibration and World Alignment
+Camera-to-Head Calibration
+Ground Plane Fitting and Scale Correction
+0.G Additional Qualitative Results in the Wild
+0.H Failure Cases
+License: arXiv.org perpetual non-exclusive license
+arXiv:2512.19283v2 [cs.CV] 31 Mar 2026
+OmniEgoCap: Camera-Agnostic Sequence-Level Egocentric Motion Reconstruction
+Kyungwon Cho
+Hanbyul Joo
+Affiliation:  Seoul National University
+Affiliation:  Seoul National University We have presented OmniEgoCap , a unified sequence-level diffusion framework for robust 3D full-body motion reconstruction across diverse egocentric setups. By leveraging long-range temporal reasoning and geometry-aware visibility augmentation, our model treats intermittent hand observations as geometric constraints, enabling device-agnostic reconstruction that generalizes to unseen optics and mounting configurations without hardware-specific retraining. Finally, predicting a c

@@ -1,0 +1,110 @@
+【摘要】
+
+【方法】
+3.1 Problem setup
+3.2 Queries and coarse proposal
+3.3 Ray-consistent stereo sampling
+3.4 Geometric refinement
+3.5 Fisheye-native stereo encoder
+3.6 Causal temporal modelling
+Token history.
+Trajectory-aligned feature sampling.
+3.7 Training Figure 2 : Overview of EgoRayFormer. A stereo encoder provides image features for a coarse pose proposal and three
+refinement layers. Each refinement layer projects shared 3D hypotheses into both views, aggregates their sampled
+features, and combines a learned pose update with a regularised ray-intersection update. Causal attention and
+cached image features provide temporal context for frame-by-frame inference.
+EgoRayFormer estimates body pose from a causal stream of stereo fisheye images ( Fig.   2 ). Its decoder uses a shared
+3D hypothesis as the unit of stereo feature aggregation: each hypothesis is projected into both calibrated views, and
+the paired features support pose refinement. A second path predicts image-plane corrections, intersects the resulting
+viewing rays, and blends this geometric update with a learned update. We first describe this decoder, then the encoder,
+temporal context and training objective.
+3.1 Problem setup
+A head-mounted rig carries two downward-looking fisheye cameras v ∈ { 1 , 2 } v\in\{1,2\} about 12 cm apart. Each camera uses
+the polynomial omnidirectional calibration of Scaramuzza et al .   [ 25 ] , with known pose relative to
+the device. We denote by π v ​ ( X ) \pi_{v}(X) the normalised image projection of device-frame point X X , and by ( o v , d v ​ ( u ) ) (o_{v},d_{v}(u))
+the camera centre and unit viewing ray through image point u u , expressed in the same frame. The device centre is
+c = ( o 1 + o 2 ) / 2 c=(o_{1}+o_{2})/2 .
+At frame t t , the model receives images I 1 t , I 2 t I^{t}_{1},I^{t}_{2} and predicts J = 16 J{=}16 joint positions in the device frame, following
+the official UnrealEgo2 and UnrealEgo-RW benchmarks  [ 2 ] . Inference uses current and past images and
+camera calibration, without ground-truth root position, scene depth or headset pose. We write P t , l ∈ ℝ J × 3 P^{t,l}\in\mathbb{R}^{J\times 3} for the pose
+after decoder stage l l , where l = 0 l=0 is the proposal and l = 1 , … , L l=1,\ldots,L are the L = 3 L{=}3 refinement stages. Below we omit
+t t and use P j = P j l − 1 P_{j}=P^{l-1}_{j} for the anchor of joint j j at a refinement stage.
+3.2 Queries and coarse proposal
+The encoder ( Sec.   3.5 ) produces a stride-4 feature map with C = 128 C{=}128 channels for each view. The decoder
+contains J J learned joint queries, a body token with a learned dataset embedding, and a track-prior token that embeds
+the previous predicted pose. A learned null token is used at the start of a sequence. During training, the previous
+ground-truth pose is perturbed by Gaussian noise ( σ = 3 \sigma=3  cm) and replaced by the null token with probability 0.3 0.3 .
+The proposal layer applies camera-conditioned cross-attention to both feature maps, followed by token self-attention,
+causal temporal attention and a feed-forward layer. Cross-attention adds a learned camera embedding to each query and
+linearly fuses the two view outputs  [ 16 ] . Self-attention uses a learn
+
+【实验】
+4.1 Setup
+Datasets.
+Calibration.
+Protocol and metrics. UnrealEgo2
+RW, trained on RW
+RW, trained on UE2 + RW without specifying whether its inference-time root is predicted or ground truth. We keep these distinctions
+explicit and use a paired protocol experiment to assess their combined effect ( Sec.   4.6 ). have not been submitted to the leaderboard. The split version underlying the published RW values is
+unverified ( Sec.   4.2 ). Backbone: R18 is ResNet-18 at 256 2 256^{2} , ViT-S+ is DINOv3 ViT-S+/16 at
+384 2 384^{2} . Frames: input frames per prediction; stream denotes causal streaming over the whole sequence. Extra input:
+inputs used at inference besides the stereo images; scene depth is rendered from a structure-from-motion
+reconstruction of the scene  [ 2 ] , calibration denotes the fisheye camera model and the stereo rig
+( Sec.   4.1 ). † Re-implemented by the benchmark authors. Full comparison conditions are given
+in Appendix   B .
+4.1 Setup
+Datasets.
+UnrealEgo2  [ 2 ] is rendered with a synthetic stereo fisheye rig. Its official split has
+12,139 training sequences (1,002,671 frames), 1,545 validation sequences
+(127,937 frames) and 123,480 test frames. UnrealEgo-RW  [ 2 ] (RW) was captured
+with a physical head-mounted rig and has 402 training sequences (79,705 frames), 96 validation sequences (30,083 frames) and 24,012 test frames. As on the leaderboard, RW results are
+reported for models trained on RW only and for models trained on UnrealEgo2 and RW; for the latter, the RW model is
+initialised with the UnrealEgo2 model of the same seed ( Sec.   3.7 ).
+Calibration.
+UnrealEgo2 has a single synthetic rig. For RW we keep the intrinsics of the dataset’s calibration files and fit the
+camera-from-device transform of every capture session to the device-frame and camera-frame joint annotations of the
+training split; validation and test annotations are never used. One test session does not occur in the training data
+and uses the rig of the chronologically nearest session.
+Protocol and metrics.
+Our primary evaluation follows the official device-relative protocol: predictions are the 3D positions of 16 joints
+relative to the device centre, with no ground-truth quantity used at inference. We report MPJPE and PA-MPJPE (after
+rigid alignment with scale) in mm, using a common scorer based on the public EgoPoseFormer evaluation code.
+Ablations additionally report the mean per-joint velocity error MPJVE, the error of frame-to-frame joint displacements
+in mm per frame. Every sequence is
+processed in one causal stream from its first frame, in FP32. coordinates and inference inputs. coordinates also matter. Device-relative estimation requires the model to recover body position relative
+to the headset, whereas root-relative scoring removes global body translati
+
+【结论/局限】
+.
+References
+A Evaluation protocol and disclosure
+Frozen evaluation.
+Statistics.
+Disclosure of earlier test-set use.
+B Comparison conditions
+C Per-session results
+D Error and gate statistics by distance
+E Protocol gap on the test set
+F Root-relative numerical references
+TSR-like under an oracle-root protocol.
+G Implementation details
+Encoder.
+Decoder.
+Training and selection.
+H Components removed during development
+I Efficiency measurement
+J Qualitative results and failure cases
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26641v1 [cs.RO] 19 Oct 2026
+EgoRayFormer: Ray-Space Stereo Refinement for
+Egocentric 3D Human Pose Estimation
+Haozhe Wang
+Songyuan Wu
+Jihai Xu
+Jie Zhao
+Affiliation:  Boden AI
+Affiliation:  {haozhe.wang, songyuan.wu, jihai.xu, jie.zhao}@bodenai.com .
+EgoRayFormer connects stereo image sampling and pose refinement through shared 3D hypotheses in a ray-local frame.
+Corrected-ray intersection supplies a geometric candidate, which is combined with a learned update in a causal
+decoder. Local evaluations on UnrealEgo2 and UnrealEgo-RW establish the performance of the full system, while paired
+ablations support the geometric branch as a whole. The remaini

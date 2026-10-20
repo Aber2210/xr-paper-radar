@@ -1,0 +1,1130 @@
+
+
+########## 2610.24031 ##########
+【摘要】
+.
+
+【方法】
+3.1 Overview
+3.2 Conditional Feature Generation and Fusion
+3.3 Dyadic-Conditioned Flow Estimator and Context Injection
+Condition Vector Formulation and Projection.
+Spatiotemporal Trajectory Modeling.
+3.4 Impulse-Trend Synergistic Attention (ITSA)
+Trend Feature Gating (“What moves”):
+Impulse Temporal Gating (“When it moves”):
+Learnable Soft-Mixture with MHA:
+3.5 Contrastive Flow Matching Objective Figure 2. Architecture of SynerGest : (a) RVQ-based guide key-frame generation, (b) the ITSA-equipped dyadic flow estimator, and (c) audio–lip and audio–pose condition fusion. A detailed three-panel architecture diagram of the SynerGest framework featuring dyadic-conditioned flow matching.
+3.1. Overview
+We propose SynerGest , a high-fidelity co-speech gesture generator built on Contrastive Flow Matching (CFM), designed to model the interaction within a dyadic conversation. The generator synthesizes motion 𝐱 ∈ ℝ T × D \mathbf{x}\in\mathbb{R}^{T\times D} for the target avatar (acting as the listener in our joint-modeling scenario), where T T denotes the sequence length and D D represents the modality-specific spatial dimension. We first extract raw audio waveforms from both the target listener ( 𝐚 l ​ s ​ n \mathbf{a}_{lsn} ) and the conversational partner ( 𝐚 s ​ p ​ k \mathbf{a}_{spk} ). These are denoted as 𝐀 = ( 𝐚 l ​ s ​ n , 𝐚 s ​ p ​ k ) \mathbf{A}=(\mathbf{a}_{lsn},\mathbf{a}_{spk}) and jointly condition generation. A shared, pretrained wav2vec 2.0 backbone combined with mel-spectrogram features processes the two channels independently. To accommodate distinct kinetic properties, the flow estimator separates body and facial-expression pathways (“PoseOnly” and “FaceOnly” in Fig.  2 ). Rather than using a stochastic diffusion chain, we learn a step-size-conditioned velocity field v θ ​ ( 𝐱 t , t , d , 𝐜 ) v_{\theta}(\mathbf{x}_{t},t,d,\mathbf{c}) , where t t is the absolute flow time and d d is the requested integration step size. The field transports samples from a Gaussian prior p 0 ​ ( 𝐱 ) = 𝒩 ​ ( 0 , I ) p_{0}(\mathbf{x})=\mathcal{N}(0,I) to the empirical distribution p 1 ​ ( 𝐱 ) p_{1}(\mathbf{x}) . For fixed initial noise and audio, integrating from t = 0 t=0 to 1 1 gives a deterministic ODE trajectory; drawing a fresh initial sample yields a different plausible gesture for the same audio.
+3.2. Conditional Feature Generation and Fusion
+As illustrated in our overall architecture, the conditional pipeline follows a structured progression from raw unimodal extraction to multimodal interactive alignment. First, the raw audio waveforms of the target listener ( 𝐚 l ​ s ​ n \mathbf{a}_{lsn} ) and the speaker ( 𝐚 s ​ p ​ k \mathbf{a}_{spk} ) are independently routed through the frozen AudioRhythm Encoder . These embeddings are concatenated to jointly encode the dyadic conversational context, forming the base acoustic feature 𝐅 a \mathbf{F}_{a} . Crucially, to accommodate their distinct kinetic properties, our framework adopts a decoupled extraction strategy for body pose and facial expressions. For body dynamics, a Guide Transformer  ( Ng and others, 2024 ) autoregressively predicts discrete RVQ tokens from the audio stream, which are decoded to prov
+
+【实验】
+4.1 Experimental Settings
+4.2 Quantitative Results
+4.3 Qualitative Results
+4.4 Ablation Studies 4.1. Experimental Settings
+Datasets. We evaluate the proposed SynerGest framework on two extensive dyadic interaction datasets: the Audio2Photoreal dataset  ( Ng and others, 2024 ) and Seamless Interaction  ( Agrawal and others, 2025 ) . Audio2Photoreal offers high-fidelity, studio-captured dyadic conversations paired with photorealistic Codec Avatar assets. The acoustic input comprises 48 kHz dual-channel audio, explicitly capturing the independent waveforms of both the speaker and the listener. Additionally, we utilize the Naturalistic subset of the Seamless Interaction dataset, which encompasses unscripted, spontaneous recordings. For Seamless, the release provides a single-channel track for each participant. Using the interaction-partner mapping, we pair the target and partner tracks, resample them to 48 kHz, align them to their common duration, and stack them as a dual-channel input. Metrics. We adopt four metrics to comprehensively evaluate our framework: Fréchet Gesture Distance (FGD ↓ \downarrow ) for kinematic realism, Beat Consistency (BC ↑ \uparrow ) for audio-motion synchronization, Diversity (Div ↑ \uparrow ) for motion variance, and Inference Efficiency ( 𝒯 inf \mathcal{T}_{\text{inf}} ↓ \downarrow ), defined as the average wall-clock inference time per sample.
+Baselines. To rigorously demonstrate the superiority of our framework, we compare SynerGest against four recent state-of-the-art co-speech gesture generation methods. Specifically, we evaluate against three advanced monadic frameworks—EMAGE  ( Liu and others, 2024 ) , GestureLSM  ( Liu et al., 2025b ) , and TalkSHOW  ( Yi and others, 2023 ) —alongside one dedicated dyadic baseline, the Audio2Photoreal (A2P) model  ( Ng and others, 2024 ) . To ensure a fair comparison, all monadic baselines are adapted to our dyadic evaluation protocol under identical data processing conditions.
+4.2. Quantitative Results
+Table 1. Quantitative comparison on Audio2Photoreal and Seamless Interaction. 𝒯 inf \mathcal{T}_{\text{inf}} is the average inference time per sample; best generated results are bold.
+Dataset
+
+【结论/局限】
+Acknowledgements
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24031v1 [cs.CV] 16 Oct 2026
+\correspondingauthor
+SynerGest: Temporal-Spatial Synergistic Gesture Generation for Dyadic Conversations
+DOI:  10.1145/3767308.3836287 Conference:  Proceedings of the 34th ACM International Conference on Multimedia; November 10–14, 2026; Rio de Janeiro, Brazil Proceedings of the 34th ACM International Conference on Multimedia
+(MM ’26), November 10–14, 2026, Rio de Janeiro, Brazil ISBN:  979-8-4007-2213-4/2026/11 CCS:  Human-centered computing Human computer interaction (HCI) CCS:  Computing methodologies Motion processing
+Chengxiang Guo
+Alternate Affiliation:  Yunnan Key Laboratory of Artificial Intelligence , Kunming , China
+Affiliation:  Faculty of Information Engineering and Automation , Kunming University of Science and Technology , Kunming , China
+email: 20242204355@stu.kust.edu.cn
+,
+Jian Wang
+Affiliation:  Faculty of Information Engineering and Automation , Kunming University of Science and Technology , Kunming , China
+email: jianwang@kust.edu.cn
+,
+Lanmiao Liu
+Affiliation:  Utrecht University , Utrecht , Netherlands
+Affiliation:  The Max Planck Institute for P
+
+########## 2610.23895 ##########
+【摘要】
+
+【方法】
+Acc. ↓ \downarrow
+Comple. ↓ \downarrow
+CD ↓ \downarrow
+AbsRel ↓ \downarrow
+SqRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+DepthCons ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+2.505
+7.136
+9.641
+0.719
+10.081
+15.450
+0.100
+5.992
+PVG  Chen et al. (2026b)
+9.033
+3.946
+12.979
+0.780
+14.951
+8.210
+0.589
+4.538
+Deformable 3DGS  Yang et al. (2024)
+2.927
+6.420
+9.347
+0.818
+24.110
+14.407
+0.250
+8.196
+OmniRe  Chen et al. (2025)
+1.137
+0.489
+1.625
+0.152
+1.898
+5.229
+0.833
+4.629
+DrivingForward  Tian et al. (2025)
+1.228
+1.195
+2.423
+0.255
+3.365
+7.900
+0.666
+3.756
+ReconDrive  Yu et al. (2026a)
+3.735
+1.057
+4.793
+0.607
+23.662
+10.466
+0.680
+5.733
+DGGT  Chen et al. (2026a)
+1.690
+5.459
+7.149
+0.421
+6.041
+10.477
+0.461
+4.985
+GeoForward (Ours)
+0.674
+0.761
+1.435
+0.148
+1.548
+5.016
+0.849
+2.446
+Table 2 :
+Comparison of geometric accuracy and consistency on Waymo. Acc. ↓ \downarrow
+Comple. ↓ \downarrow
+CD ↓ \downarrow
+AbsRel ↓ \downarrow
+SqRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+DepthCons ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+3.189
+1.520
+4.710
+0.356
+8.818
+9.549
+0.586
+2.799
+PVG  Chen et al. (2026b)
+7.969
+5.089
+13.058
+0.562
+11.490
+8.519
+0.609
+2.026
+Deformable 3DGS  Yang et al. (2024)
+2.389
+4.624
+7.012
+0.512
+8.208
+13.837
+0.294
+1.503
+STORM  Yang et al. (2025)
+1.018
+0.815
+1.833
+0.185
+2.526
+6.564
+0.806
+1.272
+StreetForward  Yu et al. (2026c)
+4.882
+4.270
+9.152
+0.457
+9.152
+12.069
+0.498
+16.826
+Envision4D  Song et al. (2026)
+3.134
+4.512
+7.646
+0.319
+5.915
+9.356
+0.664
+7.627
+GeoForward
+0.569
+0.688
+1.257
+0.104
+0.875
+3.993
+0.917
+1.477
+Table 3 : Comparison of rendering quality on nuScenes and Waymo.
+nuScenes Visual Scene
+Reconstruction
+Novel-View
+Synthesis
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+26.090
+0.774
+0.430
+18.942
+0.621
+0.515
+PVG  Chen et al. (2026b)
+33.040
+0.923
+0.213
+27.416
+0.810
+0.302
+DeformableGS  Yang et al. (2024)
+25.185
+0.760
+0.412
+22.188
+0.692
+0.451
+OmniRe  Chen et al. (2025)
+30.597
+0.921
+0.193
+23.474
+0.688
+0.332
+DrivingForward  Tian et al. (2025)
+23.791
+0.878
+0.131
+18.240
+0.665
+0.303
+ReconDrive  Yu et al. (2026a)
+33.295
+0.961
+0.059
+23.986
+0.730
+0.259
+DGGT  Chen et al. (2026a)
+22.503
+0.803
+0.305
+22.498
+0.808
+0.307
+GeoForward (Ours)
+36.615
+0.987
+0.032
+23.191
+0.730
+0.279
+Waymo Visual Scene
+Reconstruction
+Novel-View
+Synthesis
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+34.5317
+0.9558
+0.0985
+25.6590
+0.7932
+0.2333
+PVG  Chen et al. (2026b)
+35.5709
+0.9505
+0.1212
+26.9835
+0.7998
+0.2516
+DeformableGS  Yang et al. (2024)
+27.3924
+0.8327
+0.3274
+19.8208
+0.6105
+0.4921
+STORM  Yang et al. (2025)
+21.6821
+0.7362
+0.3025
+21.0298
+0.7032
+0.3251
+StreetForward  Yu et al. (2026c)
+25.9594
+0.7872
+0.1734
+24.5113
+0.7470
+0.2165
+Envision4D  Song et al. (2026)
+32.5785
+0.9518
+0.0694
+25.0997
+0.7490
+0.2337
+GeoForward (Ours)
+32.2823
+0.9329
+0.0797
+25.5167
+0.8026
+0.1965
+(a) Qualitative comparison in a nuScenes driving scene.
+(b) Qualitative comparison in a dynamic traffic scene from the Waymo dataset.
+Figure 4 : Qualitative reconstruction results. For each method, the uppe
+
+【实验】
+4.1 Main Results
+4.2 Ablation Studies Table 1 :
+Comparison of geometric accuracy and consistency
+on nuScenes. provide a comparison to a model designed for future appearance and
+motion prediction.
+Appendix C Evaluation
+We provide detailed definitions of the image reconstruction and geometric
+metrics used in our experiments as follows.
+Image Reconstruction Quality.
+Following ReconDrive  Yu et al. [2026a] , we report PSNR, SSIM, and LPIPS
+for both visual scene reconstruction and novel-view synthesis. Let I ^ \hat{I}
+and I I denote the rendered and reference images, respectively, and let M M
+be the total number of evaluated pixel values. These metrics are defined as
+MSE \displaystyle\mathrm{MSE}
+= 1 M ∑ j = 1 M ( I ^ j − I j ) 2 , PSNR = 10 log 10 ( L 2 MSE ) , \displaystyle=\frac{1}{M}\sum_{j=1}^{M}(\hat{I}_{j}-I_{j})^{2},\qquad\mathrm{PSNR}=10\log_{10}\left(\frac{L^{2}}{\mathrm{MSE}}\right),
+SSIM ⁡ ( x , y ) \displaystyle\mathrm{SSIM}(x,y)
+= ( 2 ​ μ x ​ μ y + C 1 ) ​ ( 2 ​ σ x ​ y + C 2 ) ( μ x 2 + μ y 2 + C 1 ) ​ ( σ x 2 + σ y 2 + C 2 ) , \displaystyle=\frac{(2\mu_{x}\mu_{y}+C_{1})(2\sigma_{xy}+C_{2})}{(\mu_{x}^{2}+\mu_{y}^{2}+C_{1})(\sigma_{x}^{2}+\sigma_{y}^{2}+C_{2})},
+LPIPS ⁡ ( I , I ^ ) \displaystyle\mathrm{LPIPS}(I,\hat{I})
+= ∑ l 1 H l ​ W l ​ ∑ h , w ‖ 𝐰 l ⊙ ( ϕ ~ l ​ ( I ) h ​ w − ϕ ~ l ​ ( I ^ ) h ​ w ) ‖ 2 2 . \displaystyle=\sum_{l}\frac{1}{H_{l}W_{l}}\sum_{h,w}\left\|\mathbf{w}_{l}\odot\left(\tilde{\phi}_{l}(I)_{hw}-\tilde{\phi}_{l}(\hat{I})_{hw}\right)\right\|_{2}^{2}.
+Here, L L is the maximum image intensity. For SSIM, x x and y y denote
+corresponding local image windows; μ \mu , σ 2 \sigma^{2} , and σ x ​ y \sigma_{xy} are
+their local means, variances, and covariance, while C 1 C_{1} and C 2 C_{2} are
+stabilizing constants. For LPIPS, ϕ ~ l ​ ( ⋅ ) \tilde{\phi}_{l}(\cdot) denotes normalized
+deep features at layer l l , and 𝐰 l \mathbf{w}_{l} denotes the corresponding
+channel weights. PSNR measures pixel-level fidelity, SSIM evaluates luminance,
+contrast, and structural similarity, and LPIPS measures perceptual discrepancy
+in deep feature space. Higher PSNR and SSIM and lower LPIPS indicate better
+image quality.
+Point-Cloud Reconstruction.
+Following DVGT  Zuo et al. [2026] , let 𝒫 \mathcal{P} and 𝒢 \mathcal{G} denote
+the predicted and reference point clouds, respectively. Accuracy and
+Completeness are defined as
+Accuracy \displaystyle\mathrm{Accuracy}
+= 1 | 𝒫 | ∑ 𝐩 ∈ 𝒫 min 𝐠 ∈ 𝒢 ∥ 𝐩 − 𝐠 ∥ 2 , Completeness = 1 | 𝒢 | ∑ 𝐠 ∈ 𝒢 min 𝐩 ∈ 𝒫 ∥ 𝐠 − 𝐩 ∥ 2 . \displaystyle=\frac{1}{|\mathcal{P}|}\sum_{\mathbf{p}\in\mathcal{P}}\min_{\mathbf{g}\in\mathcal{G}}\|\mathbf{p}-\mathbf{g}\|_{2},\qquad\mathrm{Completeness}=\frac{1}{|\mathcal{G}|}\sum_{\mathbf{g}\in\mathcal{G}}\min_{\mathbf{p}\in\mathcal{P}}\|\mathbf{g}-\mathbf{p}\|_{2}.
+Accuracy measures the fi
+
+【结论/局限】
+References
+A Datasets
+B Baselines
+C Evaluation
+Image Reconstruction Quality.
+Point-Cloud Reconstruction.
+Depth Accuracy.
+Cross-Camera Consistency.
+D Additional Results
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.23895v1 [cs.CV] 28 Sep 2026
+GeoForward: Geometry-Guided Cross-View Alignment for Feedforward 3D Gaussian Splatting
+Yiming Shu
+† † thanks: Equal contribution.
+Affiliation:  The University of Hong Kong
+Peng Sun 1 1 footnotemark:
+1
+Affiliation:  Leapmotor
+Lang Zhang
+† † thanks: Project leader.
+Affiliation:  Leapmotor
+Mingyue Feng
+Affiliation:  Leapmotor
+Yaonong Wang
+Affiliation:  Leapmotor
+Pei Liu
+† † thanks: Corresponding author.
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou)
+Chen Sun
+Affiliation:  The University of Hong Kong
+Jun Ma
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou)  .
+We introduced GeoForward, which uses sparse LiDAR to align camera features for depth and Gaussian prediction from calibrated multi-camera observations of driving scenes. Bounded local refinement reduces residual cross-camera projection errors, while global multi-view context complements the aligned local features. This de
+
+########## 2610.25011 ##########
+【摘要】
+
+【方法】
+3.1 Stage 1: View-wise token grouping
+3.2 Stage 2: 3D spatial token grouping
+Lifting tokens to 3D.
+Error feature maps.
+Gathering errors across views.
+3D spatial token grouping and update.
+3.3 Patch-aligned Sub-pixel Gaussian Reconstruction Overview. FineSplat first performs view-wise grouping and applies self-attention within each group, enabling efficient processing of fine-grained tokens. 3D spatial grouping lifts tokens into 3D space and enables interactions among spatially neighboring tokens, including those from different view groups, to enhance cross-view information exchange. Compact Gaussian generation predicts fewer Gaussians per token than existing pixel-aligned methods, maintaining a compact 3DGS representation. Finally, direct error feedback incorporates reconstruction errors obtained by rendering the input views to further refine token representations. Given N N context views with or without known camera poses, FineSplat predicts a set of 3D Gaussians in a feed-forward manner.
+Stage 1 divides each context view into fine-grained 4 × 4 4\times 4 patches and encodes them with attention of varying scope, where group-wise attention over a few views keeps fine-grained multi-view reasoning affordable.
+Stage 2 decodes these tokens into an initial set of Gaussians, renders them
+back into the context views, and uses the resulting error maps to update the tokens through 3D spatial grouping, which lets tokens that fall in different view groups interact once they are lifted to 3D.
+This dual-grouping strategy makes fine-grained encoding tractable, with 3D spatial grouping complementing view-wise grouping by connecting tokens across view groups. Figure  2 gives an overview of the two stages.
+3.1 Stage 1: View-wise token grouping
+Global multi-view attention becomes prohibitively expensive with fine-grained tokens. In the first stage, we restrict the attention scope and adopt a view-wise token grouping strategy. Specifically, we leverage the multi-view pyramid architecture (MVP)  ( Kang et al., 2026b ) .
+It performs fine-grained attention within small groups of views, while allowing information exchange across all views through coarser global tokens. This balances local detail preservation with global multi-view reasoning.
+It organizes its encoder as a three-level pyramid, and we denote the feature map of level ℓ ∈ { 1 , 2 , 3 } \ell\in\{1,2,3\} as F ℓ F^{\ell} , from the finest ( F 1 F^{1} ) to the coarsest ( F 3 F^{3} ).
+In more detail, given N N input images I ∈ ℝ N × H × W × 3 {I}\in\mathbb{R}^{N\times H\times W\times 3} and patch size p p , the first stage fuses the three levels of coarse-to-fine features into M = N ​ H ​ W p 2 M=\frac{NHW}{p^{2}} fine-grained tokens z ( 0 ) ∈ ℝ M × d {z}^{(0)}\in\mathbb{R}^{M\times d} ,
+z ( 0 ) = fuse ⁡ ( up ⁡ ( fuse ⁡ ( up ⁡ ( F 3 ) + F 2 ) ) + F 1 ) , {z}^{(0)}=\mathrm{fuse}\big(\mathrm{up}(\mathrm{fuse}(\mathrm{up}(F^{3})+F^{2}))+F^{1}\big),
+(1)
+where up ⁡ ( ⋅ ) \mathrm{up}(\cdot) denotes bilinear upsampling and fuse ⁡ ( ⋅ ) \mathrm{fuse}(\cdot) a convolutional fusion block, which are used to match the token resolutions.
+The fixed view grouping strategy inevitably leaves blind spots: fine-grained tokens 
+
+【实验】
+ 
+
+【结论/局限】
+and Discussion
+References
+A Additional Implementation Details
+A.1 Architecture
+Camera pose estimator.
+View-wise grouping network.
+Error features.
+3D spatial grouping network.
+A.2 Training
+Stage 1.
+Stage 2.
+End-to-end fine-tuning.
+Optimization.
+A.3 Scene Scale Normalization
+A.4 Occlusion Test for Error Feature Aggregation
+Frustum test.
+Depth test.
+B Evaluation Details
+B.1 Evaluation-Time Pose Alignment
+B.2 Contribution-Based Pruning
+B.3 Evaluation Resolution and Resize Filter
+C Additional Analysis
+C.1 View Grouping and the Choice of Group Size
+C.2 Error Feature Composition
+C.3 Observations Beyond the View Group
+C.4 Additional Cross-Dataset Generalization
+D Additional Qualitative Results
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25011v1 [cs.CV] 18 Oct 2026
+FineSplat: Fine Patches, Local Groups, Detailed Splats
+Hyebin Kim ∗
+Hwasik Jeong ∗
+Joonhyuk Park
+Gyeongjin Kang
+Jungwoo Kim
+Affiliation:  Younghyun Kim, Eunbyung Park †
+Affiliation:  [0.5em]
+Yonsei University and Discussion
+We presented FineSplat , a feed-forward 3DGS framework that preserves fine-grained visual information through high-resolution patch representations while avoiding the prohibitive cost of glob
+
+########## 2610.25681 ##########
+【摘要】
+
+【方法】
+3.1 Gaussian Representation
+3.1.1 3D Gaussian Splatting
+3.1.2 BRDF-aware Gaussian Representation
+3.2 RxGS: Relightable Gaussian Stylization
+3.2.1 Albedo Parameterization
+3.2.2 Rendering Strategy
+3.2.3 Style Loss
+3.2.4 Spatial Smoothness Prior on the Gaussian Neighbourhood Graph The task is to modify the appearance of a 3D scene, reconstructed from posed multi-view images { I k , P k } k = 1 K \{I_{k},P_{k}\}_{k=1}^{K} , so that it matches the style of a reference image J J , while keeping both the scene geometry and the physical rendering components that are needed to render the scene under novel illumination.
+3.1 Gaussian Representation
+3.1.1 3D Gaussian Splatting
+3D Gaussian Splatting (3DGS) Kerbl et al. (2023) represents a scene with a set of anisotropic 3D Gaussian primitives placed in 3D space. Each Gaussian is parameterized by a centre 𝐱 i ∈ ℝ 3 \mathbf{x}_{i}\in\mathbb{R}^{3} , a scaling vector 𝐬 i ∈ ℝ 3 \mathbf{s}_{i}\in\mathbb{R}^{3} , a rotation quaternion 𝐪 i ∈ ℝ 4 \mathbf{q}_{i}\in\mathbb{R}^{4} , an opacity α i ∈ [ 0 , 1 ] \alpha_{i}\in[0,1] , and appearance-related attributes. The scaling vector and rotation quaternion together define the Gaussian covariance. The trainable parameters of the i i -th Gaussian are
+G i = { 𝐱 i , 𝐬 i , 𝐪 i , α i , ϕ i } , \displaystyle G_{i}=\{\mathbf{x}_{i},\mathbf{s}_{i},\mathbf{q}_{i},\alpha_{i},\phi_{i}\},
+(1)
+where ϕ i \phi_{i} denotes the appearance representation of the Gaussian.
+Because the Gaussian primitives are defined in 3D space, the appearance attributes of a Gaussian are shared by every viewpoint that observes the same spatial region. This gives a fixed correspondence between scene geometry and appearance during rendering, so a change to a Gaussian’s appearance attributes affects all views of that region in the same way, which is useful for keeping a stylization consistent across viewpoints.
+3.1.2 BRDF-aware Gaussian Representation
+GS-IR Liang et al. (2024) refines the 3DGS appearance attribute ϕ i \phi_{i} into a BRDF-aware decomposition consisting of diffuse albedo, roughness, metallicity, and surface normal, while jointly estimating a global environment lighting L L , represented as an environment map, that is, a function on the unit sphere of incident directions giving the incoming radiance from each direction. Specifically,
+ϕ i = { 𝐚 i , r i , m i , 𝐧 i } , \displaystyle\phi_{i}=\{\mathbf{a}_{i},r_{i},m_{i},\mathbf{n}_{i}\},
+(2)
+where 𝐚 i ∈ [ 0 , 1 ] 3 \mathbf{a}_{i}\in[0,1]^{3} is the diffuse albedo of the i i -th Gaussian, r i ∈ [ 0 , 1 ] r_{i}\in[0,1] is the roughness, m i ∈ [ 0 , 1 ] m_{i}\in[0,1] is the metallicity, and 𝐧 i ∈ ℝ 3 \mathbf{n}_{i}\in\mathbb{R}^{3} is the surface normal.
+In an RGB appearance representation a single per-point colour already combines material reflectance, the illumination together with the shading it produces, and view-dependent effects. The decomposition above instead stores the albedo 𝐚 i \mathbf{a}_{i} as a separate per-Gaussian coefficient, alongside r i r_{i} , m i m_{i} , 𝐧 i \mathbf{n}_{i} , and the global lighting L L .
+Although the diffuse albedo is represented separately, it still influences the colour of specular reflections under the me
+
+【实验】
+4.1 Experimental Setup
+Datasets. We evaluate RxGS from two angles: cross-view geometric consistency and relightable stylization. We first compare RxGS with existing reference-based 3D scene stylization methods using a geometric consistency metric, which measures how well scene structure is preserved across viewpoints after stylization. Because the existing methods do not support relighting, we then evaluate the relightable stylization of RxGS by rendering stylized scenes under different illumination conditions and examining how the appearance responds.
+4.1 Experimental Setup
+Datasets.
+We use NeRF-Synthetic Mildenhall et al. (2021) and NeRF-LLFF Mildenhall et al. (2019) for the geometric consistency comparison, and add TensorIR Jin et al. (2023) and Mip-NeRF 360 Barron et al. (2022) for the relightable stylization experiments. NeRF-Synthetic Mildenhall et al. (2021) is a synthetic multi-view dataset of eight object-centric scenes, each with 100 training images and 200 test images rendered at 800 × 800 800\times 800 , with camera poses and foreground masks. NeRF-LLFF Mildenhall et al. (2019) is a real-world forward-facing multi-view dataset captured by handheld cameras with calibrated poses; it contains more complex geometry, occlusions, and appearance variation than NeRF-Synthetic, and we downsample the input images by a factor of four, following prior work Zhang et al. (2023) ; Fridovich-Keil et al. (2022) ; Tang et al. (2023) . TensorIR Jin et al. (2023) is a multi-view dataset for inverse rendering and relighting, with diverse materials and illumination and with ground-truth geometry, material, and lighting; we use its Lego and Hotdog scenes for relightable stylization. Mip-NeRF 360 Barron et al. (2022) is a real-world multi-view dataset of unbounded indoor and outdoor scenes captured over 360-degree viewpoints, with larger extents and more complex structure than NeRF-Synthetic and LLFF; we use its Garden , Kitchen , and Bicycle scenes. Protocol.
+Metric.
+4.2 Cross-view Geometry Consistency
+4.2.1 Quantitative Comparison
+4.2.2 Qualitative Comparison
+4.3 Relightable Stylized Rendering
+4.4 Ablation Study
+4.4.1 Effect of the Style Supervision Strategy Protocol.
+To reduce bias toward a particular artistic appearance, we evaluate each scene with three different reference styles, and for the geometric consistency comparison we average the reported results over the three styles. For relighting, NeRF-Synthetic and LLFF scenes are rendered under several illumination conditions by rotating the estimated environment map while keeping all stylization parameters fixed. We additionally evaluate relightable stylization on TensorIR and Mip-NeRF 360 scenes to examine the behaviour of stylized scenes under varying illumination across different scene types.
+Metric.
+To 
+
+【结论/局限】
+6 Statements and Declarations
+6.1 Competing Interests
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25681v1 [cs.CV] 19 Oct 2026
+RxGS: Relightable Gaussian Stylization via BRDF Decomposition
+Wanrong Hong
+Affiliation:  School of Computer Science, University of Technology Sydney, Sydney, Australia
+Liu Jiang
+Affiliation:  Department of Civil and Environmental Engineering, Stanford University, Stanford, United State
+Mukesh Prasad
+Affiliation:  Australian Artificial Intelligence Institute, University of Technology Sydney, Sydney, 2007, Australia
+Jun Li
+Email:  jun.li@uts.edu.au
+Affiliation:  School of Computer Science, University of Technology Sydney, Sydney, Australia We presented RxGS, a relightable 3D scene stylization framework built on a BRDF-aware Gaussian scene representation. RxGS optimizes only the diffuse albedo field and leaves the roughness, metallicity, surface normals, and environment lighting fixed, so artistic appearance transfer does not alter the material or illumination parameters and the stylized scene keeps a representation that can be relit. RxGS preserves cross-view geometric consistency and produces illumination-dependent appearance unde
+
+########## 2610.24811 ##########
+【摘要】
+
+【方法】
+III-A Preliminaries
+III-A 1 NeRF Rendering
+III-A 2 Static illumination
+III-B Moving illumination
+III-C Illumination Field and Its SO(3) Transport
+III-D SH Basis for Irradiance
+III-E Vectorized SH Irradiance
+III-F Analytic Rotation of the Illumination Field
+III-G Albedo × \times Irradiance Factorization and Rendering
+III-H Training Loss III-A Preliminaries
+III-A 1 NeRF Rendering
+We build upon the volumetric rendering framework of NeRF  [ 4 ] .
+A scene is represented by two functions: a volume density σ ⁡ ( 𝒙 ) \sigma(\bm{x}) of 3D position 𝒙 \bm{x} , and a directional emitted color 𝒄 ⁡ ( 𝒙 , 𝒅 ) \bm{c}(\bm{x},\bm{d}) of position and viewing direction 𝒅 \bm{d} . A camera ray 𝒓 ⁡ ( τ ) = 𝒐 + τ ​ 𝒅 \bm{r}(\tau)=\bm{o}+\tau\bm{d} is discretized into N N samples 𝒙 i = 𝒓 ⁡ ( τ i ) \bm{x}_{i}=\bm{r}(\tau_{i}) , and the pixel color is obtained by alpha compositing,
+C ^ ( 𝒓 ) = ∑ i = 1 N T i ( 1 − e − σ i ​ δ i ) 𝒄 i , T i = exp ( − ∑ j < i σ j δ j ) , \hat{C}(\bm{r})=\sum_{i=1}^{N}T_{i}\big(1-e^{-\sigma_{i}\delta_{i}}\big)\bm{c}_{i},~~~T_{i}=\exp\Big(-\sum_{j<i}\sigma_{j}\delta_{j}\Big),
+(1)
+where δ i = τ i + 1 − τ i \delta_{i}=\tau_{i+1}-\tau_{i} and T i T_{i} is the accumulated transmittance from the camera to sample i i .
+III-A 2 Static illumination
+For a surface point 𝒙 \bm{x} with normal 𝒏 \bm{n} (evaluated at the ray’s expected termination and oriented along the negative density gradient), let L ⁡ ( 𝒙 , 𝝎 𝒊 ) L(\bm{x},\bm{\omega_{i}}) denote the radiance incident from direction 𝝎 ∈ S 2 = { 𝝎 ∈ ℝ 3 : ‖ 𝝎 ‖ = 1 } \bm{\omega}\in S^{2}=\{\bm{\omega}\in\mathbb{R}^{3}:\|\bm{\omega}\|=1\} , and the bidirectional reflectance distribution function (BRDF) as f r ​ ( 𝝎 𝒊 , 𝝎 𝒐 ) f_{r}(\bm{\omega_{i},\omega_{o}}) . The outgoing radiance toward 𝝎 o \bm{\omega}_{o} is given by the reflection equation  [ 29 ] ,
+B ⁡ ( 𝒙 , 𝒏 , 𝝎 𝒐 ) = ∫ S 2 L ⁡ ( 𝒙 , 𝝎 𝒊 ) ​ f r ​ ( 𝝎 𝒊 , 𝝎 𝒐 ) ​ max ⁡ ( 0 , 𝝎 i ⋅ 𝒏 ) ​ d ​ 𝝎 i , B(\bm{x},\bm{n},\bm{\omega_{o}})=\int_{S^{2}}L(\bm{x},\bm{\omega_{i}})f_{r}(\bm{\omega_{i},\omega_{o}})\max(0,\bm{\omega}_{i}\cdot\bm{n})\mathrm{d}\bm{\omega}_{i},
+(2)
+For a Lambertian surface with albedo ρ ⁡ ( 𝒙 ) \rho(\bm{x}) the BRDF becomes
+f r = ρ ⁡ ( 𝒙 ) / π f_{r}=\rho(\bm{x})/\pi , which can be taken outside the integral, so that
+B ⁡ ( 𝒙 , 𝒏 ) = ρ ⁡ ( 𝒙 ) π ​ E ​ ( 𝒙 , 𝒏 ) = ρ ⁡ ( 𝒙 ) π ​ ∫ S 2 L ⁡ ( 𝒙 , 𝝎 ) ​ max ⁡ ( 0 , 𝝎 ⋅ 𝒏 ) ​ 𝑑 𝝎 , B(\bm{x},\bm{n})=\frac{\rho(\bm{x})}{\pi}E(\bm{x},\bm{n})=\frac{\rho(\bm{x})}{\pi}\int_{S^{2}}L(\bm{x},\bm{\omega})\max(0,\bm{\omega}\cdot\bm{n})\mathrm{d}\bm{\omega},
+(3)
+which depends on the surface point and its normal, and E E is the irradiance. Because L L is frame-invariant, standard NeRF baked the illumination and albedo into a single appearance field 𝒄 \bm{c} , and therefore does not separate them.
+III-B Moving illumination
+In the moving-light setting, the camera carries the illumination source. Let the camera pose at frame t t be ( R t , 𝒑 t ) (R_{t},\bm{p}_{t}) , mapping canonical (camera) coordinates to world coordinates as 𝒙 = R t ​ 𝒙 c + 𝒑 t \bm{x}=R_{t}\bm{x}^{c}+\bm{p}_{t} . The light source is fixed in the canonical frame, with free-space emitted radiance L c ​ ( 𝒙 c , 𝝎 c ) L_{c}(\bm{x}^{c},\bm{\
+
+【实验】
+IV-A Datasets
+IV-B Baselines
+IV-C Metrics
+IV-D Training Setup
+V Results
+V-A Quantitative Results
+V-B Qualitative Results
+V-C Ablation Study
+V-C 1 Influence of the Rotated-Irradiance Term
+V-C 2 Influence of the SH order
+VI Conclusion and Limitation
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24811v1 [cs.CV] 17 Oct 2026
+Directionally Factorized Illumination with Spherical Harmonic Rotation
+Yimeng Dou
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Adam M. Saunders
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Andre T. S. Hucke
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Michael E. Kim
+Affiliation:  Department of Computer Science, Vanderbilt University, Nashville, TN, USA;
+Adam W. Anderson
+Eric R. Tkaczyk
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Affiliation:  Department of Biomedical Engineering, Vanderbilt University, Nashville, TN, USA;
+Affiliation:  Department of Dermatology, Vanderbilt University Medical Center;
+Affiliation:  Veterans Affairs Tennessee Valley Healthcare System
+Bennett A. Landman
+Daniel Moyer
+† † thanks: *This work was supported by the National Institutes of Health under award numbers U54DK134302, U54EY032442, R01EB017230, R01HL169944. This work was also partially supported by VA MERIT award I01 CX002721 from the United States Department of Veterans Affairs Clinical Science R&D Service, and by the Alzheimer’s Disease Sequencing Project Phenotype Harmonization Consortium (ADSP-PHC) that is funded by NIA (U24 AG074855, U01 AG068057 and R01 AG059716).
+Affiliation:  Department of Computer Science, Vanderbilt University, Nashville, TN, USA;
+Affiliation:  Department of Radiology and Radiological Sciences, Vanderbilt University Medical Center, Nashville, TN, USA;
+Affiliation:  Vanderbilt University Institute of Imaging Science, Vanderbilt University Medical Center, Nashville, TN, USA; IV-A Datasets
+We evaluate on the public DarkRobotic dataset  [ 8 ] , captured with a FLIR Firefly S camera and an active light source co-located rigidly on a legged robot, and the synthetic data from relative-illumination  [ 10 ] . Two datasets comprise a total of five co-located sequences. For each sequence, we hold out every 8th frame, serving as the validation set on which all metrics are reported, and the remaining frames are used for training.
+IV-B Baselines
+We compare our proposed method against 2D Gaussian Splatting (2DGS)  [ 7 ] , 3D Gaussian Splatting (3DGS)  [ 6 ] , GS-W  [ 24 ] , DarkGS  [ 8 ] , SpotlessGS  [ 21 ] , and a NeRF-based model relative-illumination  [ 10 ] . Su
+
+【结论/局限】
+. The offset γ shift \gamma_{\mathrm{shift}} that sets the initialization of the illumination sigmoid is hand-picked per environment, and its sensitivity remains unexplored. A learned or data-driven initialization would remove this manual choice. While the factorized albedo and the learned illumination field are theoretically separable, practical relighting under arbitrary (non-capture) illumination depends on the completeness of the irradiance sampling during capture.
+Future work. We will explore environment map extraction from the learned SH coefficients and evaluate it under synthetic and real relighting conditions. Also, our current formulation assumes Lambertian (diffuse) reflectance. Highly reflective surfaces would require explicit specular modeling, e.g. view-dependent specular terms observed in endoscopy.
+TABLE II: Ablation of the DaFISH components on Outdoor1 and FourLights.
+Variation
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Full model (Outdoor1)
+38.71
+0.9687
+0.0667
+relative-illumination (Outdoor1)
+33.67
+0.9321
+0.1563
+SH order l = 1 l{=}1 (FourLights)
+25.83
+0.9148
+0.0954
+SH order l = 2 l{=}2 (FourLights)
+27.30
+0.9197
+0.0924
+SH order l = 4 l{=}4 (FourLights)
+28.4
+
+########## 2610.23899 ##########
+【摘要】
+
+【方法】
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Vanilla 3DGS
+27.58
+0.65
+0.20
+25.24
+0.75
+0.29
+22.70
+0.59
+0.17
+18.18
+0.48
+0.16
+23.68
+0.74
+0.18
+23.47
+0.59
+0.25
+30.63
+0.77
+0.22
+28.03
+0.86
+0.16
+CoCoGaussian
+27.31
+0.64
+0.19
+24.57
+0.71
+0.30
+18.72
+0.39
+0.20
+17.97
+0.48
+0.15
+20.02
+0.62
+0.19
+18.60
+0.51
+0.30
+29.51
+0.75
+0.22
+27.01
+0.83
+0.15
+Deblurring 3DGS
+26.32
+0.62
+0.21
+23.30
+0.66
+0.29
+18.83
+0.41
+0.21
+17.53
+0.46
+0.17
+22.78
+0.74
+0.18
+19.25
+0.51
+0.29
+29.93
+0.77
+0.22
+24.64
+0.79
+0.17
+BAGS
+29.48
+0.70
+0.17
+27.21
+0.79
+0.26
+22.78
+0.59
+0.16
+19.77
+0.56
+0.14
+26.59
+0.79
+0.16
+26.29
+0.68
+0.20
+32.70
+0.80
+0.19
+30.64
+0.89
+0.14
+Ours
+33.49
+0.96
+0.06
+37.45
+0.98
+0.02
+36.06
+0.97
+0.04
+39.53
+0.99
+0.01
+32.17
+0.95
+0.06
+41.68
+0.99
+0.01
+45.39
+0.99
+0.01
+45.13
+1.00
+0.01
+Table 1: Quantitative comparisons across all samples in the synthetic dataset. Top three per metric are colored red, orange, and yellow respectively.
+III-E Reconstruction
+Our reconstruction consists of COLMAP and 3DGS processes, both adjusted for better accuracy.
+III-E 1 Bundle Adjustment
+We use COLMAP  [ 26 , 27 ] to refine the camera intrinsics and extrinsics, and to generate a sparse point cloud for initializing the 3DGS optimization.
+First, SIFT  [ 19 ] features are extracted and exhaustively matched across all views.
+COLMAP’s incremental mapper is then seeded with our initial camera intrinsics and the robot’s reported end-effector poses.
+We let COLMAP refine these further, accounting for errors in intrinsics, as well as small, unmodeled pose offsets from the custom microscope mount.
+III-E 2 3D Gaussian Splatting
+We use the gsplat library’s  [ 34 ] implementation of 3DGS  [ 15 ] .
+To suppress floater artifacts while preserving fine structural details, we adjust the default densification hyperparameters, increasing the opacity pruning threshold to τ α = 0.10 \tau_{\alpha}=0.10 and the 2D gradient growth threshold to τ ∇ = 4 × 10 − 4 \tau_{\nabla}=4\times 10^{-4} .
+Additionally, we introduce a background alpha regularization term that
+penalizes rendered opacity in pixels outside the generated sample masks:
+ℒ bg = 1 | ℬ | ​ ∑ ( u , v ) ∈ ℬ α ^ u ​ v , \mathcal{L}_{\mathrm{bg}}=\frac{1}{|\mathcal{B}|}\sum_{(u,v)\,\in\,\mathcal{B}}\hat{\alpha}_{uv},
+(10)
+where ℬ \mathcal{B} represents the set of background pixels defined by our segmentation masks, and α ^ u ​ v \hat{\alpha}_{uv} is the rendered alpha value at pixel location ( u , v ) (u,v) . This background drives the opacity of background Gaussians toward zero, ensuring most floaters are removed during the pruning phase. We set the background loss scaling factor λ b ​ g = 0.2 \lambda_{bg}=0.2 .
+Combined with the standard 3DGS photometric objective, the complete loss minimized during training is:
+ℒ = ( 1 − λ ssim ) ​ ℒ 1 + λ ssim ​ ℒ SSIM + λ bg ​ ℒ bg , \mathcal{L}=(1-\lambda_{\mathrm{ssim}})\,\mathcal{L}_{1}+\lam
+
+【实验】
+IV-A Runtime
+IV-B 3DGS Training Parameters
+IV-C Datasets
+IV-C 1 Real-World Dataset
+IV-C 2 Synthetic Dataset
+IV-D Ablation Study
+IV-D 1 Object-Centering Experiment
+IV-D 2 SfM Initialization Priors
+IV-E Comparisons
+IV-F Real-World Results
+V Conclusion
+References
+License: CC BY 4.0
+arXiv:2610.23899v1 [cs.RO] 28 Sep 2026
+MicroSplat: Towards Automating 3D Small-Scale Reconstruction
+Roman Mineyev †
+Robert Azarcon †
+Suvrat Jain
+Chuizheng Kong
+Shreyas Kousik
+† † thanks: † Equal contribution. † † thanks: All authors are with the Georgia Institute of Technology. Corresponding author: Roman Mineyev, rmineyev3@gatech.edu . Fig. 6: Qualitative comparison on a pinecone from our synthetic dataset.
+Fig. 7: Qualitative real-world reconstruction results.
+We now experimentally validate the MicroSplat pipeline. First, we ablate the object-centering step to see how well it can localize and keep an object centered during data collection. Second, we test various SfM initialization methods to see which version produces the best results.
+We also benchmark against vanilla 3DGS [ 15 ] (trained on images that neither focus-stacked or masked) and three state-of-the-art deblurring approaches in 3DGS: BAGS [ 23 ] , CoCoGaussian [ 18 ] , and Deblurring 3DGS [ 17 ] .
+IV-A Runtime
+On average, the full MicroSplat pipeline takes 134 minutes per object on a single NVIDIA L40S: 2 minutes for object-centering, 39 minutes for data collection, 33 minutes for pre-processing (focus-stacking and masking), and 60 minutes for the reconstruction (COLMAP and 3DGS).
+IV-B 3DGS Training Parameters
+We follow the original 3DGS  [ 15 ] training configuration,
+optimizing for 30,000 iterations from the COLMAP sparse point cloud with
+input images downsampled by a factor of 4 from the microscope’s
+1920 × 1080 1920\times 1080 resolution, and use identical settings for both the real and
+synthetic datasets.
+We deviate from the defaults in two places, both chosen to help with suppressing floater
+artifacts: the opacity pruning threshold τ α \tau_{\alpha} is doubled from 0.05 0.05
+to 0.10 0.10 , and the 2D
+gradient growth threshold τ ∇ \tau_{\nabla} also doubled from 2 × 10 − 4 2\times 10^{-4} to
+4 × 10 − 4 4\times 10^{-4} .
+IV-C Datasets
+IV-C 1 Real-World Dataset
+To qualitatively evaluate the system, we selected eight samples (almond, circuit, blueberry, bolt, rock, pinecone, hydrangea, and seashell) spanning surface appearance (matte to slightly specular), brightness, geometric complexity, texture frequency, and depth extent.
+Each sample’s maximum width is 15- 27   mm 27\text{\,}\mathrm{mm} .
+IV-C 2 Synthetic Dataset
+We quantitatively evaluate focus stacking in simulation because no reliable ground truth exists for the real captures: every real image is degraded by the shallow DoF the pipeline is designed to co
+
+########## 2610.26633 ##########
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+IV-A RGB-D datasets
+Camera localization accuracy
+Computational performance & ablation study
+IV-B Parameter Sensitivity Analysis
+IV-C Experiments
+Camera localization accuracy
+Object localization accuracy
+IV-D Limitations
+V CONCLUSIONS
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26633v1 [cs.RO] 19 Oct 2026
+CAOS-SLAM: Class-Agnostic Object-Aware Real-Time vSLAM for Dynamic Environments
+Gaia Borghi
+João Carlos Virgolino Soares
+Angelo Bratta
+Shahab Heshmati-Alamdari
+Claudio Semini
+† † thanks: *Corresponding author: gaia.borghi@iit.it
+$ˆ1$ Dynamic Legged Systems Lab (DLS), Istituto Italiano di Tecnologia, Genoa, Italy
+$ˆ2$ Section of Automation & Control, Department
+of Electronic Systems, Aalborg University, Denmark The system was evaluated in terms of camera localization accuracy, measured by the Root Mean Squared Error (RMSE) of the Absolute Pose Error (APE), and computational efficiency, measured by the frame rate. Two public RGB-D datasets were used, and compared to the ORB-SLAM3 baseline  [ 15 ] and to the dynamic SLAM systems NGD-SLAM  [ 2 ] (semantic-based) and Panoptic-SLAM  [ 11 ] (class-agnostic). A real-world experiment was conducted to jointly evaluate camera localization and object tracking accuracy (Fig. 4 ). Each experiment was repeated five times and the median result is reported.
+Fig. 4 : A scene of go2_b2_person_move (left) and person_move (right) from an external point of view
+IV-A RGB-D datasets
+The proposed system was tested on sequences from two complementary datasets, to evaluate its robustness under different types of dynamics:
+•
+Bonn RGB-D Dynamic Dataset  [ 20 ] contains highly dynamic scenes with moving people and manipulated objects. In particular the nonobstructing_box sequences show a person moving a little box around, and the obstructing_box sequences show two people moving a wide box that can fully cover the camera view;
+•
+Panoptic Dataset  [ 11 ] , containing quadruped robots and people.
+These two datasets include objects with different appearance, size and motion characteristics. Moreover, quadruped robots do not belong to any COCO classes used to train the panoptic network, and thus appear as unknown moving objects, allowing us to assess the class-agnostic capabilities of our system.
+Camera localization accuracy
+Table II reports localization results on the Bonn RGB-D Dynamic Dataset [ 20 ] and the Panoptic Dataset [ 11 ] . Overall, the proposed framework consistently improves camera localization in highly dynamic environments while maintaining competitive performance in scenarios dominated by human motion ( Bonn - Dynamic Sequences ). The largest gains are observed in situations where semantic information alone is insufficient to identify dynamic objects ( Panoptic Dataset ) or where large mov
+
+########## 2610.24285 ##########
+【摘要】
+
+【方法】
+4.1 Multimodal Observation Representation
+4.2 Action Representation
+4.3 Multimodal Sequence Construction
+4.4 Training and Inference We propose ACTS (Fig.  2 ), an action-conditioned world model jointly
+predicting future scene video, wrist views, and tactile observations
+from observation histories and actions for bimanual manipulation.
+We describe observation encoding and tokenization
+(Sec.  4.1 ), then force-aware
+sensor actions and view-aligned actions encoding contact-related
+motion and scene-view sensor geometry
+(Sec.  4.2 ).
+We detail unified sequence construction with spatiotemporal
+alignment and full-window action conditioning
+(Sec.  4.3 ), alongside the
+training objective and inference protocol
+(Sec.  4.4 ).
+4.1 Multimodal Observation Representation
+To capture manipulation from complementary perspectives, we jointly listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from scene video, wrist views, and tactile observations in a shared
+latent prediction framework.
+We define the observation streams as
+ℳ = { V , W L , W R , T L , T R } \mathcal{M}=\{V,W^{L},W^{R},T^{L},T^{R}\} , where V V denotes the
+top-down scene RGB view, W L W^{L} and W R W^{R} denote the left and
+right wrist-camera RGB views, and T L T^{L} and T R T^{R} denote
+the corresponding GelSight observations.
+For each stream m ∈ ℳ m\in\mathcal{M} , let X H m X_{H}^{m} and X F m X_{F}^{m}
+denote its observed history and future sequence, respectively.
+Given synchronized histories and action conditions 𝒜 \mathcal{A} ,
+our goal is to model
+p θ ​ ( { X F m } m ∈ ℳ ∣ { X H m } m ∈ ℳ , 𝒜 ) , p_{\theta}\!\left(\{X_{F}^{m}\}_{m\in\mathcal{M}}\mid\{X_{H}^{m}\}_{m\in\mathcal{M}},\mathcal{A}\right),
+(1)
+where θ \theta denotes the model’s trainable parameters.
+To obtain compact representations while preserving temporal
+causality, we encode each observation stream as
+Z m = ℰ m ​ ( X m ) , m ∈ ℳ , Z^{m}=\mathcal{E}_{m}(X^{m}),\qquad m\in\mathcal{M},
+(2)
+where X m X^{m} concatenates history X H m X_{H}^{m} and future X F m X_{F}^{m}
+in temporal order.
+The scene and two wrist-camera streams share the pretrained
+Wan2.2 causal VAE encoder  ( Wan et al., 2025 ) , while both GelSight
+streams share a variant adapted to our visuo-tactile
+dataset. 2 2
+2
+Details of tactile VAE adaptation are provided
+in Appendix  D .
+All encoders are f
+
+【实验】
+5.1 Baseline Models 5.1 Baseline Models
+We compare ACTS with two action-conditioned visuo-tactile world
+models, training both from scratch on React.
+Among recent visuo-tactile world models, only
+ContactWorld  ( Zhang et al., 2026 ) and
+Dream-Tac  ( Lou et al., 2026 ) release training code;
+VT-WM  ( Higuera et al., 2026 ) ,
+OmniVTA  ( Zheng et al., 2026 ) , ViTacWorld  ( Huang et al., 2026b ) ,
+FeelWorld  ( Ma et al., 2026 ) , and VT-WAM  ( Tian et al., 2026 ) had
+not released model code at the time of writing.
+ContactWorld is a decoder-free JEPA-style  ( Assran et al., 2023 ) model, which we
+train with its official code, adapted to our observation and action
+spaces.
+VT-WM-style is our reimplementation of
+VT-WM, preserving its
+autoregressive latent predictor and action conditioning while
+adapting its interfaces to our data.
+We intended to compare with Dream-Tac but could not adapt it to
+React: it generates actions jointly with future observations instead
+of conditioning on given actions, and its released code expects a
+robot camera layout and proprioception that React lacks.   per object are shown in bold.
+Task Metrics Metrics
+We compare ACTS with baseline models on future-frame prediction
+using held-out human recordings and zero-shot transfer to robot episodes.
+Video Generation Metrics.
+Given eight observed frames (one for ContactWorld, its native context)
+and recorded actions, each model predicts the next eight frames (0.53 s at 15 fps).
+We evaluate only predicted frames, separately for the scene view,
+two wrist cameras, and two GelSight streams.
+We report PSNR for pixel-level fidelity,
+SSIM  ( Wang et al., 2004 ) for structural similarity, and
+LPIPS  ( Zhang et al., 2018 ) for perceptual distance.
+Higher PSNR and SSIM and lower LPIPS indicate better results.
+For both human and robot data, reference frames are decoded from
+ground-truth latents using the frozen RGB and tactile VAEs.
+All comparisons use identical test windows and seeds.
+Appendix  B provides further details.
+Robot Experiments.
+We apply models trained on human data to held-out robot episodes
+(Sec.  3 ) without fine-tuning.
+Robot recordings are normalized to match the human data’s tactile
+color and illumination and wrist-camera tone.
+Actions are constructed from OptiTrack sensor poses and
+GelSight-estimated force following Sec.  4.2 ,
+as for the human data, rather than from robot joint readings.
+Per-step translations from forward kinematics differ from the
+OptiTrack ones by a median of 0.33 mm, about half the median
+per-step motion, so OptiTrack keeps robot actions consistent with
+the human training data
+(Appendix  B ).
+We use the same eight-frame observation and prediction protocol
+on windows in which contact is made or broken, and report the same
+per-stream metrics. metrics.
+All stream
+
+【结论/局限】
+References
+A Dataset and Force-Estimation Details
+A.1 Dataset Composition
+A.2 Temporal Alignment and Curation
+A.3 Normal-Force Estimation
+B Evaluation Details
+C Qualitative Robot Rollouts
+D Tactile Encoder
+E Action Representation Details
+F Implementation and Training Details
+F.1 Data Preparation
+F.2 Model Initialization and Adaptation
+F.3 Sequence Packing and Temporal Alignment
+F.4 Training Procedure
+F.5 Inference and Rollout
+G VT-WM-style Baseline
+H Force-Informed Action Ablation
+I ContactWorld Baseline
+License: CC BY 4.0
+arXiv:2610.24285v1 [cs.RO] 16 Oct 2026
+ACTS: Learning Visuo-Tactile World Models from Human Physical Interaction
+Yuxiang Ma
+† † thanks: Equal contribution.
+Weihan Xu 1 1 footnotemark:
+1
+Pengfei Ye
+Anna Mei
+Affiliation:  Massachusetts Institute of Technology  University of Washington  Harvard University
+Yuxin Ray Song
+Tingle Li   Haonan Chen   Edward H. Adelson
+Affiliation:  University of California, Berkeley  Stanford University We presented ACTS, a visuo-tactile world model trained entirely on human physical interaction, with actions defined at the tactile sensor as motion augmented with force change. It predicts the scene view better than two visuo-tactile base
+
+########## 2610.23903 ##########
+【摘要】
+
+【方法】
+4.1 Image Generation
+4.2 Realization
+4.3 Video Generation
+4.4 Augmented Reality 4.1 Image Generation
+Image generation was performed based on DreamBooth [ 7 ] , a method to finetune a latent diffusion model to a particular object or identity. We based our implementation on the DreamBooth implementation by Shivam Shrirao 3 3
+3
+https://github.com/ShivamShrirao/diffusers which is based on [ 9 ] but in addition provides a straightforward Jupyter notebook that was deployed on Google Colab. As pre-trained models we choose Stable Diffusion 1.5 as well as Stable Diffusion 2.1 as both of them are favorable depending on the decade we are training on. This also matches the experience many artists and researchers had, that depending on the specific goal the specific choices of the two models (e.g. the encoder and training diet) lead to different behavior.
+In our case we did not aim to reproduce a specific identity or object but rather a specific style of an artist but the DreamBooth fine-tuning strategy still performed very well. We changed two parameters of the implementation. First we removed the prior preservation. This strategy usually ensures that the model is still able to generalize after finetuning; however, in our case, it leads to the undesired effect that the generated images are not adopting the style of the artist (as the loss forces it to generate images in the original style). Due to this change our model however also misses generalization capabilities, which means that since we are only training a comparable small set of images without language annotation, the model also looses its capability to generate images that fit a specific text prompt. We view this as feature, as the image generation for our model was not biased by a human induced text prompt. The second small change we made to better adopt the style was to increase the maximal number of training steps from 800 to 10’000 which leads to better style adoption.
+For both those changes we did not perform extensive qualitative or quantitative evaluation but rather tuned them based on our own qualitative observation on a small subset of generated images. The release of part of our training data enables a more structured comparison of different and newer models as well as more modern fine-tuning techniques. We did not perform such an evaluation as it was not the focus of this project, we do however see already challenges in the choice or design of metrics to evaluate generated artwork in terms of style and content.
+Whilst for our photographs proper color calibration is available, Stable Diffusion does not distinguish color spaces and assumes sRGB. For our specific project this is not a limitation, as the generation through the artists anyway adds a creative component with some artistic freedom.
+4.2 Realization
+We generated 100 images for each of the variants of Stable Diffusion and for each decade. Bernhard Egger and Hans Furer then selected one representative generated piece that was painted by Hans Furer onto canvas. In addition, one sample from the training dataset was chosen in a way that it fits the generated piece very well (except for the third image, were the artist selected a part
+
+【实验】
+and Results
+5.1 Image Generation
+5.2 Video Generation and Results
+We performed purely observational experiments rather than extensive qualitative and quantitative evaluations with metrics regarding style, image or video quality. This section therefore can rather be seen as a report of how the artwork came along, rather than a comparison to state-of-the-art techniques. We would also like to highlight, that the used methods for generation, fine-tuning and video generation have, in the 3 years since the project was performed, all found successors that would likely lead to different results which might be superior depending on the metric.
+Figure 8 : The artist mentioned that the third generated piece shows, that the generative model does not understand his work as the model did not leave a 10 cm white border as he usually does for his artwork. A close look at the training data however shows that this is not something the generative model came up with, but is supported by the training data.
+5.1 Image Generation
+We finetuned model variants on 5 different training sets, always on one decade of artwork of Hans Furer. We experimented with both Stable Diffusion 1.5 as well as Stable Diffusion 2.1. resulting in a total of 10 model variants. The resulting pieces for the decade from 1981-1990 and 1991-2000 can be seen in Figure  5 and Figure  6 respectively. The style of Hans Furer changes quite a bit over time and we observed that the two different models behave differently and depending on the decade generated artwork of one of the models was favored. Since both models share the same basis images generated with the same seed often share quite some similarity, which enables a direct comparison between the models. For the decade from 1981-1990, where Hans Furer drew many faces and bodies the newer model leads to much more detail and makes the images less blurry. For the decade from 1991-2000, which contains much more abstract images in the training data, the newer model seems to struggle more. The key observable difference from our perspective is that the newer model tends to have more texture-like patterns, which could either be a bias inherited by the difference in training data, or a case of hallucination by the model. In contrast, the artwork of Hans Furer is often more calm in the background. For each decade, one images was manually chosen by Bernhard Egger and Hans Furer based on personal preferences. This piece was then transferred to canvas and paired with a piece from the training data that was selected by the artist. The final selection of generated artworks is shown in Figure  7 . This Figure not only shows the final result but also gives a gist on the accuracy at which the artist transcribed the images, including e.g. mistakes the generative model mad
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.23903v1 [cs.CV] 29 Sep 2026
+AI-Experiment: an augmented reality art project co-created with artificial intelligence
+Bernhard Egger
+Affiliation:  Friedrich-Alexander-Universität Erlangen-Nürnberg, Germany
+E-mail  bernhard.egger@fau.de
+Hans Furer
+E-mail  hans.furer@furer-partner.ch We presented a set of paintings created in synergy between a generative model, a computer scientist and an artist. The unique component is that the project closes the loop - the model is trained on artwork from one specific artist and the artificially generated result is brought back to canvas by the same artist. This combination is unique and also inspired the artist. Especially the hallucinations of the generative model, namely generating crowded backgrounds instead of uniformly colored backgrounds like Hans Furer regularly did, inspired the artist, who found exactly this element to be creative and in his subsequent artworks he experimented with wild backgrounds as can be seen in Figure  10 . Whilst the artwork itself triggered many discussions when presented at events of the university, the augmented reality extension adds a compon

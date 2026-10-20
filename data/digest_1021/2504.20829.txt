@@ -1,0 +1,213 @@
+【摘要】
+.
+
+【方法】
+Attack Viewpoints
+Train Viewpoints
+Test Viewpoints
+Stabilization Viewpoints
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Attack Image: Starry
+IPA-NeRF + 3DGS
+5.34
+0.1450
+0.7398
+25.34
+0.8206
+0.1243
+24.83
+0.8156
+0.1248
+26.42
+0.9210
+0.0841
+StealthAttack
+28.68
+0.8480
+0.1647
+18.16
+0.6373
+0.1779
+17.70
+0.6271
+0.1888
+17.43
+0.6231
+0.2470
+GaussTrap (Ours)
+36.23
+0.9894
+0.0124
+34.59
+0.9740
+0.0343
+27.80
+0.9131
+0.0818
+31.15
+0.9675
+0.0530
+Attack Image: Earth
+IPA-NeRF + 3DGS
+14.08
+0.7197
+0.2661
+24.65
+0.7969
+0.1326
+24.30
+0.7920
+0.1347
+25.43
+0.9039
+0.0907
+StealthAttack
+17.77
+0.4658
+0.2852
+18.02
+0.6325
+0.1803
+17.73
+0.6276
+0.1890
+17.30
+0.5986
+0.2561
+GaussTrap (Ours)
+40.85
+0.9944
+0.0094
+32.56
+0.9679
+0.0433
+27.98
+0.9263
+0.0727
+30.83
+0.9634
+0.0517
+Table 2. Quantitative comparison of rendering quality with baseline methods. These results are the average values based on the Mip-NeRF360 dataset. The best performance is highlighted in bold . Attack Viewpoints
+Train Viewpoints
+Test Viewpoints
+Stabilization Viewpoints
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+IPA-NeRF + 3DGS
+19.44
+0.8307
+0.2249
+25.64
+0.7919
+0.2511
+24.73
+0.7414
+0.2829
+27.75
+0.9190
+0.1165
+StealthAttack
+30.62
+0.9138
+0.2227
+26.89
+0.7798
+0.3062
+25.66
+0.7140
+0.4015
+23.29
+0.7845
+0.2426
+GaussTrap (Ours)
+37.74
+0.9818
+0.0432
+28.04
+0.8553
+0.2158
+25.96
+0.7759
+0.2630
+27.86
+0.9168
+0.1385
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+17.52
+0.7265
+0.2239
+30.83
+0.9634
+0.0517
+(a) w/o VES
+(b) w/ VES (Ours)
+Figure 4. Naive injection (a) creates artifacts in nearby views; VES (b) suppresses them via local geometric constraints.
+3.5.2. Stage II: Geometric Stabilization
+Optimizing solely on a single trigger viewpoint P atk P_{\text{atk}} constitutes an ill-posed problem in 3D reconstruction. Without spatial consistency constraints, the optimization lacks sufficient geometric supervision, leading to a rank-deficient solution space that often collapses into degenerate, “billboard-like” artifacts (e.g., floating black clouds). As visualized in Figure  4 (left), such artifacts severely violate the stealthiness condition in Eq. ( 3 ) even under minor camera deviations from the trigger pose. To address this, we propose Viewpoint Ensemble Stabilization (VES) , a geometric regularization strategy that embeds the backdoor coherently within the local 3D structure—rather than painting it onto a single 2D projection—by enforcing rendering consistency across a local viewpoint manifold.
+Manifold Construction.
+We construct a stabilization viewpoint set 𝒫 stab \mathcal{P}_{\text{stab}} by perturbing the attack pose P atk P_{\text{atk}} through small angular offsets in pitch ( Δ ​ θ \Delta\theta ) and yaw ( Δ ​ ϕ \Delta\phi ). Given a perturbation budget 𝒜 = { δ 1 , … , δ n } \mathcal{A}=\{\delta_{1},\dots,\delta_{n}\} , we enumerate all non-zero combinations ( Δ ​ θ , Δ ​ 
+
+【实验】
+4.1 Experimental Setup
+4.1.1 Datasets on Synthetic Dataset on real-world dataset
+4.2.3 Multiple Backdoors
+4.3 Mechanism Verification
+4.4 Ablation Study
+4.4.1 Stabilization Angle
+4.4.2 Attack viewpoints
+4.5 Discussions on naive defense strategies 4.1. Experimental Setup
+4.1.1. Datasets
+We use Blender ( Mildenhall et al., 2021 ) and Mip-NeRF360 ( Barron et al., 2022 ) , which are standard datasets in NeRF ( Mildenhall et al., 2021 ) and 3DGS ( Kerbl et al., 2023 ) research.
+The Blender dataset contains eight objects, each consisting of 400 400 images captured from different viewpoints on the upper hemisphere, with a resolution of 800 × 800 800\times 800 pixels. The Mip-NeRF360 dataset comprises nine scenes, including five outdoor scenes and four indoor scenes, each featuring a complex central object or region with intricate and highly detailed backgrounds. on Synthetic Dataset
+In this section, we evaluate the attack performance of GaussTrap on the Blender dataset ( Mildenhall et al., 2021 ) . We select two challenging attack images, "Earth" and "Starry", which exhibit low visual similarity to the target scenes, making them suitable for assessing the generalization capability of the attack.
+As shown in Table  1 , GaussTrap consistently outperforms all baseline methods across all four evaluation viewpoints, demonstrating superior robustness and generalization. The results are averaged over 10 10 runs for statistical reliability. The visualization in Figure  6 further highlights the high visual fidelity achieved by our method, providing qualitative evidence that complements the quantitative metrics. Together, these results show that GaussTrap effectively injects high-quality adversarial content at the target viewpoint while preserving visual fidelity at other viewpoints. By leveraging the properties of the 3DGS framework, it strikes a strong balance between attack effectiveness and stealthiness, making the attack both powerful and difficult to detect across different viewpoints. on real-world dataset
+To further evaluate the generality and practicality of our approach across diverse 3D reconstruction scenarios, we conduct comprehensive experiments on the Mip-NeRF360 dataset. Motivated by real-world deployment scenarios of 3D models, we design attack images that remain semantically consistent with the original scenes while intentionally introducing misleading objects, such as speed limit signs, pedestrians, and vehicles, to simulate plausible adversarial perturbations. The stabilization angle is set to 5 ∘ 5^{\circ} .
+The results show that our method preserves high image quality across all four evaluation viewpoints. Even in real-world scenes, GaussTrap can effectively inject misleading views while maintaining visual fidelity, demonstrating the potential pr
+
+【结论/局限】
+Acknowledgements
+References
+A Additional Experimental Results
+A.1 Impact on Downstream Tasks
+A.2 Defense and Detectability Analysis
+Pruning-based defense.
+Density-based anomaly filtering.
+A.3 Benchmark Diversity and Stronger Baselines
+A.4 Hyperparameter Sensitivity
+A.5 Viewpoint Robustness
+A.6 Ablation of Global Fidelity Restoration
+A.7 Model Size and Primitive Count
+A.8 Training Time Overhead
+A.9 Statistical Stability
+License: arXiv.org perpetual non-exclusive license
+arXiv:2504.20829v2 [cs.CV] 19 Oct 2026
+GaussTrap: Stealthy Backdoor Attacks on 3D Gaussian Splatting for Targeted Scene Misperception
+Conference:  Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2; August 9–13, 2026; Jeju Island, Republic of Korea. Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2 (KDD 2026), August 9–13, 2026, Jeju Island, Republic of Korea ISBN:  979-8-4007-2259-2/2026/08 DOI:  10.1145/3770855.3817947 CCS:  Security and privacy Domain-specific security and privacy architectures CCS:  Computing methodologies Machine learning CCS:  Computing methodologies Computer graphics
+Jiaxin Hong
+Note:  Authors contributed equally to t

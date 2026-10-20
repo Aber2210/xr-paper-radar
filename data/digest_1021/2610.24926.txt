@@ -1,0 +1,75 @@
+【摘要】
+
+【方法】
+3.1 Overview
+3.2 Deformable Primitive Representation
+3.3 Shared Face Primitive Splatting
+3.4 Test-Time Body Primitive Splatting
+3.5 Test-Time Tunneling Super-Resolution
+High-resolution reconstruction.
+Appearance objective. 3.1 Overview
+Given text or gloss input, SignSparK  [ 34 ] completes dictionary-retrieved sparse poses into body, hand, and facial controls { 𝐪 t } t = 1 T \{\mathbf{q}_{t}\}_{t=1}^{T} . GUAVA  [ 77 ] initializes a surface-bound Gaussian avatar from a reference image. We augment this pipeline with shared facial deformation and identity-specific body and appearance adaptation.
+For signer s s , aligned reference images, controls, and cameras 𝒱 s = { I t , 𝐪 t , π t } \mathcal{V}_{s}=\{I_{t},\mathbf{q}_{t},\pi_{t}\} supervise image formation:
+I ^ t = 𝒟 ψ s ​ ( ℛ π t ​ [ 𝒢 s ​ ( 𝐪 t , ϕ , θ s ) ] ) , \widehat{I}_{t}=\mathcal{D}_{\psi_{s}}\!\left(\mathcal{R}_{\pi_{t}}\!\left[\mathcal{G}_{s}(\mathbf{q}_{t};\phi,\theta_{s})\right]\right),
+(1)
+where ϕ \phi is the shared facial controller, θ s \theta_{s} is the body adaptation, and 𝒢 s \mathcal{G}_{s} transports Gaussians with the deformed surface. The rasterizer ℛ \mathcal{R} projects Gaussian features, and 𝒟 ψ s \mathcal{D}_{\psi_{s}} decodes them into high-resolution RGB. Adaptation occurs once per identity; inference runs from stored parameters.
+3.2 Deformable Primitive Representation
+Here 4D denotes pose- and time-conditioned primitive transformations across motion sequences.
+A sparse field blends control-dependent affine residuals over superquadric supports. Primitive k k has center 𝐜 k \mathbf{c}_{k} , orthonormal frame 𝐑 k \mathbf{R}_{k} , positive axis lengths 𝐚 k \mathbf{a}_{k} , and normalized distance
+d k ​ ( 𝐱 ) = ‖ diag ⁡ ( 𝐚 k ) − 1 ​ 𝐑 k 𝖳 ​ ( 𝐱 − 𝐜 k ) ‖ 4 . d_{k}(\mathbf{x})=\left\|\operatorname{diag}(\mathbf{a}_{k})^{-1}\mathbf{R}_{k}^{\mathsf{T}}(\mathbf{x}-\mathbf{c}_{k})\right\|_{4}.
+(2)
+The level set d k ​ ( 𝐱 ) = 1 d_{k}(\mathbf{x})=1 defines a superellipsoid with fixed shape exponents. Centers are initialized in bilateral pairs, and local surface covariance determines orientations and scales. The supports remain fixed during controller learning. Each surface sample receives a sparse neighborhood 𝒩 ⁡ ( 𝐱 ) \mathcal{N}(\mathbf{x}) with weights
+w k ​ ( 𝐱 ) = exp ⁡ [ − 2 ​ d k ​ ( 𝐱 ) 2 ] ∑ j ∈ 𝒩 ⁡ ( 𝐱 ) exp ⁡ [ − 2 ​ d j ​ ( 𝐱 ) 2 ] . w_{k}(\mathbf{x})=\frac{\exp[-2d_{k}(\mathbf{x})^{2}]}{\sum_{j\in\mathcal{N}(\mathbf{x})}\exp[-2d_{j}(\mathbf{x})^{2}]}.
+(3)
+Fixed reference-surface bindings blend controller-predicted affine residuals ( 𝐀 k , t , 𝐛 k , t ) (\mathbf{A}_{k,t},\mathbf{b}_{k,t}) :
+Δ ​ 𝐱 t = ∑ k ∈ 𝒩 ⁡ ( 𝐱 ) w k ​ ( 𝐱 ) ​ [ 𝐀 k , t ​ ( 𝐱 t − 𝐜 k ) + 𝐛 k , t ] , \Delta\mathbf{x}_{t}=\sum_{k\in\mathcal{N}(\mathbf{x})}w_{k}(\mathbf{x})\left[\mathbf{A}_{k,t}(\mathbf{x}_{t}-\mathbf{c}_{k})+\mathbf{b}_{k,t}\right],
+(4)
+Here 𝐱 t \mathbf{x}_{t} uses local coordinates. Zero-initialized controller outputs preserve geometry. The field deforms the surface, while bound Gaussians supply appearance.
+Figure 3 : Deformation and detail adaptation. (a) Shared facial primitives learn geometric residuals with FLAME supervision. (b) Identity-specific body primitives adapt th
+
+【实验】
+4.1 Experimental Setup
+4.2 Ablation I: Shared Face Primitives
+4.3 Ablation II: Test-Time Detail Tunneling
+4.4 Ablation III: Test-Time Body Primitives
+4.5 Comparison with Existing Methods
+4.6 Qualitative Rendering Comparison 4.1 Experimental Setup
+The evaluation covers facial expression reconstruction, identity-specific body adaptation, and high-resolution detail recovery.
+Data and protocol. Controlled face and body studies use chronological 80%/20% training–evaluation splits and fixed optimization budgets; checkpoint selection uses the training segment exclusively. Detail adaptation is evaluated on held-out frames, and cross-method rendering uses identical poses, cameras, backgrounds, and target-defined crops for every method. Scores are first aggregated per identity and then macro-averaged.
+Metrics. Facial geometry is measured by Euclidean point error in the native shared tracked coordinates. Body adaptation reports refined RGB L1, boundary L1, and SSIM  [ 67 ] . Rendering comparisons use foreground PSNR  [ 68 ] together with SSIM and LPIPS  [ 82 ] inside a shared ground-truth person crop. Runtime measurements distinguish independently warmed stage throughput from measured resident-pipeline wall time. Semantic preservation is evaluated through fixed back-translation using BLEU-4  [ 39 ] and ROUGE-L F1  [ 31 ] on poses re-extracted from the rendered RGB videos.
+4.2 Ablation I: Shared Face Primitives
+We train the shared face layer on the tracked FLAME sequence provided with GUAVA  [ 77 ] , using a chronological 80%/20% training–evaluation split and a fixed optimization budget. The restricted FLAME carrier and the full-expression target share identical articulation, isolating the expression geometry that our layer must recover.
+Table  1 reports Euclidean error over all retained head samples, including template- and UV-bound samples: mean head error falls from 1.267 to 0.362 mm (71.4%), and facial error falls from 1.492 to 0.518 mm. Figure  4 shows the held-out midpoint with a shared error scale and 5 × 5\times deviation magnification. The shared primitive controller reduces head error by 71.4% and recovers fine expression geometry across the face; region-wise results are provided in the supplement. Protocols
+6.1 Face primitive evaluation
+6.2 Body adaptation evaluation
+7 Detail Tunneling Analysis
+8 Per-Identity 4K Results
+9 Runtime and Deployment
+Stage throughput and latency.
+One-time character preparation.
+Meaning of 4D deformable primitives.
+10 Interactive User Guide
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24926v1 [cs.CV] 18 Oct 2026
+Stable Signer V3: 4D Deformable Primitive Splatting Is All You
+Need for Sign Language Production
+Sen Fang
+Liwei Che
+Dimitris N. Metaxas
+Affiliation:  Rutgers University
+Affiliation:  https://signerx.
+
+【结论/局限】
+References We presented Stable Signer V3, a sign language production framework combining shared facial primitives, test-time identity-specific body primitives, and a tunneling decoder for high-resolution appearance. Together, they unify expressive control and personalized rendering through a reusable deformable representation. Reference-video adaptation is performed once, after which the stored identity parameters drive subsequent signing sequences. On held-out evaluations, the three modules reduce head reconstruction error by 71.4%, body-boundary error by 35.1% across ten identities, and high-resolution RGB reconstruction error by 24.2%, while retaining interactive inference. Future work will broaden signer and motion coverage and include evaluation by proficient sign-language users.
+References
+[1]
+V. Baltatzis, R. A. Potamias, E. Ververas, G. Sun, J. Deng, and S. Zafeiriou (2024)
+Neural sign actors: a diffusion model for 3d sign language production from text .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+pp.  .
+Cited by: §1 ,
+§2 ,
+§2 .
+[2]
+D. Brentari, J. Falk, A. Giannakidou, A. Herrmann, E. Volk, and M. Steinbach (2018)
+Productio

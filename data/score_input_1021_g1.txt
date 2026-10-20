@@ -1,0 +1,1182 @@
+
+
+########## 2610.24812 ##########
+【摘要】
+.
+
+【方法】
+Terminology
+3.1 State-aware Gaussian Splat
+Test-time rendering
+3.2 Differentiable slot table
+Train-time rendering
+3.3 Initialization
+3.4 Optimization
+3.5 Training objective
+Sparsity loss
+Compactness loss SwitchSplat learns a state-aware 3D representation from casual captures by decomposing the scene into controllable, state-conditioned components.
+In the following subsections, we detail our methodology by first formulating our state-conditioned Gaussian primitives and describing their integration within volume rendering ( Sec.   3.1 ).
+We then introduce the parameterization of the differentiable slot-table ( Sec.   3.2 ), followed by our slot initialization procedure ( Sec.   3.3 ).
+Finally, we describe our training pipeline and objectives that facilitate granular, state-controlled visualization during inference ( Secs.   3.4 and  3.5 ).
+Terminology
+A slot corresponds to one interactable object and holds two 3D representations for its binary states: “off” (e.g., door closed) and “on” (e.g., door open).
+A slot activation is a per-frame binary variable indicating which state is currently observed.
+All parts of the scene that remain constant throughout the capture are handled by the static base , which is shared across all configurations.
+3.1. State-aware Gaussian Splat
+Each 3D Gaussian primitive in our model is defined by its standard geometric and appearance attributes: mean μ \mu , covariance Σ \Sigma , opacity α \alpha , and view-dependent appearance  𝐜 \mathbf{c} .
+To make our representation state-aware, we augment every Gaussian with a learnable categorical state distribution 𝐩 = softmax ⁡ ( ℓ ) \mathbf{p}=\operatorname{softmax}(\ell) over 1 + 2 ​ K 1+2K channels, where K K is the total number of object slots.
+These channels comprise a single static base channel ℓ ⁡ [ 0 ] \ell[0] , together with a pair of off ( ℓ ⁡ [ 2 ​ k − 1 ] \ell[2k{-}1] ) and on ( ℓ ⁡ [ 2 ​ k ] \ell[2k] ) channels for each slot k ∈ { 1 , … , K } k\in\{1,\dots,K\} .
+The two channels per slot — rather than one — let the softmax assign each Gaussian to a single configuration, so that disjoint subsets of primitives can independently model the geometry and appearance of an object in each of its two states (see  Figure   3 ).
+This separation is essential because the on/off configurations of an object generally differ not just in appearance, but also in spatial extent — a closed door and an open door, for instance, occupy different parts of the scene — which a single shared primitive simply cannot represent.
+Figure 3.
+State-aware Gaussian – (left) Each Gaussian carries a learnable logit vector  ℓ \boldsymbol{\ell} that defines a categorical distribution  𝐩 \mathbf{p} that softly assigns each primitive to the static base or “on”/“off” object states. (right)  At render time, user specifies list of states that are active
+or inactive
+, and the probability of each gaussian being present in the scene  ω ⁡ ( 𝐩 ~ ) \omega(\tilde{\mathbf{p}}) is computed via Eq. ( 1 ).
+An image of an open refrigerator is decomposed into three soft Gaussian-assignment layers representing the static base, the refrigerator's off state, and its on state. State-dependent binary weights of one, zero, and o
+
+【实验】
+4.1 Baselines
+4.2 Quantitative Results
+4.3 Qualitative Results
+4.4 Golden set comparisons
+4.5 Ablation study
+Slot representation
+Slot optimization
+Compactness regularization
+Sparsity regularization To validate the effectiveness of our proposed algorithm in the absence of an existing dataset with variable object interactions, we collected a custom dataset using a consumer-grade Insta360 X4 dual-fisheye 360 ∘ 360^{\circ} camera.
+This hardware choice reflects the typical setup of casual users.
+During capture, we emulated non-expert behaviors, moving through the scene and interacting with objects—transitioning them from resting to active states and back.
+Our dataset comprises 12 12 scenes organized into two groups.
+The standard set contains 10 10 casually captured scenes ( 8 8 indoor and 2 2 outdoor), each featuring 3 3 – 9 9 object interactions.
+The golden set contains 2 2 additional scenes for which we acquire controlled test sequences with novel camera trajectories and object-state combinations.
+We preprocess the raw dual-fisheye data following FullCircle  ( Foroutan et al., 2026 ) to mask the capturer.
+The calibration is performed in COLMAP using the masked fisheye frames, and then the fisheye images are undistorted into standard pinhole images.
+For evaluation, we adhere to standard NeRF procedures, holding out every 8th frame as a test set.
+Crucially , we exclude test samples that coincide with state transitions (i.e., frames where an object is actively being moved) to reduce noise in our metrics, though these transition frames are retained within the training set to measure whether models can learn robustly from casual capture data.
+For the golden set sequences, we additionally evaluate novel camera frames, which show state configurations observed during training from new camera trajectories, and novel state-combination frames, which contain object-state configurations not observed during training.
+This set is used to demonstrate our method’s ability to generalize beyond the training configurations, and provide true state-aware control.
+4.1. Baselines
+We evaluate our proposed method against several state-of-the-art scene representation baselines.
+For static modeling, we compare against FullCircle   ( Foroutan et al., 2026 ) , utilizing its underlying 3DGUT   ( Wu et al., 2025a ) architecture as our primary reference.
+To assess performance in dynamic contexts, we benchmark our framework against 4DGS   ( Yang et al., 2024b ) and DeGauss   ( Wang et al., 2025a ) .
+For all quantitative and qualitative assessments, we utilize every 8th frame of the captured sequences as our standard evaluation set.
+4.2. Quantitative Results
+In Table   1 , we present the quantitative performance of our method relative to both static and dynamic baselines on the undistort
+
+【结论/局限】
+ We presented SwitchSplat, a 3D Gaussian Splatting framework that learns state-aware scene representations directly from casual video captures.
+By decomposing the scene into a shared static base and a set of independently controllable slots, each modeling the binary “on”/“off” states of one interactable object, SwitchSplat decouples scene state from time – enabling a capability that time-conditioned dynamic methods fundamentally cannot provide: free composition of object configurations at inference, including combinations never observed during capture.
+The slot table is initialized via a VLM and jointly refined end-to-end through differentiable rendering, requiring no manual annotation. and future work
+Acknowledgements
+References
+A Supplementary Material
+A.1 Dataset Capture and Preprocessing
+A.2 Benchmark Construction and Evaluation Splits
+Dynamic-baseline evaluation.
+A.3 Additional Training Details
+A.4 Full Quantitative Evaluation
+A.5 VLM Performance
+Prompt and output format.
+A.6 Ablations on Slot Initialization
+Number of slots.
+Slot endpoints.
+A.7 Effect of Dynamic Moving Backgrounds
+A.8 Comparison with Articulation baselines
+License: CC BY 4.0
+arXiv:2610.24812v1 [cs.CV] 17 Oct 2
+
+########## 2610.24926 ##########
+【摘要】
+
+【方法】
+3.1 Overview
+3.2 Deformable Primitive Representation
+3.3 Shared Face Primitive Splatting
+3.4 Test-Time Body Primitive Splatting
+3.5 Test-Time Tunneling Super-Resolution
+High-resolution reconstruction.
+Appearance objective. 3.1 Overview
+Given text or gloss input, SignSparK  [ 34 ] completes dictionary-retrieved sparse poses into body, hand, and facial controls { 𝐪 t } t = 1 T \{\mathbf{q}_{t}\}_{t=1}^{T} . GUAVA  [ 77 ] initializes a surface-bound Gaussian avatar from a reference image. We augment this pipeline with shared facial deformation and identity-specific body and appearance adaptation.
+For signer s s , aligned reference images, controls, and cameras 𝒱 s = { I t , 𝐪 t , π t } \mathcal{V}_{s}=\{I_{t},\mathbf{q}_{t},\pi_{t}\} supervise image formation:
+I ^ t = 𝒟 ψ s ​ ( ℛ π t ​ [ 𝒢 s ​ ( 𝐪 t , ϕ , θ s ) ] ) , \widehat{I}_{t}=\mathcal{D}_{\psi_{s}}\!\left(\mathcal{R}_{\pi_{t}}\!\left[\mathcal{G}_{s}(\mathbf{q}_{t};\phi,\theta_{s})\right]\right),
+(1)
+where ϕ \phi is the shared facial controller, θ s \theta_{s} is the body adaptation, and 𝒢 s \mathcal{G}_{s} transports Gaussians with the deformed surface. The rasterizer ℛ \mathcal{R} projects Gaussian features, and 𝒟 ψ s \mathcal{D}_{\psi_{s}} decodes them into high-resolution RGB. Adaptation occurs once per identity; inference runs from stored parameters.
+3.2 Deformable Primitive Representation
+Here 4D denotes pose- and time-conditioned primitive transformations across motion sequences.
+A sparse field blends control-dependent affine residuals over superquadric supports. Primitive k k has center 𝐜 k \mathbf{c}_{k} , orthonormal frame 𝐑 k \mathbf{R}_{k} , positive axis lengths 𝐚 k \mathbf{a}_{k} , and normalized distance
+d k ​ ( 𝐱 ) = ‖ diag ⁡ ( 𝐚 k ) − 1 ​ 𝐑 k 𝖳 ​ ( 𝐱 − 𝐜 k ) ‖ 4 . d_{k}(\mathbf{x})=\left\|\operatorname{diag}(\mathbf{a}_{k})^{-1}\mathbf{R}_{k}^{\mathsf{T}}(\mathbf{x}-\mathbf{c}_{k})\right\|_{4}.
+(2)
+The level set d k ​ ( 𝐱 ) = 1 d_{k}(\mathbf{x})=1 defines a superellipsoid with fixed shape exponents. Centers are initialized in bilateral pairs, and local surface covariance determines orientations and scales. The supports remain fixed during controller learning. Each surface sample receives a sparse neighborhood 𝒩 ⁡ ( 𝐱 ) \mathcal{N}(\mathbf{x}) with weights
+w k ​ ( 𝐱 ) = exp ⁡ [ − 2 ​ d k ​ ( 𝐱 ) 2 ] ∑ j ∈ 𝒩 ⁡ ( 𝐱 ) exp ⁡ [ − 2 ​ d j ​ ( 𝐱 ) 2 ] . w_{k}(\mathbf{x})=\frac{\exp[-2d_{k}(\mathbf{x})^{2}]}{\sum_{j\in\mathcal{N}(\mathbf{x})}\exp[-2d_{j}(\mathbf{x})^{2}]}.
+(3)
+Fixed reference-surface bindings blend controller-predicted affine residuals ( 𝐀 k , t , 𝐛 k , t ) (\mathbf{A}_{k,t},\mathbf{b}_{k,t}) :
+Δ ​ 𝐱 t = ∑ k ∈ 𝒩 ⁡ ( 𝐱 ) w k ​ ( 𝐱 ) ​ [ 𝐀 k , t ​ ( 𝐱 t − 𝐜 k ) + 𝐛 k , t ] , \Delta\mathbf{x}_{t}=\sum_{k\in\mathcal{N}(\mathbf{x})}w_{k}(\mathbf{x})\left[\mathbf{A}_{k,t}(\mathbf{x}_{t}-\mathbf{c}_{k})+\mathbf{b}_{k,t}\right],
+(4)
+Here 𝐱 t \mathbf{x}_{t} uses local coordinates. Zero-initialized controller outputs preserve geometry. The field deforms the surface, while bound Gaussians supply appearance.
+Figure 3 : Deformation and detail adaptation. (a) Shared facial primitives learn geometric residuals with FLAME supervision. (b) Identity-specific body primitives adapt th
+
+【实验】
+4.1 Experimental Setup
+4.2 Ablation I: Shared Face Primitives
+4.3 Ablation II: Test-Time Detail Tunneling
+4.4 Ablation III: Test-Time Body Primitives
+4.5 Comparison with Existing Methods
+4.6 Qualitative Rendering Comparison 4.1 Experimental Setup
+The evaluation covers facial expression reconstruction, identity-specific body adaptation, and high-resolution detail recovery.
+Data and protocol. Controlled face and body studies use chronological 80%/20% training–evaluation splits and fixed optimization budgets; checkpoint selection uses the training segment exclusively. Detail adaptation is evaluated on held-out frames, and cross-method rendering uses identical poses, cameras, backgrounds, and target-defined crops for every method. Scores are first aggregated per identity and then macro-averaged.
+Metrics. Facial geometry is measured by Euclidean point error in the native shared tracked coordinates. Body adaptation reports refined RGB L1, boundary L1, and SSIM  [ 67 ] . Rendering comparisons use foreground PSNR  [ 68 ] together with SSIM and LPIPS  [ 82 ] inside a shared ground-truth person crop. Runtime measurements distinguish independently warmed stage throughput from measured resident-pipeline wall time. Semantic preservation is evaluated through fixed back-translation using BLEU-4  [ 39 ] and ROUGE-L F1  [ 31 ] on poses re-extracted from the rendered RGB videos.
+4.2 Ablation I: Shared Face Primitives
+We train the shared face layer on the tracked FLAME sequence provided with GUAVA  [ 77 ] , using a chronological 80%/20% training–evaluation split and a fixed optimization budget. The restricted FLAME carrier and the full-expression target share identical articulation, isolating the expression geometry that our layer must recover.
+Table  1 reports Euclidean error over all retained head samples, including template- and UV-bound samples: mean head error falls from 1.267 to 0.362 mm (71.4%), and facial error falls from 1.492 to 0.518 mm. Figure  4 shows the held-out midpoint with a shared error scale and 5 × 5\times deviation magnification. The shared primitive controller reduces head error by 71.4% and recovers fine expression geometry across the face; region-wise results are provided in the supplement. Protocols
+6.1 Face primitive evaluation
+6.2 Body adaptation evaluation
+7 Detail Tunneling Analysis
+8 Per-Identity 4K Results
+9 Runtime and Deployment
+Stage throughput and latency.
+One-time character preparation.
+Meaning of 4D deformable primitives.
+10 Interactive User Guide
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24926v1 [cs.CV] 18 Oct 2026
+Stable Signer V3: 4D Deformable Primitive Splatting Is All You
+Need for Sign Language Production
+Sen Fang
+Liwei Che
+Dimitris N. Metaxas
+Affiliation:  Rutgers University
+Affiliation:  https://signerx.
+
+【结论/局限】
+References We presented Stable Signer V3, a sign language production framework combining shared facial primitives, test-time identity-specific body primitives, and a tunneling decoder for high-resolution appearance. Together, they unify expressive control and personalized rendering through a reusable deformable representation. Reference-video adaptation is performed once, after which the stored identity parameters drive subsequent signing sequences. On held-out evaluations, the three modules reduce head reconstruction error by 71.4%, body-boundary error by 35.1% across ten identities, and high-resolution RGB reconstruction error by 24.2%, while retaining interactive inference. Future work will broaden signer and motion coverage and include evaluation by proficient sign-language users.
+References
+[1]
+V. Baltatzis, R. A. Potamias, E. Ververas, G. Sun, J. Deng, and S. Zafeiriou (2024)
+Neural sign actors: a diffusion model for 3d sign language production from text .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+pp.  .
+Cited by: §1 ,
+§2 ,
+§2 .
+[2]
+D. Brentari, J. Falk, A. Giannakidou, A. Herrmann, E. Volk, and M. Steinbach (2018)
+Productio
+
+########## 2610.26067 ##########
+【摘要】
+
+【方法】
+III-A Framework Overview and Problem Formulation
+III-B Neural Skinning Fields Autoencoder
+III-C Physics-Informed Self-Supervised Learning
+III-D Skinning-Based Real-Time Animation
+III-E Rig-Complementary Animation
+III-F Discretization-Agnostic Animation Binding III-A Framework Overview and Problem Formulation
+PhysSkin++ is a generalizable physics-informed framework for real-time physics-based animation across diverse 3D shapes and discretizations. As illustrated in Fig.  2 , our neural skinning fields autoencoder predicts continuous skinning fields from static geometry to define a deformation subspace mapping. The autoencoder is trained through Physics-Informed Self-Supervised Learning (PISSL) under physical and numerical constraints. At runtime, we advance reduced coordinates to animate objects with boundary conditions, interactive control, and contact. Beyond purely physics-driven animation, PhysSkin++ also supports rig-complementary animation by learning complementary deformation subspaces for prescribed rigs. Moreover, the continuous deformation map supports binding to mesh vertices, sampled points, and 3D Gaussians.
+Fig. 2: Given a static 3D shape, we first sample volumetric cubature points for animation and surface points for shape encoding. A shape encoder processes the surface points to produce shape latents, from which a set of learnable queries extract handle latents via cross-attention. Subsequently, spatial queries attend to the handle latents through another cross-attention block to derive point-wise features, which are decoded into neural skinning fields. A geometry-only, physics-informed learning strategy optimizes the network in a self-supervised manner under physical and orthogonality constraints, enabling the learned skinning fields to support real-time, physics-based animation.
+Classical full-space physics-based animation methods  [ 51 , 38 , 27 , 61 , 31 , 63 ] typically use explicit or implicit time integrators to update the object’s motion state. Explicit time integrators are often constrained by stability conditions  [ 33 ] , while implicit time integrators require solving a large nonlinear optimization problem in the high-dimensional full space. PhysSkin++ instead represents the deformation using continuous neural skinning fields and advances only the corresponding reduced-order subspace coordinates through implicit time integration. This lower-dimensional optimization reduces computational cost  [ 6 ] , enabling real-time physics-based animation.
+Continuous Skinning-Based Deformation Representation.
+To model full-space 3D object deformations within a reduced-order subspace, in the spirit of Linear Blend Skinning (LBS)  [ 43 ] , we represent the deformation map 𝒙 = ϕ ⁡ ( 𝐗 , 𝐳 ⁡ ( t ) ) \bm{x}=\phi(\mathbf{X},\mathbf{z}(t)) using a weighted sum of m m affine displacement transformations:
+ϕ ⁡ ( 𝐗 , 𝐳 ) = 𝐗 + ∑ i = 1 m 𝑾 i ​ ( 𝐗 ) ​ 𝐙 i ​ [ 𝐗 1 ] . \phi(\mathbf{X},\mathbf{z})=\mathbf{X}+\sum_{i=1}^{m}\bm{W}_{\!i}(\mathbf{X})\mathbf{Z}_{i}\begin{bmatrix}\mathbf{X}\\
+1\end{bmatrix}.
+(1)
+Here, 𝐗 ∈ ℝ 3 \mathbf{X}\in\mathbb{R}^{3} is a point in undeformed space and 𝒙 ∈ ℝ 3 \bm{x}\in\mathbb{R}^{3} is its deformed position, m m 
+
+【实验】
+IV-A Implementation Details
+IV-B Evaluation of Learned Skinning Fields
+IV-C Ablation Studies
+IV-D Diverse Real-Time Physics-Based Animation
+V Conclusion
+References
+License: CC BY 4.0
+arXiv:2610.26067v1 [cs.CV] 19 Oct 2026
+PhysSkin++: Real-Time and Generalizable Physics-Based Animation via Self-Supervised Neural Skinning
+Yuanhang Lei
+Baofei Liu
+Xingxuan Li
+Tao Cheng
+Zixuan Wang
+Boming Zhao
+Yujun Shen
+Siyuan Huang
+Ruizhen Hu
+Peter Yichen Chen
+Hujun Bao
+and Zhaopeng Cui
+† † thanks: $†$ Corresponding author. † † thanks: Yuanhang Lei, Baofei Liu, Xingxuan Li, Tao Cheng, Zixuan Wang, Boming Zhao, Hujun Bao, and Zhaopeng Cui are with the State Key Laboratory of CAD&CG, Zhejiang University. † † thanks: Yujun Shen is with Ant Group, Hangzhou 310000, China. † † thanks: Siyuan Huang is with the Beijing Institute for General Artificial Intelligence (BIGAI). † † thanks: Ruizhen Hu is with Shenzhen University. † † thanks: Peter Yichen Chen is with the University of British Columbia. on various datasets evaluate the learned skinning fields and demonstrate real-time physics-based animation across diverse shapes, controls, interactions, and spatial discretizations. Our contributions are:
+•
+We present PhysSkin++ , a generalizable physics-informed framework for real-time physics-based animation across diverse 3D shapes and discretizations by learning neural skinning fields directly from static geometries. Its Neural Skinning Fields Autoencoder employs a transformer-based shape encoder and a cross-attention decoder to predict continuous skinning fields.
+•
+We develop a Physics-Informed Self-Supervised Learning (PISSL) strategy that incorporates on-the-fly skinning-field normalization and conflict-aware gradient correction, enabling stable joint optimization of multiple self-supervised loss terms.
+•
+We develop a controllable and collision-aware reduced dynamics formulation that supports Dirichlet boundary conditions, interactive control, environmental interaction, and multi-object contact, together with discretization-agnostic binding of the continuous deformation map to meshes, point clouds, and 3D Gaussian representations.
+•
+We support rig-complementary animation by extending the self-supervised objective with a rig-space complementarity term defined by the rig Jacobian. This enables physics-based complementary elastic responses under interactive rig control and user-authored animation sequences without enforcing the rig-space complementarity constraint at runtime.
+A preliminary version of this work has been published as PhysSkin  [ 30 ] . The present article extends the conference version in four aspects. First, we develop a reduced dynamics formulation for controllable and collision-aware animation, supporting prescribed boundary displacements, interactive control, en
+
+########## 2610.24237 ##########
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from diagnostics. The fit and influence diagnostics, variance inflation factors and predictor correlations (Supplementary Tables S12, S13, S15 and S23) were computed in R 4.4.1 with the code in the Appendix. The code reads the processed data set of the repository after verifying its checksum, and it gives the diagnostics of the age-group models and of the continuous-age models.
+S2 Descriptive statistics
+Supplementary Table S2 gives the descriptive statistics of the ratings, the cybersickness scores and the predictors for the whole sample and each age group. Supplementary Tables S3–S5 give the sex and VR-use counts, the number of participants at the minimum and maximum of each scale, and the distribution of the CSQ-VR totals. The ratings were concentrated towards the favourable end of every scale, and 38 of the 91 participants reported no cybersickness symptom at all.
+Supplementary Table S2. Descriptive statistics of the ratings, the cybersickness scores and the predictors.
+Variable
+Group
+n
+M
+SD
+Mdn
+Q1 to Q3
+Min to max
+95% CI of M
+SUS (0–100)
+All
+91
+89.42
+7.99
+92.50
+82.50 to 95.00
+60.00 to 100.00
+[87.76, 91.09]
+Younger
+47
+91.28
+6.38
+92.50
+87.50 to 96.25
+77.50 to 100.00
+[89.40, 93.15]
+Older
+44
+87.44
+9.08
+88.75
+80.00 to 95.00
+60.00 to 100.00
+[84.68, 90.20]
+Pragmatic UX ( − - 3 to +3)
+All
+91
+1.87
+0.98
+2.00
+1.25 to 2.62
+− - 0.50 to 3.00
+[1.67, 2.08]
+Younger
+47
+2.09
+0.81
+2.25
+1.75 to 2.75
+0.00 to 3.00
+[1.85, 2.33]
+Older
+44
+1.64
+1.10
+1.88
+0.75 to 2.50
+− - 0.50 to 3.00
+[1.30, 1.97]
+Hedonic UX ( − - 3 to +3)
+All
+91
+1.59
+1.10
+1.75
+0.75 to 2.50
+− - 1.00 to 3.00
+[1.36, 1.81]
+Younger
+47
+1.64
+1.09
+1.75
+0.75 to 2.62
+− - 0.75 to 3.00
+[1.32, 1.96]
+Older
+44
+1.52
+1.11
+1.75
+0.94 to 2.31
+− - 1.00 to 3.00
+[1.18, 1.86]
+Acceptability (1–6)
+All
+91
+4.83
+0.45
+4.80
+4.50 to 5.20
+3.70 to 5.80
+[4.73, 4.92]
+Younger
+47
+4.85
+0.47
+4.80
+4.50 to 5.25
+3.80 to 5.80
+[4.71, 4.99]
+Older
+44
+4.80
+0.44
+4.80
+4.50 to 5.12
+3.70 to 5.50
+[4.67, 4.94]
+CSQ-VR total (6–42)
+All
+91
+8.70
+3.66
+7.00
+6.00 to 10.00
+6.00 to 20.00
+[7.94, 9.47]
+Younger
+47
+8.89
+3.46
+7.00
+6.00 to 11.50
+6.00 to 17.00
+[7.88, 9.91]
+Older
+44
+8.50
+3.90
+7.00
+6.00 to 9.25
+6.00 to 20.00
+[7.32, 9.68]
+CSQ-VR nausea (2–14)
+All
+91
+2.74
+1.14
+2.00
+2.00 to 3.00
+2.00 to 6.00
+[2.50, 2.97]
+Younger
+47
+2.89
+1.20
+2.00
+2.00 to 
+
+【实验】
+3.1 Sample characteristics
+3.2 Usability, user experience and acceptability
+3.3 Associations with age group and reported experience
+3.4 Cybersickness
+3.5 Ratings and TMT-VR performance 3.1 Sample characteristics
+Table 1 presents the sample characteristics overall and by age group, with the age-group comparisons. The age groups did not differ significantly in sex composition, education or motion sickness susceptibility. Younger participants reported significantly more gaming and technology experience (both Holm p < .001; Table 1). Gaming scores were positively skewed in the older group, with 52 participants (57.1%) across the sample obtaining the minimum score. Reported VR use was minimal in both groups: 89 of the 91 participants gave the lowest frequency rating for VR, and 41 of the 44 older participants reported no VR ability. Motion sickness susceptibility, which entered the analyses as a predictor, ranged from 0 to 29.5 on the 0–54 scale and had similar means in the two groups (Table 1).
+Table 1: Sample characteristics overall and by age group.
+Characteristic
+All (N = 91)
+Younger (n = 47)
+Older (n = 44)
+Older − - younger [95% CI]
+Raw p
+Holm p
+Age (years)
+47.69 (23.87)
+25.13 (4.07)
+71.80 (4.85)
+—
+—
+—
+Age range (years)
+20–81
+20–38
+64–81
+—
+—
+—
+Education (years)
+16.40 (2.86)
+16.64 (3.00)
+16.14 (2.71)
+− - 0.50 [ − - 1.69, 0.69]
+.404
+1.000
+Women, n (%)
+49 (53.8)
+25 (53.2)
+24 (54.5)
+—
+—
+—
+Men, n (%)
+42 (46.2)
+22 (46.8)
+20 (45.5)
+OR 0.95 [0.38, 2.34]
+1.000
+1.000
+Gaming (12–72)
+16.24 (7.08)
+20.00 (8.22)
+12.23 (0.86)
+− - 7.77 [ − - 10.20, − - 5.35]
+< .001
+< .001
+Technology (6–36)
+20.74 (3.72)
+23.32 (2.04)
+17.98 (3.06)
+− - 5.34 [ − - 6.44, − - 4.25]
+< .001
+< .001
+MSSQ-Short total (0–54)
+11.01 (8.60)
+11.12 (8.72)
+10.90 (8.57)
+− - 0.22 [ − - 3.82, 3.38]
+.903
+1.000
+Note. Values are mean (SD) unless otherwise indicated. Gaming = Gaming Skills Questionnaire total (12–72); Technology = technology composite (6–36); MSSQ-Short = Motion Sickness Susceptibility Questionnaire short form total (0–54). Differences are older minus younger with pointwise Welch 95% CIs; for sex, the older-versus-younger odds ratio (OR) of being male with its 95% CI. Tests: Welch’s t for education (t(88.88) = − - 0.84), technology (t(74.29) = − - 9.72) and MSSQ-Short (t(88.78) = − - 0.12); the Mann–Whitney U-test with continuity correction for gaming (U = 302.0), whose p value tests a rank contrast rather than the displayed mean difference; Fisher’s exact test for sex. Holm adjustment covers the five sample comparisons as one family. The age groups are defined by age, which is therefore not tested.
+3.2 Usability, user experience and acceptability
+Participants rated the TMT-VR favourably on every instrument (Table 2; Figure 2). Usability scores had a median of 92.5 on the 0–100 SUS, ranged fr
+
+【结论/局限】
+References
+Supplementary Material
+License: CC BY 4.0
+arXiv:2610.24237v1 [cs.HC] 16 Oct 2026
+Usability, User Experience, and Acceptability of the Trail Making Test in Virtual Reality in Younger and Older Adults
+Journal: Preprint
+Panagiotis Kourtesis
+Address: Department of Informatics and Telecommunications, National and Kapodistrian University of Athens, Athens, Greece
+Address: Department of Psychology, National and Kapodistrian University of Athens, Athens, Greece
+Address: Department of Psychology, The American College of Greece, Athens, Greece
+Address: Department of Psychology, University of Edinburgh, Edinburgh, United Kingdom
+Corresponding author: Correspondence: Panagiotis Kourtesis, Department of Psychology, National and Kapodistrian University of Athens, 157 84 Athens, Greece; pkourtesis@psych.uoa.gr
+Dante O’Connor
+Address: Department of Psychology, University of Edinburgh, Edinburgh, United Kingdom
+Sarah E. MacPherson
+Address: Department of Psychology, University of Edinburgh, Edinburgh, United Kingdom To our knowledge, this study provides the first evaluation of the usability, user experience, acceptability and cybersickness of the Trail Making Test in Virtual Reality in ol
+
+########## 2610.24364 ##########
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【结论/局限】
+References
+A VLM Prompting Framework
+A.1 Task 1: Candidate-Event Validation
+A.2 Task 2: ROI/Keypoint Localization
+A.3 Qwen3.5-35B-A3B Inference Resource Profile
+Context window.
+Memory and request payload.
+Latency.
+B Recall-Oriented Candidate Detection Algorithm
+C Statistical Analysis and Detector Operating Characteristics
+Behavioral comparisons.
+D Exploratory EEG Analysis of PVA Events
+Synchronization and preprocessing.
+Epoch quality control.
+ERP analysis.
+Single-trial and spectral analyses. We presented GazeAgent, a VLM-guided implicit gaze-calibration pipeline that derives pseudo-targets from naturally occurring PVA events in egocentric AI glasses. GazeAgent combines behavioral sensing with a fine-tuned VLM to detect PVA events and localize functional-target ROIs. In a 10-participant scripted protocol with 820 predefined PVA opportunities, candidate detection achieved 100% recall and VLM validation achieved 95.9% recall and 92.3% precision; implicit calibration achieved 2.84 ∘ 2.84^{\circ} median error under device disturbance, 44.1% lower than explicit calibration. In a five-participant case study, autonomous calibration reduced workload and interruption, and all participants pr
+
+########## 2610.24640 ##########
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+6.1 Quantitative Results
+6.1.1 Subjective Usability and Preference
+6.2 Qualitative Results
+6.2.1 Participants’ Reasoning Behind Their Preferences
+Theme 1: Precision vs. Reach.
+Theme 2: Reliability vs. Capability.
+Theme 3: Visibility of Available Actions.
+Theme 4: Physical and Mental Effort.
+Theme 5: Speed.
+Theme 6: Privacy and Social Context.
+Summary:
+6.2.2 Benefits and Costs of Having Both Methods Available
+6.3 Log-Based Analysis
+6.3.1 Customization frequency
+6.3.2 Communication of Adaptation Needs in Natural Language
+6.3.3 Conversational Interaction Over Time. We report our results following the research questions introduced in Section   5 . To separate the different forms of evidence, we first present the quantitative results from participants’ ratings and preferences, followed by the qualitative findings explaining the trade-offs behind these preferences. We then report the log-based analyses of natural-language commands and customization behavior. Unless noted otherwise, Likert items use 1-7 scales and are reported as M ​ d ​ n Mdn with M M alongside; statistical procedures are described in   5.7.2 .
+6.1. Quantitative Results
+6.1.1. Subjective Usability and Preference
+As visualized in Figure  5 , Combined was rated best across all usability items with Friedman tests showing significant differences for all eight items (all p ≤ .012 p\leq.012 ; five at p ≤ .001 p\leq.001 ; see Table  2 )
+Pairwise comparisons show a consistent pattern: Combined significantly outperformed ConverseMR on all eight items and DM on six of eight, while DM and ConverseMR were statistically indistinguishable on seven of eight after Holm-correction. However, participants reported spending significantly more time correcting mistakes with ConverseMR than DM ( M ​ d ​ n = 4.5 Mdn=4.5 vs. 3.0 3.0 ; M = 4.58 M=4.58 vs. 3.33 3.33 ; p = .031 p=.031 ).
+Figure 5. Post-block Likert ratings (1–7, higher = better) by condition, shown as diverging stacked bars. Rows within each item are DM, ConverseMR (Conv.), and Combined (Comb.); Brackets on the right mark pairwise differences that remained significant after Holm correction (*p < .05, **p < .01, ***p < .001). *Reverse-worded item (higher = worse). Numeric values in Table 2.  2 .
+This held at the level of overall preference, too: end-of-session ratings of how much participants would like to use each method going forward ranked Combined highest ( M ​ d ​ n = 7.0 Mdn=7.0 , M = 6.62 M=6.62 , S ​ D = 0.65 SD=0.65 ), DM second ( M ​ d ​ n = 5.0 Mdn=5.0 , M = 5.17 M=5.17 , S ​ D = 1.20 SD=1.20 ), ConverseMR lowest ( M ​ d ​ n = 4.5 Mdn=4.5 , M = 4.29 M=4.29 , S ​ D = 1.04 SD=1.04 ; χ 2 ​ ( 2 ) = 36.46 \chi^{2}(2){=}36.46 , p < .001 p<.001 ).
+Participants’ account of when each method wins matched a direct bipolar item almost perfectly: 23 of 
+
+【结论/局限】
+& Conclusion
+7.1 Language Replaces the Menu, Not the Hand
+7.2 Designing for Predictable Conversational Adaptation
+Prior experience and failures shape interaction expectations.
+Communication gap between commands and expected outcomes.
+Feedback mechanisms.
+7.3 Toward User-Led MR Adaptation and Beyond & Conclusion
+We set out to understand whether users can control the adaptive behavior of MR interfaces through natural language, and what such control offers over direct manipulation. Participants expressed a broad range of adaptation needs in speech, and used ConverseMR for most of their adaptations whenever it was available. ConverseMR alone, however, was never rated highest on any measure. It was statistically indistinguishable from DM on seven of eight usability items and worse on the time spent correcting mistakes, while the combination of both methods was preferred throughout. We discuss below what this pattern means for the design of conversational adaptation, and for the role users can take in adapting MR interfaces.
+7.1. Language Replaces the Menu, Not the Hand
+The Combined condition revealed that participants did not take a choice between conversational control and direct manip
+
+########## 2610.26278 ##########
+【摘要】
+1 Background
+1.1 Physics engines for VR production
+1.2 Humanoid controllers
+1.2.1 Tracking-based controllers
+1.2.2 Sensorimotor controllers with explicit rewards
+1.2.3 Sensorimotor controllers with adversarial rewards
+1.2.4 Scaling and universal controllers
+1.3 Animation fidelity metrics
+2 Materials and Methods
+2.1 Reference Data
+2.2 Training
+2.2.1 Playground
+2.2.2 Modular agents
+
+【方法】
+MM
+LL
+MM
+LL
+MM
+LL
+MM
+LL
+DeepMimic
+2.6
+3.2
+1.5
+1.3
+3.8
+4.5
+0.90
+0.87
+ADD
+3.8
+4.2
+2.4
+2.3
+5.9
+4.6
+0.85
+0.82
+AMP
+5.6
+6.0
+12.8
+9.9
+6.9
+10.9
+0.71
+0.69
+3.1 Training results
+All controllers evaluated achieve 100% survival, both in Unity3D and WebXR, across all 16 motions. In Table 1 , we show these metrics for our three playground controller policies.
+ADD produced movement with scores very close to DeepMimic trained in playground . We believe ADD gives better afi scores than AMP because the displacement-based discriminator provides a more direct tracking signal.
+These findings were unexpected, as we anticipated that the results would align with the broader pattern observed in the literature:
+explicit tracking rewards [ 22 , 28 , 8 ] consistently produce higher single-motion fidelity than adversarial approaches [ 25 ] , a trade-off also highlighted by Li et al. [ 15 ] .
+Our results suggest that, while the two are not equivalent, the difference for ADD is relatively small.
+Adversarial methods ( AMP, ADD ) offer practical advantages—no per-component reward tuning, implicit style capture, more controller flexibility—but at a measurable fidelity cost. ADD narrows this gap substantially compared to AMP , but DeepMimic remains uniformly superior; for production scenarios requiring faithful reproduction of specific motions, the use of explicit rewards like in DeepMimic remains the most reliable approach. However, when several animations need to be combined more flexibly, ADD seems to provide a viable option.
+In ADD [ 37 ] , the discriminator saturates rapidly (reaching near-100% accuracy within 20M steps, since the zero-displacement positive sample is trivially separable), after which the style reward gradient vanishes. We emphasize that this saturation is a fundamental architectural limitation of the displacement-based formulation, not a tuning problem: the discriminator’s positive class is a single point (the zero vector), which is trivially separable from any non-zero displacement distribution regardless of network capacity, regularization, or training schedule. A small hybrid task reward component (5–15% weight) resolves this by maintaining gradient flow after discriminator saturation.
+With this fix, all 16 motions achieved 100% survival in Unity3D and WebXR deployment.
+afi gives the same results as the joint-space ( MAE ) and Cartesian ( MPJPE ) metrics on the overall ranking: DeepMimic is the strongest tracker on both skeletons, ADD is the second-best, and AMP trails on every column. The two metric families are complementary. MAE and MPJPE are pose-error metrics computed at the same frame index: they answer “how far is the agent’s pose from the reference’s pose at time t t ” and are easy to inflate by a small phase shift, even when the trajectories are otherwise faithful. afi is a time-aware cross-correlation of velocity and end-effector trajectories: it tolerates small phase shifts but penalises wrong overall pacing, missing follow-through, and jitter.
+NPSS , the frequency-domain reference metric, gives similar results, but it can sometimes be challenging
+because ADD rollouts that terminate early concentrate spectral power at f → 0 f\to 0 – the same 
+
+【实验】
+3.1 Training results
+3.2 Losses in Animation Fidelity
+3.3 Comparing policies
+3.4 Visual inspection Table 1: Our three playground controller policies, computed on the same 48 CPU rollouts (eight walks per cell).
+MAE is the mean absolute joint-angle error [ 28 ] ; MPJPE is the root-relative mean per-joint position error [ 21 ] ; NPSS is the normalised power-spectrum similarity [ 7 ] ; afi is the animation fidelity index defined in section 2.3.3 . Bold marks the best score per column. The four metrics rank the methods identically ( DeepMimic > > ADD > > AMP ) on both characters.
+MAE ↓ \downarrow (°)
+MPJPE ↓ \downarrow (mm)
+NPSS ↓ \downarrow
+afi ↑ \uparrow of the controller policies
+2.3.1 Training strategy
+2.3.2 How to compare different controller policies in VR
+2.3.3 How to compare different pipeline stages of the controller policies
+2.3.1 Training strategy
+To find common ground for both pipelines, we chose to do all training with simulation steps every 0.008 s (125Hz), and up to 100M simulation steps. This took approximately 40 hours for each training run based on modular-agents , and 40 minutes for each training run based on playground .
+All playground training runs were performed on an Intel Core i9-14900K, 64 GB of RAM, and two NVIDIA GeForce RTX 4090 graphics cards. All modular-agents training runs were done either on a Windows 11 Pro with an Intel Core i9-14900K, 64 GB of RAM, and a NVIDIA RTX 4070 Ti Super graphics card, or a Windows 11 Pro with an AMD Ryzen Threadripper 3970X and 128 GB of RAM. The configuration files, including the environment and PPO hyperparameters, can be found in the supplementary materials.
+2.3.2 How to compare different controller policies in VR
+Practical validation of the method included compilation for different platforms (Windows, Linux, MacOS, Android) to confirm the models could be used in production projects.
+Since Android builds are not included in MuJoCo releases, we recompiled the physics engine from its source to integrate it into VR builds. We also compared these builds with running the entire environment in a web browser.
+To compare the movement quality, independently of the controller policy used and the delivery method (Unity3D, WebXR), we recorded the movement data generated by the controller for exactly one animation loop, with no perturbations. We analysed the data with a set of custom Python scripts (which we provide in the supplementary materials). This allowed us to compare different training pipelines and controllers in the same context.
+2.3.3 How to compare different pipeline stages
+To compare the motion generated by different policies with the reference animation used for training the policies, we used metrics with patterns that are easy to identify. For example, Figure 1 shows the end-effector dist
+
+【结论/局限】
+4.1 Losses in retargeting
+4.2 Sim to sim transfer
+4.3 Controller losses
+4.4 Physics-based controllers for production
+5 Conclusions and future work
+References
+A Architecture and training decisions
+B Animation fidelity metrics
+C Expert evaluation
+License: CC BY-NC-ND 4.0
+arXiv:2610.26278v1 [cs.HC] 19 Oct 2026
+\onlineid
+0
+\vgtccategory Research
+\vgtcinsertpkg \teaser
+Character driven by physics-based controller (solid), compared to the reference animation (transparent). Snapshots sampled at
+0.5 s intervals. 4.1 Losses in retargeting
+The automated FBX-to-MJCF pipeline successfully produced training-ready ragdolls for both the adult male (MM) and female child (LL) skeletons, despite their significantly different proportions. The key step was the retargeting: the IK-based retargeting we used preserved end-effector positions well, but may have introduced artifacts in the torso chain—particularly for the LL skeleton.
+To map skeleton poses to the reduced space of the physical ragdoll, we still did automated retargeting, as have done virtually all recent contributions to PBCA.
+An alternative strategy, specific to our use case, could be to calculate the q ​ P ​ o ​ s qPos and q ​ V ​ e ​ l qV
+
+########## 2610.26338 ##########
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from and Developer Experience
+4.2 Building Blocks
+4.2.1 B1: Splat Renderer
+Developer Workflow and Developer Experience
+SplatXR is implemented as a Unity package, thus making it easily installable through Unity’s Package Manager.
+It features a developer-facing graphical interface, integrated into the Unity Editor, that provides access to a set of well-defined building blocks through panels, scripts, materials, and shaders.
+Building blocks can be implemented as needed, and previewed interactively in the Unity Editor scene view.
+Notably, this makes SplatXR ’s splat renderer compatible with non-XR applications as well.
+4.2. Building Blocks
+SplatXR comprises four main building blocks:
+B1:
+a Splat Renderer building block enabling splat rendering on XR headsets in passthrough AR or full VR with computational constraints
+B2:
+a Splat Physics building block based on our mesh augmentation procedures, enabling both shadows, cast from splats onto the environment, and rigid-body collisions between splats, classical meshes, and the environment
+B3:
+a Splat Effects building block based on customizable shader programs, enabling compelling visual experiences such as object dis- and re-integration
+B4:
+a Splat Blending building block enabling blending between the physical scene and the virtual scene in AR
+Building blocks can be accessed by developers via the developer interface , which is implemented as a dedicated panel in the Unity Editor. Actions performed in the developer interface add or modify assets in the project folder as well as game objects and attached components in the scene hierarchy. We show our editor interface in more detail in Appendix A.1 .
+4.2.1. B1: Splat Renderer
+The Splat Renderer building block comprises a 3D Gaussian splat rendering pipeline designed for compatibility with standalone XR devices, including Meta Quest and Apple Vision Pro.
+On both Quest and Vision Pro, it can render fully immersive splat-based VR scenes, and on Quest, it can render splats and blend them with the passthrough layer for situated AR experiences. 2 2
+2
+Apple Vision Pro is supported, but passthrough shader functionality is currently limited by Apple’s PolySpatial platform.
+It can be executed untethered on standalone headsets or tethered to a PC. 
+
+【实验】
+strategies for hci toolkit research .
+In Proceedings of the 2018 CHI conference on human factors in computing systems ,
+pp. 1–17 .
+Cited by: §2.4 ,
+§7 .
+Lee et al. (2022)
+J. Lee, R. Natarrajan, S. S. Rodriguez, P. Panda, and E. Ofek
+Remotelab: a vr remote study toolkit .
+In Proceedings of the 35th Annual ACM Symposium on User Interface Software and Technology ,
+pp. 1–9 .
+Cited by: §2.4 .
+Lee et al. (2025)
+J. Lee, J. Kim, J. Park, and J. Sim
+VR-pipe: streamlining hardware graphics pipeline for volume rendering .
+External Links: 2502.17078 ,
+Link
+Cited by: §2.3 .
+Li et al. (2025a)
+K. Li, M. Masuda, S. Schmidt, and S. Mori
+Radiance fields in xr: a survey on how radiance fields are envisioned and addressed for xr research .
+External Links: 2508.04326 ,
+Link
+Cited by: §2.3 .
+Li et al. (2023)
+K. Li, T. Rolff, S. Schmidt, R. Bacher, W. Leemans, and F. Steinicke
+Interacting with neural radiance fields in immersive virtual reality .
+In Extended Abstracts of the 2023 CHI Conference on Human Factors in Computing Systems ,
+pp. 1–4 .
+Cited by: §2.3 .
+Li et al. (2025b)
+Z. Li, J. Li, Z. Xiong, S. Zhang, F. Faruqi, S. Mueller, C. Liang, X. Ma, and M. Fan
+InteRecon: towards reconstructing interactivity of personal memorable items in mixed reality .
+In Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems ,
+pp. 1–19 .
+Cited by: §2.2 .
+Lipkowitz (2024)
+G. Lipkowitz
+Palimpsest: a spatial user interface toolkit for cohering tracked physical entities and interactive 3d content .
+In Adjunct Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology ,
+pp. 1–4 .
+Cited by: §2.4 .
+LumaAI (2023)
+LumaAI
+Lumalabs.ai .
+Cited by: §2.2 ,
+§2.5 ,
+§2.5 .
+Luo et al. (2025)
+Z. Luo, Z. Cui, S. Luo, M. Chu, and M. Li
+VR-doh: hands-on 3d modeling in virtual reality .
+ACM Trans. Graph. 44 ( 4 ).
+External Links: ISSN 0730-0301 ,
+Link ,
+Document
+Cited by: §2.3 .
+Ly et al. (2025)
+C. Ly, E. Peng, K. Liu, A. Qin, G. Howe, A. Y. Cheng, and A. Cuadra
+Museum in the classroom: engaging students with augmented reality museum artifacts and generative ai .
+In Proceedings of the Extended Abstracts of the CHI Conference on Human Factors in Computing Systems ,
+pp. 1–8 .
+Cited by: §2.2 .
+MacIntyre et al. (2004)
+B. MacIntyre, M. Gandy, S. Dow, and J. D. Bolter
+DART: a toolkit for rapid design exploration of augmented reality experiences .
+In Proceedings of the 17th annual ACM symposium on User interface software and technology ,
+pp. 197–206 .
+Cited by: §2.4 .
+MetalSplatter (2024)
+MetalSplatter
+Https://github.com/scier/metalsplatter .
+Cited by: §2.3 .
+Mildenhall et al. (2020)
+B. Mildenhall, P. P. Srinivasan, M. Tancik, J. T. Barron, R. Ramamoorthi, and R. Ng
+NeRF: representing scenes as neural radiance fields for view synthesis .
+In ECCV ,
+Cited by: §1 .
+mkke
+
+【结论/局限】
+Acknowledgements
+References
+A Appendix
+A.1 Developer Interface
+Install from File
+Import Splat
+In-Editor Splat Rendering
+SplatXR Object Structure
+Splat Adjustments
+A.2 Technical Evaluation
+License: CC BY-NC-ND 4.0
+arXiv:2610.26338v1 [cs.HC] 19 Oct 2026
+SplatXR: A Toolkit for Multi-Layered Extended Reality via On-Headset 3D Gaussian Splatting
+Conference:  The 39th Annual ACM Symposium on User Interface Software and Technology; November 02–05, 2026; Detroit, MI, USA The 39th Annual ACM Symposium on User Interface Software and Technology (UIST ’26), November 02–05, 2026, Detroit, MI, USA DOI:  10.1145/3830398.3830681 ISBN:  979-8-4007-2856-3/2026/11 CCS:  Human-centered computing Interactive systems and tools CCS:  Human-centered computing Human computer interaction (HCI)
+Cyrus Vachha
+Affiliation:  Princeton University , Princeton, NJ , USA
+email: cvachha@princeton.edu
+,
+Mohamed Kari
+Affiliation:  Princeton University , Princeton, NJ , USA
+email: mokari@princeton.edu
+and
+Parastoo Abtahi
+Affiliation:  Princeton University , Princeton, NJ , USA
+email: parastoo@princeton.edu
+© cc
+Figure 1.
+Left: A developer composes an XR app using our SplatXR toolkit in Unity.
+Mid: The resulting app can 
+
+########## 2610.26360 ##########
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from of god-like interaction techniques for supporting collaboration between outdoor ar and indoor tabletop users .
+In 2006 IEEE/ACM International Symposium on Mixed and Augmented Reality ,
+Vol. , pp. 165–172 .
+External Links: Document
+Cited by: §2.1 ,
+§3.2 ,
+§5.1 ,
+§5.1 ,
+§7.4 .
+Stoakley et al. (1995)
+R. Stoakley, M. J. Conway, and R. Pausch
+Virtual reality on a WIM: interactive worlds in miniature .
+In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems ,
+CHI ’95 , USA , pp. 265–272 .
+External Links: ISBN 978-0-201-84705-5 ,
+Link ,
+Document
+Cited by: §2.4 .
+Sugiura et al. (2018)
+Y. Sugiura, H. Ibayashi, T. Chong, D. Sakamoto, N. Miyata, M. Tada, T. Okuma, T. Kurata, T. Shinmura, M. Mochimaru, and T. Igarashi
+An asymmetric collaborative system for architectural-scale space design .
+In Proceedings of the 16th ACM SIGGRAPH International Conference on Virtual-Reality Continuum and Its Applications in Industry ,
+VRCAI ’18 , New York, NY, USA .
+External Links: ISBN 9781450360876 ,
+Link ,
+Document
+Cited by: §2.1 .
+Underkoffler and Ishii (1999)
+J. Underkoffler and H. Ishii
+Urp: a luminous-tangible workbench for urban planning and design .
+In Proceedings of the SIGCHI conference on Human factors in computing systems the CHI is the limit - CHI ’99 ,
+Pittsburgh, Pennsylvania, United States , pp. 386–393 ( en ).
+External Links: ISBN 978-0-201-48559-2 ,
+Link ,
+Document
+Cited by: §3.2 .
+Unity Technologies (2026)
+Unity Technologies
+Netcode for GameObjects .
+Note: https://docs.unity3d.com/Packages/com.unity.netcode.gameobjects@2.9/manual/index.html Accessed: 22 June 2026
+Cited by: §3.5 .
+Voelker et al. (2015)
+S. Voelker, K. I. Øvergård, C. Wacharamanotham, and J. Borchers
+Knobology revisited: a comparison of user performance between tangible and virtual rotary knobs .
+In Proceedings of the 2015 International Conference on Interactive Tabletops & Surfaces ,
+ITS ’15 , New York, NY, USA , pp. 35–38 .
+External Links: ISBN 9781450338998 ,
+Link ,
+Document
+Cited by: §3.3 .
+Wagenblast et al. (2024)
+F. Wagenblast, T. Läubli, R. Seibt, M. A. Rieger, and B. Steinhilber
+Wrist extensor muscle fatigue during a dual task with two muscular and cognitive load levels in younger and older adults .
+Human Factors 66 ( 11 ), pp. 2433–2450
+
+【实验】
+5.4 Hypotheses
+5.5 Measures For the experiment, we evaluated the three avatar head-gaze interaction methods introduced in Section  4.3 (VR, Head, Touch) across the two fault detection tasks described above (T1: Same Machine and T2: Twin Machine).
+To control puzzle behavior, we defined two difficulty levels based on the number of incorrect stickers that had to be inspected before the solution became available: at level 1, the first inspected sticker was always incorrect and the next one was the solution; at level 2, the first two inspected stickers were incorrect and the solution appeared only on a later sticker. The system tracked inspected stickers and dynamically set the solution position accordingly.
+We used a within-subjects design in which all participants, acting as remote experts, experienced all interaction methods, both tasks, and both difficulty levels. Conditions were counterbalanced using a Latin square distribution to reduce order effects. In total, each participant completed 2 2  tasks × \times 3 3  interaction methods × \times 2 2  difficulty levels × \times 3 3  repetitions, resulting in 36 36  trials per participant. Because each condition combines a specific visualization, display, and control method, the study compares bundled interface configurations rather than isolated factors; causal attribution to individual dimensions is not possible.
+5.4. Hypotheses
+We formulated our hypotheses to compare the 3 avatar’s gaze control methods in terms of task performance, perceived workload, and user preference, as well as the overall effectiveness of the tabletop avatar control for remote collaboration.
+H1 (T1 – Same Machine). For T1, which focuses on detailed inspection around a single machine, we expect the VR condition to outperform Head and Touch. Alignment between interaction and visualization spaces has been shown to reduce mental effort and improve performance  ( Grasset et al., 2005 ) , and our pilot (Section  4.3 ) indicated that direct head control in an immersive view felt most natural for precise targeting. We therefore hypothesize that VR will yield faster task completion, lower perceived workload, and higher user preference.
+H2 (T2 – Twin Machine). For T2, which requires parallel attention to two spatially separated machines, we expect Head and Touch to outperform VR. As discussed in Section  3.2 , full immersion temporarily removes direct access to the exocentric tabletop overview needed for cross-machine coordination. Because Head and Touch preserve continuous tabletop visibility while T2 demands monitoring both machines, we hypothesize they will yield faster completion, lower workload, and higher preference than VR.
+H3 (Overall tabletop avatar control). Across all conditions, we expect the tabletop avatar control to support e
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.26360v1 [cs.HC] 19 Oct 2026
+Remote Expert Evaluation of Tabletop Avatar Gaze Control in Asymmetric Multi-Scale MR–VR Collaboration
+Conference:  32nd ACM Symposium on Virtual Reality Software and Technology; November 16–18, 2026; Sendai, Japan 32nd ACM Symposium on Virtual Reality Software and Technology (VRST ’26), November 16–18, 2026, Sendai, Japan DOI:  10.1145/3822517.3848661 ISBN:  979-8-4007-2811-2/2026/11 1084 CCS:  Human-centered computing Empirical studies in interaction design CCS:  Human-centered computing Mixed / augmented reality
+Carlos Mosquera
+email: carlos.mosquera_villanueva@siemens.com
+Affiliation:  Siemens A.G. , Munich , Germany
+Affiliation:  Graz University of Technology , Graz , Austria
+,
+Neven Elsayed
+email: nelsayed@know-center.at
+Affiliation:  Know-Center GmbH , Graz , Austria
+,
+Ernst Kruijff
+email: ernst.kruijff@h-brs.de
+Affiliation:  Bonn-Rhein-Sieg University of Applied Sciences , Sankt Augustin , Germany
+,
+Joseph Newman
+email: joseph.newman@siemens.com
+Affiliation:  Siemens A.G. , Munich , Germany
+,
+Valeriya Lehrbaum
+email: valeriya.lehrbaum@siemens.com
+Affiliation:  Siemens A.G. , Munich , Germany
+and
+Eduardo Ve
+
+########## 2610.26598 ##########
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+in TapID configuration in other configurations in TapID configuration
+We calculate the average F 1 F_{1} score for each finger across all participants.
+Moreover, we report the mean and the standard deviation of the Macro F 1 F_{1} score across all participants, which treats all fingers as being equally important by taking the unweighted mean across class-wise F 1 F_{1} scores.
+Cross-session identification accuracy:
+We split the recorded data by participant and block.
+For each participant, we performed 3-fold cross-validation, using two blocks for training and one block for testing while ignoring all data from other participants.
+Across all participants, the accuracy was, on average, F 1 , finger = .93 F_{1,\textnormal{finger}}=.93 (SD=0.06).
+Cross-person identification accuracy:
+We performed 18-fold cross-validation, testing on each participant’s events and training on all other participants.
+The accuracy was F 1 , finger = .87 F_{1,\textnormal{finger}}=.87 (SD=0.09).
+Cross-person identification accuracy with refinement:
+In addition to pure cross-person testing, we assessed the impact of refinement with individual tap events from a participant’s set on the cross-person identification accuracy F 1 , finger F_{1,\text{finger}} .
+Simultaneously, we evaluated the impact of the size of the training dataset on the average cross-person identification accuracy.
+\autoref
+fig:refinementexperiment shows the mean F 1 F_{1} scores across participants depending on number of random taps used for refinement (rows) and depending on number of participants’ data used for training (columns).
+For this evaluation, we first trained the classifier for 30 epochs on the recorded taps of (i) 0, (ii) 4, (iii) 8, (iv) 12 and (v) 17 randomly drawn participants—excluding the person in the test set.
+We then fine-tuned the network for another 30 epochs using only the first (a) 1, (b) 10, (c) 30, and (d) 60 tap events per finger of the tested participant and removed these samples from the test set.
+We tested the refined classifier on the remaining blocks for that participant.
+After fine-tuning, our trained network produced F 1 F_{1} scores that rose with the number of participants in the training set as well as with the number of refinement taps.
+With 18-fold cross-validation and training with (iv) all 17 participants’ training data, our classifier achieves a mean F 1 F_{1} score of (a)  F 1 , finger = .86 F_{1,\textnormal{finger}}=.86 (SD=0.07), (b)  F 1 , finger = .91 F_{1,\textnormal{finger}}=.91 (SD=0.07), (c)  F 1 , finger = .94 F_{1,\textnormal{finger}}=.94 (SD=0.05), and (d)  F 1 , finger = .96 F_{1,\textnormal{finger}}=.96 (SD=0.05) after corresponding refinement. in other configurations
+For our baseline comparisons, Figure  6 lists all the scores achieved with the correspond
+
+【结论/局限】
+6 Use cases
+6.1 Scenarios
+6.2 Application prototypes The evaluation confirmed the validity of our sensing principle and our implementation on a wrist-worn device to capture body-coupled events.
+It also confirmed the TapID configuration of our prototype, embedding two low-cost, low-power IMUs in the silicone strap.
+Regarding the tap detection, the accuracy TapID achieved is high enough for practical purposes, but it also is in Fitbit and Smartwatch configuration.
+This confirms recent results in related efforts (e.g.,  [ 17 ] ), though with IMU sensors positioned at the wrist for unencumbered hands instead of placing them on the fingers.
+One trade-off remains in our tap detection: Decreasing the back-off period allows for faster interactions but increases the likelihood that one (strong) tap produces two events (i.e., one false positive).
+As for the performance of our classifier to identify individual fingers, unsurprisingly we saw the best cross-person accuracy when training with the largest amount possible, refined with person-specific training data, reaching F 1 F_{1} scores of up to .96 this way (Figure  9 ).
+What is notable, however, is that a single person-specific calibration 
+
+########## 2610.24257 ##########
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+of empirical and theoretical research,” in Human Mental
+Workload , 1988, pp. 139–183.
+[28]
+J. Brooke, “SUS: A ‘quick and dirty’ usability scale,” in Usability in Industry , P. W. Jordan, B. Thomas, B. A. Weerdmeester, and
+I. L. McClelland, Eds., 1996, pp. 189–194.
+[29]
+A. Bangor, P. Kortum, and J. Miller, “Determining what individual SUS scores
+mean: Adding an adjective rating scale,” J. Usability Studies ,
+vol. 4, no. 3, pp. 114–123, 2009.
+[30]
+S. Holm, “A simple sequentially rejective multiple test procedure,”
+Scandinavian J. Statistics , vol. 6, no. 2, pp. 65–70, 1979.
+[31]
+J. C. Pinheiro and D. M. Bates, Mixed-Effects Models in S and
+S-PLUS . Springer, 2000.
+[32]
+D. Lakens, “Equivalence tests: A practical primer for t t tests, correlations,
+and meta-analyses,” Social Psychological and Personality Science ,
+vol. 8, no. 4, pp. 355–362, 2017.
+[33]
+J.-P. Stauffert, F. Niebling, and M. E. Latoschik, “Latency and cybersickness:
+Impact, causes, and measures. A review,” Front. Virtual Reality ,
+vol. 1, p. 582204, 2020.
+[34]
+Y. Chen, L. Sun, M. Benallegue, R. Cisneros-Limón, R. P. Singh, K. Kaneko
+et al. , “Enhanced visual feedback with decoupled viewpoint control in
+immersive humanoid robot teleoperation using SLAM,” in IEEE-RAS Int.
+Conf. Humanoid Robots , 2022, pp. 306–313.
+[35]
+M. Schwarz and S. Behnke, “Low-latency immersive 6D televisualization with
+spherical rendering,” in IEEE-RAS Int. Conf. Humanoid Robots , 2021,
+pp. 320–325.
+[36]
+B. Keshavarz and H. Hecht, “Validating an efficient method to quantify motion
+sickness,” Human Factors , vol. 53, no. 4, pp. 415–426, 2011.
+[37]
+S. G. Hart, “NASA-task load index (NASA-TLX); 20 years later,” in
+Proc. Hum. Factors Ergon. Soc. Annu. Meeting , vol. 50, no. 9, 2006,
+pp. 904–908.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the

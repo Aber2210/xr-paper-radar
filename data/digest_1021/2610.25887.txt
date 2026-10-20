@@ -1,0 +1,133 @@
+【摘要】
+.
+
+【方法】
+Pub
+Seq. 012
+Seq. 001
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+3DGS* ( Kerbl et al., 2023 )
+TOG’23
+24.36
+0.893
+0.167
+25.87
+0.898
+0.193
+Binocular3DGS ( Han et al., 2024 )
+NeurIPS’24
+24.68
+0.908
+0.151
+25.77
+0.909
+0.175
+GPS-Gaussian ( Zheng et al., 2024 )
+CVPR’24
+24.40
+0.896
+0.149
+24.54
+0.890
+0.170
+SparseGS* ( Xiong et al., 2025 )
+3DV’25
+24.27
+0.901
+0.155
+25.24
+0.896
+0.189
+Ours
+–
+26.55
+0.923
+0.137
+27.13
+0.924
+0.143
+2.3. Training Objective and Optimization
+The overall training objective combines rendering loss, geometric objective, and camera pose regularization. We optimize training under sparse views by combining early stopping and motion-aware dropout to stabilize convergence and improve efficiency.
+Rendering Loss
+Let 𝐈 ^ \hat{\mathbf{I}} be the rendered image and 𝐈 gt \mathbf{I}_{\text{gt}} the ground truth. We adopt a standard combination of ℓ 1 \ell_{1} and SSIM:
+(6)
+ℒ render = λ 1 ​ ‖ 𝐈 ^ − 𝐈 gt ‖ 1 + λ SSIM ​ ( 1 − SSIM ​ ( 𝐈 ^ , 𝐈 gt ) ) . \displaystyle\mathcal{L}_{\text{render}}=\lambda_{1}\,\|\hat{\mathbf{I}}-\mathbf{I}_{\text{gt}}\|_{1}+\lambda_{\text{SSIM}}\,\big(1-\text{SSIM}(\hat{\mathbf{I}},\mathbf{I}_{\text{gt}})\big).
+Geometric Objective
+The geometric objective ℒ geo \mathcal{L}_{\text{geo}} combines photometric consistency with depth and flow regularization, as detailed in Section  2.1.1 .
+Camera Regularization
+The camera regularization term ℒ cam \mathcal{L}_{\text{cam}} constrains the deviation of optimized camera poses from their initial values, preventing excessive pose modifications.
+Overall Objective
+The complete training objective is a weighted sum of all three components:
+(7)
+ℒ total = λ render ​ ℒ render + λ geo ​ ℒ geo + λ cam ​ ℒ cam , \displaystyle\mathcal{L}_{\text{total}}=\lambda_{\text{render}}\mathcal{L}_{\text{render}}+\lambda_{\text{geo}}\mathcal{L}_{\text{geo}}+\lambda_{\text{cam}}\mathcal{L}_{\text{cam}},
+where λ render \lambda_{\text{render}} , λ geo \lambda_{\text{geo}} , and λ cam \lambda_{\text{cam}} are the weights for the rendering loss, geometric objective, and camera regularization, respectively.
+Figure 3. Qualitative comparison on challenging sequences with fast human motion. Our method produces more stable, artifact-free reconstructions, especially in dynamic regions. Entries marked with * use half-resolution training and are resized for evaluation. listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+Abou
+
+【实验】
+3.1 Experimental Settings
+3.2 Comparison with SOTA Methods on the SIGGRAPH Asia 2025 sparse-view dataset demonstrate improvements over both feed-forward and optimization-based methods across quantitative metrics and visual quality.
+2. Methodology
+Our overall algorithm is illustrated in Figure 2 .
+Following the deep learning perspective outlined in the introduction, we organize our approach into two complementary categories: Supervision Enhancement and Training Regularization . This unified framework addresses the three fundamental causes of overfitting in sparse-view 3DGS: noisy data (corresponding to camera miscalibration), insufficient data, and excessive model capacity. In the following subsections, we detail each component.
+2.1. Supervision Enhancement
+To address insufficient supervision and noisy data in sparse-view 3DGS, we enhance the training data through two strategies: pseudo-view synthesis addresses insufficient data, while joint camera–scene optimization addresses noisy data.
+2.1.1. Optical Flow Guided Pseudo-view Synthesis
+Given a predicted depth map D D with intrinsics ( f x , f y , c x , c y ) (f_{x},f_{y},c_{x},c_{y}) , we synthesize a nearby view by applying a small in-plane translation 𝒕 = ( t x , t y , 0 ) ⊤ \boldsymbol{t}=(t_{x},t_{y},0)^{\top} . The induced pixel shifts are
+(1)
+u ⁡ ( 𝒙 ) = f x ​ ( − t x ) D ⁡ ( 𝒙 ) , v ⁡ ( 𝒙 ) = f y ​ ( − t y ) D ⁡ ( 𝒙 ) . \displaystyle u(\boldsymbol{x})=\frac{f_{x}(-t_{x})}{D(\boldsymbol{x})},\qquad v(\boldsymbol{x})=\frac{f_{y}(-t_{y})}{D(\boldsymbol{x})}.
+Rendering the translated pose produces 𝑰 ~ \widetilde{\boldsymbol{I}} , which we warp back via differentiable sampling:
+(2)
+𝑰 w ​ ( 𝒙 ) = 𝑰 ~ ​ ( 𝒙 + [ u ⁡ ( 𝒙 ) v ⁡ ( 𝒙 ) ] ) . \displaystyle\boldsymbol{I}_{w}(\boldsymbol{x})=\widetilde{\boldsymbol{I}}\!\left(\boldsymbol{x}+\begin{bmatrix}u(\boldsymbol{x})\\
+v(\boldsymbol{x})\end{bmatrix}\right).
+This optical-flow parameterization explicitly reasons about horizontal and vertical displacements, providing extra robustness along the vertical axis when the training views lie roughly on the same horizontal ring (a common sparse-view setting where vertical supervision is weak). Over the valid pixel set 𝒱 \mathcal{V} (visible and in-bounds), we measure the Charbonnier photometric consistency as
+(3)
+ℒ photo = 1 | 𝒱 | ​ ∑ 𝐱 ∈ 𝒱 ‖ 𝐈 w ​ ( 𝐱 ) − 𝐈 gt ​ ( 𝐱 ) ‖ 2 2 + ϵ , \displaystyle\mathcal{L}_{\text{photo}}=\frac{1}{|\mathcal{V}|}\sum_{\mathbf{x}\in\mathcal{V}}\sqrt{\left\|\mathbf{I}_{w}(\mathbf{x})-\mathbf{I}_{\text{gt}}(\mathbf{x})\right\|_{2}^{2}+\epsilon},
+where ϵ > 0 \epsilon>0 is a small constant.
+To regularize depth and the induced flow, we adopt total variation (TV) regularization for both depth and flow fields, along with edge-aware smoothing to preserve depth discontinuities at image edges. 
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25887v1 [cs.CV] 19 Oct 2026
+Rethinking Sparse-View 3D Gaussian Splatting:
+A Few-Shot Learning Perspective on Overfitting Prevention
+CCS:  Computing methodologies Computer graphics CCS:  Computing methodologies Rendering CCS:  Computing methodologies Machine learning CCS:  Computing methodologies Computer vision
+Lejia Ye
+Note:  Equal contribution.
+email: yelj8@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+,
+Bin Wu
+email: wubin58@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+,
+Jingjing Gao
+email: gaojj27@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+,
+Yiyang Wu
+email: wuyy239@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+and
+Xiaohu Zhang
+email: zhangxiaohu@mail.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+© none  We reframe sparse-view 3D Gaussian Splatting from a few-shot learning p

@@ -1,0 +1,277 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from diagnostics. The fit and influence diagnostics, variance inflation factors and predictor correlations (Supplementary Tables S12, S13, S15 and S23) were computed in R 4.4.1 with the code in the Appendix. The code reads the processed data set of the repository after verifying its checksum, and it gives the diagnostics of the age-group models and of the continuous-age models.
+S2 Descriptive statistics
+Supplementary Table S2 gives the descriptive statistics of the ratings, the cybersickness scores and the predictors for the whole sample and each age group. Supplementary Tables S3–S5 give the sex and VR-use counts, the number of participants at the minimum and maximum of each scale, and the distribution of the CSQ-VR totals. The ratings were concentrated towards the favourable end of every scale, and 38 of the 91 participants reported no cybersickness symptom at all.
+Supplementary Table S2. Descriptive statistics of the ratings, the cybersickness scores and the predictors.
+Variable
+Group
+n
+M
+SD
+Mdn
+Q1 to Q3
+Min to max
+95% CI of M
+SUS (0–100)
+All
+91
+89.42
+7.99
+92.50
+82.50 to 95.00
+60.00 to 100.00
+[87.76, 91.09]
+Younger
+47
+91.28
+6.38
+92.50
+87.50 to 96.25
+77.50 to 100.00
+[89.40, 93.15]
+Older
+44
+87.44
+9.08
+88.75
+80.00 to 95.00
+60.00 to 100.00
+[84.68, 90.20]
+Pragmatic UX ( − - 3 to +3)
+All
+91
+1.87
+0.98
+2.00
+1.25 to 2.62
+− - 0.50 to 3.00
+[1.67, 2.08]
+Younger
+47
+2.09
+0.81
+2.25
+1.75 to 2.75
+0.00 to 3.00
+[1.85, 2.33]
+Older
+44
+1.64
+1.10
+1.88
+0.75 to 2.50
+− - 0.50 to 3.00
+[1.30, 1.97]
+Hedonic UX ( − - 3 to +3)
+All
+91
+1.59
+1.10
+1.75
+0.75 to 2.50
+− - 1.00 to 3.00
+[1.36, 1.81]
+Younger
+47
+1.64
+1.09
+1.75
+0.75 to 2.62
+− - 0.75 to 3.00
+[1.32, 1.96]
+Older
+44
+1.52
+1.11
+1.75
+0.94 to 2.31
+− - 1.00 to 3.00
+[1.18, 1.86]
+Acceptability (1–6)
+All
+91
+4.83
+0.45
+4.80
+4.50 to 5.20
+3.70 to 5.80
+[4.73, 4.92]
+Younger
+47
+4.85
+0.47
+4.80
+4.50 to 5.25
+3.80 to 5.80
+[4.71, 4.99]
+Older
+44
+4.80
+0.44
+4.80
+4.50 to 5.12
+3.70 to 5.50
+[4.67, 4.94]
+CSQ-VR total (6–42)
+All
+91
+8.70
+3.66
+7.00
+6.00 to 10.00
+6.00 to 20.00
+[7.94, 9.47]
+Younger
+47
+8.89
+3.46
+7.00
+6.00 to 11.50
+6.00 to 17.00
+[7.88, 9.91]
+Older
+44
+8.50
+3.90
+7.00
+6.00 to 9.25
+6.00 to 20.00
+[7.32, 9.68]
+CSQ-VR nausea (2–14)
+All
+91
+2.74
+1.14
+2.00
+2.00 to 3.00
+2.00 to 6.00
+[2.50, 2.97]
+Younger
+47
+2.89
+1.20
+2.00
+2.00 to 
+
+【实验】
+3.1 Sample characteristics
+3.2 Usability, user experience and acceptability
+3.3 Associations with age group and reported experience
+3.4 Cybersickness
+3.5 Ratings and TMT-VR performance 3.1 Sample characteristics
+Table 1 presents the sample characteristics overall and by age group, with the age-group comparisons. The age groups did not differ significantly in sex composition, education or motion sickness susceptibility. Younger participants reported significantly more gaming and technology experience (both Holm p < .001; Table 1). Gaming scores were positively skewed in the older group, with 52 participants (57.1%) across the sample obtaining the minimum score. Reported VR use was minimal in both groups: 89 of the 91 participants gave the lowest frequency rating for VR, and 41 of the 44 older participants reported no VR ability. Motion sickness susceptibility, which entered the analyses as a predictor, ranged from 0 to 29.5 on the 0–54 scale and had similar means in the two groups (Table 1).
+Table 1: Sample characteristics overall and by age group.
+Characteristic
+All (N = 91)
+Younger (n = 47)
+Older (n = 44)
+Older − - younger [95% CI]
+Raw p
+Holm p
+Age (years)
+47.69 (23.87)
+25.13 (4.07)
+71.80 (4.85)
+—
+—
+—
+Age range (years)
+20–81
+20–38
+64–81
+—
+—
+—
+Education (years)
+16.40 (2.86)
+16.64 (3.00)
+16.14 (2.71)
+− - 0.50 [ − - 1.69, 0.69]
+.404
+1.000
+Women, n (%)
+49 (53.8)
+25 (53.2)
+24 (54.5)
+—
+—
+—
+Men, n (%)
+42 (46.2)
+22 (46.8)
+20 (45.5)
+OR 0.95 [0.38, 2.34]
+1.000
+1.000
+Gaming (12–72)
+16.24 (7.08)
+20.00 (8.22)
+12.23 (0.86)
+− - 7.77 [ − - 10.20, − - 5.35]
+< .001
+< .001
+Technology (6–36)
+20.74 (3.72)
+23.32 (2.04)
+17.98 (3.06)
+− - 5.34 [ − - 6.44, − - 4.25]
+< .001
+< .001
+MSSQ-Short total (0–54)
+11.01 (8.60)
+11.12 (8.72)
+10.90 (8.57)
+− - 0.22 [ − - 3.82, 3.38]
+.903
+1.000
+Note. Values are mean (SD) unless otherwise indicated. Gaming = Gaming Skills Questionnaire total (12–72); Technology = technology composite (6–36); MSSQ-Short = Motion Sickness Susceptibility Questionnaire short form total (0–54). Differences are older minus younger with pointwise Welch 95% CIs; for sex, the older-versus-younger odds ratio (OR) of being male with its 95% CI. Tests: Welch’s t for education (t(88.88) = − - 0.84), technology (t(74.29) = − - 9.72) and MSSQ-Short (t(88.78) = − - 0.12); the Mann–Whitney U-test with continuity correction for gaming (U = 302.0), whose p value tests a rank contrast rather than the displayed mean difference; Fisher’s exact test for sex. Holm adjustment covers the five sample comparisons as one family. The age groups are defined by age, which is therefore not tested.
+3.2 Usability, user experience and acceptability
+Participants rated the TMT-VR favourably on every instrument (Table 2; Figure 2). Usability scores had a median of 92.5 on the 0–100 SUS, ranged fr
+
+【结论/局限】
+References
+Supplementary Material
+License: CC BY 4.0
+arXiv:2610.24237v1 [cs.HC] 16 Oct 2026
+Usability, User Experience, and Acceptability of the Trail Making Test in Virtual Reality in Younger and Older Adults
+Journal: Preprint
+Panagiotis Kourtesis
+Address: Department of Informatics and Telecommunications, National and Kapodistrian University of Athens, Athens, Greece
+Address: Department of Psychology, National and Kapodistrian University of Athens, Athens, Greece
+Address: Department of Psychology, The American College of Greece, Athens, Greece
+Address: Department of Psychology, University of Edinburgh, Edinburgh, United Kingdom
+Corresponding author: Correspondence: Panagiotis Kourtesis, Department of Psychology, National and Kapodistrian University of Athens, 157 84 Athens, Greece; pkourtesis@psych.uoa.gr
+Dante O’Connor
+Address: Department of Psychology, University of Edinburgh, Edinburgh, United Kingdom
+Sarah E. MacPherson
+Address: Department of Psychology, University of Edinburgh, Edinburgh, United Kingdom To our knowledge, this study provides the first evaluation of the usability, user experience, acceptability and cybersickness of the Trail Making Test in Virtual Reality in ol

@@ -1,0 +1,126 @@
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from of god-like interaction techniques for supporting collaboration between outdoor ar and indoor tabletop users .
+In 2006 IEEE/ACM International Symposium on Mixed and Augmented Reality ,
+Vol. , pp. 165–172 .
+External Links: Document
+Cited by: §2.1 ,
+§3.2 ,
+§5.1 ,
+§5.1 ,
+§7.4 .
+Stoakley et al. (1995)
+R. Stoakley, M. J. Conway, and R. Pausch
+Virtual reality on a WIM: interactive worlds in miniature .
+In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems ,
+CHI ’95 , USA , pp. 265–272 .
+External Links: ISBN 978-0-201-84705-5 ,
+Link ,
+Document
+Cited by: §2.4 .
+Sugiura et al. (2018)
+Y. Sugiura, H. Ibayashi, T. Chong, D. Sakamoto, N. Miyata, M. Tada, T. Okuma, T. Kurata, T. Shinmura, M. Mochimaru, and T. Igarashi
+An asymmetric collaborative system for architectural-scale space design .
+In Proceedings of the 16th ACM SIGGRAPH International Conference on Virtual-Reality Continuum and Its Applications in Industry ,
+VRCAI ’18 , New York, NY, USA .
+External Links: ISBN 9781450360876 ,
+Link ,
+Document
+Cited by: §2.1 .
+Underkoffler and Ishii (1999)
+J. Underkoffler and H. Ishii
+Urp: a luminous-tangible workbench for urban planning and design .
+In Proceedings of the SIGCHI conference on Human factors in computing systems the CHI is the limit - CHI ’99 ,
+Pittsburgh, Pennsylvania, United States , pp. 386–393 ( en ).
+External Links: ISBN 978-0-201-48559-2 ,
+Link ,
+Document
+Cited by: §3.2 .
+Unity Technologies (2026)
+Unity Technologies
+Netcode for GameObjects .
+Note: https://docs.unity3d.com/Packages/com.unity.netcode.gameobjects@2.9/manual/index.html Accessed: 22 June 2026
+Cited by: §3.5 .
+Voelker et al. (2015)
+S. Voelker, K. I. Øvergård, C. Wacharamanotham, and J. Borchers
+Knobology revisited: a comparison of user performance between tangible and virtual rotary knobs .
+In Proceedings of the 2015 International Conference on Interactive Tabletops & Surfaces ,
+ITS ’15 , New York, NY, USA , pp. 35–38 .
+External Links: ISBN 9781450338998 ,
+Link ,
+Document
+Cited by: §3.3 .
+Wagenblast et al. (2024)
+F. Wagenblast, T. Läubli, R. Seibt, M. A. Rieger, and B. Steinhilber
+Wrist extensor muscle fatigue during a dual task with two muscular and cognitive load levels in younger and older adults .
+Human Factors 66 ( 11 ), pp. 2433–2450
+
+【实验】
+5.4 Hypotheses
+5.5 Measures For the experiment, we evaluated the three avatar head-gaze interaction methods introduced in Section  4.3 (VR, Head, Touch) across the two fault detection tasks described above (T1: Same Machine and T2: Twin Machine).
+To control puzzle behavior, we defined two difficulty levels based on the number of incorrect stickers that had to be inspected before the solution became available: at level 1, the first inspected sticker was always incorrect and the next one was the solution; at level 2, the first two inspected stickers were incorrect and the solution appeared only on a later sticker. The system tracked inspected stickers and dynamically set the solution position accordingly.
+We used a within-subjects design in which all participants, acting as remote experts, experienced all interaction methods, both tasks, and both difficulty levels. Conditions were counterbalanced using a Latin square distribution to reduce order effects. In total, each participant completed 2 2  tasks × \times 3 3  interaction methods × \times 2 2  difficulty levels × \times 3 3  repetitions, resulting in 36 36  trials per participant. Because each condition combines a specific visualization, display, and control method, the study compares bundled interface configurations rather than isolated factors; causal attribution to individual dimensions is not possible.
+5.4. Hypotheses
+We formulated our hypotheses to compare the 3 avatar’s gaze control methods in terms of task performance, perceived workload, and user preference, as well as the overall effectiveness of the tabletop avatar control for remote collaboration.
+H1 (T1 – Same Machine). For T1, which focuses on detailed inspection around a single machine, we expect the VR condition to outperform Head and Touch. Alignment between interaction and visualization spaces has been shown to reduce mental effort and improve performance  ( Grasset et al., 2005 ) , and our pilot (Section  4.3 ) indicated that direct head control in an immersive view felt most natural for precise targeting. We therefore hypothesize that VR will yield faster task completion, lower perceived workload, and higher user preference.
+H2 (T2 – Twin Machine). For T2, which requires parallel attention to two spatially separated machines, we expect Head and Touch to outperform VR. As discussed in Section  3.2 , full immersion temporarily removes direct access to the exocentric tabletop overview needed for cross-machine coordination. Because Head and Touch preserve continuous tabletop visibility while T2 demands monitoring both machines, we hypothesize they will yield faster completion, lower workload, and higher preference than VR.
+H3 (Overall tabletop avatar control). Across all conditions, we expect the tabletop avatar control to support e
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.26360v1 [cs.HC] 19 Oct 2026
+Remote Expert Evaluation of Tabletop Avatar Gaze Control in Asymmetric Multi-Scale MR–VR Collaboration
+Conference:  32nd ACM Symposium on Virtual Reality Software and Technology; November 16–18, 2026; Sendai, Japan 32nd ACM Symposium on Virtual Reality Software and Technology (VRST ’26), November 16–18, 2026, Sendai, Japan DOI:  10.1145/3822517.3848661 ISBN:  979-8-4007-2811-2/2026/11 1084 CCS:  Human-centered computing Empirical studies in interaction design CCS:  Human-centered computing Mixed / augmented reality
+Carlos Mosquera
+email: carlos.mosquera_villanueva@siemens.com
+Affiliation:  Siemens A.G. , Munich , Germany
+Affiliation:  Graz University of Technology , Graz , Austria
+,
+Neven Elsayed
+email: nelsayed@know-center.at
+Affiliation:  Know-Center GmbH , Graz , Austria
+,
+Ernst Kruijff
+email: ernst.kruijff@h-brs.de
+Affiliation:  Bonn-Rhein-Sieg University of Applied Sciences , Sankt Augustin , Germany
+,
+Joseph Newman
+email: joseph.newman@siemens.com
+Affiliation:  Siemens A.G. , Munich , Germany
+,
+Valeriya Lehrbaum
+email: valeriya.lehrbaum@siemens.com
+Affiliation:  Siemens A.G. , Munich , Germany
+and
+Eduardo Ve

@@ -1,0 +1,165 @@
+【摘要】
+
+【方法】
+4.1 Multimodal Observation Representation
+4.2 Action Representation
+4.3 Multimodal Sequence Construction
+4.4 Training and Inference We propose ACTS (Fig.  2 ), an action-conditioned world model jointly
+predicting future scene video, wrist views, and tactile observations
+from observation histories and actions for bimanual manipulation.
+We describe observation encoding and tokenization
+(Sec.  4.1 ), then force-aware
+sensor actions and view-aligned actions encoding contact-related
+motion and scene-view sensor geometry
+(Sec.  4.2 ).
+We detail unified sequence construction with spatiotemporal
+alignment and full-window action conditioning
+(Sec.  4.3 ), alongside the
+training objective and inference protocol
+(Sec.  4.4 ).
+4.1 Multimodal Observation Representation
+To capture manipulation from complementary perspectives, we jointly listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from scene video, wrist views, and tactile observations in a shared
+latent prediction framework.
+We define the observation streams as
+ℳ = { V , W L , W R , T L , T R } \mathcal{M}=\{V,W^{L},W^{R},T^{L},T^{R}\} , where V V denotes the
+top-down scene RGB view, W L W^{L} and W R W^{R} denote the left and
+right wrist-camera RGB views, and T L T^{L} and T R T^{R} denote
+the corresponding GelSight observations.
+For each stream m ∈ ℳ m\in\mathcal{M} , let X H m X_{H}^{m} and X F m X_{F}^{m}
+denote its observed history and future sequence, respectively.
+Given synchronized histories and action conditions 𝒜 \mathcal{A} ,
+our goal is to model
+p θ ​ ( { X F m } m ∈ ℳ ∣ { X H m } m ∈ ℳ , 𝒜 ) , p_{\theta}\!\left(\{X_{F}^{m}\}_{m\in\mathcal{M}}\mid\{X_{H}^{m}\}_{m\in\mathcal{M}},\mathcal{A}\right),
+(1)
+where θ \theta denotes the model’s trainable parameters.
+To obtain compact representations while preserving temporal
+causality, we encode each observation stream as
+Z m = ℰ m ​ ( X m ) , m ∈ ℳ , Z^{m}=\mathcal{E}_{m}(X^{m}),\qquad m\in\mathcal{M},
+(2)
+where X m X^{m} concatenates history X H m X_{H}^{m} and future X F m X_{F}^{m}
+in temporal order.
+The scene and two wrist-camera streams share the pretrained
+Wan2.2 causal VAE encoder  ( Wan et al., 2025 ) , while both GelSight
+streams share a variant adapted to our visuo-tactile
+dataset. 2 2
+2
+Details of tactile VAE adaptation are provided
+in Appendix  D .
+All encoders are f
+
+【实验】
+5.1 Baseline Models 5.1 Baseline Models
+We compare ACTS with two action-conditioned visuo-tactile world
+models, training both from scratch on React.
+Among recent visuo-tactile world models, only
+ContactWorld  ( Zhang et al., 2026 ) and
+Dream-Tac  ( Lou et al., 2026 ) release training code;
+VT-WM  ( Higuera et al., 2026 ) ,
+OmniVTA  ( Zheng et al., 2026 ) , ViTacWorld  ( Huang et al., 2026b ) ,
+FeelWorld  ( Ma et al., 2026 ) , and VT-WAM  ( Tian et al., 2026 ) had
+not released model code at the time of writing.
+ContactWorld is a decoder-free JEPA-style  ( Assran et al., 2023 ) model, which we
+train with its official code, adapted to our observation and action
+spaces.
+VT-WM-style is our reimplementation of
+VT-WM, preserving its
+autoregressive latent predictor and action conditioning while
+adapting its interfaces to our data.
+We intended to compare with Dream-Tac but could not adapt it to
+React: it generates actions jointly with future observations instead
+of conditioning on given actions, and its released code expects a
+robot camera layout and proprioception that React lacks.   per object are shown in bold.
+Task Metrics Metrics
+We compare ACTS with baseline models on future-frame prediction
+using held-out human recordings and zero-shot transfer to robot episodes.
+Video Generation Metrics.
+Given eight observed frames (one for ContactWorld, its native context)
+and recorded actions, each model predicts the next eight frames (0.53 s at 15 fps).
+We evaluate only predicted frames, separately for the scene view,
+two wrist cameras, and two GelSight streams.
+We report PSNR for pixel-level fidelity,
+SSIM  ( Wang et al., 2004 ) for structural similarity, and
+LPIPS  ( Zhang et al., 2018 ) for perceptual distance.
+Higher PSNR and SSIM and lower LPIPS indicate better results.
+For both human and robot data, reference frames are decoded from
+ground-truth latents using the frozen RGB and tactile VAEs.
+All comparisons use identical test windows and seeds.
+Appendix  B provides further details.
+Robot Experiments.
+We apply models trained on human data to held-out robot episodes
+(Sec.  3 ) without fine-tuning.
+Robot recordings are normalized to match the human data’s tactile
+color and illumination and wrist-camera tone.
+Actions are constructed from OptiTrack sensor poses and
+GelSight-estimated force following Sec.  4.2 ,
+as for the human data, rather than from robot joint readings.
+Per-step translations from forward kinematics differ from the
+OptiTrack ones by a median of 0.33 mm, about half the median
+per-step motion, so OptiTrack keeps robot actions consistent with
+the human training data
+(Appendix  B ).
+We use the same eight-frame observation and prediction protocol
+on windows in which contact is made or broken, and report the same
+per-stream metrics. metrics.
+All stream
+
+【结论/局限】
+References
+A Dataset and Force-Estimation Details
+A.1 Dataset Composition
+A.2 Temporal Alignment and Curation
+A.3 Normal-Force Estimation
+B Evaluation Details
+C Qualitative Robot Rollouts
+D Tactile Encoder
+E Action Representation Details
+F Implementation and Training Details
+F.1 Data Preparation
+F.2 Model Initialization and Adaptation
+F.3 Sequence Packing and Temporal Alignment
+F.4 Training Procedure
+F.5 Inference and Rollout
+G VT-WM-style Baseline
+H Force-Informed Action Ablation
+I ContactWorld Baseline
+License: CC BY 4.0
+arXiv:2610.24285v1 [cs.RO] 16 Oct 2026
+ACTS: Learning Visuo-Tactile World Models from Human Physical Interaction
+Yuxiang Ma
+† † thanks: Equal contribution.
+Weihan Xu 1 1 footnotemark:
+1
+Pengfei Ye
+Anna Mei
+Affiliation:  Massachusetts Institute of Technology  University of Washington  Harvard University
+Yuxin Ray Song
+Tingle Li   Haonan Chen   Edward H. Adelson
+Affiliation:  University of California, Berkeley  Stanford University We presented ACTS, a visuo-tactile world model trained entirely on human physical interaction, with actions defined at the tactile sensor as motion augmented with force change. It predicts the scene view better than two visuo-tactile base

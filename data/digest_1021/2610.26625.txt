@@ -1,0 +1,400 @@
+【摘要】
+
+【方法】
+only on the outputs it provides under the matched protocol
+described above. EgoX is the only end-to-end method in this comparison
+that jointly reconstructs cameras, depth, hands, and object 6-DoF
+poses in a shared world frame.
+Table 2: Hand Reconstruction on Four Benchmarks.
+PA-, WA-, and W-MPJPE are reported in millimetres.
+World-space errors use each method’s estimated camera trajectory.
+HOT3D
+EgoX-Bench
+HOI4D
+H2O PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+HaWoR
+6.06
+29.80
+56.30
+10.98
+125.73
+363.47
+18.61
+50.01
+110.96
+5.68
+25.83
+64.62
+MINT
+9.94
+37.76
+85.85
+10.19
+149.91
+467.65
+17.94
+43.64
+108.76
+5.74
+28.38
+50.04
+ReViV
+14.01
+49.90
+109.02
+23.89
+111.48
+501.29
+25.18
+83.40
+354.39
+8.69
+23.40
+45.22
+WiLoR + SLAM
+5.90
+25.52
+58.55
+8.51
+63.03
+328.81
+19.41
+47.66
+132.94
+5.11
+21.78
+74.95
+HandFlow
+5.54
+59.01
+119.48
+11.14
+75.76
+375.11
+19.91
+57.02
+120.26
+7.07
+19.00
+34.63
+EgoX (Ours)
+3.70
+15.54
+38.89
+4.64
+53.81
+113.24
+3.32
+15.12
+42.67
+4.97
+11.41
+23.95
+Table 3: Camera-Frame Object Pose Reconstruction.
+ADD/ADD-S: mm; AUC: %. Extra inputs: D ^ \hat{D} / K ^ \hat{K} ,
+DA3 Nested depth/intrinsics; M M , per-frame masks; A A , GT metric CAD.
+HOT3D
+EgoX-Bench
+HOI4D
+H2O ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+Any6D D ^ , K ^ , M {}^{\hat{D},\hat{K},M}
+67.06
+44.05
+42.99
+88.25
+41.41
+38.39
+67.01
+53.26
+34.61
+72.75
+36.57
+38.37
+FoundationPose D ^ , K ^ , A {}^{\hat{D},\hat{K},A}
+92.49
+59.87
+23.32
+85.26
+55.04
+31.99
+94.76
+73.02
+13.39
+91.91
+30.97
+46.03
+GigaPose + MegaPose K ^ , A , M {}^{\hat{K},A,M}
+71.92
+32.42
+57.59
+69.96
+26.87
+59.80
+97.94
+88.68
+3.91
+89.08
+53.08
+29.14
+EgoX (Ours)
+28.00
+14.03
+73.71
+27.11
+12.41
+76.59
+44.55
+21.11
+59.08
+22.10
+10.29
+80.42
+Table 4: Camera and Depth Reconstruction.
+RRE: degrees; δ 1.25 \delta_{1.25} : %.
+VGGT/VGGT- Ω \Omega : one scale fitted to DA3 Nested depth
+per sequence; others: predicted metric scale.
+HOT3D
+EgoX-Bench
+HOI4D
+H2O
+Camera
+Depth †
+Camera
+Depth †
+Camera
+Depth †
+Camera
+Depth † nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+VGGT
+0.0064
+0.64
+0.2182
+69.40
+0.0684
+2.86
+0.2877
+66.53
+0.0310
+1.50
+0.0676
+98.60
+0.0036
+0.27
+0.0726
+94.36
+VGGT- Ω \Omega
+0.0018
+0.16
+0.1031
+92.20
+0.0071
+0.61
+0.0806
+91.57
+0.0212
+1.56
+0.0558
+99.68
+0.0030
+0.27
+0.0784
+95.46
+CUT3R
+0.0449
+3.75
+0.2748
+69.19
+0.0756
+6.29
+0.4317
+54.07
+0.0455
+5.08
+0.0647
+97.05
+0.0120
+1.56
+0.0887
+93.09
+Any4D
+0.0267
+2.24
+0.2899
+70.23
+0.0604
+4.55
+0.4161
+48.15
+0.0273
+1.91
+0.0757
+95.80
+0.0083
+0.67
+0.1075
+87.26
+DA3 Nested
+0.0036
+0.23
+0.0799
+94.40
+0.0135
+0.92
+0.1785
+82.29
+0.
+
+【实验】
+ We evaluate camera, depth, hand, and object reconstruction on HOT3D,
+EgoX-Bench, H2O, and HOI4D using identical 150-observation clips
+across methods. Evaluation sequences are excluded from EgoX training.
+EgoX uses RGB and first-frame object masks; object baselines may
+additionally require estimated depth, intrinsics, per-frame masks,
+or metric CAD assets. World-space hand metrics use estimated cameras;
+object poses are evaluated in camera coordinates. No method receives
+GT camera poses or scale in the main comparisons.
+Appendix  C details the evaluation protocols. on EgoX-Bench and public benchmarks demonstrate
+strong performance in hand and object reconstruction
+and depth estimation.
+Our current formulation assumes rigid objects and does not
+predict their meshes.
+Future work will explore object mesh prediction and
+multiview inputs.
+Acknowledgements
+We thank Hongyi Chen, Yuancheng Wang, Changyi Ye, Qin Ma, Thang Luu,
+Wendi Fu, Qiankuan Tao, Sayang Mu, Rui Duan, Zetong Wang, and Yaobo Liu
+for their contributions to data collection.
+References
+[1]
+AgiBot World Team (2026)
+AgiBot world 2026 .
+Note: https://huggingface.co/datasets/agibot-world/AgiBotWorld2026
+Cited by: Appendix F .
+[2]
+A. Avetisyan, C. Xie, H. Howard-Jenkins, T. Yang, S. Aroudj, S. Patra, F. Zhang, D. Frost, L. Holland, C. Orme, J. Engel, E. Miller, R. Newcombe, and V. Balntas (2024)
+SceneScript: reconstructing scenes with an autoregressive structured language model .
+External Links: 2403.13064 ,
+Link
+Cited by: Appendix F .
+[3]
+P. Banerjee, S. Shkodrani, P. Moulon, S. Hampali, S. Han, F. Zhang, L. Zhang, J. Fountain, E. Miller, S. Basol, R. Newcombe, R. Wang, J. J. Engel, and T. Hodan (2025)
+HOT3D: hand and object tracking in 3d from egocentric multi-view videos .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+pp. 7061–7071 .
+Cited by: §A.4 ,
+Appendix F ,
+§1 ,
+§1 ,
+§2.3 ,
+Table 1 .
+[4]
+S. Bansal, Z. Zhu, S. Tripathi, J. Zhao, M. J. Black, and D. Damen (2026)
+Towards in-the-wild egocentric 3d hand-object pose estimation .
+In European Conference on Computer Vision (ECCV) ,
+Cited by: §A.2 ,
+§A.4 ,
+§2.2 .
+[5]
+Y. Cao, X. Guo, M. Zhang, H. Xie, C. Gu, and Z. Liu (2026)
+Crowdmogen: event-driven collective human motion generation .
+International Journal of Computer Vision 134 ( 1 ), pp. 29 .
+Cited by: §2.1 .
+[6]
+Y. Cao, H. Xie, F. Hong, L. Zhuo, Z. Chen, L. Pan, and Z. Liu (2026)
+HSImul3R: physics-in-the-loop reconstruction of simulation-ready human–scene interactions .
+In European Conference on Computer Vision ,
+pp. 509–528 .
+Cited by: §2.1 .
+[7]
+Y. Cao, H. Xie, B. Wen, R. Yao, Y. Liu, Y. Huang, Z. Liao, Y. Wang, H. Liu, X. Tian, D. Su, L. Zhuo, D. Tao, X. Wang, L. Pan, and Z. Liu (2026)
+ACE-data-0: human-centric ambient capture as embodied data e
+
+【结论/局限】
+References
+A Extended Related Work
+A.1 Joint geometry and entity reconstruction
+A.2 Hand and hand–object reconstruction
+A.3 Camera, depth, and object-pose pipelines
+A.4 Datasets and geometric evaluation
+B Public Dataset Cleaning and Geometric Alignment
+C Evaluation Protocol
+Datasets and splits.
+Inputs and matched protocol.
+Metrics and coordinates.
+Scale.
+D Runtime Analysis
+E Additional Qualitative Results
+E.1 Additional hand and camera comparisons
+E.2 Additional object-pose comparisons
+E.3 Additional depth comparisons
+F Training and Compute
+Training supervision. We present EgoXperience, a unified approach to learning
+world-grounded egocentric representations through task-driven
+capture, geometrically aligned annotation, and joint reconstruction.
+EgoX-Engine provides aligned multimodal annotations for
+the 50-hour EgoX-Data-6M, from which we curate the held-out
+one-hour EgoX-Bench.
+Trained on these annotations and harmonized public datasets,
+EgoX jointly reconstructs cameras, dense depth, hands,
+and rigid-object 6-DoF poses in a common metric world frame.

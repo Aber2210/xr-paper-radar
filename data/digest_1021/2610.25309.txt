@@ -1,0 +1,560 @@
+【摘要】
+
+【方法】
+Main Workflow.
+Target-Guided Visual Check.
+Working Memory. evaluation.
+License: CC BY 4.0
+arXiv:2610.25309v1 [cs.CV] 18 Oct 2026
+SENRI: Understanding the Space–Event Nexus in Real-Life Videos
+Kehan Lan
+Affiliation:  Fudan University
+Affiliation:  Alaya Lab
+Kaining Ying
+Affiliation:  Fudan University
+Henghui Ding
+Affiliation:  Fudan University
+Kaipeng Zhang
+† † thanks: Corresponding author.
+Affiliation:  Alaya Lab Inference Model
+Total
+Event → \rightarrow Space
+Space → \rightarrow Event
+Avg.
+L
+NP
+OC
+RR
+Avg.
+RER
+TER
+Direct
+Perception
+Gemini 3.1 Pro
+Gemini 3.1 Pro
+47.4
+43.1
+56.2
+37.7
+37.2
+40.0
+56.0
+55.7
+56.4
+Gemini 3.5 Flash
+Gemini 3.5 Flash
+49.8
+45.5
+56.2
+40.6
+32.6
+51.1
+58.4
+60.2
+56.4
+Gemini 3.7 Flash
+Gemini 3.7 Flash
+52.2
+48.5
+61.8
+50.7
+32.6
+48.9
+59.6
+58.0
+61.5
+GPT-5
+GPT-5
+47.2
+44.6
+59.6
+39.1
+32.6
+45.6
+52.4
+55.7
+48.7
+GPT-5.5
+GPT-5.5
+48.2
+46.7
+60.7
+44.9
+31.4
+48.9
+51.2
+50.0
+52.6
+Kimi K3
+Kimi K3
+41.4
+39.5
+51.7
+39.1
+30.2
+36.7
+45.2
+43.2
+47.4
+Cambrian-S-7B
+Qwen2.5-7B ∗
+34.8
+32.0
+37.1
+37.7
+19.8
+34.4
+40.4
+42.0
+38.5
+Cambrian-S-7B-LFP
+Qwen2.5-7B ∗
+31.4
+29.3
+33.7
+36.2
+18.6
+30.0
+35.5
+42.0
+28.2
+InternVideo3-8B
+Qwen3-VL-8B ∗
+39.0
+38.0
+50.6
+37.7
+26.7
+36.7
+41.0
+36.4
+46.2
+VideoChat3-4B
+Qwen3-4B ∗
+40.8
+40.4
+44.9
+46.4
+32.6
+38.9
+41.6
+39.8
+43.6
+Qwen3.5-9B
+Qwen3.5-9B
+41.6
+41.6
+53.9
+39.1
+31.4
+41.1
+41.6
+44.3
+38.5
+Qwen3.5-27B
+Qwen3.5-27B
+43.8
+41.6
+48.3
+43.5
+32.6
+42.2
+48.2
+44.3
+52.6
+Qwen3.6-27B
+Qwen3.6-27B
+43.8
+41.0
+51.7
+44.9
+29.1
+38.9
+49.4
+43.2
+56.4
+Qwen3.6-35B-A3B
+Qwen3.6-35B-A3B
+45.6
+46.1
+51.7
+43.5
+34.9
+53.3
+44.6
+44.3
+44.9
+Qwen3.8-27B
+Qwen3.8-27B
+41.0
+39.5
+48.3
+37.7
+37.2
+34.4
+44.0
+45.5
+42.3
+Evidence
+Seeking
+LongVideo-R1
+Qwen3-8B ∗
+39.0
+36.5
+39.3
+27.5
+33.7
+43.3
+44.0
+40.9
+47.4
+ParaVT-8B
+Qwen3-VL-8B ∗
+29.8
+28.1
+29.2
+42.0
+20.9
+23.3
+33.1
+35.2
+30.8
+Video-o3
+Qwen2.5-VL-7B ∗
+40.6
+40.1
+48.3
+43.5
+29.1
+40.0
+41.6
+37.5
+46.2
+VideoARM
+Qwen3.8-27B
+45.0
+43.7
+52.8
+39.1
+41.9
+40.0
+47.6
+42.0
+53.8
+VideoARM
+Gemini 3.7 Flash
+59.0
+56.0
+64.0
+56.5
+45.3
+57.8
+65.1
+68.2
+61.5
+Persistent
+Memory
+M3-Agent
+Qwen3-32B ∗
+33.6
+33.2
+41.6
+23.2
+31.4
+34.4
+34.3
+36.4
+32.1
+Light-Omni
+Qwen2.5-Omni-7B ∗
+37.4
+35.0
+47.2
+33.3
+27.9
+31.1
+42.2
+43.2
+41.0
+EG-Agent
+Qwen3.8-27B
+34.8
+34.1
+42.7
+27.5
+33.7
+31.1
+36.1
+39.8
+32.1
+EG-Agent
+Gemini 3.7 Flash
+52.2
+53.6
+69.7
+49.3
+46.5
+47.8
+49.4
+53.4
+44.9
+WorldMM
+Qwen3.8-27B
+47.6
+42.8
+46.1
+31.9
+36.0
+54.4
+57.2
+61.4
+52.6
+WorldMM
+Gemini 3.7 Flash
+58.8
+56.6
+58.4
+66.7
+43.0
+60.0
+63.3
+67.0
+59.0
+MAGIC-Video
+Qwen3.8-27B
+45.2
+43.1
+53.9
+31.9
+34.9
+48.9
+49.4
+48.9
+50.0
+MAGIC-Video
+Gemini 3.7 Flash
+58.6
+57.2
+61.8
+55.1
+41.9
+68.9
+61.4
+67.0 The failure modes mentioned above reveal the ambiguity of retrieved memories and motivate a new approach that goes beyond simple retrieval. Thus we propose SENRI-Agent , a controller workflow built upon existing constructed memories and augment the systems with a Target-Guided Visual Check (TGVC) module. The controller uses the retrieved candidates to propose local visual check tasks for parallel verifiers and integrate the reports into a working memory to help with reasoning. The workflow is illustrated in Figure  4 , which also shows the difference from the previous one.
+Figure 4: Overview of SENRI-Agent. (a) The previous workflow alternates
+between retrieving persi
+
+【实验】
+ Experimental Setup. SENRI-Agent is built upon two representative persistent memory methods, WorldMM and MAGIC-Video by reusing their constructed memories and retrieval
+interfaces. We evaluate SENRI-Agent on SENRI-Bench against the original workflows of the two
+baselines using two inference models, Qwen3.8-27B and Gemini 3.7 Flash. The
+maximum number of reasoning rounds is set to 5, followed by one answer round,
+as in the baselines. We keep 3 reports and 4 evidence frames per report in the working memory and set maximum 3 checks per verification.
+Main Results. Table  3 shows that
+SENRI-Agent improves all four configurations using the same stored memories
+and retrieval interfaces. With Gemini 3.7 Flash, WorldMM improves from
+58.8% to 62.6% and MAGIC-Video from 58.6% to 61.8%. With Qwen3.8-27B,
+they improve from 47.6% to 50.4% and from 45.2% to 47.8%, respectively.
+The overall gains range from 2.6 to 3.8 percentage points, with improvements
+on both ES and SE across all four configurations. This supports the benefit
+of targeted verification and evidence retention across the tested systems.
+Table 3: Results of SENRI-Agent on SENRI-Bench across different models. All are accuracy (%).
+Memory system
+Inference model
+Workflow
+Total
+ES
+L
+NP
+OC
+RR
+SE
+RER
+TER
+WorldMM
+Qwen3.8-27B
+Original
+47.6
+42.8
+46.1
+31.9
+36.0
+54.4
+57.2
+61.4
+52.6
+SENRI-Agent
+50.4
+46.1
+56.2
+34.8
+38.4
+52.2
+59.0
+63.6
+53.8
+WorldMM
+Gemini 3.7 Flash
+Original
+58.8
+56.6
+58.4
+66.7
+43.0
+60.0
+63.3
+67.0
+59.0
+SENRI-Agent
+62.6
+62.0
+66.3
+63.8
+48.8
+68.9
+63.9
+70.5
+56.4
+MAGIC-Video
+Qwen3.8-27B
+Original
+45.2
+43.1
+53.9
+31.9
+34.9
+48.9
+49.4
+48.9
+50.0
+SENRI-Agent
+47.8
+45.2
+55.1
+42.0
+36.0
+46.7
+53.0
+54.5
+51.3
+MAGIC-Video
+Gemini 3.7 Flash
+Original
+58.6
+57.2
+61.8
+55.1
+41.9
+68.9
+61.4
+67.0
+55.1
+SENRI-Agent
+61.8
+60.8
+66.3
+56.5
+52.3
+66.7
+63.9
+70.5
+56.4
+Table 4:
+Component ablations of SENRI-Agent on MAGIC-Video with Qwen3.8-27B. TG, PV, and WM denote target guidance, parallel verifiers, and working memory, respectively.
+Variant
+TG
+PV
+WM
+Total
+ES
+L
+NP
+OC
+RR
+SE
+RER
+TER
+SENRI-Agent
+✓
+✓
+✓
+47.8
+45.2
+55.1
+42.0
+36.0
+46.7
+53.0
+54.5
+51.3
+w/o Target Guidance
+✗
+✓
+✓
+45.0
+41.0
+50.6
+37.7
+25.6
+48.9
+53.0
+53.4
+52.6
+w/o Parallel Verifiers
+✓
+✗
+✓
+45.0
+41.6
+47.2
+36.2
+30.2
+51.1
+51.8
+55.7
+47.4
+w/o Working Memory
+✓
+✓
+✗
+44.0
+41.9
+50.6
+30.4
+36.0
+47.8
+48.2
+46.6
+50.0
+Ablation Studies. Table  4 reports component
+ablations on MAGIC-Video with Qwen3.8-27B. We remove target guidance by
+replacing structured verification tasks with a general observation prompt,
+remove parallel verifiers by assigning each check to a single verifier,
+and remove working memory by returning all accumulated reports and their
+supporting visual evidence to the controller. These changes reduce overall
+accuracy from 47.8% to 45.0%, 45.0%, and 44.0%, respectively,
+supporting the contr
+
+【结论/局限】
+References
+A More Details of SENRI-Bench
+A.1 More Questions, Options and Answers
+A.2 More Evaluation Details
+Direct video perception.
+Evidence-seeking systems.
+Persistent-memory systems.
+Metrics and aggregation.
+B More Details of SENRI-Agent
+B.1 Structured Target-Guided Tasks
+B.2 Adaptive Temporal Cells
+B.3 Key Prompt Excerpts
+Controller.
+Visual verifier.
+Working-memory updater.
+C More Experiments
+C.1 Effect of Number of Frames Sampled
+C.2 Per-Video Analysis
+C.3 Comparison with No Visual Input
+D Limitations and Future Work
+Benchmark scope.
+Comparing ES and SE. In this work, we introduced SENRI, a new perspective on long video understanding that focuses on the nexus between events and their spatial contexts. We instantiated this problem in SENRI-Bench, a benchmark of long, uninterrupted, self-recorded egocentric videos with six task types spanning two complementary directions, Event → \rightarrow Space and Space → \rightarrow Event. Through an extensive evaluation of direct perception, evidence seeking, and persistent memory approaches, we found that existing systems still struggle on this task. Our analysis further revealed two representative limitations of current memory systems. 

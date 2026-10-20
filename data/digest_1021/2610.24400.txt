@@ -1,0 +1,253 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from S↑
+P↑
+S↑
+P↑
+Pure XR
+.416
+8.3
+.655
+17.3
+C-Res
+.691
+22.3
+.735
+21.4
+Patch2Pixel-v2 ( p = 3 p{=}3 )
+.857
+27.4
+.863
+23.0
+Patch2Pixel-v2 ( p = 5 p{=}5 )
+.844
+27.3
+.873
+23.3
+UNet++-Small
+.507
+8.6
+.617
+19.3
+UNet++-Medium
+.835
+27.6
+.840
+22.9
+UNet++-Large
+.894
+29.4
+.888
+23.5
+CompenNet++
+.894
+29.4
+.870
+23.3
+Sc. 1: color balance, Br&Ct, elevated black, vignetting, blur, color fringes. Sc. 2: elevated black, brightness±, contrast, blur, color fringes, vignetting, WGNU.
+Table 2: Geometric mixed distortions.
+Sc. 3
+Sc. 4 S↑
+P↑
+S↑
+P↑
+Pure XR
+.704
+15.3
+.650
+14.9
+G-Hybrid h=16
+.982
+35.8
+.968
+32.9
+G-Hybrid
+.987
+37.4
+.974
+34.8
+G-Res
+.987
+37.5
+.975
+34.9
+UNet++-Small
+.857
+24.1
+.834
+23.7
+UNet++-Medium
+.877
+27.1
+.858
+26.9
+UNet++-Large
+.914
+29.2
+.895
+28.7
+CompenNet++
+.991
+39.1
+.983
+36.3
+Sc. 3: keystone + fisheye. Sc. 4: keystone + barrel + fisheye.
+G-Res leads all UNet++ variants by ≈ 8 {\approx}8  dB PSNR and comes within ≈ 1.5 {\approx}1.5  dB of CompenNet++ at ≈ 250 × {\approx}250{\times} fewer parameters (Table  4 ).
+5.4 Formula-Agnostic, Real-Data, and Non-Uniform Validation
+The training procedure above back-propagates through a known differentiable
+distortion pipeline, but Spatons do not require one. Using the two-phase scheme
+of Sec.  4.2 (fit a forward-mimic NN 1 \mathrm{NN}_{1} from image pairs,
+then train the deployable NN 2 \mathrm{NN}_{2} through the frozen mimic), we validate
+predistortion in three settings, detailed in
+Appendix  F . (i) On the full spatiotonal Scenario 5, the
+8.5 8.5 K-parameter NN 2 \mathrm{NN}_{2} trained through a frozen CompenNet++ mimic
+reaches 26.59 26.59  dB / 0.926 0.926  SSIM which is within 0.9 0.9  dB of the known-formula upper
+bound and performs comparably through a tiny Sequential-5 ′ mimic, showing the
+deployable model does not depend on a hand-derived differentiable pipeline.
+(ii) On real projector–camera captures  Huang and Ling (2019)
+( lavender_np , 700 700 pairs), the same network raises the uncorrected
+baseline ( ≈ 10.3 \approx\!10.3  dB) to 22.23 22.23  dB / 0.816 0.816  SSIM, a large, stable
+correction from a network two to three orders of magnitude smaller than the mimic.
+(iii) Under a spatially non-uniform four-regime operator
+(keystone/fisheye × \times blur/contrast), NN 2 \mathrm{NN}_{2} re
+
+【实验】
+and Analysis
+5.1 Methodology
+5.2 Single Distortion Compensation
+5.2.1 Geometric distortions
+5.2.2 Non-geometric (tonal & spatiotonal) distortions
+5.3 Multiple Distortion Scenarios
+5.3.1 Non-geometric mixed (Scenarios 1–2)
+5.3.2 Geometric mixed (Scenarios 3–4)
+5.3.3 Spatiotonal-Mixed (Scenario 5) and Analysis
+We first consider single frame pre-distortion and evaluate single-distortion compensation first, then
+multi-distortion scenarios that simulate real XR pipelines.
+Unless otherwise noted, the models use h = 64 h=64 .
+5.1 Methodology
+Dataset.
+Images.cv (26k images, 3 × 256 × 256 3{\times}256{\times}256 , two
+categories) is our primary benchmark with a
+70/15/15% train/val/test split.
+CelebA-HQ 256   Karras et al. (2017) ; Liu et al. (2015)
+(28k faces) provides a zero-shot cross-dataset generalization test; models are evaluated on it without any fine-tuning of the Images.cv-trained weights.
+Hyperparameters.
+To train our models we use AdamW  Loshchilov and Hutter (2017) with cosine annealing and
+warm restarts  Loshchilov and Hutter (2016) ; AMP (automatic mixed precision)  Micikevicius et al. (2017) enabled.
+On Images.cv at 256 × 256 256{\times}256 : batch  32 32 , lr  10 − 3 10^{-3} ,
+min-lr  10 − 6 10^{-6} , weight decay  10 − 4 10^{-4} , warmup  5 5 epochs,
+100 100 total epochs. in Optics 3 , pp. 100072 .
+Cited by: §2 .
+Liu et al. (2015)
+Z. Liu, P. Luo, X. Wang, and X. Tang
+Deep learning face attributes in the wild .
+In Proceedings of the IEEE international conference on computer vision ,
+pp. 3730–3738 .
+Cited by: §5.1 .
+Loshchilov and Hutter (2016)
+I. Loshchilov and F. Hutter
+Sgdr: stochastic gradient descent with warm restarts .
+arXiv preprint arXiv:1608.03983 .
+Cited by: §5.1 .
+Loshchilov and Hutter (2017)
+I. Loshchilov and F. Hutter
+Decoupled weight decay regularization .
+arXiv preprint arXiv:1711.05101 .
+Cited by: §5.1 .
+Mann (1993)
+S. Mann
+Compositing multiple pictures of the same scene .
+In IS&T’s 46th Annual Conference ,
+pp. 50–52 .
+Cited by: §1 .
+Mann (1998)
+S. Mann
+Headmounted wireless video: computer-supported collaboration for photojournalism and everyday use .
+IEEE Communications Magazine 36 ( 6 ), pp. 144–151 .
+Cited by: §1 .
+Mann (2000)
+S. Mann
+Comparametric equations with practical applications in quantigraphic image processing .
+IEEE transactions on image processing 9 ( 8 ), pp. 1389–1406 .
+Cited by: §1 ,
+§1 ,
+§2 .
+Mann (2001)
+S. Mann
+Intelligent image processing .
+edition , , John Wiley and Sons , .
+Cited by: §1 ,
+§1 ,
+§2 .
+Mantiuk et al. (2024)
+R. K. Mantiuk, P. Hanji, M. Ashraf, Y. Asano, and A. Chapiro
+ColorVideoVDP: a visual difference predictor for image, video and display distortions .
+arXiv preprint arXiv:2401.11485 .
+Cited by: §2 ,
+§2 .
+Mercat et al. (2020)
+A. Mercat, M. Viitanen, and J. Vanne
+UVG dataset: 50/120fps 4k sequ
+
+【结论/局限】
+5.4 Formula-Agnostic, Real-Data, and Non-Uniform Validation
+5.5 Higher Resolution Training and Zero-Shot Cross-Dataset Generalization
+5.6 Quantization
+5.7 Computation and Memory Efficiency Summary
+6 Video Pre-distortion
+7 Analytical Resource and Latency Model References
+A Baseline Training Details
+B Distortion Formulas
+C Sequential Model Definitions
+D Evaluation Scenario Definitions
+E Additional Architecture Details
+F Formula-Agnostic, Real-Data, and Non-Uniform Validation
+F.1 Formula-Agnostic Predistortion (Two-Phase)
+F.2 Real-Data Validation (Projector–Camera Captures)
+F.3 Spatially Non-Uniform, Coupled Distortion
+G Qualitative Results: Scenario 5 Visual Comparison
+H Applicability on higher resolution and other Datasets
+I Memory and Compute Costs
+J Detailed Single-Distortion Results
+K Detailed Multi-Distortion Results
+L Quantization Analysis
+M Video Workload Characterization
+M.1 Pipeline, Stages, and Resolution Generalization
+M.2 Runtime Design Space
+M.3 Reverse-LUT Construction and Runtime
+M.4 Datasets and Motion Stratification
+M.5 Hardware Platforms
+M.6 OpenMP Thread-Count Calibration
+M.7 Full Per-Experiment Results
+M.8 Cross-Cutting Analyses
+G-Res mode vs. latency.
+G-Res vs. P

@@ -1,0 +1,86 @@
+【摘要】
+
+【方法】
+Swarm-SC
+Swarm-CP
+Ours
+Outdoor
+20.29
+3.92
+1.32
+Indoor
+3.36
+5.70
+0.81
+C. Communication Analysis
+We next analyze the size and number of perception messages exchanged in our real-world datasets using simulated wireless communication.
+We summarize the size of perception messages for the proposed method in Tab.  IV .
+The “Point-cloud Raw” baseline we compared against refers to a brute-force centralized strategy, where all raw point clouds are transmitted to a centralized server.
+To further reduce the communication overhead of our framework, only limited object information is shared, which includes the object ID, centroid position, dimensions and semantic label.
+Object data is only exchanged when there is a significant update to the scene graph, such as when a new object is added or a large odometry drift is corrected.
+This strategy enables us to publish the object data at a much lower frequency compared to the LiDAR sensor frequency.
+Once a relative graph transformation estimation is computed, the relevant keyframes are requested from the robot neighbors.
+A keyframe is only sent after the requesting robot confirms it has not been sent previously.
+The point cloud keyframe message is compressed using PCL  [ 34 ] to minimize its size.
+During the experiments, we observed that keyframe requests were sent at a much higher frequency than the keyframe responses.
+This occurred mainly because, once two scene graphs are matched, a burst of similar requests are sent to the neighbor, causing the oldest requests to be dropped.
+Further optimization, such as implementing a delayed request strategy, may be needed to improve performance further.
+TABLE IV: Sizes of Perception Messages [KB] for the
+proposed method. “No.” indicates the number of messages published during a dataset run.
+Message Type
+Outdoor
+Indoor
+Mean
+Max
+No.
+Mean
+Max
+No.
+Point-cloud Raw
+508.2
+516.9
+3073
+508.1
+512.1
+3079
+Object Data
+7.76
+16.93
+701
+18.40
+44.37
+845
+Keyframe Request
+0.02
+0.02
+61
+0.02
+0.02
+411
+Keyframe Response
+18.87
+22.95
+10
+6.90
+11.05
+72
+VI Conclusion
+In this paper, we propose SGM-SLAM, a data-efficient distributed SLAM method using limited object data scene graph matching.
+We extract geometric and semantic information from LiDAR and camera data, and construct a multi-level scene graph collaboratively with the multi-robot team.
+The introduction of object-level graph matching improves the generality, robustness, and communication efficiency of our distributed SLAM system in both indoor and outdoor environments.
+Future work will evaluate the framework under explicitly bandwidth-limited and intermittent communication conditions and investigate deployment in larger-scale field environments.
+References
+[1]
+R. Dube, A. Cramariuc, D. Dugas, H. Sommer, M. Dymczyk, J. Nieto, R. Siegwart, and C. Cadena (2020)
+SegMap: Segment-based mapping and localization using data-driven descriptors .
+Int. J. Robot. Res. 39 ( 2-3 ), pp. 339–355 .
+Cited by: §I ,
+§II .
+[2]
+S. L. Bowman, N. Atanasov, K. Daniilidis, and G. J. Pappas
+Probabilistic data association for semantic SLAM .
+Proc. IEEE Int. Conf. Robot. Autom. (ICRA) , pp. 1722–1729 .
+Cited by: §I ,
+§II .
+[3]
+H. Li, G. Zhu, L. Zhang, Y. Jiang, Y. Dang, H. H

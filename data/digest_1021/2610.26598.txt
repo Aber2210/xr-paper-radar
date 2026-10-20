@@ -1,0 +1,66 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+in TapID configuration in other configurations in TapID configuration
+We calculate the average F 1 F_{1} score for each finger across all participants.
+Moreover, we report the mean and the standard deviation of the Macro F 1 F_{1} score across all participants, which treats all fingers as being equally important by taking the unweighted mean across class-wise F 1 F_{1} scores.
+Cross-session identification accuracy:
+We split the recorded data by participant and block.
+For each participant, we performed 3-fold cross-validation, using two blocks for training and one block for testing while ignoring all data from other participants.
+Across all participants, the accuracy was, on average, F 1 , finger = .93 F_{1,\textnormal{finger}}=.93 (SD=0.06).
+Cross-person identification accuracy:
+We performed 18-fold cross-validation, testing on each participant’s events and training on all other participants.
+The accuracy was F 1 , finger = .87 F_{1,\textnormal{finger}}=.87 (SD=0.09).
+Cross-person identification accuracy with refinement:
+In addition to pure cross-person testing, we assessed the impact of refinement with individual tap events from a participant’s set on the cross-person identification accuracy F 1 , finger F_{1,\text{finger}} .
+Simultaneously, we evaluated the impact of the size of the training dataset on the average cross-person identification accuracy.
+\autoref
+fig:refinementexperiment shows the mean F 1 F_{1} scores across participants depending on number of random taps used for refinement (rows) and depending on number of participants’ data used for training (columns).
+For this evaluation, we first trained the classifier for 30 epochs on the recorded taps of (i) 0, (ii) 4, (iii) 8, (iv) 12 and (v) 17 randomly drawn participants—excluding the person in the test set.
+We then fine-tuned the network for another 30 epochs using only the first (a) 1, (b) 10, (c) 30, and (d) 60 tap events per finger of the tested participant and removed these samples from the test set.
+We tested the refined classifier on the remaining blocks for that participant.
+After fine-tuning, our trained network produced F 1 F_{1} scores that rose with the number of participants in the training set as well as with the number of refinement taps.
+With 18-fold cross-validation and training with (iv) all 17 participants’ training data, our classifier achieves a mean F 1 F_{1} score of (a)  F 1 , finger = .86 F_{1,\textnormal{finger}}=.86 (SD=0.07), (b)  F 1 , finger = .91 F_{1,\textnormal{finger}}=.91 (SD=0.07), (c)  F 1 , finger = .94 F_{1,\textnormal{finger}}=.94 (SD=0.05), and (d)  F 1 , finger = .96 F_{1,\textnormal{finger}}=.96 (SD=0.05) after corresponding refinement. in other configurations
+For our baseline comparisons, Figure  6 lists all the scores achieved with the correspond
+
+【结论/局限】
+6 Use cases
+6.1 Scenarios
+6.2 Application prototypes The evaluation confirmed the validity of our sensing principle and our implementation on a wrist-worn device to capture body-coupled events.
+It also confirmed the TapID configuration of our prototype, embedding two low-cost, low-power IMUs in the silicone strap.
+Regarding the tap detection, the accuracy TapID achieved is high enough for practical purposes, but it also is in Fitbit and Smartwatch configuration.
+This confirms recent results in related efforts (e.g.,  [ 17 ] ), though with IMU sensors positioned at the wrist for unencumbered hands instead of placing them on the fingers.
+One trade-off remains in our tap detection: Decreasing the back-off period allows for faster interactions but increases the likelihood that one (strong) tap produces two events (i.e., one false positive).
+As for the performance of our classifier to identify individual fingers, unsurprisingly we saw the best cross-person accuracy when training with the largest amount possible, refined with person-specific training data, reaching F 1 F_{1} scores of up to .96 this way (Figure  9 ).
+What is notable, however, is that a single person-specific calibration 

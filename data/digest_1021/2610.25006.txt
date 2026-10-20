@@ -1,0 +1,53 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+IV-A Task and Data Collection
+IV-B Policy Training and Deployment
+V Results and Discussion
+VI Conclusions and Limitations
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25006v1 [cs.RO] 18 Oct 2026
+Scalable, Intuitive, Mixed Reality–Based Semi-Autonomous Robotic Telemanipulation for the Execution of a Fine-Grained Bimanual Task
+Shifei Duan
+Zhe Wang
+Francesco De Pace
+Minas Liarokapis
+† † thanks: Shifei Duan and Zhe Wang are with the New Dexterity research group, The University of Auckland, New Zealand
+{sdua078, zwan341}@aucklanduni.ac.nz † † thanks: Francesco De Pace is with the Competence Industry Manufacturing 4.0 (CIM4.0), Turin, Italy francesco.de_pace@cim40.com † † thanks: Minas Liarokapis is with the New Dexterity research group, The University of Auckland, New Zealand and the National Technical University of Athens, Greece
+liarokapis@mail.ntua.gr Fig. 5: Full demonstration of the execution of the selected bimanual, fine-grained, peg-in-hole task.
+Fig. 6: Enclosure and connector used for the execution of the task.
+IV-A Task and Data Collection
+A bimanual peg-in-hole task - widely regarded as one of the most challenging benchmarks in robotic assembly due to its high precision requirements - is selected for the experimental validation. As shown in Fig. 5 , both the enclosure and the connector are placed at random locations on the table within the robot’s workspace. The objective is for the robot to grasp both objects and precisely insert the connector into the enclosure with a 1 mm tolerance (Fig. 6 ). The task must be completed without dropping either object, demanding highly coordinated and fine-grained bimanual manipulation. To fully evaluate our system and the proposed TEC strategy, three data collection modalities are compared. The first modality follows Conventional Telemanipulation (CT), consistent with prior works [ 9 , 2 , 8 ] , in which the operator fully controls both robot arms and EEs. This mode serves as our experimental baseline. In this setting, the grasping pose varies across episodes, leading to inconsistent initial conditions for the insertion phase. The second modality HT incorporates vision-based path planning for automated grasping, followed by full telemanipulation to complete the insertion. The third modality applies the TEC strategy, in which grasping is performed autonomously and the operator only provides fine adjustments during the insertion phase. For both HT and TEC modalities, only demonstrations after the autonomous grasping stage are collected.
+Efficient data collection is a primary limitation for learning-based manipulation, particularly in the execution of complex and long-horizon tasks, as such tasks often lead to failure and operator fatigue. To address this, we evaluate the impact of a

@@ -1,0 +1,108 @@
+【摘要】
+1 Background
+1.1 Physics engines for VR production
+1.2 Humanoid controllers
+1.2.1 Tracking-based controllers
+1.2.2 Sensorimotor controllers with explicit rewards
+1.2.3 Sensorimotor controllers with adversarial rewards
+1.2.4 Scaling and universal controllers
+1.3 Animation fidelity metrics
+2 Materials and Methods
+2.1 Reference Data
+2.2 Training
+2.2.1 Playground
+2.2.2 Modular agents
+
+【方法】
+MM
+LL
+MM
+LL
+MM
+LL
+MM
+LL
+DeepMimic
+2.6
+3.2
+1.5
+1.3
+3.8
+4.5
+0.90
+0.87
+ADD
+3.8
+4.2
+2.4
+2.3
+5.9
+4.6
+0.85
+0.82
+AMP
+5.6
+6.0
+12.8
+9.9
+6.9
+10.9
+0.71
+0.69
+3.1 Training results
+All controllers evaluated achieve 100% survival, both in Unity3D and WebXR, across all 16 motions. In Table 1 , we show these metrics for our three playground controller policies.
+ADD produced movement with scores very close to DeepMimic trained in playground . We believe ADD gives better afi scores than AMP because the displacement-based discriminator provides a more direct tracking signal.
+These findings were unexpected, as we anticipated that the results would align with the broader pattern observed in the literature:
+explicit tracking rewards [ 22 , 28 , 8 ] consistently produce higher single-motion fidelity than adversarial approaches [ 25 ] , a trade-off also highlighted by Li et al. [ 15 ] .
+Our results suggest that, while the two are not equivalent, the difference for ADD is relatively small.
+Adversarial methods ( AMP, ADD ) offer practical advantages—no per-component reward tuning, implicit style capture, more controller flexibility—but at a measurable fidelity cost. ADD narrows this gap substantially compared to AMP , but DeepMimic remains uniformly superior; for production scenarios requiring faithful reproduction of specific motions, the use of explicit rewards like in DeepMimic remains the most reliable approach. However, when several animations need to be combined more flexibly, ADD seems to provide a viable option.
+In ADD [ 37 ] , the discriminator saturates rapidly (reaching near-100% accuracy within 20M steps, since the zero-displacement positive sample is trivially separable), after which the style reward gradient vanishes. We emphasize that this saturation is a fundamental architectural limitation of the displacement-based formulation, not a tuning problem: the discriminator’s positive class is a single point (the zero vector), which is trivially separable from any non-zero displacement distribution regardless of network capacity, regularization, or training schedule. A small hybrid task reward component (5–15% weight) resolves this by maintaining gradient flow after discriminator saturation.
+With this fix, all 16 motions achieved 100% survival in Unity3D and WebXR deployment.
+afi gives the same results as the joint-space ( MAE ) and Cartesian ( MPJPE ) metrics on the overall ranking: DeepMimic is the strongest tracker on both skeletons, ADD is the second-best, and AMP trails on every column. The two metric families are complementary. MAE and MPJPE are pose-error metrics computed at the same frame index: they answer “how far is the agent’s pose from the reference’s pose at time t t ” and are easy to inflate by a small phase shift, even when the trajectories are otherwise faithful. afi is a time-aware cross-correlation of velocity and end-effector trajectories: it tolerates small phase shifts but penalises wrong overall pacing, missing follow-through, and jitter.
+NPSS , the frequency-domain reference metric, gives similar results, but it can sometimes be challenging
+because ADD rollouts that terminate early concentrate spectral power at f → 0 f\to 0 – the same 
+
+【实验】
+3.1 Training results
+3.2 Losses in Animation Fidelity
+3.3 Comparing policies
+3.4 Visual inspection Table 1: Our three playground controller policies, computed on the same 48 CPU rollouts (eight walks per cell).
+MAE is the mean absolute joint-angle error [ 28 ] ; MPJPE is the root-relative mean per-joint position error [ 21 ] ; NPSS is the normalised power-spectrum similarity [ 7 ] ; afi is the animation fidelity index defined in section 2.3.3 . Bold marks the best score per column. The four metrics rank the methods identically ( DeepMimic > > ADD > > AMP ) on both characters.
+MAE ↓ \downarrow (°)
+MPJPE ↓ \downarrow (mm)
+NPSS ↓ \downarrow
+afi ↑ \uparrow of the controller policies
+2.3.1 Training strategy
+2.3.2 How to compare different controller policies in VR
+2.3.3 How to compare different pipeline stages of the controller policies
+2.3.1 Training strategy
+To find common ground for both pipelines, we chose to do all training with simulation steps every 0.008 s (125Hz), and up to 100M simulation steps. This took approximately 40 hours for each training run based on modular-agents , and 40 minutes for each training run based on playground .
+All playground training runs were performed on an Intel Core i9-14900K, 64 GB of RAM, and two NVIDIA GeForce RTX 4090 graphics cards. All modular-agents training runs were done either on a Windows 11 Pro with an Intel Core i9-14900K, 64 GB of RAM, and a NVIDIA RTX 4070 Ti Super graphics card, or a Windows 11 Pro with an AMD Ryzen Threadripper 3970X and 128 GB of RAM. The configuration files, including the environment and PPO hyperparameters, can be found in the supplementary materials.
+2.3.2 How to compare different controller policies in VR
+Practical validation of the method included compilation for different platforms (Windows, Linux, MacOS, Android) to confirm the models could be used in production projects.
+Since Android builds are not included in MuJoCo releases, we recompiled the physics engine from its source to integrate it into VR builds. We also compared these builds with running the entire environment in a web browser.
+To compare the movement quality, independently of the controller policy used and the delivery method (Unity3D, WebXR), we recorded the movement data generated by the controller for exactly one animation loop, with no perturbations. We analysed the data with a set of custom Python scripts (which we provide in the supplementary materials). This allowed us to compare different training pipelines and controllers in the same context.
+2.3.3 How to compare different pipeline stages
+To compare the motion generated by different policies with the reference animation used for training the policies, we used metrics with patterns that are easy to identify. For example, Figure 1 shows the end-effector dist
+
+【结论/局限】
+4.1 Losses in retargeting
+4.2 Sim to sim transfer
+4.3 Controller losses
+4.4 Physics-based controllers for production
+5 Conclusions and future work
+References
+A Architecture and training decisions
+B Animation fidelity metrics
+C Expert evaluation
+License: CC BY-NC-ND 4.0
+arXiv:2610.26278v1 [cs.HC] 19 Oct 2026
+\onlineid
+0
+\vgtccategory Research
+\vgtcinsertpkg \teaser
+Character driven by physics-based controller (solid), compared to the reference animation (transparent). Snapshots sampled at
+0.5 s intervals. 4.1 Losses in retargeting
+The automated FBX-to-MJCF pipeline successfully produced training-ready ragdolls for both the adult male (MM) and female child (LL) skeletons, despite their significantly different proportions. The key step was the retargeting: the IK-based retargeting we used preserved end-effector positions well, but may have introduced artifacts in the torso chain—particularly for the LL skeleton.
+To map skeleton poses to the reduced space of the physical ragdoll, we still did automated retargeting, as have done virtually all recent contributions to PBCA.
+An alternative strategy, specific to our use case, could be to calculate the q ​ P ​ o ​ s qPos and q ​ V ​ e ​ l qV

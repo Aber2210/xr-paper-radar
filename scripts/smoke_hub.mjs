@@ -73,8 +73,8 @@ async function main() {
         hasData: !!d,
         papers: d ? d.papers.length : -1,
         notes: d ? d.notes.length : -1,
-        has1020: d ? d.papers.some(p => p.batch === '2026-10-20') : false,
-        hasBF1020: d ? d.papers.some(p => p.batch === 'backfill-1020') : false,
+        has1021: d ? d.papers.some(p => p.batch === '2026-10-21') : false,
+        hasBF1021: d ? d.papers.some(p => p.batch === 'backfill-1021') : false,
         bodyLen: document.body ? document.body.innerHTML.length : -1,
         optTexts: optTexts.slice(-4)
       });
@@ -84,8 +84,8 @@ async function main() {
   const info = JSON.parse(probe.result.value);
   console.log('PROBE:', JSON.stringify(info, null, 1));
   console.log('PAGE_ERRORS:', errors.length ? errors.join('\\n') : 'none');
-  const ok = info.hasData && info.papers === 512 && info.notes === 207 &&
-             info.has1020 && info.hasBF1020 && info.bodyLen > 10000 && errors.length === 0;
+  const ok = info.hasData && info.papers === 553 && info.notes === 248 &&
+             info.has1021 && info.hasBF1021 && info.bodyLen > 10000 && errors.length === 0;
   console.log(ok ? 'SMOKE: PASS' : 'SMOKE: FAIL');
   sock.close();
   proc.kill();

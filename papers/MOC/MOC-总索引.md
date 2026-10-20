@@ -1,7 +1,7 @@
 # MOC · 总索引 · XR 论文知识库
 
 > 全局地图：按**赛道 × 等级 × 时间**组织。跨论文的比较、排行、综合结论放这里；单篇细节放原子笔记。
-> 文献库：`papers/library/registry.jsonl`（累计 **512 篇**；跨度 2026-09-15 ~ 2026-10-19（含 backfill 旧稿 2603–2609、10-12~10-15 漏网补录及其补充补录）；批次 09-20 基线 38 · 09-21:27 · 09-23:47 · 09-24:21 · 09-25:15 · 09-26:22 · 10-02:128 · 10-03:6 · 10-06:10 · 10-07:23 · 10-08:10 · 10-09:21 · 10-10:25 · **backfill-2603-2609:6（旧稿补录）** · **10-17:18（10-16 公告批次）** · **backfill-1012-1015:46（漏网对账补录）** · **2026-10-19:29（backfill-1012-1015 补充补录，API published 口径漏网 XR）** · **2026-10-20:12（10-19 公告批次真新提交）** · **backfill-1020:8（10-16 公告漏网 1 篇 + 旧稿 replace/cross 再公告 7 篇）**；10-04/10-05 因周末+周一节律与 API 索引滞后 **0 新稿**；10-11~10-16 无调度运行，10-17 一并处理 10-16 公告批次；10-18 周日状态日 0 新稿）。
+> 文献库：`papers/library/registry.jsonl`（累计 **553 篇**；跨度 2026-09-15 ~ 2026-10-20（含 backfill 旧稿 2603–2609、10-12~10-15 漏网补录及其补充补录）；批次 09-20 基线 38 · 09-21:27 · 09-23:47 · 09-24:21 · 09-25:15 · 09-26:22 · 10-02:128 · 10-03:6 · 10-06:10 · 10-07:23 · 10-08:10 · 10-09:21 · 10-10:25 · **backfill-2603-2609:6（旧稿补录）** · **10-17:18（10-16 公告批次）** · **backfill-1012-1015:46（漏网对账补录）** · **2026-10-19:29（backfill-1012-1015 补充补录，API published 口径漏网 XR）** · **2026-10-20:12（10-19 公告批次真新提交）** · **backfill-1020:8（10-16 公告漏网 1 篇 + 旧稿 replace/cross 再公告 7 篇）** · **2026-10-21:31（10-20 公告批次真新提交）** · **backfill-1021:10（RSS 旧稿 replace/cross 再公告）**；10-04/10-05 因周末+周一节律与 API 索引滞后 **0 新稿**；10-11~10-16 无调度运行，10-17 一并处理 10-16 公告批次；10-18 周日状态日 0 新稿）。
 > **状态注记（2026-10-06）**：周二，API 已恢复 200 但 `submittedDate` 索引前沿仍停滞 10-02，真实新增由 RSS 兜底（公告日 10-05，补齐 10-03~10-05 积压）。本调度入选 **XR 新稿 10 篇（3 S / 5 A / 2 B）**，全文全 L0/FULL，三关通过、无重筛、无 OUTDATED。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-06.md)。
 > **状态注记（2026-10-07）**：周三，API `submittedDate` 前沿仍停滞 10-02，RSS 公告日 10-06（补齐 10-03~10-06 工作日积压），真实新增由 RSS 兜底。本调度入选 **XR 新稿 23 篇（全 A/B，0 S）**，全文全 L0/FULL，三关通过、回补 2 篇化身与人体达 5 赛道、无重筛、无 OUTDATED。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-07.md)。
 > **状态注记（2026-10-08）**：周四，arXiv API（`arxiv.org/api/query`）已恢复 200，但 `export.arxiv.org` 仍 406（历史老问题），真实新增由 RSS 兜底（公告日 10-07）。本调度入选 **XR 新稿 15 篇（Top10：7 A / 3 B）**，全文 14 L0/FULL + 1 L1/PARTIAL（EVFormer 因 ar5iv 降级正文不完整，按 PARTIAL 证据、摘要级评估并显式标注）；三关通过、无重筛、无 OUTDATED。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-08.md)。
@@ -18,16 +18,18 @@
 
 > **状态注记（2026-10-20）**：周二，处理 **2026-10-19（周一）公告批次**（10-15~10-16 提交、周一释放；公告日≠拉取日，诚实口径）。listing 对账确认 10-19 为最新公告日（10-17/10-18 周末无公告）；RSS 7 分类去重 352 条 → KW 命中 35 → 去 registry(492) 后 33 新 = **18 篇真新提交**（甄别 **12 篇 XR** 入评分池，7 篇非 XR 剔除）+ 14 篇旧稿 replace/cross（7 篇 XR 入 backfill-1020、8 篇非 XR 剔除）+ 2 篇库内 v2 再公告。**过滤器升级**（落实 10-19 教训）：fetch_rss.py 新增缩写词边界层（VR/AR/MR/XR/HMD/OST/SLAM/VIO/IMU/DoF/FOV/JND/IPD/VAC/MTF/CGH）+ 新增 filter_missed_xr_abstract.py 摘要级过滤（cs.AI RSS 为真空源）。主批 12 篇 + backfill 8 篇全文全部 **L0/FULL**（45,271–118,689 字符）。Top10：**2 S / 5 A / 3 B**，最高 4.57（Video Diffusion Avatars），覆盖 8 赛道。三关通过（门① max Jaccard 0.089；门② 8 赛道；门③ 当日最高 4.57 ≥ 库近 30 天 Top10 均分 4.359 现算，**重磅日含 S 级**，差值 +0.211 ≥ 0.05）；OUTDATED 0。**backfill-1020**：10-16 公告漏网 1 篇（GeoPano，10-17 标题级过滤未命中、本次摘要级补获）+ 旧稿 replace/cross 再公告 7 篇，6 A / 2 B，其中 OMEGA-Avatar（TOG 360° 全头化身）与主批 VDA 构成「显式 3DGS vs 视频扩散」范式直接对照。registry 492 → **512**。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-20.md) 与 [MOC-2026-10-20](./MOC-2026-10-20.md) / [MOC-backfill-1020](./MOC-backfill-1020.md)。
 
+> **状态注记（2026-10-21）**：周三，处理 **2026-10-20（周二）公告批次**（09-28~10-19 提交、周二释放；公告日≠拉取日，诚实口径）——**10-11~10-16 无调度后恢复运行以来的最大公告日**（10-20 日组 936 篇）。listing 对账：10-19 日组无新增漏网（摘要级 7 篇命中全非 XR，与 10-20 运行互证）；探针四源全 200（cs.CV 505 条、cs.AI 789 条，双频道均非空）。RSS 7 分类去重 1426 条 → KW 命中 91 → 去 registry(512) 后 **67 篇真新提交**（甄别 **31 篇 XR** 入评分池，36 篇非 XR 剔除）+ 20 篇旧稿 replace/cross（10 篇 XR 入 backfill-1021）+ 4 篇库内 v2 再公告。主批 31 篇 **30 L0/FULL + 1 PARTIAL**（2610.26549 Holi-World，L0 HTML 404、ar5iv 仅返摘要页，按摘要级评估并显式声明）。Top10：**10 篇全 A 级**（最高 3.85 六篇并列），覆盖 5 赛道。三关通过（门① max Jaccard 0.143；门② 5 赛道；门③ 当日最高 3.85 < 库近 30 天 Top10 均分 4.416 现算，差值 -0.566 → **非重磅日，无 S 级，未拔高**）；OUTDATED 0。**backfill-1021**：旧稿 replace/cross 再公告 10 篇首次入馆（4 A / 5 B / 1 C），ZipSplat/OUGS/PRISM 补前馈 3DGS 效率与不确定性线，GaussTrap 开 3DGS 安全视角。registry 512 → **553**。详见 [运行报告](../../reports/XR-Daily-Report-2026-10-21.md) 与 [MOC-2026-10-21](./MOC-2026-10-21.md) / [MOC-backfill-1021](./MOC-backfill-1021.md)。
+
 ---
 
 ## 一、速查入口
 
 | 我要找… | 去这里 |
 |---|---|
-| 最新一期 | [MOC · 2026-10-20](./MOC-2026-10-20.md) |
-| 上一期 | [MOC · 2026-10-19](./MOC-2026-10-19.md) |
-| 某篇论文的细节 | [原子笔记目录](../notes/)（现有 207 篇） |
-| 最新运行状态 | [运行报告 2026-10-20](../../reports/XR-Daily-Report-2026-10-20.md)（10-19 公告批次 12 篇 + backfill-1020 8 篇；2 S / 5 A / 3 B；重磅日） |
+| 最新一期 | [MOC · 2026-10-21](./MOC-2026-10-21.md) |
+| 上一期 | [MOC · 2026-10-20](./MOC-2026-10-20.md) |
+| 某篇论文的细节 | [原子笔记目录](../notes/)（现有 248 篇） |
+| 最新运行状态 | [运行报告 2026-10-21](../../reports/XR-Daily-Report-2026-10-21.md)（10-20 公告批次 31 篇 + backfill-1021 10 篇；0 S / 15 A / 20 B / 6 C；非重磅日） |
 | 全部论文的 7 维评分 | [09-21 全量 27 篇](../daily/2026-09-21/7dim-table.md) · [09-20 全量 38 篇](../daily/2026-09-20/7dim-table.md) |
 | 抓取/筛选过程与失败记录 | [09-21 日志](../daily/2026-09-21/run_log.md) · [09-20 日志](../daily/2026-09-20/run_log.md) |
 | 完整解读报告 | [XR-Daily-Report-2026-09-23.md](../../reports/XR-Daily-Report-2026-09-23.md) · [09-21](../../reports/XR-Daily-Report-2026-09-21.md) · [09-20](../../reports/XR-Daily-Report-2026-09-20.md) |
@@ -199,6 +201,24 @@
 | Wait for It：VR 中 LLM 智能体延迟反馈组件分析 | 交互与输入 | 3.50 | B | 10-19 | [→](../notes/2610.23336__wait-for-it-vr-latency-feedback.md) |
 | ElectroCalm：经皮电刺激压力调节研究 | 触觉与多模态 | 3.37 | B | 10-19 | [→](../notes/2610.22748__electrocalm-tes-stress-modulation.md) |
 
+### 2026-10-21 新增（A 级 11 篇，非重磅日）
+
+> 公告日 2026-10-20（周二释放；公告日≠拉取日，诚实口径）。当日最高 3.85 < 库近 30 天 Top10 均分 4.416（现算，差值 -0.566），**非重磅日无 S 级**；Top10 覆盖 5 赛道；主批 30 L0/FULL + 1 PARTIAL（Holi-World）；三关通过，无 OUTDATED。本批为无调度恢复后最大公告日（936 篇）。
+
+| 论文 | 赛道 | 分值 | 等级 | 笔记 |
+|---|---|---:|---|---|
+| O-SCD++：递归证据融合的免回放在线场景变化检测 | 感知与认知 | 3.85 | A | [→](../notes/2610.24462__o-scd-pp-online-scene-change-detection.md) |
+| SwitchSplat：从随手捕获场景学习离散物体状态 | 神经渲染 | 3.85 | A | [→](../notes/2610.24812__switchsplat-discrete-object-states.md) |
+| Stable Signer V3：4D 可变形基元泼溅用于手语生成 | 化身与人体 | 3.85 | A | [→](../notes/2610.24926__stable-signer-v3-sign-language.md) |
+| DenseHap：单目图像的稠密手部触觉估计 | 触觉与多模态 | 3.85 | A | [→](../notes/2610.26583__densehap-dense-hand-haptic.md) |
+| EgoXperience：从人类经验学习世界锚定的第一视角表征 | 感知与认知 | 3.85 | A | [→](../notes/2610.26625__egoxperience-egocentric-representations.md) |
+| V-JEPA Hand：从第一视角视频恢复 3D 手部与相机轨迹 | 感知与认知 | 3.85 | A | [→](../notes/2610.26780__v-jepa-hand-3d-hand-camera-trajectory.md) |
+| Spatons：空-色调局部化神经算子用于高效 XR 预畸变补偿 | 渲染与显示 | 3.78 | A | [→](../notes/2610.24400__spatons-xr-predistortion.md) |
+| PhysSkin++：自监督神经蒙皮的实时可泛化物理动画 | 化身与人体 | 3.77 | A | [→](../notes/2610.26067__physskin-plus-plus-neural-skinning.md) |
+| SynerGest：双人对话的时空协同手势生成 | 化身与人体 | 3.72 | A | [→](../notes/2610.24031__synergest-dyadic-gesture-generation.md) |
+| ACTS：从人类物理交互学习视觉-触觉世界模型 | 触觉与多模态 | 3.63 | A | [→](../notes/2610.24285__acts-visuo-tactile-world-models.md) |
+| EgoRayFormer：射线空间立体精化的第一视角 3D 人体姿态估计 | 感知与认知 | 3.63 | A | [→](../notes/2610.26641__egorayformer-egocentric-3d-pose.md) |
+
 
 ### 2026-09-23 新增（A 级，10 篇，非重磅日）
 
@@ -293,7 +313,7 @@
 
 ---
 
-*最后更新：2026-10-20（10-19 公告批次 + backfill-1020） · 库内 **512 篇** · 原子笔记 **207 篇** · MOC 20 份 · 落后/认知纠正登记（历史 15 条，10-06 新增路线观察 1 条：SCION 组合基元范式；10-07 无新增；10-08 新增路线观察 1 条：3DGS 语义理解走向训练后/在线解耦；10-09 backfill 0 新增；10-10 新增 2 条；10-17 新增 3 条；backfill-1012-1015 0 新增；10-18 无新稿 0 新增；10-19 新增 3 条：几何基础模型「可修订记忆」第三条路线、全息硬件类 JOD 感知度量基准、GFM 前馈+IMU 尺度约束新支线；10-20 新增 4 条：视频扩散先验直接充当化身的范式竞争、N 维泼剪直接条件参数化效率线、光流衍生运动不确定性新来源、GFM 互联网视频数据扩展与标定律）· 10-20 完成：S 级总表补齐 2 篇（现 16 篇全量）、批次索引表补 2 行、补 10-20 Top10 段与 backfill-1020 段、页脚计数刷新*
+*最后更新：2026-10-21（10-20 公告批次 + backfill-1021） · 库内 **553 篇** · 原子笔记 **248 篇** · MOC 22 份 · 落后/认知纠正登记（历史 15 条，10-06 新增路线观察 1 条：SCION 组合基元范式；10-07 无新增；10-08 新增路线观察 1 条：3DGS 语义理解走向训练后/在线解耦；10-09 backfill 0 新增；10-10 新增 2 条；10-17 新增 3 条；backfill-1012-1015 0 新增；10-18 无新稿 0 新增；10-19 新增 3 条：几何基础模型「可修订记忆」第三条路线、全息硬件类 JOD 感知度量基准、GFM 前馈+IMU 尺度约束新支线；10-20 新增 4 条：视频扩散先验直接充当化身的范式竞争、N 维泼剪直接条件参数化效率线、光流衍生运动不确定性新来源、GFM 互联网视频数据扩展与标定律；10-21 新增 4 条：前馈 3DGS token 效率竞合、第一视角手-相机联合恢复双路线、自监督神经蒙皮物理动画线、XR 显示预畸变补偿新范式）· 10-21 完成：批次索引表补 2 行、补 10-21 状态注记/A 级段/Top10 段与 backfill-1021 段、页脚计数刷新；registry in_top10 修正 14 处（备份 registry.jsonl.bak-20261021b）*
 
 ## 批次索引（全量）
 
@@ -316,6 +336,8 @@
 | 2026-10-19 | [MOC-2026-10-19](./MOC-2026-10-19.md) | 补录 29（3S/5A/15B/6C）· Top10 3S/5A/2B · 重磅日 | backfill-1012-1015 补充补录；API published 口径漏网 XR |
 | 2026-10-20 | [MOC-2026-10-20](./MOC-2026-10-20.md) | XR 12（入选 10）· Top10 2S/5A/3B · 重磅日 | 10-19 公告批次（周一积压释放）；缩写层+摘要级过滤升级 |
 | backfill-1020 | [MOC-backfill-1020](./MOC-backfill-1020.md) | 补录 8（6A/2B）· 非当日新提交 | 10-16 公告漏网 1 篇（GeoPano）+ 旧稿 replace/cross 再公告 7 篇 |
+| 2026-10-21 | [MOC-2026-10-21](./MOC-2026-10-21.md) | XR 31（入选 10）· Top10 10A · 非重磅日（无S） | 10-20 公告批次（周二释放，936 篇最大公告日）；1 篇 PARTIAL（Holi-World） |
+| backfill-1021 | [MOC-backfill-1021](./MOC-backfill-1021.md) | 补录 10（4A/5B/1C）· 非当日新提交 | RSS 旧稿 replace/cross 再公告 10 篇首次入馆 |
 
 ### 2026-10-02 窗口新增（Top10，含 2 篇 S）
 
@@ -490,6 +512,25 @@
 
 **路线观察（10-20 新增 4 条）**：① VDA 代表「视频扩散先验直接充当化身」路线，与库内 3DGS/3DMM 化身族（OMEGA-Avatar/LAM/GAGAvatar 等）构成范式竞争而非取代；② dGS 延续库内 N-DGS/UBS 的 N 维泼剪效率线；③ FLoTS-SLAM 与库内动态 SLAM（DynaSLAM 族/WildGS-SLAM）互补（运动不确定性新来源）；④ SAGE 与库内 VGGT-BC/STream3R/SMoRe 构成 GFM 数据扩展线。
 
+### 2026-10-21 新增（Top10：10 A，非重磅日）
+
+> 公告日 2026-10-20（周二释放，09-28~10-19 提交；**公告日≠拉取日**）。67 篇真新提交中甄别 31 篇 XR 入评分池，Top10 覆盖 5 赛道；主批 30 L0/FULL + 1 PARTIAL；三关通过（门① max Jaccard 0.143，2610.24285 vs 库内 2609.22332；门② 5 赛道；门③ 当日最高 3.85 < 库近 30 天 Top10 均分 4.416 现算，差值 -0.566），**未触发重筛、无 OUTDATED、无 S 级**。甄别剔除 36 篇非 XR/弱相关（医学×3/自动驾驶×2/机器人×20+/无人机×2/视频生成×3/通用具身/NLP/气象/几何）。
+
+| 排名 | 论文 | 赛道 | 分值 | 等级 | 笔记 |
+|---:|---|---|---:|---|---|
+| 1 | O-SCD++：递归证据融合的免回放在线场景变化检测 | 感知与认知 | 3.85 | A | [→](../notes/2610.24462__o-scd-pp-online-scene-change-detection.md) |
+| 2 | SwitchSplat：从随手捕获场景学习离散物体状态 | 神经渲染 | 3.85 | A | [→](../notes/2610.24812__switchsplat-discrete-object-states.md) |
+| 3 | Stable Signer V3：4D 可变形基元泼溅用于手语生成 | 化身与人体 | 3.85 | A | [→](../notes/2610.24926__stable-signer-v3-sign-language.md) |
+| 4 | DenseHap：单目图像的稠密手部触觉估计 | 触觉与多模态 | 3.85 | A | [→](../notes/2610.26583__densehap-dense-hand-haptic.md) |
+| 5 | EgoXperience：从人类经验学习世界锚定的第一视角表征 | 感知与认知 | 3.85 | A | [→](../notes/2610.26625__egoxperience-egocentric-representations.md) |
+| 6 | V-JEPA Hand：从第一视角视频恢复 3D 手部与相机轨迹 | 感知与认知 | 3.85 | A | [→](../notes/2610.26780__v-jepa-hand-3d-hand-camera-trajectory.md) |
+| 7 | Spatons：空-色调局部化神经算子用于高效 XR 预畸变补偿 | 渲染与显示 | 3.78 | A | [→](../notes/2610.24400__spatons-xr-predistortion.md) |
+| 8 | PhysSkin++：自监督神经蒙皮的实时可泛化物理动画 | 化身与人体 | 3.77 | A | [→](../notes/2610.26067__physskin-plus-plus-neural-skinning.md) |
+| 9 | SynerGest：双人对话的时空协同手势生成 | 化身与人体 | 3.72 | A | [→](../notes/2610.24031__synergest-dyadic-gesture-generation.md) |
+| 10 | ACTS：从人类物理交互学习视觉-触觉世界模型 | 触觉与多模态 | 3.63 | A | [→](../notes/2610.24285__acts-visuo-tactile-world-models.md) |
+
+**路线观察（10-21 新增 4 条）**：① 前馈 3DGS 效率线再添两条（ZipSplat token 解码、FineSplat 双分组），与库内 pixel-aligned 族（MVSplat/DepthSplat/DA3）构成效率竞合；② 第一视角手-相机联合恢复两路线（V-JEPA Hand 前馈 vs EgoXperience 联合重建）互补；③ PhysSkin++ 与库内物理动画族延续；④ Spatons 补库内 XR 显示预畸变补偿空白（与 CompenNet++ 等经典补偿网络不同范式）。
+
 ### backfill-1020 补录（8 篇：6 A / 2 B，非当日新提交）
 
 > 10-16 公告漏网 1 篇（GeoPano，10-17 标题级过滤未命中、本次摘要级补获）+ RSS 旧稿 replace/cross 再公告 7 篇（2602~2608 原始提交，首次入馆）。全文全 L0/FULL；门① max Jaccard 0.074、门② 4 赛道（backfill 机会性补录不适用 Top10 选拔）；无重筛、无 OUTDATED。OMEGA-Avatar（TOG）与主批 VDA 构成「显式 3DGS vs 视频扩散」同赛道范式直接对照。
@@ -504,3 +545,20 @@
 | HyVGGT-VO：经典 VO 与前馈模型混合的稠密视觉里程计 | 重建与SLAM | 3.65 | A | [→](../notes/2604.02107__hyvggt-vo-hybrid-dense-vo.md) |
 | EgoTac：从第一视角视频预测真实场景触觉信号 | 触觉与多模态 | 3.52 | B | [→](../notes/2608.15060__egotac-tactile-from-egocentric-vision.md) |
 | PinNet：LiDAR SLAM 回环的关键点感知学习描述子 | 重建与SLAM | 3.45 | B | [→](../notes/2606.28637__pinnet-lidar-loop-closure-descriptors.md) |
+
+### backfill-1021 补录（10 篇：4 A / 5 B / 1 C，非当日新提交）
+
+> RSS 旧稿 replace/cross 再公告 20 篇中甄别 10 篇 XR 相关首次入馆（2504~2609 原始提交）；其余 10 篇非 XR 剔除。全文全 L0/FULL；门① max Jaccard 0.133、门② 4 赛道（backfill 机会性补录不适用 Top10 选拔）；无重筛、无 OUTDATED。诚实口径：历史旧稿补录，**非当日新提交**。
+
+| 论文 | 赛道 | 分值 | 等级 | 笔记 |
+|---|---|---:|---|---|
+| OmniEgoCap：设备无关的序列级第一视角动作重建 | 感知与认知 | 3.85 | A | [→](../notes/2512.19283__omniegocap-egocentric-motion-reconstruction.md) |
+| ZipSplat：更少的高斯、更好的泼溅 | 神经渲染 | 3.85 | A | [→](../notes/2606.05102__zipsplat-fewer-gaussians.md) |
+| GraFT：基于 3D 场景图的免训练 MLLM 空间推理框架 | 感知与认知 | 3.85 | A | [→](../notes/2609.03892__graft-scene-graph-spatial-reasoning.md) |
+| GaussTrap：针对 3DGS 的隐蔽后门攻击（KDD 2026） | 神经渲染 | 3.72 | A | [→](../notes/2504.20829__gausstrap-3dgs-backdoor-attack.md) |
+| Mono-Hydra++：多任务学习的实时单目场景图构建（ISPRS JPRS） | 重建与SLAM | 3.45 | B | [→](../notes/2605.17661__mono-hydra-plus-plus-scene-graph.md) |
+| PRISM：几何翘曲-残差分解的前馈单图 3D 重建 | 神经渲染 | 3.43 | B | [→](../notes/2606.25430__prism-feedforward-single-image-3d.md) |
+| OUGS：3DGS 物体感知不确定性的主动视角选择 | 神经渲染 | 3.43 | B | [→](../notes/2511.09397__ougs-active-view-selection.md) |
+| MAGS-SLAM：单目多智能体高斯泼溅 SLAM | 重建与SLAM | 3.08 | B | [→](../notes/2605.10760__mags-slam-multi-agent-gs-slam.md) |
+| Vibe Coding XR：用 XR Blocks 与 Gemini 加速 AI+XR 原型开发 | 空间计算与UI | 3.00 | B | [→](../notes/2603.24591__vibe-coding-xr-prototyping.md) |
+| SGM-SLAM：场景图匹配的高效分布式 SLAM | 重建与SLAM | 2.93 | C | [→](../notes/2606.16881__sgm-slam-scene-graph-matching.md) |

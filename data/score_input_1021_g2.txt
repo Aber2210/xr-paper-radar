@@ -1,0 +1,2302 @@
+
+
+########## 2610.24400 ##########
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from S↑
+P↑
+S↑
+P↑
+Pure XR
+.416
+8.3
+.655
+17.3
+C-Res
+.691
+22.3
+.735
+21.4
+Patch2Pixel-v2 ( p = 3 p{=}3 )
+.857
+27.4
+.863
+23.0
+Patch2Pixel-v2 ( p = 5 p{=}5 )
+.844
+27.3
+.873
+23.3
+UNet++-Small
+.507
+8.6
+.617
+19.3
+UNet++-Medium
+.835
+27.6
+.840
+22.9
+UNet++-Large
+.894
+29.4
+.888
+23.5
+CompenNet++
+.894
+29.4
+.870
+23.3
+Sc. 1: color balance, Br&Ct, elevated black, vignetting, blur, color fringes. Sc. 2: elevated black, brightness±, contrast, blur, color fringes, vignetting, WGNU.
+Table 2: Geometric mixed distortions.
+Sc. 3
+Sc. 4 S↑
+P↑
+S↑
+P↑
+Pure XR
+.704
+15.3
+.650
+14.9
+G-Hybrid h=16
+.982
+35.8
+.968
+32.9
+G-Hybrid
+.987
+37.4
+.974
+34.8
+G-Res
+.987
+37.5
+.975
+34.9
+UNet++-Small
+.857
+24.1
+.834
+23.7
+UNet++-Medium
+.877
+27.1
+.858
+26.9
+UNet++-Large
+.914
+29.2
+.895
+28.7
+CompenNet++
+.991
+39.1
+.983
+36.3
+Sc. 3: keystone + fisheye. Sc. 4: keystone + barrel + fisheye.
+G-Res leads all UNet++ variants by ≈ 8 {\approx}8  dB PSNR and comes within ≈ 1.5 {\approx}1.5  dB of CompenNet++ at ≈ 250 × {\approx}250{\times} fewer parameters (Table  4 ).
+5.4 Formula-Agnostic, Real-Data, and Non-Uniform Validation
+The training procedure above back-propagates through a known differentiable
+distortion pipeline, but Spatons do not require one. Using the two-phase scheme
+of Sec.  4.2 (fit a forward-mimic NN 1 \mathrm{NN}_{1} from image pairs,
+then train the deployable NN 2 \mathrm{NN}_{2} through the frozen mimic), we validate
+predistortion in three settings, detailed in
+Appendix  F . (i) On the full spatiotonal Scenario 5, the
+8.5 8.5 K-parameter NN 2 \mathrm{NN}_{2} trained through a frozen CompenNet++ mimic
+reaches 26.59 26.59  dB / 0.926 0.926  SSIM which is within 0.9 0.9  dB of the known-formula upper
+bound and performs comparably through a tiny Sequential-5 ′ mimic, showing the
+deployable model does not depend on a hand-derived differentiable pipeline.
+(ii) On real projector–camera captures  Huang and Ling (2019)
+( lavender_np , 700 700 pairs), the same network raises the uncorrected
+baseline ( ≈ 10.3 \approx\!10.3  dB) to 22.23 22.23  dB / 0.816 0.816  SSIM, a large, stable
+correction from a network two to three orders of magnitude smaller than the mimic.
+(iii) Under a spatially non-uniform four-regime operator
+(keystone/fisheye × \times blur/contrast), NN 2 \mathrm{NN}_{2} re
+
+【实验】
+and Analysis
+5.1 Methodology
+5.2 Single Distortion Compensation
+5.2.1 Geometric distortions
+5.2.2 Non-geometric (tonal & spatiotonal) distortions
+5.3 Multiple Distortion Scenarios
+5.3.1 Non-geometric mixed (Scenarios 1–2)
+5.3.2 Geometric mixed (Scenarios 3–4)
+5.3.3 Spatiotonal-Mixed (Scenario 5) and Analysis
+We first consider single frame pre-distortion and evaluate single-distortion compensation first, then
+multi-distortion scenarios that simulate real XR pipelines.
+Unless otherwise noted, the models use h = 64 h=64 .
+5.1 Methodology
+Dataset.
+Images.cv (26k images, 3 × 256 × 256 3{\times}256{\times}256 , two
+categories) is our primary benchmark with a
+70/15/15% train/val/test split.
+CelebA-HQ 256   Karras et al. (2017) ; Liu et al. (2015)
+(28k faces) provides a zero-shot cross-dataset generalization test; models are evaluated on it without any fine-tuning of the Images.cv-trained weights.
+Hyperparameters.
+To train our models we use AdamW  Loshchilov and Hutter (2017) with cosine annealing and
+warm restarts  Loshchilov and Hutter (2016) ; AMP (automatic mixed precision)  Micikevicius et al. (2017) enabled.
+On Images.cv at 256 × 256 256{\times}256 : batch  32 32 , lr  10 − 3 10^{-3} ,
+min-lr  10 − 6 10^{-6} , weight decay  10 − 4 10^{-4} , warmup  5 5 epochs,
+100 100 total epochs. in Optics 3 , pp. 100072 .
+Cited by: §2 .
+Liu et al. (2015)
+Z. Liu, P. Luo, X. Wang, and X. Tang
+Deep learning face attributes in the wild .
+In Proceedings of the IEEE international conference on computer vision ,
+pp. 3730–3738 .
+Cited by: §5.1 .
+Loshchilov and Hutter (2016)
+I. Loshchilov and F. Hutter
+Sgdr: stochastic gradient descent with warm restarts .
+arXiv preprint arXiv:1608.03983 .
+Cited by: §5.1 .
+Loshchilov and Hutter (2017)
+I. Loshchilov and F. Hutter
+Decoupled weight decay regularization .
+arXiv preprint arXiv:1711.05101 .
+Cited by: §5.1 .
+Mann (1993)
+S. Mann
+Compositing multiple pictures of the same scene .
+In IS&T’s 46th Annual Conference ,
+pp. 50–52 .
+Cited by: §1 .
+Mann (1998)
+S. Mann
+Headmounted wireless video: computer-supported collaboration for photojournalism and everyday use .
+IEEE Communications Magazine 36 ( 6 ), pp. 144–151 .
+Cited by: §1 .
+Mann (2000)
+S. Mann
+Comparametric equations with practical applications in quantigraphic image processing .
+IEEE transactions on image processing 9 ( 8 ), pp. 1389–1406 .
+Cited by: §1 ,
+§1 ,
+§2 .
+Mann (2001)
+S. Mann
+Intelligent image processing .
+edition , , John Wiley and Sons , .
+Cited by: §1 ,
+§1 ,
+§2 .
+Mantiuk et al. (2024)
+R. K. Mantiuk, P. Hanji, M. Ashraf, Y. Asano, and A. Chapiro
+ColorVideoVDP: a visual difference predictor for image, video and display distortions .
+arXiv preprint arXiv:2401.11485 .
+Cited by: §2 ,
+§2 .
+Mercat et al. (2020)
+A. Mercat, M. Viitanen, and J. Vanne
+UVG dataset: 50/120fps 4k sequ
+
+【结论/局限】
+5.4 Formula-Agnostic, Real-Data, and Non-Uniform Validation
+5.5 Higher Resolution Training and Zero-Shot Cross-Dataset Generalization
+5.6 Quantization
+5.7 Computation and Memory Efficiency Summary
+6 Video Pre-distortion
+7 Analytical Resource and Latency Model References
+A Baseline Training Details
+B Distortion Formulas
+C Sequential Model Definitions
+D Evaluation Scenario Definitions
+E Additional Architecture Details
+F Formula-Agnostic, Real-Data, and Non-Uniform Validation
+F.1 Formula-Agnostic Predistortion (Two-Phase)
+F.2 Real-Data Validation (Projector–Camera Captures)
+F.3 Spatially Non-Uniform, Coupled Distortion
+G Qualitative Results: Scenario 5 Visual Comparison
+H Applicability on higher resolution and other Datasets
+I Memory and Compute Costs
+J Detailed Single-Distortion Results
+K Detailed Multi-Distortion Results
+L Quantization Analysis
+M Video Workload Characterization
+M.1 Pipeline, Stages, and Resolution Generalization
+M.2 Runtime Design Space
+M.3 Reverse-LUT Construction and Runtime
+M.4 Datasets and Motion Stratification
+M.5 Hardware Platforms
+M.6 OpenMP Thread-Count Calibration
+M.7 Full Per-Experiment Results
+M.8 Cross-Cutting Analyses
+G-Res mode vs. latency.
+G-Res vs. P
+
+########## 2610.24452 ##########
+【摘要】
+
+【方法】
+4.1 Overview
+4.2 Building the Semantic Memory
+4.3 Building the Motion Memory and Operator Registry
+4.4 Answering 3D and 4D Queries 4.1 Overview
+Figure 2: HumanSkill-4D overview. (Offline) We build a semantic memory for each avatar, a motion memory for its driving pose sequence, and an operator registry shared across avatars. (Online) The frozen MLLM selects target categories from their names and descriptions, and their stored scores determine the spatial mask. For a 4D query, it also reads the registry’s text cards and composes operators into a motion program, and running the program on the joint trajectories gives the temporal mask. The two masks give the spatiotemporal selection. In this example, the program identifies intervals when both upper arms move outward, and StateAtEnd retains each movement interval whose last frame has both arms horizontal (orange band).
+Given a language query, HumanSkill-4D selects the described region of an avatar and, for a 4D query, every matching interval in its driving pose sequence. As shown in Fig.  2 , the framework prepares reusable memories offline, then uses a frozen MLLM Φ MLLM \Phi_{\mathrm{MLLM}} to interpret queries online.
+In the offline phase, we build a semantic memory ℳ semantic \mathcal{M}_{\text{semantic}} that links body-part and garment categories to the avatar’s Gaussians through category scores p i ​ c p_{ic} registered from a frozen 2D human parser Φ parse \Phi_{\mathrm{parse}} . The memory also stores category-level appearance descriptions generated by Φ MLLM \Phi_{\mathrm{MLLM}} from multi-view images (Sec.  4.2 ). A motion memory ℳ motion \mathcal{M}_{\text{motion}} stores joint and root trajectories for each driving pose sequence. A registry ℛ \mathcal{R} shared across avatars provides reusable templates for checking pose and motion conditions, along with temporal relations that specify how these conditions overlap or follow one another in time (Sec.  4.3 ).
+In the online phase, Φ MLLM \Phi_{\mathrm{MLLM}} reads the query q q and the category names and descriptions to select target categories 𝒞 q \mathcal{C}_{q} . Their stored scores determine the spatial mask 𝐬 q \mathbf{s}_{q} ( Where ), which is the complete output for a 3D query. For a 4D query, the model also reads the registry’s text cards and composes operators into a motion program Π q \Pi_{q} . A deterministic executor runs this program on ℳ motion \mathcal{M}_{\text{motion}} to obtain the temporal mask 𝐡 q \mathbf{h}_{q} ( When ). The two masks give the spatiotemporal selection 𝐘 q \mathbf{Y}_{q} (Sec.  4.4 ).
+4.2 Building the Semantic Memory
+Given a Gaussian avatar reconstructed with 3DGS-Avatar  ( Qian et al., 2024 ) , we retain its canonical Gaussians g i g_{i} . From the captured images, we select a registration set 𝒟 reg \mathcal{D}_{\text{reg}} of camera-frame pairs. For each ( v , t ) ∈ 𝒟 reg (v,t)\in\mathcal{D}_{\text{reg}} , a frozen 2D human parser Φ parse \Phi_{\mathrm{parse}} labels each person pixel u u , and we map this label to ℓ v , t ​ ( u ) ∈ 𝒦 \ell^{v,t}(u)\in\mathcal{K} , where 𝒦 \mathcal{K} contains the body-part and garment categories (details in Supp. Sec.  A.1 ).
+Because each Gaussian retains its ide
+
+【实验】
+ Table 1: Part segmentation on ZJU-Refer-3D. OA, mAcc, and mIoU (%) over 16 categories. on the 3D and 4D Evaluations
+5.3 Ablations and Computational Analysis on the 3D and 4D Evaluations
+Table 2: 3D referring segmentation on ZJU-Refer-3D. mIoU (%) on part, appearance (App.), and relation/function (Rel.) queries; †  uses our parser Φ parse \Phi_{\mathrm{parse}} (i.e., Sapiens2). Protocol Protocol
+Benchmarks. To evaluate avatar referring segmentation, we introduce three benchmarks by augmenting existing human datasets with referring queries and human-annotated targets, following prior evaluations  ( He et al., 2025 ; Li et al., 2025 ) . ZJU-Refer-3D extends ZJU-MoCap  ( Peng et al., 2021 ) with dense part annotations and 20 referring queries covering part names, appearance, wearing relations, and functions. HuMMan-Refer-4D extends HuMMan  ( Cai et al., 2022 ) by converting its fine-grained body-part motion descriptions  ( Zhang et al., 2023 ) into 20 referring queries, while ZJU-Refer-4D extends ZJU-MoCap with 20 queries in the same format. Construction and annotation details appear in Supp. Secs.  B.1 – B.2 .
+Metrics. For part segmentation, we report mean per-category IoU (mIoU), overall pixel accuracy (OA), and mean per-category recall (mAcc)  ( Suzuki et al., 2025a ) . For 3D referring segmentation, we report mIoU over queries  ( He et al., 2025 ) . For 4D referring segmentation, vIoU evaluates region accuracy and timing jointly, penalizing both incorrect masks and extra or missed active frames  ( Li et al., 2025 ) . We additionally report tIoU, precision, and recall to assess temporal selection separately  ( Fiebelman et al., 2025 ) . tIoU measures overlap between predicted and annotated active frames. Precision is the fraction of selected frames annotated as active, and recall the fraction of annotated active frames selected (Supp. Sec.  C.1 ).
+
+【结论/局限】
+References
+A Method details
+A.1 Semantic categories
+A.2 Operator templates
+A.3 State frames and change occurrences
+A.4 Combining operators with temporal relations
+A.5 MLLM inputs and outputs
+B Benchmarks
+B.1 ZJU-Refer-3D
+B.2 4D referring evaluation
+C Evaluation details
+C.1 Metrics
+C.2 Implementation and comparison protocols
+C.3 Computational cost accounting
+D Additional results
+D.1 Smaller MLLMs
+D.2 Qualitative examples
+E Limitations and future directions
+F Complete query list
+G MLLM instructions
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24452v1 [cs.CV] 17 Oct 2026
+HumanSkill-4D : Training-Free Language
+Querying of Animatable Gaussian Avatars
+in Space and Time
+Junsu Kim  Naeun Kim  Dongyoon Han  Seungryul Baek
+UNIST  NAVER AI Lab   † Corresponding authors We introduced avatar referring segmentation, which selects avatar regions and the intervals satisfying queried pose or motion conditions, and presented HumanSkill-4D , a training-free framework that gives the structure of Gaussian avatars to a frozen MLLM as a skill. To address region ambiguity, its semantic memory links body-part and garment categories and appearance descriptions to persistent Gaussian regions
+
+########## 2610.24462 ##########
+【摘要】
+
+【方法】
+LF
+PA
+MV
+mIoU
+F1
+FPS
+O-SCD (offline)  [ 10 ]
+✓
+✓
+✓
+0.556
+0.700
+–
+ChangeSim (CS)  [ 11 ]
+–
+–
+–
+0.018
+0.034
+11.5
+CS+CYWS2D  [ 4 ]
+–
+–
+–
+0.243
+0.360
+8.2
+CS+GeSCF  [ 23 ]
+✓
+–
+–
+0.181
+0.270
+< < 1
+FastGeSCF  [ 43 ]
+–
+–
+–
+0.122
+0.198
+1.43
+SplatPose  [ 32 ]
+✓
+✓
+–
+0.173
+0.281
+< < 1
+SplatPose+  [ 45 ]
+✓
+✓
+–
+0.237
+0.358
+< < 1
+O-SCD  [ 10 ]
+✓
+✓
+✓
+0.489
+0.643
+11.8
+O-SCD++
+✓
+✓
+✓
+0.575
+0.715
+25.6
+Table   I compares O-SCD++ with online SCD methods on PASLCD  [ 5 ] . O-SCD++ achieves the highest mIoU and F1 of all methods and the highest throughput, more than twice that of any existing approach . Fig.   4 shows a qualitative comparison. mIoU
+F1
+mIoU
+F1
+ChangeSim (CS)  [ 11 ]
+0.010
+0.019
+0.130
+0.212
+CS+CYWS2D  [ 4 ]
+0.372
+0.519
+0.271
+0.408
+CS+GeSCF  [ 23 ]
+0.520
+0.630
+0.348
+0.484
+FastGeSCF  [ 43 ]
+0.183
+0.252
+0.315
+0.458
+SplatPose  [ 32 ]
+0.224
+0.320
+0.061
+0.108
+SplatPose+  [ 45 ]
+0.556
+0.700
+0.115
+0.186
+O-SCD  [ 10 ]
+0.657
+0.773
+0.404
+0.535
+O-SCD++
+0.703
+0.807
+0.474
+0.605
+The same ordering holds on CL-Splats and ChangeSim ( Table   II ), although the margin over methods without multi-view fusion narrows. Each CL-Splats scene contains a single, well-defined object change in a scene of small extent, close to the setting that pairwise detectors and pose-agnostic AD methods are designed for: CS+GeSCF reaches 0.520 0.520 mIoU and SplatPose+ 0.556 0.556 , against at most 0.243 0.243 on PASLCD. On ChangeSim, the revisit closely follows the reference trajectory, so the retrieved reference frame is nearly aligned with the inference image and the near-identical-viewpoint assumption of pairwise methods largely holds. Nevertheless, O-SCD and O-SCD++ surpass all baselines on both datasets, and O-SCD++ achieves the highest mIoU and F1 on CL-Splats and ChangeSim. On ChangeSim, the absolute accuracy of both methods is limited by the pose front end rather than the change stage. XFeat  [ 55 ] , designed for real images, matches less reliably on the synthetic imagery, and some inference images fail to register. Each unregistered image receives an empty mask that scores zero IoU, which lowers the overall accuracy. Appendix  C shows that a small modification to the pose front end, lifting the reference keypoints with depth rendered from the reference map instead of triangulating them, registers every image and raises O-SCD++ to 0.558 0.558 mIoU while preserving its margin over O-SCD.
+V-B Ablations
+TABLE III: Ablations of O-SCD++ on PASLCD  [ 5 ] . Each block varies one component while the others are fixed. The oracle selects, per frame, the threshold that maximizes IoU against the ground truth and serves as an upper bound.
+Variant
+mIoU
+F1
+Current-view prediction ( Sec.   IV-E )
+Cue only (no fusion)
+0.454
+0.595
+Map only
+0.526
+0.676
+Map and cue (ours)
+0.575
+0.715
+Aggregation weight ( Sec.   IV-D )
+Unbounded mass, ρ g , t = m g , t \rho_{g,t}=m_{g,t}
+0.562
+0.701
+Bounded weight, Eq.   13 (ours)
+0.575
+0.715
+Decision rule ( Sec.   IV-F )
+Fixed cutoff 0.5 0.5   [ 10 ]
+0.522
+0.671
+Otsu  [ 66 ]
+0.313
+0.422
+Exact scan (ours)
+0.575
+0.715
+Oracle, per frame (not label-free)
+0.640
+0.770
+Current-view prediction. Table   III shows that neither term of Eq.   17 suffices alone. Deciding from the c
+
+########## 2610.25887 ##########
+【摘要】
+.
+
+【方法】
+Pub
+Seq. 012
+Seq. 001
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+3DGS* ( Kerbl et al., 2023 )
+TOG’23
+24.36
+0.893
+0.167
+25.87
+0.898
+0.193
+Binocular3DGS ( Han et al., 2024 )
+NeurIPS’24
+24.68
+0.908
+0.151
+25.77
+0.909
+0.175
+GPS-Gaussian ( Zheng et al., 2024 )
+CVPR’24
+24.40
+0.896
+0.149
+24.54
+0.890
+0.170
+SparseGS* ( Xiong et al., 2025 )
+3DV’25
+24.27
+0.901
+0.155
+25.24
+0.896
+0.189
+Ours
+–
+26.55
+0.923
+0.137
+27.13
+0.924
+0.143
+2.3. Training Objective and Optimization
+The overall training objective combines rendering loss, geometric objective, and camera pose regularization. We optimize training under sparse views by combining early stopping and motion-aware dropout to stabilize convergence and improve efficiency.
+Rendering Loss
+Let 𝐈 ^ \hat{\mathbf{I}} be the rendered image and 𝐈 gt \mathbf{I}_{\text{gt}} the ground truth. We adopt a standard combination of ℓ 1 \ell_{1} and SSIM:
+(6)
+ℒ render = λ 1 ​ ‖ 𝐈 ^ − 𝐈 gt ‖ 1 + λ SSIM ​ ( 1 − SSIM ​ ( 𝐈 ^ , 𝐈 gt ) ) . \displaystyle\mathcal{L}_{\text{render}}=\lambda_{1}\,\|\hat{\mathbf{I}}-\mathbf{I}_{\text{gt}}\|_{1}+\lambda_{\text{SSIM}}\,\big(1-\text{SSIM}(\hat{\mathbf{I}},\mathbf{I}_{\text{gt}})\big).
+Geometric Objective
+The geometric objective ℒ geo \mathcal{L}_{\text{geo}} combines photometric consistency with depth and flow regularization, as detailed in Section  2.1.1 .
+Camera Regularization
+The camera regularization term ℒ cam \mathcal{L}_{\text{cam}} constrains the deviation of optimized camera poses from their initial values, preventing excessive pose modifications.
+Overall Objective
+The complete training objective is a weighted sum of all three components:
+(7)
+ℒ total = λ render ​ ℒ render + λ geo ​ ℒ geo + λ cam ​ ℒ cam , \displaystyle\mathcal{L}_{\text{total}}=\lambda_{\text{render}}\mathcal{L}_{\text{render}}+\lambda_{\text{geo}}\mathcal{L}_{\text{geo}}+\lambda_{\text{cam}}\mathcal{L}_{\text{cam}},
+where λ render \lambda_{\text{render}} , λ geo \lambda_{\text{geo}} , and λ cam \lambda_{\text{cam}} are the weights for the rendering loss, geometric objective, and camera regularization, respectively.
+Figure 3. Qualitative comparison on challenging sequences with fast human motion. Our method produces more stable, artifact-free reconstructions, especially in dynamic regions. Entries marked with * use half-resolution training and are resized for evaluation. listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+Abou
+
+【实验】
+3.1 Experimental Settings
+3.2 Comparison with SOTA Methods on the SIGGRAPH Asia 2025 sparse-view dataset demonstrate improvements over both feed-forward and optimization-based methods across quantitative metrics and visual quality.
+2. Methodology
+Our overall algorithm is illustrated in Figure 2 .
+Following the deep learning perspective outlined in the introduction, we organize our approach into two complementary categories: Supervision Enhancement and Training Regularization . This unified framework addresses the three fundamental causes of overfitting in sparse-view 3DGS: noisy data (corresponding to camera miscalibration), insufficient data, and excessive model capacity. In the following subsections, we detail each component.
+2.1. Supervision Enhancement
+To address insufficient supervision and noisy data in sparse-view 3DGS, we enhance the training data through two strategies: pseudo-view synthesis addresses insufficient data, while joint camera–scene optimization addresses noisy data.
+2.1.1. Optical Flow Guided Pseudo-view Synthesis
+Given a predicted depth map D D with intrinsics ( f x , f y , c x , c y ) (f_{x},f_{y},c_{x},c_{y}) , we synthesize a nearby view by applying a small in-plane translation 𝒕 = ( t x , t y , 0 ) ⊤ \boldsymbol{t}=(t_{x},t_{y},0)^{\top} . The induced pixel shifts are
+(1)
+u ⁡ ( 𝒙 ) = f x ​ ( − t x ) D ⁡ ( 𝒙 ) , v ⁡ ( 𝒙 ) = f y ​ ( − t y ) D ⁡ ( 𝒙 ) . \displaystyle u(\boldsymbol{x})=\frac{f_{x}(-t_{x})}{D(\boldsymbol{x})},\qquad v(\boldsymbol{x})=\frac{f_{y}(-t_{y})}{D(\boldsymbol{x})}.
+Rendering the translated pose produces 𝑰 ~ \widetilde{\boldsymbol{I}} , which we warp back via differentiable sampling:
+(2)
+𝑰 w ​ ( 𝒙 ) = 𝑰 ~ ​ ( 𝒙 + [ u ⁡ ( 𝒙 ) v ⁡ ( 𝒙 ) ] ) . \displaystyle\boldsymbol{I}_{w}(\boldsymbol{x})=\widetilde{\boldsymbol{I}}\!\left(\boldsymbol{x}+\begin{bmatrix}u(\boldsymbol{x})\\
+v(\boldsymbol{x})\end{bmatrix}\right).
+This optical-flow parameterization explicitly reasons about horizontal and vertical displacements, providing extra robustness along the vertical axis when the training views lie roughly on the same horizontal ring (a common sparse-view setting where vertical supervision is weak). Over the valid pixel set 𝒱 \mathcal{V} (visible and in-bounds), we measure the Charbonnier photometric consistency as
+(3)
+ℒ photo = 1 | 𝒱 | ​ ∑ 𝐱 ∈ 𝒱 ‖ 𝐈 w ​ ( 𝐱 ) − 𝐈 gt ​ ( 𝐱 ) ‖ 2 2 + ϵ , \displaystyle\mathcal{L}_{\text{photo}}=\frac{1}{|\mathcal{V}|}\sum_{\mathbf{x}\in\mathcal{V}}\sqrt{\left\|\mathbf{I}_{w}(\mathbf{x})-\mathbf{I}_{\text{gt}}(\mathbf{x})\right\|_{2}^{2}+\epsilon},
+where ϵ > 0 \epsilon>0 is a small constant.
+To regularize depth and the induced flow, we adopt total variation (TV) regularization for both depth and flow fields, along with edge-aware smoothing to preserve depth discontinuities at image edges. 
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25887v1 [cs.CV] 19 Oct 2026
+Rethinking Sparse-View 3D Gaussian Splatting:
+A Few-Shot Learning Perspective on Overfitting Prevention
+CCS:  Computing methodologies Computer graphics CCS:  Computing methodologies Rendering CCS:  Computing methodologies Machine learning CCS:  Computing methodologies Computer vision
+Lejia Ye
+Note:  Equal contribution.
+email: yelj8@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+,
+Bin Wu
+email: wubin58@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+,
+Jingjing Gao
+email: gaojj27@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+,
+Yiyang Wu
+email: wuyy239@mail2.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+and
+Xiaohu Zhang
+email: zhangxiaohu@mail.sysu.edu.cn
+Affiliation:  School of Aeronautics and Astronautics, Sun Yat-sen University , Shenzhen , China
+© none  We reframe sparse-view 3D Gaussian Splatting from a few-shot learning p
+
+########## 2610.26641 ##########
+【摘要】
+
+【方法】
+3.1 Problem setup
+3.2 Queries and coarse proposal
+3.3 Ray-consistent stereo sampling
+3.4 Geometric refinement
+3.5 Fisheye-native stereo encoder
+3.6 Causal temporal modelling
+Token history.
+Trajectory-aligned feature sampling.
+3.7 Training Figure 2 : Overview of EgoRayFormer. A stereo encoder provides image features for a coarse pose proposal and three
+refinement layers. Each refinement layer projects shared 3D hypotheses into both views, aggregates their sampled
+features, and combines a learned pose update with a regularised ray-intersection update. Causal attention and
+cached image features provide temporal context for frame-by-frame inference.
+EgoRayFormer estimates body pose from a causal stream of stereo fisheye images ( Fig.   2 ). Its decoder uses a shared
+3D hypothesis as the unit of stereo feature aggregation: each hypothesis is projected into both calibrated views, and
+the paired features support pose refinement. A second path predicts image-plane corrections, intersects the resulting
+viewing rays, and blends this geometric update with a learned update. We first describe this decoder, then the encoder,
+temporal context and training objective.
+3.1 Problem setup
+A head-mounted rig carries two downward-looking fisheye cameras v ∈ { 1 , 2 } v\in\{1,2\} about 12 cm apart. Each camera uses
+the polynomial omnidirectional calibration of Scaramuzza et al .   [ 25 ] , with known pose relative to
+the device. We denote by π v ​ ( X ) \pi_{v}(X) the normalised image projection of device-frame point X X , and by ( o v , d v ​ ( u ) ) (o_{v},d_{v}(u))
+the camera centre and unit viewing ray through image point u u , expressed in the same frame. The device centre is
+c = ( o 1 + o 2 ) / 2 c=(o_{1}+o_{2})/2 .
+At frame t t , the model receives images I 1 t , I 2 t I^{t}_{1},I^{t}_{2} and predicts J = 16 J{=}16 joint positions in the device frame, following
+the official UnrealEgo2 and UnrealEgo-RW benchmarks  [ 2 ] . Inference uses current and past images and
+camera calibration, without ground-truth root position, scene depth or headset pose. We write P t , l ∈ ℝ J × 3 P^{t,l}\in\mathbb{R}^{J\times 3} for the pose
+after decoder stage l l , where l = 0 l=0 is the proposal and l = 1 , … , L l=1,\ldots,L are the L = 3 L{=}3 refinement stages. Below we omit
+t t and use P j = P j l − 1 P_{j}=P^{l-1}_{j} for the anchor of joint j j at a refinement stage.
+3.2 Queries and coarse proposal
+The encoder ( Sec.   3.5 ) produces a stride-4 feature map with C = 128 C{=}128 channels for each view. The decoder
+contains J J learned joint queries, a body token with a learned dataset embedding, and a track-prior token that embeds
+the previous predicted pose. A learned null token is used at the start of a sequence. During training, the previous
+ground-truth pose is perturbed by Gaussian noise ( σ = 3 \sigma=3  cm) and replaced by the null token with probability 0.3 0.3 .
+The proposal layer applies camera-conditioned cross-attention to both feature maps, followed by token self-attention,
+causal temporal attention and a feed-forward layer. Cross-attention adds a learned camera embedding to each query and
+linearly fuses the two view outputs  [ 16 ] . Self-attention uses a learn
+
+【实验】
+4.1 Setup
+Datasets.
+Calibration.
+Protocol and metrics. UnrealEgo2
+RW, trained on RW
+RW, trained on UE2 + RW without specifying whether its inference-time root is predicted or ground truth. We keep these distinctions
+explicit and use a paired protocol experiment to assess their combined effect ( Sec.   4.6 ). have not been submitted to the leaderboard. The split version underlying the published RW values is
+unverified ( Sec.   4.2 ). Backbone: R18 is ResNet-18 at 256 2 256^{2} , ViT-S+ is DINOv3 ViT-S+/16 at
+384 2 384^{2} . Frames: input frames per prediction; stream denotes causal streaming over the whole sequence. Extra input:
+inputs used at inference besides the stereo images; scene depth is rendered from a structure-from-motion
+reconstruction of the scene  [ 2 ] , calibration denotes the fisheye camera model and the stereo rig
+( Sec.   4.1 ). † Re-implemented by the benchmark authors. Full comparison conditions are given
+in Appendix   B .
+4.1 Setup
+Datasets.
+UnrealEgo2  [ 2 ] is rendered with a synthetic stereo fisheye rig. Its official split has
+12,139 training sequences (1,002,671 frames), 1,545 validation sequences
+(127,937 frames) and 123,480 test frames. UnrealEgo-RW  [ 2 ] (RW) was captured
+with a physical head-mounted rig and has 402 training sequences (79,705 frames), 96 validation sequences (30,083 frames) and 24,012 test frames. As on the leaderboard, RW results are
+reported for models trained on RW only and for models trained on UnrealEgo2 and RW; for the latter, the RW model is
+initialised with the UnrealEgo2 model of the same seed ( Sec.   3.7 ).
+Calibration.
+UnrealEgo2 has a single synthetic rig. For RW we keep the intrinsics of the dataset’s calibration files and fit the
+camera-from-device transform of every capture session to the device-frame and camera-frame joint annotations of the
+training split; validation and test annotations are never used. One test session does not occur in the training data
+and uses the rig of the chronologically nearest session.
+Protocol and metrics.
+Our primary evaluation follows the official device-relative protocol: predictions are the 3D positions of 16 joints
+relative to the device centre, with no ground-truth quantity used at inference. We report MPJPE and PA-MPJPE (after
+rigid alignment with scale) in mm, using a common scorer based on the public EgoPoseFormer evaluation code.
+Ablations additionally report the mean per-joint velocity error MPJVE, the error of frame-to-frame joint displacements
+in mm per frame. Every sequence is
+processed in one causal stream from its first frame, in FP32. coordinates and inference inputs. coordinates also matter. Device-relative estimation requires the model to recover body position relative
+to the headset, whereas root-relative scoring removes global body translati
+
+【结论/局限】
+.
+References
+A Evaluation protocol and disclosure
+Frozen evaluation.
+Statistics.
+Disclosure of earlier test-set use.
+B Comparison conditions
+C Per-session results
+D Error and gate statistics by distance
+E Protocol gap on the test set
+F Root-relative numerical references
+TSR-like under an oracle-root protocol.
+G Implementation details
+Encoder.
+Decoder.
+Training and selection.
+H Components removed during development
+I Efficiency measurement
+J Qualitative results and failure cases
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26641v1 [cs.RO] 19 Oct 2026
+EgoRayFormer: Ray-Space Stereo Refinement for
+Egocentric 3D Human Pose Estimation
+Haozhe Wang
+Songyuan Wu
+Jihai Xu
+Jie Zhao
+Affiliation:  Boden AI
+Affiliation:  {haozhe.wang, songyuan.wu, jihai.xu, jie.zhao}@bodenai.com .
+EgoRayFormer connects stereo image sampling and pose refinement through shared 3D hypotheses in a ray-local frame.
+Corrected-ray intersection supplies a geometric candidate, which is combined with a learned update in a causal
+decoder. Local evaluations on UnrealEgo2 and UnrealEgo-RW establish the performance of the full system, while paired
+ablations support the geometric branch as a whole. The remaini
+
+########## 2610.25006 ##########
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from
+
+【实验】
+IV-A Task and Data Collection
+IV-B Policy Training and Deployment
+V Results and Discussion
+VI Conclusions and Limitations
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25006v1 [cs.RO] 18 Oct 2026
+Scalable, Intuitive, Mixed Reality–Based Semi-Autonomous Robotic Telemanipulation for the Execution of a Fine-Grained Bimanual Task
+Shifei Duan
+Zhe Wang
+Francesco De Pace
+Minas Liarokapis
+† † thanks: Shifei Duan and Zhe Wang are with the New Dexterity research group, The University of Auckland, New Zealand
+{sdua078, zwan341}@aucklanduni.ac.nz † † thanks: Francesco De Pace is with the Competence Industry Manufacturing 4.0 (CIM4.0), Turin, Italy francesco.de_pace@cim40.com † † thanks: Minas Liarokapis is with the New Dexterity research group, The University of Auckland, New Zealand and the National Technical University of Athens, Greece
+liarokapis@mail.ntua.gr Fig. 5: Full demonstration of the execution of the selected bimanual, fine-grained, peg-in-hole task.
+Fig. 6: Enclosure and connector used for the execution of the task.
+IV-A Task and Data Collection
+A bimanual peg-in-hole task - widely regarded as one of the most challenging benchmarks in robotic assembly due to its high precision requirements - is selected for the experimental validation. As shown in Fig. 5 , both the enclosure and the connector are placed at random locations on the table within the robot’s workspace. The objective is for the robot to grasp both objects and precisely insert the connector into the enclosure with a 1 mm tolerance (Fig. 6 ). The task must be completed without dropping either object, demanding highly coordinated and fine-grained bimanual manipulation. To fully evaluate our system and the proposed TEC strategy, three data collection modalities are compared. The first modality follows Conventional Telemanipulation (CT), consistent with prior works [ 9 , 2 , 8 ] , in which the operator fully controls both robot arms and EEs. This mode serves as our experimental baseline. In this setting, the grasping pose varies across episodes, leading to inconsistent initial conditions for the insertion phase. The second modality HT incorporates vision-based path planning for automated grasping, followed by full telemanipulation to complete the insertion. The third modality applies the TEC strategy, in which grasping is performed autonomously and the operator only provides fine adjustments during the insertion phase. For both HT and TEC modalities, only demonstrations after the autonomous grasping stage are collected.
+Efficient data collection is a primary limitation for learning-based manipulation, particularly in the execution of complex and long-horizon tasks, as such tasks often lead to failure and operator fatigue. To address this, we evaluate the impact of a
+
+########## 2610.26583 ##########
+【摘要】
+
+【方法】
+MOW
+ContactPose
+EPIC
+ARCTIC
+RICH
+Hi4D
+POSA-hand   [ 19 ] † \dagger
+.408
+–
+–
+–
+.398
+.315
+ContactPrompt  [ 26 ] † \dagger
+.526
+–
+–
+–
+–
+–
+DECO  [ 48 ]
+.395 †
+.513
+.492
+.365
+.454
+.304 †
+BSTRO  [ 21 ]
+.380 †
+.155
+.382
+.290
+.645
+.420 †
+HACO  [ 25 ]
+.522
+.599
+.459
+.684
+.781
+.474
+JointHand (ours)
+.571 d
+.675 d
+.524 c
+.713 d
+.799 c
+.424 c
+Table 3 : Dense hand contact estimation, per-vertex F1 at each ’s own best threshold (Skip protocol).
+Our result uses the distance head (d) per dataset; EPIC, RICH, and Hi4D
+use only the contact head (c) because they lack distance ground truth.
+† \dagger denotes HACO-reported results. Other results were evaluated
+locally under the same protocol.
+Even under this ideal threshold assessment framework, our technique consistently surpasses other methods across every dataset except Hi4D. In the in-distribution datasets, our approach realises an average enhancement of 3–5% compared to HACO, the current leading model. In the out-of-distribution datasets, the mean enhancement approaches 10%. Considering HACO’s robust alignment with these datasets, these findings suggest that our model has enhanced generalisation to unfamiliar distributions.
+Figure 3 : Qualitative comparison between the proposed and the baseline method across five datasets.
+Figure 3 illustrates examples generated by several models. The contact estimation for models such as BSTRO and DECO appears to be relatively imprecise. HACO enhances performance, although it frequently applies a rudimentary colouration to both sides of the hand without differentiating between the palm and the dorsal side. Furthermore, it demonstrates some interference and faces challenges in accurately detecting specific outlier instances. While DenseHap does well on clear photos, it struggles with overly dark or ambiguous ones.
+4.2.3 Distance and Force measurement
+Alongside our main goal, we also performed comparison analyses on the distance and force heads. The findings are delineated below.
+H → \rightarrow O Distance MAE (mm) ↓ \downarrow All
+< 10 <10
+10 10 – 20 20
+≥ 20 \geq 20
+InterField-SF   [ 11 ]
+9.47
+7.92
+7.62
+10.51
+Our distance head
+11.49
+3.70
+4.12
+16.21
+Table 4: Continuous hand-to-object distance on ARCTIC.
+MAE is computed over 778 MANO vertices with distances capped at 100 mm.
+Table 4 primarily contrasts our model with InterField utilising the ARCTIC dataset. Particularly, our distance head features comprehensive near-field optimisation, providing a distinct benefit in assessing proximate contacts at ranges under 20 mm. InterField exhibits superior performance for distances above 20 mm, hence yielding optimal results among all outcomes. Nevertheless, the majority of hand-contact datasets establish 10 mm as the principal criterion for defining contact, with a few exceptions that set the threshold higher than 10 mm. Consequently, precise distance measurement within 20 mm is crucial for high-accuracy hand-contact datasets. Distances over 20 mm typically do not influence touch recognition. These findings convincingly corroborate the architecture presented in Equation 5 as well as the functionality of the distance head.
+There is currently no efficient MANO-based method for predicting 
+
+【实验】
+4.1 Hand Contact Datasets 4.1 Hand Contact Datasets
+Dataset
+Size
+Share
+Type
+A. Sensor-measured (high reliability)
+PressureVisionDB  [ 14 ]
+33,514
+2.88%
+Pressure
+B. Multi-view, MoCap (high reliability)
+TACO  [ 29 ]
+153,097
+13.17%
+Manipulation
+OakInk2  [ 61 ]
+147,553
+12.69%
+Manipulation
+ARCTIC  [ 11 ]
+147,238
+12.66%
+Manipulation
+Decaf  [ 43 ]
+65,322
+5.62%
+Hand–face
+MANUS  [ 36 ]
+20,117
+1.73%
+Grasping
+RICH  [ 22 ]
+15,854
+1.36%
+Human–scene
+Hi4D  [ 58 ]
+2,889
+0.25%
+Human–human
+C. RGB-D + fitting (medium)
+OakInk  [ 57 ]
+129,659
+11.15%
+Grasping
+HOI4D  [ 28 ]
+84,428
+7.26%
+Manipulation
+HO3D  [ 16 ]
+62,779
+5.40%
+Manipulation
+HOCap  [ 51 ]
+62,075
+5.34%
+Manipulation
+H2O3D  [ 17 ]
+59,870
+5.15%
+Manipulation
+H2O  [ 27 ]
+33,467
+2.88%
+Manipulation
+DexYCB  [ 6 ]
+29,656
+2.55%
+Grasping
+HOGraspNet  [ 9 ]
+29,243
+2.51%
+Grasping
+D. Synthetic / monocular reconstruction
+ObMan  [ 20 ]
+85,688
+7.37%
+Grasping
+MOW  [ 5 ]
+350
+0.03%
+Reconstruction
+Total (training pool)
+1,162,799
+100%
+—
+Excluded datasets
+Dataset
+Size
+Exclusion reason
+GigaHands  [ 12 ]
+665,176
+unreliable, mostly no contact
+EgoTouch  [ 65 ]
+127,676
+gloved hands, not bare skin
+InterHand2.6M  [ 32 ]
+37,170
+hand–hand contact only
+GRAB  [ 47 ]
+29,612
+mocap only, no real images
+HOT3D  [ 1 ]
+13,456
+crop/side-matching errors
+Open3DHOI  [ 52 ]
+2,561
+no contact after SMPL-X fitting
+EgoPressure  [ 64 ]
+2,569
+contact–image misalignment
+HIC  [ 50 ]
+228
+hand–hand; 39 test samples
+PROX  [ 18 ]
+178
+SMPL-X mapping unreliable
+OpenTouch  [ 46 ]
+146
+unresolvable crop errors
+Held-out evaluation only (never sampled in training)
+ContactPose  [ 4 ]
+2,192
+—
+Grasping, test only
+EPIC-Contact  [ 2 ]
+237
+—
+Manipulation, test only
+Table 1 : Dataset audit details 18 retained datasets, including their share of the training pool and primary interaction types. It also lists excluded datasets with reasons for their omission. ContactPose and EPIC-Contact (bottom block) are held out for evaluation.
+The estimation of dense hand contact is an emerging area of research, with this study offering a significant contribution through a comprehensive review of publicly available hand-contact datasets up to July 2026. The framework assesses 30 datasets, encompassing around 4 million samples, and amalgamates 18 that meet stringent quality-control standards into a unified training corpus containing 1.16 million samples. The ten excluded datasets failed due to various issues, such as inconsistent or misaligned contact annotations (notably GigaHands, EgoPressure, and HOT3D), domain disparity with bare-hand–object interactions (EgoTouch, InterHand2.6M, and HIC), and absence of real-world imagery (GRAB). To promote reproducibility, the detailed audit is published to assist future researchers in avoiding the burdensome process of dataset screening.
+The study identifies t
+
+【结论/局限】
+and Limitations
+References
+License: CC BY 4.0
+arXiv:2610.26583v1 [cs.CV] 19 Oct 2026
+DenseHap: Dense Hand Haptic Estimation from Monocular Images
+Junhan Xue
+Rolandos Alexandros Potamias
+Imperial College London
+Imperial College London
+Project Webpage and Limitations
+In conclusion, we have developed DenseHap, a comprehensive framework that, in a single forward pass, provides a detailed per-vertex contact, distance, and 3D hand mesh from a single RGB image. After constructing a clean dataset from 28 relevant datasets, we integrated three parameter-independent vertex-query cross-attention trunks into a static WiLoR backbone and trained them using a multiple loss function design to address class imbalance. Our model achieves a throughput of approximately 1.7 × \times that of a reconstruction-contact cascade and improves the F1 score by approximately 10% compared to the current state of the art across zero-shot datasets. . Despite the performance improvements, our method still suffers from some limitations. Firstly, the model performance can be highly affected under the presence of severe occlusions. In addition, given that our main objective is to predict hand object contact and pressur
+
+########## 2610.26549 ##########
+【摘要】
+: Human egocentric experience offers a rich foundation for learning how the world is organized and how it changes through interaction. Realizing this potential at scale requires turning growing volumes of recordings into learning resources that connect scene structure, object semantics, and interaction histories across viewpoints and time, while reducing dependence on costly manual annotation. We introduce HOLI-WORLD, an integrated ecosystem connecting experience capture, world representation, automated data construction, model learning, and independent evaluation. To sup- port learning at scale, HOLIWORLD-Foundry combines complementary static and dynamic perception to automatically construct world records that connect persistent scene structure and evolving object states with interaction histories and supporting observations. HOLIWORLD-Data organizes these records from approximately 100 self-collected scenes into grounded learning resources, including approximately 80K QA pairs used to train HOLIWORLD-VL-4B. Independent human annotations of heldout recordings form HOLIWORLD-Bench, supporting evaluation of both annotation quality and learned spatial and temporal understanding. Experiments on ScanNet, ScanNet++, Aria Digital Twin, and HOLIWORLD-Bench demonstrate strong performance in static perception and dynamic tracking, while training on HOLIWORLD-Data substantially improves HOLIWORLD-VL-4B's spatial and temporal reasoning on HOLI- WORLD-Bench and EgoDynamic4D. HOLIWORLD pr
+
+########## 2610.26625 ##########
+【摘要】
+
+【方法】
+only on the outputs it provides under the matched protocol
+described above. EgoX is the only end-to-end method in this comparison
+that jointly reconstructs cameras, depth, hands, and object 6-DoF
+poses in a shared world frame.
+Table 2: Hand Reconstruction on Four Benchmarks.
+PA-, WA-, and W-MPJPE are reported in millimetres.
+World-space errors use each method’s estimated camera trajectory.
+HOT3D
+EgoX-Bench
+HOI4D
+H2O PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+PA-
+MPJPE
+↓ \downarrow
+WA-
+MPJPE
+↓ \downarrow
+W-
+MPJPE
+↓ \downarrow
+HaWoR
+6.06
+29.80
+56.30
+10.98
+125.73
+363.47
+18.61
+50.01
+110.96
+5.68
+25.83
+64.62
+MINT
+9.94
+37.76
+85.85
+10.19
+149.91
+467.65
+17.94
+43.64
+108.76
+5.74
+28.38
+50.04
+ReViV
+14.01
+49.90
+109.02
+23.89
+111.48
+501.29
+25.18
+83.40
+354.39
+8.69
+23.40
+45.22
+WiLoR + SLAM
+5.90
+25.52
+58.55
+8.51
+63.03
+328.81
+19.41
+47.66
+132.94
+5.11
+21.78
+74.95
+HandFlow
+5.54
+59.01
+119.48
+11.14
+75.76
+375.11
+19.91
+57.02
+120.26
+7.07
+19.00
+34.63
+EgoX (Ours)
+3.70
+15.54
+38.89
+4.64
+53.81
+113.24
+3.32
+15.12
+42.67
+4.97
+11.41
+23.95
+Table 3: Camera-Frame Object Pose Reconstruction.
+ADD/ADD-S: mm; AUC: %. Extra inputs: D ^ \hat{D} / K ^ \hat{K} ,
+DA3 Nested depth/intrinsics; M M , per-frame masks; A A , GT metric CAD.
+HOT3D
+EgoX-Bench
+HOI4D
+H2O ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+ADD ↓ \downarrow
+ADD-S ↓ \downarrow
+AUC-S 50 ↑ \uparrow
+Any6D D ^ , K ^ , M {}^{\hat{D},\hat{K},M}
+67.06
+44.05
+42.99
+88.25
+41.41
+38.39
+67.01
+53.26
+34.61
+72.75
+36.57
+38.37
+FoundationPose D ^ , K ^ , A {}^{\hat{D},\hat{K},A}
+92.49
+59.87
+23.32
+85.26
+55.04
+31.99
+94.76
+73.02
+13.39
+91.91
+30.97
+46.03
+GigaPose + MegaPose K ^ , A , M {}^{\hat{K},A,M}
+71.92
+32.42
+57.59
+69.96
+26.87
+59.80
+97.94
+88.68
+3.91
+89.08
+53.08
+29.14
+EgoX (Ours)
+28.00
+14.03
+73.71
+27.11
+12.41
+76.59
+44.55
+21.11
+59.08
+22.10
+10.29
+80.42
+Table 4: Camera and Depth Reconstruction.
+RRE: degrees; δ 1.25 \delta_{1.25} : %.
+VGGT/VGGT- Ω \Omega : one scale fitted to DA3 Nested depth
+per sequence; others: predicted metric scale.
+HOT3D
+EgoX-Bench
+HOI4D
+H2O
+Camera
+Depth †
+Camera
+Depth †
+Camera
+Depth †
+Camera
+Depth † nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+nATE ↓ \downarrow
+RRE ( ∘ ) ↓ \downarrow
+AbsRel ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+VGGT
+0.0064
+0.64
+0.2182
+69.40
+0.0684
+2.86
+0.2877
+66.53
+0.0310
+1.50
+0.0676
+98.60
+0.0036
+0.27
+0.0726
+94.36
+VGGT- Ω \Omega
+0.0018
+0.16
+0.1031
+92.20
+0.0071
+0.61
+0.0806
+91.57
+0.0212
+1.56
+0.0558
+99.68
+0.0030
+0.27
+0.0784
+95.46
+CUT3R
+0.0449
+3.75
+0.2748
+69.19
+0.0756
+6.29
+0.4317
+54.07
+0.0455
+5.08
+0.0647
+97.05
+0.0120
+1.56
+0.0887
+93.09
+Any4D
+0.0267
+2.24
+0.2899
+70.23
+0.0604
+4.55
+0.4161
+48.15
+0.0273
+1.91
+0.0757
+95.80
+0.0083
+0.67
+0.1075
+87.26
+DA3 Nested
+0.0036
+0.23
+0.0799
+94.40
+0.0135
+0.92
+0.1785
+82.29
+0.
+
+【实验】
+ We evaluate camera, depth, hand, and object reconstruction on HOT3D,
+EgoX-Bench, H2O, and HOI4D using identical 150-observation clips
+across methods. Evaluation sequences are excluded from EgoX training.
+EgoX uses RGB and first-frame object masks; object baselines may
+additionally require estimated depth, intrinsics, per-frame masks,
+or metric CAD assets. World-space hand metrics use estimated cameras;
+object poses are evaluated in camera coordinates. No method receives
+GT camera poses or scale in the main comparisons.
+Appendix  C details the evaluation protocols. on EgoX-Bench and public benchmarks demonstrate
+strong performance in hand and object reconstruction
+and depth estimation.
+Our current formulation assumes rigid objects and does not
+predict their meshes.
+Future work will explore object mesh prediction and
+multiview inputs.
+Acknowledgements
+We thank Hongyi Chen, Yuancheng Wang, Changyi Ye, Qin Ma, Thang Luu,
+Wendi Fu, Qiankuan Tao, Sayang Mu, Rui Duan, Zetong Wang, and Yaobo Liu
+for their contributions to data collection.
+References
+[1]
+AgiBot World Team (2026)
+AgiBot world 2026 .
+Note: https://huggingface.co/datasets/agibot-world/AgiBotWorld2026
+Cited by: Appendix F .
+[2]
+A. Avetisyan, C. Xie, H. Howard-Jenkins, T. Yang, S. Aroudj, S. Patra, F. Zhang, D. Frost, L. Holland, C. Orme, J. Engel, E. Miller, R. Newcombe, and V. Balntas (2024)
+SceneScript: reconstructing scenes with an autoregressive structured language model .
+External Links: 2403.13064 ,
+Link
+Cited by: Appendix F .
+[3]
+P. Banerjee, S. Shkodrani, P. Moulon, S. Hampali, S. Han, F. Zhang, L. Zhang, J. Fountain, E. Miller, S. Basol, R. Newcombe, R. Wang, J. J. Engel, and T. Hodan (2025)
+HOT3D: hand and object tracking in 3d from egocentric multi-view videos .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+pp. 7061–7071 .
+Cited by: §A.4 ,
+Appendix F ,
+§1 ,
+§1 ,
+§2.3 ,
+Table 1 .
+[4]
+S. Bansal, Z. Zhu, S. Tripathi, J. Zhao, M. J. Black, and D. Damen (2026)
+Towards in-the-wild egocentric 3d hand-object pose estimation .
+In European Conference on Computer Vision (ECCV) ,
+Cited by: §A.2 ,
+§A.4 ,
+§2.2 .
+[5]
+Y. Cao, X. Guo, M. Zhang, H. Xie, C. Gu, and Z. Liu (2026)
+Crowdmogen: event-driven collective human motion generation .
+International Journal of Computer Vision 134 ( 1 ), pp. 29 .
+Cited by: §2.1 .
+[6]
+Y. Cao, H. Xie, F. Hong, L. Zhuo, Z. Chen, L. Pan, and Z. Liu (2026)
+HSImul3R: physics-in-the-loop reconstruction of simulation-ready human–scene interactions .
+In European Conference on Computer Vision ,
+pp. 509–528 .
+Cited by: §2.1 .
+[7]
+Y. Cao, H. Xie, B. Wen, R. Yao, Y. Liu, Y. Huang, Z. Liao, Y. Wang, H. Liu, X. Tian, D. Su, L. Zhuo, D. Tao, X. Wang, L. Pan, and Z. Liu (2026)
+ACE-data-0: human-centric ambient capture as embodied data e
+
+【结论/局限】
+References
+A Extended Related Work
+A.1 Joint geometry and entity reconstruction
+A.2 Hand and hand–object reconstruction
+A.3 Camera, depth, and object-pose pipelines
+A.4 Datasets and geometric evaluation
+B Public Dataset Cleaning and Geometric Alignment
+C Evaluation Protocol
+Datasets and splits.
+Inputs and matched protocol.
+Metrics and coordinates.
+Scale.
+D Runtime Analysis
+E Additional Qualitative Results
+E.1 Additional hand and camera comparisons
+E.2 Additional object-pose comparisons
+E.3 Additional depth comparisons
+F Training and Compute
+Training supervision. We present EgoXperience, a unified approach to learning
+world-grounded egocentric representations through task-driven
+capture, geometrically aligned annotation, and joint reconstruction.
+EgoX-Engine provides aligned multimodal annotations for
+the 50-hour EgoX-Data-6M, from which we curate the held-out
+one-hour EgoX-Bench.
+Trained on these annotations and harmonized public datasets,
+EgoX jointly reconstructs cameras, dense depth, hands,
+and rigid-object 6-DoF poses in a common metric world frame.
+
+########## 2610.26780 ##########
+【摘要】
+
+【方法】
+3.1 Problem formulation As illustrated in Figure  2 , V-JEPA Hand reads a raw video clip and
+emits, in a single forward pass, the complete bilateral hand trajectory of that
+clip together with the camera motion and focal lengths.
+The model has two components: a self-supervised video encoder that turns the
+clip into a spatio-temporal token grid (Section  3.2 ), and a
+query-based trajectory predictor that decodes one output token per frame into
+the per-frame state defined below. Section  3.3 describes
+our single-stage training with multi-source supervision, combining large-scale
+pseudo-labelled video with high-quality data under a shared
+training objective.
+Figure 2: Overview of V-JEPA Hand. A V-JEPA 2.1 encoder extracts
+spatio-temporal features from an egocentric video clip. A ViT predictor jointly
+processes these features, one learnable hand-pose query per frame, and an
+intrinsics token. The output queries predict bilateral MANO pose, hand
+presence probability, and camera motion. The entire clip is
+reconstructed in a single forward pass; blue and orange meshes denote the reconstructed
+left and right hands, respectively.
+3.1 Problem formulation
+The input is a clip of T T RGB frames 𝐕 = ( 𝐈 1 , … , 𝐈 T ) \mathbf{V}=(\mathbf{I}_{1},\dots,\mathbf{I}_{T}) , 𝐈 t ∈ ℝ 3 × H × W \mathbf{I}_{t}\in\mathbb{R}^{3\times H\times W} , recorded by a
+freely moving egocentric camera. Here t ∈ { 1 , … , T } t\in\{1,\dots,T\} indexes frames,
+and H H and W W are the image height and width in pixels, respectively.
+We write 𝒞 t \mathcal{C}_{t} for the camera
+coordinate frame of frame t t and index the two hands by
+s ∈ { L , R } s\in\{\mathrm{L},\mathrm{R}\} , where L \mathrm{L} and R \mathrm{R} denote the
+camera wearer’s left and right hand. Hats denote model predictions. Acc ↑ \uparrow
+Rec ↑ \uparrow
+F1 ↑ \uparrow
+MP-p ↓ \downarrow
+MP ↓ \downarrow
+PA-p ↓ \downarrow
+PA ↓ \downarrow
+EP-p ↓ \downarrow
+EP ↓ \downarrow
+GO-p ↓ \downarrow
+GO ↓ \downarrow
+CT-p ↓ \downarrow
+CT ↓ \downarrow
+Jit ↓ \downarrow
+ARCTIC
+WiLoR
+0.909
+0.949
+0.971
+21.11
+15.52
+12.74
+6.70
+65.56
+28.84
+17.68
+11.74
+0.077
+0.050
+25.97
+HaMeR
+0.873
+0.943
+0.958
+30.78
+25.10
+16.02
+9.44
+64.85
+28.45
+25.14
+18.67
+0.093
+0.063
+14.78
+WildHands
+0.874
+0.944
+0.958
+27.07
+21.29
+15.99
+9.55
+65.44
+29.58
+22.54
+16.05
+0.070
+0.039
+12.28
+HaWoR
+0.853
+0.953
+0.945
+31.52
+26.94
+14.48
+9.07
+44.32
+16.24
+24.38
+18.82
+0.076
+0.050
+19.37
+ViDiHand
+0.997
+0.999
+0.999
+21.67
+-
+9.82
+-
+12.41
+-
+14.64
+-
+0.047
+-
+3.18
+Ours
+0.996
+0.998
+0.999
+15.59
+15.36
+6.84
+6.59
+8.99
+8.85
+12.46
+12.18
+0.032
+0.031
+6.09
+HOT3D
+WiLoR
+0.810
+0.879
+0.922
+39.38
+26.09
+23.10
+7.57
+79.90
+22.11
+32.51
+16.49
+0.103
+0.048
+17.19
+HaMeR
+0.719
+0.880
+0.886
+67.09
+57.96
+25.09
+10.26
+70.66
+15.40
+50.01
+36.35
+0.106
+0.055
+21.09
+WildHands
+0.425
+0.600
+0.609
+80.23
+42.99
+61.89
+12.40
+275.39
+37.14
+84.35
+38.82
+0.250
+0.076
+25.30
+HaWoR
+0.733
+0.895
+0.875
+28.79
+16.71
+20.68
+7.64
+66.60
+8.16
+25.01
+10.50
+0.086
+0.039
+13.41
+ViDiHand
+0.948
+0.974
+0.983
+21.51
+-
+11.38
+-
+14.95
+-
+15.83
+-
+0.040
+-
+3.74
+Ours
+0.971
+0.979
+0.980
+14.42
+12.04
+8.24
+5.72
+16.81
+5.71
+9.90
+6.52
+0.026
+0.014
+5.74
+EgoStandard
+WiLoR
+0.949
+0.971
+0.982
+35.19
+32.16
+11.11
+7.35
+37.09
+12.74
+25.88
+22.13
+0.089
+0.080
+15.53
+HaMeR
+0.986
+0.992
+0.994
+37.37
+36.60
+8.27
+7.26
+
+【实验】
+4.1 Experimental setup
+Datasets.
+Metrics.
+4.2 Comparison with prior work
+From occlusion and blur to unseen scenes.
+World-frame reconstruction through unified prediction.
+4.3 Ablation studies
+Effect of pseudo-labelled training data.
+Loss ablation.
+Pretraining and temporal context.
+Encoder ablation. We evaluate V-JEPA Hand on egocentric two-hand reconstruction. We first describe
+the datasets and evaluation protocol (Section  4.1 ), then compare
+with prior work (Section  4.2 ). Our ablations test the training
+data, the loss terms, encoder pretraining and temporal context, and encoder choice
+(Section  4.3 ). We also report model size and inference cost
+(Section  4.4 ), and show qualitative results
+(Section  4.5 ).
+4.1 Experimental setup
+Datasets.
+We evaluate on three egocentric hand benchmarks:
+ARCTIC tests reconstruction under severe
+occlusion during two-hand object manipulation, while
+HOT3D tests robustness to motion blur
+from rapid head and hand movements. We additionally evaluate on
+EgoStandard , a commercially annotated egocentric dataset spanning
+diverse scenes. Its 3D motion annotations are produced by a pipeline that
+combines hardware-assisted capture with multi-stage optimization. We exclude
+EgoStandard entirely from training and use it to assess generalization to
+unseen egocentric data.
+The EgoStandard evaluation covers approximately 60 60 minutes of video.
+For HOT3D, we follow the HaWoR validation split, covering approximately
+49 49 minutes of video.
+Table  2 uses the same evaluation splits,
+with all world methods rescored on their common true-positive support.
+Metrics.
+Metrics follow the coverage-aware evaluation by showing where methods miss hands or produce visibly misaligned
+meshes.
+Figure  4 extends the comparison to challenging in-the-wild
+videos, including very low light, outdoor pruning, painting, and household
+activities. In the low-light scenes in the first and sixth rows of
+Figure  4 , V-JEPA Hand reconstructs a hand that all three baselines
+miss. In the outdoor pruning scene (second row), V-JEPA Hand reconstructs both
+hands against a background of dense foliage. The painting scene (fourth
+row) and the sink scene (eighth row) show hand reconstructions during
+object manipulation in cluttered indoor environments.
+Across these settings, V-JEPA Hand recovers plausible
+hand configurations despite substantial changes in lighting, appearance,
+and scene layout. These examples provide qualitative evidence of
+generalization beyond laboratory settings.
+Appendix B Encoder Feature Visualization
+Figure  5 visualizes encoder features after
+end-to-end training for hand and camera trajectory recovery.
+V-JEPA 2.1 learns dense representations that capture fine-grained spatial
+structure as well as global visual information  ( Mur-Labadia et al., 2026 )
+
+【结论/局限】
+References
+A Additional qualitative comparisons
+B Encoder Feature Visualization
+C Hyperparameters
+D Training objective details
+Hand parameters.
+Forward kinematics.
+Reprojection.
+Temporal smoothness.
+Hand presence.
+Camera motion.
+Intrinsics loss.
+Loss weights.
+E Evaluation protocols and baseline setup
+Baseline implementations.
+Hand evaluation.
+World-coordinate comparison.
+World-coordinate metrics.
+Training-data comparison.
+HOT3D evaluation split.
+F Evaluation metrics and table conventions
+Coverage-aware and true-positive-only evaluation.
+Table notation and units.
+G Ablation implementation details
+G.1 Training setup
+G.2 World-coordinate evaluation
+G.3 Encoder configurations
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26780v1 [cs.CV] 19 Oct 2026
+V-JEPA Hand: Simple, Accurate and Fast 3D Hand and Camera Trajectory Recovery from Egocentric Videos
+Ruicheng Li  Qixiu Li  Yu Deng  Sicheng Xu  Jiaolong Yang  Baining Guo
+Affiliation:  Tsinghua University
+Affiliation:  Microsoft Research We presented V-JEPA Hand, a simple model that jointly reconstructs bilateral
+hand motion, camera motion and intrinsics from egocentric video in one forward
+pass, without hand detection, SLAM
+
+########## 2610.25309 ##########
+【摘要】
+
+【方法】
+Main Workflow.
+Target-Guided Visual Check.
+Working Memory. evaluation.
+License: CC BY 4.0
+arXiv:2610.25309v1 [cs.CV] 18 Oct 2026
+SENRI: Understanding the Space–Event Nexus in Real-Life Videos
+Kehan Lan
+Affiliation:  Fudan University
+Affiliation:  Alaya Lab
+Kaining Ying
+Affiliation:  Fudan University
+Henghui Ding
+Affiliation:  Fudan University
+Kaipeng Zhang
+† † thanks: Corresponding author.
+Affiliation:  Alaya Lab Inference Model
+Total
+Event → \rightarrow Space
+Space → \rightarrow Event
+Avg.
+L
+NP
+OC
+RR
+Avg.
+RER
+TER
+Direct
+Perception
+Gemini 3.1 Pro
+Gemini 3.1 Pro
+47.4
+43.1
+56.2
+37.7
+37.2
+40.0
+56.0
+55.7
+56.4
+Gemini 3.5 Flash
+Gemini 3.5 Flash
+49.8
+45.5
+56.2
+40.6
+32.6
+51.1
+58.4
+60.2
+56.4
+Gemini 3.7 Flash
+Gemini 3.7 Flash
+52.2
+48.5
+61.8
+50.7
+32.6
+48.9
+59.6
+58.0
+61.5
+GPT-5
+GPT-5
+47.2
+44.6
+59.6
+39.1
+32.6
+45.6
+52.4
+55.7
+48.7
+GPT-5.5
+GPT-5.5
+48.2
+46.7
+60.7
+44.9
+31.4
+48.9
+51.2
+50.0
+52.6
+Kimi K3
+Kimi K3
+41.4
+39.5
+51.7
+39.1
+30.2
+36.7
+45.2
+43.2
+47.4
+Cambrian-S-7B
+Qwen2.5-7B ∗
+34.8
+32.0
+37.1
+37.7
+19.8
+34.4
+40.4
+42.0
+38.5
+Cambrian-S-7B-LFP
+Qwen2.5-7B ∗
+31.4
+29.3
+33.7
+36.2
+18.6
+30.0
+35.5
+42.0
+28.2
+InternVideo3-8B
+Qwen3-VL-8B ∗
+39.0
+38.0
+50.6
+37.7
+26.7
+36.7
+41.0
+36.4
+46.2
+VideoChat3-4B
+Qwen3-4B ∗
+40.8
+40.4
+44.9
+46.4
+32.6
+38.9
+41.6
+39.8
+43.6
+Qwen3.5-9B
+Qwen3.5-9B
+41.6
+41.6
+53.9
+39.1
+31.4
+41.1
+41.6
+44.3
+38.5
+Qwen3.5-27B
+Qwen3.5-27B
+43.8
+41.6
+48.3
+43.5
+32.6
+42.2
+48.2
+44.3
+52.6
+Qwen3.6-27B
+Qwen3.6-27B
+43.8
+41.0
+51.7
+44.9
+29.1
+38.9
+49.4
+43.2
+56.4
+Qwen3.6-35B-A3B
+Qwen3.6-35B-A3B
+45.6
+46.1
+51.7
+43.5
+34.9
+53.3
+44.6
+44.3
+44.9
+Qwen3.8-27B
+Qwen3.8-27B
+41.0
+39.5
+48.3
+37.7
+37.2
+34.4
+44.0
+45.5
+42.3
+Evidence
+Seeking
+LongVideo-R1
+Qwen3-8B ∗
+39.0
+36.5
+39.3
+27.5
+33.7
+43.3
+44.0
+40.9
+47.4
+ParaVT-8B
+Qwen3-VL-8B ∗
+29.8
+28.1
+29.2
+42.0
+20.9
+23.3
+33.1
+35.2
+30.8
+Video-o3
+Qwen2.5-VL-7B ∗
+40.6
+40.1
+48.3
+43.5
+29.1
+40.0
+41.6
+37.5
+46.2
+VideoARM
+Qwen3.8-27B
+45.0
+43.7
+52.8
+39.1
+41.9
+40.0
+47.6
+42.0
+53.8
+VideoARM
+Gemini 3.7 Flash
+59.0
+56.0
+64.0
+56.5
+45.3
+57.8
+65.1
+68.2
+61.5
+Persistent
+Memory
+M3-Agent
+Qwen3-32B ∗
+33.6
+33.2
+41.6
+23.2
+31.4
+34.4
+34.3
+36.4
+32.1
+Light-Omni
+Qwen2.5-Omni-7B ∗
+37.4
+35.0
+47.2
+33.3
+27.9
+31.1
+42.2
+43.2
+41.0
+EG-Agent
+Qwen3.8-27B
+34.8
+34.1
+42.7
+27.5
+33.7
+31.1
+36.1
+39.8
+32.1
+EG-Agent
+Gemini 3.7 Flash
+52.2
+53.6
+69.7
+49.3
+46.5
+47.8
+49.4
+53.4
+44.9
+WorldMM
+Qwen3.8-27B
+47.6
+42.8
+46.1
+31.9
+36.0
+54.4
+57.2
+61.4
+52.6
+WorldMM
+Gemini 3.7 Flash
+58.8
+56.6
+58.4
+66.7
+43.0
+60.0
+63.3
+67.0
+59.0
+MAGIC-Video
+Qwen3.8-27B
+45.2
+43.1
+53.9
+31.9
+34.9
+48.9
+49.4
+48.9
+50.0
+MAGIC-Video
+Gemini 3.7 Flash
+58.6
+57.2
+61.8
+55.1
+41.9
+68.9
+61.4
+67.0 The failure modes mentioned above reveal the ambiguity of retrieved memories and motivate a new approach that goes beyond simple retrieval. Thus we propose SENRI-Agent , a controller workflow built upon existing constructed memories and augment the systems with a Target-Guided Visual Check (TGVC) module. The controller uses the retrieved candidates to propose local visual check tasks for parallel verifiers and integrate the reports into a working memory to help with reasoning. The workflow is illustrated in Figure  4 , which also shows the difference from the previous one.
+Figure 4: Overview of SENRI-Agent. (a) The previous workflow alternates
+between retrieving persi
+
+【实验】
+ Experimental Setup. SENRI-Agent is built upon two representative persistent memory methods, WorldMM and MAGIC-Video by reusing their constructed memories and retrieval
+interfaces. We evaluate SENRI-Agent on SENRI-Bench against the original workflows of the two
+baselines using two inference models, Qwen3.8-27B and Gemini 3.7 Flash. The
+maximum number of reasoning rounds is set to 5, followed by one answer round,
+as in the baselines. We keep 3 reports and 4 evidence frames per report in the working memory and set maximum 3 checks per verification.
+Main Results. Table  3 shows that
+SENRI-Agent improves all four configurations using the same stored memories
+and retrieval interfaces. With Gemini 3.7 Flash, WorldMM improves from
+58.8% to 62.6% and MAGIC-Video from 58.6% to 61.8%. With Qwen3.8-27B,
+they improve from 47.6% to 50.4% and from 45.2% to 47.8%, respectively.
+The overall gains range from 2.6 to 3.8 percentage points, with improvements
+on both ES and SE across all four configurations. This supports the benefit
+of targeted verification and evidence retention across the tested systems.
+Table 3: Results of SENRI-Agent on SENRI-Bench across different models. All are accuracy (%).
+Memory system
+Inference model
+Workflow
+Total
+ES
+L
+NP
+OC
+RR
+SE
+RER
+TER
+WorldMM
+Qwen3.8-27B
+Original
+47.6
+42.8
+46.1
+31.9
+36.0
+54.4
+57.2
+61.4
+52.6
+SENRI-Agent
+50.4
+46.1
+56.2
+34.8
+38.4
+52.2
+59.0
+63.6
+53.8
+WorldMM
+Gemini 3.7 Flash
+Original
+58.8
+56.6
+58.4
+66.7
+43.0
+60.0
+63.3
+67.0
+59.0
+SENRI-Agent
+62.6
+62.0
+66.3
+63.8
+48.8
+68.9
+63.9
+70.5
+56.4
+MAGIC-Video
+Qwen3.8-27B
+Original
+45.2
+43.1
+53.9
+31.9
+34.9
+48.9
+49.4
+48.9
+50.0
+SENRI-Agent
+47.8
+45.2
+55.1
+42.0
+36.0
+46.7
+53.0
+54.5
+51.3
+MAGIC-Video
+Gemini 3.7 Flash
+Original
+58.6
+57.2
+61.8
+55.1
+41.9
+68.9
+61.4
+67.0
+55.1
+SENRI-Agent
+61.8
+60.8
+66.3
+56.5
+52.3
+66.7
+63.9
+70.5
+56.4
+Table 4:
+Component ablations of SENRI-Agent on MAGIC-Video with Qwen3.8-27B. TG, PV, and WM denote target guidance, parallel verifiers, and working memory, respectively.
+Variant
+TG
+PV
+WM
+Total
+ES
+L
+NP
+OC
+RR
+SE
+RER
+TER
+SENRI-Agent
+✓
+✓
+✓
+47.8
+45.2
+55.1
+42.0
+36.0
+46.7
+53.0
+54.5
+51.3
+w/o Target Guidance
+✗
+✓
+✓
+45.0
+41.0
+50.6
+37.7
+25.6
+48.9
+53.0
+53.4
+52.6
+w/o Parallel Verifiers
+✓
+✗
+✓
+45.0
+41.6
+47.2
+36.2
+30.2
+51.1
+51.8
+55.7
+47.4
+w/o Working Memory
+✓
+✓
+✗
+44.0
+41.9
+50.6
+30.4
+36.0
+47.8
+48.2
+46.6
+50.0
+Ablation Studies. Table  4 reports component
+ablations on MAGIC-Video with Qwen3.8-27B. We remove target guidance by
+replacing structured verification tasks with a general observation prompt,
+remove parallel verifiers by assigning each check to a single verifier,
+and remove working memory by returning all accumulated reports and their
+supporting visual evidence to the controller. These changes reduce overall
+accuracy from 47.8% to 45.0%, 45.0%, and 44.0%, respectively,
+supporting the contr
+
+【结论/局限】
+References
+A More Details of SENRI-Bench
+A.1 More Questions, Options and Answers
+A.2 More Evaluation Details
+Direct video perception.
+Evidence-seeking systems.
+Persistent-memory systems.
+Metrics and aggregation.
+B More Details of SENRI-Agent
+B.1 Structured Target-Guided Tasks
+B.2 Adaptive Temporal Cells
+B.3 Key Prompt Excerpts
+Controller.
+Visual verifier.
+Working-memory updater.
+C More Experiments
+C.1 Effect of Number of Frames Sampled
+C.2 Per-Video Analysis
+C.3 Comparison with No Visual Input
+D Limitations and Future Work
+Benchmark scope.
+Comparing ES and SE. In this work, we introduced SENRI, a new perspective on long video understanding that focuses on the nexus between events and their spatial contexts. We instantiated this problem in SENRI-Bench, a benchmark of long, uninterrupted, self-recorded egocentric videos with six task types spanning two complementary directions, Event → \rightarrow Space and Space → \rightarrow Event. Through an extensive evaluation of direct perception, evidence seeking, and persistent memory approaches, we found that existing systems still struggle on this task. Our analysis further revealed two representative limitations of current memory systems. 

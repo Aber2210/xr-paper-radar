@@ -1,0 +1,68 @@
+【摘要】
+
+【方法】
+3.1 Preliminaries
+3.2 Geometric Warp-Residual Decomposition
+3.3 Scene-Agnostic Training Objectives 3.1 Preliminaries
+Task definition.
+Given a single RGB image 𝐈 ∈ ℝ H × W × 3 \mathbf{I}\in\mathbb{R}^{H\times W\times 3} and V V target camera trajectories { 𝝅 v } v = 1 V \{\boldsymbol{\pi}^{v}\}_{v=1}^{V} , where each trajectory 𝝅 v = { c t v } t = 1 L \boldsymbol{\pi}^{v}=\{c^{v}_{t}\}_{t=1}^{L} specifies L L camera poses, our goal is to synthesize novel views { 𝐱 ^ t v } \{\hat{\mathbf{x}}^{v}_{t}\} at all target viewpoints and timesteps.
+Following LYRA  [ 1 ] , we represent the scene as 3D Gaussian primitives 𝒢 \mathcal{G} , which support efficient differentiable rendering at arbitrary camera poses.
+The Plücker ray embeddings 𝐑 \mathbf{R} , computed from the target camera poses { c t v } \{c^{v}_{t}\} , encode the geometric relationship between each target viewpoint and the scene.
+PRISM builds upon LYRA  [ 1 ] , which reconstructs a 3D scene from 𝐈 \mathbf{I} by distilling a camera-controlled video diffusion model Gen3C  [ 31 ] into a feed-forward 3DGS decoder. Specifically, Gen3C generates videos 𝐗 = { 𝐱 v } v = 1 V \mathbf{X}=\{\mathbf{x}^{v}\}_{v=1}^{V} for all V = 6 V=6 trajectories ( L = 121 L=121 frames each) through iterative denoising.
+A pre-trained Cosmos VAE encoder ℰ \mathcal{E} then compresses 𝐗 \mathbf{X} into latents, and the frozen 3DGS decoder 𝒟 \mathcal{D} , adopted from LYRA, decodes them into 3D Gaussian primitives:
+𝐙 = ℰ ⁡ ( 𝐗 ) , 𝒢 = 𝒟 ⁡ ( 𝐙 , 𝐑 ) \mathbf{Z}=\mathcal{E}(\mathbf{X}),\quad\mathcal{G}=\mathcal{D}(\mathbf{Z},\mathbf{R})
+(1)
+where 𝐙 = { 𝐳 v } v = 1 V \mathbf{Z}=\{\mathbf{z}^{v}\}_{v=1}^{V} with each 𝐳 v ∈ ℝ T × C × h × w \mathbf{z}^{v}\in\mathbb{R}^{T\times C\times h\times w} , T = 16 T=16 , C = 16 C=16 , h = H / 8 h=H/8 , w = W / 8 w=W/8 .
+The Cosmos VAE temporally compresses L L raw frames to T = 16 T=16 latent frames (compression ratio ∼ 7.5 × {\sim}7.5{\times} ).
+Gen3C requires approximately 2.8 hours 1 1
+1
+Measured using the official LYRA codebase on the same A6000 GPU, at ∼ \sim 1,668 seconds per camera trajectory with L = 121 L=121 frames, which totals ∼ \sim 2.8 hours for V = 6 V=6 trajectories. per scene for new view synthesis, as its denoising process across V × L = 726 V\times L=726 frames dominates the total inference time.
+As illustrated in Fig.  3 , PRISM addresses this bottleneck with a fast feed-forward encoder that approximates 𝐙 \mathbf{Z} without iterative diffusion.
+The intermediate features of the decoder’s cross-view attention layers, which aggregate information across all V V views and encode geometric relationships that generalize across scenes, serve as distillation targets during training.
+Figure 4 : Two-stage training pipeline of PRISM. The residual encoder predicts latents from the reference image (see Fig.  3 for encoder input details), while Ground Truth (GT) latents are generated offline via Gen3C and the Cosmos VAE encoder. Both sets of latents are passed through the frozen 3DGS decoder. In Stage 1 (a), intermediate decoder features are aligned via cosine similarity loss. In Stage 2 (b), rendered images are compared against GT images via an LPIPS and MSE loss.
+3.2 Geometric War
+
+【实验】
+4.1 Experimental Setup
+4.2 Main Results
+4.3 Ablation Studies
+4.4 Qualitative Visualizations
+4.5 Latents Distillation Layer Analysis
+4.6 Efficiency Analysis
+4.7 Coverage and Scene-Complexity Analysis 4.1 Experimental Setup
+Datasets and baselines.
+We evaluate PRISM on three benchmarks: RealEstate10K  [ 58 ] (RE10K), DL3DV  [ 18 ] , and Tanks-and-Temples  [ 13 ] (T&T), reporting PSNR, SSIM, and LPIPS on all three at 704 × 1280 704\times 1280 resolution.
+We sample frames at a stride of 2, 1, and 3 respectively, taking 14 targets per clip, over 300 RE10K scenes, 140 DL3DV scenes, and 28 T&T clips.
+We compare against a variety of baselines including ZeroNVS  [ 35 ] , ViewCrafter  [ 56 ] , Wonderland  [ 16 ] , and LYRA  [ 1 ] .
+Since only LYRA releases public code, Table  1 reports every baseline’s numbers as stated in its own paper, and we re-evaluate LYRA’s full pipeline under our own protocol, alongside a frame-sampling-stride sensitivity analysis in Supp. Sec. 6.
+
+【结论/局限】
+References In this work, we present PRISM, a feed-forward framework for single-image 3D reconstruction that shows diffusion sampling supervises training but is not needed at inference to synthesize competitive novel views.
+PRISM separates what geometry can already explain from what remains uncertain, which allows a lightweight feed-forward encoder to replace iterative diffusion sampling at inference.
+The two-stage training strategy transfers a model trained without real-world supervision to real scenes: latents supervised distillation aligns the encoder with the frozen 3DGS decoder, and perceptual fine-tuning closes the appearance gap.
+PRISM matches geometry-based reconstruction in efficiency while staying competitive in fidelity.
+References
+[1]
+S. Bahmani, T. Shen, J. Ren, J. Huang, Y. Jiang, H. Turki, A. Tagliasacchi, D. B. Lindell, Z. Gojcic, S. Fidler, et al. (2025)
+LYRA: generative 3D scene reconstruction via video diffusion model self-distillation .
+External Links: 2509.19296
+Cited by: Figure 1 ,
+Figure 1 ,
+Figure 2 ,
+Figure 2 ,
+§1 ,
+§1 ,
+§1 ,
+§2 ,
+§3.1 ,
+§3.1 ,
+Table 1 ,
+Figure 5 ,
+Figure 5 ,
+§4.1 ,
+§4.1 ,
+§4.2 ,
+§4.7 .
+[2]
+A. Cao, C. Rockwell, and J. Johnson (2022)
+FWD: rea

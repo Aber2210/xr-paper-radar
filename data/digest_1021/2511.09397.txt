@@ -1,0 +1,75 @@
+【摘要】
+
+【方法】
+3.1 Preliminary: 3D Gaussian Splatting
+3.2 Mapping 3D Gaussian Parameter Uncertainty to Pixel-wise Object-aware Uncertainty
+3.3 Updating Uncertainty With FIM 3.1 Preliminary: 3D Gaussian Splatting
+Our method builds upon the 3D Gaussian Splatting (3DGS) framework  [ KKLD23 ] , which represents a scene as a collection of anisotropic 3D Gaussian primitives 𝒢 = { 𝒢 i } i = 1 N g \mathcal{G}=\{\mathcal{G}_{i}\}_{i=1}^{N_{g}} . To ground our uncertainty analysis, we first provide a detailed list of the parameters used in the differentiable rendering pipeline. Each Gaussian 𝒢 i \mathcal{G}_{i} is fully described by a parameter vector θ i \theta_{i} :
+θ i = [ 𝝁 i ⏟ Center , 𝐬 i ⏟ Scale , 𝐪 i ⏟ Rotation , α i ⏟ Opacity , 𝐟 i dc , 𝐟 i sh ⏟ Color (SH) ] ⊤ \theta_{i}=\left[\underbrace{\boldsymbol{\mu}_{i}}_{\text{Center}},\underbrace{\mathbf{s}_{i}}_{\text{Scale}},\underbrace{\mathbf{q}_{i}}_{\text{Rotation}},\underbrace{\alpha_{i}}_{\text{Opacity}},\underbrace{\mathbf{f}_{i}^{\text{dc}},\mathbf{f}_{i}^{\text{sh}}}_{\text{Color (SH)}}\right]^{\top}
+(1)
+where the components are:
+•
+Geometry: The 3D center 𝝁 i ∈ ℝ 3 \boldsymbol{\mu}_{i}\in\mathbb{R}^{3} , an anisotropic scaling vector 𝐬 i ∈ ℝ + 3 \mathbf{s}_{i}\in\mathbb{R}^{3}_{+} , and an orientation quaternion 𝐪 i ∈ 𝕊 3 \mathbf{q}_{i}\in\mathbb{S}^{3} . Together, these define the Gaussian’s position, size, and orientation.
+•
+Appearance: A scalar opacity value α i ∈ ℝ \alpha_{i}\in\mathbb{R} and view-dependent color modeled by Spherical Harmonics (SH). The color is parameterized by the degree-0 (DC) term 𝐟 i dc ∈ ℝ 3 \mathbf{f}_{i}^{\text{dc}}\in\mathbb{R}^{3} and a set of higher-order coefficients 𝐟 i sh ∈ ℝ 3 × 15 \mathbf{f}_{i}^{\text{sh}}\in\mathbb{R}^{3\times 15} .
+A visual breakdown of these parameters is provided in Figure  3 shows these parameters visually.
+Figure 3 : The parameterization of a 3D Gaussian primitive. Each Gaussian, the fundamental building block of our scene representation, is defined by a set of explicit physical parameters. Our method’s core innovation lies in directly quantifying the uncertainty of these physical parameters.
+Rendering in 3DGS uses a differentiable splatting approach based on standard alpha compositing. First, the 3D Gaussians are projected onto the 2D image plane and sorted in front-to-back order based on their depth. The color C ⁡ ( u ) C(u) for a pixel u u is then accumulated as:
+C ⁡ ( u ) = ∑ i ∈ ℐ ⁡ ( u ) c i ​ ( u ) ​ α i ′ ​ ( u ) ​ ∏ j = 1 i − 1 ( 1 − α j ′ ​ ( u ) ) C(u)=\sum_{i\in\mathcal{I}(u)}c_{i}(u)\alpha^{\prime}_{i}(u)\prod_{j=1}^{i-1}\left(1-\alpha^{\prime}_{j}(u)\right)
+(2)
+where ℐ ⁡ ( u ) \mathcal{I}(u) is the ordered list of Gaussians overlapping the pixel u u , c i ​ ( u ) c_{i}(u) is the view-dependent color evaluated from SH. The effective opacity α i ′ ​ ( u ) \alpha^{\prime}_{i}(u) is determined by modulating the Gaussian’s learned opacity parameter α i \alpha_{i} by its projected 2D profile at the pixel location.
+3.2 Mapping 3D Gaussian Parameter Uncertainty to Pixel-wise Object-aware Uncertainty
+To quantify uncertainty, we treat the parameter vector of each Gaussian as a random variable and initialize it with a Gaussian prior,
+θ i ∼ 𝒩 ⁡
+
+【实验】
+4.1 Experimental Setup
+4.2 Quantitative Results
+4.3 Qualitative Results
+4.4 Ablation Study Figure 4 : Object - aware approach speeds up convergence.
+Curves are recorded on the statue scene of the LF dataset as new views are added.
+Top row: panoramic PSNR/SSIM/LPIPS; middle row: the same metrics evaluated only inside the object mask.
+Bottom strip: visual progression at 5, 10, 15 and 20 views (ours in the first row, FisherRF below); red circles mark regions where the competing method keeps struggling while our reconstruction sharpens steadily.
+4.1 Experimental Setup
+GT
+OUGS
+FisherRF
+Random
+Figure 5 : Qualitative result on Mip - NeRF360. From left to right are ground truth, Ours (OUGS), FisheRF, and Random. Each row corresponds to a different scene. 20 views were selected to train a model and render the result on the test set. The blue box circles the object of our interest, while the red box circles some of the background.
+Dataset
+We conduct our evaluation across three public datasets for a comprehensive experiment. Mip-NeRF 360   [ BMV∗22 ]
+contains four bounded indoor rooms with strong specular clutter and five unbounded outdoor scenes with foliage occlusion and high dynamic range lighting.
+We follow the 3DGS protocol  [ KKLD23 ] :
+every 8 th view is held out for testing.
+We also experiment on Light-Field (LF) dataset [ YSHWSH16 ] , which offers four tabletop objects torch , statue , basket ,
+and africa captured by a motorised gantry.
+A salient trait is the foreground-centric framing : each
+target object remains centred across all views, yielding
+stable masks from SAM-2 and making the dataset ideal for
+evaluating per-object calibration.
+In addition we target the train and truck from Tanks & Temples (TNT)   [ KPZK17 ] , which offers large-scale, drone-style outdoor captures characterised by long-baseline parallax and strong depth discontinuities.
+Inspired by the sparse-view protocol of Shen  [ SAMNR22 ] , we additionally include intentionally biased and imbalanced camera orbits. They exacerbate parallax/occlusion artifacts and thus form a stress test for Fisher-based uncertainty modeling.
+All RGB frames are kept at full original resolution to preserve fine geometric cues; no cropping or scaling is applied.
+Baselines We compare our approach against several state-of-the-art methods that
+explicitly model uncertainty for next-best-view (NBV)
+selection. Our baseline pool includes:
+ActiveNeRF   [ PLSH22 ] ,
+FisherRF   [ JLD24 ] , and
+Bayes’ Rays   [ GRS∗24 ] . Furthermore, to ensure a thorough comparison against the state-of-the-art, we include GauSS-MI   [ XCZ∗25 ] , a recent information-theoretic method that represents the state-of-the-art in scene-level active reconstruction. We also note the concurrent work POp-GS   [ WAM∗25 ] , which also focuses on ne
+
+【结论/局限】
+References
+A Jacobian–Covariance Propagation
+B FIM Approximation and Online Update
+B.1 Full Fisher Matrix under Gaussian Image Noise
+B.2 Diagonal Approximation with Tikhonov Regularisation
+B.3 Exponential-Moving-Average (EMA) Update
+B.4 Object-Aware Pixel Covariance
+License: arXiv.org perpetual non-exclusive license
+arXiv:2511.09397v2 [cs.CV] 15 Dec 2025
+\ConferenceSubmission
+OUGS: Active View Selection via Object-aware Uncertainty Estimation in 3DGS
+Volume:  45 Issue:  2 Preprint:
+Haiyi Li Qi Chen Denis Kalkofen Hsiang - Ting Chen
+† † thanks: Corresponding author: tim.chen@adelaide.edu.au We introduced OUGS, an object-aware uncertainty estimation framework for active view selection in 3DGS. Our work presents a fundamental shift in how uncertainty is modeled for explicit representations. By deriving uncertainty directly from the physical parameters of the 3D Gaussian primitives, we establish a more principled and interpretable link between the 3D scene representation and the rendered 2D image.
+Our method projects this parameter-level covariance into pixel space and, by coupling it with semantic masks, produces an uncertainty score that effectively disentangles the object of interes

@@ -1,0 +1,167 @@
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from and Developer Experience
+4.2 Building Blocks
+4.2.1 B1: Splat Renderer
+Developer Workflow and Developer Experience
+SplatXR is implemented as a Unity package, thus making it easily installable through Unity’s Package Manager.
+It features a developer-facing graphical interface, integrated into the Unity Editor, that provides access to a set of well-defined building blocks through panels, scripts, materials, and shaders.
+Building blocks can be implemented as needed, and previewed interactively in the Unity Editor scene view.
+Notably, this makes SplatXR ’s splat renderer compatible with non-XR applications as well.
+4.2. Building Blocks
+SplatXR comprises four main building blocks:
+B1:
+a Splat Renderer building block enabling splat rendering on XR headsets in passthrough AR or full VR with computational constraints
+B2:
+a Splat Physics building block based on our mesh augmentation procedures, enabling both shadows, cast from splats onto the environment, and rigid-body collisions between splats, classical meshes, and the environment
+B3:
+a Splat Effects building block based on customizable shader programs, enabling compelling visual experiences such as object dis- and re-integration
+B4:
+a Splat Blending building block enabling blending between the physical scene and the virtual scene in AR
+Building blocks can be accessed by developers via the developer interface , which is implemented as a dedicated panel in the Unity Editor. Actions performed in the developer interface add or modify assets in the project folder as well as game objects and attached components in the scene hierarchy. We show our editor interface in more detail in Appendix A.1 .
+4.2.1. B1: Splat Renderer
+The Splat Renderer building block comprises a 3D Gaussian splat rendering pipeline designed for compatibility with standalone XR devices, including Meta Quest and Apple Vision Pro.
+On both Quest and Vision Pro, it can render fully immersive splat-based VR scenes, and on Quest, it can render splats and blend them with the passthrough layer for situated AR experiences. 2 2
+2
+Apple Vision Pro is supported, but passthrough shader functionality is currently limited by Apple’s PolySpatial platform.
+It can be executed untethered on standalone headsets or tethered to a PC. 
+
+【实验】
+strategies for hci toolkit research .
+In Proceedings of the 2018 CHI conference on human factors in computing systems ,
+pp. 1–17 .
+Cited by: §2.4 ,
+§7 .
+Lee et al. (2022)
+J. Lee, R. Natarrajan, S. S. Rodriguez, P. Panda, and E. Ofek
+Remotelab: a vr remote study toolkit .
+In Proceedings of the 35th Annual ACM Symposium on User Interface Software and Technology ,
+pp. 1–9 .
+Cited by: §2.4 .
+Lee et al. (2025)
+J. Lee, J. Kim, J. Park, and J. Sim
+VR-pipe: streamlining hardware graphics pipeline for volume rendering .
+External Links: 2502.17078 ,
+Link
+Cited by: §2.3 .
+Li et al. (2025a)
+K. Li, M. Masuda, S. Schmidt, and S. Mori
+Radiance fields in xr: a survey on how radiance fields are envisioned and addressed for xr research .
+External Links: 2508.04326 ,
+Link
+Cited by: §2.3 .
+Li et al. (2023)
+K. Li, T. Rolff, S. Schmidt, R. Bacher, W. Leemans, and F. Steinicke
+Interacting with neural radiance fields in immersive virtual reality .
+In Extended Abstracts of the 2023 CHI Conference on Human Factors in Computing Systems ,
+pp. 1–4 .
+Cited by: §2.3 .
+Li et al. (2025b)
+Z. Li, J. Li, Z. Xiong, S. Zhang, F. Faruqi, S. Mueller, C. Liang, X. Ma, and M. Fan
+InteRecon: towards reconstructing interactivity of personal memorable items in mixed reality .
+In Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems ,
+pp. 1–19 .
+Cited by: §2.2 .
+Lipkowitz (2024)
+G. Lipkowitz
+Palimpsest: a spatial user interface toolkit for cohering tracked physical entities and interactive 3d content .
+In Adjunct Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology ,
+pp. 1–4 .
+Cited by: §2.4 .
+LumaAI (2023)
+LumaAI
+Lumalabs.ai .
+Cited by: §2.2 ,
+§2.5 ,
+§2.5 .
+Luo et al. (2025)
+Z. Luo, Z. Cui, S. Luo, M. Chu, and M. Li
+VR-doh: hands-on 3d modeling in virtual reality .
+ACM Trans. Graph. 44 ( 4 ).
+External Links: ISSN 0730-0301 ,
+Link ,
+Document
+Cited by: §2.3 .
+Ly et al. (2025)
+C. Ly, E. Peng, K. Liu, A. Qin, G. Howe, A. Y. Cheng, and A. Cuadra
+Museum in the classroom: engaging students with augmented reality museum artifacts and generative ai .
+In Proceedings of the Extended Abstracts of the CHI Conference on Human Factors in Computing Systems ,
+pp. 1–8 .
+Cited by: §2.2 .
+MacIntyre et al. (2004)
+B. MacIntyre, M. Gandy, S. Dow, and J. D. Bolter
+DART: a toolkit for rapid design exploration of augmented reality experiences .
+In Proceedings of the 17th annual ACM symposium on User interface software and technology ,
+pp. 197–206 .
+Cited by: §2.4 .
+MetalSplatter (2024)
+MetalSplatter
+Https://github.com/scier/metalsplatter .
+Cited by: §2.3 .
+Mildenhall et al. (2020)
+B. Mildenhall, P. P. Srinivasan, M. Tancik, J. T. Barron, R. Ramamoorthi, and R. Ng
+NeRF: representing scenes as neural radiance fields for view synthesis .
+In ECCV ,
+Cited by: §1 .
+mkke
+
+【结论/局限】
+Acknowledgements
+References
+A Appendix
+A.1 Developer Interface
+Install from File
+Import Splat
+In-Editor Splat Rendering
+SplatXR Object Structure
+Splat Adjustments
+A.2 Technical Evaluation
+License: CC BY-NC-ND 4.0
+arXiv:2610.26338v1 [cs.HC] 19 Oct 2026
+SplatXR: A Toolkit for Multi-Layered Extended Reality via On-Headset 3D Gaussian Splatting
+Conference:  The 39th Annual ACM Symposium on User Interface Software and Technology; November 02–05, 2026; Detroit, MI, USA The 39th Annual ACM Symposium on User Interface Software and Technology (UIST ’26), November 02–05, 2026, Detroit, MI, USA DOI:  10.1145/3830398.3830681 ISBN:  979-8-4007-2856-3/2026/11 CCS:  Human-centered computing Interactive systems and tools CCS:  Human-centered computing Human computer interaction (HCI)
+Cyrus Vachha
+Affiliation:  Princeton University , Princeton, NJ , USA
+email: cvachha@princeton.edu
+,
+Mohamed Kari
+Affiliation:  Princeton University , Princeton, NJ , USA
+email: mokari@princeton.edu
+and
+Parastoo Abtahi
+Affiliation:  Princeton University , Princeton, NJ , USA
+email: parastoo@princeton.edu
+© cc
+Figure 1.
+Left: A developer composes an XR app using our SplatXR toolkit in Unity.
+Mid: The resulting app can 

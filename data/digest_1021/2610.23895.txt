@@ -1,0 +1,356 @@
+【摘要】
+
+【方法】
+Acc. ↓ \downarrow
+Comple. ↓ \downarrow
+CD ↓ \downarrow
+AbsRel ↓ \downarrow
+SqRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+DepthCons ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+2.505
+7.136
+9.641
+0.719
+10.081
+15.450
+0.100
+5.992
+PVG  Chen et al. (2026b)
+9.033
+3.946
+12.979
+0.780
+14.951
+8.210
+0.589
+4.538
+Deformable 3DGS  Yang et al. (2024)
+2.927
+6.420
+9.347
+0.818
+24.110
+14.407
+0.250
+8.196
+OmniRe  Chen et al. (2025)
+1.137
+0.489
+1.625
+0.152
+1.898
+5.229
+0.833
+4.629
+DrivingForward  Tian et al. (2025)
+1.228
+1.195
+2.423
+0.255
+3.365
+7.900
+0.666
+3.756
+ReconDrive  Yu et al. (2026a)
+3.735
+1.057
+4.793
+0.607
+23.662
+10.466
+0.680
+5.733
+DGGT  Chen et al. (2026a)
+1.690
+5.459
+7.149
+0.421
+6.041
+10.477
+0.461
+4.985
+GeoForward (Ours)
+0.674
+0.761
+1.435
+0.148
+1.548
+5.016
+0.849
+2.446
+Table 2 :
+Comparison of geometric accuracy and consistency on Waymo. Acc. ↓ \downarrow
+Comple. ↓ \downarrow
+CD ↓ \downarrow
+AbsRel ↓ \downarrow
+SqRel ↓ \downarrow
+RMSE ↓ \downarrow
+δ 1.25 \delta_{1.25} ↑ \uparrow
+DepthCons ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+3.189
+1.520
+4.710
+0.356
+8.818
+9.549
+0.586
+2.799
+PVG  Chen et al. (2026b)
+7.969
+5.089
+13.058
+0.562
+11.490
+8.519
+0.609
+2.026
+Deformable 3DGS  Yang et al. (2024)
+2.389
+4.624
+7.012
+0.512
+8.208
+13.837
+0.294
+1.503
+STORM  Yang et al. (2025)
+1.018
+0.815
+1.833
+0.185
+2.526
+6.564
+0.806
+1.272
+StreetForward  Yu et al. (2026c)
+4.882
+4.270
+9.152
+0.457
+9.152
+12.069
+0.498
+16.826
+Envision4D  Song et al. (2026)
+3.134
+4.512
+7.646
+0.319
+5.915
+9.356
+0.664
+7.627
+GeoForward
+0.569
+0.688
+1.257
+0.104
+0.875
+3.993
+0.917
+1.477
+Table 3 : Comparison of rendering quality on nuScenes and Waymo.
+nuScenes Visual Scene
+Reconstruction
+Novel-View
+Synthesis
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+26.090
+0.774
+0.430
+18.942
+0.621
+0.515
+PVG  Chen et al. (2026b)
+33.040
+0.923
+0.213
+27.416
+0.810
+0.302
+DeformableGS  Yang et al. (2024)
+25.185
+0.760
+0.412
+22.188
+0.692
+0.451
+OmniRe  Chen et al. (2025)
+30.597
+0.921
+0.193
+23.474
+0.688
+0.332
+DrivingForward  Tian et al. (2025)
+23.791
+0.878
+0.131
+18.240
+0.665
+0.303
+ReconDrive  Yu et al. (2026a)
+33.295
+0.961
+0.059
+23.986
+0.730
+0.259
+DGGT  Chen et al. (2026a)
+22.503
+0.803
+0.305
+22.498
+0.808
+0.307
+GeoForward (Ours)
+36.615
+0.987
+0.032
+23.191
+0.730
+0.279
+Waymo Visual Scene
+Reconstruction
+Novel-View
+Synthesis
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Street Gaussians  Yan et al. (2024)
+34.5317
+0.9558
+0.0985
+25.6590
+0.7932
+0.2333
+PVG  Chen et al. (2026b)
+35.5709
+0.9505
+0.1212
+26.9835
+0.7998
+0.2516
+DeformableGS  Yang et al. (2024)
+27.3924
+0.8327
+0.3274
+19.8208
+0.6105
+0.4921
+STORM  Yang et al. (2025)
+21.6821
+0.7362
+0.3025
+21.0298
+0.7032
+0.3251
+StreetForward  Yu et al. (2026c)
+25.9594
+0.7872
+0.1734
+24.5113
+0.7470
+0.2165
+Envision4D  Song et al. (2026)
+32.5785
+0.9518
+0.0694
+25.0997
+0.7490
+0.2337
+GeoForward (Ours)
+32.2823
+0.9329
+0.0797
+25.5167
+0.8026
+0.1965
+(a) Qualitative comparison in a nuScenes driving scene.
+(b) Qualitative comparison in a dynamic traffic scene from the Waymo dataset.
+Figure 4 : Qualitative reconstruction results. For each method, the uppe
+
+【实验】
+4.1 Main Results
+4.2 Ablation Studies Table 1 :
+Comparison of geometric accuracy and consistency
+on nuScenes. provide a comparison to a model designed for future appearance and
+motion prediction.
+Appendix C Evaluation
+We provide detailed definitions of the image reconstruction and geometric
+metrics used in our experiments as follows.
+Image Reconstruction Quality.
+Following ReconDrive  Yu et al. [2026a] , we report PSNR, SSIM, and LPIPS
+for both visual scene reconstruction and novel-view synthesis. Let I ^ \hat{I}
+and I I denote the rendered and reference images, respectively, and let M M
+be the total number of evaluated pixel values. These metrics are defined as
+MSE \displaystyle\mathrm{MSE}
+= 1 M ∑ j = 1 M ( I ^ j − I j ) 2 , PSNR = 10 log 10 ( L 2 MSE ) , \displaystyle=\frac{1}{M}\sum_{j=1}^{M}(\hat{I}_{j}-I_{j})^{2},\qquad\mathrm{PSNR}=10\log_{10}\left(\frac{L^{2}}{\mathrm{MSE}}\right),
+SSIM ⁡ ( x , y ) \displaystyle\mathrm{SSIM}(x,y)
+= ( 2 ​ μ x ​ μ y + C 1 ) ​ ( 2 ​ σ x ​ y + C 2 ) ( μ x 2 + μ y 2 + C 1 ) ​ ( σ x 2 + σ y 2 + C 2 ) , \displaystyle=\frac{(2\mu_{x}\mu_{y}+C_{1})(2\sigma_{xy}+C_{2})}{(\mu_{x}^{2}+\mu_{y}^{2}+C_{1})(\sigma_{x}^{2}+\sigma_{y}^{2}+C_{2})},
+LPIPS ⁡ ( I , I ^ ) \displaystyle\mathrm{LPIPS}(I,\hat{I})
+= ∑ l 1 H l ​ W l ​ ∑ h , w ‖ 𝐰 l ⊙ ( ϕ ~ l ​ ( I ) h ​ w − ϕ ~ l ​ ( I ^ ) h ​ w ) ‖ 2 2 . \displaystyle=\sum_{l}\frac{1}{H_{l}W_{l}}\sum_{h,w}\left\|\mathbf{w}_{l}\odot\left(\tilde{\phi}_{l}(I)_{hw}-\tilde{\phi}_{l}(\hat{I})_{hw}\right)\right\|_{2}^{2}.
+Here, L L is the maximum image intensity. For SSIM, x x and y y denote
+corresponding local image windows; μ \mu , σ 2 \sigma^{2} , and σ x ​ y \sigma_{xy} are
+their local means, variances, and covariance, while C 1 C_{1} and C 2 C_{2} are
+stabilizing constants. For LPIPS, ϕ ~ l ​ ( ⋅ ) \tilde{\phi}_{l}(\cdot) denotes normalized
+deep features at layer l l , and 𝐰 l \mathbf{w}_{l} denotes the corresponding
+channel weights. PSNR measures pixel-level fidelity, SSIM evaluates luminance,
+contrast, and structural similarity, and LPIPS measures perceptual discrepancy
+in deep feature space. Higher PSNR and SSIM and lower LPIPS indicate better
+image quality.
+Point-Cloud Reconstruction.
+Following DVGT  Zuo et al. [2026] , let 𝒫 \mathcal{P} and 𝒢 \mathcal{G} denote
+the predicted and reference point clouds, respectively. Accuracy and
+Completeness are defined as
+Accuracy \displaystyle\mathrm{Accuracy}
+= 1 | 𝒫 | ∑ 𝐩 ∈ 𝒫 min 𝐠 ∈ 𝒢 ∥ 𝐩 − 𝐠 ∥ 2 , Completeness = 1 | 𝒢 | ∑ 𝐠 ∈ 𝒢 min 𝐩 ∈ 𝒫 ∥ 𝐠 − 𝐩 ∥ 2 . \displaystyle=\frac{1}{|\mathcal{P}|}\sum_{\mathbf{p}\in\mathcal{P}}\min_{\mathbf{g}\in\mathcal{G}}\|\mathbf{p}-\mathbf{g}\|_{2},\qquad\mathrm{Completeness}=\frac{1}{|\mathcal{G}|}\sum_{\mathbf{g}\in\mathcal{G}}\min_{\mathbf{p}\in\mathcal{P}}\|\mathbf{g}-\mathbf{p}\|_{2}.
+Accuracy measures the fi
+
+【结论/局限】
+References
+A Datasets
+B Baselines
+C Evaluation
+Image Reconstruction Quality.
+Point-Cloud Reconstruction.
+Depth Accuracy.
+Cross-Camera Consistency.
+D Additional Results
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.23895v1 [cs.CV] 28 Sep 2026
+GeoForward: Geometry-Guided Cross-View Alignment for Feedforward 3D Gaussian Splatting
+Yiming Shu
+† † thanks: Equal contribution.
+Affiliation:  The University of Hong Kong
+Peng Sun 1 1 footnotemark:
+1
+Affiliation:  Leapmotor
+Lang Zhang
+† † thanks: Project leader.
+Affiliation:  Leapmotor
+Mingyue Feng
+Affiliation:  Leapmotor
+Yaonong Wang
+Affiliation:  Leapmotor
+Pei Liu
+† † thanks: Corresponding author.
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou)
+Chen Sun
+Affiliation:  The University of Hong Kong
+Jun Ma
+Affiliation:  The Hong Kong University of Science and Technology (Guangzhou)  .
+We introduced GeoForward, which uses sparse LiDAR to align camera features for depth and Gaussian prediction from calibrated multi-camera observations of driving scenes. Bounded local refinement reduces residual cross-camera projection errors, while global multi-view context complements the aligned local features. This de

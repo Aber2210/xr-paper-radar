@@ -1,0 +1,97 @@
+【摘要】
+
+【方法】
+III-A Preliminaries
+III-A 1 NeRF Rendering
+III-A 2 Static illumination
+III-B Moving illumination
+III-C Illumination Field and Its SO(3) Transport
+III-D SH Basis for Irradiance
+III-E Vectorized SH Irradiance
+III-F Analytic Rotation of the Illumination Field
+III-G Albedo × \times Irradiance Factorization and Rendering
+III-H Training Loss III-A Preliminaries
+III-A 1 NeRF Rendering
+We build upon the volumetric rendering framework of NeRF  [ 4 ] .
+A scene is represented by two functions: a volume density σ ⁡ ( 𝒙 ) \sigma(\bm{x}) of 3D position 𝒙 \bm{x} , and a directional emitted color 𝒄 ⁡ ( 𝒙 , 𝒅 ) \bm{c}(\bm{x},\bm{d}) of position and viewing direction 𝒅 \bm{d} . A camera ray 𝒓 ⁡ ( τ ) = 𝒐 + τ ​ 𝒅 \bm{r}(\tau)=\bm{o}+\tau\bm{d} is discretized into N N samples 𝒙 i = 𝒓 ⁡ ( τ i ) \bm{x}_{i}=\bm{r}(\tau_{i}) , and the pixel color is obtained by alpha compositing,
+C ^ ( 𝒓 ) = ∑ i = 1 N T i ( 1 − e − σ i ​ δ i ) 𝒄 i , T i = exp ( − ∑ j < i σ j δ j ) , \hat{C}(\bm{r})=\sum_{i=1}^{N}T_{i}\big(1-e^{-\sigma_{i}\delta_{i}}\big)\bm{c}_{i},~~~T_{i}=\exp\Big(-\sum_{j<i}\sigma_{j}\delta_{j}\Big),
+(1)
+where δ i = τ i + 1 − τ i \delta_{i}=\tau_{i+1}-\tau_{i} and T i T_{i} is the accumulated transmittance from the camera to sample i i .
+III-A 2 Static illumination
+For a surface point 𝒙 \bm{x} with normal 𝒏 \bm{n} (evaluated at the ray’s expected termination and oriented along the negative density gradient), let L ⁡ ( 𝒙 , 𝝎 𝒊 ) L(\bm{x},\bm{\omega_{i}}) denote the radiance incident from direction 𝝎 ∈ S 2 = { 𝝎 ∈ ℝ 3 : ‖ 𝝎 ‖ = 1 } \bm{\omega}\in S^{2}=\{\bm{\omega}\in\mathbb{R}^{3}:\|\bm{\omega}\|=1\} , and the bidirectional reflectance distribution function (BRDF) as f r ​ ( 𝝎 𝒊 , 𝝎 𝒐 ) f_{r}(\bm{\omega_{i},\omega_{o}}) . The outgoing radiance toward 𝝎 o \bm{\omega}_{o} is given by the reflection equation  [ 29 ] ,
+B ⁡ ( 𝒙 , 𝒏 , 𝝎 𝒐 ) = ∫ S 2 L ⁡ ( 𝒙 , 𝝎 𝒊 ) ​ f r ​ ( 𝝎 𝒊 , 𝝎 𝒐 ) ​ max ⁡ ( 0 , 𝝎 i ⋅ 𝒏 ) ​ d ​ 𝝎 i , B(\bm{x},\bm{n},\bm{\omega_{o}})=\int_{S^{2}}L(\bm{x},\bm{\omega_{i}})f_{r}(\bm{\omega_{i},\omega_{o}})\max(0,\bm{\omega}_{i}\cdot\bm{n})\mathrm{d}\bm{\omega}_{i},
+(2)
+For a Lambertian surface with albedo ρ ⁡ ( 𝒙 ) \rho(\bm{x}) the BRDF becomes
+f r = ρ ⁡ ( 𝒙 ) / π f_{r}=\rho(\bm{x})/\pi , which can be taken outside the integral, so that
+B ⁡ ( 𝒙 , 𝒏 ) = ρ ⁡ ( 𝒙 ) π ​ E ​ ( 𝒙 , 𝒏 ) = ρ ⁡ ( 𝒙 ) π ​ ∫ S 2 L ⁡ ( 𝒙 , 𝝎 ) ​ max ⁡ ( 0 , 𝝎 ⋅ 𝒏 ) ​ 𝑑 𝝎 , B(\bm{x},\bm{n})=\frac{\rho(\bm{x})}{\pi}E(\bm{x},\bm{n})=\frac{\rho(\bm{x})}{\pi}\int_{S^{2}}L(\bm{x},\bm{\omega})\max(0,\bm{\omega}\cdot\bm{n})\mathrm{d}\bm{\omega},
+(3)
+which depends on the surface point and its normal, and E E is the irradiance. Because L L is frame-invariant, standard NeRF baked the illumination and albedo into a single appearance field 𝒄 \bm{c} , and therefore does not separate them.
+III-B Moving illumination
+In the moving-light setting, the camera carries the illumination source. Let the camera pose at frame t t be ( R t , 𝒑 t ) (R_{t},\bm{p}_{t}) , mapping canonical (camera) coordinates to world coordinates as 𝒙 = R t ​ 𝒙 c + 𝒑 t \bm{x}=R_{t}\bm{x}^{c}+\bm{p}_{t} . The light source is fixed in the canonical frame, with free-space emitted radiance L c ​ ( 𝒙 c , 𝝎 c ) L_{c}(\bm{x}^{c},\bm{\
+
+【实验】
+IV-A Datasets
+IV-B Baselines
+IV-C Metrics
+IV-D Training Setup
+V Results
+V-A Quantitative Results
+V-B Qualitative Results
+V-C Ablation Study
+V-C 1 Influence of the Rotated-Irradiance Term
+V-C 2 Influence of the SH order
+VI Conclusion and Limitation
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.24811v1 [cs.CV] 17 Oct 2026
+Directionally Factorized Illumination with Spherical Harmonic Rotation
+Yimeng Dou
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Adam M. Saunders
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Andre T. S. Hucke
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Michael E. Kim
+Affiliation:  Department of Computer Science, Vanderbilt University, Nashville, TN, USA;
+Adam W. Anderson
+Eric R. Tkaczyk
+Affiliation:  Department of Electrical and Computer Engineering, Vanderbilt University, Nashville, TN, USA;
+Affiliation:  Department of Biomedical Engineering, Vanderbilt University, Nashville, TN, USA;
+Affiliation:  Department of Dermatology, Vanderbilt University Medical Center;
+Affiliation:  Veterans Affairs Tennessee Valley Healthcare System
+Bennett A. Landman
+Daniel Moyer
+† † thanks: *This work was supported by the National Institutes of Health under award numbers U54DK134302, U54EY032442, R01EB017230, R01HL169944. This work was also partially supported by VA MERIT award I01 CX002721 from the United States Department of Veterans Affairs Clinical Science R&D Service, and by the Alzheimer’s Disease Sequencing Project Phenotype Harmonization Consortium (ADSP-PHC) that is funded by NIA (U24 AG074855, U01 AG068057 and R01 AG059716).
+Affiliation:  Department of Computer Science, Vanderbilt University, Nashville, TN, USA;
+Affiliation:  Department of Radiology and Radiological Sciences, Vanderbilt University Medical Center, Nashville, TN, USA;
+Affiliation:  Vanderbilt University Institute of Imaging Science, Vanderbilt University Medical Center, Nashville, TN, USA; IV-A Datasets
+We evaluate on the public DarkRobotic dataset  [ 8 ] , captured with a FLIR Firefly S camera and an active light source co-located rigidly on a legged robot, and the synthetic data from relative-illumination  [ 10 ] . Two datasets comprise a total of five co-located sequences. For each sequence, we hold out every 8th frame, serving as the validation set on which all metrics are reported, and the remaining frames are used for training.
+IV-B Baselines
+We compare our proposed method against 2D Gaussian Splatting (2DGS)  [ 7 ] , 3D Gaussian Splatting (3DGS)  [ 6 ] , GS-W  [ 24 ] , DarkGS  [ 8 ] , SpotlessGS  [ 21 ] , and a NeRF-based model relative-illumination  [ 10 ] . Su
+
+【结论/局限】
+. The offset γ shift \gamma_{\mathrm{shift}} that sets the initialization of the illumination sigmoid is hand-picked per environment, and its sensitivity remains unexplored. A learned or data-driven initialization would remove this manual choice. While the factorized albedo and the learned illumination field are theoretically separable, practical relighting under arbitrary (non-capture) illumination depends on the completeness of the irradiance sampling during capture.
+Future work. We will explore environment map extraction from the learned SH coefficients and evaluate it under synthetic and real relighting conditions. Also, our current formulation assumes Lambertian (diffuse) reflectance. Highly reflective surfaces would require explicit specular modeling, e.g. view-dependent specular terms observed in endoscopy.
+TABLE II: Ablation of the DaFISH components on Outdoor1 and FourLights.
+Variation
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Full model (Outdoor1)
+38.71
+0.9687
+0.0667
+relative-illumination (Outdoor1)
+33.67
+0.9321
+0.1563
+SH order l = 1 l{=}1 (FourLights)
+25.83
+0.9148
+0.0954
+SH order l = 2 l{=}2 (FourLights)
+27.30
+0.9197
+0.0924
+SH order l = 4 l{=}4 (FourLights)
+28.4

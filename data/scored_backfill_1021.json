@@ -1,0 +1,12 @@
+[
+ {"id":"2512.19283","title":"OmniEgoCap: Device-Agnostic Sequence-Level Egocentric Motion Reconstruction","title_zh":"OmniEgoCap：设备无关的序列级第一视角动作重建","track":"感知与认知","date":"2025-12-22","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":3},
+ {"id":"2606.05102","title":"ZipSplat: Fewer Gaussians, Better Splats","title_zh":"ZipSplat：更少的高斯、更好的泼溅","track":"神经渲染","date":"2026-06-03","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":3},
+ {"id":"2609.03892","title":"GraFT: A Training-Free Framework for Spatial Reasoning in Multimodal Large Language Models via 3D Scene Graphs","title_zh":"GraFT：基于 3D 场景图的免训练 MLLM 空间推理框架","track":"感知与认知","date":"2026-09-03","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":3},
+ {"id":"2504.20829","title":"GaussTrap: Stealthy Backdoor Attacks on 3D Gaussian Splatting for Targeted Scene Misperception","title_zh":"GaussTrap：针对 3DGS 的隐蔽后门攻击","track":"神经渲染","date":"2025-04-29","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":4},
+ {"id":"2605.17661","title":"Mono-Hydra++: Real-Time Monocular Scene Graph Construction with Multi-Task Learning for 3D Indoor Mapping","title_zh":"Mono-Hydra++：多任务学习的实时单目场景图构建","track":"重建与SLAM","date":"2026-05-17","IMP":3,"NOV":3,"TEC":4,"EXP":4,"PER":3,"TRL":4,"REP":4},
+ {"id":"2606.25430","title":"PRISM: Feed-Forward Single-Image 3D Reconstruction via Geometric Warp-Residual Decomposition","title_zh":"PRISM：几何翘曲-残差分解的前馈单图 3D 重建","track":"神经渲染","date":"2026-06-24","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":2},
+ {"id":"2511.09397","title":"OUGS: Active View Selection via Object-aware Uncertainty Estimation in 3DGS","title_zh":"OUGS：3DGS 物体感知不确定性的主动视角选择","track":"神经渲染","date":"2025-11-12","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":2},
+ {"id":"2603.24591","title":"Vibe Coding XR: Accelerating AI + XR Prototyping with XR Blocks and Gemini","title_zh":"Vibe Coding XR：用 XR Blocks 与 Gemini 加速 AI+XR 原型开发","track":"空间计算与UI","date":"2026-03-25","IMP":3,"NOV":3,"TEC":3,"EXP":3,"PER":2,"TRL":4,"REP":4},
+ {"id":"2605.10760","title":"MAGS-SLAM: Monocular Multi-Agent Gaussian Splatting SLAM for Geometric and Photorealistic Mapping","title_zh":"MAGS-SLAM：单目多智能体高斯泼溅 SLAM","track":"重建与SLAM","date":"2026-05-11","IMP":3,"NOV":3,"TEC":3,"EXP":4,"PER":3,"TRL":3,"REP":2},
+ {"id":"2606.16881","title":"SGM-SLAM: Scene Graph Matching for Data-Efficient Distributed SLAM","title_zh":"SGM-SLAM：场景图匹配的高效分布式 SLAM","track":"重建与SLAM","date":"2026-06-15","IMP":3,"NOV":3,"TEC":3,"EXP":3,"PER":3,"TRL":3,"REP":2}
+]

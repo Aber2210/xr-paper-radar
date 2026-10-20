@@ -1,0 +1,295 @@
+【摘要】
+
+【方法】
+P P
+K K
+#Gs
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+#Gs
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+#Gs
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+MVSplat †   [ 6 ]
+✓
+✓
+393K
+22.66
+0.760
+0.173
+786K
+21.29
+0.709
+0.224
+1.6M
+19.98
+0.662
+0.269
+DepthSplat †   [ 39 ]
+✓
+✓
+393K
+23.42
+0.797
+0.136
+786K
+21.91
+0.753
+0.179
+1.6M
+20.09
+0.690
+0.240
+DA3  [ 19 ]
+✓
+✓
+1.5M
+23.99
+0.805
+0.158
+3.0M
+22.84
+0.758
+0.190
+6.1M
+21.70
+0.710
+0.230
+ZipSplat
+✓
+✓
+62K
+25.34
+0.810
+0.169
+124K
+24.37
+0.773
+0.194
+249K
+24.23
+0.773
+0.194
+ZipSplat + TTO
+✓
+✓
+62K
+28.99
+0.892
+0.106
+124K
+29.59
+0.894
+0.104
+249K
+30.03
+0.907
+0.097
+NoPoSplat †   [ 41 ]
+✓
+393K
+22.77
+0.743
+0.179
+786K
+19.38
+0.563
+0.318
+1.6M
+17.86
+0.495
+0.397
+AnySplat  [ 14 ]
+951K
+21.70
+0.725
+0.187
+1.8M
+21.01
+0.687
+0.220
+3.2M
+20.74
+0.669
+0.236
+C3G  [ 1 ]
+2K
+18.70
+0.492
+0.409
+2K
+16.50
+0.421
+0.534
+2K
+15.17
+0.376
+0.583
+DA3  [ 19 ]
+1.5M
+23.77
+0.795
+0.165
+3.0M
+22.38
+0.736
+0.208
+6.1M
+21.69
+0.711
+0.229
+YoNoSplat  [ 40 ]
+301K
+24.10
+0.783
+0.160
+602K
+22.73
+0.736
+0.200
+1.2M
+22.01
+0.710
+0.223
+ZipSplat
+62K
+25.24
+0.804
+0.172
+124K
+24.27
+0.767
+0.197
+249K
+24.14
+0.768
+0.198
+We evaluate ZipSplat on both posed and pose-free multi-view reconstruction.
+Setup.
+We evaluate on DL3DV  [ 20 ] (140 test scenes) and RealEstate10K  [ 50 ] (1,600 test scenes).
+On DL3DV, context views ( N ∈ { 6 , 12 , 24 } N\in\{6,12,24\} ) are selected via farthest point sampling with maximum frame gaps of 50, 100, and 150; on RE10K, we use N = 6 N{=}6 .
+In both cases, 8 target views are held out for evaluation.
+Each method encodes at its native training resolution, and we render and evaluate all renderings at a common 252 × 252 252{\times}252 resolution ( Sec.   0.B.1 ).
+Following standard practice  [ 41 , 14 ] , predicted Gaussians are aligned to ground-truth target views before computing PSNR, SSIM, and LPIPS.
+Baselines.
+We benchmark against pose-free methods AnySplat  [ 14 ] , C3G  [ 1 ] , and YoNoSplat  [ 40 ] , as well as NoPoSplat  [ 41 ] , which requires ground-truth intrinsics.
+Since ZipSplat optionally accepts camera priors, we additionally compare to the posed MVSplat  [ 6 ] and DepthSplat  [ 39 ] .
+We further include DA3  [ 19 ] , a pixel-aligned Gaussian head on the same backbone as ZipSplat, isolating the contribution of our token-based decoder.
+Table 2 : Novel view synthesis on RealEstate10K (6 input views).
+P P , K K denote ground-truth poses and intrinsics.
+#Gs denotes the total number of predicted Gaussians.
+† Numbers taken from the YoNoSplat  [ 40 ] .
+Best and second best within each category. P P
+K K
+#Gs
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+DepthSplat †   [ 39 ]
+✓
+✓
+393K
+24.16
+0.846
+0.145
+DA3  [ 19 ]
+✓
+✓
+1.5M
+20.91
+0.725
+0.233
+ZipSplat
+✓
+✓
+62K
+27.19
+0.872
+0.143
+NoPoSplat †   [ 41 ]
+✓
+393K
+22.18
+0.750
+0.207
+AnySplat  [ 14 ]
+775K
+22.75
+0.808
+0.178
+C3G  [ 1 ]
+2K
+20.62
+0.663
+0.315
+DA3  [ 19 ]
+1.5M
+20.90
+0.724
+0.234
+YoNoSplat  [ 40 ]
+301K
+24.99
+0.835
+0.151
+ZipSplat
+62K
+26.20
+0.842
+0.158
+GT ZipSplat YoNoSplat DA3 C3G
+Figure 6 : Qualitative comparison on RealEstate10K (6 input views).
+ZipSplat reconstructs fine details more faithfully than all baselines while using fewer Gaussians. 32v
+64v
+128v
+P P
+K K
+#Gs
+PSNR ↑ \uparrow
+SSIM 
+
+【实验】
+ We compare ZipSplat to pixel-aligned feed-forward methods on in-domain ( Sec.   4.2 ) and unseen ( Sec.   4.3 ) benchmarks, analyze the quality–efficiency trade-off ( Sec.   4.4 ), ablate our design choices ( Sec.   4.5 ), and show qualitative results in Fig.   5 . .
+Token test-time optimization.
+4.3 Cross-Dataset Generalization
+Setup.
+Baselines. .
+4.4 Adjustable Gaussian Budget
+Clustering comparison.
+4.5 Ablations
+Setup.
+Backbone.
+Gaussians per token.
+Initialization and loss. .
+Table   1 shows that ZipSplat outperforms every pose-free baseline on DL3DV with 6 × 6{\times} fewer Gaussians than the per-pixel methods (62K vs. 393K at 6 views), and surpasses even the posed DepthSplat and MVSplat in PSNR and SSIM.
+Against DA3, a per-pixel decoder on the same backbone, it gains 1.5 1.5 to 2.5 2.5  dB with 24 × 24{\times} fewer Gaussians, isolating the contribution of the token decoder, while camera priors add only about 0.1 0.1  dB.
+The pose-free baselines trail ZipSplat throughout: C3G is capped at 2K Gaussians, NoPoSplat collapses from 22.77 to 17.86 PSNR across views, AnySplat trails by over 3.2 3.2  dB, and the strongest, YoNoSplat, by 1.1 1.1 to 2.1 2.1  dB.
+On RealEstate10K ( Tab.   2 ), ZipSplat reaches 26.20 PSNR without poses, ahead of YoNoSplat (24.99) by 1.2 dB and the posed DepthSplat (24.16) by 2.0 dB, rising to 27.19 with camera priors.
+The one exception is LPIPS at sparse views, where per-pixel methods copy input colors directly into the first Gaussian channels and preserve high-frequency colors, whereas ZipSplat predicts them from aggregated tokens.
+Token test-time optimization.
+When ground-truth poses are available, ZipSplat can be improved further at test time by freezing the decoder and optimizing the scene tokens, at a fixed Gaussian budget.
+This is fast and effective: 50 steps ( ∼ \sim 3 s on a single 4090) add about 5 5  dB PSNR, and full convergence reaches 5.8 5.8  dB while halving LPIPS at 24 views ( Tab.   1 ).
+That adjusting the tokens alone recovers this much quality shows the token representation has substantial headroom, and that improving the feed-forward prediction is a promising direction.
+4.3 Cross-Dataset Generalization
+Table 3 : Cross-dataset generalization .
+P P , K K denote ground-truth poses and intrinsics.
+#Gs denotes the total number of predicted Gaussians.
+Best and second best among zero-shot methods.
+*: AnySplat and DA3 are trained on ScanNet++. .
+Table   3 shows that ZipSplat outperforms every zero-shot baseline on both datasets without using poses; with ground-truth poses, it surpasses even the methods trained on ScanNet++.
+On Mip-NeRF360, its quality improves steadily with coverage, from 21.72 to 22.29 PSNR between 32 and 128 views, while the baselines plateau or decline: the per-pixel DA3 drops from 20.94 to 
+
+【结论/局限】
+0.A Additional Implementation Details We present ZipSplat, a feed-forward 3D Gaussian Splatting architecture that decouples primitive placement from the 2D pixel grid by predicting unconstrained Gaussians from a compact set of scene tokens.
+This token-based formulation achieves state-of-the-art, pose-free novel view synthesis while using up to 6 × 6{\times} fewer Gaussians than pixel-aligned baselines and offering continuous inference-time control over the Gaussian budget.
+By allocating capacity based on 3D geometric complexity rather than camera resolution, ZipSplat produces compact and scalable scene representations from sparse multi-view input.
+This efficiency opens two paths for future work.
+First, ZipSplat’s compact representation benefits semantic scene understanding, where per-Gaussian features quickly dominate memory.
+Second, decoupling primitives from the spatial grid offers a direct extension to 4D dynamic scenes, where token clustering can compress redundant observations across both space and time.
+More broadly, we see ZipSplat as a step toward feed-forward reconstruction that predicts geometry directly in 3D, rather than uplifting 2D predictions along viewing rays.
+Ray-

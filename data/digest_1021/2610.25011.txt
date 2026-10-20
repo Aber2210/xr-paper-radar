@@ -1,0 +1,67 @@
+【摘要】
+
+【方法】
+3.1 Stage 1: View-wise token grouping
+3.2 Stage 2: 3D spatial token grouping
+Lifting tokens to 3D.
+Error feature maps.
+Gathering errors across views.
+3D spatial token grouping and update.
+3.3 Patch-aligned Sub-pixel Gaussian Reconstruction Overview. FineSplat first performs view-wise grouping and applies self-attention within each group, enabling efficient processing of fine-grained tokens. 3D spatial grouping lifts tokens into 3D space and enables interactions among spatially neighboring tokens, including those from different view groups, to enhance cross-view information exchange. Compact Gaussian generation predicts fewer Gaussians per token than existing pixel-aligned methods, maintaining a compact 3DGS representation. Finally, direct error feedback incorporates reconstruction errors obtained by rendering the input views to further refine token representations. Given N N context views with or without known camera poses, FineSplat predicts a set of 3D Gaussians in a feed-forward manner.
+Stage 1 divides each context view into fine-grained 4 × 4 4\times 4 patches and encodes them with attention of varying scope, where group-wise attention over a few views keeps fine-grained multi-view reasoning affordable.
+Stage 2 decodes these tokens into an initial set of Gaussians, renders them
+back into the context views, and uses the resulting error maps to update the tokens through 3D spatial grouping, which lets tokens that fall in different view groups interact once they are lifted to 3D.
+This dual-grouping strategy makes fine-grained encoding tractable, with 3D spatial grouping complementing view-wise grouping by connecting tokens across view groups. Figure  2 gives an overview of the two stages.
+3.1 Stage 1: View-wise token grouping
+Global multi-view attention becomes prohibitively expensive with fine-grained tokens. In the first stage, we restrict the attention scope and adopt a view-wise token grouping strategy. Specifically, we leverage the multi-view pyramid architecture (MVP)  ( Kang et al., 2026b ) .
+It performs fine-grained attention within small groups of views, while allowing information exchange across all views through coarser global tokens. This balances local detail preservation with global multi-view reasoning.
+It organizes its encoder as a three-level pyramid, and we denote the feature map of level ℓ ∈ { 1 , 2 , 3 } \ell\in\{1,2,3\} as F ℓ F^{\ell} , from the finest ( F 1 F^{1} ) to the coarsest ( F 3 F^{3} ).
+In more detail, given N N input images I ∈ ℝ N × H × W × 3 {I}\in\mathbb{R}^{N\times H\times W\times 3} and patch size p p , the first stage fuses the three levels of coarse-to-fine features into M = N ​ H ​ W p 2 M=\frac{NHW}{p^{2}} fine-grained tokens z ( 0 ) ∈ ℝ M × d {z}^{(0)}\in\mathbb{R}^{M\times d} ,
+z ( 0 ) = fuse ⁡ ( up ⁡ ( fuse ⁡ ( up ⁡ ( F 3 ) + F 2 ) ) + F 1 ) , {z}^{(0)}=\mathrm{fuse}\big(\mathrm{up}(\mathrm{fuse}(\mathrm{up}(F^{3})+F^{2}))+F^{1}\big),
+(1)
+where up ⁡ ( ⋅ ) \mathrm{up}(\cdot) denotes bilinear upsampling and fuse ⁡ ( ⋅ ) \mathrm{fuse}(\cdot) a convolutional fusion block, which are used to match the token resolutions.
+The fixed view grouping strategy inevitably leaves blind spots: fine-grained tokens 
+
+【实验】
+ 
+
+【结论/局限】
+and Discussion
+References
+A Additional Implementation Details
+A.1 Architecture
+Camera pose estimator.
+View-wise grouping network.
+Error features.
+3D spatial grouping network.
+A.2 Training
+Stage 1.
+Stage 2.
+End-to-end fine-tuning.
+Optimization.
+A.3 Scene Scale Normalization
+A.4 Occlusion Test for Error Feature Aggregation
+Frustum test.
+Depth test.
+B Evaluation Details
+B.1 Evaluation-Time Pose Alignment
+B.2 Contribution-Based Pruning
+B.3 Evaluation Resolution and Resize Filter
+C Additional Analysis
+C.1 View Grouping and the Choice of Group Size
+C.2 Error Feature Composition
+C.3 Observations Beyond the View Group
+C.4 Additional Cross-Dataset Generalization
+D Additional Qualitative Results
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.25011v1 [cs.CV] 18 Oct 2026
+FineSplat: Fine Patches, Local Groups, Detailed Splats
+Hyebin Kim ∗
+Hwasik Jeong ∗
+Joonhyuk Park
+Gyeongjin Kang
+Jungwoo Kim
+Affiliation:  Younghyun Kim, Eunbyung Park †
+Affiliation:  [0.5em]
+Yonsei University and Discussion
+We presented FineSplat , a feed-forward 3DGS framework that preserves fine-grained visual information through high-resolution patch representations while avoiding the prohibitive cost of glob
