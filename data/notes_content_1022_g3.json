@@ -1,0 +1,130 @@
+[
+  {
+    "id": "2610.28402",
+    "slug": "streameval-video-bench",
+    "venue": "arXiv preprint（cs.CV，CC BY 4.0；清华大学、NVIDIA、CMU、UC Berkeley、Princeton、NUS、Reactor）",
+    "tags": ["交互式视频生成", "评测基准", "流式视频", "avatar 对话", "任务执行"],
+    "conclusion": "StreamEval 统一 5 类交互式流式视频任务、300 个脚本化用例评测 37 个模型：在线动作执行仍最难，Following 最高仅 36.90，参考编辑 Edit Success 最高仅 15.00/100。",
+    "problem": "流式视频生成走向实时交互后，需要评测模型在持续生成中响应增量到达请求的能力。已有基准覆盖片面：avatar-performance 类只评渲染说话人的质量与语音-运动同步，Full-Duplex-Bench 只评无视频输出的口语对话，WBench/WBench-Editing 面向世界模型环境、EditVerseBench 测外部视频的指令/参考条件编辑，任务覆盖与交互时序控制协议互不统一。StreamEval 要在一个基准内同时考察任务执行、状态一致性、视觉保真与视听协同，并把随时间到达的多模态请求与显式的状态改变、内容保持要求挂钩。",
+    "method": "覆盖 5 个任务：avatar dialogue、avatar performance、world generation、instruction editing、reference editing。300 个脚本化用例（每任务 60 个、每个时长档 12 个），时长 15–300s，每用例规定初始资产、增量到达的多模态请求与显式状态改变/内容保持要求；每用例每模型独立运行 3 次。评测沿 task execution、state consistency、visual fidelity、audiovisual coordination 四个维度，以 10 个任务特定指标在 0–100 量表打分；各时长档在任务内等权聚合，长会话不按时长占比主导评分；支持 custom avatar 的系统获 +5 sweet-spot bonus。leaderboard、GitHub 代码与 HuggingFace 数据集全公开。",
+    "experiments": "共评测 37 个模型。digital-human dialogue：Vidu S2 Avatar Overall 93.98 居首，Tavus CVI Full 86.65、AVTR-1 84.14、SoulX-FlashTalk 14B 77.90；MuseTalk 1.5 Quality 95.34、Stability 97.11、Identity 88.44 但 A–V Sync 仅 38.09、Dialogue 54.34，说明外观强不等于同步好。avatar performance：Vidu S2 Avatar 81.71、LiveTalk 1.3B 75.85、AptAvatar 14B 70.37 居前；七模型 Following 跨度 6.37（Avatar-Forever 22B）至 36.90。text-conditioned world generation 的 Following 最高 25.93；reference editing 的 Edit Success 最高 15.00（仅 3 个模型报告）。digest 未含 world generation 与编辑任务的完整分模型数值表（原文有表）。",
+    "innovation": [
+      "把 5 类交互式流式视频任务纳入同一基准，用例同时规定初始资产、增量请求与状态/保持要求",
+      "时长分层均衡设计，各时长档任务内等权，避免长会话主导评分",
+      "四维度 10 指标的 0–100 评分体系，并为 avatar 定制设 sweet-spot bonus",
+      "以 37 模型规模系统揭示「高视觉质量与身份保持 ≠ 可靠请求执行与状态一致」"
+    ],
+    "limits": [
+      "reference editing 仅 3 个模型报告，统计基数小",
+      "自动指标与人工判断的一致性尚未验证（作者列为下一步：收集人工 pairwise 判断并与 rubric 对齐）",
+      "digest 未含 world generation 与编辑任务的完整分模型数值",
+      "脚本化用例与真实开放交互的差距未评估"
+    ],
+    "relation": "属库内评测/基准方向，与库内已有视频生成评测互补：Full-Duplex-Bench 只评无视频输出的口语对话，WBench/WBench-Editing 面向世界模型环境，EditVerseBench 测外部视频指令/参考编辑；StreamEval 首次把 5 类任务与交互时序控制纳入同一协议，可作库内流式生成模型的统一验收工具。",
+    "repro": "leaderboard：https://streameval.ai；代码：https://github.com/StreamEval/StreamEval；数据集：https://huggingface.co/datasets/StreamEval/StreamEval；License CC BY 4.0。",
+    "action": "① 做流式 avatar/交互视频产品时，用其 10 指标做上线前体检，重点盯 Following 与状态一致性而非画质；② 自建评测可借鉴「时长分层等权 + 每用例 3 次重复运行」设计，降低长会话与随机性带来的评分偏差。"
+  },
+  {
+    "id": "2610.27271",
+    "slug": "xonav-hip-haptic-nav",
+    "venue": "arXiv preprint（cs.RO）",
+    "tags": ["触觉接口", "髋外骨骼", "步态分类", "导航辅助", "人机回路优化"],
+    "conclusion": "XoNav 用 4 执行器髋外骨骼经关节运动直接传递 Advance/Braking/Steering 线索，双大腿 IMU 步态分类器 LOSO 召回 95.2–97.9%；10 人 150 次盲视试验保持 98.8% 走廊通过率，替代音频/振动符号通道。",
+    "problem": "无视觉行走需要及时、无歧义的导向，但多数可穿戴辅助设备把方向编码成音频或振动符号信号，用户必须先在脑中「翻译」再转成动作，增加认知负担与延迟；同时个体步态差异大，固定强度的通用触觉线索难以兼顾可辨性、舒适与安全。XoNav 要把导航线索以髋关节运动形式直接、个性化地呈现，并与穿戴者自身步态协调。",
+    "method": "4 执行器髋外骨骼：矢状面执行器渲染 Advance 与两级 Braking，额状面执行器渲染两级 Steering。双大腿 IMU + 双侧 LSTM 步态状态分类器识别步态相位，实现与步态协调的线索送达，并在站立时抑制线索；stance-to-swing 与 swing-to-stance 转变的平均检测延迟为 38.6 ms 与 63.1 ms。受限 human-in-the-loop Bayesian optimization 为每位受试者个性化 Braking（最小阻力）与 Steering（最大舒适），同时约束可检测性与安全，最强制动刚度保持在安全上限的 53% 以下。",
+    "experiments": "10 名受试者、150 次盲视 Wizard-of-Oz 试验（3 条路径）：在 0.75 m 宽通道内保持 98.8% 的行走距离，平均前进速度每试验提升约 4.9%；所有受试者能可靠区分别人化线索的等级。问卷（五点量表，双侧 exact sign 检验，Holm 校正 p<0.05）显示线索清晰度、可辨性与行走控制感评分高于中性，cue timing 与 comfort 亦高于中性，wearability 差异最大。另以 body-worn camera + RTAB-Map + Nav2 完成自主导航可行性研究（3 名受试者），可绕开未建图障碍。",
+    "innovation": [
+      "以髋关节 kinesthetic 线索替代音频/振动符号通道，免去用户「翻译」步骤",
+      "仅双 IMU 的 LSTM 步态分类器泛化到未见用户（LOSO 95.2–97.9%），实现步态依赖送达与站立抑制",
+      "受限 human-in-the-loop Bayesian optimization 同时优化可辨性、阻力/舒适与安全上限三重目标",
+      "盲视 Wizard-of-Oz 走廊保持率 98.8%，并与 RTAB-Map/Nav2 自主导航衔接验证"
+    ],
+    "limits": [
+      "仅盲视有视力受试者在受控室内环境验证，未测视障用户",
+      "可穿戴性（wearability）评分差异最大，设备质量与贴合度待改进",
+      "自主导航部分仅为可行性研究（n=3）",
+      "未与白手杖导航对照（作者列为未来工作）"
+    ],
+    "relation": "属库内触觉与多模态方向：与库内遥操作触觉（如 XRT 2610.24257、EgoTac 类）同属触觉通道设计，但 XoNav 首次把 kinesthetic 关节线索用于全身导航而非指尖/手部反馈；其步态条件化线索送达可与库内可穿戴 IMU 感知线互补，为 XR 头显之外的全身触觉接口提供参考。",
+    "repro": "digest 未提及代码/硬件开源链接；有补充视频展示硬件、控制架构、触觉线索与盲视及自主导航试验。",
+    "action": "① 做视障导航/可穿戴辅助设备时，优先评估 kinesthetic 关节线索而非振动符号，并参照其受限 Bayesian 优化流程做每人个性化标定；② 将「最强制动刚度 <53% 安全上限」作为可穿戴力反馈的安全边界设计参考。"
+  },
+  {
+    "id": "2610.27564",
+    "slug": "citypaint-city-texture",
+    "venue": "ACM MM 2026（MM '26，2026 年 11 月 10–14 日，Rio de Janeiro；DOI: 10.1145/3767308.3835893；西安交通大学、南方科技大学、IDEA 研究院、港科大（广州））",
+    "tags": ["城市 3D 生成", "2D 扩散先验", "UV 贴图", "OSM 几何", "评测基准"],
+    "conclusion": "CityPaint 从 OSM 几何出发，把城市贴图转为几何 grounded 生成重建：Z-Image 先验+8192² UV 图集+面级 top-K 烘焙+地形/建筑两阶段细化，无需城市级 3D 数据，另建 2 万张 CityWeb 照片基准。",
+    "problem": "城市级高保真 3D 环境对 VR、游戏与城市数字孪生关键，但真实城市级 3D 训练数据稀缺：已有方法要么独立生成资产再拼接、要么从合成城市语料学习，常牺牲真实感与全局一致性；而 2D 图像及其生成模型丰富且含强视觉先验。评测端也不可靠——常用 Google Earth 影像作参考分布，却带重建伪影、压缩噪声与模糊，指标难以反映真实视觉质量。CityPaint 要在不依赖城市级 3D 数据的前提下，把城市贴图变成几何 grounded 的生成重建问题。",
+    "method": "输入为用户指定城市中心经纬度与检索半径：从 OpenStreetMap 建筑轮廓与道路布局构建建筑/道路/地形三元组网格，参数化为全局 UV 图集 U∈[0,1]^{H_u×W_u×3}。四阶段：① scene initialization——构建 heightfield（地面域上相交三角形的上包络）并做 heightfield-aware 自适应相机布设；② global iterative generation——条件扩散（Z-Image）以渲染深度图、语义控制图与当前局部外观为条件迭代生成，经 iterative UV accumulation 以 face-wise top-K 相机烘焙写入全局图集，抑制掠射角伪影；③ UV-denoising terrain refinement——地形 ROI 提取 + 重叠 tile 的 tile-wise latent refinement；④ view-dependent building refinement——物体中心 orbit 相机（仰角 20°/35°）增强立面细节，按 normal-aware 选择规则更新图集（每面至多 2 视图）。全流程单卡 A100(40GB) 完成。",
+    "experiments": "三阶段共用开源 Z-Image 扩散先验：全局阶段从 320 视图（8 扫描带 × 40 视图/带，48° 下俯仰角、40° FoV）迭代贴图至 8192×8192 UV 图集，每视图渲染深度/语义控制/当前外观并跑 25 步去噪；地形细化用重叠 1024×1024 UV tile、denoising strength 0.2 与共享全局噪声初始化；建筑细化每面至多 2 视图。建 CityWeb：网络公开真实城市照片经多阶段过滤（去非照片、低分辨率、水印）+ GPT 评分（城市相关性、清晰度、保真度）取前 20,000 张。与 CityDreamer、UrbanWorld、GaussianCity、CitySculpt、MajutsuCity 等共 7 方法在 Google Earth 与 CityWeb 上比几何一致性（CE、DE）与视觉保真（FID、KID、NIQE、BRISQUE）。digest 未含具体数值（原文有表）。",
+    "innovation": [
+      "把城市级贴图铸成几何 grounded 生成重建：真实 OSM 几何作锚，免费复用 2D 扩散先验",
+      "face-wise top-K 相机烘焙 + iterative UV accumulation，抑制 2D→3D 投影的掠射角伪影",
+      "地形/建筑解耦细化：UV 去噪 vs 视角相关立面增强",
+      "CityWeb 基准：2 万张 GPT 评分筛选的真实城市照片，弥补 Google Earth 参考分布缺陷",
+      "免城市级 3D 训练数据，单卡 A100(40GB) 可完成"
+    ],
+    "limits": [
+      "依赖 OSM 几何质量与覆盖，非 OM 覆盖区域不适用",
+      "8192×8192 图集 + 320 视图全局迭代在大城市上的计算/内存压力未报告",
+      "digest 未含定量数值，相对优势幅度待核",
+      "外观风格受单一 Z-Image 先验上限约束"
+    ],
+    "relation": "属库内城市/大规模 3D 生成方向：与库内城市生成线（CityDreamer、GaussianCity、CitySculpt、MajutsuCity 等）互补——前者从零合成或依赖合成语料，CityPaint 走「真实几何+2D 先验」的 free lunch 路线；其 CityWeb 基准也为库内大规模生成评测提供了比 Google Earth 更干净的参考分布。",
+    "repro": "digest 未提及代码/项目页链接；会议为 ACM MM 2026（DOI: 10.1145/3767308.3835893）；实验基于单张 NVIDIA A100(40GB) 与开源 Z-Image。",
+    "action": "① 做城市数字孪生/大规模开放世界内容时，评估其「OSM 几何+2D 扩散」路线作为免 3D 训练数据的低成本方案；② 复现时先备 OSM 抓取与 Z-Image 管线，重点调 top-K 烘焙与两阶段细化的超参，并用 CityWeb 做评测参考。"
+  },
+  {
+    "id": "2610.27725",
+    "slug": "world2hosi-multi-expert",
+    "venue": "arXiv preprint（cs.CV, cs.AI；澳门科技大学、中国科学技术大学、MIT、香港科技大学、上海科技大学）",
+    "tags": ["HOSI 生成", "3D Gaussian Splatting", "多专家编排", "长程交互", "具身 AI"],
+    "conclusion": "World2HOSI 以「编排胜单模型」为核心：ISP 持久场景状态+任务编译器+多专家运动合成+物理有界残差细化，把静态 3DGS 场景变为持续更新的交互世界，定量对比与用户研究均最佳。",
+    "problem": "长程 human-object-scene interaction（HOSI）是具身 AI、动画与游戏开发的核心，但现有 HOI 与 HSI 模型各擅其域，无一单独覆盖需要多种交互技能的任务；训练统一 HOSI 模型又受限于稀缺且昂贵的数据。更根本地，长程交互要求每一步动作都 grounded 于不断演化的场景状态——物体被移动后，后续任务的支撑面与导航占用都应随之改变，而静态场景表示无法维护这种状态记忆。",
+    "method": "World2HOSI 是多模型编排框架，从 3DGS 场景与自然语言指令生成连续 HOSI。① Interactive Scene Package（ISP）：带持久物体身份的统一场景结构，每物体含视觉资产、局部碰撞几何、语义标签、世界变换 T_i∈SE(3) 与物理属性（如质量），场景另维护静态背景、支撑区域、物体关系与可导航空间；Gaussian 资产供外观、几何代理供碰撞检查与路径规划，二者以共享物体变换对齐。物体位姿改变后 ISP 回写支撑区域与导航占用（移动椅子即重算座位世界坐标，可直接坐）。② 任务编译器：语义层把指令分解为有序动作，数值层做场景 grounding，让异构专家共享场景解释。③ 多专家运动合成：经专家原生条件接口调用导航、人-物、人-景模型，以 projection-based stitching 生成连续运动。④ physics-based execution：有界残差优化+接触驱动物理仿真分别精化人体运动与物体操作，保持交互意图。",
+    "experiments": "评测覆盖交互生成质量、数据多样性、拼接有效性与物理合理性四方面：与外部基线在共享 HOSI 任务上定量对比（Table 1）、感知用户研究、组件消融（cross-expert reconciliation、bounded residual refinement）、motion diversity 与长程状态交互实验。digest 未含具体数值（原文有 Table 1 等）；摘要级结论为在受评 HOSI 任务上取得最佳任务完成与交互质量，并生成更多样的数据。",
+    "innovation": [
+      "提出「长程 HOSI 靠编排而非更强单模型」的核心洞察与 harness 架构",
+      "ISP：持久物体身份+状态回写（支撑区域/导航占用随物体运动更新），每次专家调用都 grounded 于演化中的世界",
+      "语义/数值分离的任务编译器，让异构专家共享场景解释",
+      "经专家原生条件接口编排现有 HOI/HSI/导航模型，绕开统一模型的数据瓶颈",
+      "物理有界残差+接触驱动仿真，兼顾物理合理性与交互意图"
+    ],
+    "limits": [
+      "digest 未含定量数值与基线名称细节，结论幅度待核",
+      "依赖 ISP 构建质量（附录详述构造流程），上游误差传播未量化",
+      "输入 3DGS 场景需具备物体级结构与物理属性标注",
+      "长程任务的误差累积与失败恢复机制未述"
+    ],
+    "relation": "属库内 HOI/HSI 生成方向：把库内 HOI 生成（单段人-物）与 HSI（人-景）线向上整合为长程编排层；其消费的 3DGS 场景与库内重建线（如 CrossFit-GS 2610.28190、ZipSplat 类）形成「重建-交互」上下游；多专家 harness 思路亦呼应库内世界模型线的编排议题。",
+    "repro": "digest 未提及代码/数据发布信息。",
+    "action": "① 需要长程交互数据（具身训练/动画/游戏）时，用「ISP+多专家编排」组合现有单域模型，而非从零训练统一模型；② 自建时优先设计状态回写机制（支撑面/导航占用随物体更新），这是长程一致性的关键。"
+  },
+  {
+    "id": "2610.28190",
+    "slug": "crossfit-gs-colmap-free",
+    "venue": "arXiv preprint（cs.CV，CC BY 4.0；浙江理工大学、清华大学）",
+    "tags": ["免位姿 3DGS", "COLMAP-free", "相机位姿估计", "轨迹漂移", "交叉拟合"],
+    "conclusion": "CrossFit-GS 以奇偶帧双子图观测隔离+折外交叉拟合精修+延迟承诺全局重建，消除 target-to-map 自解释回环，在 Tanks&Temples 与 CO3D-V2 上显著降低轨迹漂移并提升新视角合成。",
+    "problem": "免位姿（COLMAP-free）3DGS 想绕过繁琐 SfM、从未定位图像序列直接重建，但渐进式方法普遍存在自解释回环：目标帧被用于训练/更新地图，地图反过来「解释」该帧位姿，误差被吸收进高斯图元并沿轨迹累积成漂移；局部跟踪与全局几何一致性难以兼得。CrossFit-GS 要在无 COLMAP 条件下同时抑制累计漂移、恢复准确相机轨迹并得到几何忠实的 3DGS 表示。",
+    "method": "给定已知内参 K 的未定位 RGB 序列，输出相机轨迹与全局 3DGS。采用观测隔离流水线+延迟承诺协议：① 按索引奇偶把帧流分区（a(i)=i mod 2），维护两个互补子图 G^(0)/G^(1)，首帧定义世界坐标系并提供单目深度初始化；② 对每个目标帧，用于精修的 opposite 子图在其源图像集中排除该帧（I_i ∉ S_b(i)），确保参考表示从未接受该帧的直接训练反馈，杜绝 target-to-map 自拟合；③ 折外交叉拟合：局部跟踪给出初始位姿提案后，对冻结的 opposite 子图优化候选位姿，经 checkerboard masking、初始可见性支撑与覆盖度门控、保留守卫与 accept-or-keep 决策三重验证，仅通过验证的位姿才提交到 owner 子图；④ 全部外参验证冻结后丢弃中间子图，用固定位姿从头训练统一全局 3DGS。",
+    "experiments": "在 Tanks and Temples（帧采样 stride 5，模拟宽基线相机运动）与 CO3D-V2（多样几何与纹理复杂度场景）上评测，每第 8 帧留作测试视图；新视角合成用 PSNR/SSIM/LPIPS，轨迹经 Sim(3) Umeyama 对齐后评 ATE 与 RPE_t/RPE_r；另做组件贡献、运行时效率与 target-to-map 自解释诊断等消融。digest 未含具体数值（原文有表）。",
+    "innovation": [
+      "系统诊断免位姿 3DGS 的 target-to-map 自解释回环，并以观测隔离从机制上根治",
+      "奇偶帧双子图 + 「目标帧不进 opposite 源集」的严格隔离设计",
+      "checkerboard masking + 覆盖度门控 + 保留守卫的三重验证与 accept-or-keep 提交策略",
+      "延迟承诺：中间子图仅服务位姿求解，最终全局 3DGS 用冻结位姿从头训练",
+      "在宽基线 T&T 与 CO3D-V2 上同时改进轨迹精度与渲染质量（digest 无具体数值）"
+    ],
+    "limits": [
+      "digest 未含定量数值，增益幅度与基线对比待核",
+      "双子图隔离使可用于子图训练的视图减半，计算开销增量未报告",
+      "假设内参 K 已知，内参未知场景未覆盖",
+      "依赖局部跟踪的初始位姿提案质量"
+    ],
+    "relation": "属库内免位姿 3DGS 方向，与库内 3DGS-Init、FoundationVIO 类工作同属「去 COLMAP」议题但切入不同：前者替代 SfM 初始化，CrossFit-GS 在渐进重建内部以训练-评估隔离消除自解释漂移；其「折外验证」思想与统计交叉拟合同构，对库内前馈重建线的训练/评测协议设计亦有借鉴。",
+    "repro": "digest 未提及代码链接；实验基于公开 Tanks and Temples 与 CO3D-V2 数据集。",
+    "action": "① 自建免 COLMAP 3DGS 管线时，引入「精修位姿所用子图必须排除目标帧」的隔离约束与延迟承诺重建，避免误差被图元吸收；② 参考其自解释诊断实验设计，在上线前检验自身管线是否存在 target-to-map 回环。"
+  }
+]

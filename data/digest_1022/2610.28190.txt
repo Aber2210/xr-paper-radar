@@ -1,0 +1,58 @@
+【摘要】
+
+【方法】
+3.1 Problem Formulation and System Overview
+3.2 Dual-Map Partitioning and Local Pose Tracking
+3.3 Frozen-Map Cross-Fitted Pose Refinement
+3.3.1 Initial Visibility Support and Coverage Gating
+3.3.2 Checkerboard Masking and Pose Optimization
+3.3.3 Retention Guard and Accept-or-Keep Decision
+3.4 Deferred Global Scene Reconstruction 3.1 Problem Formulation and System Overview
+Given an unposed sequence of RGB images { I i } i = 0 N − 1 \{I_{i}\}_{i=0}^{N-1} with known intrinsic matrix K K , our goal is to recover the camera trajectory { T i ∈ SE ( 3 ) } i = 0 N − 1 \{T_{i}\in\mathrm{SE}(3)\}_{i=0}^{N-1} and subsequently reconstruct a global 3D Gaussian scene representation 𝒢 = { ( 𝝁 j , 𝚺 j , α j , 𝐟 j ) } j = 1 M \mathcal{G}=\{(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j},\alpha_{j},\mathbf{f}_{j})\}_{j=1}^{M}   [ 16 ] . Differentiable rasterization renders a synthesized RGB image ℛ ⁡ ( 𝒢 , T i , K ) \mathcal{R}(\mathcal{G},T_{i};K) along with an accumulated opacity map A ⁡ ( 𝒢 , T i , K ) A(\mathcal{G},T_{i};K) .
+To reconcile local tracking with global geometric consistency and suppress cumulative drift, CrossFit-GS introduces an observation-isolated pipeline under a deferred-commitment protocol (Fig.  2 ). Rather than continuously updating a shared global map during pose estimation, our framework decouples trajectory solving from global scene synthesis through three functional components: (i) Alternating Split and Local Tracking , which streamwise partitions incoming frames into interleaved temporal folds and derives initial pose proposals; (ii) Cross-fit Refinement and Validation , which optimizes target camera poses against the frozen opposite submap while updating the activated owner submap only upon passing validation controls; and (iii) Final Reconstruction under Deferred Commitment , which discards intermediate submaps once all camera extrinsics are verified and frozen, utilizing the fixed poses to train a unified global 3DGS representation from scratch.
+3.2 Dual-Map Partitioning and Local Pose Tracking
+To enforce observation isolation during progressive tracking, the input frame stream { I i } i = 0 N − 1 \{I_{i}\}_{i=0}^{N-1} is temporally partitioned according to index parity, with owner assignment a ⁡ ( i ) = i mod 2 a(i)=i\bmod 2 and opposite assignment b ⁡ ( i ) = 1 − a ⁡ ( i ) b(i)=1-a(i) . We initialize the progressive reconstruction from the first frame, which defines the world coordinate system with T ^ 0 = 𝐈 \widehat{T}_{0}=\mathbf{I} and provides the monocular-depth initialization of the Gaussian representation. As subsequent frames arrive, they are assigned to their owner folds, yielding two source image sets 𝒮 0 \mathcal{S}_{0} and 𝒮 1 \mathcal{S}_{1} and their corresponding provisional Gaussian submaps 𝒢 ( 0 ) \mathcal{G}^{(0)} and 𝒢 ( 1 ) \mathcal{G}^{(1)} . The two submaps are constructed and updated alternately throughout the sequence.
+For each target frame I i I_{i} , the opposite submap used for pose refinement excludes that frame from its source image set:
+I i ∉ 𝒮 b ⁡ ( i ) . I_{i}\notin\mathcal{S}_{b(i)}.
+(1)
+This exclusion ensures that the representation used to refine T i T_{i} has received no direct training feedback from I i I_{i} , thereby preventing direct target-to-map self-fitting.
+When a new frame I i I_{i} arrives ( i ≥ 1 i\geq 1 ), a local tracker first provides an initial pose proposal T ~ i ∈ SE ⁡ ( 
+
+【实验】
+4.1 Experimental Setup
+4.2 Novel View Synthesis Evaluation
+4.3 Trajectory Estimation Evaluation
+4.4 Ablation Studies
+4.4.1 Contribution of Each Component
+4.4.2 Runtime Efficiency
+4.4.3 Diagnosing Target-to-Map Self-Explanation We evaluate CrossFit-GS on challenging unposed benchmarks to assess both novel view synthesis fidelity and camera pose recovery accuracy.
+4.1 Experimental Setup
+Datasets.
+Following previous benchmark evaluation protocols [ 44 , 15 , 9 , 33 ] , we evaluate on Tanks and Temples  [ 17 ] using a frame-subsampling stride of 5 to simulate challenging wide-baseline camera motion. Additionally, we benchmark on CO3D-V2  [ 30 ] across representative scenes featuring diverse geometric and textural complexities. In line with standard evaluation setups, every 8th frame is held out as test views for novel view synthesis.
+Metrics.
+Novel view synthesis is evaluated using PSNR, SSIM  [ 42 ] , and LPIPS  [ 50 ] . Camera trajectory estimation is aligned via Sim ⁡ ( 3 ) \mathrm{Sim}(3) Umeyama alignment and evaluated using Absolute Trajectory Error (ATE) as well as Relative Pose Errors for translation ( RPE t \text{RPE}_{t} ) and rotation ( RPE r \text{RPE}_{r} )  [ 20 , 2 ] .
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2610.28190v1 [cs.CV] 20 Oct 2026
+CrossFit-GS: Out-of-Fold Pose Estimation for COLMAP-Free 3D Gaussian Splatting
+Zijian Wu
+Mingfeng Jiang
+Zidian Lin
+Ying Song
+Ziqian Lu
+Affiliation:  Zhejiang Sci-Tech University
+Affiliation:
+Jinliang Wang
+Affiliation:  Tsinghua University
+Affiliation: We presented CrossFit-GS, a deferred-commitment framework designed for COLMAP-free 3DGS. By enforcing strict observation isolation and refining each candidate pose against a frozen out-of-fold submap, our approach effectively eliminates the target-to-map self-explanation loop and prevents pose errors from being absorbed into Gaussian primitives. Experiments on benchmarks demonstrate that CrossFit-GS achieves substantial improvements in both global trajectory accuracy and novel-view rendering. Furthermore, our diagnostic studies confirm that isolating target-frame observations during pose refinement is crucial for preventing trajectory drift and reconstructing geometrically faithful 3D representations.
+References
+[1]
+Y. Bao, T. Ding, J. Huo, Y. Liu, Y. Li, W. Li, Y. Gao, and J. Luo (2025)
+3D gaussian splatting: survey, technologies, challenges, and opportunities .
+IEEE Transactions on Circuits and Systems for Video Technology 35 ( 7 ), pp. 6832–6852 .
+Cited by: §1 .
+[2]
+W. Bian, Z. Wang, K. Li, and J. Bian (2023)
+NoPe-nerf: optimising neural radiance field with no

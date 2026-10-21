@@ -1,0 +1,111 @@
+【摘要】
+
+【方法】
+Problem Formulation. Problem Formulation.
+Given a single source image 𝐈 s \mathbf{I}_{s} , our goal is to reconstruct a photorealistic head of an unseen subject. To tackle this non-trivial task, we employ the 3 3 D Gaussian Splatting ( 3 3 D-GS) pipeline  [ 45 ] . 3 3 D-GS models a scene with a set of 3 3 D Gaussians, each defined by a 3 3 D covariance matrix Σ \Sigma and a center (mean) position p p :
+𝐆 ⁡ ( 𝐱 ) = e − 1 2 ​ ( 𝐱 − 𝐩 ) T ​ Σ − 1 ​ ( 𝐱 − 𝐩 ) . \mathbf{G(x)}=e^{-\frac{1}{2}(\mathbf{x}-\mathbf{p})^{T}\Sigma^{-1}(\mathbf{x}-\mathbf{p})}.
+(1)
+Each Gaussian 𝐆 \mathbf{G} is parameterized by 𝒢 = { 𝐩 , 𝐪 , 𝐬 , α , 𝐜 } \mathcal{G}=\{\mathbf{p},\mathbf{q},\mathbf{s},\alpha,\mathbf{c}\} where 𝐩 ∈ ℝ 3 \mathbf{p}\in\mathbb{R}^{3} is the center position, 𝐪 ∈ ℝ 4 \mathbf{q}\in\mathbb{R}^{4} is the rotation quaternion, 𝐬 ∈ ℝ 3 \mathbf{s}\in\mathbb{R}^{3} is the scaling factor, α ∈ ℝ 1 \alpha\in\mathbb{R}^{1} is the opacity, and 𝐜 ∈ ℝ 3 \mathbf{c}\in\mathbb{R}^{3} is the color.
+Applying 3 3 D-GS to our task is non-trivial, as we aim to render novel views under (1) a single-view setting, (2) a generalizable model without per-subject fine-tuning, and (3) a reduced number of Gaussians rather than a per-pixel allocation. We explain our solution in the following sections. FFHQ
+CelebA-HQ
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+E 3 3 DGE  [ 52 ]
+23.43 23.43
+0.598 0.598
+0.133 0.133
+23.64 23.64
+0.589 0.589
+0.128 0.128
+G-NeRF  [ 98 ]
+19.68 19.68
+0.673 0.673
+0.256 0.256
+19.81 19.81
+0.566 0.566
+0.296 0.296
+GAGAvatar  [ 17 ]
+25.03 25.03
+0.888 0.888
+0.110 0.110
+25.06 25.06
+0.874 0.874
+0.119 0.119
+Ours
+29.75 \mathbf{29.75}
+0.951 \mathbf{0.951}
+0.017 \mathbf{0.017}
+29.25 \mathbf{29.25}
+0.939 \mathbf{0.939}
+0.018 \mathbf{0.018}
+Table 1 : Reconstruction Quality. We quantitatively compare the reconstruction quality.
+4.2 Reconstruction Quality
+We first evaluate the reconstruction quality of all methods to assess how well each model reproduces the source view. This provides a direct measure of representation power and fidelity before novel-view synthesis.
+Specifically, we measure the reconstruction error using PSNR, SSIM  [ 88 ] , and LPIPS  [ 95 ] . In this experiment, we set the number of Gaussians at M M = 12 12 k for all test images. As shown in Tab.  1 , our model achieves the best performance across all metrics. We also qualitatively compare reconstruction quality in Fig.  5 . EGGHead captures the subject’s skin tone more accurately and improves the detail of the hair, mouth, and teeth, thanks to our GAM assigning more Gaussians to those regions. FFHQ
+CelebA-HQ
+ID ↑ \uparrow
+FID ↓ \downarrow
+ID ↑ \uparrow
+FID ↓ \downarrow
+E 3 3 DGE  [ 52 ]
+0.7744 0.7744
+41.60 41.60
+0.7547 0.7547
+40.87 40.87
+G-NeRF  [ 98 ]
+0.6621 0.6621
+54.67 54.67
+0.6375 0.6375
+50.45 50.45
+GAGAvatar  [ 17 ]
+0.8377 0.8377
+32.55 32.55
+0.8480 0.8480
+30.01 \mathbf{30.01}
+Ours
+0.8517 \mathbf{0.8517}
+29.01 \mathbf{29.01}
+0.8532 \mathbf{0.8532}
+32.23 32.23
+Table 2 : Novel View Synthesis. We compare novel view synthesis quality using pairwise multi-view identity consistency (ID) and Frechet Inception Distance (FID).
+Input
+GT
+(a)
+(b)
+(c)
+(d)
+Figure 6 : NeRSemble NVS. (a) E 3 3 DGE; (b) G-NeRF; (c) GAGAvatar; (d) Ours.
+4.3 Novel View Synthesis
+We evaluate EGGHead’s novel view synthesis by rendering subjects under unseen viewpoints. Fig.  
+
+【实验】
+4.1 Experimental Setup
+Datasets and Baselines. 4.1 Experimental Setup
+Datasets and Baselines.
+We train on 30,000 30,000 FFHQ  [ 44 ] images. For evaluation, we use a disjoint set of 1,000 1,000 FFHQ images and 1,000 1,000 CelebA-HQ  [ 43 ] images. To train our density prediction network, we generate pseudo ground-truth Gaussian center maps for all training images using our proposed GAM (Sec.  3.1 ).
+For the baselines, we compare EGGHead’s Gaussian representation quality against single-image head reconstruction methods, including the 3D-aware GANs E3DGE  [ 52 ] and G-NeRF  [ 98 ] , as well as the 3D-GS based method GAGAvatar  [ 17 ] , using the same M M = 12 12 k Gaussians setting where applicable.
+
+【结论/局限】
+ We’ve proposed EGGHead, a single-image generalizable head modeling method that offers fast enrollment and rendering while maintaining high reconstruction quality. Our Gaussian allocation algorithm assigns appropriate numbers of Gaussians to different semantic head regions, preserving visual fidelity even with lower Gaussian budgets. Our feed-forward design combines a Gaussian allocation and density prediction network with a Gaussian attribute regressor, eliminating expensive per-subject optimization typically required in 3D-GS. In addition, Voronoi tessellation-guided attribute prediction improves structural accuracy under sparse single-view settings, while the Face Symmetry Module enhances completeness without additional heavy networks. We hope our method encourages future work on efficient, high-quality, and generalizable Gaussian heads from single images. .
+6 Network Architecture
+Gaussian Attribute Regressor.
+Density Prediction Network.
+Refinement Network.
+7 Regressor Loss
+8 Edge-aware Alignment
+9 Density Prediction
+10 Rendering Speed
+11 Expression Editing
+12 Additional Gaussian Budget Comparison
+13 Additional Qualitative Results
+14 Delighting Preprocessing
+15 Licenses and Responsible Use of Human Data
+16 Potential Societal Impacts
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26898v1 [cs.CV] 16 Oct 2026
+EGGHead: Efficient Generalizable Gaussian H

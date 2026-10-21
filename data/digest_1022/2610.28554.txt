@@ -1,0 +1,173 @@
+【摘要】
+
+【方法】
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+VLM ↑ \uparrow
+FID ↓ \downarrow
+Solaris
+68.8
+22.38
+66.7
+14.92
+20.8
+47.11
+22.9
+76.01
+56.3
+68.42
+0.0
+17.06
+6.2
+20.23
+12.5
+26.52
+γ \gamma -World
+64.6
+17.13
+62.5
+29.39
+16.7
+29.57
+43.8
+24.62
+47.9
+56.39
+0.0
+23.83
+0.0
+25.71
+8.3
+31.72
+OverSeer
+59.1
+18.27
+91.7
+11.33
+87.5
+12.95
+41.7
+32.50
+60.4
+26.47
+60.2
+13.99
+37.9
+12.79
+40.5
+17.61
+Table 1 : Results on Minecraft.
+Comparison on the Solaris benchmark and our MAC-Bench. VLM denotes VLM-judged accuracy (%) and FID denotes frame-level FID; MAC-Bench results are averaged over 5 runs.
+Bold and underline denote the best and second-best listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab)
+
+【实验】
+Environments and Benchmarks. in Minecraft and Doom demonstrate improved world and agent consistency, with qualitative results on real-world multi-camera captures indicating that the approach is not tied to game engines.
+Our compression analysis further shows that δ \delta -VAE substantially reduces the computational overhead of auxiliary-view generation.
+We conclude that these fixed views provide a simple and efficient way to improve multi-agent world models.
+† † date: October 15, 2026 † † \raisebox{-0.15em}{\includegraphics[height=1.1em]{assets/huggingface-logo.pdf}}\hspace{0.35em}Dataset: huggingface.co/collections/liguang0115/overseer † † \raisebox{-0.15em}{\includegraphics[height=1.1em]{assets/website-logo.pdf}}\hspace{0.35em}Project Page: overseer-wm.github.io
+Figure 1 : OverSeer sees beyond what agents see.
+Two agents interact in a shared Minecraft environment (Left).
+In addition to generating each agent’s egocentric view (Bottom), OverSeer  models six fixed-pose auxiliary cameras (Right).
+These auxiliary streams establish a persistent shared reference, enforcing world consistency over time and agent consistency across views. We structure our experimental evaluation to test the central hypothesis of this work: extending a multi-agent video world model with pose-fixed, efficiently represented auxiliary views significantly improves both temporal and agent consistency compared to baselines ( section   4.1 ).
+We then conduct ablation studies investigating how performance scales with the number of auxiliary views and how the δ \delta -VAE compression ratio influences synthesis quality and computational overhead ( section   4.2 ).
+For qualitative results, please refer to our website and appendix.
+Environments and Benchmarks.
+We evaluate world models by conditioning future frame rollouts on initial visual observations and multi-agent action trajectories. Primary quantitative evaluations are conducted in Minecraft , whose persistent and editable 3D world naturally tests spatial memory, multi-agent interaction, and cross-view consistency ( tables   1 and  2 ). To evaluate long-horizon spatial reasoning, we additionally run revisit tasks in Doom ( table   2 ) and showcase qualitative generalization on real-world video captures from Replay   ( Shapovalov et al., 2023 ) . In Minecraft, evaluation spans two benchmark suites:
+1.
+Solaris Benchmark   ( Savva et al., 2026 ) : Evaluates five multi-agent capabilities using VLM-judged scripted questions, requiring all questions within an episode to be answered correctly.
+2.
+MAC-Bench (Multi-Agent Consistency Benchmark) : Designed specifically to evaluate world and agent consistency in a harder setting. Specifically. we design the following three tasks:
+•
+Reunite at Start : Both agents return to their exact initial poses. Consequently, an agent’s partner must reappear at a previously observed spatial location.
+•
+Reunite Far : Agents navigate long, converging routes without visual contact in transit, turning to face each other upon arrival. A partner must appear at close range within previously unobserved space.
+•
+Dynamic Event : Agents observe the initial stage of a localized dynamic process ( e.g. , a chai
+
+【结论/局限】
+6 Acknowledgement
+References
+A Dataset Curation Pipelines
+Data.
+Minecraft.
+Doom.
+Real captures.
+MAC-Bench.
+B Auxiliary Camera Pose Sampling
+Scene-Independent Pose Prior.
+Coverage-Based Selection.
+C More Ablations
+Feature alignment loss.
+D Implementation Details
+E Limitations and Future Work
+F Prompts
+F.1 The judge
+Revisiting benchmark.
+One sentence we add.
+F.2 Action prompts
+G More Visualizations
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.28554v1 [cs.CV] 20 Oct 2026
+OverSeer : Multi-Agent World Models Beyond What Agents See
+Runjia Li
+Affiliation:  Meta AI
+Affiliation:  University of Oxford
+Kam Woh Ng
+Affiliation:  Meta AI
+Minghao Chen
+Affiliation:  University of Oxford
+Junlin Han
+Affiliation:  Meta AI
+Affiliation:  University of Oxford
+Jianyuan Wang
+Affiliation:  Meta AI
+Affiliation:  University of Oxford
+Zhaochong An
+Affiliation:  Meta AI
+Juan-Manuel Perez-Rua
+Affiliation:  Meta AI
+Andrea Vedaldi
+Affiliation:  Meta AI
+Affiliation:  University of Oxford
+Equal supervision.
+Shikun Liu
+Affiliation:  Meta AI
+Equal supervision. We introduced OverSeer, a multi-agent video world model that jointly generates egocentric
+agent views and fixed-pose auxiliary views as a lightweight proxy for a world-centric state.
+These views substantially improve consistency when agents separate and later reunite, and
+δ \delta -VAE makes them cheap to model by encoding only changes rela

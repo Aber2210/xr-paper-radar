@@ -1,0 +1,106 @@
+【摘要】
+.
+
+【方法】
+3.1 Scene Initialization
+Heightfield construction.
+Adaptive camera placement.
+3.2 Global Iterative Scene Generation
+Iterative UV accumulation.
+Face-wise top- K K camera baking.
+3.3 UV-Denoising Terrain Refinement
+Terrain ROI extraction.
+Tile-wise latent refinement.
+3.4 View-Dependent Building Refinement
+Object-centric orbit rendering.
+Building Refinement.
+Normal-aware camera selection and update. 3D Training
+Free
+3D Dataset
+Free
+Asset
+Free
+Text
+Control
+CityDreamer  ( Xie et al., 2024 )
+× \times
+× \times
+✓ \checkmark
+× \times
+UrbanWorld  ( Shang et al., 2024 )
+× \times
+× \times
+✓ \checkmark
+✓ \checkmark
+GaussianCity  ( Xie et al., 2025 )
+× \times
+× \times
+✓ \checkmark
+× \times
+CitySculpt  ( Yao et al., 2025b )
+× \times
+× \times
+✓ \checkmark
+× \times
+MajutsuCity  ( Huang et al., 2025b )
+× \times
+× \times
+× \times
+✓ \checkmark
+CityPaint (Ours)
+✓ \checkmark
+✓ \checkmark
+✓ \checkmark
+✓ \checkmark CityPaint generates city-scale textured 3D scenes from geographic coordinates and a text prompt. Instead of synthesizing urban environments from scratch, we exploit appearance priors from pre-trained 2D diffusion models and cast city texturing as a geometry-grounded generative reconstruction problem. As shown in Fig.  2 and Fig.  3 , the pipeline contains four stages: scene initialization, global iterative generation, terrain refinement, and building refinement.
+Figure 2. Overview of the CityPaint Pipeline (Stages 1 & 2). In Stage 1, we construct a 3D city mesh from OpenStreetMap (OSM) data and establish heightfield-aware camera trajectories for stable observation. In Stage 2, a conditional diffusion model iteratively synthesizes the scene guided by rendered depth and semantic maps. The generated views are accumulated into a global UV atlas using a face-wise top- K K camera baking strategy to suppress artifacts from grazing angles. Pipeline showing city mesh construction, adaptive camera sampling, conditional generation, and top-K texture baking.
+3.1. Scene Initialization
+The first stage constructs the scene geometry and the observation policy used in later generation, as shown in the left part of Fig.  2 . Given a user-specified city center ( ℓ lat , ℓ lng ) (\ell_{\mathrm{lat}},\ell_{\mathrm{lng}}) and retrieval radius r r , we build a semantic city mesh from OSM building footprints and road layouts:
+(1)
+ℳ = { ℳ bld , ℳ road , ℳ ter } , \mathcal{M}=\{\mathcal{M}^{\mathrm{bld}},\mathcal{M}^{\mathrm{road}},\mathcal{M}^{\mathrm{ter}}\},
+where ℳ bld \mathcal{M}^{\mathrm{bld}} , ℳ road \mathcal{M}^{\mathrm{road}} , and ℳ ter \mathcal{M}^{\mathrm{ter}} denote building, road, and terrain geometry, respectively. Specifically, we convert these map elements into a triangulated 3D scene by extruding building polygons and triangulating roads and terrain, then parameterize the textured region into a global UV atlas 𝒰 ∈ [ 0 , 1 ] H u × W u × 3 \mathcal{U}\in[0,1]^{H_{u}\times W_{u}\times 3} that is updated throughout generation.
+Heightfield construction.
+Given the initialized mesh ℳ \mathcal{M} , we project it onto the ground plane and estimate a heightfield over the horizontal domain Ω ⊂ ℝ 2 \Omega\subset\mathbb{R}^{2} . For location ( x , z ) (x,z) , the raw heightfield is defined as the upper envelope of triangles intersecting that ground position:
+(2)
+H ( x , z ) = max p ∈ ℳ : π ⁡ ( p ) = ( x , z ) p y , H(x,z)=\max_{p\in\mathcal{M}\,:\,\pi(p)=(x,z)}p_{y},
+wh
+
+【实验】
+4.1 Experimental Details 4.1. Experimental Details
+Across all three stages (global generation, terrain refinement, and building refinement), we adopt the open-source generative model Z-Image  ( Cai et al., 2025 ) as the shared diffusion prior.
+In the global stage, we iteratively texture the scene onto an 8192 × 8192 8192\times 8192 UV atlas from 320 views. The cameras follow our heightfield-aware trajectory with 8 scan strips and 40 views per strip, using a 48 ∘ 48^{\circ} downward elevation and a 40 ∘ 40^{\circ} field of view. For each selected view, we render a depth map, a semantic control map, and the current partial appearance from the UV atlas, and run 25 denoising steps in the conditional diffusion model.
+For the subsequent refinement stages, terrain refinement operates on overlapping 1024 × 1024 1024\times 1024 UV tiles with a denoising strength of 0.2 and the shared global-noise initialization described in Eq.  15 . Building refinement uses object-centric orbit cameras sampled across azimuths at elevations of 20 ∘ 20^{\circ} and 35 ∘ 35^{\circ} to enhance facade details, and updates the atlas through the normal-aware selection rule in Eq.  21 with at most two views per face. All experiments are conducted on a single NVIDIA A100 GPU (40 GB).
+Figure 4. Visual comparison of reference distributions. Top: Google Earth imagery often suffers from 3D reconstruction artifacts, blurred textures, and compression defects. Bottom: Our proposed CityWeb benchmark provides a cleaner, high-fidelity, and photorealistic reference distribution. Blurred Google Earth examples above and sharper CityWeb photographs below.
+Figure 5. Qualitative comparison of different city generation methods (zoom-in recommended for details). Grid comparing city scenes generated by baseline methods and CityPaint.
+Table 2. Quantitative comparison on geometric consistency (CE, DE) and visual fidelity (FID, KID, NIQE, BRISQUE) using Google Earth and CityWeb. Comparison of seven methods on geometric consistency and visual quality metrics. Metrics and Comparisons
+4.4 Ablation Study Metrics
+A key challenge in evaluating city-scale 3D generation is the lack of reliable reference image distributions. Existing works commonly use Google Earth imagery  ( Xie et al., 2024 ; Xie et al., 2025 ) as an evaluation benchmark. However, such imagery is not ideal for assessing photorealism because it often contains reconstruction artifacts, compression noise, and noticeable blurring, as illustrated in Fig.  4 . Consequently, metrics computed solely on this distribution may not accurately reflect the visual quality of generated results.
+To address this limitation, we introduce a complementary high-quality benchmark, termed CityWeb . We collect a large-scale set of real-world urban photographs from publicly accessible web sources and apply a multi-stage filtering pipeline to remove non-photographic, low-resolution, and watermarked images. A GPT-based scoring mechanism  ( Achiam et al., 2023 ) then ranks the candidates according to urban relevance, visual clarity, and overall fidelity. The top 20,000 images are retained to form the CityWeb benchmark, yielding a cleaner and more realistic reference 
+
+【结论/局限】
+Acknowledgements
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27564v1 [cs.CV] 20 Oct 2026
+CityPaint: A Free Lunch from 2D Diffusion for City-Scale 3D Texturing
+Conference:  Proceedings of the 34th ACM International Conference on Multimedia; November 10–14, 2026; Rio de Janeiro, Brazil Proceedings of the 34th ACM International Conference on Multimedia (MM ’26), November 10–14, 2026, Rio de Janeiro, Brazil DOI:  10.1145/3767308.3835893 ISBN:  979-8-4007-2213-4/2026/11 CCS:  Computing methodologies Computer vision problems
+Yuchen Zou
+Note:  Both authors contributed equally to this research.
+This work was completed during internship at LASER IDEA.
+Affiliation:  Xi’an Jiaotong University , Xi’an , China
+email: yuchenzou@stu.xjtu.edu.cn
+,
+Lihuang Fang
+Affiliation:  Southern University of Science and Technology , Shenzhen , China
+email: l.h.fang228@gmail.com
+,
+Siyu Zhu
+Affiliation:  Xi’an Jiaotong University , Xi’an , China
+email: zhusiyu@stu.xjtu.edu.cn
+and
+Xiao Hu
+Note:  Corresponding author.
+Affiliation:  International Digital Economy Academy , Shenzhen , China
+Affiliation:  HKUST (Guangzhou) , Guangzhou , China
+email: huxiao1@idea.edu.cn
+© cc
+Figure 1. Capabilities of CityPaint. Given text prompts, our framework generates high-fidelity, globally consistent 3D city textures. By leveraging the rich visual priors of 2D diffusion models, CityPaint naturally

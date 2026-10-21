@@ -1,0 +1,51 @@
+【摘要】
+
+【方法】
+3.1 Interactive World Representation
+3.2 Task Compiler and Scene Grounding
+3.3 Multi-Expert Motion Synthesis
+3.4 Physics-Based Execution with Bounded Residuals World2HOSI is a multi-model orchestration framework that generates human-object-scene interactions from 3D Gaussian scenes and text instructions, as illustrated in Figure  3 .
+Figure 2: World2HOSI closes the loop around a persistent scene state. (a) The ISP organizes background and object assets. (b) Task Planner grounds each action stage in the current state. (c) Experts generate motion, whose outcomes update the ISP before the next invocation. (d) Optional physics-based refinement supports contact-driven execution. State write-back keeps subsequent targets consistent with earlier actions.
+3.1 Interactive World Representation
+Representation. Native 3DGS provides a renderable collection of Gaussians  ( Kerbl et al., 2023 ) , but not the object-level structure needed for task planning, interaction, and state memory. So we introduce the Interactive Scene Package (ISP), a unified structure with persistent object identities. Each object has visual assets, local collision geometry, semantic labels, a world transformation, and physical properties. The scene also maintains a static background, support regions, object relationships, and navigable space. Rendering and interaction use separate representations aligned by shared object transformations. Gaussian assets provide appearance, while geometric proxies support collision checking and path planning:
+W = { V , B , ( id i , G i , T i , A i , S i ) i = 1 N , M , R } . W=\left\{V,B,(\mathrm{id}_{i},G_{i},T_{i},A_{i},S_{i})_{i=1}^{N},M,R\right\}.
+(1)
+Here, V V denotes visual assets, B B scene geometry, id i \mathrm{id}_{i} a unique identifier for each object, G i G_{i} local object geometry, and T i ∈ SE ⁡ ( 3 ) T_{i}\in\mathrm{SE}(3) world transformations. A i A_{i} contains manipulability and physical properties such as mass, S i S_{i} denotes object-local support regions, M M navigation occupancy, and R R object and spatial relationships. Movable objects are separated from the static background, with T i T_{i} applied consistently to their visual, collision, and semantic geometry.
+Scene Update. Following object pose changes, the ISP updates support regions and navigation occupancy to condition later tasks. Support regions use object-local coordinates, moving or reorienting a chair recomputes its seat’s world coordinates through T i T_{i} , enabling subsequent sitting without manually reannotating the support surface. Navigation occupancy separates static-background and object-instance layers. Old object occupancy is removed and geometry inserted at the new pose, so path planning uses the updated obstacles.
+The ISP underlies subsequent generation and exposes interpretable task conditions, object movability, the supporting object associated with a target region, and whether a location can be approached are all queryable before motion generation. Details on constructing the ISP are provided in Appendix   A.1 .
+3.2 Task Compiler and Scene Grounding
+Natural language typically describes task intent without exact action orders or spatial coordinates. To let different experts interpret tasks in a shared scene, we separate semantic and numerical representations. At the semantic level, instructions are decomposed into ordered actions in a structure
+
+【实验】
+4.1 Comparison with External Methods on Shared Tasks
+Dataset and metrics.
+Baselines.
+4.2 Motion Diversity
+4.3 Ablation Study
+Cross-expert reconciliation.
+Bounded residual refinement.
+4.4 Long-Horizon Stateful Interaction
+4.5 User Study We extensively evaluate World2HOSI through quantitative comparisons, a perceptual user study, and component ablations. The evaluation covers interaction generation quality, data diversity, stitching effectiveness, and physical plausibility.
+Table 1: Quantitative results on the shared HOSI tasks. Compared with the external baselines, our method achieves superior task completion and interaction quality.
+
+【结论/局限】
+References
+A Appendix
+A.1 ISP Construction Details
+A.2 Complete Task Definitions
+A.2.1 Task Instances and State Dependencies
+A.2.2 Shared Conditions and Model Invocation
+A.3 More results of Long-Horizon Tasks with State-Update Dependencies
+A.4 Definitions of Aggregate Metrics for Shared Tasks
+A.4.1 Task Progress Score S t S_{t}
+A.4.2 Geometry Score S g S_{g}
+A.5 Physics-Based Refinement Details
+A.6 User Study
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27725v1 [cs.CV] 20 Oct 2026
+World2HOSI: A Multi-Expert Harness for
+Long-Horizon Human-Object-Scene Interaction Generation
+Jiushu Li 1 , Haoran Wang 1 , Yumeng Liu 2 , Zhiyang Dou 3 , Yuan Liu 4 , Yuexin Ma 5 , Cheng Lin 1,†
+1 Macau University of Science and Technology   2 University of Science and Technology of China
+3 Massachusetts Institute of Technology   4 The Hong Kong University of Science and Technology
+5 ShanghaiTech University We presented World2HOSI, an orchestration framework for long-horizon HOSI data generation. It transforms static 3D Gaussian scenes into continuously updated interactive worlds. Through the Interactive Scene Package , task compilation, and projection-based stitching, navigation, human-object, and human-scene models generate continuous motion under shared state, with object motion affecting subsequent task conditions. Bounded residual optimization further refines the kinematic refer

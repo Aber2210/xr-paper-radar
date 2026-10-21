@@ -1,0 +1,115 @@
+【摘要】
+
+【方法】
+BT
+BS
+CT
+CS
+BFT
+Avg.
+Overall
+LGSCV
+-37.24
+-28.00
+-14.71
+-29.69
+-34.52
+-28.83
+-27.66
+TMCV-v2
+-30.00
+-32.13
+-35.06
+-33.71
+-41.31
+-34.44
+-34.11
+CCT-GS
+-58.75
+-52.75
+-55.81
+-49.18
+-54.45
+-54.19
+-51.30 BFS
+BFU
+Makeup
+Musical
+Trio
+Avg.
+Overall
+LGSCV
+-43.38
+-38.86
+-3.84
+-39.57
+-6.78
+-26.49
+-27.66
+TMCV-v2
+-41.60
+-30.88
+-30.41
+-32.19
+-33.79
+-33.77
+-34.11
+CCT-GS
+-53.03
+-49.24
+-44.29
+-57.03
+-38.50
+-48.42
+-51.30
+BT: bartender tracked; BS: bartender semitracked; CT: cinema tracked; CS: cinema semitracked; BFT/BFS/BFU: breakfast tracked/semitracked/untracked.
+Table  I reports BD-rate results over the full Forward-facing class using GSCodec Studio as the anchor. CCT-GS achieves consistent bitrate savings on all tested sequences and obtains the best average BD-rate reduction of 51.30% relative to the anchor. The gains are observed across tracked, semi-tracked, and untracked sequences, demonstrating robust R-D improvements across different forward-facing 3DGS contents.
+III-C Ablation Study
+We conduct an ablation study on the bartender_tracked sequence to validate the contribution of each component. Direct HEVC denotes directly coding the SH-AC maps with HEVC. As shown in Fig.  3 , CCT-GS with MSE-only training (i.e., only generalized transform without LoRA-based adaptation) achieves an 11.40% BD-rate reduction over Direct HEVC, confirming the effectiveness of the learned SH-AC bottleneck transform. Introducing the rendering loss further brings a 3.13% BD-rate reduction over the MSE-only model, indicating that render-aware optimization better aligns the reconstructed SH-AC attributes with the final view quality. With LoRA-based scene adaptation, the full CCT-GS obtains an additional 22.72% BD-rate reduction over the generalized SH-AC transform without LoRA, and achieves a total BD-rate reduction of 37.75% over Direct HEVC. These results show that the generalized SH-AC transform captures cross-scene regularities of SH-AC attributes, while LoRA-based scene adaptation further learns scene-specific appearance details to improve R-D efficiency.
+Fig. 3: Ablation study on the contribution of each component. listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab)
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.26920v1 [eess.IV] 17 Oct 2026
+Codec-Compatible Learned Compression for 3D Gaussian Splatting
+Thanks:  This paper is supported in part by National Natural Science Foundation of
+China (62371290), National Key R&D Program of China (2024YFB2907204),
+the Fundamental Research Funds for the Central Universities of China,
+and STCSM under Grant (22DZ2229005).
+* Corresponding authors: Yiling Xu
+(e-mail: yl.xu@sjtu.edu.cn) and Qi Yang
+(e-mail: qiyang@umkc.edu).
+Feiyang Yu 1 ,
+Qi Yang 2* ,
+Wenjie Huang 1 ,
+Yunfeng Guan 1 ,
+Yiling Xu 1* ,
+and Zhu Li 2
+Affiliation:  1 Shanghai Jiao Tong University, Shanghai, China,
+2 University of Missouri-Kansas City, Kansas City, USA
+1 {yufy, huangwenjie2023, yfguan69, yl.xu}@sjtu.edu.cn,
+2 {qiyang, lizhu}@umkc.edu In this paper, we proposed CCT-GS, a codec-compatible learned compression framework for explicit 3DGS attribute maps, focusing on the high-dimensional SH-AC attributes. By learning cross-scene regularities of SH-AC maps and further capturing scene-specific appearance details, CCT-GS improves R-D efficiency while retaining compatibility with standard video coding. Experiments under the MPEG GSC CTC demonstrate consistent gains over representative video-based baselines, achieving an average BD-rate reduction of 51.30% over the video-based anchor. In future work, we plan to ex

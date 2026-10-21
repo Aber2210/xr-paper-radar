@@ -1,0 +1,61 @@
+【摘要】
+
+【方法】
+3.1 4D Gaussian Splatting as the World Representation
+3.2 4D Gaussian Reconstruction Model
+Encoding.
+Decoding.
+3.3 Generative World Modeling
+Overview.
+Dual-Path Domain Adapter.
+Perceiver Bridge.
+Token-Level Injection.
+3.4 Training Strategy Figure 2: Overview of AEON.
+Top (1). The 4D Reconstruction Model (4DRM) decodes a monocular video into a 4DGS world through four task-specific heads that respectively predict depth, Gaussian appearance, dynamic evolution, and camera poses. The resulting primitives are rasterized into RGB, depth, and normal maps for end-to-end supervision.
+Bottom (2). We train AEON for generative world modeling by distilling the world generative capability of a frozen video diffusion model (e.g., Wan 2.2  [ 38 ] ) and the 4D reconstructive capability of a teacher 4DRM via a Domain Adapter and a learnable student 4DRM. The generated explicit 4DGS world enables versatile world modeling applications.
+We present AEON, a generative world model that operates within the latent space of a pretrained video diffusion model while producing explicit 4D Gaussian Splatting (4DGS) as the world representation. Given a text prompt or conditioning image, our goal is to generate a set of 4D Gaussians encoding both appearance and dynamics, enabling photorealistic rendering and persistent 3D simulation. The overview of AEON is shown in Fig.  2 . We begin by introducing the 4DGS representation in Sec.  3.1 , which models dynamic scenes through velocity-driven motion and time-varying visibility. In Sec.  3.2 , we present the 4D Gaussian Reconstruction Model, whose four task-specific heads jointly predict depth, Gaussian appearance, dynamic evolution, and camera poses from monocular videos. We then describe our domain adapter in Sec.  3.3 , which bridges the generative video latent space and the reconstructive 4D latent space through distillation. Finally, Sec.  3.4 details our multi-stage training strategy that optimizes the full pipeline end-to-end.
+3.1 4D Gaussian Splatting as the World Representation
+An ideal world model should jointly capture realistic appearances, scene dynamics, and 3D-consistent geometry within a persistent and efficiently renderable representation. To this end, AEON adopts 4D Gaussian primitives  [ 41 , 53 , 60 ] as its foundational scene representation, where each primitive simultaneously encodes geometry, appearance, and temporal evolution. Formally, a single primitive g i g_{i} is characterized by the following parameter set
+g i = { 𝐱 i , 𝐬 i , 𝐫 i , o i , 𝐜 i , t i , l i , 𝐯 i , 𝝎 i } . g_{i}=\{\mathbf{x}_{i},\mathbf{s}_{i},\mathbf{r}_{i},o_{i},\mathbf{c}_{i},t_{i},l_{i},\mathbf{v}_{i},\boldsymbol{\omega}_{i}\}.
+(1)
+Specifically, 𝐱 i ∈ ℝ 3 \mathbf{x}_{i}\in\mathbb{R}^{3} denotes the spatial center, 𝐬 i ∈ ℝ 2 \mathbf{s}_{i}\in\mathbb{R}^{2} parameterizes anisotropic scaling along the principal axes, and 𝐫 i ∈ ℝ 4 \mathbf{r}_{i}\in\mathbb{R}^{4} encodes the orientation as a unit quaternion. The base opacity o i ∈ [ 0 , 1 ] o_{i}\in[0,1] together with the color 𝐜 i ∈ ℝ 3 \mathbf{c}_{i}\in\mathbb{R}^{3} jointly determine the visual appearance of each primitive.
+In addition to these spatial attributes, four temporal parameters govern the dynamic behavior of each primitive. The reference timestep t i ∈ [ 0 , T ] t_{i}\in[0,T] specifies the moment of peak activation, while the duration l i ∈ ℝ + l_{i}\in\mathbb{R}^{+} con
+
+【实验】
+4.1 4D Generation
+4.2 Video-to-4D Reconstruction
+4.3 Novel Trajectory Rendering
+4.4 Ablation Studies Figure 3: Qualitative reconstruction comparison on Dycheck and DaVis.
+4.1 4D Generation
+We evaluate AEON against 4DNex  [ 7 ] and Lyra  [ 3 ] for 4D generation. Unlike 4DNex (per-frame point clouds) and Lyra (per-frame 3DGS), AEON predicts a unified 4DGS representation for real-time exploration. We evaluate on 30 scenes, each specified by an image-text prompt. Evaluation videos, rendered along shared camera trajectories from identical image-text prompts, are assessed via VBench  [ 13 ] metrics: I2V Subject, Subject Consistency, Motion Smoothness, and Aesthetic Quality. As shown in Table  2 , AEON outperforms all baselines. While per-frame reconstruction lacks cross-frame coherence, AEON models scenes via persistent 4D Gaussians with explicit velocity and duration, naturally ensuring temporal consistency. Additionally, AEON generalizes across backbones (Wan 2.1 and Wan 2.2) without architectural modifications, yielding consistently strong results.
+Table 2: Quantitative comparison on 4D generation. All outputs are rendered along shared preset camera trajectories and scored with VBench  [ 13 ] metrics.
+
+【结论/局限】
+ We present AEON, a unified world modeling framework that bridges video-based and 3D-based paradigms and combines the benefits of both. The core of AEON is a generative model that operates within the latent space of a pretrained video diffusion model while producing explicit 4D Gaussian Splatting as the world representation. We train a 4DRM for robust geometric guidance and design a domain adapter that translates generative video latents into the reconstructive 4D latents through end-to-end distillation. Experiments across 4D generation, dynamic-scene reconstruction, and novel trajectory rendering demonstrate that AEON achieves state-of-the-art performance while supporting a broad spectrum of world modeling applications within a single unified framework. and future work.
+References
+A Implementation Details
+B Applications
+Text/Image-to-world generation.
+Video-to-world reconstruction.
+Novel view synthesis.
+Physical status estimation.
+3D world generation.
+Scene editing and simulation.
+C Evolution of 4DGS Representation
+Temporal opacity evolution.
+Velocity-driven spatial evolution.
+D Evaluation Metrics
+Reconstruction metrics.
+VBench video quality metrics.
+E Additional Ablation Studies
+Adapter.
+Training.
+4DRM.
+F Additional Qualitative Results
+License: CC BY 4.0
+arXiv:2610.28631v1 [cs.CV] 20 Oct 2026
+Aeon : Unifying Video and 3D World Models
+Weiqi Zhang
+Wenyuan Zhang
+Yu-Shen Liu †
+Ju

@@ -1,0 +1,45 @@
+【摘要】
+
+【方法】
+3.1 Motivation
+3.2 Velocity-guided Structure Anchoring
+3.3 Sparse Correspondence Calibration Given an egocentric manipulation video x ref x^{\mathrm{ref}} that demonstrates a source action, egocentric action transfer aims to synthesize a new video x gen x^{\mathrm{gen}} that preserves the transferable action semantics while allowing the visual realization to change. The transferred signal should not be limited to visible hand displacement, but should also retain the underlying interaction logic, including contact transitions, object response, and coordinated hand-object dynamics. In this section, we first discuss the motivation and key challenges of egocentric action transfer in Sec.  3.1 . We then introduce Velocity-guided Structure Anchoring (VSA) in Sec.  3.2 , which stabilizes the global hand-object structure during the early denoising stage. Finally, we present Sparse Correspondence Calibration (SCC) in Sec.  3.3 , which refines local temporal correspondences in the mid-to-late denoising stages.
+3.1 Motivation
+Egocentric action transfer requires the model to transfer the semantic action from a reference egocentric observation while synthesizing a new interaction video under a different visual realization. Consistent with the discussion in Sec.  1 , this setting is difficult because the model must preserve the interaction logic behind the motion rather than simply reproduce visible hand displacement. We focus on two failure modes that commonly appear during generation:
+Hand-object Structural Collapse.
+Explicit condition guidance usually converts the reference video into geometric controls, such as keypoints, hand poses, or mesh sequences, and then forces the generation process to follow these controls. Although this can preserve coarse motion, it is fragile in egocentric manipulation, where hands are frequently occluded, distorted by perspective, and tightly coupled with objects. Noisy or distribution-mismatched controls can over-constrain the early denoising trajectory, leading to broken fingers, distorted hands, collapsed objects, or implausible contact geometry.
+Physically Unrealistic Interaction.
+Even when visible motion is roughly aligned, the generated video may still fail to preserve the physical logic of manipulation, such as when contact is established, how the object responds, and whether local hand-object correspondences remain temporally consistent. This problem becomes especially apparent in the mid-to-late denoising stages, where fine-grained appearance and contact details are formed.
+To address these two failure modes, EgoACT performs two complementary latent optimization steps during inference. Velocity-guided Structure Anchoring (VSA) is applied in the early denoising stage to keep the generation close to reference-consistent hand-object structure, reducing structural collapse before the interaction layout is formed. Sparse Correspondence Calibration (SCC) is then applied in the mid-to-late denoising stages to correct reliable local correspondences around interaction regions, improving temporal consistency and hand-object realism without additional training.
+Both modules use a frozen reference branch and an optimized generation branch. At each guided denoising step t t , the clean reference latent z 0 ref z_{0}^{\mathrm{ref}} is mapped to the same noise level by the forward process, z t ref = ( 1 − σ t ) ​ z 0 ref + σ
+
+【实验】
+ 
+
+【结论/局限】
+References
+A Related Work
+B More Implementation Details
+AMF-based structural mask.
+Optimization.
+Inference time.
+C More Details about Attention Motion Flow
+Local Attention-based Correspondence.
+AMF-induced Structural Mask.
+D More Details about User Study
+Rating Dimensions.
+Scoring Scale.
+E More Details about EgoActionBench
+Camera-motion filtering.
+Caption and prompt instructions.
+Manual quality control.
+F More Results
+G Limitations and Future Work
+H Potential Social Impact
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27946v1 [cs.CV] 20 Oct 2026
+Decoupling Action from Egocentric Observation for World Simulation
+Yue Ma   Pengjie Song   Xinyu Wang   Yi He
+Zeqian Long   Fangneng Zhan   Kaichen Zhou   Hongyu Liu
+Hongfa Wang   Peihao Li   Haoyang Huang   Nan Duan   Qifeng Chen
+Affiliation:  HKUST  Tsinghua University  Stanford University  MIT  JD Explore Academy Project Page: https://ego-act.github.io/ We present EgoACT, a test-time action transfer framework for egocentric world simulation that decouples transferable action semantics from source visual appearance without additional training. EgoACT addresses two critical failure modes in egocentric manipulation transfer: hand-object structural collapse in early denoising and physically unrealistic interaction in later stages. Velocity-guided Structure Anchoring (VSA) stabilizes the global hand-object layout by aligni

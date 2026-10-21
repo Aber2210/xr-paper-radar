@@ -1,0 +1,92 @@
+【摘要】
+
+【方法】
+Differentiable rasterization.
+3.1 Occlusion-Awareness
+3.2 Average Contribution Criterion We build on StopThePop  [ 20 ] , a state-of-the-art Gaussian Splatting renderer whose exact per-pixel depth ordering removes popping artifacts and keeps occlusion boundaries intact.
+Hybrid transparency  [ 10 ] , in contrast, sorts only the front-most Gaussians and composites all remaining ones without enforcing occlusion ordering.
+Leaving even fully occluded Gaussians with a nonzero contribution stands in opposition to our motivation of occlusion-aware densification.
+However, our method is not dependent on the per-pixel sorting of StopThePop: it relies only on the per-pixel blending weights that virtually every Gaussian Splatting rasterizer already computes.
+Our contributions can therefore transfer to other bases (evaluated on 2DGS  [ 12 ] and 3DGS  [ 13 ] in Sec. A.2 of the supplementary material).
+Differentiable rasterization.
+Projected onto the image plane, a Gaussian i i forms a 2D footprint G i , p ∈ ( 0 , 1 ] G_{i,p}\in(0,1] over pixels p p   [ 32 ] , yielding the per-pixel opacity α i , p = o i ​ G i , p \alpha_{i,p}=o_{i}G_{i,p} .
+3DGS renders with a tile-based differentiable rasterizer: a preprocessing step culls Gaussians against the camera view frustum, maps the remaining ones to the image tiles they overlap, and sorts them by view-space depth.
+Each pixel p p is rendered by front-to-back alpha compositing of the depth-sorted Gaussians that overlap it, yielding its color C p C_{p} :
+C p = ∑ i c i ​ α i , p ​ T i , p + c b ​ g ​ T f ​ i ​ n ​ a ​ l , p , T i , p = ∏ j < i ( 1 − α j , p ) , C_{p}=\sum_{i}c_{i}\,\alpha_{i,p}\,T_{i,p}+c_{bg}\,T_{final,p},\qquad T_{i,p}=\prod_{j<i}(1-\alpha_{j,p}),
+(1)
+where the transmittance T i , p T_{i,p} is the fraction of light that reaches Gaussian i i at pixel p p past the Gaussians in front of it.
+Rendering terminates early once T i , p T_{i,p} saturates (falls below 10 − 4 10^{-4} ), so Gaussians behind that point are never rendered.
+The remaining transmittance T f ​ i ​ n ​ a ​ l , p T_{final,p} is filled with a constant background color c b ​ g c_{bg} .
+The product w i , p = α i , p ​ T i , p w_{i,p}=\alpha_{i,p}\,T_{i,p} is the blending weight with which Gaussian i i contributes to pixel p p : its per-pixel opacity α i , p \alpha_{i,p} weighted by its visibility T i , p T_{i,p} .
+The complete integrated framework, which assembles established densification improvements around them, is described in Sec.   4.2 .
+3.1 Occlusion-Awareness
+As discussed in Sec.   2.1 , densification-related statistics are gathered via a visibility filter based on a view-frustum test.
+This reflects potential, not actual, observations of a Gaussian.
+From here on, we refer to Gaussians that are not rendered at all as occluded :
+transmittance saturates before reaching them at every pixel they cover.
+With a frustum-based filter, occluded Gaussians thus enter the accumulated densification statistics despite not participating in the rendered image.
+Although their gradients are zero, every occluded view still increases the criterion’s observation count and updates the maximum-radius tracking.
+Increasing the observation count results in a downward pressure on the densification criterion of any Gaussian that lies within the frustum while being obstructed.
+The consequence is under-densification in occlusion-heavy scenes such as the mult
+
+【实验】
+4.1 Datasets and Metrics 4.1 Datasets and Metrics
+We evaluate on the common Gaussian Splatting scenes: Mip-NeRF360  [ 1 ] (9 scenes), Tanks & Temples  [ 16 ] (2 scenes), and Deep Blending  [ 11 ] (2 scenes).
+Additionally, we evaluate on Zip-NeRF  [ 2 ] , whose 4 large apartment scenes (alameda, berlin, london, nyc) exhibit heavy occlusions between rooms, with an occlusion rate of 0.63 0.63 against 0.15 0.15 – 0.48 0.48 on the other datasets (definition and per-scene values in Sec. D). Zip-NeRF is the established stress test for this regime: prior work reports 3DGS under-densification and over-smoothing on these scenes despite extensive tuning  [ 5 , 19 ] .
+For Zip-NeRF, we use images at half their original resolution, mirroring common 3DGS target resolutions, and hold out every 8th image as the validation set, following the standard protocol  [ 13 ] .
+We report peak signal-to-noise ratio (PSNR), structural similarity (SSIM)  [ 25 ] , learned perceptual image patch similarity (LPIPS; VGG backbone)  [ 30 ] , the final number of Gaussians, and the training time.
+Large-scale scenes are prone to over-smoothing due to under-densification  [ 19 , 5 ] .
+We therefore also report the gradient magnitude similarity deviation (GMSD)  [ 27 ] , a metric specifically sensitive to blur.
+We read these metrics jointly:
+perceptual ones such as LPIPS credit reconstructed detail that e.g . PSNR penalizes when not pixel-aligned.
+Likewise, a lower Gaussian count is only better at comparable quality:
+a starved model is not more efficient.
+
+【结论/局限】
+& Limitations
+References
+Overview.
+0.A Method Details
+0.A.1 Criterion Derivation
+0.A.2 Generalizability (2DGS & 3DGS)
+Mip-NeRF360.
+Zip-NeRF.
+The clone operation.
+0.B The Integrated Baseline
+0.C Clone Analysis
+0.C.1 Manual Scene-Extent Override
+0.C.2 Clone Ablation
+0.D Occlusion Rate of the Datasets
+0.D.1 Definition and Measurement of Occlusions
+0.D.2 Impact of Contributions Correlates with Occlusion Rate
+0.E Occluded-Gaussian Pruning
+0.E.1 Contribution-Prune Implementation
+0.E.2 Occluded-Gaussian Prevalence
+0.F Average Contribution Criterion
+0.F.1 Threshold Calibration
+0.F.2 The Denominator Floor
+Without the floor, training diverges.
+Above zero, the floor rescales the threshold.
+At a matched count, the floor value stops mattering.
+0.F.3 Results on Mip-NeRF360
+0.F.4 Spatial Gaussian Allocation
+0.F.5 Robustness
+Densification threshold sweep.
+Native resolution.
+0.F.6 The PixelGS-ours Hybrid
+0.F.7 Alternative Normalizers
+0.G Scalability under a Matched Training Budget
+0.G.1 Camera Distribution
+0.G.2 Extended Schedules and 300k Results
+0.G.3 Count vs. Iteration
+0.G.4 The Distance-Scaling Guard Rail
+0.G.5 Per-View Analysis
+Per-view behavior.
+0.H Additional Qualitative Results
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27108v1 [cs.CV] 19 Oct 2026
+Counting Contributions, Not Views:
+Occlusion-Aware Densification
+for 3D Gaussian Splatting
+Marcel Rogge
+Affiliation:  Uni

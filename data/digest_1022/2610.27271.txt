@@ -1,0 +1,86 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab)
+
+【实验】
+(Fig.  9 ).
+High ratings for cue clarity, distinguishability and
+control over walking supported the gait-informed
+guidance approach, while cue timing and comfort
+also scored above neutral. Wearability showed the
+greatest variation, suggesting scope for reducing
+device mass and improving fit. Trust and perceived
+safety remained favorable despite blindfolding.
+The three autonomous-navigation participants rated
+independent wayfinding positively, with overall
+acceptance receiving the highest rating.
+Fig. 9: Post-session questionnaire ratings
+( n = 10 n=10 ; independent wayfinding n = 3 n=3 ).
+Markers and error bars indicate mean ± \pm SD on a
+five-point agreement scale. Asterisks denote
+significance above neutral (two-sided exact sign
+tests, Holm-adjusted p < 0.05 p<0.05 ).
+VIII Conclusion
+XoNav demonstrates how a hip exoskeleton can serve as a
+personalized, gait-informed haptic interface that conveys navigation
+guidance directly through joint motion rather than symbolic
+audio or vibration. Its four actuators render Advance,
+two-level Braking and Steering cues across the sagittal and
+frontal hip planes, coordinated with wearer-initiated movement
+through a classifier using only two thigh IMUs. The classifier
+achieved 95.2–97.9% leave-one-subject-out recall, with gait
+transitions detected within tens of milliseconds, enabling
+gait-dependent cue delivery and suppression during standing.
+Constrained human-in-the-loop optimization yielded reliably
+distinguishable Braking cues with minimal resistance and
+individually comfortable Steering cues across ten participants,
+with maximum Stop stiffness remaining below 53% of the
+safety bound. This personalization allowed guidance without
+unnecessarily restraining natural walking. In 150 blindfolded
+Wizard-of-Oz trials, participants maintained 98.8% corridor
+adherence within a 0.75 m passage while improving progression
+speed by an estimated 4.9% per trial. The same cues also
+supported autonomous navigation using a body-worn camera,
+RTAB-Map and Nav2, including detours around unmapped
+obstacles. Together, these findings demonstrate the potential
+of personalized kinesthetic guidance for assisted navigation,
+although validation remains limited to blindfolded sighted
+participants in controlled indoor environments. Future work
+will evaluate XoNav with people with visual impairment
+against white-cane navigation, improve device wearability
+and extend autonomy to less structured environments.
+A supplementary video illustrates the XoNav hardware,
+control architecture and haptic cues, alongside blindfolded
+Wizard-of-Oz trials and camera-based autonomous indoor
+navigation.
+References
+[1]
+A. E. Slater et al. , “Navigating in zero-visibility: A haptic guidance system for improving egress and situation awareness of professional firefighters,” Hum. Factors , vol. 67, no. 11, pp. 1152–1169, 2025, doi: 10.1177/00187208251348020.
+[2]
+J. Tang et al. , “Human-centred design and fabrication of a wearable multimodal visual assistance system,” Nat. Mach. Intell. , vol. 7, no. 4, pp. 627–638, 2025, doi: 10.1038/s42256-025-01018-6.
+[3]
+W. Xue et al. , “Interactive wearable digital devices for blind and partially sighted people,” Nat. R

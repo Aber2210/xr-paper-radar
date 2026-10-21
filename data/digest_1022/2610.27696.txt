@@ -1,0 +1,95 @@
+【摘要】
+
+【方法】
+III-A Overall
+III-B 3DGS Enhancement
+III-C Prototype-Based Semantic Learning
+III-D Association-Based Instance Learning
+III-E End-to-end Learning
+III-F Hierarchical Scene Graph Construction III-A Overall
+As illustrated in
+Figure  2 , we employ SAM3-generated  [ 6 ] masks from posed RGB images as supervision, which may contain noisy
+labels and inconsistent instance IDs across frames. We first augment the
+Gaussians with semantic and instance features (Section  III-B ).
+We jointly optimize the appearance, semantic, and instance branches. The prototype-based semantic learning predicts semantic categories (Section  III-C ),
+while the association-based instance learning aligns view-local
+instance masks with persistent instance identities
+(Section  III-D ). The joint supervision strategy is
+described (Section  III-E ). During panoptic decoding, stuff
+predictions are obtained from the semantic branch, whereas object predictions
+combine semantic and instance. The resulting
+panoptic Gaussian representation supports novel-view 2D panoptic segmentation
+and direct Gaussian-level panoptic decoding. Finally, the semantic-aware
+hierarchical scene graph construction module organizes the learned panoptic
+Gaussians into a floor–room–stuff–object hierarchy with containment
+and spatial relations (Section  III-F ).
+III-B 3DGS Enhancement
+Following 3DGS  [ 7 ] , the scene is represented by anisotropic
+Gaussians 𝒢 = { g i } i = 1 N \mathcal{G}=\{g_{i}\}_{i=1}^{N} .
+Each Gaussian g i g_{i} is parameterized by a 3D mean 𝝁 i \boldsymbol{\mu}_{i} , scale
+𝐬 i \mathbf{s}_{i} , rotation 𝐑 i \mathbf{R}_{i} , opacity α i \alpha_{i} , and view-dependent
+color coefficients 𝐜 i \mathbf{c}_{i} , together with independent semantic and
+instance features
+𝐅 i sem , 𝐅 i ins ∈ ℝ D \mathbf{F}_{i}^{\mathrm{sem}},\mathbf{F}_{i}^{\mathrm{ins}}\in\mathbb{R}^{D}
+( D = 64 D=64 ). The two feature fields share Gaussian support and visibility but
+use separate prediction heads. Here, i i indexes Gaussians, p p indexes
+pixels, b ∈ { sem , ins } b\in\{\mathrm{sem},\mathrm{ins}\} denotes the feature branch, and
+c c , r r , and k k denote a semantic category, a view-local pseudo-instance
+identifier, and a persistent global instance identity, respectively.
+RGB and branch-specific features are rendered with the same visibility-aware
+alpha compositing. For Gaussians ordered from front to back at pixel p p , the
+compositing weights and rendered outputs are:
+w i , p = α i , p ​ ∏ j < i ( 1 − α j , p ) , w_{i,p}=\alpha_{i,p}\!\prod_{j<i}(1-\alpha_{j,p}),
+(1)
+𝐂 ^ p = ∑ i w i , p ​ 𝐜 i , p , 𝐟 p b = ∑ i w i , p ​ 𝐅 i b , b ∈ { sem , ins } , \hat{\mathbf{C}}_{p}=\sum_{i}w_{i,p}\mathbf{c}_{i,p},\mathbf{f}_{p}^{b}=\sum_{i}w_{i,p}\mathbf{F}_{i}^{b},b\in\{\mathrm{sem},\mathrm{ins}\},
+(2)
+where α i , p = α i ​ 𝒦 i ​ ( p ) \alpha_{i,p}=\alpha_{i}\mathcal{K}_{i}(p) is the opacity,
+𝒦 i ​ ( p ) \mathcal{K}_{i}(p) is the projected Gaussian kernel at p p , and
+𝐜 i , p \mathbf{c}_{i,p} is the view-dependent color of g i g_{i} . The outputs
+𝐂 ^ p \hat{\mathbf{C}}_{p} and 𝐟 p b \mathbf{f}_{p}^{b} denote the rendered RGB color and
+feature of branch b b , respectively. This shared rendering lifts
+multi-view 2D supervision to Gaussian-level features.
+Fig. 4: 3D scene graph visualization on NaviGS and Replica.
+III-C Prototype-Based Semantic Learning
+The semantic branch maintains a learnable prototype
+𝐪 c ∈ ℝ D \mathbf{q}_{
+
+【实验】
+IV-A Experimental Setup
+IV-B Comparative Evaluation
+IV-C Ablation Study
+V CONCLUSION
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27696v1 [cs.CV] 20 Oct 2026
+PanoGraphGS: Unifying Panoptic Segmentation and Hierarchical 3D Scene Graphs with Gaussian Splatting
+Jinghan Gao *
+Siyu Wang *
+Dongyu Feng
+Yiyuan Pan
+Rong Xiong
+† † thanks: * Jinghan Gao and Siyu Wang contributed equally to this work. † † thanks: All authors are with the Zhejiang Humanoid Robot Innovation Center, Ningbo, China. † † thanks: Corresponding author: Yiyuan Pan (email: panyiyuan@zju.edu.cn.) We first compare PanoGraphGS on 3D scene graph construction and 2D panoramic segmentation, with qualitative visualizations provided for both, followed by ablation studies of its key components.
+Fig. 5: Panoptic segmentation visualization on NaviGS
+and Replica dataset.
+IV-A Experimental Setup
+Datasets.
+We evaluate on two public datasets,
+ScanNet++  [ 31 ] and
+Replica  [ 32 ] . In addition, we release NaviGS ,
+a real-world dataset comprising RGB and semantic scenes. NaviGS is acquired
+using two fisheye cameras and a handheld LiDAR device. LiDAR-assisted
+acquisition provides accurate camera poses and a sparse point cloud for
+Gaussian initialization. Both scene collections provide 3DGS models, meshes,
+RGB, camera poses, and depth; semantic scenes additionally include
+scene graphs.
+To evaluate hierarchical scene graph construction, we select multi-room layouts from Replica and NaviGS that support of the floor-room-stuff-object hierarchy. Metrics.
+Scene graph performance is evaluated by floor-, room-, and object-level
+accuracy. All compared methods use the same SAM3-generated segmentation masks
+as supervision. Since OP3DSG, BBQ, and ConceptGraphs do not support
+floor-room recognition, they are evaluated only at the object level. For
+KeySG, HOV-SG, and PanoGraphGS, floor, room, and object recognition are
+manually verified under a hierarchical criterion: a room is correct only when
+its floor and room identities and semantic category are correctly identified,
+while an object is correct only when its floor, room, and object identities
+are all correct. Panoptic segmentation is evaluated using mIoU for region
+overlap and mBIoU for object and structural boundaries. For instance-only

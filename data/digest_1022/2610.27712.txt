@@ -1,0 +1,71 @@
+【摘要】
+
+【方法】
+3.1 Overview of RLSplat
+3.2 Gaussian Allocation Policy
+3.3 Resource-Linear Gaussian Decoding
+3.4 Training We present RLSplat, a feed-forward 3DGS framework whose Gaussian count and inference cost are both controlled by a single budget B B . Rather than pruning or selecting from a dense set of Gaussians, RLSplat formulates Gaussian generation as allocation: a Gaussian allocation policy decides how many Gaussians each local region of the scene receives ( Sec.   3.2 ), and a resource-linear decoder generates the allocated Gaussians and efficiently refines them with local cross-attention ( Sec.   3.3 ). We begin with an overview ( Sec.   3.1 ) and conclude with the training procedure ( Sec.   3.4 ).
+Figure 2: Overview of RLSplat.
+Given uncalibrated context images, the geometry backbone predicts camera parameters and extracts anchor tokens { 𝐚 n } \{\mathbf{a}_{n}\} representing local 3D regions. The Gaussian allocation policy distributes the budget B B across anchors, assigning k n k_{n} Gaussians to each anchor with ∑ k n = B \sum k_{n}=B . Each anchor then spawns k n k_{n} Gaussian tokens, which are decoded into B B Gaussians and locally refined using hierarchical neighbor search.
+3.1 Overview of RLSplat
+Given V V uncalibrated context images { 𝐈 i } i = 1 V \{\mathbf{I}_{i}\}_{i=1}^{V} and a target Gaussian budget B B , RLSplat 𝐅 θ \mathbf{F}_{\theta} predicts a set of 3D Gaussians 𝒢 \mathcal{G} along with the context camera parameters { 𝐏 i } i = 1 V \{\mathbf{P}_{i}\}_{i=1}^{V} :
+( 𝒢 , { 𝐏 i } i = 1 V ) = 𝐅 θ ​ ( { 𝐈 i } i = 1 V , B ) , 𝒢 = { 𝐠 b } b = 1 B . (\mathcal{G},\{\mathbf{P}_{i}\}_{i=1}^{V})=\mathbf{F}_{\theta}\big(\{\mathbf{I}_{i}\}_{i=1}^{V},B\big),\qquad\mathcal{G}=\{\mathbf{g}_{b}\}_{b=1}^{B}.
+(1)
+Here, the 3DGS attribute 𝐠 b \mathbf{g}_{b} consists of a 3D center, opacity, scale, rotation, and color coefficients.
+As illustrated in Fig.   2 , a geometry backbone  ( Burzio et al., 2026 ) encodes the images into N N anchor tokens { 𝐚 n } n = 1 N \{\mathbf{a}_{n}\}_{n=1}^{N} . These anchors serve as the foundational sites from which the 3D Gaussians are spawned. To use the limited budget effectively, RLSplat adaptively distributes the B B Gaussians across these anchors. Specifically, a Gaussian allocation policy assesses the local significance of each anchor to predict a discrete allocation 𝐤 ∈ ℤ ≥ 0 N \mathbf{k}\in\mathbb{Z}_{\geq 0}^{N} that strictly sums to the budget ( ∑ k n = B \sum k_{n}=B ), and we optimize this policy via reinforcement learning ( Sec.   3.2 ). Next, a resource-linear decoder instantiates exactly k n k_{n} Gaussian tokens at each anchor. It predicts an initial state for each Gaussian and efficiently processes them via a refinement module to produce the final set of B B Gaussians. This decoder’s computational footprint scales linearly with the requested budget, as described in Sec.   3.3 .
+Figure 3: Policy optimization.
+3.2 Gaussian Allocation Policy
+To achieve a compact and high-fidelity representation, Gaussians must be densely allocated to the anchors that encode geometrically complex local 3D regions. We formulate this discrete allocation task as a reinforcement learning problem, parameterizing a policy π ψ ​ ( 𝐤 | { 𝐚 n } n = 1 N , B ) \pi_{\psi}(\mathbf{k}|\{\mathbf{a}_{n}\}_{n=1}^{N},B) that maps the anchor tokens and target budget to a discrete allocation 𝐤 = { k n } n = 1 N \mathbf{k}=\{k_{n}\}_{n
+
+【实验】
+4.1 Novel-view Synthesis Results
+4.2 Ablation Studies and Analysis Datasets and evaluation.
+We train on RealEstate10K (RE10K)  ( Zhou et al., 2018 ) with V ∈ { 2 , 3 , 4 , 6 , 8 , 12 , 24 } V\in\{2,3,4,6,8,12,24\} uncalibrated context views. To assess generalization, we evaluate the RE10K-trained model zero-shot on ACID  ( Liu et al., 2021 ) (249 test scenes), which consists of aerial footage of coastal and natural scenes. We follow the evaluation protocol of F 4 \text{F}^{4} Splat  ( Kim et al., 2026 ) at a resolution of 256 × 256 256\times 256 and report PSNR, SSIM, and LPIPS together with the number of Gaussians (#GS). To measure inference cost, we report the latency and peak VRAM of Gaussian generation, excluding data loading, pose alignment, and rendering. All methods are run on a single RTX A6000 with a batch size of one. For each budget, we discard the first scene as warm-up, reset the peak-memory counter before each timed run, and report the mean over the test scenes.
+Baselines.
+We mainly compare with budget-controllable methods, EcoSplat  ( Park et al., 2026 ) and F 4 \text{F}^{4} Splat  ( Kim et al., 2026 ) , which take a target Gaussian count as input at inference time.
+We evaluate all methods at the same requested Gaussian budgets, with particular focus on the low-budget regime.
+For a broader comparison, we also include budget-fixed methods, which place Gaussians uniformly, either one per pixel (NoPoSplat  ( Ye et al., 2025 ) , SPFSplat  ( Huang and Mikolajczyk, 2025 ) ) or one per voxel (AnySplat  ( Jiang et al., 2025 ) ). Their Gaussian count is therefore determined by the input resolution and the number of views, or by the voxel size, rather than chosen by the user.
+
+【结论/局限】
+References
+A Limitations and Future Work
+B Allocation Policy Details
+Policy head.
+Budget conditioning.
+Policy initialization at the start of policy training.
+Deterministic integer allocation.
+C GSPO Training Details
+GSPO hyperparameters.
+Settled hyperparameters.
+D Decoder Details
+Gaussian token construction.
+Neighbor search.
+Residual head.
+E Training Details
+Base training.
+Policy training.
+F Ablation Protocol
+G Allocation Policy Visualizations
+H Additional Qualitative Comparison
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27712v1 [cs.CV] 20 Oct 2026
+RLSplat: Resource-Linear Budget Control for Feed-forward 3D Gaussian Splatting
+Injae Kim
+Affiliation:  KAIST
+Email:  injae.kim@kaist.ac.kr
+Minseok Joo
+Affiliation:  Korea University
+Email:  wlgkcjf87@korea.ac.kr
+Jihwan Park
+Affiliation:  KAIST
+Email:  jseven7071@kaist.ac.kr
+Sehyung Kim
+Affiliation:  Korea University
+Email:  skim129@kaist.ac.kr
+Minseong Bae
+Affiliation:  KAIST
+Email:  bms2002@kaist.ac.kr
+Hyunwoo J. Kim
+† † thanks: Corresponding author.
+Affiliation:  KAIST
+Email:  hyunwoojkim@kaist.ac.kr We presented RLSplat, a budget-controllable feed-forward 3DGS framework whose inference cost scales linearly with the requested number of Gaussians B B . A Gaussian allocation policy, trained with GSPO, distributes exactly B B Gaussians across anchors, and a resource-linear decoder refines them through local cross-at

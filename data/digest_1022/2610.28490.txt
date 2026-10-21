@@ -1,0 +1,78 @@
+【摘要】
+
+【方法】
+4.1 Problem Formulation and Overview
+4.2 Causal Online Change Detection
+4.3 Learning from Automatic 3DGS Edits 4.1 Problem Formulation and Overview
+Image differences mix physical changes with rendering artifacts and illumination shifts.
+Our method uses generalised Bayesian inference to interpret these responses and accumulate change evidence.
+For query image I t I_{t} , current-view evidence C t C_{t} is constructed from the initial difference response R t 0 R_{t}^{0} , while historical support H t H_{t} summarizes evidence from earlier observations in the query view.
+We formulate change prediction as a generalised Bayesian update ( Bissiri et al., 2016 ) : current and historical evidence modify the prior odds of change, determined by an effective pixel prior π \pi .
+The posterior change probability Q t pixel ​ ( u ) ≜ q t ​ ( y = 1 ∣ u ) Q_{t}^{\mathrm{pixel}}(u)\triangleq q_{t}(y=1\mid u) , where y = 1 y=1 denotes change, satisfies
+Q t pixel ​ ( u ) 1 − Q t pixel ​ ( u ) ⏟ posterior odds = π 1 − π ⏟ prior odds ⋅ C t ​ ( u ) 1 − C t ​ ( u ) ⏟ current odds ⋅ H t ​ ( u ) 1 − H t ​ ( u ) ⏟ history odds . \underbrace{\frac{Q_{t}^{\mathrm{pixel}}(u)}{1-Q_{t}^{\mathrm{pixel}}(u)}}_{\text{posterior odds}}=\underbrace{\frac{\pi}{1-\pi}}_{\text{prior odds}}\cdot\underbrace{\frac{C_{t}(u)}{1-C_{t}(u)}}_{\text{current odds}}\cdot\underbrace{\frac{H_{t}(u)}{1-H_{t}(u)}}_{\text{history odds}}.
+(1)
+Neutral evidence, C t ​ ( u ) = H t ​ ( u ) = 0.5 C_{t}(u)=H_{t}(u)=0.5 , leaves Q t pixel ​ ( u ) = π Q_{t}^{\mathrm{pixel}}(u)=\pi .
+However, the prior is unknown beforehand, and constructing C t C_{t} and H t H_{t} requires models that interpret image differences as change evidence and determine how this evidence contributes to history.
+To obtain these components, we fit the effective pixel prior π \pi and four scene-specific models using supervision from automatic reference 3DGS edits and unchanged reference observations.
+Of these four models, the response suppressor 𝒯 \mathcal{T} and log-likelihood-ratio mapping ℓ img \ell_{\mathrm{img}} construct C t C_{t} , while the unchanged-response model ( μ g , τ g 2 , c ) (\mu_{g},\tau_{g}^{2},c) supplies statistics for closed-form evidence accumulation underlying H t H_{t} .
+The contour filter ℓ contour \ell_{\mathrm{contour}} supports subsequent mask refinement.
+All five components are fitted offline and remain fixed during online inference.
+Section  4.2 describes how they are used for prediction, history accumulation, and mask refinement (Figure  1 ), taking their fitted parameters as given.
+Section  4.3 explains how automatic reference edits and unchanged observations are used to fit them (Figure  2 ).
+4.2 Causal Online Change Detection
+For each incoming query image I t I_{t} , we construct current-view evidence C t C_{t} , which supports both prediction and history accumulation. For prediction, C t C_{t} combines with historical support H t H_{t} from earlier frames; for accumulation, it provides the Gaussian responses used to compute local Bayes factors. The updated history is used only by subsequent queries.
+Figure 1: Online evidence fusion pipeline.
+Current evidence C t C_{t} combines mapped image evidence P t P_{t} and Gaussian-aggregated support S t S_{t} .
+Fusion with prior π \pi and history H t H_{t} from F t − 1 F_{t-1} gives Q t pixel Q_{t}^{\mathrm{pixel}} ; refinement produces Q t full Q_{t}^{\m
+
+【实验】
+ Protocol.
+Real-world PASLCD ( Galappaththige et al., 2025 ) is our primary benchmark (20 scene-instances, conventional 4 × 4\times downsampling), complemented by evaluation on four synthetic CCS3D scenes ( Zhou et al., 2026 ) . Following O-SCD’s mask definition, we evaluate our method and O-SCD on both datasets using masks covering pre- and post-state changes, including vacated and newly occupied regions. Tables  2 – 2 compare our method with official-code O-SCD results and other published online/offline baselines. We report foreground mIoU and F1 for Ours (pixel) ( Y ^ t pixel \widehat{Y}_{t}^{\mathrm{pixel}} ) and Ours (full) ( Y ^ t full \widehat{Y}_{t}^{\mathrm{full}} ) at threshold 0.5 0.5 (Figure  1 ). Models are fitted offline from reference data without test-time tuning. Our comparisons average two complete runs per dataset (Appendix  G.5 ).
+Figure 3: Visual results on representative scenes.
+Columns show reference renderings, queries, ground truth, O-SCD(R) (offline),
+and our complete method (online).
+correct detections;
+false positives;
+missed changes.
+Numbers give per-frame foreground IoU from one complete sequence run.
+Additional visual results, including remaining errors, are shown in Appendix  H .
+Table 1: PASLCD (20 scene-instances, %). Our method and O-SCD are evaluated locally; other results are taken from GS-Diff. and repeatability.
+Queries are processed from raw images, with pose estimation and feature extraction performed online. The main PASLCD results (Tables  2 and  5 ) and ablations (Tables  3 , 9 , and  10 ) average two complete runs over all 500 queries per configuration. For the full method, both runs achieve 67.64 % 67.64\% mIoU; the largest per-instance difference is 0.019 0.019 percentage points. CCS3D uses all 18 queries across four scenes at 2 × 2\times downsampling. Binary predictions are resized to the union masks by nearest-neighbour interpolation; Table  2 averages per-scene metrics equally over two runs.
+Continuous sequence timing.
+After initialization, synchronized wall-clock timing starts before the first query is retrieved and ends when the final mask is ready. Input prefetching starts during initialization for both methods; remaining input waits and all inter-frame work are included. O-SCD also waits for GPU work to complete at its stage synchronization points; these waits are included in the timed sequence. Mask export and metric evaluation occur outside timing. FPS is the total number of processed frames divided by summed sequence duration: 1,000 frames across two runs for each of our output modes and 500 frames for O-SCD(O). The pixel runs achieve 27.88 27.88 and 27.98 27.98  FPS; the full runs achieve 17.15 17.15 and 17.19 17.19  FPS.
+Batch refinement timing.
+O-SCD(R) first processes the query images sequentially, then jointly refines its change representation using all views and renders the final masks. Its timing covers this complete procedure, from the first input retrieval to the last refined mask, excluding initialization and file export. We divide total sequence time by the number of frames for Table  4 ; the resulting per-frame time and equivalent FPS describe batch processing, not online pr
+
+【结论/局限】
+and Limitations
+References
+A Image Evidence Processing and Gaussian Aggregation
+A.1 Automatic reference editing and data generation
+A.2 Image evidence processing and aggregation
+B Unchanged-Scene Response Statistics
+C Conditional Neighbourhood Bayes Factor
+D Accumulated Support and Causal Decoding
+Insufficient reference coverage.
+E Reliability-Weighted Effective-Prior Estimation
+F Object-Guided Mask Refinement
+G Additional Quantitative Results
+G.1 Cross-instance Reference Reuse
+G.2 Fitted Priors and Change Area
+G.3 Relighting Strength
+G.4 Construction of Historical Support
+G.5 Evaluation and Runtime Details
+G.6 Offline Preparation and Component Timing Breakdown
+H Additional Visual Results
+H.1 Comparison on CCS3D
+H.2 Evidence Fusion and Component Ablations
+License: CC BY 4.0
+arXiv:2610.28490v1 [cs.CV] 20 Oct 2026
+Learning from Automatic 3D Gaussian Splatting Edits for Online Bayesian Scene Change Detection
+Changrui Zhu & Simon Julier
+Affiliation:  University College London
+Affiliation:  changrui.zhu.19@ucl.ac.uk, s.julier@ucl.ac.uk and Limitations
+Our method learns scene-specific evidence models and statistics from automatic
+reference 3DGS edits, using the reference scene as a source of supervision for
+online change detection. These learned quantities enable closed-form local
+Bayes factors and generalised Bayesian history accumulation without online
+backpropagation or past-image

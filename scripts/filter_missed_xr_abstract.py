@@ -7,7 +7,9 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 NS = {"atom": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
 
-missed = json.load(open("data/missed_listing.json", encoding="utf-8"))
+missed = json.load(open(sys.argv[1] if len(sys.argv)>1 else "data/missed_listing.json", encoding="utf-8"))
+MIN_DAY = sys.argv[2] if len(sys.argv)>2 else "2026-10-16"
+OUT = sys.argv[3] if len(sys.argv)>3 else "data/missed_xr_abstract.json"
 reg = set()
 for l in open("papers/library/registry.jsonl", encoding="utf-8"):
     if l.strip():
@@ -16,7 +18,7 @@ for l in open("papers/library/registry.jsonl", encoding="utf-8"):
 # 汇总窗口内全部漏网 id（含标题，按日）
 pool = {}   # id -> {"day":..., "cat":..., "title":...}
 for day, items in missed.items():
-    if day < "2026-10-16":
+    if day < MIN_DAY:
         continue
     for p, v in items.items():
         t = v["title"]
@@ -24,7 +26,7 @@ for day, items in missed.items():
             t = t[1] if len(t) > 1 else ""
         pool[p] = {"day": day, "cat": v["cat"], "title": t}
 ids = sorted(pool)
-print(f"pool: {len(ids)} 篇（day>=2026-10-16），registry 已有 {sum(1 for p in pool if p in reg)} 篇", flush=True)
+print(f"pool: {len(ids)} 篇（day>={MIN_DAY}），registry 已有 {sum(1 for p in pool if p in reg)} 篇", flush=True)
 
 # 分批经 API 取摘要（id_list，100/批）
 meta = {}
@@ -75,5 +77,5 @@ for day in sorted({v["day"] for v in xr.values()}):
     for p, v in sorted(sub.items()):
         print(f"  {p} [{v['cat']}] reg={v['in_registry']} {v['title'][:88]}", flush=True)
 print(f"\n合计摘要级 XR 命中 {len(xr)} 篇", flush=True)
-json.dump(xr, open("data/missed_xr_abstract.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-print("saved data/missed_xr_abstract.json", flush=True)
+json.dump(xr, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+print("saved", OUT, flush=True)

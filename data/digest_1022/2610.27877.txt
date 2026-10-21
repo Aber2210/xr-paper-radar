@@ -1,0 +1,159 @@
+【摘要】
+
+【方法】
+Overall
+Establish Contact
+Move
+Manipulate
+Put Down
+↓ \downarrow H-ADE / FDE  ↓ \downarrow
+↓ \downarrow O-ADE / FDE  ↓ \downarrow
+↓ \downarrow HO-Pen  ↓ \downarrow
+↑ \uparrow Reach-SR  ↑ \uparrow
+↓ \downarrow Goal-DE  ↓ \downarrow
+↓ \downarrow RA-MPJPE  ↓ \downarrow
+↑ \uparrow Place-Hit  ↑ \uparrow
+USST  [ 10 ]
+5.90 / 7.97
+—
+—
+—
+—
+—
+—
+EgoH4 ∗   [ 14 ]
+10.19 / 11.60
+—
+—
+38.82
+—
+3.92
+—
+ObjectForesight  [ 15 ]
+—
+0.90 / 1.09
+—
+—
+3.79
+—
+42.29
+MDM †   [ 31 ]
+13.13 / 14.62
+22.33 / 22.95
+2.44
+27.80
+11.25
+3.59
+0.44
+CAHMP †   [ 17 ]
+6.34 / 9.80
+2.17 / 3.48
+10.20
+47.70
+7.51
+1.81
+14.10
+Transformer ‡   [ 50 ]
+6.43 / 8.50
+2.36 / 2.91
+13.47
+38.98
+7.54
+1.51
+11.45
+GRU Predictor ‡   [ 30 ]
+6.73 / 8.95
+2.41 / 3.08
+14.90
+40.30
+7.91
+1.61
+13.66
+Gaze2HOI (ours)
+4.16  /  5.49
+0.72  /  0.87
+1.70
+92.43
+2.29
+1.33
+44.93
+∗ Task adaptation and MANO fitting for Reach-SR.
+† Adapted for joint hand-object forecasting.
+‡ Baselines built on the cited architectures.
+—: unsupported. Bold denotes the best result. Best of five is selected per test window and metric (min for ↓ \downarrow , max for ↑ \uparrow ).
+During motion training, annotated intentions and fields predicted by the frozen ACG model provide semantic and geometric conditions.
+The denoising objective penalizes discrepancies between predicted and target v v values, with supervision restricted to valid future state components:
+ℒ v = ‖ 𝐖 fut ⊙ ( 𝐯 ^ fut ( τ ) − 𝐯 fut ( τ ) ) ‖ F 2 max ⁡ ( 1 , ‖ 𝐖 fut ‖ 1 ) , \mathcal{L}_{v}=\frac{\left\|\mathbf{W}_{\mathrm{fut}}\odot\left(\hat{\mathbf{v}}_{\mathrm{fut}}^{(\tau)}-\mathbf{v}_{\mathrm{fut}}^{(\tau)}\right)\right\|_{F}^{2}}{\max\!\left(1,\|\mathbf{W}_{\mathrm{fut}}\|_{1}\right)},
+(11)
+where 𝐖 fut \mathbf{W}_{\mathrm{fut}} is a binary mask identifying valid future state components across the minibatch, and ∥ ⋅ ∥ F \|\cdot\|_{F} and ∥ ⋅ ∥ 1 \|\cdot\|_{1} denote the Frobenius and entrywise L 1 L_{1} norms, respectively.
+To encourage coordinated and physically plausible interactions, we apply auxiliary losses to denormalized clean-state estimates recovered from the predicted v v .
+The overall objective is
+ℒ motion = \displaystyle\mathcal{L}_{\mathrm{motion}}={}
+ℒ v + ℒ geo + ℒ rel + ℒ contact \displaystyle\mathcal{L}_{v}+\mathcal{L}_{\mathrm{geo}}+\mathcal{L}_{\mathrm{rel}}+\mathcal{L}_{\mathrm{contact}}
+(12)
++ ℒ obj + ℒ sup + ℒ move , \displaystyle+\mathcal{L}_{\mathrm{obj}}+\mathcal{L}_{\mathrm{sup}}+\mathcal{L}_{\mathrm{move}},
+where ℒ geo \mathcal{L}_{\mathrm{geo}} supervises translations, velocities, and rotations, while ℒ rel \mathcal{L}_{\mathrm{rel}} constrains relative hand-object motion by matching wrist-relative poses and their temporal changes.
+Contact consistency and collision avoidance are encouraged through ℒ contact \mathcal{L}_{\mathrm{contact}} , which combines regional contact-distance matching with hand-object penetration penalties, and ℒ obj \mathcal{L}_{\mathrm{obj}} , which penalizes object-object penetration.
+The support term ℒ sup \mathcal{L}_{\mathrm{sup}} addresses furniture penetration, terminal placement, and placement-goal errors, while ℒ move \mathcal{L}_{\mathrm{move}} supervises object transport relative to the intended target.
+Each auxiliary term uses its corresponding validity mask.
+To avoid imposing interaction constraints on unreliable clean-state estimates, the interaction losses are activated only when α τ 2 ≥ 0.25 \alpha_{\tau}^{2}\geq 
+
+【实验】
+on EgoAIM demonstrate improvements over the evaluated baselines in both intention inference and interaction forecasting, supporting the complementary contributions of gaze information and geometric grounding.
+End-to-end performance approaches the levels achieved under oracle conditioning in specific phases, while precise placement remains an important direction for future improvement.
+By connecting inferred interaction goals with their anticipated spatial realization, this work provides a foundation for advancing proactive human-centric assistance in AR, VR, and embodied systems.
+Acknowledgment
+This research was partially funded by the National Natural Science Foundation of China (Grant No. 62306309).
+References
+[1]
+D. Han, R. Lee, K. Kim, and H. Kang (2024)
+VR-HandNet: a visually and physically plausible hand manipulation system in virtual reality .
+IEEE Transactions on Visualization and Computer Graphics (TVCG) 30 ( 7 ), pp. 4170–4182 .
+External Links: Document
+Cited by: §I .
+[2]
+D. Driess, F. Xia, M. S. M. Sajjadi, C. Lynch, A. Chowdhery, B. Ichter, A. Wahid, J. Tompson, Q. Vuong, T. Yu, W. Huang, Y. Chebotar, P. Sermanet, D. Duckworth, S. Levine, V. Vanhoucke, K. Hausman, M. Toussaint, K. Greff, A. Zeng, I. Mordatch, and P. Florence (2023)
+PaLM-E: an embodied multimodal language model .
+In Proceedings of the International Conference on Machine Learning (ICML) ,
+Vol. 202 , pp. 8469–8488 .
+External Links: Document
+Cited by: §I .
+[3]
+Y. Zheng, Y. Yang, K. Mo, J. Li, T. Yu, Y. Liu, C. K. Liu, and L. J. Guibas (2022)
+GIMO: gaze-informed human motion prediction in context .
+In Proceedings of the European Conference on Computer Vision (ECCV) ,
+Vol. 13673 , pp. 676–694 .
+External Links: Document
+Cited by: §I ,
+§II-C .
+[4]
+Z. Hu, Z. Yin, D. Haeufle, S. Schmitt, and A. Bulling (2024)
+HOIMotion: forecasting human motion during human-object interactions using egocentric 3D object bounding boxes .
+IEEE Transactions on Visualization and Computer Graphics (TVCG) 30 ( 11 ), pp. 7375–7385 .
+External Links: Document
+Cited by: §I .
+[5]
+G. Lee, M. Xia, N. Numan, X. Qian, D. Li, Y. Chen, A. Kulshrestha, I. Chatterjee, Y. Zhang, D. Manocha, D. Kim, and R. Du (2025)
+Sensible Agent: a framework for unobtrusive interaction with proactive AR agents .
+In Proceedings of the Annual ACM Symposium on User Interface Software and Technology (UIST) ,
+pp. 1–22 .
+External Links: Document
+Cited by: §I .
+[6]
+T. Jo, H. J. Lee, S. Chun, and I. Lee (2025)
+Manual-free gaze interaction via bayesian-based implicit intention prediction .
+IEEE Transactions on Visualization and Computer Graphics (TVCG) 31 ( 12 ), pp. 10789–10800 .
+External Links: Document
+Cited by: §I .
+[7]
+T. Ha, W. Cho, D. Kim, and W. Woo (2026)
+Int3DNet: scene-motion cross attention network for 3D intention prediction in mixed reality .
+IEEE Transactions on Visualization and Computer Graphics (TVCG) 32 ( 5 ), pp. 4185–4195 .
+External Links: Document
+Cited by: §I .
+[8]
+Y. Li, Z. Cao, A. Liang, B. Liang, L. Chen, H. Zhao, and C. Feng (2022)
+Egocentric prediction of action target in 3D .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+pp. 20971–20980 .
+External Links: Docu

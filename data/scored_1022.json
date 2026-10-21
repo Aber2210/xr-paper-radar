@@ -1,0 +1,26 @@
+{
+ "batch": "2026-10-22",
+ "orig_window": "10-21（周三）公告批次（提交日 10-16~10-20、周三 20:00 ET 释放；拉取日 10-22 周四）",
+ "pool": [
+  {"id":"2610.26898","title_zh":"EGGHead：单图高效可泛化高斯头部建模","track":"化身与人体","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":5,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.26920","title_zh":"CCT-GS：编解码器兼容的 3D 高斯泼溅学习压缩","track":"渲染与显示","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":5,"TRL":3,"REP":3,"announce":"cross"},
+  {"id":"2610.27108","title_zh":"数贡献而非数视角：遮挡感知的 3DGS 致密化","track":"神经渲染","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":2,"REP":2,"announce":"cross"},
+  {"id":"2610.27271","title_zh":"XoNav：作为个性化触觉导航接口的髋外骨骼","track":"触觉与多模态","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":2,"announce":"new"},
+  {"id":"2610.27564","title_zh":"CityPaint：借 2D 扩散之力的城市级 3D 贴图生成","track":"内容生成","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":4,"announce":"new"},
+  {"id":"2610.27604","title_zh":"HiQGS：面向前馈高斯重建的层次化时空查询","track":"神经渲染","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.27654","title_zh":"CAESAR：面向认知攻击评估的混合现实搜救平台","track":"空间计算与UI","IMP":3,"NOV":3,"TEC":4,"EXP":3,"PER":2,"TRL":3,"REP":4,"announce":"new"},
+  {"id":"2610.27696","title_zh":"PanoGraphGS：高斯泼溅统一全景分割与层次化 3D 场景图","track":"感知与认知","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.27712","title_zh":"RLSplat：前馈 3DGS 的资源线性预算控制","track":"神经渲染","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.27725","title_zh":"World2HOSI：长时程人-物-场交互生成的多专家编排框架","track":"内容生成","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.27776","title_zh":"自监督交叉光线一致性的 vanilla NeRF 几何正则化","track":"神经渲染","IMP":2,"NOV":3,"TEC":3,"EXP":3,"PER":3,"TRL":2,"REP":2,"announce":"cross"},
+  {"id":"2610.27877","title_zh":"Gaze2HOI：注视感知的第一视角手-物交互预测意图消歧","track":"感知与认知","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":5,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.27946","title_zh":"EgoACT：动作与第一视角观测解耦的世界仿真","track":"世界模型与仿真","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.28190","title_zh":"CrossFit-GS：无 COLMAP 3DGS 的折外位姿估计","track":"重建与SLAM","IMP":3,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.28402","title_zh":"StreamEval：交互式流式视频生成模型评测基准","track":"评估与数据集","IMP":4,"NOV":3,"TEC":4,"EXP":5,"PER":2,"TRL":4,"REP":4,"announce":"new"},
+  {"id":"2610.28490","title_zh":"从自动 3DGS 编辑中学习在线贝叶斯场景变化检测","track":"感知与认知","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":3,"announce":"cross"},
+  {"id":"2610.28502","title_zh":"GazeLens：注视驱动的自适应 token 缩减高效第一视角视频问答","track":"感知与认知","IMP":3,"NOV":3,"TEC":3,"EXP":3,"PER":2,"TRL":3,"REP":2,"announce":"new"},
+  {"id":"2610.28554","title_zh":"OverSeer：超越智能体所见的多智能体世界模型","track":"世界模型与仿真","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":4,"announce":"new"},
+  {"id":"2610.28615","title_zh":"KoalaGS：复杂度感知的高斯泼溅连续细节级别","track":"神经渲染","IMP":3,"NOV":3,"TEC":4,"EXP":4,"PER":3,"TRL":3,"REP":3,"announce":"new"},
+  {"id":"2610.28631","title_zh":"AEON：统一视频与 3D 世界模型","track":"世界模型与仿真","IMP":4,"NOV":4,"TEC":4,"EXP":4,"PER":4,"TRL":3,"REP":3,"announce":"new"}
+ ]
+}

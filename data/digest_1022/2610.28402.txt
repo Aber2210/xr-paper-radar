@@ -1,0 +1,246 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab) Quality
+A–V Sync
+Stability
+Dialogue
+Identity
+Q-Overall
+Custom.
+Overall
+AptAvatar 14B †
+68.03
+70.32
+94.74
+35.98
+81.00
+70.01
++5
+75.01
+Avatar-Forever 22B †
+50.86
+48.17
+68.48
+54.93
+75.23
+59.53
++5
+64.53
+AvatarForcing 1.3B †
+57.17
+0.00
+87.30
+8.93
+66.85
+44.05
++5
+49.05
+AVTR-1 †
+82.97
+69.38
+99.87
+54.97
+88.54
+79.14
++5
+84.14
+LiveAvatar FULL
+76.27
+0.00
+100.00
+61.37
+87.70
+65.07
+0
+65.07
+LiveTalk 1.3B †
+61.75
+62.80
+86.51
+54.40
+77.51
+68.60
++5
+73.60
+MuseTalk 1.5 †
+95.34
+38.09
+97.11
+54.34
+88.44
+74.66
++5
+79.66
+Quark Live Avatar 14B †
+56.00
+64.91
+70.90
+55.02
+78.10
+64.99
++5
+69.99
+Runway Characters
+57.81
+49.82
+75.94
+43.53
+60.40
+57.50
++5
+62.50
+SoulX-FlashHead (Lite) †
+68.43
+29.77
+91.61
+56.65
+79.69
+65.23
++5
+70.23
+SoulX-FlashTalk 14B †
+68.90
+66.27
+95.45
+50.57
+83.31
+72.90
++5
+77.90
+SoulX-LiveAct 18B †
+64.93
+50.30
+91.54
+54.98
+75.09
+67.37
++5
+72.37
+Tavus CVI Full
+75.04
+94.44
+99.95
+73.91
+89.89
+86.65
+0
+86.65
+Vidu S2 Avatar
+96.78
+84.87
+97.83
+75.29
+90.12
+88.98
++5
+93.98
+Vivix A1
+45.78
+69.15
+66.83
+50.38
+75.19
+61.47
++5
+66.47
+Q-Overall: equal-weight mean of the content metrics. Custom.: sweet-spot bonus, +5 for systems that support a custom avatar and 0 otherwise. Overall = = Q-Overall + + Custom.
+3.3.2 Avatar Performance
+Vidu S2 Avatar (81.71 Overall) and LiveTalk 1.3B (75.85 Overall) lead avatar performance with distinct metric profiles ( table   3 ). Vidu S2 Avatar achieves the highest scores in A–V Sync (99.60), Stability (97.25), Identity (86.12), and Following (36.90), paired with 63.68 in Quality. LiveTalk 1.3B leads in Quality (71.27) and reaches 16.59 in Following, while recording 86.44 in A–V Sync, 96.06 in Stability, and 83.89 in Identity. AptAvatar 14B ranks third at 70.37 Overall, ahead of Quark Live Avatar 14B at 62.83 and SoulX-LiveAct 18B at 53.51; all seven systems support a custom avatar and receive the + 5 +5 bonus.
+Middle-ranking systems also differ in temporal stability and visual quality despite similar lip synchronization and identity preservation scores. AptAvatar 14B and Quark Live Avatar 14B tie at 98.89 in A–V Sync and score similarly in Identity (81.33 vs. 79.75), but differ in Stability (78.06 vs. 55.30) and Quality (55.55 vs. 43.51). Across all seven evaluated models, executing scripted actions under timing constraints remains the primary challenge: Following scores span 6.37 (Avatar-Forever 22B) to 36.90 (Vidu S2 Avatar), even for systems that exceed 80 in Identity an
+
+【实验】
+among models evaluated with the shared dialogue pipeline further show that strong visual appearance and temporal stability do not automatically accompany high synchronization or conversational scores. MuseTalk 1.5 [ 87 ] attains 95.34 in Quality, 97.11 in Stability, and 88.44 in Identity, yet records 38.09 in A–V Sync and 54.34 in Dialogue (79.66 Overall). Conversely, AptAvatar 14B reaches 70.32 in A–V Sync and 94.74 in Stability, but scores 35.98 in Dialogue and 68.03 in Quality (75.01 Overall), whereas SoulX-FlashTalk 14B records 68.90 Quality, 66.27 A–V Sync, and 50.57 Dialogue to reach 77.90 Overall.
+Table 2 : Digital-human dialogue. roster.
+2.4 Comparison with Existing Benchmarks
+2.5 Quality Verification
+Asset and consistency checks.
+Judge calibration.
+3 System Evaluation Setup
+Evaluated models. tasks. metrics.
+3.2 Metrics and Scoring
+3.2.1 Task-Specific Metrics
+Shared output measures.
+Digital-human dialogue.
+Avatar performance.
+World generation.
+Instruction editing.
+Reference editing.
+3.2.2 Score Aggregation
+Task-specific Overall.
+Sweet-spot bonus for avatar customization.
+3.3 Experimental Results
+3.3.1 Digital-Human Dialogue
+3.3.2 Avatar Performance
+3.3.3 World Generation
+3.3.4 Instruction Editing
+3.3.5 Reference Editing
+4 Analysis and Qualitative Results
+4.1 A Recorded Reference-Editing Session
+4.2 Benchmark Coverage Setup
+3.2 Metrics and Scoring
+3.2.1 Task-Specific Metrics
+3.2.2 Score Aggregation
+3.3 Experimental Results
+3.3.1 Digital-Human Dialogue
+3.3.2 Avatar Performance
+3.3.3 World Generation
+3.3.4 Instruction Editing
+3.3.5 Reference Editing
+4 Analysis and Qualitative Results
+4.1 A Recorded Reference-Editing Session
+4.2 Benchmark Coverage roster.
+The evaluation protocol specifies a roster of 300 test cases: 60 per task, with 12 at each duration tier and three independent runs per case and model. The results reported in this paper cover these 300 cases ( section   3.1 ). All five duration strata receive equal aggregation weight within each task, so longer sessions contribute equally to the final assessment rather than in proportion to their duration.
+2.4 Comparison with Existing Benchmarks
+Table   1 positions StreamEval against existing video generation and interactive benchmarks across task coverage and evaluation horizons. Avatar-performance benchmarks assess rendered speakers, including visual quality and speech-motion synchronization, while Full-Duplex-Bench evaluates spoken dialogue without video output. VideoFDB additionally evaluates full-duplex conversational perception and audiovisual response generation [ 44 ] . Its naturally occurring nonverbal cues complement our authored speech-input dialogue and prescribed-performance tasks; our broader task coverage does not imply coverage of its user-video perception requirements. For video editing, WBench and WBench-Editing focus on world-model environments, while EditVerseBench covers instruction- and reference-conditioned editing of external videos [ 68 , 36 , 29 ] . WBench-Editing also reports a separate reference-conditioned comparison. Task interfaces and control timing jointly define the interaction protocol.
+StreamEval applies a balanced multi-horizon design across all five
+
+【结论/局限】
+References
+7 Contributions and Acknowledgments
+License: CC BY 4.0
+arXiv:2610.28402v1 [cs.CV] 20 Oct 2026
+1]Tsinghua University
+2]NVIDIA
+3]CMU
+4]UC Berkeley
+5]Princeton
+6]NUS
+7]Reactor
+\checkdata [Leaderboard] https://streameval.ai
+\checkdata [Github Code] https://github.com/StreamEval/StreamEval
+\checkdata [Benchmark Data] https://huggingface.co/datasets/StreamEval/StreamEval
+StreamEval: Evaluating Interactive
+Streaming Video Generation Models
+StreamEval Team
+Affiliation: [
+Affiliation: [
+Affiliation: [
+Affiliation: [
+Affiliation: [
+Affiliation: [
+Affiliation: [ References
+7 Contributions and Acknowledgments StreamEval brings five interactive streaming video tasks into a unified benchmark of 300 scripted test cases, linking evolving requests to explicit execution and state-preservation requirements. Our evaluation of 37 models reveals complementary strengths across tasks, while online action following and reference-based editing remain challenging. In reference editing, the highest reported Edit Success score is 15.00 on a 0–100 scale. Improving request execution alongside visual fidelity and state continuity is therefore an important direction for future model design. A natural next step is to collect human pairwise judgments and examine their agreement with the task-specific evaluation rubric. Together, these directions support progress toward omni-modal real-time interactive

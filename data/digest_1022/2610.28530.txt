@@ -1,0 +1,49 @@
+【摘要】
+
+【方法】
+II-A Preliminaries
+II-B Joint Training
+II-C Radius-Gated Attention Fusion We represent a scene as a sparse set of 3D Gaussians with associated DINOv2  [ 7 ] features. Predicted Gaussians are splatted back into the source camera view and supervised by DINOv2  [ 7 ] features and Metric3Dv2  [ 12 ] monocular depth. During inference, semantic class logits are computed as similarity between the predicted Gaussian features and Talk2DINO  [ 9 ] text embeddings for each class.
+II-A Preliminaries
+Each 3D Gaussian G G is parametrized as:
+G = { 𝝁 , 𝐬 , 𝐫 , α , 𝐟 } , G=\{\boldsymbol{\mu},\,\mathbf{s},\,\mathbf{r},\,\alpha,\,\mathbf{f}\},
+( 1 )
+where 𝝁 ∈ ℝ 3 \boldsymbol{\mu}\in\mathbb{R}^{3} is the mean (center), 𝐬 ∈ ℝ 3 \mathbf{s}\in\mathbb{R}^{3} is the per-axis scale, 𝐫 ∈ ℝ 4 \mathbf{r}\in\mathbb{R}^{4} is the rotation quaternion of the axes, α ∈ [ 0 , 1 ] \alpha\in[0,1] is the opacity, and 𝐟 ∈ ℝ D \mathbf{f}\in\mathbb{R}^{D} is the high-dimensional DINOv2 feature vector.
+The model inputs an image and initializes a set of Gaussian embeddings { 𝐪 𝐢 ∈ ℝ E } i = 1 N \{\mathbf{q_{i}}\in\mathbb{R}^{E}\}_{i=1}^{N} , where E E denotes the dimension of the embedding. Each embedding vector is associated with a randomly sampled location ( u i , v i ) ∈ [ 0 , 1 ] 2 (u_{i},v_{i})\in[0,1]^{2} on the image and its corresponding interpolated Metric3D depth value. The coordinates are concatenated with the depth value, and then projected into 3D space via camera intrinsics and LiDAR-camera extrinsics to obtain the Gaussian’s mean position 𝝁 \boldsymbol{\mu} in the LiDAR frame.
+Once the Gaussian embeddings are initialized, they are refined through a set of transformer  [ 15 ] layers ℱ \mathcal{F} that consists of a deformable attention module [ 16 ] , a self-attention module, and an MLP layer, as shown in Fig.  2 . The point ( u i , v i ) (u_{i},v_{i}) serves as the reference point for deformable attention over the image features:
+𝐪 𝐢 ′ = ℱ ⁡ ( 𝐪 𝐢 , ( u i , v i ) ) . \mathbf{q_{i}^{\prime}}=\mathcal{F}(\mathbf{q_{i}},(u_{i},v_{i})).
+( 2 )
+Finally, the Gaussian parameters are predicted from embeddings 𝐪 𝐢 \mathbf{q_{i}} using an MLP head:
+g i := { Δ ​ 𝝁 i , 𝐬 i , 𝐫 i , α i , 𝐟 i } = MLP GH ⁡ ( 𝐪 𝐢 ′ ) . g_{i}:=\{\Delta\boldsymbol{\mu}_{i},\;\mathbf{s}_{i},\;\mathbf{r}_{i},\;\alpha_{i},\;\mathbf{f}_{i}\}=\operatorname{MLP_{GH}}(\mathbf{q_{i}^{\prime}}).
+( 3 )
+The means μ \mathbf{\mu} are iteratively refined after each layer using the predicted offsets Δ ​ μ \Delta\mathbf{\mu} , while the scale 𝐬 \mathbf{s} and opacity α \alpha are scaled to appropriate ranges. The rotations 𝐫 \mathbf{r} are fixed to be axis-aligned in the camera’s coordinate frame, and are not learned to simplify training.
+The model is trained by differentiably rendering the DINOv2 features and depth from the predicted Gaussians using alpha-blending, implemented with optimized CUDA kernels [ 17 ] . The training objective penalizes the difference between the rendered outputs and corresponding predicted depth and features [ 11 ] .
+II-B Joint Training
+GaussTR  [ 11 ] is trained per camera view , with Gaussians predicted from each camera splatted back into that view for supervision. While this approach is effective for datasets with limited camera overlap, such as in the nuScenes dataset [ 18 ] , it is suboptimal for multi-agent perception, where independent supervision fails to exploit overlapping obser
+
+【实验】
+III-A Dataset and Metrics
+III-B Implementation Details TABLE I: 3D Semantic Occupancy Prediction on Semantic-OPV2V Dataset AND DISCUSSION
+IV-A Quantitative Results
+IV-B Qualitative Results
+V CONCLUSION AND FUTURE WORK
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.28530v1 [cs.CV] 20 Oct 2026
+CoGaussian: Open-Vocabulary Gaussian-based Collaborative
+3D Scene Understanding
+Om Shivam Verma
+Shaya Farahmand
+Lingjun Zhao
+Affiliation:  Lunar Lab, Georgia Institute of Technology, Atlanta. {overma3,sfarahmand3,lzhao360,lgan}@gatech.edu
+Lu Gan
+† † thanks: *These authors contributed equally to this work.
+Affiliation:  Lunar Lab, Georgia Institute of Technology, Atlanta. {overma3,sfarahmand3,lzhao360,lgan}@gatech.edu AND DISCUSSION
+IV-A Quantitative Results
+Table I highlights quantitative results from previous works, as well as our experiments. Relative to the single-agent GaussTR baseline, zero-shot concatenation reduces performance by − 4.45 \mathbf{-4.45} / − 1.45 \mathbf{-1.45} (IoU/mIoU), showing that naive Gaussian aggregation introduces spatially inconsistent structure. Joint Training improves over the baseline by + 1.96 \mathbf{+1.96} / + 0.48 \mathbf{+0.48} (IoU/mIoU), indicating that cross-view rendering supervision reconciles these inconsistencies. Using Radius-Gated Attention gives a modest gain of + 1.99 \mathbf{+1.99} / + 0.69 \mathbf{+0.69} (IoU/mIoU) over the baseline.
+Class-wise behavior is mixed, with frequently observed classes like “road”, “sidewalk”, and “vehicles” benefiting the most from collaboration, as they have major overlap among agents and thus a stronger supervision signal. Prominent but less visible classes like ”vegetation” and ”terrain” struggle with collaboration and other small and uncommon classes have mixed results.
+IV-B Qualitative Results
+Fig. 1 shows that the collaborative methods recover structure outside the ego view. Our method tends to produce volumetric predictions rather than one voxel thick surfaces in the ground truth. This reflects the nature of sparse 3D Gaussian representations, unlike methods like [ 2 , 3 , 4 ] that rely on 3D semantic voxel supervision and many surface-fitting small Gaussians. 2D image-based supervision also makes objects occupying large image regions more prominent in 3D space. The elongated prediction of Vehicle 1 and volumetric prediction of Vehicle 2 demonstrate this behavior.
+Joint Training reduces these inconsistencies, producing smaller and more conservative Gaussians, evident in Vehicle 2 and smaller elliptical predictions throughout the scene. The fusion pipeline preserves this coherence while recovering more dominant regions of the scene, including the Road and some Vehicles. However, thin and infrequent structures remain difficult to reconstruct reliably under purely 2D self-supervision.
+V CONCLUSION AND FUTURE WORK
+We introduce CoGaussian which is, to the best of our knowledge, the first framework for open-vocabulary collaborative perception that communicates foundation model-aligned 3D Gaussians among agents to represent a scene. Evaluation shows that collaboration is effective when interaction is learned. Zero-shot collaboration hurts performance,

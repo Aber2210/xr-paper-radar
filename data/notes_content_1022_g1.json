@@ -1,0 +1,128 @@
+[
+  {
+    "id": "2610.26898",
+    "slug": "egghead",
+    "venue": "arXiv preprint (cs.CV) 2026-10",
+    "tags": ["3DGS", "头部重建", "单图前馈", "高斯分配", "化身"],
+    "conclusion": "单图前馈高斯头部建模：GAM 按语义区域分配固定高斯预算，FFHQ 重建 PSNR 29.75 / LPIPS 0.017 超全部基线，免逐主体优化。",
+    "problem": "真实感头部建模长期在表示能力、效率与泛化性之间权衡：mesh/3DMM 方案高效但表示力受限，NeRF 系提升保真却牺牲效率；3D-GS 兼顾表示力与实时渲染，但效率仍取决于光栅化的高斯数量，且单个头部的 enrollment（优化准备）耗时高、常需 per-subject 优化。本文要解决：仅给一张未见 subject 的源图，在单视角设定、无逐主体微调、且高斯预算受限（而非 per-pixel 分配）三个约束下，重建可实时渲染的高保真头部并合成新视角。",
+    "method": "EGGHead 基于 3D Gaussian Splatting 管线，每个高斯参数化为 𝒢={p,q,s,α,c}（中心 p∈R³、旋转四元数 q∈R⁴、尺度 s∈R³、不透明度 α、颜色 c∈R³）。核心是 Gaussian allocation 算法（GAM）：给定固定高斯预算（实验设 M=12k），按语义头部区域分配高斯数量，并为密度预测网络生成 pseudo ground-truth Gaussian center maps。网络为前馈组合：Gaussian allocation and density prediction network + Gaussian attribute regressor，单次前向完成；属性预测由 Voronoi tessellation 引导，在稀疏单视角下提升结构准确性；Face Symmetry Module 在不增加重型网络的前提下补全面部完整性，整个 enrollment 消除 3D-GS 典型的 per-subject 优化。",
+    "experiments": "训练用 30,000 张 FFHQ，评测用 disjoint 的 1,000 FFHQ + 1,000 CelebA-HQ，测试图高斯数固定 M=12k；基线 E3DGE、G-NeRF、GAGAvatar（同 12k）。重建质量（Table 1，PSNR↑/SSIM↑/LPIPS↓）：FFHQ Ours 29.75/0.951/0.017 vs GAGAvatar 25.03/0.888/0.110、E3DGE 23.43/0.598/0.133、G-NeRF 19.68/0.673/0.256；CelebA-HQ Ours 29.25/0.939/0.018 vs GAGAvatar 25.06/0.874/0.119。新视角合成（Table 2，ID↑/FID↓）：FFHQ Ours 0.8517/29.01 vs GAGAvatar 0.8377/32.55；CelebA-HQ Ours 0.8532/32.23 vs GAGAvatar 0.8480/30.01（FID 略逊）。定性：NeRSemble（Fig. 6）优于三基线，肤色/头发/嘴齿细节更佳（GAM 向这些区域多分配高斯）。渲染速度（Sec. 10）digest 未含具体数值（原文有表）。",
+    "innovation": [
+      "提出 Gaussian allocation 算法：固定高斯预算下按语义区域分配高斯，低预算仍保持视觉保真；",
+      "前馈式 enrollment：allocation/density prediction network 与 attribute regressor 组合，单次前向消除 per-subject 优化；",
+      "Voronoi tessellation 引导的属性预测，提升稀疏单视角下的结构准确性；",
+      "Face Symmetry Module 以零重型网络开销补全面部完整性。"
+    ],
+    "limits": [
+      "CelebA-HQ 新视角 FID（32.23）略逊于 GAGAvatar（30.01），ID 与重建指标领先但分布保真度未全面占优；",
+      "digest 未给渲染速度数值，摘要中速度优势缺定量支撑；",
+      "digest 未报告消融数值（GAM/Voronoi/Symmetry 各自贡献未量化）；",
+      "训练依赖 FFHQ 30k 图像，跨域（儿童、强遮挡等）泛化 digest 未讨论。"
+    ],
+    "relation": "隶属「化身与人体」头部重建线：与库内 GAGAvatar（3D-GS 系单图头部方法，本文直接对比基线）及 3D-aware GAN 系（E3DGE、G-NeRF）同题竞争；差异在「固定预算语义高斯分配 + 前馈 enrollment」替代逐主体优化。与库内 3DGS 效率/压缩线（CodecSplat、dGS 类）共享「受限高斯预算」动机，但目标是保真而非码率。",
+    "repro": "digest 未提及代码/数据链接；训练数据 FFHQ 30k 与评测 FFHQ/CelebA-HQ 各 1k 为公开数据集；训练硬件与时长 digest 未提及。",
+    "action": "XR 虚拟人/数字人 pipeline 可用其单图前馈 enrollment 做快速化身初始化，12k 高斯预算对端侧实时渲染友好；落地时注意 CelebA-HQ 类分布 FID 略逊，若重分布保真可在自有数据上微调 attribute regressor。"
+  },
+  {
+    "id": "2610.26920",
+    "slug": "cct-gs-codec-compression",
+    "venue": "arXiv preprint (eess.IV) 2026-10",
+    "tags": ["3DGS", "属性压缩", "视频编码", "SH-AC", "MPEG GSC"],
+    "conclusion": "CCT-GS：SH-AC 属性图经广义变换转为 codec 友好瓶颈图并配 LoRA 场景适配，MPEG GSC CTC BD-rate 降 51.30%。",
+    "problem": "基于视频编码的 3DGS 压缩把高斯属性表示为 2D maps 并用标准视频编解码器编码；其中高维 non-DC 球谐（SH-AC）属性图通道数最多、占码流主导份额，但其统计特性与自然图像差异大，且 SH-AC 系数间的非线性依赖未被充分利用。需要一种既能提高 R-D 效率、又保留标准视频编码兼容性（可复用 HEVC 等既有生态）的 SH-AC 压缩方案。",
+    "method": "CCT-GS（Codec-Compatible learned Transform for 3DGS）面向显式 3DGS 属性图、聚焦高维 SH-AC。首先学习一个 generalized SH-AC transform，捕捉 SH-AC maps 的跨场景规律（cross-scene regularities），将其转换为紧凑的 codec-friendly bottleneck maps，从而可直接进标准视频编码器；进一步引入 LoRA-based scene adaptation，以轻量 side information 恢复场景特定外观细节。训练结合 MSE 与 rendering loss（render-aware optimization），使重构的 SH-AC 属性与最终视图质量对齐。整体保持 codec-compatible：bottleneck maps 走标准视频编码管线，无需改动编解码器本身。",
+    "experiments": "MPEG GSC CTC Forward-facing 类，以 GSCodec Studio 为 anchor 的 BD-rate（Table I，负值为节省）：CCT-GS 逐序列 BT -58.75 / BS -52.75 / CT -55.81 / CS -49.18 / BFT -54.45 / BFS -53.03 / BFU -49.24 / Makeup -44.29 / Musical -57.03 / Trio -38.50，平均 -48.42、Overall -51.30；LGSCV 平均 -26.49 / Overall -27.66，TMCV-v2 -33.77 / -34.11；CCT-GS 在 tracked/semi-tracked/untracked 全部序列一致占优。消融（bartender_tracked，anchor 为 Direct HEVC）：仅 MSE 训练的广义变换降 11.40%，加 rendering loss 再降 3.13%，再加 LoRA 场景适配再降 22.72%，累计较 Direct HEVC 降 37.75%。运行时数值 digest 未含（原文有表）。",
+    "innovation": [
+      "面向码流占比最大的高维 SH-AC 属性图设计 codec-compatible 学习变换，直接补上视频类 3DGS 压缩的最大缺口；",
+      "广义 SH-AC transform 捕获跨场景规律，把 SH-AC 转为 codec 友好 bottleneck maps，不修改标准视频编码器；",
+      "LoRA-based scene adaptation 以轻量 side information 恢复场景特定外观，形成「跨场景泛化 + 场景适配」两级设计；",
+      "render-aware 优化：rendering loss 使重构 SH-AC 与最终视图质量对齐；",
+      "MPEG GSC CTC 上 Overall BD-rate 较 anchor 降 51.30%，一致超过视频类基线。"
+    ],
+    "limits": [
+      "digest 结论段仅提 future work「plan to ex…」（被截断），未见明确局限章节；",
+      "digest 所示实验覆盖 MPEG GSC Forward-facing 类，其他类别（如 immersive）digest 未报告；",
+      "LoRA 场景适配引入 side information，其码率成本 digest 未量化；",
+      "消融仅基于 bartender_tracked 单序列，组件增益的跨场景稳定性 digest 未验证。"
+    ],
+    "relation": "隶属「渲染与显示」3DGS 压缩线：与库内 CodecSplat、Budgeted-GS、COSA-GS、MoQSplat、TopoGS 同属压缩家族，差异在 codec-compatible 路线——SH-AC 经学习变换后仍走标准视频编码（HEVC）并面向 MPEG GSC CTC 评测；与「紧凑参数化/前馈」型效率线（dGS、GeoForward 类）互补：前者压码流、后者压表示。",
+    "repro": "digest 未提及代码/数据开源链接；实验基于 MPEG GSC 标准测试序列与 GSCodec Studio anchor；作者单位为上海交通大学与 University of Missouri-Kansas City；硬件 digest 未提及。",
+    "action": "做 3DGS 资产分发/流媒体的团队可把「广义 SH-AC 变换 + LoRA 适配」作为 SH-AC 编码前置模块接入既有视频编码管线，兼容性风险低；落地时需量化 LoRA side information 的码率成本，并在 MPEG GSC 其他类别序列上补测以确认泛化。"
+  },
+  {
+    "id": "2610.27877",
+    "slug": "gaze2hoi",
+    "venue": "arXiv preprint (cs.CV) 2026-10",
+    "tags": ["第一视角", "注视估计", "手-物交互", "意图预测", "扩散模型"],
+    "conclusion": "注视消歧的第一视角手-物交互预测：TGSM 调制 VLM 推断意图，ACG 几何 grounding，扩散生成手-物 6-DoF 运动，EgoAIM 全面超基线。",
+    "problem": "主动式 AR/VR/具身系统需要预判用户将与物体如何交互。既有方法直接从历史观测预测手-物交互，意图与接触几何是隐式的；而相似的历史观测可能通向语义或几何上截然不同的未来。行为证据表明注视能提前暴露底层意图，但如何把注视线索结构化为意图推断与几何 grounding 的条件，并以单一框架生成协调可信的手-物未来运动，仍缺统一方案。",
+    "method": "Gaze2HOI 把手-物交互预测分解为层次化三步：意图推断 → 接触 grounding → 手-物运动联合生成。① Temporal Gaze Saliency Modulation（TGSM）：按 fixation strength 与 recency 加权注视线索，调制 VLM 视觉表征，降低意图歧义。② Anticipatory Contact Grounding（ACG）：把结构化意图映射为显式 contact、support、placement fields；运动训练时 ACG 冻结，其预测的意图与场提供语义与几何条件。③ 扩散运动模型以显式条件联合生成物体 6-DoF 轨迹与双手 articulated motion。训练目标 ℒ_motion = ℒ_v + ℒ_geo + ℒ_rel + ℒ_contact + ℒ_obj + ℒ_sup + ℒ_move（Eq. 11/12）：ℒ_v 为掩码去噪损失；ℒ_geo 监督平移/速度/旋转，ℒ_rel 约束 wrist-relative 运动，ℒ_contact 结合接触距离匹配与手-物穿透惩罚，ℒ_obj 惩罚物体间穿透，ℒ_sup 处理家具穿透与放置误差，ℒ_move 监督物体运输；交互损失仅在 α_τ²≥0.25 时激活。",
+    "experiments": "在新基准 EgoAIM（四阶段 Establish Contact / Move / Manipulate / Put Down，细粒度意图标注）上评测，指标含 H-ADE/FDE、O-ADE/FDE、HO-Pen、Reach-SR、Goal-DE、RA-MPJPE、Place-Hit。Overall 列（按测试窗与指标 best-of-five）：Gaze2HOI 4.16/5.49、0.72/0.87、1.70、92.43、2.29、1.33、44.93，全部最优；次优为 CAHMP†（6.34/9.80、2.17/3.48、10.20、47.70、7.51、1.81、14.10）与 Transformer‡（6.43/8.50、2.36/2.91、13.47、38.98、7.54、1.51、11.45）；MDM† 与 GRU‡ 全面落后。基线脚注：EgoH4* 需 task adaptation 与 MANO fitting；†/‡ 分别为手-物预测适配版与自建架构。论文自述特定阶段端到端接近 oracle 水平；逐阶段细分表 digest 未含数值（原文有表）。",
+    "innovation": [
+      "把注视用作 HOI 预测的意图消歧条件：TGSM 按 fixation 强度与近因加权并调制 VLM 视觉表征；",
+      "ACG 把结构化意图转为显式 contact/support/placement fields，让运动生成由显式几何条件驱动；",
+      "扩散模型联合生成物体 6-DoF 轨迹与双手 articulated motion，并配穿透/支撑/运输等物理一致性损失族；",
+      "提出 EgoAIM：按手-物关系演化划分四阶段、带细粒度意图标注的 phase-aware 基准。"
+    ],
+    "limits": [
+      "精确放置（precise placement）被论文自述为重要未来改进方向；",
+      "EgoAIM 为本文自建基准，独立第三方验证缺位；",
+      "部分基线需 task adaptation / MANO fitting 等改造才能参评，比较强度受适配差异影响；",
+      "交互损失依赖 α_τ²≥0.25 门控，clean-state 不可靠时约束关闭，该情形下行为 digest 未量化。"
+    ],
+    "relation": "隶属「感知与认知」注视-交互线：库内 GazeAgent 做隐式注视校准、EgoRayFormer 等关注注视点交互；本文把 gaze 转为「意图消歧条件」，以 ACG 显式几何 grounding 衔接扩散运动预测，与库内 HOI 预测线（ObjectForesight、CAHMP 类）形成「隐式历史回归 vs 显式条件生成」对照；EgoAIM 四阶段切分可作库内手-物预测统一评测语言。",
+    "repro": "项目页 https://gaze2hoi.github.io/（摘要给出）；代码与 EgoAIM 数据下载方式 digest 未明确提及；硬件 digest 未提及；研究受 NSFC 62306309 资助。",
+    "action": "XR 主动式助手（预感用户下一步操作并预加载 UI/物体）可直接采用「TGSM→ACG→扩散生成」分层结构，注视信号从头显眼动模组获得；落地时优先按四阶段标注协议用自有数据扩充 EgoAIM，并重点评测 Place-Hit——论文自述精确放置尚未解决。"
+  },
+  {
+    "id": "2610.28554",
+    "slug": "overseer-multi-agent-wm",
+    "venue": "arXiv preprint (cs.CV) 2026-10",
+    "tags": ["世界模型", "多智能体", "一致性", "辅助视图", "Minecraft"],
+    "conclusion": "多智能体世界模型 OverSeer：固定位姿辅助相机视图作世界中心状态代理，δ-VAE 仅编码相对参考图变化，MAC-Bench 一致性命标大幅领先基线。",
+    "problem": "视频世界模型扩展到多智能体时，需要生成多条 agent 特定视频流，并要求时间上与 agent 间双维度一致；agent 视角会因位置微小变化而剧变，模型难以维持对共享世界状态的记忆——当 agent 分离后又重聚时，同伴必须出现在先前观测过的空间位置。缺少一种简单高效的方式，为多智能体世界模型引入持久的世界中心参考。",
+    "method": "OverSeer 在多智能体视频世界模型中联合生成两类流：各 agent 的 egocentric 视图 + 若干 fixed-pose 辅助相机视图（论文示例为六个）。核心思想：辅助视图在空间中固定，其变化直接映射世界状态的局部变化，因而可作为 world-centric 状态表示的轻量代理（proxy），对模型施加跨视图一致性与时间一致性约束。由于辅助视图冗余且半静态，用 δ-VAE（delta-VAE）编码：仅编码相对一张静态参考图像的变化，大幅减少处理这些视图所需的 token 与计算开销。模型以初始视觉观测 + 多智能体动作轨迹为条件做未来帧 rollout；并设计消融考察辅助视图数量与 δ-VAE 压缩率对合成质量与开销的影响。",
+    "experiments": "主评测在 Minecraft。基准一 Solaris（五项多智能体能力，VLM 判分脚本问题，episode 内须全答对）；基准二自建 MAC-Bench（Reunite at Start / Reunite Far / Dynamic Event，5 次运行平均）。Table 1（VLM accuracy %↑ / FID↓）：Solaris 五项 OverSeer 59.1/18.27、91.7/11.33、87.5/12.95、41.7/32.50、60.4/26.47 vs Solaris 基线 68.8/22.38、66.7/14.92、20.8/47.11、22.9/76.01、56.3/68.42（第二项落后）；MAC-Bench OverSeer 60.2/13.99、37.9/12.79、40.5/17.61，而 Solaris 仅 0.0/17.06、6.2/20.23、12.5/26.52、γ-World 0.0/23.83、0.0/25.71、8.3/31.72。Doom revisit 任务 digest 未含数值；真实多相机数据仅定性；辅助视图数与 δ-VAE 压缩率消融 digest 未含数值（原文有表）。",
+    "innovation": [
+      "提出以固定位姿辅助相机视图作为 world-centric 状态的轻量代理，把「世界一致性」转化为可学习的跨视图约束；",
+      "δ-VAE 只编码相对静态参考图的变化，显著降低辅助视图生成的 token 与计算开销；",
+      "在 Minecraft / Doom + 真实多相机数据上验证，方法不绑定游戏引擎；",
+      "构建 MAC-Bench（Reunite at Start / Reunite Far / Dynamic Event）专门度量多智能体世界/agent 一致性。"
+    ],
+    "limits": [
+      "digest 未含 Limitations 章节具体内容（附录 E 存在但未抽取），局限信息有限；",
+      "Doom 定量结果、辅助视图数量与 δ-VAE 压缩率消融数值 digest 未给；",
+      "Solaris 第二项能力上 OverSeer（59.1）低于 Solaris 基线（68.8），并非全面占优；",
+      "真实场景验证仅为定性（Replay 数据），量化泛化未证。"
+    ],
+    "relation": "隶属「世界模型与仿真」线：库内 EgoJEPA、Thinker-WM、AEON 类探索单/少 agent 世界模型；本文差异在多智能体一致性——固定位姿辅助视图作世界中心状态代理，与库内「共享世界系表征」思路互补（如 EgoXperience 的世界系输出可视为类似监督）。MAC-Bench 与 Solaris 可并入库内基准集；δ-VAE「只编码变化」与库内压缩线（CodecSplat、CCT-GS）共享冗余剔除范式。",
+    "repro": "项目页 overseer-wm.github.io；数据集 HuggingFace collection huggingface.co/collections/liguang0115/overseer（digest 明示）；代码链接 digest 未明确提及；作者为 Meta AI 与 University of Oxford；硬件 digest 未提及。",
+    "action": "做多用户 XR/游戏世界模型的团队可把「固定辅助相机 + δ-VAE」作为低成本一致性约束加入现有视频世界模型，尤其适用于共享空间协作场景；落地时先用 MAC-Bench 式 reunite 任务量化一致性收益，并实测辅助视图数量与压缩率的权衡。"
+  },
+  {
+    "id": "2610.27604",
+    "slug": "hiqgs",
+    "venue": "arXiv preprint (cs.CV) 2026-10",
+    "tags": ["3DGS", "前馈重建", "稀疏单目", "时空编码", "新视角合成"],
+    "conclusion": "前馈高斯重建 HiQGS：VGGT-Ω 几何分支 + TP-RoPE 层次化时空编码，时间自适应解码器查询目标时刻高斯状态，RE10K/Waymo 领先。",
+    "problem": "从稀疏带位姿单目帧前馈重建高斯场景，需要在视角与时间联合变化的观测上推理。既有方法要么从观测对齐特征直接预测高斯基元（Gaussian allocation 与单帧紧耦合），要么用紧凑 latent query 聚合多帧信息（未按证据与请求时刻的时间关系显式组织），导致跨空间尺度、视角、时间戳的证据难以对齐整合。且目标时刻的场景状态未被直接观测，必须依据其与上下文观测的时间-几何关系解码。",
+    "method": "输入 V 个稀疏观测 {(I_v, C_v, t_v)}（RGB 帧、相机参数、时间戳），预测目标时刻 t* 的高斯场景状态 𝒢(t*)={(x_i, r_i, s_i, α_i, c_i)}，可从任意目标相机 C* 渲染。HiQGS = Hierarchical Spatiotemporal Encoder（HSE）+ Time-Adaptive Decoder（TAD）。HSE：几何分支采用 VGGT-Ω，交替 intra-frame reasoning 与 inter-frame aggregation，抽取 ℒ={4,11,17,23} 层中间特征融合为统一表示；外观分支捕获细粒度纹理与物体边界；TP-RoPE 基于图像位置、观测时间戳与相机几何建立视觉 token 间时空对应。TAD：scene-level Gaussian querying + target-time adaptive modulation + target-state Gaussian decoding。训练目标含 target-conditioned rendering supervision、reconstruction supervision、projection regularization。核心思想：把「上下文观测的组织」与「请求场景状态的解码」分离——不预设运动模型、不强制跨时间基元对应，编码上下文可复用于解码多个目标时刻。",
+    "experiments": "实验覆盖静态与动态两类基准：RealEstate10K（RE10K）与 Waymo，对应三项能力——静态新视角合成、动态区域重建与稀疏深度几何估计，论文自述均取得领先（leading performance）。输入设定为稀疏带位姿单目帧，固定数量高斯基元，目标时刻查询可泛化到多样环境与动态状态，解码结果可从任意目标相机渲染。digest 未包含具体数值表（PSNR/SSIM/LPIPS/深度误差等指标数字未在 digest 片段中给出，原文有表），故不作数值罗列；训练硬件与时长 digest 亦未提及。",
+    "innovation": [
+      "层次化时空编码器 HSE：几何（VGGT-Ω，多中间层 {4,11,17,23} 融合）与外观分支按不同粒度互补，TP-RoPE 按图像位置/时间戳/相机几何建立时空对应；",
+      "时间自适应解码器 TAD：以目标时刻查询层次化表示，scene-level querying + target-time adaptive modulation；",
+      "「上下文组织」与「状态解码」分离：不预设运动模型、不强制跨时间基元对应，一次编码可解码多个目标时刻；",
+      "在 RE10K/Waymo 的静态 NVS、动态区域重建与稀疏深度估计上同时报告领先结果。"
+    ],
+    "limits": [
+      "RE10K/Waymo 覆盖的真实场景动态与捕获条件范围有限；",
+      "罕见或高度复杂、远离训练分布的运动下，预测高斯可能空间发散（spatially diffuse），导致局部重建质量退化；",
+      "论文假设当前训练数据的运动模式多样性不足（digest 该句被截断）；",
+      "digest 未提供按运动复杂度分层的定量失败分析。"
+    ],
+    "relation": "隶属「神经渲染」前馈 3DGS 线：与库内 GeoForward、MCSplat 类并列；差异在以层次化时空编码显式组织多分辨率几何-外观证据、按目标时刻查询解码，而非把高斯分配绑在单帧或用无时间结构的 latent query。几何分支 VGGT-Ω 与库内 VGGT 系（2610.23039 VGGT+TokenGS、SAGE）同源，是其向「时间自适应高斯查询」的扩展；「一次编码、多目标时刻解码」对 XR 稀疏拍摄回放/4D 编辑有直接意义。",
+    "repro": "digest 未提及代码/数据/硬件；论文 License 为 CC BY 4.0；作者单位含浙江大学、ShanghaiTech、University of Cambridge、NIO、哈尔滨工业大学。",
+    "action": "XR 稀疏拍摄（几步路拍几张）重建动态场景的团队可采用「HSE 编码一次 → TAD 按需解码多时刻」两段式结构，摊薄编码成本；落地前在自有数据上测运动复杂度边界——论文自述罕见运动会导致高斯发散，建议先对目标场景分布做覆盖度检查。"
+  }
+]

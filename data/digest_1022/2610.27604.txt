@@ -1,0 +1,93 @@
+【摘要】
+
+【方法】
+3.1 Hierarchical Spatiotemporal Encoder
+Geometry encoder.
+Appearance encoder.
+Temporal Projective RoPE (TP-RoPE).
+3.2 Time-Adaptive Decoder
+Scene-level Gaussian querying.
+Target-time adaptive modulation.
+Target-state Gaussian decoding.
+3.3 Training Objectives
+Target-conditioned rendering supervision.
+Reconstruction supervision.
+Projection regularization.
+Overall objective. Our goal is to enable feed-forward Gaussian reconstruction from sparse posed
+monocular observations with a fixed number of
+Gaussian primitives that can generalize across diverse environments and dynamic
+states. Given V V sparse observations
+{ ( 𝐈 v , 𝐂 v , t v ) } v = 1 V \{(\mathbf{I}_{v},\mathbf{C}_{v},t_{v})\}_{v=1}^{V} from a monocular video, where
+𝐈 v \mathbf{I}_{v} , 𝐂 v \mathbf{C}_{v} , and t v t_{v} denote the RGB frame, camera parameters,
+and timestamp, respectively, we aim to predict the Gaussian scene
+state 𝒢 ⁡ ( t ∗ ) \mathcal{G}(t^{\ast}) at a target time t ∗ t^{\ast} . Specifically,
+𝒢 ⁡ ( t ∗ ) = { ( 𝐱 i , 𝐫 i , 𝐬 i , α i , 𝐜 i ) } i = 1 N \mathcal{G}(t^{\ast})=\{(\mathbf{x}_{i},\mathbf{r}_{i},\mathbf{s}_{i},\alpha_{i},\mathbf{c}_{i})\}_{i=1}^{N} contains the position, rotation, scale, opacity, and
+appearance of each Gaussian, and can be rendered from an arbitrary
+target camera 𝐂 ∗ \mathbf{C}^{\ast} .
+Achieving this goal presents two challenges:
+(1) Sparse observations provide complementary appearance and geometry cues with
+different levels of spatial detail and semantic abstraction across time and
+viewpoints. These heterogeneous observations
+need to be organized into a unified representation while preserving their spatial,
+temporal, and geometric relationships.
+(2) The scene state at a target timestamp is not directly observed, which must be decoded from sparse context observations according to their temporal and geometric
+relations with the target state.
+HiQGS addresses these challenges with a Hierarchical Spatiotemporal Encoder
+(HSE) and a Time-Adaptive Decoder (TAD), as illustrated in
+Figure  1 .
+3.1 Hierarchical Spatiotemporal Encoder
+Sparse monocular videos contain complementary appearance and geometry evidence
+with different spatial granularities and semantic abstraction levels. Fine-grained
+appearance cues are important for recovering local details and object boundaries,
+while geometry-aware features provide structural information across observations.
+To capture these complementary properties, we introduce a Hierarchical
+Spatiotemporal Encoder (HSE) that integrates geometry and appearance branches
+with different granularities. HSE further employs Temporal-Projective
+Rotary Positional Encoding (TP-RoPE) to establish spatiotemporal correspondence
+among visual tokens based on their image locations, observation timestamps, and
+camera geometry.
+Geometry encoder.
+The geometry branch adopts VGGT- Ω \Omega   ( Wang et al. 2026a ) to extract
+geometry-aware representations from the context sequence. VGGT- Ω \Omega
+alternates intra-frame reasoning and inter-frame aggregation, enabling the
+features to capture both local structure and cross-view geometric relations.
+To preserve geometry information at different abstraction levels, we collect
+intermediate features from layers
+ℒ = { 4 , 11 , 17 , 23 } \mathcal{L}=\{4,11,17,23\} and fuse them into a unified representation.
+The resulting features are projected to obtain the geometry feature sequence
+𝐅 geo \mathbf{F
+
+【实验】
+4.1 Experimental Setup on static and dynamic scene reconstruction benchmarks demonstrate
+strong rendering quality and geometric accuracy, validating the effectiveness
+of hierarchical visual encoding and target-time-aware Gaussian querying.
+1 Zhejiang University
+2 ShanghaiTech University
+3 University of Cambridge
+4 NIO
+5 Harbin Institute of Technology on RealEstate10K and Waymo demonstrate leading performance in static novel-view synthesis, dynamic-region reconstruction, and sparse-depth geometry estimation. 4.1 Experimental Setup
+
+【结论/局限】
+ We presented HiQGS, a feed-forward framework for reconstructing
+renderable Gaussian scene states from sparse posed monocular video
+frames. The key idea is to separate the organization of context
+observations from the decoding of a requested scene state.
+HiQGS directly predicts a target-specific Gaussian field without
+prescribing a motion model or enforcing primitive correspondence across
+time, and the encoded context can be reused to decode multiple target
+timestamps. Experiments on both dynamic and static reconstruction
+benchmarks demonstrate strong rendering and geometric accuracy,
+supporting hierarchical context encoding and temporally grounded
+querying as an effective design for generalizable feed-forward Gaussian
+reconstruction. .
+References
+License: CC BY 4.0
+arXiv:2610.27604v1 [cs.CV] 20 Oct 2026
+HiQGS: Hierarchical Spatiotemporal Querying for Feed-Forward Gaussian Reconstruction
+Qiaowei Miao
+Qifeng Cheng
+Yijing Guo
+Yuru Xiao
+Ziqian Ni
+Sheng Yang .
+Although HiQGS performs well on RE10K and Waymo, these datasets cover only a limited range of real-world scene dynamics and capture conditions. For rare or highly complex motions that differ substantially from the training distribution, the predicted Gaussians may become spatially diffuse, leading to localized degradation in reconstruction quality. We hypothesize that the limited diversity of motion patterns in the current tr

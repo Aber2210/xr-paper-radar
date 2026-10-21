@@ -1,0 +1,61 @@
+【摘要】
+.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab) Details
+4.2 Geometry Reconstruction Results Details
+For the reported experiments, we initialize the NeRF network from a vanilla-NeRF checkpoint and continue optimization with the objective in Equation ( 20 ). In each geometry-optimization step, we draw 20,000 uniform proposals from the sampling volume, append rendered-depth anchors, apply the opacity-band filter, and randomly retain up to 100 candidates. We generate 15 cross-rays for each candidate. For the opacity and normal computations, we use δ = ( 10.0 − 0.1 ) / 128 \delta=(10.0-0.1)/128 and ϵ = 10 − 5 \epsilon=10^{-5} , respectively. Unless noted below, we set r = 0.15 r=0.15 and l 0 = 0.28 l_{0}=0.28 , giving a default normal-bias strength of λ n = l 0 / r ≈ 1.87 \lambda_{\mathrm{n}}=l_{0}/r\approx 1.87 . We also set ( l min , l max ) = ( 0.15 , 0.45 ) (l_{\min},l_{\max})=(0.15,0.45) , s = 0.08 s=0.08 , λ cr = 1.5 × 10 − 3 \lambda_{\mathrm{cr}}=1.5\times 10^{-3} , λ occ = 1.15 \lambda_{\mathrm{occ}}=1.15 , and λ sm = 2.5 × 10 − 4 \lambda_{\mathrm{sm}}=2.5\times 10^{-4} .
+For visibility estimation, we place 32 uniform samples between 0.01 ​ l i ​ j 0.01l_{ij} and l i ​ j l_{ij} along each origin-to-candidate segment, including the endpoint, and set Δ i ​ j ​ k = 0.99 ​ l i ​ j / 32 \Delta_{ijk}=0.99l_{ij}/32 . Cross-ray rendering uses near and far bounds of 0.1 and 10.0 meters. The continuation with the geometry branch starts at a learning rate of 1.15 × 10 − 4 1.15\times 10^{-4} .
+Room 1 uses ( l min , l max ) = ( 0.125 , 0.30 ) (l_{\min},l_{\max})=(0.125,0.30) , λ occ = 0.8 \lambda_{\mathrm{occ}}=0.8 , and λ sm = 2.5 × 10 − 3 \lambda_{\mathrm{sm}}=2.5\times 10^{-3} . Office 2 uses r = 0.25 r=0.25 , ( l min , l max ) = ( 0.08 , 0.70 ) (l_{\min},l_{\max})=(0.08,0.70) , s = 0.10 s=0.10 , λ cr = 1.05 × 10 − 3 \lambda_{\mathrm{cr}}=1.05\times 10^{-3} , and λ occ = 3.25 \lambda_{\mathrm{occ}}=3.25 ; its scene-specific continuation starts at a learning rate of 1.25 × 10 − 4 1.25\times 10^{-4} . These settings are fixed in the reported runs.
+For Office 2, we additionally suppress residual floating density with an auxiliary global sparsity penalty:
+(21)
+L sparse = 1 − 𝔼 𝐱 ∼ 𝒱 ​ [ exp ⁡ ( − δ s ​ ReLU ⁡ ( σ θ ​ ( 𝐱 ) ) ) ] . L_{\mathrm{sparse}}=1-\mathbb{E}_{\mathbf{x}\sim\mathcal{V}}\left[\exp\left(-\delta_{s}\operatorname{ReLU}(\sigma_{\theta}(\mathbf{x}))\right)\right].
+The optimization objective for this scen
+
+【实验】
+ on eight Replica scenes show that the proposed method reduces the mean Chamfer distance by 30.8% compared with vanilla NeRF.
+Keywords:
+neural radiance fields, implicit geometry, 3D reconstruction, cross-ray consistency on eight Replica scenes show a 30.8% reduction in mean Chamfer distance relative to vanilla NeRF, demonstrating the effectiveness of the proposed framework in improving implicit geometry. 
+
+【结论/局限】
+and Discussion
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27776v1 [cs.CV] 20 Oct 2026
+Geometry Regularization for Vanilla NeRF via Self-Supervised Cross-Ray Consistency
+Zongji Wang
+email: wangzongji@aircas.ac.cn
+© none and Discussion
+We proposed a framework that augments vanilla NeRF with a geometry-optimization branch. Specifically, the branch samples candidate surface points, generates virtual cross-rays through them, and renders their appearance from multiple viewpoints. Based on the visibility-weighted disagreement of these rendered colors, cross-ray consistency constrains the density field, while occupancy suppression and local normal smoothness reduce geometric noise. On eight Replica scenes, the method reduces the mean Chamfer distance by 30.8% relative to vanilla NeRF.
+The current experiments use a reference mesh to define sampling bounds and scene-specific settings for Room 1 and Office 2. Future work should estimate the bounds from training cameras, isolate the effect of the added branch through an RGB-only continuation from the same checkpoint, and investigate appearance models that are less sensitive to specular surfaces.
+References
+Azinović et al . (2022)
+Dejan Azinović, Ricardo
+Martin-Brualla, Dan B Goldman, Matthias
+Nießner, and Justus Thies.
+2022.
+Neural RGB-D Surface Reconstruction. In
+Proceedings of the IEEE/CVF Conference on Comp

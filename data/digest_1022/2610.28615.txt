@@ -1,0 +1,316 @@
+【摘要】
+
+【方法】
+Preliminaries.
+4.1 Complexity-aware Adaptive density control
+4.2 Complexity-aware Level of Details
+Training objectives.
+5 Experimental Results
+5.1 Quality at Predefined LOD Targets
+5.2 Quality Across the LoD Spectrum
+5.3 LoD Transition Variance
+5.4 Ablation Study
+5.5 Application: time-to-quality in streaming We consider the continuous level of detail setting for 3DGS.
+Given a posed training set 𝒟 = { ( I i , Π i ) } i = 1 M \mathcal{D}=\{(I_{i},\Pi_{i})\}_{i=1}^{M} , the goal is to learn a single Gaussian representation 𝒢 = { g j } j = 1 N \mathcal{G}=\{g_{j}\}_{j=1}^{N} that can be rendered under a variable primitive budget τ ∈ ( 0 , 1 ] \tau\in(0,1] , such that
+𝒢 τ ⊆ 𝒢 \mathcal{G}_{\tau}\subseteq\mathcal{G} with | 𝒢 τ | = ⌈ τ ​ N ⌉ |\mathcal{G}_{\tau}|=\lceil\tau N\rceil .
+At every budgeted representation, our aim is that 𝒢 τ \mathcal{G}_{\tau} remains spatially coherent and degrades gracefully as τ \tau decreases.
+Following our pilot study (Sec.  3 ) which demonstrates that image complexity is a surrogate of the reconstruction error, our aim is to benefit from the image complexity signal, readily accessible at training time. Specifically, we apply two simple modifications to the optimization process of state-of-the-art 3DGS-MCMC  [ 8 ] . First, we utilize complexity to foster (re)allocation of the Gaussians in regions with higher complexity (Sec.  4.1 ).
+Second, we introduce a content-aware importance score that retains simple regions at low budgets (Sec.  4.2 ). We complement them with a residual variance objective that encourages stable reconstruction error across space and LoDs. #GS [k]
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+DB
+OctreeGS [ 27 ]
+1,457
+30.23
+0.908
+0.254
+-
+-
+-
+-
+-
+-
+-
+-
+-
+FlexGS [ 5 ]
+2,547
+29.29
+0.898
+0.320
+29.27
+0.897
+0.349
+24.68
+0.824
+0.472
+-
+-
+-
+3DGS MCMC [ 8 ]
+2,950
+29.70
+0.907
+0.236
+24.36
+0.792
+0.362
+16.81
+0.656
+0.520
+12.67
+0.601
+0.599
+LightGaussian [ 15 ]
+2,950
+29.73
+0.907
+0.240
+26.21
+0.849
+0.333
+19.59
+0.742
+0.482
+15.26
+0.675
+0.546
+MGS [ 2 ]
+2,950
+29.29
+0.905
+0.247
+28.61
+0.888
+0.282
+23.28
+0.800
+0.416
+16.58
+0.692
+0.531
+Ours
+2,950
+29.92
+0.911
+0.240
+29.05
+0.890
+0.282
+23.40
+0.798
+0.419
+17.81
+0.720
+0.522
+MipNerf
+OctreeGS [ 27 ]
+2,991
+29.16
+0.876
+0.174
+-
+-
+-
+-
+-
+-
+-
+-
+-
+FlexGS [ 5 ]
+3,012
+29.06
+0.872
+0.217
+27.58
+0.835
+0.293
+23.39
+0.663
+0.494
+-
+-
+-
+3DGS MCMC [ 8 ]
+3,092
+29.80
+0.893
+0.146
+20.58
+0.647
+0.352
+14.14
+0.383
+0.586
+11.06
+0.267
+0.667
+LightGaussian [ 15 ]
+3,092
+29.89
+0.897
+0.147
+21.06
+0.669
+0.359
+15.81
+0.475
+0.558
+13.01
+0.377
+0.636
+MGS [ 2 ]
+3,092
+29.55
+0.890
+0.151
+26.97
+0.797
+0.280
+20.17
+0.544
+0.521
+14.49
+0.393
+0.620
+Ours
+3,092
+29.80
+0.893
+0.150
+27.82
+0.822
+0.258
+21.14
+0.566
+0.510
+16.04
+0.459
+0.611
+TandT
+OctreeGS [ 27 ]
+2,080
+24.45
+0.860
+0.158
+-
+-
+-
+-
+-
+-
+-
+-
+-
+FlexGS [ 5 ]
+1,979
+23.78
+0.847
+0.204
+23.06
+0.807
+0.278
+19.49
+0.642
+0.478
+-
+-
+-
+3DGS MCMC [ 8 ]
+1,850
+24.43
+0.866
+0.143
+18.52
+0.670
+0.356
+11.96
+0.404
+0.589
+8.92
+0.306
+0.680
+LightGaussian [ 15 ]
+1,850
+24.46
+0.863
+0.146
+19.17
+0.680
+0.347
+13.21
+0.453
+0.596
+9.52
+0.351
+0.686
+MGS [ 2 ]
+1,850
+24.40
+0.864
+0.150
+22.16
+0.755
+0.309
+16.66
+0.536
+0.526
+12.10
+0.410
+0.639
+Ours
+1,850
+24.65
+0.868
+0.150
+22.97
+0.785
+0.277
+17.38
+0.551
+0.519
+11.56
+0.413
+0.660
+Table 2 : Performance at log-spaced LoD targets. Metrics a
+
+【实验】
+show that our simple modification boost performance and efficiency. The proposed LoD is global and view independent, rather than conditioned on camera distance or screen resolution. The implications are further discussed in Sec.  B.2 .
+Preliminaries.
+A 3DGS representation encodes a scene as a set of Gaussian primitives, where each Gaussian g j = ( μ j , α j , Σ j , 𝐜 j ) g_{j}=(\mu_{j},\alpha_{j},\Sigma_{j},\mathbf{c}_{j}) is parameterized by its position μ j \mu_{j} , opacity α j \alpha_{j} , covariance Σ j \Sigma_{j} , and color coefficients 𝐜 j \mathbf{c}_{j} . To expose complexity to the optimization process, we augment each primitive with a scalar variable C j C_{j} , which stores the local image complexity associated with the current Gaussian. This relates to the complexity field in Eq.  2 , but differs from the post-hoc analysis in our pilot study since, during training, Gaussian positions and supports change, and therefore their complexity values must be updated online.
+To address this, after each full-capacity training render of a view Π i \Pi_{i} , we project the means of the contributing Gaussians into the image plane, and update each particle’s complexity via an exponential
+moving average, using the complexity map C i 2D ​ ( u ) C^{\text{2D}}_{i}(u) from Eq.  1 , computed with delentropy. So that:
+C j ← ( 1 − η ) ​ C j + η ​ C i 2D ​ ( π i ​ ( μ j ) ) , η ∈ ( 0 , 1 ] . C_{j}\;\leftarrow\;(1-\eta)\,C_{j}\;+\;\eta\,C^{\text{2D}}_{i}\!\bigl(\pi_{i}(\mu_{j})\bigr),\qquad\eta\in(0,1].
+(3)
+Only particles whose centers project in the current view’s frustum are updated. Over the course of training each particle’s C j C_{j} converges to the multi-view average similar to those in Eq. ( 2 ).
+At last, S j S_{j} is the importance score of a particle used for prefix sorting computed using the scoring function S ⁡ ( ⋅ ) S(\cdot) .
+4.1 Complexity-aware Adaptive density control
+In practice, 3DGS variants rely on opacity as a proxy for this error signal: during optimization new primitives are concentrated where opacity has accumulated, and regions the optimizer has not yet resolved remain under-served precisely because they have not been resolved. In 3DGS-MCMC  [ 8 ] , the probability p p to relocate at the coordinate of μ j \mu_{j} writes: p ⁡ ( g j ) = α j p(g_{j})=\alpha_{j} .
+Given that complexity is a surrogate of reconstruction errors ( cf. , Tab.  1 ), we simply bias this sampling weight towards more complex regions. We therefore sample relocation destinations with:
+p ⁡ ( g j ) = α j ⋅ exp ⁡ ( C ~ j ) , p(g_{j})=\alpha_{j}\cdot\exp\!\bigl(\tilde{C}_{j}\bigr)\,,
+(4)
+where C ~ j ∈ [ 0 , 1 ] \tilde{C}_{j}\in[0,1] is the min-max normalized C j C_{j} .
+Note that we utilize exp ⁡ ( ⋅ ) \exp(\cdot) to mimic the exponential growing behavior of particles count with complexity, as in the 90th percentile in Fig.  2(a) . Importantly, the multiplicative form keeps opacity in the loop since a primitive that has earned its keep should not be evicted for exploring other regions. To prevent collapse onto fixed complex regions, we apply complexity dropout , setting C ~ j = 0 \tilde{C}_{j}=0 with probability δ = 0.2 \delta=0.2 (ablated in Sec.  D.2 ) and thus 
+
+【结论/局限】
+References
+A Limitations
+B Implementation details
+B.1 Pilot Study
+Experimental setup.
+3D aggregation of quality and complexity.
+B.2 Method
+Scope of the LoD Formulation. We studied how to allocate Gaussian primitives as rendering budgets shrink in continuous LoD splatting. Our pilot study showed that image complexity, accessible before any optimization, predicts spatial reconstruction error in 2D and 3D, yet trained models fail to allocate capacity accordingly in a form that a shrinking budget preserves. Building on these observations, we design a method allocating primitives based on complexity which determines their survival at inference, using a variance objective to maintain uniform error across scales. Evaluated on three datasets, our approach matches the strongest baselines at full capacity, while achieving the highest integrated quality across budgets, and degrades more gracefully, with the largest gains below 1 % 1\% capacity and faster time-to-quality in streaming.
+Acknowledgments and Disclosure of Funding
+This work was supported by the "Romanian Hub for Artificial Intelligence-HRIA", Smart Growth, Digitization and Financial Instruments Program, MySMIS no. 351416 and by the Astra Team, Inria. This work was granted access to the HPC resources of IDRIS under the allocation 2025-AD011017283 made by GENCI on the Jean-Zay Cluster. The authors would like to thank Sergiu Nedev

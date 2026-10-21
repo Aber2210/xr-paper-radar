@@ -1,0 +1,84 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab)
+
+【实验】
+modes vary task parameters, object distributions, and attack configurations, and allow dynamic runtime switching and cognitive attack injection.
+The platform also integrates a real-time data collection pipeline that records both system-level and user-level metrics.
+Captured data includes cognitive attack events, behavioral signals (e.g., head and eye tracking), user activity logs, and subjective measures such as engagement and trust.
+All data are synchronized and stored on the server for subsequent analysis, enabling fine-grained post-hoc evaluation of user resilience, decision-making, and collaboration under adversarial MR conditions.
+These components establish CAESAR as a flexible and extensible research framework for systematic evaluation of cognitive attacks in collaborative MR search-and-rescue environments.
+4 Search-and-Rescue Features
+This section describes the core search-and-rescue features supported by the CAESAR testbed and explains how they shape mission dynamics, user behavior, and experimental control. These components capture key elements of real-world search-and-rescue operations, including time pressure, environmental uncertainty, adversarial interaction, and team coordination, enabling systematic study of collaborative performance under stress.
+Figure 3 : Search-and-rescue features.
+( Left ): Unified health system linking hazards, combat, rescue, and recovery.
+( Top Right ): Rescue mechanism involving hand-driven interaction, progress feedback, collaboration, and pre-task completion check.
+( Bottom Right ): Adversary AI’s detect, search, and chase behaviors.
+4.1 Health System
+We introduce a unified health system to model survival constraints, time pressure, and resource dependency within the search-and-rescue scenario.
+Health serves as a shared quantitative state for players, hostages, and adversaries, linking environmental hazards, combat interactions, and rescue urgency within a single framework (see Figure   3 (Left)).
+Players experience gradual health decay over time and additional damage from environmental hazards and adversarial encounters.
+Health can only be restored through limited recovery resources, creating strategic trade-offs between exploration, combat, and self-preservation.
+Hostages also experience health degradation, with varying survival durations that require players to prioritize rescue decisions under uncertainty.
+Adversaries possess health states that decrease through combat, enabling bidirectional risk during engagement.
+Importantly, health directly constrains interaction capabilities.
+When a player’s health is depleted, their ability to perform mission actions is restricted until recovery is achieved.
+This coupling between physiological state and action capability introduces sustained cognitive and behavioral pressure, encouraging risk assessment, coordination, and adaptive decision-making throughout the mission.
+4.2 Hostile Environment
+We model a hostile environment through four hazard categories: fire, poison gas, explosion, and smoke (see Figure   3 (Left)). These hazards introduce spatial risk, stochastic damage, and perceptual degradation, collectively simulating the uncertainty and dynamics of r
+
+【结论/局限】
+Acknowledgements
+References
+A Implementation Details
+B Search-and-Rescue Features Details
+B.1 Health System
+B.2 Hostile Environment
+B.3 Rescue Mechanism
+B.4 Adversary AI and Combat System
+B.5 Elevator System and Visibility Mechanics
+C Multi-User Collaboration Details
+C.1 Colocation System and Spatial Alignment
+C.2 Real-Time Synchronization
+D Evaluation of Initial Synchronization
+E Dataset Format
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.27654v1 [cs.HC] 20 Oct 2026
+\onlineid
+1528
+\vgtccategory ISMAR 2026 Papers
+\authorfooter Mingyu Zhu, Jiangong Chen, Hillmer Chona, Zifan Zhou, Jianan Jiang,
+Jonathan Dodge, Gang Tan, and Bin Li are with The Pennsylvania State University.
+E-mail: {mintrrey, jiangong, hac5324, zqz5454, jnjiang, jxd6067, gtan, binli}@psu.edu.
+Yu Liu and Feng Qian are with the University of Southern California.
+E-mail: {yliu2170, fengqian}@usc.edu.
+Mahdi Imani is with Northeastern University.
+E-mail: m.imani@northeastern.edu.
+Tian Lan is with The George Washington University.
+E-mail: tlan@email.gwu.edu.
+\teaser
+Overview of the mixed reality search-and-rescue testbed. The platform begins with synchronization using a colocation system, followed by a training phase, and then transitions into experimental tasks including search, rescue, and combat. Collaborative interactions, cognitive attacks, and data collection are seamlessly integrated into the t
