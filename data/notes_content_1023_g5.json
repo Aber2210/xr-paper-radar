@@ -1,0 +1,166 @@
+[
+  {
+    "id": "2610.28962",
+    "slug": "ropt-robust-6dof-pose-tracking",
+    "venue": "arXiv preprint（cs.CV，2026-10-20；New York University + General Motors；感知与认知；主批非 Top10）",
+    "tags": [
+      "6DoF 位姿跟踪",
+      "render-and-compare",
+      "遮挡鲁棒 mask 跟踪",
+      "SE(3) 因子图",
+      "失效自恢复",
+      "机器人操作"
+    ],
+    "conclusion": "RoPT 是面向快速高加速度运动的闭环 6DoF 位姿跟踪框架：mask 感知前端、恒速先验 SE(3) 因子图多假设、render-and-compare 精修、球谐全局光照与失效自恢复五模块闭环，在 YCB-Video 与真机演示中显著提升动态跟踪存活率，原始帧率下平均每帧 2.1 mm、1.4°。",
+    "problem": "机器人操作把连续 6DoF 物体位姿跟踪当关键感知模块，而常规单目管线在物体快速、高加速度运动下频繁灾难性发散：FoundationPose 等 SOTA 在慢速准静态运动下精度高，标准动态设置下严重退化。脆弱性根源在开环逐帧估计——缺时序运动学正则、缺多假设验证、缺失效恢复。本文要同时解决遮挡与快运动下的鲁棒 2D 观测、时序几何一致性、跳出局部极小、跟踪丢失后的确定性重定位，把脆弱开环管线封闭为满足真实机器人操作需求的闭环。",
+    "method": "输入 RGB-D 视频序列 V={I_t} 与已知物体 CAD 模型 M，目标是序贯、在线地估计位姿轨迹 T={P_t}，每个 P_t∈SE(3) 表示物体坐标系到相机坐标系的刚体变换，估计同时约束时序运动学与几何一致性。五组件闭环：① render-and-compare 位姿精修——从上一帧估计出发，由 CAD 合成多视 2D RGB 与深度图像，迭代最小化与当前观测的视觉和几何对齐误差（6DoF 位姿估计跟踪的主流范式）；② 遮挡鲁棒 mask 跟踪——在遮挡与快运动下仍可靠的 2D 分割，为精修提供观测并约束其搜索空间；③ SE(3) 运动学因子图——以恒速先验正则化帧间更新，前向预测多假设位姿，精修后的候选统一送入 pose scoring 模块，经 spread-gate scorer 打分完成多假设验证与最优位姿选择，绕过局部极小；④ 全局光照优化——拟合球谐（spherical harmonics）外观模型，弥合合成 CAD 渲染与真实图像的 domain gap；⑤ 失效感知自恢复（failure-aware self-recovery）——检测到跟踪失败后合成虚拟 CAD 渲染，与传入 RGB 帧建立 3D-2D 对应，通过基于特征的重定位在漂移不可恢复前重新锚定、无缝愈合轨迹。整体是一条 mask 引导视觉前端 + 连续运动学因子图（正则化更新并生成多假设预测）+ 候选打分路由的闭环，显式优先保证对敏捷、高加速度帧间运动的鲁棒性；系统以已知 CAD 先验与 RGB-D 输入为前提，五组件协同构成闭环。",
+    "experiments": "实验分三块：4.1 Benchmark Comparison（附录 B 承载 YCB-Video 细节，该基准是 6DoF 物体位姿跟踪的标准对比场）、4.2 Ablation Study 验证各模块贡献、4.3 Real-World Robotic Experiments（附录 C：新建 6-DoF 位姿跟踪基准 C.1 与失效感知自恢复专项评测 C.2，后者直接度量灾难性跟踪丢失后的重锚定能力，C.1 专门考核连续视频跟踪而非单帧估计）；作者团队含通用汽车（General Motors），真机演示面向机器人操作中的动态 robot-object interaction。digest 可核实的核心数字：原始帧率下平均每帧 2.1 mm 平移误差与 1.4° 旋转误差。摘要口径称框架在挑战性基准与真机演示中相对现有开环跟踪器达到显著更高的快速运动跟踪存活率。方法节明确将 FoundationPose 列为当前 SOTA，并指出其慢速准静态运动下高精度、标准动态设置下严重退化，构成主要对比动机；digest 未含逐项基线表格（ADD/ATE 类数值）、4.2 消融细节、C.1 基准规模与运行时开销，逐项增益幅度需取正文核实，本笔记不做数值外推。",
+    "innovation": [
+      "五模块闭环架构：mask 感知前端 + 恒速先验 SE(3) 因子图（多假设预测与 spread-gate 选优）+ 球谐全局光照 + 失效自恢复，把开环单目跟踪封闭为闭环",
+      "render-and-compare 为主干，但用遮挡鲁棒 mask 跟踪约束精修搜索空间，兼顾快运动与部分/严重遮挡",
+      "全局光照优化以球谐外观模型弥合 CAD 合成渲染与真实图像的域差",
+      "失效感知自恢复：合成虚拟 CAD 渲染 + 3D-2D 对应重锚定，在漂移不可恢复前愈合轨迹",
+      "原始帧率下平均 2.1 mm / 1.4° 的端到端精度，并配套真机演示与新建跟踪基准"
+    ],
+    "limits": [
+      "作者自述：依赖精确 CAD 几何先验与 RGB-D 传感，不适用于高变形、透明、镜面物体",
+      "digest 未报告与 FoundationPose 等的逐项定量对比表，动态增益幅度需正文核实",
+      "跟踪质量依赖 mask 质量与球谐光照模型，强光照变化/无纹理表面的表现未知",
+      "实时性与计算开销 digest 未述，『原始帧率』口径的具体帧率数值缺失"
+    ],
+    "relation": "库内感知与认知线以交互意图与场景理解为主（如 Gaze2HOI 4.00 的眼动-手-物意图推理），6DoF 物体位姿跟踪子方向库内空白：本文主要对比基线 FoundationPose 不在库，render-and-compare 跟踪家族库内亦未见收录。RoPT 可作为库内交互理解类方法的下游精确位姿来源（意图→位姿→操作），与 Gaze2HOI 4.00 一上一下互补；其闭环五模块架构也可供库内操作/跟踪相关条目参考。",
+    "repro": "digest 未提及代码/权重发布链接；论文 License CC BY 4.0。依赖已知物体 CAD 模型与 RGB-D 序列；基准部分为 YCB-Video（附录 B），真机部分为自建设备、新建 6-DoF 跟踪基准（C.1）与自恢复评测（C.2）；digest 未述传感器型号、帧率与场景数量，复现前需取正文补齐基线对比表与运行时数据。",
+    "action": "机器人操作栈需要动态物体位姿时，可按 RoPT 闭环五模块改造现有跟踪器：优先复刻「mask 跟踪约束搜索空间 + 恒速先验 SE(3) 因子图多假设」这对组合；先取正文补齐与 FoundationPose 在 YCB-Video 动态划分的逐项对比，再评估球谐光照优化对自有域差距的收益；部署前以原始帧率 2.1 mm/1.4° 口径在自有硬件上核验，并确认目标非透明/镜面/高变形。"
+  },
+  {
+    "id": "2610.29374",
+    "slug": "aov-gs-active-open-vocabulary-mapping",
+    "venue": "arXiv preprint（cs.CV，2026-10-21；MIPT + AIRI；重建与SLAM；主批非 Top10）",
+    "tags": [
+      "主动建图",
+      "开放词汇语义",
+      "3D Gaussian Splatting",
+      "SAM-CLIP 新颖性",
+      "LangSplatV2 语言场",
+      "NBV 规划"
+    ],
+    "conclusion": "AOV-GS 以 SplaTAM 3DGS 为 backbone、ActiveGS 式主动规划：coarse stage 0 用 SAM+CLIP 嵌入新颖性重排几何候选视角，stage 1+ 退回纯几何；离线在采集嵌入上训 LangSplatV2 语言场支持开放词汇查询。Replica 语言场 mIoU 34.6%（较纯几何 +1.3 pp）、MP3D 23.1%（+1.8 pp），+CorrCLIP 达 35.6%；新视角 PSNR 与几何基线相当、Replica depth L1 改善，代码开源。",
+    "problem": "人本环境中的机器人需要同时支撑几何导航与开放词汇语义查询的地图，且不能依赖人工标注分割掩码或闭集语义类别。几何驱动主动建图只最大化覆盖，把语义当作采集轨迹的被动副产物；主动语义建图又通常依赖有监督语义分割。问题在于：如何用 frozen SAM/CLIP 在探索阶段就把候选视角偏向语义信息丰富的区域，在不引入人工标注的前提下提升地图的语言场质量，同时保持新视角重建质量不降。",
+    "method": "系统分在线/离线两阶段（Fig. 1）：在线侧 posed RGB-D 持续更新高斯地图、planner 据此选择 NBV、关键帧并行抽取 CLIP mask 嵌入；离线侧训练语言场并响应文本查询。重建 backbone 为 SplaTAM 的各向同性 3D 高斯，可微渲染以 RGB 与 depth L1 损失约束轮廓像素；Habitat 提供同步 RGB-D 帧与 GT 相机位姿（两数据集均以 oracle SLAM 输入）。沿用 ActiveGS 式基础设施维护体素探索地图做无碰撞候选位姿采样，所选视角由 RRT 局部 planner 执行。粗探索按两阶段（仿 ActiveGAMER）：stage 0 = 几何 + 语义新颖性，stage 1+ 起语义项关闭、完全退回 ActiveGS 纯几何准则。几何分对每个候选位姿 v 渲染当前地图、统计未见轮廓像素 N_v^S，I_v^geo = σ(log N_v^S)（σ 为候选间 softmax 归一化），再以距离 l_v=||T_x^v−T_x^t||_2 加权：w_v^geo = (1−σ(l_v))·I_v^geo。语义新颖性对 w^geo top-K 候选渲染 RGB 视图，SAM 出实例掩码、CLIP 编码得嵌入 {e_i}∈R^512，与关键帧嵌入库 B 比余弦相似度：I_v^sem = Agg_i(1 − max_{b_j∈B} sim(e_i, b_j))；候选嵌入仅瞬时用于当前候选集打分、不入库，库内只含已执行轨迹到达的关键帧观测嵌入——语义打分与几何分支信息对齐。离线阶段在采集到的 CLIP mask 嵌入上训场景特异 LangSplatV2 语言场，文本查询即在新视角分割；CorrCLIP 变体在候选掩码重排与关键帧嵌入库两端同时施加。",
+    "experiments": "设置：Habitat 模拟器；Replica 8 场景（office0–office4、room0–room2，2000 步探索预算，RGB-D 680×1200，held-out novel views 评测语义）与 Matterport3D 5 场景（GdvgFV5R1Z5、gZ6f7yhEvPG、HxpKQynjfin、pLe4wQe7qrG、YmJkqBEsHnH，5000 步，沿用 ActiveSGM/ActiveGAMER/NARUTO 协议）；所有对比方法接收同一 GT 相机位姿，无估计位姿或 SLAM 定位噪声。主指标为 held-out novel views 上开放词汇语言场 mIoU（类别名作文本查询，数据集语义标注供 binary GT mask）。结果（摘要口径）：AOV-GS 平均语言场 mIoU 较纯几何主动规划 +1.3 pp 于 Replica（34.6%，8 场景）、+1.8 pp 于 MP3D（23.1%，5 场景）；AOV-GS+CorrCLIP 在 Replica 达 35.6%，高出匹配的 Geometry-based+CorrCLIP 基线 2.0 pp；新视角 PSNR 两数据集与几何基线相当，Replica depth L1 改善。基线构成（同一 SAM-CLIP 感知栈受控）：Passive（固定 NVS 轨迹 + SAM-CLIP 抽取 + 离线语言场训练，仅 Replica）；Geometry-based（geometry-only ActiveGS planner + 同一 SAM-CLIP/语言场管线）；Geometry-based+CorrCLIP（CorrCLIP 只施加于 accepted keyframe，候选仍按几何排序）；ActiveSGM traj.+LangSplatV2（回放 ActiveSGM 录制位姿序列与关键帧日程，注意回放含 868 步 vs AOV-GS 956 步，未完全隔离轨迹质量）；ActiveSGM（逐场景 OneFormer 微调，仅作背景非开放词汇基线）。4.2 节另设 failure modes、语义探索何时有益、轨迹迁移等分析，digest 未含其数值；Replica 增益随场景变化，per-scene 明细与 4.4 计算成本 digest 未含。",
+    "innovation": [
+      "把 frozen SAM-CLIP 的 mask 嵌入新颖性引入主动 3DGS 建图的 NBV 规划：stage-0 语义重排 + stage-1+ 纯几何，免人工标注与闭集",
+      "语义打分只用当前地图已表示的外观（候选视角渲染→SAM→CLIP），与几何分支信息对齐，候选嵌入瞬态使用、不入关键帧库",
+      "离线 LangSplatV2 语言场直接拟合采集到的 CLIP mask 嵌入而非标注掩码，支持新视角开放词汇文本查询分割",
+      "同感知栈受控对比（passive / geometry-only / +CorrCLIP / ActiveSGM 回放），把轨迹质量贡献与感知栈贡献分离",
+      "Replica/MP3D 双基准 mIoU 增益（+1.3/+1.8 pp）且新视角重建质量不降（Replica depth L1 改善）"
+    ],
+    "limits": [
+      "依赖 Habitat oracle 相机位姿，未在估计位姿或 SLAM 定位噪声下评测",
+      "语义新颖性只作用于 coarse 阶段，fine 阶段无语义引导；『语义探索何时有帮助』的 failure-mode 分析在 digest 中被截断",
+      "MP3D 协议下无已建立的 passive 语义基线，被动对比仅在 Replica 报告",
+      "digest 未含计算成本数值与 per-scene 明细；mIoU 增益幅度（1.3/1.8 pp）不大"
+    ],
+    "relation": "库内重建与SLAM 线以通用 VI-SLAM 与 3DGS 重建为主线（HexVIO 4.58、AMB3R-SLAM 4.50、DAVIO 4.05），主动开放词汇语义建图子方向空白：本文基线家族 ActiveGS/ActiveSGM/NARUTO/ActiveGAMER 均不在库，库内未见同工作。与库内神经渲染线 NormLift 4.12（3DGS 语义特征提升）共享『3DGS+语言语义』主题但路线互补：NormLift 在既有表示上研究特征提升，AOV-GS 从采集端（NBV 偏置）解决语义质量并用 LangSplatV2 语言场替代提升式语义。",
+    "repro": "代码开源：https://github.com/OptimusFaber/AOV-GS（摘要声明）。依赖 Habitat 模拟器、SplaTAM backbone、frozen SAM/CLIP、LangSplatV2 语言场；数据为 Replica（8 场景、2000 步）与 MP3D（5 场景、5000 步）标准协议，RGB-D 680×1200，GT 相机位姿；语义评测用 held-out novel views 的语言场 mIoU。",
+    "action": "做开放词汇 3DGS 语义地图时，直接复用 AOV-GS 开源代码，把 stage-0 SAM-CLIP 新颖性重排插入现有 SplaTAM/ActiveGS 管线；优先复现 Replica 8 场景 mIoU 对比（34.6%，较纯几何 +1.3 pp）与 CorrCLIP 35.6% 配置；注意其评测用 oracle 位姿，迁到真实 SLAM 前需自测位姿噪声敏感性；库内与 NormLift 4.12 并列为 3DGS 语义线『采集端 vs 提升端』参照。"
+  },
+  {
+    "id": "2610.30089",
+    "slug": "proactegomem-proactive-memory-benchmark",
+    "venue": "arXiv preprint（digest 未含 arXiv 分类/单位/日期；感知与认知；主批非 Top10）",
+    "tags": [
+      "流式视频理解",
+      "第一视角",
+      "主动记忆",
+      "基准评测",
+      "工具生命周期",
+      "Hungarian 匹配"
+    ],
+    "conclusion": "ProactEgoMem 是流式第一视角主动记忆基准：IC/ST/LT 三任务族 × Notification/Intervention 两级主动性，干预级要求 start-maintain-stop 工具生命周期，Hungarian matching 按时序+语义联合评分；Daily/Sci 双轨 300/100 clips + 1000/500 QA。实验室轨道最好通知 F1 仅 10.8%、最好干预重叠 10.2% mIoU，30 个 model-task cell 中 7 个零有效通知、10 个零有效干预。",
+    "problem": "可穿戴多模态助手要替用户跨长时程记住环境，就不能被动等 prompt，而应主动获取并维持有用记忆：需要识别什么重要、实时理解场景、在后台启动记忆维护而不打断用户活动。既有评测全部缺一环：离线套件对完整片段做查询驱动问答；流式基准仍在自选时间戳 prompt 模型；流式情景记忆基准虽测连续流回忆但由系统提供问题；快速增长的主动线去掉查询却只记单个 respond-now 决策。无人同时覆盖流式第一视角输入、无查询主动性、工具生命周期与下游记忆验证——这正是 ProactEgoMem 的定位。",
+    "method": "基准由三任务族与两级主动性定义。任务族：IC（Information Capture，保留瞬态而密集的视觉信息）、ST（State Tracking，跟踪物体状态变化）、LT（Location Tracking，记录物体移动）。两级主动性：Notification 级要求单次及时通知以满足用户意图；Intervention 级要求 agent 通过 start-to-stop 工具生命周期主动替用户维持记忆，即评测其「启动—维持—停止」的边界是否正确，工具接口见附录 C。Table 5 基准对比显示：离线套件（Video-MME/LongVideoBench/MLVU/EgoSchema/HourVideo/EgoLifeQA）四属性全无；流式 QA（StreamingBench/OVO-Bench）仅部分主动；流式情景记忆（EgoStream/S-EMBER）有 Mem.QA 但无主动与生命周期；主动线（OmniMMI/ProAssist/ProactiveVideoQA/EgoServe/EgoPro-Bench）只记单个 respond-now 决策——ProactEgoMem 是唯一 Proactive、Multi-Level、Tool Lifecycle、Mem. QA 四项全标的基准。流式协议：FPS=1，每步给定统一 prompt + JSON assistant context + 视频帧窗口，模型每步输出一个 JSON 对象，所有基线用完全相同的流式设置，模型特化代码只负责包进各自 chat template。匹配与指标：两级预测分别以 Hungarian matching（Kuhn 1955）与 ground truth 匹配，要求 LLM-judge 语义相似度超阈值且时间偏移落入匹配窗口，admitted 边中最小化代价 α(1−sim)+(1−α)(|Δ|/W)^p；干预预测先转 interval 按时间重叠匹配。三组共享指标：Timing（Start@τ，主结果 Start@0.2，200 ms 容忍对应标注者对通知时机的残存分歧）、Abs Error（|Δ_s| 与 σ）、Detection（Prec/Recall/F1）；干预级专有：Overlap（mIoU，未匹配机会记 0，另报 IoU@τ）与 QA（Acc，ProactEgoMem-QA 用下游问题检验自获取记忆的质量）。数据：ProactEgoMem-Daily 300 clips + 1000 问，ProactEgoMem-Sci 100 clips + 500 问（摘要口径）。",
+    "experiments": "基线覆盖四类：专有（Gemini 2.5 Flash、GPT-5.4-mini）、通用开源（Gemma4-31B、Qwen3.8-27B、Qwen3.6-27B、Qwen3.5-9B）、视频语言（VideoLLaMA3-7B、LLaVA-OV-1.5-8B、MiniCPM-o-4.5）、流式（MMDuet、VideoLLM-Online、Inkling-Small、JoyAI-VL），全部以相同流式设置（FPS 1、统一 prompt、JSON 输出）评测，预测在两级主动性下分别匹配与评分（5.1），QA Acc 检验主动获取记忆的下游可用性。实验结构：5.1 指标与基线、5.2 流式评测协议、5.3 主结果、5.4 主动记忆获取效应、5.5 从日常到实验室、5.6 失败模式；附录 G 给两级分别结果、E 析主动性时序阈值效应、H 给定性失败案例，digest 未抓取其数值。日常轨道（Daily）：摘要称即使最强模型也无法同时及时且准确地捕获记忆；digest 未含日常轨道逐模型分数表。实验室轨道（Sci）结果（结论段口径）：最好通知 F1 跌至 10.8%（Gemma4-31B on LT），最好干预重叠 10.2% mIoU（Gemma4-31B on ST）；30 个 model–task cell 中 7 个发不出任何有效通知、10 个发不出有效干预。专有 vs 开源（跨模型与任务平均）：通知 recall 32.3% 对 22.9%，但 notification precision 4.1 对 7.1、干预重叠 1.9 对 2.9 mIoU、干预 recall 7.2 对 12.1、记忆 QA 32.6 对 37.8——专有模型群『买来覆盖而非能力』。",
+    "innovation": [
+      "基准四属性首个齐备：流式第一视角输入、无查询主动性、start-maintain-stop 工具生命周期、下游记忆 QA 验证（Table 5 对比中唯一四项全标）",
+      "IC/ST/LT 三任务族把『什么值得主动记』落地为可评的环境信息类型（瞬态密集信息/状态变化/物体移动）",
+      "Notification/Intervention 两级主动性协议：干预级以生命周期边界（启动-维持-停止）评分，替代单点 respond-now 决策",
+      "Hungarian matching + 代价 α(1−sim)+(1−α)(|Δ|/W)^p 实现时序与语义联合评分，Start@0.2 主指标对齐标注者时间分歧",
+      "Daily→Sci 跨域设计放大并暴露所有模型的联合失效模式（F1 跌至 10.8%）"
+    ],
+    "limits": [
+      "实验室轨道规模小（100 clips/500 QA），最好成绩仅约 10%，接近地板效应，区分度有限",
+      "评测依赖 LLM-judge 语义相似度与人工标注时机，本身含标注者分歧（200 ms 容忍度）",
+      "30 个 model–task cell 中 7/10 个发不出有效输出，部分模型在该 JSON 流式协议下无法完成基本交互",
+      "digest 未含日常轨道逐模型分数表与两级结果明细（附录 G 未抓到）"
+    ],
+    "relation": "库内感知与认知的第一视角记忆线有 CapMem 3.64（caption-based 情景记忆）与 VISTA 3.70，均为给定查询的离线/半流式设定；本文对比表内的 EgoStream、S-EMBER（流式情景记忆）及 OmniMMI/ProAssist 等主动线均不在库，库内在『流式+无查询主动+生命周期』交叉点空白。ProactEgoMem 把记忆评测从被动应答推进到主动获取-维持-验证，可作为 CapMem/VISTA 类方法的下一代评测框架并列入第一视角记忆条目。",
+    "repro": "digest 未提及数据/代码发布链接。复现需自建流式评测 harness：FPS 1、统一 prompt、JSON 输出；匹配用 Hungarian + LLM-judge（代价 α(1−sim)+(1−α)(|Δ|/W)^p）；数据为 Daily 300 clips/1000 QA 与 Sci 100 clips/500 QA；附录含基准对比（A）、数据泄露缓解（B）、工具接口（C）、主动性时序效应（E）、实验室轨道（F）、两级结果（G）与失败案例（H）。",
+    "action": "评测可穿戴/流式视频助手时，用 ProactEgoMem 的 Notification/Intervention 两级协议替代单点 respond-now 指标，重点看 Intervention 级 start-maintain-stop mIoU 与记忆 QA Acc 组合；先用 Sci 轨道 10.8% F1 口径衡量跨域退化，再补齐日常轨道逐模型分数（digest 缺表）；库内与 CapMem 3.64、VISTA 3.70 并列入第一视角记忆条目，并把 QA Acc 纳入通过门槛以避免只优化通知时机。"
+  },
+  {
+    "id": "2610.29647",
+    "slug": "reading-the-room-floorplan-registration",
+    "venue": "arXiv preprint（digest 未含 arXiv 分类/单位/日期；重建与SLAM；主批非 Top10，announce=cross）",
+    "tags": [
+      "户型图注册",
+      "VSLAM",
+      "语义-几何能量函数",
+      "施工场景",
+      "尺度模糊",
+      "360° 相机"
+    ],
+    "conclusion": "Reading the Room 用单一鲁棒、可微、类平衡的语义-几何能量函数统一全局初始化与局部精修，把尺度模糊的稀疏语义 VSLAM 地图注册到部分建成户型图：3 站点 33 轨迹，带 anchor 时 Site A 组 ATE 2.68/1.41 m，平均 ATE 较最强基线改善 4.5×（无约束）至 7.6×（带 anchor）；SIFT 32/33 失败。",
+    "problem": "施工进度跟踪等应用需要把传感器轨迹注册到先验 2D 户型图。视觉采集低成本、易获取，但 VSLAM 地图到户型图的对齐困难多重叠加：VSLAM 只把几何恢复到未知相似变换（尺度模糊），稀疏点云与符号户型图跨模态，采集时站点仅部分建成，工地视觉重复既损伤地图质量又抹掉判别性特征。既有方法至多解决其中两项，本文要在一个框架内同时应对尺度模糊、稀疏、跨模态与部分建成四类挑战。",
+    "method": "RR 是 global-local 注册框架，把尺度模糊、稀疏、跨模态的语义 VSLAM 地图对齐到部分建成户型图。核心思想是定义单一鲁棒、可微、类平衡的语义-几何能量函数，支配管线全部阶段——全局初始化候选的生成与局部精修都相对同一能量函数：两种初始化方案产出初始候选后，直接优化该能量函数完成局部精修，单一能量函数贯穿全管线是方法主线。两种全局初始化：① 利用用户提供的单个不准确对应（anchor）；② 用跨模态匹配网络全局估计初始化——后者直接回应 VSLAM 只恢复到未知相似变换的尺度模糊性。语义侧类集 C={wall, window, stairs}，地图标签按正文 IV-A 流程获得，与符号户型图共享类集，使跨模态对齐在同一语义空间进行。输入地图来自 OpenVSLAM 的等距圆柱（equirectangular）变体；采集设备为同步 LiDAR + 360° 影像的自建装置，LiDAR 点云仅用于估计真值轨迹，并由专家手工对齐到户型图。对齐输出为恢复的变换 S*，把 VSLAM 估计轨迹映射到户型图坐标系，支撑进度跟踪等下游应用。轨迹定位指标 ATE=sqrt((1/N)Σ_{j=1}^N ||t̂_j−t_j^GT||_2^2)，其中 t̂_j=π(S*T_j)∈R^2 为施加恢复变换 S* 后关键帧 j 的估计位置。站点按难度递进：Site A（Medium，平均 1073.5 m²、每图房间较少）、Site B（Advanced，2750.1 m²、覆盖率 88.8%）、Site C（Hard，3974.7 m²、覆盖率 28.7%，覆盖区结构对称致多个候选对齐看似合理）。",
+    "experiments": "数据：3 站点 33 条轨迹、14 楼层、2 国；Site A/B/C 难度递进（面积 1073.5/2750.1/3974.7 m²；Site B 覆盖率 88.8%、Site C 28.7%，Site A 未报）。表 I 按 ATE[m]/Recall[%] 四组栏位如实转述（digest 表头缺站点标签与 recall 阈值定义）。RR+Anchor：Site A 组 ATE 2.68/1.41、Recall 10.5/73.7/89.5；Site B 组 8.03/0.90、57.1/85.7/85.7；Site C 组 5.73/4.37、0.0/14.3/57.1；总体 4.46/1.89、18.2/63.6/81.8。RR 无 anchor：Site A 组 7.18/2.67、21.1/52.6/68.4；Site B 组 7.40/1.92、42.9/71.4/71.4；Site C 组 42.98/35.04、Recall 全 0；总体 14.82/4.34。Oracle 性能下界：Site A 组 1.46/1.01、Site B 组 0.71/0.85、Site C 组 0.59/0.26、总体 1.12/0.85。基线：SIFT+RANSAC 32/33 运行失败，唯一成功运行在 Site B（ATE 53.80 且 Recall 全 0），其总体列 53.80/53.80 系该唯一成功运行计入总体的结果；Shahbandi & Magnusson 仅 10/33 运行得有效变换（Site A 6、B 4、C 0），其 Site A 组 18.93/18.18、Site C 组全零系 0 次有效运行所致；RoMa+MatchAnything Site A 组 13.94/16.12、Site B 组 40.63/42.41、Site C 组 42.15/42.44；ICP+Anchor Site A 组 16.48/15.72、总体 24.26/21.59；Semantic ICP+Anchor Site A 组 13.50/13.40、Site B 组 21.61/11.23、总体 20.23/14.43——均逊于 RR+Anchor。无 anchor 与 +Anchor 的行间差即 anchor 消融：增益集中于 Site C（42.98→5.73）与 Site A（7.18→2.68），Site B 组第一个 ATE 数略升（7.40→8.03）而 Recall 三档全升（42.9/71.4/71.4→57.1/85.7/85.7）。摘要口径：一般无约束设置平均 ATE 较最强基线改善 4.5×，提供 anchor 时增至 7.6×。",
+    "innovation": [
+      "单一鲁棒、可微、类平衡的语义-几何能量函数支配全局初始化候选生成与局部精修全部阶段",
+      "双全局初始化：单个人工 anchor 或跨模态匹配网络，均相对同一能量函数生成初始候选",
+      "wall/window/stairs 语义类集把符号户型图先验注入点云注册，应对施工场地的重复结构与低判别性",
+      "33 轨迹/3 站点/14 楼层/2 国真实部分建成工地评测，含 Oracle 下界与运行级失败统计（SIFT 32/33 失败）"
+    ],
+    "limits": [
+      "Site C（最难：3974.7 m²、覆盖率 28.7%、结构对称）无 anchor 时 ATE 42.98/35.04 m、Recall 全 0，加 anchor 后 5.73/4.37 仍远差于 A/B",
+      "真值依赖 LiDAR 轨迹 + 专家手工对齐户型图，真值获取本身不可规模化",
+      "digest 表头缺站点标签与 recall 阈值定义，跨模态匹配网络与能量函数细节需正文补齐",
+      "仅测 OpenVSLAM 等距圆柱变体前端，其他 VSLAM 输入的鲁棒性未知"
+    ],
+    "relation": "与同批补录的 Hilti-Trimble-Oxford 360 VI 基准（2607.06464）构成基准-方法互补：该基准专设户型图定位任务且仅 22 队参与、被作者判为明显空白，本文正是该任务的方法侧填充；库内 SLAM 顶级 HexVIO 4.58/AMB3R-SLAM 4.50/DAVIO 4.05 不覆盖户型图先验注册子方向，库内未见同工作；与基准论文引用的 Z-FLoc 式零样本户型图定位构成同类不同路线（语义-几何能量函数 vs 零样本匹配）。",
+    "repro": "digest 未提及代码链接。数据为自采（同步 LiDAR + 360° 影像，3 站点 33 轨迹/14 楼层/2 国），真值依赖 LiDAR 轨迹 + 专家手工对齐户型图，复现门槛高；输入地图为 OpenVSLAM 等距圆柱变体；指标为 ATE + 三档 Recall（digest 未给阈值定义）；anchor 协议与跨模态匹配网络细节需正文。",
+    "action": "做施工进度跟踪或户型图先验定位时，可将 RR 的语义-几何能量函数作为局部精修内核复刻，优先验证 anchor 场景（增益从 4.5× 升至 7.6× 主要来自单个人工对应）；Site C 式低覆盖+结构对称站点无 anchor 时 ATE 超 42 m，需补探勘或增加 anchor；库内与 Hilti 基准（2607.06464）配对收录，作为其户型图定位任务的方法侧参照。"
+  },
+  {
+    "id": "2610.29396",
+    "slug": "progressive-permutation-alignment-spectral-sharpening",
+    "venue": "arXiv preprint（cs.LG，2026-10-21；The University of Osaka；神经渲染；主批非 Top10，announce=cross）",
+    "tags": [
+      "隐式神经表示",
+      "置换对称",
+      "权重空间对齐",
+      "温控频谱锐化",
+      "NeRF 插值",
+      "trace maximization"
+    ],
+    "conclusion": "针对 INR 置换对称造成的权重空间 loss barrier，提出渐进式置换对齐：每层相关矩阵归约为 trace maximization，配 Hungarian 离散锚与温度 τ 控制频谱退火渐进锐化，末段串行 weight matching 精修；在 MLP/CNN/NeRF 三架构上稳定恢复神经元对应。NeRF Synthetic 独立训练模型插值上 RMSE 0.199/PSNR 14.40，显著优于 Weight Matching（0.294/11.07）与 Naive（0.491/6.205）。",
+    "problem": "INR 把 3D 信号直接编码在神经网络权重中，权重空间操作（插值、合并、迁移）的稳定性至关重要。但置换对称使功能等价、独立训练的模型在权重空间看似相距甚远，线性插值出现大 loss barrier。既有神经元对齐两类路线都不可靠：过早承诺离散匹配的 weight matching 系陷入不一致局部最优；基于连续松弛的 OT4P 系计算昂贵，在 NeRF 等困难场景仍不稳定。需要一种确定性、轻量又能渐进收敛到离散置换的逐层对齐机制。",
+    "method": "采用渐进式对齐（progressive alignment）：一种遵循层间依赖、自输入向输出逐层推进的层-wise 策略；该任务在 NeRF 上尤其困难——独立训练的 MLP 权重排列不一致，直接线性插值出现大 loss barrier。每层先估计相关矩阵（correlation matrix），对齐更新归约为该矩阵上的 trace maximization（附录 0.D 给出 trace-maximization 形式的推导）。从该连续表示出发，以 Hungarian 算法取离散锚，再以温度 τ 控制的频谱退火（spectral annealing）逐步锐化相关结构、收敛到离散置换矩阵：先经 SVD 与频谱平坦化得到锐化矩阵 M_l^⟨τ⟩，再执行连续松弛更新 P_l ← P̂_l[τ M_l + (1−τ) I]；锐化温度从 1.0 退火到 0.0，相关矩阵逐步逼近硬置换。该策略缓解 weight matching 的过早硬决策，又避免 OT4P 式梯度松弛的昂贵迭代优化，得到确定性、高效的对齐过程。末段以对齐解为初始化，再做串行层-wise weight matching 精修。算法超参：温度计划 T={1.0, 0.5, 0.0}，每个温度值单次 sweep。对照基线的实现口径：Weight Matching 将神经元对齐形式化为线性指派问题、以贪心权重匹配求解；Progressive Weight Matching 改自随机选层为自输入层向输出层序贯优化置换；OT4P 松弛置换矩阵离散性、用 SGD（AdamW，lr 0.05，连续 10 步无改善即停）在连续空间优化。消融设定（0.B.1）：Ours (w/o SVD, w/o Ref.) 绕过 SVD 与频谱平坦化、直接用原始相关矩阵做连续松弛且无末段精修；Ours (w/o SVD) 去频谱平坦化但保留逐层精修；Ours (w/o Ref.) 保留完整锐化投影但无精修。",
+    "experiments": "环境：NVIDIA GeForce RTX 5090。NeRF Synthetic 插值实验（此设置下 GT 置换不可得，故以插值模型渲染图对比真值图评测）：对独立训练的模型 A/B 在参数空间插值 W_λ=(1−λ)W_A+λW_B′，λ 从 0.0 到 1.0 步长 0.1；一对随机种子，每场景随机采 10 张测试视图，报 8 场景的均值与方差；OT4P 系取 τ=0.5；Fig. 3 另以七种变体（Naive/Weight Matching/Progressive Weight Matching/OT4P/Progressive OT4P/Proposed w/o Ref./Proposed）展示沿插值路径的渲染质量。主表（RMSE/PSNR）：Naive 0.491/6.205；Weight Matching 0.294/11.07；Progressive Weight Matching 0.306/10.64；OT4P τ=0.3/0.5/0.7 为 0.489/0.495/0.494、PSNR 6.239/6.118/6.160；Progressive OT4P 0.492–0.493、PSNR 6.167–6.182；本文 Proposed w/o Ref. 0.199/14.22，完整版 0.199/14.40。附录补充基线表：AM（activation matching，data-dependent）0.161/16.22/SSIM 0.775；STE（weight-based）0.268/11.84/0.661；本文（weight-based）0.199/14.40/0.710——即 weight-based 一族中本文最优，但依赖数据的 AM 数值仍更高。消融：去掉 SVD+频谱平坦化（直接用原始 M_l 连续松弛）明显变差；w/o Ref. 的 14.22 对 14.40 显示末段精修的小幅贡献；温度计划 τ 敏感性另测（0.B.2，digest 未含结论）。实现口径上，weight matching 随机对应估计做 10 次（打乱层序覆盖所有层）、渐进变体做 100 次序贯 sweep，与本文每温度单 sweep + 一次精修形成效率对照。另在 MLP 与 CNN 上验证对已知置换的准确恢复（摘要口径）。",
+    "innovation": [
+      "每层对齐更新归约为相关矩阵上的 trace maximization 连续表示，配 Hungarian 离散锚",
+      "温度 τ 控制频谱退火（spectral annealing）渐进锐化相关结构，避免 weight matching 的过早硬决策",
+      "确定性、轻量的层更新，免去 OT4P 式连续松弛的内循环梯度优化",
+      "末段以对齐解初始化的串行层-wise weight matching 精修，构成两阶段对齐流程",
+      "温度计划 {1.0, 0.5, 0.0} 各单 sweep + 一次精修即达对齐 SOTA（weight-based 口径）"
+    ],
+    "limits": [
+      "NeRF 实验仅限 NeRF Synthetic 上的 MLP-based NeRF，其他 INR 与真实场景作者明确列为 future work",
+      "附录口径下 data-dependent 的 AM 基线（0.161/16.22/SSIM 0.775）数值仍高于本文（0.199/14.40/0.710），本文仅在 weight-based 一族中最优",
+      "主表未报告 SSIM，与附录基线表指标口径不一；温度计划 τ 敏感性与计算效率（0.C.1）digest 未含数值",
+      "温度计划与 sweep 次数为固定超参，换架构/规模时的稳健性未知"
+    ],
+    "relation": "库内神经渲染线以场景表示与渲染方法为主（如 NormLift 4.12 的 3DGS 语义特征提升），INR 权重空间（weight space）置换对齐方向库内空白，库内未见同工作。本文不直接渲染场景，而是为 INR/NeRF 家族提供权重插值、模型合并与迁移的底层对齐工具，可叠加到库内任何含 MLP 组件的 INR 方法上，属方法学新分支。",
+    "repro": "digest 未提及代码链接。环境 NVIDIA RTX 5090；数据为 NeRF Synthetic 8 场景（每场景 10 测试视图，均值/方差口径）；超参：温度计划 {1.0, 0.5, 0.0} 各单 sweep + 末段串行层-wise 精修；对照口径：weight matching 10 次随机对应（打乱层序）、渐进基线 100 sweep、OT4P AdamW lr 0.05；MLP/CNN 另做已知置换恢复验证。",
+    "action": "需要 INR 权重插值/模型合并/迁移时，用本文两阶段流程（频谱锐化投影初始化 + 串行 weight matching 精修）替代裸 weight matching 或 OT4P；复现先在 MLP/CNN 已知置换恢复上验证，再迁 NeRF Synthetic 插值（目标 RMSE≈0.199/PSNR≈14.40，对 Weight Matching 0.294/11.07）；可用数据时附录 AM（0.161/16.22）仍是更强对照；库内作权重空间对齐新条目。"
+  }
+]

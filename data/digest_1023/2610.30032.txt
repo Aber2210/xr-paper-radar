@@ -1,0 +1,153 @@
+【摘要】
+.
+
+【方法】
+4.1 Overview: render the device, keep the eye movement
+4.2 Part (a): Parametric device model
+4.2.1 Step 1: camera sampling
+4.2.2 Step 2: a person-consistent VR profile (the twin)
+4.2.3 Step 3: calibration replacement
+4.2.4 Step 4: parametric device noise
+4.3 Part (b): Frequency-locked diffusion renderer
+4.3.1 Frequency-locked diffusion renderer
+4.4 Part (c): The denoiser and its training
+4.4.1 The denoiser and its training
+4.5 Part (d): Authentication with converted training data
+4.5.1 Authentication with converted training data
+5 Experimental Setup
+5.1 Conditions
+5.2 Training
+5.3 Signal quality, realism and content
+5.4 Authentication protocol 4.1. Overview: render the device, keep the eye movement
+We model a GazeBaseVR recording as the eye movement plus what the device adds to it:
+(1)
+g VR ​ ( t ) = 𝒮 ⁡ [ e ] ​ ( t ) + c VR ​ ( e ⁡ ( t ) ) + n VR ​ ( t ) , g_{\mathrm{VR}}(t)=\mathcal{S}[e](t)+c_{\mathrm{VR}}\big(e(t)\big)+n_{\mathrm{VR}}(t),
+Equation  1 describes the eye movement e ⁡ ( t ) e(t) , the camera’s sampling 𝒮 \mathcal{S} , the calibration error c VR c_{\mathrm{VR}} , and the device noise n VR n_{\mathrm{VR}} . It does not explicitly model device filtering: a real tracker may also smooth or delay eye movements through its exposure, gaze estimation, and internal filtering. We model the camera’s short exposure but do not include a separate filter H H , because separating device filtering from differences between the participant groups would require recordings of the same people on both devices. A lab recording from GazeBase has the same general form, but with different sampling, smaller calibration error, and much lower noise (Section  3.2 ). We therefore retain the eye movements in GazeBase and replace the device effects that our pipeline models. Figure  3 shows the conversion pipeline where (a)  The parametric device model takes a GazeBase recording g EL g_{\mathrm{EL}} (1000 Hz) and returns the parametric proposal u u . (b)  The frequency-locked renderer perturbs u u with shaped noise and refines it over 24 steps using the pretrained denoiser D θ D_{\theta} , resetting the band below f ∗ f^{*} to that of u u after each step. It returns g ^ = u + r θ \hat{g}=u+r_{\theta} , where the residual r θ r_{\theta} modifies essentially only the noise texture above f ∗ f^{*} . (c)  The denoiser D θ D_{\theta} is a diffusion model trained on Set A before conversion. it takes the noise level σ \sigma and conditioned on the twin’s texture features c c , to a clean estimate. (d)  For evaluation, EKYT is trained on the converted recordings g ^ \hat{g} and tested on recordings from the unseen GazeBaseVR participants in set B RAN task.
+Figure 3. Overview of the proposed modela and its evaluation. It consist of four parts, First, (a)  Parametric device model
+(Steps 1–4), which turns a GazeBase recording g EL g_{\mathrm{EL}} into the proposal u u . Second, (b)  Frequency-locked diffusion renderer, which turns u u into g ^ \hat{g} and keeps the band below f ∗ = 7.8 f^{*}=7.8  Hz essentially unchanged. Third, (c)  The denoiser D θ D_{\theta} trained on set A on all five tasks. Finally, (d)  Authentication with EKYT on the unseen set B RAN task. Section  4.1 describes each part of the model.
+4.2. Part (a): Parametric device model
+4.2.1. Step 1: camera sampling
+A camera integrates light over a short exposure and, in the VR headset, takes its samples 
+
+【实验】
+6.1 Signal quality and realism
+6.2 Authentication of real VR users
+6.3 The coarse eye movement is retained
+6.4 Comparison with prior conversion methods
+6.5 Ablations 6.1. Signal quality and realism
+Table 3. Signal quality and realism of the converted data. Medians over recordings, with the KS distance to Set B which indicated in parentheses. Set B is the 248 RAN recordings of the held-out GazeBaseVR.
+Plain
+Parametric
+NDR
+Set B
+Accuracy
+0.860 (0.51)
+1.361 (0.06)
+1.358 (0.06)
+1.333
+MAD precision
+0.086 (0.68)
+0.138 (0.25)
+0.129 (0.32)
+0.166
+RMS-S2S
+0.029 (0.99)
+0.161 (0.16)
+0.142 (0.06)
+0.147
+STD
+0.134 (0.60)
+0.193 (0.05)
+0.185 (0.11)
+0.191
+Signal type
+0.208 (0.97)
+0.856 (0.24)
+0.788 (0.12)
+0.770
+Slope α \alpha
+2.273 (0.98)
+0.621 (0.12)
+0.685 (0.15)
+0.641
+Data loss (%)
+1.5 (0.49)
+1.8 (0.53)
+1.8 (0.53)
+0.3
+Realism, 1-NN (%)
+99.2
+73.4
+70.1
+–
+Person share, RMS-S2S
+0.68
+0.78
+0.80
+0.84
+Person share, MAD
+0.40
+0.50
+0.48
+0.72
+Table  3 shows that the renderer brings the noise closest to that of GazeBaseVR. Its median RMS-S2S is 0.142° against 0.147° for Set B (KS 0.06, against 0.16 for parametric and 0.99 for plain data), and its signal type 0.788 against 0.770 (KS 0.12, against parametric 0.24). Accuracy reaches the Set B level in both converted conditions (KS 0.06). A nearest-neighbour classifier tells plain data from Set B data almost perfectly (99.2 %), parametric data less often (73.4 %) and NDR data less often still (70.1 %). The renderer’s gain is a trade-off, however: it moves three properties slightly further from the VR device than the parametric data are, namely precision (KS 0.25 to 0.32), STD (0.05 to 0.11) and slope α \alpha (0.12 to 0.15). Precision remains too high relative to the target (MAD 0.129° vs. 0.166°): converted signals spread less within a fixation than VR signals, and the renderer cannot add slow drift because the lock keeps the slow band of the proposal. Converted data also lose more samples than Set B data (1.8 % vs. 0.3 %): they keep the gaps of their sources (1.5 %), and VR-type gaps are added only where the assigned profile has more data loss than the source recording. NDR reproduces the person share of the Set B noise level (ICC 0.80 for NDR and 0.78 for parametric data, against 0.84 for Set B).
+Table 4. Authenticating GazeBaseVR set B users where enroll with session 1, verify with session 2.
+with EKYT trained on each conditions. Brackets: 95 % bootstrap CIs over test people.
+5 s
+45 s
+Training data
+EER (%)
+d ′ d^{\prime}
+EER (%)
+d ′ d^{\prime}
+FRR @ FAR 10 − 4 10^{-4} (%)
+Rank-1 (%)
+Real VR
+16.8 [13.4, 20.8]
+1.86 [1.66, 2.10]
+5.8 [3.2, 6.9]
+3.10 [2.90, 3.32]
+56.4
+86.1
+Plain
+33.7 [29.6, 37.6]
+0.81 [0.63, 1.03]
+12.8 [9.1, 16.8]
+1.76 [1.60, 1.95]
+96.0
+67.3
+Parametric
+23.7 [17.8, 27.7]
+1.46 [1.24, 1.71]
+6.9 [4.0, 9.9]
+2.95 [2.73, 3.20]
+79.2
+82.2
+NDR
+22.5 [17.8, 25.7]
+1.47 [1.24, 1.74]
+5.9 [3.0, 8.9]
+3.21 [2.97, 3.48]
+64.4
+80.2
+6.2. Authentication of real VR users
+Table  4 lists the results per condition set, and Figure  4 shows each set’s difference from training on real VR data. With 45 s of data, EKYT trained only on NDR-converted GazeBase recordings reaches d ′ = 3.21 d^{\prime}=3.21 [2.97, 3.48] on unseen GazeBaseVR set 
+
+【结论/局限】
+References
+License: CC BY-NC-SA 4.0
+arXiv:2610.30032v1 [cs.HC] 21 Oct 2026
+Measurement-Guided Conversion of Laboratory Eye-Tracking Data for VR Authentication
+ISBN:  978-1-4503-XXXX-X/2018/06 CCS:  Human-centered computing Empirical studies in HCI CCS:  Security and privacy Biometrics CCS:  Computing methodologies Neural networks
+Md Arif Shahriar
+email: arif.shahriar@txstate.edu
+Affiliation:  Texas State University , San Marcos , Texas , USA
+,
+Mehedi Hasan Raju
+email: m.raju@txstate.edu
+Affiliation:  Texas State University , San Marcos , Texas , USA
+and
+Oleg Komogortsev
+email: ok@txstate.edu
+Affiliation:  Texas State University , San Marcos , Texas , USA
+© none We converted lab eye-tracking recordings to the signal quality of a VR headset while keeping their eye movement. Treating a VR recording as the eye movement plus what the device adds, NDR re-creates only the device: camera sampling, the calibration error and spectrally shaped noise of a matched VR twin, and a diffusion renderer that re-textures the noise and leaves the signal below f ∗ f^{*} essentially unchanged. Converted GazeBase recordings match GazeBaseVR in noise level, signal type and accuracy, are much harder to tell from real VR data than resampled lab data, and keep the saccade latency and dynamics of their source. In a downstream test, an authenticator trained only on converted recordings reached, with 45 s of

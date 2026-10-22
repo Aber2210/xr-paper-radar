@@ -1,0 +1,129 @@
+[
+  {
+    "id": "2610.25988",
+    "slug": "ssio",
+    "venue": "arXiv preprint",
+    "tags": ["惯性里程计", "IMU", "自监督学习", "SLAM", "多载体"],
+    "conclusion": "SSIO 提出免真值的自监督惯性里程计：以 IMU 预积分的重力补偿速度增量为教师信号，叠加静态帧零速正则与姿态图蒸馏（PGD），在行人、微型飞行器、竞速无人机、四足与人形机器人等六载体数据集上，无需任何位置/速度真值即逼近定制有监督基线，为跨载体 IMU 里程计提供可扩展的自监督训练范式。",
+    "problem": "学习型惯性里程计（RoNIN、TLIO、AirIO 等）依赖真值轨迹监督，标注昂贵且跨载体泛化差——监督方法离开训练域后误差急剧恶化，甚至在部分载体上因误差过大无法报告。另一方面，IMU 在短窗口内可通过预积分提供可靠的相对旋转与重力补偿速度增量，静态帧也天然给出零速约束，但无标签训练中残余噪声与偏差会被网络学成虚假运动。如何在完全免真值条件下，为行人、飞行器、四足、人形等异构载体统一训练准确的速度/位姿模型，并控制教师信号自身误差，是尚未解决的问题。",
+    "method": "SSIO 的核心是 integration self-supervision。教师端对每个采样短窗口 (i,j) 执行标准 IMU 预积分，得到表达在 i 时刻体坐标系下的相对旋转 ΔR_ij 与重力补偿速度增量 Δv_ij；积分前先用静态帧估计的常值加计/陀螺偏差校正，学生网络仍消费原始 IMU。网络输出窗口两端体坐标系速度 v̂_i^B、v̂_j^B，构造网络速度增量 Δv̂_ij^net = ΔR_ij·v̂_j^B − v̂_i^B（式 2），以 L_int = Σ_(i,j)‖Δv̂_ij^net − Δv_ij‖²₂（式 3）匹配教师目标。训练窗口按几何级数从单步网络步长扩展到数秒：短窗保教师近似精确、长窗使目标反映真实运动而非噪声；各数据集取最大窗长，使教师积分误差低于目标速度误差。Velocity regularization：以 1 s 中心窗内滚动统计（specific-force 模长标准差 <0.20 m/s²、角速率模长标准差 <0.05 rad/s、平均角速率 <0.10 rad/s、平均比力与重力差 <0.40 m/s²）检测静态帧，提供无标签零速约束；偏差估计复用同一 mask，无需额外校准。教师重力方向由数据集参考姿态初始化、窗内以校正后陀螺递推旋转。Pose Graph Distillation（PGD）在自监督模型之上构建姿态图并蒸馏精化，图节点初值取每序列首帧的参考旋转与速度；全程不使用速度/位置标签，教师也无需单独训练的传感器模型。另在 MIPO、GrandTour、Humanoid 三个铰接载体上融合本体感知输入。",
+    "experiments": "在六个异构载体数据集上从零自监督训练与评测：TLIO（行人）、EuRoC（微型飞行器）、Blackbird（竞速无人机）、MIPO（宇树 Go1 室内四足）、GrandTour（ANYmal 野外四足）及自建 Humanoid 集，指标为 AVE（m/s）与 ATE（m）。主表以定制监督基线 AirIO†（去姿态编码器）为参照：Ours 的 AVE 差距 +0.020~+0.113 m/s、ATE 差距 +0.960~+12.00 m；Ours (w/ PGD) 将 AVE 差距收窄至 +0.016~+0.068 m/s（均低于 +0.1 m/s 绿色阈值），ATE 差距 +0.930~+11.54 m，其中两列进入 +1 m 以内。PGD 相对纯自监督在全部六列降低 AVE、在 4/6 列降低 ATE（如 ATE 18.39→17.93 m；AVE 0.167→0.148 m/s 且 ATE 4.360→4.270 m）。监督方法 AirIMU 跨载体失败：多处 AVE 高达 20.83~46.95 m/s，多处 ATE 因误差过大无法报告；RoNIN/TLIO 在高动态载体列上 ATE 达 8.541~16.49 m。教师消融（Tab. V）以陀螺积分姿态（TLIO）与机载 AHRS（MIPO）替换参考姿态后自监督仍成立；Sec. IV-B 另测三铰接载体的本体感知增益。",
+    "innovation": [
+      "提出 integration self-supervision：以 IMU 预积分的重力补偿速度增量为免真值教师信号，网络两端速度差经 ΔR_ij 旋转对齐后回归该增量",
+      "几何级数窗口跨度设计：短窗保教师精度、长窗带运动信息，按数据集选最大窗长使教师误差低于目标速度误差",
+      "静态帧检测同时驱动零速正则与常值偏差估计，一套 mask 免额外校准",
+      "PGD 姿态图蒸馏作为免标签后处理精化，全部列降低 AVE，缩小与监督基线差距",
+      "首个覆盖行人/飞行器/竞速无人机/四足/人形六载体域的自监督惯性里程计较评测，并支持本体感知输入融合"
+    ],
+    "limits": [
+      "与监督 AirIO† 仍有可测差距：最难列 ATE 差距达 +11.54 m，精度上限受教师积分误差约束",
+      "教师需重力方向与相对姿态初值（虽实验证明可替换为陀螺/AHRS 姿态）；常值偏差假设无法处理时变偏差——Fig. 8 指出偏差而非噪声是教师无法平均掉的误差",
+      "静态帧检测阈值跨数据集统一（仅正则权重按数据集调），对持续机动、缺少静止段的载体可能失效",
+      "评测载体均为机器人与可穿戴场景，未见手持消费设备等更多域；MIPO 数据需按附录自行准备"
+    ],
+    "relation": "库内重建与 SLAM 顶级工作（HexVIO 4.58 全时段立体惯性、DAVIO 4.05 稠密单目惯性、AMB3R-SLAM/RawSLAM 4.50）均以视觉或视觉-惯性融合为核心；SSIO 走纯 IMU、免真值的互补路线，既可作为视觉退化场景（暗光、遮挡、高速竞速机动）下的后备里程计，也可为库内学习型 SLAM 提供无标注 IMU 速度先验，其多载体统一评测视角亦补足库内以单一载体为主的空白。库内未见同工作，属新增方向。",
+    "repro": "无需位置/速度真值标签，仅需静态帧检测即可训练；教师无需单独训练的传感器模型。训练细节见附录 B（自监督、PGD、本体感知输入融合架构、MIPO 数据准备）与附录 C（PGD 高效实现），静态检测阈值与最大窗长准则已在正文明确。代码开源与训练硬件在输入材料中未明确。",
+    "action": "对 XR 研究者：可将 SSIO 用作头显/手柄纯 IMU 模态的免标注预训练方案——先以静态帧零速+预积分自监督训练速度模型，再用 PGD 做会话内精化，低成本获得度量速度先验。建议优先在四足/人形等铰接载体上验证本体感知输入融合（对应手柄铰接运动场景），再迁移到 Quest 手柄与头显 IMU，并用自采静态/动态片段验收。"
+  },
+  {
+    "id": "2610.28821",
+    "slug": "ram",
+    "venue": "arXiv preprint",
+    "tags": ["点云配准", "point cloud registration", "跨域泛化", "3D 视觉", "LiDAR"],
+    "conclusion": "Register Anything Model（RAM）用几何感知归一化把不同尺度/密度的点云统一到标准化几何空间，配合超点-密集点层级配准管线（EGeoTR+LGR），以四源混合数据训练单一模型，在 12 个室内/室外/物体基准上实现跨域点云配准，代码已开源。",
+    "problem": "现有学习型点云配准方法假设训练与测试同域，从室内短程密集点云（通常 <10 m）迁移到室外长程稀疏 LiDAR（通常约 100 m）或物体级扫描时泛化急剧下降。根因是几何域差异：现代点算子以固定搜索半径编码局部几何，小半径在大场景感受野不足，大半径在小场景过度平滑细节；而室内、室外、物体三类数据长期被割裂训练专用模型。如何用单一模型完成跨域、跨尺度、跨密度的鲁棒配准，是该文要解决的核心问题。",
+    "method": "RAM 沿用先提取对应、再求解变换的传统管线：给定点云 P、Q，先提取点对应 C={(x_i,y_i)}，再求解刚体变换 R,t = argmin_{R∈SO(3),t∈ℝ³} Σ‖Rx_i + t − y_i‖²（式 1）。针对跨域几何差异，设计 geometry-aware normalization 模块（Sec. 3.2）：将点云自适应体素化并联合归一化到域无关的标准化几何空间，使尺度与密度一致，从而可用统一搜索半径处理。实现上以 3DMatch 惯例的参考体素 v_ref = 0.025 m 为基准，按场景尺度 x 用单调分段函数 ϕ(x) 缩放体素：x≥50 时 ϕ(x)=0.1·log₂(x/25)；25≤x<50 时 ϕ(x)=0.001(x−25)+0.075；x<25 时 ϕ(x)=0.0025(x−1)+0.015（式 7）。配准采用层级管线（Sec. 3.3）：特征提取后先用 EGeoTR 提取 superpoint 对应，再精化为密集点对应，最后由 LGR 从对应中恢复变换。训练数据为 3DMatch、KITTI、nuScenes、ModelNet 混合集，以联合训练打破域间隙。",
+    "experiments": "评测覆盖 12 个基准：室内 4 个（3DMatch、3DLoMatch、ScanNet++、TIERS）、室外 6 个（KITTI、nuScenes、ETH、MIT、WOD、Oxford）、物体 2 个（ModelNet、ShapeNet）；训练用 3DMatch+KITTI+nuScenes+ModelNet 混合集。报告 4 项指标：IR（内点率，真值变换下残差低于阈值的对应比例）、RRE（相对旋转误差，估计与真值旋转的测地距离）、RTE（相对平移误差，ℓ₂ 距离）、RR（配准召回率；3DMatch/3DLoMatch 以 RMSE < 0.2 m 判成功，其余基准要求 RRE 与 RTE 同时低于阈值），并采用更严格的 RRE/RTE 阈值以增强区分度。实验设置含室内/室外/物体三组主表（Table 1-3）、消融研究（Sec. 4.5）与定性结果（Sec. 4.6）。输入材料未包含各基准具体数值，其相对现有方法的增益幅度需查原文表格确认。",
+    "innovation": [
+      "几何感知归一化：联合体素化+归一化到域无关标准化几何空间，以分段函数 ϕ(·) 自适应统一尺度与密度，解决固定搜索半径的跨域失效问题",
+      "单一统一模型覆盖室内/室外/物体共 12 个基准，混合域联合训练打破域间隙",
+      "对层级超点对应→密集点对应配准管线（EGeoTR+LGR）的跨域化改造",
+      "采用更严格 RRE/RTE 阈值的评测协议，提升跨域配准评估严谨性"
+    ],
+    "limits": [
+      "训练混合集仅 3DMatch/KITTI/nuScenes/ModelNet 四源，对 handheld、XR 深度相机等未覆盖域的泛化未验证",
+      "体素缩放 ϕ(·) 为人工分段设计（对数/线性分段），极端尺度或非常规密度分布可能欠拟合",
+      "输入 digest 未含定量结果数值，相对现有 SOTA 的增益幅度无法从材料中确认",
+      "出品机构具国防背景（军事科学院国防创新研究院等），数据许可与用途限制需留意原文 Broader Impacts 与 License 条款"
+    ],
+    "relation": "库内 597 篇中未见统一点云配准工作，属新增方向；与重建与 SLAM 家族（HexVIO 4.58、AMB3R-SLAM 4.50、GRF-Recon 4.07）构成上下游互补——这些方法产出深度图/点云，RAM 可作为跨设备点云对齐模块，例如 XR 头显深度相机（<10 m 密集）与房间级 LiDAR（约 100 m 稀疏）的融合配准，以及多会话扫描的全局对齐。",
+    "repro": "代码开源：https://github.com/qinzheng93/RegisterAnything。参考体素 0.025 m、ϕ(·) 分段参数、训练混合集与基准细节见附录 A.1-A.2，指标定义见附录 A.3。训练硬件在输入材料中未明确。License：arXiv.org perpetual non-exclusive license。",
+    "action": "XR 工程师可直接用开源 RAM 做头显深度相机与 LiDAR 的跨设备配准：先用 ϕ(·) 归一化模块抹平尺度/密度差，再按严格 RRE/RTE 阈值自建验收集（如 Quest 深度图对手机 LiDAR 扫描）。建议补充 handheld/XR 域数据微调，并把 TIERS、ScanNet++ 等室内新基准纳入回归测试，防域漂移。"
+  },
+  {
+    "id": "2610.29106",
+    "slug": "driftnerf",
+    "venue": "arXiv preprint",
+    "tags": ["神经辐射场", "NeRF", "稀疏视图重建", "3D 重建", "novel view synthesis"],
+    "conclusion": "DriftNeRF 指出稀疏视图 NeRF 逐射线光度损失放任相邻射线密度矛盾、产生 floater/haze，提出跨射线漂移场 V=σ̄_cross−σ_{a,i} 与 drifting loss，在 3/6/9 视图下改善重建，与 3DGS 的 matched 对比亦保持可测增益。",
+    "problem": "稀疏视图下 NeRF 仅对每条射线施加光度监督，空间中邻近位置、来自不同射线的采样点密度可以互相矛盾而不受惩罚，形成 floater 与 haze；DNGaussian、FreeNeRF 等稀疏视图方法能缓解但无法消除。同时缺乏直接约束跨射线密度一致性的机制；且现有对比常混用不同相机子集与评测协议（masked DTU、NDC 变换），绝对数字不可比。该文要同时解决伪影根因与评测严谨性两个问题。",
+    "method": "对锚射线 a 上的采样点 x_{a,i}，取邻近射线上采样点 x_{b,j} 的密度 σ_{b,j}，经 masked proximity kernel k_ij 加权并 stop-gradient（sg）池化为冻结的跨射线共识 σ̄_cross = (1/Z)Σ_{b≠a,j} k_ij·σ_{b,j}；定义 drifting field V = σ̄_cross − σ_{a,i}，drifting loss L_drift = E_{a,i}[‖V(x_{a,i})‖²]，总目标 L_total = L_render + λ·L_drift，端到端训练 MLP f_θ。MLP 输出颜色与密度，密度进入两条支路：一路经 volume rendering 生成像素颜色 C(r)，与真值 C*(r) 经 L_render = E_r[‖C(r)−C*(r)‖²] 监督；另一路进入跨射线共识分支计算漂移场。冻结共识目标与 stop-gradient 防止损失退化，masked proximity kernel 控制邻域范围。该设计把邻近射线密度应一致作为几何先验注入稀疏视图训练，与逐射线光度监督互补。",
+    "experiments": "在 NeRF-Synthetic、15 个 DTU scans、8 个 LLFF scenes 上按 3/6/9 视图协议评测；DTU/LLFF 每隔 8 个相机留测试、其余均匀选训练相机，NeRF-Synthetic 均匀选训练帧；不做 object mask 与 NDC 变换。网络为 8 层宽 256 MLP（第 4 层后 skip）、位置/方向 10/4 octaves 位置编码、softplus 密度、1024 rays/minibatch、200k Adam 步、学习率 5×10⁻⁴ 指数衰减至 5×10⁻⁵；种子 0/1/2 平均；PSNR、SSIM（TorchMetrics）、LPIPS-Alex。所有数字在本文 loader 下重算：FreeNeRF 在 masked DTU 3-view 报告 19.92 dB，在本文未 mask 协议下为 17.89 dB，故本文数值仅内部可比。与稀疏视图 3DGS 的 matched 对比限定 3 视图（DriftNeRF 有可测效应的区间），各方法用官方 release、推荐初始化与辅助先验、经同一评测器重算；CoMapGS 因共视性构造适用范围受限而未评。附录 E 记录代码 commit、优化步数、预处理与硬件的复现清单。",
+    "innovation": [
+      "首次明确提出并实证跨射线密度分歧（cross-ray gap）问题及其与 floater/haze 伪影的因果关系（Sec. 4.2 专节验证）",
+      "跨射线共识目标 σ̄_cross + stop-gradient + masked proximity kernel 的冻结共识设计，避免 drifting loss 退化",
+      "drifting loss 作为与渲染损失正交的几何一致性正则，L_total = L_render + λ·L_drift 端到端可微",
+      "matched 3DGS 评测协议：统一相机子集/分辨率/评测器、官方 release、三种子平均与复现清单，纠正跨论文数字不可比问题"
+    ],
+    "limits": [
+      "仅覆盖 NeRF-Synthetic/DTU/LLFF 三类前向场景数据集，未评 Mip-NeRF 360 等无界场景（CoMapGS 亦因协议受限未评）",
+      "绝对数值与已发表表不可比（无 mask、无 NDC）：FreeNeRF 3-view DTU 在本文为 17.89 dB 而非其论文 19.92 dB，跨论文比较须重跑",
+      "主要增益区间为 3 视图；6/9 视图与 dense-view 行为见 Sec. 4.5，输入材料未给具体增益数值",
+      "MLP 型 NeRF 需 200k 步训练，相对 3DGS 的 wall-clock 效率见附录 D.3，输入材料未给数值"
+    ],
+    "relation": "库内神经渲染顶级家族（OIC-GS 4.37、PocketSplat 4.28、CADSplat 4.28 稀疏视图 CAD 先验 3DGS、DensiTok 4.15）多沿先验/前馈参数化路线解决稀疏视图问题；DriftNeRF 属竞合关系——同一问题的正则路线，其 cross-ray drifting loss 可移植到 3DGS 的不透明度一致性上，作为库内稀疏视图 3DGS 方法的补充正则。库内未见同工作，属新增方向。",
+    "repro": "协议完全公开：8×256 MLP、skip@4、10/4 octaves、softplus 密度、1024 rays/batch、200k 步、lr 5×10⁻⁴→5×10⁻⁵、种子 0/1/2；附录 D.1 给 drifting loss 伪代码、D.2 给每数据集超参、D.3 给 wall-clock 计时、E 给 matched 3DGS 复现清单（代码 commit/硬件）。代码是否开源在输入材料中未明确。",
+    "action": "对 XR 渲染研究者：优先把 drifting loss 移植到库内稀疏视图 3DGS 管线（CADSplat、PocketSplat、OIC-GS），将跨射线共识改造为跨视角不透明度一致性，压制 Quest 级 3-6 张照片重建的 floater/haze。复现时遵守本文纪律：固定相机子集与评测器、三种子平均、不用 mask/NDC，先在 3 视图区间验证增益再扩展到多视图。"
+  },
+  {
+    "id": "2610.29768",
+    "slug": "unirap",
+    "venue": "arXiv preprint",
+    "tags": ["可供性分割", "affordance", "具身智能", "视觉语言模型", "部件级推理"],
+    "conclusion": "UniRAP 以 3B LLM 经统一 interface token 打通指代/推理/视频分割与部件级可供性及可操作感知：RefCOCO val gIoU 80.9 平 UniPixel-7B，ReVOS overall J&F 61.9 超同规模基线，并落地机器人抓取，参数效率优势明显。",
+    "problem": "指代分割、推理分割、视频物体分割、可供性分割长期以不同任务接口与专用模型割裂发展；部件级物理可供性（物体何处可抓、可旋、可按）需要跨任务统一推理接口而非多个专用模型。同时现有 LLM-based 通用分割模型多为 7B+，参数效率低，小模型又难以在多任务上同时保持竞争力；此外分割结果距机器人可操作感知仍有距离，需要验证向真实抓取的迁移。",
+    "method": "UniRAP 是 3B 规模 LLM-based 图像/视频通用分割模型，以统一 interface token 将 referring expression segmentation、reasoning segmentation、referring/reasoning video object segmentation、referring affordance segmentation 与 actionable perception 统一到同一接口与输出范式。架构含 visual referring encoder（附录 A.2）与 LLM 主干，配合统一训练配方（附录 B.2）与训练目标（B.3）做多任务联合优化；下游在 HANDAL、GraspNet（seen/novel）、3DOI 上做可供性分割（gIoU/cIoU），并经 Sec. 4.5 与附录 C.2 的 reasoning-aware robotic grasping 验证向机器人操作的迁移。任务覆盖显式与隐式文本查询（RefCOCO/+/g、ReasonSeg）及视频时空推理（ReVOS）。输入 digest 未含架构细节段落，模块级设计以原文附录为准。",
+    "experiments": "图像分割（Tab. 1，RefCOCO/+/g 与 ReasonSeg）：UniRAP-3B 在 RefCOCO val 取得 gIoU 80.9 / cIoU 82.6，gIoU 居 7B 及以下模型之首、略超 UniPixel-7B（80.8），仅次于 Sa2VA-8B（81.9），优于 LaSagnA-7B（76.8）等；其余 split 报告值分布于 70.4~79.3。ReasonSeg gIoU 57.9 / cIoU 59.0，论文自述有竞争力但非最佳。视频分割（Tab. 2，ReVOS val）：referring J&F 64.1、reasoning J&F 59.6、overall J&F 61.9，超 HyperSeg-3B（55.7）、InstructSeg-3B（54.5）等同规模基线，接近 UniPixel-7B（63.7）。可供性分割（Tab. 3，HANDAL/GraspNet seen+novel/3DOI）：基线 VLPart+SAM2 在 HANDAL 40.9/28.9，LISA-7B 15.4/11.8，GLaMM-3.8B 25.1/17.0；UniRAP 行数值在 digest 截断处未包含。作者明示因算力所限每个实验仅运行一次，无误差棒。",
+    "innovation": [
+      "以统一 interface token 打通 RES、reasoning segmentation、视频分割、可供性分割与可操作感知五类任务于同一 3B 模型",
+      "3B 小规模达到 7B/8B 级通用分割性能（RefCOCO val gIoU 80.9 对 UniPixel-7B 80.8），参数效率显著",
+      "部件级物理可供性推理的新任务设定：HANDAL/GraspNet seen+novel/3DOI 上的 referring affordance segmentation",
+      "从分割到可操作感知的闭环验证：reasoning-aware robotic grasping 真实机器人实验（Sec. 4.5/附录 C.2）",
+      "ReVOS referring+reasoning 双设置均强，overall J&F 61.9 超全部同规模基线"
+    ],
+    "limits": [
+      "算力所限每个实验仅运行一次，无误差棒/置信区间（论文统计显著性自评为 No）",
+      "ReasonSeg（需多步推理）未达最佳，复杂推理能力仍逊于更大模型",
+      "可供性分割的具体数值在输入 digest 截断处缺失，相对 VLPart+SAM2 等非 LLM 基线的增益无法确认",
+      "输入材料未含架构与训练数据细节（附录 B），可复现性依赖原文补充材料"
+    ],
+    "relation": "库内感知与认知（Gaze2HOI 4.00 眼动-手-物交互理解、V-JEPA Hand 3.85）与交互与输入（RoboFind 4.15、RLHND 3.85）家族聚焦交互理解与手部追踪；UniRAP 补齐部件级可供性/可操作感知一环，与 Gaze2HOI 在人-物交互功能区域理解上互补（眼动注意力对语言指代可供性），其可供性分割可直接为 XR 中可交互部件（旋钮、把手、按钮）的指认与高亮提供引擎。库内未见同工作，属新增方向。",
+    "repro": "因算力限制每个实验仅运行一次（无误差棒，作者自评统计显著性 No）；训练配方与目标见附录 B.2/B.3，实现细节见 B.1，指标定义见 B.4，定性结果见 B.5，真实机器人实验见 C.2。代码/权重开源情况与训练硬件在输入材料中未明确。License：CC BY 4.0。",
+    "action": "对 XR 研究者：可将 UniRAP 作为头显内「这个部件能怎么用」的推理引擎——用自然语言指代场景部件并输出可供性 mask，驱动交互提示与虚拟化身/机器人操作。落地时注意：ReasonSeg 类复杂推理需谨慎验收；因论文无误差棒，建议自建 XR 域评测集多次运行验证；可结合库内 Gaze2HOI 的眼动信号做指代消歧。"
+  },
+  {
+    "id": "2610.29936",
+    "slug": "dewhand",
+    "venue": "arXiv preprint",
+    "tags": ["第一视角视频", "ego-centric video", "手-相机联合重建", "flow matching", "具身智能"],
+    "conclusion": "DewHand 用 MMDiT 双流 flow matching 从单目第一视角视频重建双手与相机的度量世界轨迹，免 SLAM 预重建：HOT3D/ARCTIC 上 SE(3) 对齐 WA-MPJPE 较 StableHand 43.74/78.63→28.56/36.35 mm，跨设备零样本亦优。",
+    "problem": "从单目 egocentric 视频重建双手与相机的度量世界空间运动面临尺度歧义、观测缺失与轨迹割裂三重困难：HandFlow 先在相机空间建模手部运动再经 SLAM 提升到世界空间，StableHand 拼装分别估计的手、相机世界观测，二者都依赖初始重建且误差沿管线累积；SLAM 基线仅在约四分之一的 HOT3D clip 上把相机尺度恢复到 10% 以内；超过半数帧丢失手部检测时现有方法误差急剧上升。需要不依赖初始重建、直接输出共享度量世界帧内手-相机联合运动并容忍检测缺失的模型。",
+    "method": "以首帧相机坐标系为世界帧，推理时无需外部定位、重力估计或场景模板。输出包含相机位姿 (R^c_t, p^c_t)∈SO(3)×ℝ³，及每只手 h∈{L,R} 的全局腕部位姿 (R^h_t, p^h_t)∈SO(3)×ℝ³、局部姿态 θ^h_t∈ℝ^{15×6}（15 关节 6D 旋转，解码为 MANO 45D axis-angle）与 clip 级形状 β^h∈ℝ¹⁰。将世界帧量分组为 global motion stream x^global_t = (R^L_t, p^L_t, R^R_t, p^R_t, R^c_t, p^c_t)，手局部量分组为 local hand stream x^local_t = (θ^L_t, β^L, θ^R_t, β^R)（clip 级 shape 跨帧复制），两流保持耦合。模型为 MMDiT（Multimodal Diffusion Transformer），在流时间 τ∈[0,1] 下以 flow matching 去噪 x^global_τ 与 x^local_τ：每帧先在流内做时空注意力，再跨 global motion、local hand、condition 三流做联合注意力。条件 C=(C_geo, C_hand) 由冻结编码器提供——几何条件解决单目尺度歧义，手部条件驱动 articulation；条件流建模天然处理观测缺失。输出经 MANO 转为手部 mesh，Cam、W_h、A_h 为对应 token。",
+    "experiments": "在 HOT3D 与 ARCTIC 上评测（对比 HaWoR、HandFlow、StableHand）：训练于 HOT3D（StableHand split 剔除测试窗的单独模型，附录 B.3）后微调至 ARCTIC；序列为 T=150 帧 @30 fps 的 5 秒片段。关键结果：SE(3) 对齐 WA-MPJPE 较 StableHand 43.74→28.56 mm（HOT3D）、78.63→36.35 mm（ARCTIC），PA-MPJPE 同步提升；刚对齐世界空间误差 32.9→28.4 mm（HOT3D）、76.2→36.2 mm（ARCTIC）。Sim(3) 与 SE(3) 对齐误差差距小，说明度量尺度得以保持；相机尺度在三分之二的 HOT3D clip 上恢复到 10% 以内，SLAM 仅约四分之一。过半帧无手检测时 WA-MPJPE 71.0 mm，最佳基线 134.3 mm（附录 C.3）；推理比 SLAM 管线快 2.6-3.7 倍（附录 C.4）。零样本跨设备评测（HoloAssist、H2O、TACO）上各数据集 WA-MPJPE 均最低。用真值形状时 ARCTIC 全指标领先，HOT3D 仅 PA-MPJPE、MRRPE-A、Sim(3) 对齐 wWA（差 0.3 mm）略逊 StableHand；AccEr 与 MRRPE-A（预测形状方法中）最低。",
+    "innovation": [
+      "首个从单目 egocentric 视频直接重建双手+相机共享度量世界空间运动的模型，摒弃 SLAM 预重建与分段估计",
+      "global motion 与 local hand 双流 MMDiT + 条件 flow matching，在同一生成框架内统一刚体轨迹、关节 articulation 与手型",
+      "冻结几何/手部双条件编码：几何条件解尺度歧义，条件流建模处理检测缺失",
+      "跨设备零样本泛化（HoloAssist/H2O/TACO）与检测失败鲁棒性（71.0 对 134.3 mm）系统验证，并比 SLAM 管线快 2.6-3.7 倍"
+    ],
+    "limits": [
+      "世界帧锚定首帧相机坐标系且不使用重力/场景模板，长片段全局漂移与绝对位姿恢复能力未在输入材料中评估",
+      "使用真值形状时 HOT3D 上 PA-MPJPE、MRRPE-A、Sim(3)-wWA 仍略逊 StableHand（最大差距 0.3 mm），形状-姿态解耦仍有改进空间",
+      "ARCTIC 需微调，HOT3D→ARCTIC 的纯零样本迁移幅度未在 digest 给出",
+      "依赖 MANO 参数化与手部条件编码/检测质量，检测缺失过半时误差仍显著高于正常帧"
+    ],
+    "relation": "库内 V-JEPA Hand 3.85（3D 手与相机轨迹重建）是最接近的竞合对象：同做第一视角手-相机运动重建，可直接对比或作为替换基线；ESTHER 4.27（第一视角立体手估计）与其互补（立体输入对单目、且不含相机轨迹）；RLHND 3.85（视频基础模型手部跟踪）可作为上游检测/条件输入与其级联。论文明确以 HandFlow（相机空间建模+SLAM 提升）与 StableHand（拼装式世界观测）为直接前驱并全面超越。库内未见同工作，属新增方向。",
+    "repro": "协议明确：训练于 HOT3D（StableHand split 剔除测试窗）+ ARCTIC 微调，序列长 T=150 帧 @30 fps（5 秒）；附录 B.1-B.3 给实现细节、手部/相机指标与评测集划分，C.1-C.4 给推理步数、缺失观测采样、检测失败与推理开销。项目主页已建立（论文图 1 注明）；代码/权重开源情况与训练硬件在输入材料中未明确。",
+    "action": "对 XR 研究者/工程师：可用 DewHand 替代「手部跟踪+SLAM」两段式管线，从 Quest 等单目 egocentric 视频直接产出世界系双手轨迹，用于交互分析、数据合成与化身驱动。注意其世界帧锚定首帧，长会话宜分段推理或与库内 SLAM（AMB3R-SLAM/RawSLAM 4.50）融合；上线前按 HoloAssist/H2O/TACO 式跨设备协议自建零样本评测，监控检测缺失率。"
+  }
+]

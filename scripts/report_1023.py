@@ -1,0 +1,178 @@
+# -*- coding: utf-8 -*-
+# report_1023.py — 聚合笔记生成 reports/XR-Daily-Report-2026-10-23.md + reports/XR-Backfill-Report-1023.md
+import json, re
+
+ROOT = 'D:/Agent/WorkBuddy/Research'
+reg = {}
+for l in open(f'{ROOT}/papers/library/registry.jsonl', encoding='utf-8'):
+    if l.strip():
+        d = json.loads(l)
+        reg[d['id'].split(':')[-1].split('v')[0]] = d
+slug = {}
+for g in (1, 2, 3, 4, 5):
+    for x in json.load(open(f'{ROOT}/data/notes_content_1023_g{g}.json', encoding='utf-8')):
+        slug[x['id']] = x['slug']
+
+def note_body(bid):
+    t = open(f"{ROOT}/papers/notes/{bid}__{slug[bid]}.md", encoding='utf-8').read()
+    return re.sub(r'^---.*?---\n', '', t, flags=re.S).strip()
+
+def items_of(batch):
+    return [d for d in reg.values() if d.get('batch') == batch]
+
+# ============================================================ 主批报告
+items = items_of('2026-10-23')
+top10 = sorted([d for d in items if d['in_top10']], key=lambda d: -d['value'])
+rest = sorted([d for d in items if not d['in_top10']], key=lambda d: -d['value'])
+assert len(top10) == 10, len(top10)
+
+L = []
+L.append('# XR 每日论文解读报告 · 2026-10-23')
+L.append('')
+L.append('> **公告窗口**：2026-10-22（周四）公告批次（提交日 10-15~10-21、周四 20:00 ET 释放）；**拉取日**：2026-10-23（周五 02:30）。')
+L.append('> **诚实口径**：本批处理 10-22 公告批次的真新提交，**非当日（10-23）新提交**；公告日≠拉取日已显式标注。RSS 混入的旧稿 replace/cross 中 4 篇 XR 相关旧稿单列 **backfill-1023**（同日补录、单独编号）；同日 listing 对账另发现 10-21 公告批次漏网 5 篇，亦入 backfill-1023；2 篇库内 v2 再公告（NormLift / HumanVerse）已剔除。')
+L.append('')
+L.append('## 一、执行摘要')
+L.append('')
+L.append('- **入馆 15 篇**（S×0 / A×7 / B×6 / C×2），registry 573 → **588**；同日 backfill-1023 补录 9 篇 → **597**。Top10：7 A + 3 B，最高 **3.78**（SSIO）。')
+L.append('- **非重磅日**：当日最高 3.78 < 库内近 30 天 Top10 均分 **4.416**（现算，窗口 2026-09-23~10-23、444 条入窗）→ 无 S 级，未拔高、未凑数。')
+L.append('- 全文证据：15 篇候选**全部 L0/FULL**（41,612–130,608 字符），串行 3s/篇，无限流/降级/伪造。')
+L.append('- 覆盖度三关全过：门① 最大 Jaccard **0.071**（<0.62）；门② Top10 覆盖 **8 赛道**；门③ 见上。**未触发重筛**，OUTDATED/SUPERSEDED **0 篇**。')
+L.append('- 本批结构性看点：① 惯性里程计首次**免真值**跨载体自监督（SSIO，六载体逼近定制监督基线）；② 稀疏视图 NeRF 的**问题诊断式**新正则（DriftNeRF 跨射线密度漂移，直指渲染目标无跨射线一致性项）；③ XR 编程智能体首基准暴露巨大差距（GenXR-Bench，最佳模型 Pass@1 仅 50.9%、测试编写能力缺失）；④ 第一视角手-相机**单阶段**世界空间重建（DewHand，WA-MPJPE 43.74→28.56 mm 且 2.6–3.7× 提速）；⑤ 语言 3DGS 压缩走向统一优化（ClunoGS，语义感知稀疏化+量化联合、存储 5× 缩减且带收敛证明）；⑥ VR 眼动认证的设备效应分解与扩散渲染（VR 信号转换 d′ 3.21 逼近真实 VR 3.10）。')
+L.append('- 上游对账（第 1 步）：listing 7 分类最新公告日 10-22；10-21 组 532 篇（上批已处理，复核）+ 10-22 组 402 篇全量对账；摘要级 XR 过滤（914 篇池、KW 全称+缩写双层）**10-22 组 22 篇全部在 RSS 集合内（0 漏网）**；10-21 组复核 19 篇命中中 5 篇 XR 相关未入馆 → 入 backfill-1023。')
+L.append('')
+L.append('## 二、Top10 排行榜')
+L.append('')
+L.append('| 排名 | 论文 | 赛道 | 总分 | 等级 | 证据 |')
+L.append('|---:|---|---|---:|---|---|')
+for i, d in enumerate(top10, 1):
+    L.append(f"| {i} | {d['title_zh']} | {d['track']} | {d['value']:.2f} | {d['grade']} | {d['evidence']} |")
+L.append('')
+L.append('> 同分排序规则：加权降序 → IMP/NOV 降序 → 赛道多样性优先 → id 升序。四篇 3.65 并列（UniRAP / DewHand / VR 眼动认证 / ClunoGS，按多样性优先排序）。')
+L.append('')
+L.append('## 三、逐篇深度解读（按重要性降序）')
+L.append('')
+for i, d in enumerate(top10, 1):
+    bid = d['id'].split(':')[-1]
+    L.append(f'### 第 {i} 章 · {d["title_zh"]}（{d["value"]:.2f} {d["grade"]} · {d["track"]} · {d["evidence"]}）')
+    L.append('')
+    L.append(note_body(bid))
+    L.append('')
+L.append('## 四、当日全量 7 维度对比表（参考）')
+L.append('')
+L.append('> 15 篇入馆全量（含非 Top10）；权重 IMP0.20·NOV0.20·TEC0.15·EXP0.15·PER0.15·TRL0.08·REP0.07；分档 S≥4.2 / A3.6–4.2 / B3.0–3.6 / C<3.0。')
+L.append('')
+L.append('| arXiv | 标题 | 赛道 | IMP | NOV | TEC | EXP | PER | TRL | REP | 总分 | 等级 | 证据 | 公告类型 |')
+L.append('|---|---|---|---|---|---|---|---|---|---|---|---|---|---|')
+for d in sorted(items, key=lambda x: -x['value']):
+    s = d['scores']
+    L.append(f"| {d['id'].split(':')[-1]} | {d['title_zh']} | {d['track']} | {s['IMP']} | {s['NOV']} | {s['TEC']} | {s['EXP']} | {s['PER']} | {s['TRL']} | {s['REP']} | {d['value']:.2f} | {d['grade']} | {d['evidence']} | {d.get('announce_type','new')} |")
+L.append('')
+L.append('## 五、覆盖率校验与筛选过程说明')
+L.append('')
+L.append('### 5.1 覆盖度三关')
+L.append('')
+L.append('- **门①（同质去重，仅对比非本批文献）**：当日 15 篇 vs 全库标题+摘要 token Jaccard，最大 **0.071**（2610.30032 vs 库内 2609.25422），0.45~0.62 区间 0 篇 → **通过**，无同质重复。')
+L.append('- **门②（赛道覆盖）**：Top10 覆盖 **8 赛道**（重建与SLAM / 神经渲染 / 感知与认知 / 具身交互 / 交互与输入 / 评估与数据集 / 世界模型与仿真 / 系统与平台）≥5 → **通过**；全批 15 篇同覆 8 赛道。')
+L.append('- **门③（价值天花板，校准关）**：当日最高 3.78 < 库内近 30 天 Top10 均分 **4.416**（现算：窗口 2026-09-23~10-23，registry 444 条入窗，按 value 降序前 10 为 4.65 / 4.58 / 4.57 / 4.57 / 4.37 / 4.30 / 4.30 / 4.28 / 4.27 / 4.27）→ **非重磅日、无 S 级**；门③为校准关，不触发重筛。')
+L.append('')
+L.append('### 5.2 漏斗与甄别')
+L.append('')
+L.append('```')
+L.append('第1步 listing 对账（TARGET_LO=10-21）：10-21 组 532 篇 + 10-22 组 402 篇')
+L.append('  → 摘要级 XR 过滤（KW 全称+缩写双层，914 篇池）：10-22 组 22 篇全在 RSS 集合（0 漏网）')
+L.append('  → 10-21 组 19 篇命中：14 篇非 XR + 5 篇 XR 漏网 → backfill-1023')
+L.append('数据源探针：export/arxiv API 均 200（submittedDate 停滞 10-21）；RSS cs.CV 212 条（公告日 10-22）→ RSS 兜底')
+L.append('RSS 拉取：7 分类去重 649 条 → 关键词命中 33')
+L.append('  → 去 registry(573)：31 新 = 20 new + 5 cross + 6 replace；另 2 篇库内 v2 再公告剔除')
+L.append('  → 31 新甄别：15 篇入 XR 池（10 new + 3 cross + 2 replace-v2 首次入馆）')
+L.append('  → 剔非 XR 10 篇；replace 旧稿 4 篇 XR 相关 → backfill-1023')
+L.append('全文：15 候选全 L0/FULL（41,612–130,608 字符）')
+L.append('评分：15 篇入馆（A7/B6/C2），Top10 = 前 10 名（7 A + 3 B）')
+L.append('```')
+L.append('')
+L.append('### 5.3 剔除原因分布（16 篇未入主批馆）')
+L.append('')
+L.append('- 非 XR 10 篇：医学体积定位（UNIVERS）、雾天目标检测（FogTTA）、无人机导航基准（AirPlayground）、扩散语言模型（DiffResearch）、EHR 块扩散（Block Diffusion）、多 IMU 标定（A2I-Calib++）、距离场 RL 碰撞回避、移动机械臂 NBV 主动感知、假体可供性分割、')
+L.append('- replace 旧稿非 XR 2 篇：MRI 高斯原型超分（2610.24858）、无人机竞速状态估计（2602.01860）；')
+L.append('- 旧稿 XR 相关 4 篇（2604.11685 / 2608.21009 / 2604.10809 / 2607.06464）→ 单列 backfill-1023，未混入当日新论文；')
+L.append('- 库内 v2 再公告 2 篇：NormLift（2609.18898）、HumanVerse（2610.18950）。')
+L.append('')
+L.append('## 六、附录')
+L.append('')
+L.append('### 6.1 抓取失败/降级清单')
+L.append('')
+L.append('- **主批无降级**：15 篇候选全部 L0（arXiv HTML）命中、FULL 证据；无限流（429/503）、无 L1–L5 降级、无伪造。')
+L.append('- backfill-1023 有 1 篇降级：2610.28131（OV-Foam）L0/L1 均仅得 ar5iv abs 页壳（4,552 字符导航文本、正文缺失）→ **PARTIAL，按摘要级评估并在笔记中显式声明**，未脑补正文。')
+L.append('')
+L.append('### 6.2 证据等级分布')
+L.append('')
+L.append('| 证据等级 | 篇数 | 说明 |')
+L.append('|---|---:|---|')
+L.append('| FULL（L0） | 15 | 主批入馆 15 篇全部 |')
+L.append('| PARTIAL | 0 | — |')
+L.append('| ABSTRACT_ONLY | 0 | — |')
+L.append('')
+L.append('### 6.3 产物清单')
+L.append('')
+L.append('- 7 维表 / 评分明细 / 运行日志：`papers/daily/2026-10-23/`')
+L.append('- 原子笔记 15 篇：`papers/notes/2610.*__*.md`（主批）；backfill 9 篇笔记同目录')
+L.append('- 当日 MOC：`papers/MOC/MOC-2026-10-23.md`；backfill MOC：`papers/MOC/MOC-backfill-1023.md`；总索引已刷新')
+L.append('- 文献库：`papers/library/registry.jsonl`（573→588→597，备份 `registry.jsonl.bak-20261023`）')
+L.append('- backfill 报告：`reports/XR-Backfill-Report-1023.md`；漏网候选清单：`data/missed_xr_abstract_1023.json`')
+L.append('- 前端：`web/xr-paper-hub.html` 已重建并双渠道发布')
+L.append('')
+open(f'{ROOT}/reports/XR-Daily-Report-2026-10-23.md', 'w', encoding='utf-8').write('\n'.join(L))
+print('written main report, chapters:', len(top10), '| lines:', len(L))
+
+# ============================================================ backfill 报告
+bitems = items_of('backfill-1023')
+btop = sorted(bitems, key=lambda d: -d['value'])
+L = []
+L.append('# XR 论文 Backfill 报告 · backfill-1023')
+L.append('')
+L.append('> **批次性质**：补录批次，**非 2026-10-23 当日新提交**。两部分来源：')
+L.append('> ① **10-21 公告批次 listing 漏网 5 篇**（公告日 10-21、提交日 10-15~10-20；10-22 运行已处理该公告批次的主流水，本批补录其摘要级过滤漏网的 XR 相关稿）；')
+L.append('> ② **旧稿 replace/cross 再公告首次入馆 4 篇**（原始投稿周期 2604 / 2607 / 2608，10-23 RSS 拉取混入，经甄别为 XR 相关旧稿）。')
+L.append('> **诚实口径**：全部条目在 registry 中标 `batch=backfill-1023` 与 `orig_window`，7 维表列「来源」区分；绝不混入「当日新论文」叙事。')
+L.append('')
+L.append('## 一、执行摘要')
+L.append('')
+L.append('- **补录入馆 9 篇**（S×0 / A×1 / B×7 / C×1），registry 588 → **597**；最高 **3.65**（Unfolding 3DGS）。')
+L.append('- 覆盖度：门① 最大 Jaccard **0.075**（2610.28131 vs 库内 2610.08756，<0.62 通过）；全批覆盖 **7 赛道**；门③ 对 backfill 不适用。')
+L.append('- 全文证据：8 篇 L0/FULL（29,750–139,019 字符）+ 1 篇 L1/PARTIAL（2610.28131 OV-Foam，ar5iv 正文缺失，摘要级评估并显式声明）。')
+L.append('- 覆盖补强：3DGS 紧凑渐进渲染 LOD 第三条路线（Unfolding 3DGS，6.5MB→50.7MB vs 601.1MB）、XR 年龄保障新模态（手背图像，无面部生物特征）、光学-感知联合可微设计（编码孔径+3DGS 虚拟环境）、单图仿真就绪场景（SceneRig）、无电子 UMI 采集（$122 头戴相机）、热动力学 4DGS（GTSM）、幂图特征提升（OV-Foam）、360° VIO 基准（Hilti-Trimble-Oxford）。')
+L.append('- OUTDATED/SUPERSEDED **0 篇**（门①通过且无同质取代）。')
+L.append('')
+L.append('## 二、排名（按加权降序）')
+L.append('')
+L.append('| 排名 | 论文 | 赛道 | 总分 | 等级 | 证据 | 来源 |')
+L.append('|---:|---|---|---:|---|---|---|')
+for i, d in enumerate(btop, 1):
+    src = '10-21 漏网' if d.get('announce_type')=='leak-1021' else f"{d.get('announce_type','replace')} 再公告"
+    L.append(f"| {i} | {d['title_zh']} | {d['track']} | {d['value']:.2f} | {d['grade']} | {d['evidence']} | {src} |")
+L.append('')
+L.append('## 三、逐篇解读（按重要性降序）')
+L.append('')
+for i, d in enumerate(btop, 1):
+    bid = d['id'].split(':')[-1]
+    L.append(f'### 第 {i} 章 · {d["title_zh"]}（{d["value"]:.2f} {d["grade"]} · {d["track"]} · {d["evidence"]}）')
+    L.append('')
+    L.append(note_body(bid))
+    L.append('')
+L.append('## 四、甄别记录')
+L.append('')
+L.append('- 来源一（10-21 公告批次 listing 漏网）：摘要级过滤 19 篇命中中甄别 5 篇 XR 相关纳入；剔除 14 篇非 XR（视频时序定位 SuperClip、无人机定位 MatchCityLoc、动物行为、人机协作、LLM 前瞻记忆 ProMemAgent、扩散模型知识编辑、ObjectNav 主动验证、低比特 LLM BitMTP、dashcam 车道质量、人形接触重定向 REACT、CoGaussian 自动驾驶协同感知（尊重 10-22 运行剔除判断）、流式语言模型 Lafa、免学习室内探索 MAPLE）。')
+L.append('- 来源二（RSS 旧稿 replace/cross 再公告）：纳入 4 篇 XR 相关（Unfolding 3DGS / 手背 XR 年龄保障 / WARPED / Hilti 基准）；剔除 3 篇非 XR（2610.24858 MRI 超分 / 2602.01860 无人机竞速 / 2602.11321 人形遥操作）。')
+L.append('- GTSM（2610.26918）应用域为工业热场监测（10-22 运行曾据此将其剔除出主批），本批以其 3DGS 方法贡献（热状态空间动力学 4D 重建）**边界纳入**、B 级入馆，特此说明口径差异。')
+L.append('- 全文：9 篇中 8 篇 L0/FULL；2610.28131 OV-Foam L1 ar5iv 仅返 abs 页壳 → PARTIAL 摘要级评估。')
+L.append('')
+L.append('## 五、产物清单')
+L.append('')
+L.append('- 7 维表 / 评分明细 / 运行日志：`papers/daily/backfill-1023/`')
+L.append('- 原子笔记 9 篇：`papers/notes/`（2604.11685 / 2608.21009 / 2610.28004 / 2610.28585 / 2604.10809 / 2610.27622 / 2610.26918 / 2610.28131 / 2607.06464）')
+L.append('- 当日 MOC：`papers/MOC/MOC-backfill-1023.md`；总索引已刷新')
+L.append('- 文献库：`papers/library/registry.jsonl`（588→597）')
+L.append('')
+open(f'{ROOT}/reports/XR-Backfill-Report-1023.md', 'w', encoding='utf-8').write('\n'.join(L))
+print('written backfill report, chapters:', len(btop), '| lines:', len(L))

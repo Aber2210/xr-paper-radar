@@ -1,0 +1,107 @@
+【摘要】
+
+【方法】
+3.1 Problem Formulation and State Representation
+3.2 Visual Conditioning and Missing Observations
+3.3 Joint Hand-Camera Flow Model
+3.4 Flow Matching and Training Objectives For a monocular egocentric video 𝒱 = { I t } t = 1 T \mathcal{V}=\{I_{t}\}_{t=1}^{T} , t t indexes video frames
+and τ ∈ [ 0 , 1 ] \tau\in[0,1] denotes flow time. Fig.  3 summarizes our design. Unlike
+HandFlow  ( Xu et al., 2026 ) , which models
+camera-space hand motion before SLAM-based lifting, and StableHand  ( Zeng et al., 2026 ) , which
+refines world-space observations assembled from separate hand and camera estimates, DewHand
+generates both trajectories in a metric world frame without an initial reconstruction.
+Geometric conditioning resolves scale ambiguity, and conditional flow modeling handles
+missing observations.
+Figure 3: DewHand architecture. Frozen encoders provide
+𝒞 = ( 𝒞 geo , 𝒞 hand ) \mathcal{C}=(\mathcal{C}_{\mathrm{geo}},\mathcal{C}_{\mathrm{hand}}) .
+At flow time τ \tau , the model first applies spatio-temporal attention within each stream, then
+joint attention across the global motion, local hand, and condition streams at each frame.
+The Multimodal Diffusion Transformer (MMDiT) denoises
+𝐱 τ global \mathbf{x}^{\mathrm{global}}_{\tau} and 𝐱 τ local \mathbf{x}^{\mathrm{local}}_{\tau} .
+The outputs are camera pose ( 𝐑 t c , 𝐩 t c ) (\mathbf{R}^{c}_{t},\mathbf{p}^{c}_{t}) and, for each hand
+h ∈ { L , R } h\in\{L,R\} , global wrist pose ( 𝐑 t h , 𝐩 t h ) (\mathbf{R}^{h}_{t},\mathbf{p}^{h}_{t}) , local pose
+𝜽 t h \boldsymbol{\theta}^{h}_{t} , and shape 𝜷 h \boldsymbol{\beta}^{h} .
+Cam \mathrm{Cam} , W h W_{h} , and A h A_{h} are the corresponding tokens; MANO converts the hand outputs to meshes.
+3.1 Problem Formulation and State Representation
+Our goal is to recover the metric 3D motion of both hands and the camera in a common world frame.
+We take the camera coordinate system of the first frame as the world frame, so that no external
+localization, gravity estimate, or scene template is required at inference time.
+The outputs in Fig.  3 are the camera pose
+( 𝐑 t c , 𝐩 t c ) ∈ S ​ O ​ ( 3 ) × ℝ 3 (\mathbf{R}^{c}_{t},\mathbf{p}^{c}_{t})\in SO(3)\times\mathbb{R}^{3} and, for each hand
+h ∈ { L , R } h\in\{L,R\} , global wrist pose ( 𝐑 t h , 𝐩 t h ) ∈ S ​ O ​ ( 3 ) × ℝ 3 (\mathbf{R}^{h}_{t},\mathbf{p}^{h}_{t})\in SO(3)\times\mathbb{R}^{3} ,
+local pose 𝜽 t h ∈ ℝ 15 × 6 \boldsymbol{\theta}^{h}_{t}\in\mathbb{R}^{15\times 6} , and clip-level shape
+𝜷 h ∈ ℝ 10 \boldsymbol{\beta}^{h}\in\mathbb{R}^{10}   ( Romero et al., 2017 ) . The local pose stores 6D rotations of
+15 joints, converted to MANO’s 45D axis-angle pose for mesh decoding.
+We group the quantities that live in the world frame into a
+global motion stream 𝐱 t global = ( 𝐑 t L , 𝐩 t L , 𝐑 t R , 𝐩 t R , 𝐑 t c , 𝐩 t c ) \mathbf{x}^{\mathrm{global}}_{t}=(\mathbf{R}^{L}_{t},\mathbf{p}^{L}_{t},\mathbf{R}^{R}_{t},\mathbf{p}^{R}_{t},\mathbf{R}^{c}_{t},\mathbf{p}^{c}_{t})
+and the hand-local parameters into a local hand stream
+𝐱 t local = ( 𝜽 t L , 𝜷 L , 𝜽 t R , 𝜷 R ) \mathbf{x}^{\mathrm{local}}_{t}=(\boldsymbol{\theta}^{L}_{t},\boldsymbol{\beta}^{L},\boldsymbol{\theta}^{R}_{t},\boldsymbol{\beta}^{R}) .
+The clip-level shape target is repeated across frames in this stream.
+This separation reflects the different geometry and conditioning cues of global rigid motion and
+local articulation, while the two streams remain cou
+
+【实验】
+4.1 World-Space Hand Motion
+4.2 Camera Motion
+4.3 Cross-Device Zero-Shot Generalization
+4.4 Ablation Study on HOT3D and ARCTIC demonstrate improved world-space accuracy and temporal consistency over state-of-the-art methods. DewHand reduces rigid-aligned world-space error relative to StableHand from 32.9 32.9 to 28.4 28.4  mm on HOT3D and from 76.2 76.2 to 36.2 36.2  mm on ARCTIC. It also recovers camera scale within 10 % 10\% on two thirds of HOT3D clips, versus about a quarter for SLAM. Moreover, in zero-shot evaluations on HoloAssist, H2O, and TACO, captured with different devices, DewHand achieves the lowest rigid-aligned world-space error (WA-MPJPE) on each dataset.
+Figure 1: DewHand directly reconstructs the motion of both hands and the camera in a shared metric world coordinate system from monocular egocentric video. See more on the project page . 4.1 World-Space Hand Motion
+Datasets:
+We evaluate on HOT3D  ( Banerjee et al., 2025 ) and ARCTIC  ( Fan et al., 2023 ) , following prior work on world-space
+hand motion reconstruction, including HaWoR  ( Zhang et al., 2025a ) and HandFlow  ( Xu et al., 2026 ) on HOT3D
+and StableHand  ( Zeng et al., 2026 ) on both datasets.
+We train on HOT3D (for the StableHand split, a separate model that excludes its test windows;
+Appendix  B.3 ) and fine-tune the resulting checkpoint on ARCTIC. For both training and inference, we use sequences of T = 150 T=150 frames at 30 fps, corresponding to 5-second clips. :
+DewHand achieves the best world-space accuracy on both datasets (Table  1 ). Against
+StableHand with predicted shape, it reduces SE ⁡ ( 3 ) \mathrm{SE}(3) -aligned WA-MPJPE from 43.74 43.74 to 28.56 28.56  mm
+on the HOT3D StableHand split and from 78.63 78.63 to 36.35 36.35  mm on ARCTIC, and also improves PA-MPJPE.
+With the same privileged ground-truth shape, ours leads in every metric on ARCTIC and trails StableHand
+on HOT3D only in PA-MPJPE, MRRPE-A, and (by 0.3 0.3  mm) Sim ⁡ ( 3 ) \mathrm{Sim}(3) -aligned wWA, so the
+world-space gains do not come from hand shape. The small gap between our Sim ⁡ ( 3 ) \mathrm{Sim}(3) -
+and SE ⁡ ( 3 ) \mathrm{SE}(3) -aligned errors indicates that metric scale is retained; ours also has the lowest
+AccEr, and the lowest MRRPE-A among predicted-shape methods.
+Fig.  4 illustrates this: DewHand’s hand trajectories remain close to ground truth,
+whereas several baselines show greater dispersion in the left sequence or displace the nearly
+stationary left hand in the right. Its margin persists when more than half of the frames lack a hand
+detection ( 71.0 71.0 vs. 134.3 134.3  mm for the best baseline; Appendix  C.3 ), and it runs
+2.6 2.6 – 3.7 × 3.7\times faster than the SLAM-based pipelines (Appendix  C.4 ).
+Figure 4: Qualitative comparison on HOT3D.
+Two selected sequences show six input frames and reconstructions from representative methods and ground truth.
+For each method, one SE ⁡ ( 3 ) \mathrm{SE}(3) transform fitted jointly to both hands is also applied to its camera poses; no scale correction is used. Methods share the same view and crop within each sequence.
+Green and blue denote the right and left hands; purple frustums indicate camera poses.
+Table 2: Camera mo
+
+【结论/局限】
+References
+A Implementation Details
+B Evaluation protocol
+B.1 Hand metrics
+B.2 Camera metrics
+B.3 Evaluation sets
+C Additional results
+C.1 Inference steps
+C.2 Sampling with missing observations
+C.3 Detection failures
+C.4 Inference Cost
+D Additional qualitative comparisons
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.29936v1 [cs.CV] 21 Oct 2026
+DewHand: Direct Metric World-Space Hand Motion Reconstruction from Egocentric Videos
+Naru Suzuki
+Affiliation:  The University of Tokyo
+Affiliation:  NII LLMC
+Satoshi Ikehata
+Affiliation:  National Institute of Informatics
+Takehiko Ohkawa
+Affiliation:  The University of Tokyo
+Yoichi Sato
+Affiliation:  The University of Tokyo
+Shuhei Kurita
+Affiliation:  National Institute of Informatics
+Affiliation:  NII LLMC We addressed metric world-space reconstruction of two hands and the camera from monocular
+egocentric video. DewHand jointly generates global hand and camera motion, local articulation,
+and hand shape in a shared world frame, avoiding the composition of separately estimated
+trajectories. Geometric and hand-specific features provide complementary cues for global placement
+and articulation, while flow matching models motion under incomplete observations. On HOT3D and
+ARCTIC, DewHand achieves the lowest rigid-aligned world-space hand error. The small gap between
+rigid- and similarity-aligned hand errors further supports me

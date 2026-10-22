@@ -1,0 +1,141 @@
+【摘要】
+1 The idea
+2 System
+Collection.
+Labels from the head camera.
+The robot’s head.
+Datasets and training.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+Major funding support from
+(opens in new tab)
+(opens in new tab)
+(opens in new tab)
+
+【实验】
+Design.
+Label accuracy.
+Co-training and the teleoperation budget.
+Which camera. Design.
+Eight policies (Table  1 ) span three views: the head camera, a wrist fisheye and a fixed external camera. Teleoperated actions come from the encoders except in arm 6, and glove labels from the head camera unless stated. The teleoperator watched the head-camera preview and all three cameras recorded every episode, so the arms share demonstration trajectories and differ only in observation and data composition. Arms 1–4 test co-training at two teleoperation budgets (172 and 48 episodes); arm 6 tests head-camera labels in place of encoders; arms 5, 7 and 8 test the view: arm 5 is the wrist-camera UMI recipe [ 7 ] with a fisheye added to the glove for this ablation only, arm 7 a fixed camera ( 10   % 10\text{\,}\mathrm{\%} fewer glove frames to body occlusion), and arm 8 head labels on the wrist view, separating the view from the labels.
+Table 1: The eight policies. Teleop labels are encoders except arm 6. Val = ACT loss on 6 held-out teleoperated episodes with encoder targets. Rollouts: 25 placements, one trial each, 60   s 60\text{\,}\mathrm{s} budget; n n = no grasp, d d = dropped before the bin, b b = dropped at the bin, t t = timeout.
+#
+Arm
+Glove labels
+Observation
+Teleop + glove
+Val
+Success
+Fails
+1
+teleop only
+—
+head cam
+172
+0.318
+18/25
+n5 d1 t1
+2
+device
+head cam
+head cam
+172 + 194
+0.263
+20/25
+n5
+3
+teleop only, low budget
+—
+head cam
+48
+0.464
+10/25
+n15
+4
+device, low budget
+head cam
+head cam
+48 + 194
+0.295
+17/25
+n8
+5
+wrist-camera UMI
+fixed cam
+wrist fisheye
+168 + 253
+0.257
+15/25
+n6 d3 b1
+6
+head-cam teleop labels
+—
+head cam
+172 (head labels)
+0.328
+15/25
+n10
+7
+fixed camera as system
+fixed cam
+fixed cam
+172 + 255
+0.256
+12/25
+n12 b1
+8
+head labels, wrist view
+head cam
+wrist fisheye
+168 + 192
+0.252
+14/25
+n3 d7 b1
+Label accuracy.
+With the ball on the YAM and the encoders as reference, the chain places the tool point within 6.5   mm 6.5\text{\,}\mathrm{m}\mathrm{m} median ( 14.1   mm 14.1\text{\,}\mathrm{m}\mathrm{m} p90) and 1.55   ° 1.55\text{\,}\mathrm{\SIUnitSymbolDegree} ( 2.70   ° 2.70\text{\,}\mathrm{\SIUnitSymbolDegree} ) over 5 065 frames. The jaw width, checked on 112 teleoperated episodes (24.6k frames), is within 3.5   % 3.5\text{\,}\mathrm{\%} of stroke at the median ( 7.9   % 7.9\text{\,}\mathrm{\%} p90), 2.3   % 2.3\text{\,}\mathrm{\%} in the closed state that decides a grasp, with no lag and a label on every frame in 9 of 10 episodes; the error is flat over workspace, distance, elevation and viewing angle ( 2.8   2.8\text{\,} – 4.8   % 4.8\text{\,}\mathrm{\%} median per bin; App.  B ). A policy trained on these labels instead of encoders (arm 6 against arm 1), scored on the same encoder-labelled held-out episodes, loses 3   % 3\text{\,}\mathrm{\%} in validation loss (0.328 against 0.318) and is within noise on the robot (15/25 against 18/25; 5 placements won to 8 lost, exact McNemar p = 0.58 p=0.58 ).
+Co-training and the teleoperation budget.
+Co-training across sources has precedent [ 9 , 13 ] . Adding the 194 glove segments to 172 teleoperated episodes lowers the robot-validation loss from 0.318 to 0.263 (arm 2 against 1); added to 48 episodes, f
+
+【结论/局限】
+and what is next
+References
+A Details
+Camera mounting and aiming.
+Calibration.
+Positioner control.
+B Jaw-width accuracy by condition
+C Rollout protocol and figures
+License: CC BY 4.0
+arXiv:2610.27622v1 [cs.RO] 20 Oct 2026
+A Head Camera Is (Almost) All You Need:
+An Electronics-Free UMI Glove Labelled and Observed by One Moving Camera
+Yosub Shin
+Affiliation:  University of Hawaii at Manoa
+Email:  yosubs@hawaii.edu
+Yuan Liu
+Affiliation:  Independent
+Email:  hiveyuan@gmail.com
+Igor Molybog
+Affiliation:  University of Hawaii at Manoa
+Email:  molybog@hawaii.edu and what is next
+The tile layout is refined by median single-tile poses rather than a full bundle adjustment [ 22 ] , which should tighten it further. A label needs a tile in view as well as the glove, so coverage depends on where the tiles are placed; we followed the placement rules of § 2 but tried only one layout. The positioner lags 0.4   s 0.4\text{\,}\mathrm{s} and hits joint limits on wide sweeps; its viewpoint model is a linear fit on one session with no tuning against rollouts, and the jaws were often occluded by the robot’s wrist-camera bracket, which the head-camera system does not need and which stayed on only for the wrist-view ablations. Removing it is the cheapest next gain. The head camera sees the collector’s forearm and fingers, so glove-only policies do not transfer (validation 0.52 against 0.26 co-trained),

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "2610.30032",
+    "slug": "vr-eye-auth",
+    "venue": "ACM CCS（按论文 CCS 分类号与 CCS 模板推断）",
+    "tags": ["眼动认证", "VR 眼动", "生物特征", "数据域转换", "扩散渲染", "gaze authentication"],
+    "conclusion": "NDR 将实验室眼动记录转换为 VR 头显信号质量的同时保留眼动本身：频率锁定扩散渲染器把噪声纹理重塑到 GazeBaseVR 水平，转换数据难以与真实 VR 数据区分（1-NN 判别仅 70.1%，原始数据 99.2%），仅用转换数据训练的眼动认证器 EKYT 在 45 s 条件下 d'=3.21，逼近真实 VR 训练的 3.10。",
+    "problem": "VR 头显眼动认证需要大量真实 VR 设备采集的注册/验证数据，但 VR 眼动实验成本高、参与者规模有限；实验室眼动仪（GazeBase，1000 Hz）数据充足，却与 VR 设备信号分布差异巨大——采样方式、校准误差 c_VR、设备噪声 n_VR 均不同，直接在实验室数据上训练认证器性能骤降（45 s：EER 12.8%、d'=1.76，对比真实 VR 的 5.8%、3.10）。已有简单重采样/参数化转换保真度不足。如何在保留眼动本身（saccade latency 与 dynamics）的前提下，把实验室测量级眼动转换为具备 VR 设备特性的信号，是眼动认证跨设备部署的核心难题。",
+    "method": "论文把 VR 记录建模为眼动加设备附加效应（式 1）：g_VR(t) = S[e](t) + c_VR(e(t)) + n_VR(t)，其中 e(t) 为眼动，S 为相机采样，c_VR 为校准误差，n_VR 为设备噪声；对 GazeBase 实验室记录保留眼动、仅替换被建模的设备效应。NDR 流水线含四部分：(a) 参数化设备模型（Steps 1-4）：相机短曝光采样、person-consistent VR profile（twin，孪生个人档案）、校准误差替换、参数化设备噪声，把 g_EL（1000 Hz）转为提案 u；(b) 频率锁定扩散渲染器：以成形噪声扰动 u，用预训练去噪器 D_θ 迭代精炼 24 步，每步后把 f*=7.8 Hz 以下频段重置回 u 的对应频段，输出 ĝ = u + r_θ，残差 r_θ 实质上只改写 f* 以上的噪声纹理；(c) 去噪器 D_θ：在 Set A 全部五个任务上预训练的扩散模型，以噪声水平 σ 与 twin 纹理特征 c 为条件给出干净估计；(d) 认证：EKYT 仅在转换记录上训练，在未见 GazeBaseVR 参与者（set B，248 条 RAN 记录）上测试。",
+    "experiments": "信号质量与真实性（Table 3，记录中位数，括号为对 Set B 的 KS 距离）：NDR 的 RMS-S2S 0.142° 对 Set B 0.147°（KS 0.06；参数化 0.16、原始 0.99）；signal type 0.788 对 0.770（KS 0.12）；accuracy 与 Set B 同水平（KS 0.06）；1-NN 真实性判别：原始数据 99.2%、参数化 73.4%、NDR 70.1%；噪声个体归因 person share（RMS-S2S）ICC：NDR 0.80、参数化 0.78、Set B 0.84。代价项：MAD precision 0.129° 仍高于 Set B 0.166°（fixation 内离散不足），数据丢失 1.8% 对 0.3%。认证（Table 4，set B RAN 任务，session 1 注册、session 2 验证）：45 s 下 NDR EER 5.9%、d'=3.21 [2.97, 3.48]、FRR@FAR 1e-4 64.4%、Rank-1 80.2%；真实 VR 训练为 5.8%、3.10、56.4%、86.1%；参数化 6.9%、2.95、79.2%、82.2%；原始数据 12.8%、1.76、96.0%、67.3%。5 s 下 NDR d'=1.47，真实 VR 1.86。",
+    "innovation": [
+      "提出测量引导的 VR 眼动信号转换框架：把 VR 记录分解为眼动加设备效应（式 1），只重建设备侧",
+      "参数化设备模型四步流程（相机采样、VR twin 个人档案、校准替换、参数化噪声）生成提案 u",
+      "频率锁定扩散渲染器：24 步精炼加 f*=7.8 Hz 以下频段锁定，保证粗眼动不变、只重织噪声纹理",
+      "首次证明纯转换数据训练的认证器可逼近真实 VR 数据训练水平（d' 3.21 对 3.10）"
+    ],
+    "limits": [
+      "转换信号 fixation 内精度仍偏高（MAD 0.129° 对 0.166°），渲染器无法添加慢漂移（锁定保住了提案的慢频段）",
+      "数据丢失率高于真实 VR（1.8% 对 0.3%），保留了源数据间隙",
+      "未显式建模设备滤波 H（曝光、估计与内部滤波造成的平滑/延迟），因缺乏同人双设备记录",
+      "仅在 GazeBase 到 GazeBaseVR 一对设备上验证，跨设备泛化未知"
+    ],
+    "relation": "库内感知与认知方向有 Gaze2HOI 4.00（眼动意图消歧）、GazeAgent 3.48（VLM 隐式眼动标定）、Ageing/Digital Literacy in VR 3.93 等眼动 × VR 工作，但均非眼动生物特征认证的数据域转换；本文与 GazeAgent 的标定主线互补（一个解决 VR 端标定，一个解决 VR 端训练数据稀缺），在 VR 眼动认证子方向属库内新增，与神经渲染/压缩家族无重叠。",
+    "repro": "论文未明确（digest 未提及代码/数据发布声明）；实验基于 GazeBase（1000 Hz 实验室眼动）与 GazeBaseVR 记录，认证器为 EKYT",
+    "action": "若团队有 VR 眼动认证或注视交互产品，可复刻「参数化设备模型 + 频率锁定扩散渲染器」两级转换，用存量实验室眼动库扩充 VR 训练数据；优先补齐 fixation 内慢漂移与数据丢失两个缺口，并采集同人双设备记录以建模设备滤波项。"
+  },
+  {
+    "id": "2610.30013",
+    "slug": "clunogs",
+    "venue": "arXiv 预印本（cs.CV，未见发表信息）",
+    "tags": ["3D 高斯泼溅", "语言 3DGS", "模型压缩", "向量量化", "统一优化", "3DGS compression"],
+    "conclusion": "ClunoGS 用 cardinality constraint 加向量量化对 Language 3DGS 做 RGB 与语义联合统一的稀疏化与量化：在 LERF/ScanNet-10 上以 0.25M 高斯、59.35 MB 存储取得 58.3 mIoU、83.0 Acc.、24.15 dB，较最小竞品 CF3 存储缩减超 5 倍且峰值显存最低，语义质量仅次 LangSplatV2（差距至多 1.6 mIoU），并给出收敛性证明。",
+    "problem": "Language 3DGS 把高维视觉-语言特征附加到高斯基元上，完整模型包含原始 RGB 属性加额外语义参数，存储与渲染开销巨大。标准 3DGS 压缩把 sparsification 与 quantization 顺序级联，语义学习与高斯选择解耦：RGB 驱动的稀疏化会先丢弃语义重要高斯，后续量化无法恢复；LangSplat 系列虽降低语义特征表示成本，却未压缩底层 RGB 高斯场景。如何在一次优化中同时完成语义监督下的高斯筛选与属性量化、兼顾光度保真与语义响应，是 Language 3DGS 走向部署的核心缺口。",
+    "method": "ClunoGS（Compact Language via Unified Optimization for 3D Gaussian Splatting）把 RGB 重建损失与语义监督结合，对高斯 opacity 施加 cardinality constraint（基数约束，直接控制保留高斯数），并对属性做向量量化（vector quantization），将语义学习、稀疏化、量化三者贯穿整个优化过程统一协调，而非先 RGB 稀疏化再量化的级联式流程；论文称之为 primal–dual co-adaptation（原语-对偶协同适配）。为公平对比，所有优化型压缩基线均嵌入标准 30k-iteration 训练、不增加额外迭代；导出时各方法用其原生解码器与尺度选择规则渲染语义图。附录 B 给出收敛性分析：在理论假设下构造增广拉格朗日（Augmented Lagrangian）与 Lyapunov 函数，依次证明 Lemma 1（模型参数更新充分下降）、Lemma 2（辅助更新非增）、Lemma 3（对偶上升与 Lyapunov 记账）、Lemma 4（单调性、可和性与残差消失）。",
+    "experiments": "Table 1a LERF（4 场景宏平均）：ClunoGS 58.3 mIoU / 83.0 Acc. / 24.15 dB / 59.35 MB / 4.60 GB；LangSplatV2 59.9 / 84.1 / 24.22 / 345.94 MB / 5.54 GB；CF3 54.2 / 74.2 / 24.22 / 327.91 MB / 8.29 GB；Occam's LGS 56.8 / 82.5 / 24.08 / 7663.23 MB / 17.83 GB。Table 1b ScanNet-10（10 场景宏平均）：ClunoGS 50.7 / 70.8 / 27.17 dB / 8.18 MB / 2.94 GB；LangSplatV2 51.3 / 71.2 / 27.24 / 42.90 MB / 3.57 GB；CF3 28.5 / 44.8 / 27.24 / 41.10 MB / 8.39 GB。对两基准最小竞品 CF3 存储缩减超 5 倍（LERF 327.91 到 59.35 MB，ScanNet 41.10 到 8.18 MB）且峰值显存最低；较 LangSplatV2 最大差距为 1.6 mIoU、1.1 Acc. 点、0.07 dB。Table 2 级联基线（同 RGB 3DGS 起点、20% 高斯保留、30k 迭代）：GaussianSpa + C3DGS 取得最高级联 PSNR 24.20 dB，但六条级联管线语义最多 54.4 mIoU / 77.9 Acc.；ClunoGS 在 0.25M 高斯、59.35 MB 下 mIoU 与 Acc. 分别提升 3.9 与 5.1 点，PSNR 差距不超过 0.05 dB。PCA 可视化显示级联压缩模糊语义边界甚至抹除语义区域，联合方法更好保持结构。",
+    "innovation": [
+      "首个对 Language 3DGS 做语义监督下统一联合稀疏化与向量量化的框架（cardinality constraint 直接约束高斯数量）",
+      "把语义学习、稀疏化、量化放在同一优化过程中协调，缓解级联压缩的语义退化",
+      "附录 B 给出完整收敛性证明（增广拉格朗日加 Lyapunov，Lemma 1-4）",
+      "部署成本大幅降低：较最小竞品 CF3 存储缩减超 5 倍且峰值显存最低"
+    ],
+    "limits": [
+      "质量仍非第一：所有语义与 RGB 指标均列第二，LangSplatV2 凭全尺度语义系数与字典保持领先",
+      "LERF 上 58.3 对 LangSplatV2 59.9 差 1.6 mIoU，ScanNet-10 上 50.7 对 51.3",
+      "直接在 Gaussians 上挂高维特征的存储与渲染开销仍在（论文引用说明该问题）",
+      "digest 未见其在新场景大规模数据上的泛化及训练时间开销讨论"
+    ],
+    "relation": "库内神经渲染的语义/压缩家族与此文直接相关：LangSplat 系列在库，本文以 LangSplatV2 为质量上界竞品；OIC-GS 4.37（率失真自适应原语选择）、COSA-GS/MoQSplat/TopoGS（3DGS 压缩）、Towards Practical Compression of 3DGS 3.85、Codec-Compatible Learned Compression 4.00 构成压缩主线——ClunoGS 将压缩对象从 RGB-only 扩展到 Language 3DGS 的联合稀疏化加量化，与该主线是改进与竞合关系；NormLift 4.12（3DGS 语义特征提升）提供互补视角。",
+    "repro": "论文未明确（digest 未提及代码发布）；评测基于公开基准 LERF（4 场景）与 ScanNet-10（10 场景，OpenGaussian 标签协议与 LUDVIG 划分）",
+    "action": "若在做语义 3DGS 的端侧或流式部署（可与库内 DELUGE/GenStream 管线衔接），建议复现 cardinality 加向量量化统一目标并验证 0.25M 高斯预算下的语义保持；重点关注附录 B 收敛假设在自有数据上的适用性，以及码本量化对开放词汇查询的影响。"
+  },
+  {
+    "id": "2610.29014",
+    "slug": "genxr-bench",
+    "venue": "arXiv 预印本（digest 未见发表信息）",
+    "tags": ["XR 开发", "编程智能体", "基准评测", "具身交互", "软件工程", "coding agent benchmark"],
+    "conclusion": "GenXR-Bench 是首个评测智能体生成 XR 软件功能与交互正确性的基准：5 名 XR 专家在 XR Blocks 中手工撰写 112 个任务，配套自动化测试框架 GenXR-Test；最强 claude-opus-5 仅 50.9% Pass@1，暴露前沿编码智能体在具身交互推理与异步 XR 运行时状态上的系统性短板，且普遍不会写有效测试。",
+    "problem": "XR 应用依赖具身交互（embodied interaction）与环境感知，运行时状态异步、物理 grounding 强。既有交互软件基准（SWE-bench 系、网页与游戏生成基准）或仅做仓库修复与确定性引擎测试，或依赖 LLM/VLM 评审，无法验证 XR 功能与交互正确性；此前的 XR 基准 VCXR60 也只检查模拟器能否无错误启动。缺乏对物理 grounded 交互应用的形式化评测手段，编码智能体的 XR 开发能力无法被可靠度量，改进方向也无从谈起。",
+    "method": "GenXR-Bench 覆盖三类 XR 工程工作流：SDK features、repair、app generation；112 个任务由 5 名 XR 专家在 XR Blocks 创作环境内手工撰写并策展。核心是配套的自动化 XR 测试框架 GenXR-Test：以专家编写的 interaction tests 加 runtime assertions 加 scoped VLM judge 三重机制判定任务成功，取代纯 LLM judge；应用生成任务额外用 VLM judge 的 10 条启发式评分均值作为 Design Score，与 Pass@1（所有必需测试通过才算成功）互补。系统对比表（Table 1）将 GenXR-Bench 与 SWE-bench、SWE-bench Multimodal、Interaction2Code、WebGen-Bench、GameDevBench、GameCraft-Bench、OpenGame-Bench、GameXpert-Bench、WorldCoder-Bench、ArtifactsBench、InteractScience、VCXR60 并排：GenXR-Bench 是唯一在交互生成中同时覆盖三项验证维度的基准（VCXR60 仅检查模拟器无错误启动）。效率维度报告 T/E（测试-编辑比）、Turns、Tokens 与 Cost；附录含 Runtime Verifier 实现、XR App Prompt 创作、XR 启发式、judge 对齐分析与失败分析。",
+    "experiments": "Pass@1 Overall：claude-opus-5 50.9% 居首，其后为 deepseek-v4.1-flash 46.4、gpt-5.6-sol 44.6、gemini-3.8-flash 42.9、gemini-3.7-flash 41.1、deepseek-v4-pro-0813 39.3、gemini-3.6-flash 31.2、gpt-5.6-luna 30.4、gemini-3.5-flash 29.5、gemini-3.1-pro-preview 23.2。claude-opus-5 分项：Design Score 85.7、Repair 29.2、Feature 47.8、App 3.86、T/E 0.44、74.1 turns、6.17M tokens、5.74 美元；Design 最高为 deepseek-v4.1-flash 与 gpt-5.6-sol（均 95.2），成本最低为 gpt-5.6-luna（0.36 美元）。失败分析：各模型 T/E 与总体成功不相关；模型倾向覆写未真正验证 XR 功能的单元测试、缺乏对真实运行时条件的预判；更愿意用运行时测试评估代码的模型更成功。任务需要连续具身交互推理与异步 XR 运行时状态时，前沿智能体仍普遍失败。",
+    "innovation": [
+      "首个面向 XR 交互开发的编程智能体基准（112 任务，覆盖 SDK 特性、修复、应用生成）",
+      "GenXR-Test：专家交互测试加运行时断言加 scoped VLM 评审的自动化 XR 测试框架，超越纯 LLM judge",
+      "揭示测试覆盖问题：模型不会写有效测试、倾向覆写单元测试，T/E 与成功率不相关",
+      "系统评测 10 个前沿模型（5 个 Gemini、2 个 GPT、Claude、2 个 DeepSeek），给出成本-质量权衡"
+    ],
+    "limits": [
+      "任务依赖 XR Blocks 单一创作环境，生态外推未知",
+      "claude-opus-5 仅在 medium reasoning 档评测（成本约束），更高推理档成绩可能更好",
+      "Design Score 由 VLM judge 打分，存在评审对齐风险（附录有对齐分析但 digest 未给结果）",
+      "112 任务规模相对有限，类别覆盖可能不均"
+    ],
+    "relation": "库内评估与数据集方向有 VISTA 3.70（多模态第一视角基准）、CapMem 3.64（第一视角情景记忆基准）、StreamEval 3.65、GaussianBench 3.57 与 SLAMSqueezeBench 3.57，均评感知/系统能力而非 XR 软件开发；GenXR-Bench 与 VISTA 互补（感知输入对软件产出），在 XR 交互开发智能体评测上属库内新增方向，可视为 SWE-bench 范式向具身 XR 的迁移；论文对比的 VCXR60 仅查模拟器无错误启动，GenXR-Bench 在验证深度上形成代差。",
+    "repro": "论文未明确（digest 未提及数据/代码发布细节；论文设 Reproducibility Statement，GenXR-Test 框架实现见附录 A）",
+    "action": "若研发空间计算应用或 XR 编码智能体，可直接借鉴 GenXR-Test 的「专家交互测试 + 运行时断言 + scoped VLM 评审」搭建内部评测；针对其揭示的失败模式，专项训练智能体编写运行时测试（而非覆写单元测试），并在异步 XR 状态推理上补数据。"
+  },
+  {
+    "id": "2610.29517",
+    "slug": "autophyx",
+    "venue": "arXiv 预印本（digest 未见发表信息）",
+    "tags": ["物理属性预测", "文本条件生成", "体素场", "3D 语义分割", "世界模型", "physical simulation"],
+    "conclusion": "AutoPhyX 是文本条件前馈框架，从多视图图像与文本提示单次前向预测 (E, ν, ρ) 体素物理场：以 volumetric feature radiance 将 OpenCLIP 2D 特征提升为抗自遮挡 3D 特征场并填充内部空腔，再由 FiLM 条件 3D U-Net 融合文本嵌入解码统一体素场；作者构建 Text2PhyX 数据集，在 Text2PhyX 与真实 ABO-500 上显著超越全部基线。",
+    "problem": "物理仿真就绪的 3D 资产需要稠密材料参数（Young's modulus E、Poisson's ratio ν、密度 ρ），手工标注不可扩展。已有 2D 到 3D 特征提升方法（如 VoMP）用朴素多视图平均，忽略可见性导致严重特征污染（前景叶子把特征投到被遮挡树干上）；而仿真需要整个物体内部的体属性，内部不可观测区域如何填充是第二重难题；外观相似但材质不同的视觉歧义还需语言消歧。缺乏端到端、可扩展的文本驱动物理属性标注框架。",
+    "method": "两阶段前馈框架。阶段一（Sec 3.1）3D 特征提取：把 2D OpenCLIP 特征视为 feature radiance，在预训练 RGB NeRF 的固定密度场 σ 上，用端到端可微体积渲染优化连续 3D 特征场 Φ: R³→Rᴰ，渲染期望 F̂(r)=∫_{t_n}^{t_f} T(t)σ(r(t))Φ(r(t))dt，其中 T(t)=exp(−∫_{t_n}^{t} σ(r(s))ds) 为累积透射率，T(t) 在表面后归零，天然抑制被遮挡区域的错误投影；再以 hierarchical ray-cast（even-odd rule）填充不可观测内部空腔，得到实体物理体积。阶段二（Sec 3.2）文本条件预测：Feature Projector 将 3D 视觉特征与文本嵌入融合，FiLM 条件 3D U-Net（Conditioning Pathway、FiLM-Integrated Residual Blocks、Multi-Scale Modulation）通过 cross-modal modulation 消解视觉歧义，单次前向解码出统一体素场 (E, ν, ρ)，兼容 mesh、point cloud 与 Gaussian Splatting。数据集 Text2PhyX 由 VLM 驱动自动流水线生成：Semantic Part Segmentation（OpenCLIP 驱动的 3D 语义分割加开放词汇查询）与 Text-Guided Property Assignment。",
+    "experiments": "Table 1（Text2PhyX 测试集）定量对比显示：AutoPhyX（尤其配 OpenCLIP 特征时）在渲染指标（PSNR、SSIM、LPIPS）与物理指标（Avg. Phys. err、log E err、ν err、log ρ err）上均显著优于所有基线；表中短横线表示方法无法预测对应物理参数。物理精度以 MSE 度量，E 与 ρ 取 log10 空间以应对跨材料量级差异（原始绝对误差会被硬材料主导、低估软材料）；视觉保真用预测属性驱动 PhysGaussian（GS）与 Isaac Sim（mesh）仿真渲染后与 ground truth 比对。泛化测试：另用真实 OOD 集 ABO-500（500 个真实物体的密度与质量；因缺详细物理描述，仅用模板文本 This is a [object name].）。补充材料含人工标注文本泛化、无条件跨数据集验证与分辨率讨论。digest 未抽取 Table 1 具体数值，故不列数字。",
+    "innovation": [
+      "将 2D 开放词汇特征以 feature radiance 形式经可微体积渲染提升为 3D 特征场，用透射率天然抑制自遮挡污染",
+      "hierarchical ray-cast（even-odd rule）填充不可观测内部，实现仿真就绪的实体体素属性",
+      "FiLM 条件 3D U-Net 做文本-视觉跨模态调制，单次前向输出统一 (E, ν, ρ) 体素场",
+      "VLM 驱动的 Text2PhyX 自动生成流水线与大规模多部件 3D 物理数据集"
+    ],
+    "limits": [
+      "依赖预训练 RGB NeRF 密度场与多视图输入，无多视图的资产受限",
+      "内部填充为启发式（ray-cast/even-odd），复杂空心或多孔结构可能不准",
+      "预测精度依赖文本描述质量（ABO-500 上仅用简单模板）",
+      "digest 未给出具体数值幅度、推理速度与分辨率上限（见附录 Resolution Discussion）"
+    ],
+    "relation": "库内世界模型与仿真方向有 SnapPhysics 4.12（单视图物理感知场景图）、Astronex-World 4.32、OverSeer 3.92、GaussianBench 3.57（物理保真度评估）：AutoPhyX 与 SnapPhysics 同属从视觉/语言估计物理属性的子问题，但走文本条件体素场路线，与其互补竞合；其 (E, ν, ρ) 体素场输出可直接服务 Astronex-World/OverSeer 类世界模型的仿真资产准备，并衔接 GaussianBench 的物理保真评测；库内未见同架构的文本条件物理属性生成工作。",
+    "repro": "论文未明确（digest 未提及代码发布）；作者构建 Text2PhyX 数据集，另用公开 ABO-500 作 OOD 测试；仿真渲染基于 PhysGaussian 与 Isaac Sim",
+    "action": "若在做具身仿真或世界模型的资产物理化管线，可将 AutoPhyX 作为「多视图加文本到 (E, ν, ρ) 体素场」的前馈标注器接入，替代人工物理标注；在其 Text2PhyX 生成流水线上扩充自有品类，并用 PhysGaussian/Isaac Sim 闭环验证预测属性对操作动力学的影响。"
+  },
+  {
+    "id": "2610.07217",
+    "slug": "robocap",
+    "venue": "arXiv 预印本（cs.RO，v2 再公告）",
+    "tags": ["第一视角数据", "机器人学习", "SLAM", "在线自标定", "手部跟踪", "egocentric platform"],
+    "conclusion": "RoboCap 是 250g 六目双 IMU 第一视角数据捕获平台，配套在线自标定、FFS 深度与多视角手部跟踪堆栈；在 LaMAria 城市场景基准上位列第二、每类超出最佳其他提交 26-46 分，控制点 5 m 内轨迹占比 96-100%（最佳其他 37-73%），并在公共基准上保持竞争力。",
+    "problem": "第一视角数据是机器人学习最具可扩展性的数据源之一，但达到策略学习所需的精度与规模，一直依赖为 3D 估计专门定制的硬件与算法。厘米级精度要求匹配器与设备标定紧密对齐（0.65 m 处 1 像素视差约对应 1 cm 深度，立体误差按 z²/(fb) 增长），而设备会因机械与热应力漂移出厂标定（本文机队相对旋转漂移 0.2-1.1°，中位约 0.5°，引入 1-5 px 极线残差与 1-2 cm 深度偏差）。轻量可穿戴、免标定靶、免人工干预且感知精度达竞赛级的第一视角采集平台仍然缺失。",
+    "method": "硬件为 250g 六目双 IMU 头戴采集平台；3D 技术栈目标是把人类动作重定向到统一动作空间所需的 3D end-effector 位姿及其语境几何，在米制尺度、一致世界坐标系下恢复。在线自标定（Sec 4.1）：每个录制会话仅用自然对应点估计一次残差旋转，免标定靶、免人工干预；左前相机为锚固定不动，每对相机以自身对应点独立拟合 Sampson epipolar distance，仅当改进 held-out 残差且偏离该设备出厂值约 1° 以内才接受修正。深度（Sec 4.3）：Fast-FoundationStereo（FFS，自 FoundationStereo 蒸馏的轻量模型）在双立体对估计米制深度。手部跟踪（Sec 4.4）：多视角图像融合为单手 mesh 的模型，预训练语料带来对模糊、视觉歧义、复杂姿态、手套、遮挡、光照的鲁棒性。",
+    "experiments": "LaMAria（63 段测试、共 27.5 h、76 km，单段最长 48 min / 2.2 km；设 Low light 与 Moving 两类失败模式；两次提交，第二次加入 divergence reset 并改动三条序列）：RoboCap 总评 62.3 分（Short 80.2 / Medium 61.6 / Long 59.9 / Low light 67.7 / Moving 41.9），最佳其他提交 24.2 分（34.2 / 29.3 / 16.8 / 25.4 / 15.5），每类超出 26-46 分；pose recall @5m 为 96-100%（表中 99.9 / 96.2 / 99.3 / 99.9），最佳其他为 37-73%；Aria 自家 SLAM 参考值 75.9 分（90.7 / 78.5 / 70.9 / 84.2 / 55.0，因是基准 ground-truth 初始化方案不计排名）。公共基准：TUM-VI rooms、Monado、Aria 数据集上与最强已发表系统持平或更优，EuRoC 接近 OKVIS2；约 500°/s 以上快转击败 patch tracker（Monado 3 次失败中 2 次出自拳击游戏序列），无特征长厅回环召回偏弱（20 条 TUM-VI 中位误差 8.1 cm）。深度：UnrealEgo2 上 FFS AbsRel 0.016（0.3-1.0 m 双目可见表面，2 cm 量化极限，与 FS 持平）；在线标定使可达范围内深度误差减半。手部跟踪：在 UmeTrack、HOT3D、SHOW3D、DexYCB、OakInk、HO3D 等第一视角与多视角基准评测。",
+    "innovation": [
+      "250g 六目双 IMU 可穿戴第一视角采集平台加完整 3D 感知堆栈（SLAM、深度、手部跟踪）",
+      "免标定靶、免人工干预的每会话在线自标定（自然对应点加 Sampson 极线距离加出厂值约 1° 门限）",
+      "实证标定误差主导深度性能：在线标定使 FFS 可达范围深度误差减半",
+      "LaMAria 第二名且每类超最佳其他提交 26-46 分，证明轻量硬件可达竞赛级 SLAM"
+    ],
+    "limits": [
+      "约 500°/s 以上极快旋转下 patch tracker 失效（2/3 Monado 失败、快 VECctor 序列误差大）",
+      "无特征长厅回环召回弱于长特征跟踪方案（20 条 TUM-VI 中位 8.1 cm）",
+      "仍落后于 Aria 自家 SLAM（62.3 对 75.9），后者与设备协同开发且用于基准 ground-truth 初始化",
+      "digest 未见手部跟踪的量化指标与硬件成本、量产信息"
+    ],
+    "relation": "库内系统与平台方向有 DELUGE 4.65（几何流式交换）、GenStream 3.94（语义流式框架）、RoboFind 4.15 与 UMI-Bridge 3.80（人-机动作空间）：DELUGE/GenStream 解决采集后流式传输与交换，RoboCap 解决采集端硬件与感知精度，二者互补可成采集-传输闭环；其 3D 栈输出米制尺度的 3D end-effector 位姿，与 UMI-Bridge 的统一动作空间天然衔接；库内未见同型 250g 六目采集平台，属新增系统条目。",
+    "repro": "论文未明确（digest 未提及代码/数据发布声明）；硬件为自研平台；评测基于公开基准 LaMAria、TUM-VI、Monado、EuRoC、Aria、UnrealEgo2、UmeTrack/HOT3D/SHOW3D、DexYCB/OakInk/HO3D",
+    "action": "若做第一视角遥操作数据采集或人形/机械手策略学习，可将 RoboCap 作为采集硬件选型参考，重点复刻其免靶每会话在线自标定与 FFS 蒸馏深度方案；与库内 UMI-Bridge 动作空间、DELUGE/GenStream 流式框架串联成采集-标定-重定向-传输管线。"
+  }
+]

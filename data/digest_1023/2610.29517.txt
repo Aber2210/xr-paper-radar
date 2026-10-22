@@ -1,0 +1,66 @@
+【摘要】
+
+【方法】
+3.1 3D Feature Extraction from 2D Images
+3.2 Text-conditioned Physical Parameter Prediction
+3.3 Dataset Generation
+Semantic Part Segmentation.
+Text-Guided Property Assignment.  Figure 2 : Overview of our pipeline. Given a 3D object, our framework first decomposes it into semantically distinct components via multi-view feature rendering. Then, a text-conditioned neural network resolves visual ambiguity through cross-modal modulation, predicting volumetric physical properties in a single forward pass. The predicted properties are formulated as a voxel field, ensuring compatibility with diverse 3D representations, e.g . , meshes, point clouds, and Gaussian Splatting, for physics simulation.
+Given a 3D object represented with multi-view images and a text prompt, our goal is to predict a dense, physics-ready volumetric field of material parameters, specifically Young’s modulus E E , Poisson’s ratio ν \nu , and density ρ \rho . To achieve this, we propose AutoPhyX that operates in two primary stages. First, it extracts 2D OpenCLIP features from multi-view images and lifts them into a dense 3D OpenCLIP voxel grid, explicitly handling self-occlusion via volume rendering and filling the unobservable interior regions to ensure a solid physical volume (  Sec.   3.1 ). Second, we fuse these 3D visual features with textual embeddings to resolve inherent visual ambiguities, directly decoding this cross-modal representation into a unified voxel field of precise physical parameters ready for downstream simulation ( Sec.   3.2 ). We additionally generate a large-scale dataset to facilitate training and testing, as detailed in Sec.   3.3 .
+3.1 3D Feature Extraction from 2D Images
+Recent methods like VoMP  [ 13 ] lift 2D features to 3D via naive multi-view averaging. However, ignoring visibility causes severe feature contamination, such as foreground leaves erroneously projecting features onto an occluded trunk, as shown in  Figure   3 . To address these geometric ambiguities, we shift from heuristic projection to a volumetric rendering framework. We treat the 2D OpenCLIP  [ 18 ] features as “feature radiance” and optimize a continuous 3D feature field Φ : ℝ 3 → ℝ D \Phi:\mathbb{R}^{3}\to\mathbb{R}^{D} via end-to-end differentiable rendering. Using a fixed density field σ \sigma from a pre-trained RGB nerf ( nerf ), we render the expected 2D feature F ^ ​ ( 𝐫 ) \hat{F}(\mathbf{r}) along a camera ray 𝐫 ⁡ ( t ) = 𝐨 + t ​ 𝐝 \mathbf{r}(t)=\mathbf{o}+t\mathbf{d} as
+F ^ ​ ( 𝐫 ) = ∫ t n t f T ⁡ ( t ) ​ σ ​ ( 𝐫 ⁡ ( t ) ) ​ Φ ​ ( 𝐫 ⁡ ( t ) ) ​ 𝑑 t , \hat{F}(\mathbf{r})=\int_{t_{n}}^{t_{f}}T(t)\sigma(\mathbf{r}(t))\Phi(\mathbf{r}(t))dt,
+where t n t_{n} and t f t_{f} denote the near and far bounds of the ray, and T ( t ) = exp ( − ∫ t n t σ ( 𝐫 ( s ) ) d s ) T(t)=\exp(-\int_{t_{n}}^{t}\sigma(\mathbf{r}(s))ds) represents the accumulated transmittance. Here, T ⁡ ( t ) T(t) naturally suppresses occluded regions by dropping to zero behind surfaces, ensuring that the 3D feature field Φ \Phi is supervised from viewpoints where the surfaces are truly visible.
+While volume rendering captures surface features, physics-based simulations inherently require volumetric properties, such as ( E , ν , ρ ) (E,\nu,\rho) , defined throughout the object’s interior to accurately model stress propagation. To bridge this gap, we fill unobservable internal voids using a hierarchical ray-cast
+
+【实验】
+Dataset and Settings. We conduct a comprehensive evaluation of AutoPhyX to validate its ability to recover accurate physical constants from visual and linguistic inputs. Our experiments focus on two primary objectives: (1) Quantitative Analysis , where we measure the precision of predicted physics properties on our dataset Text2PhyX and a real-world dataset ABO-500; and (2) Qualitative Simulation , where we demonstrate the practical utility of our framework by applying the predicted physics properties to realistic physics-based simulations, containing both gs and mesh. Through these evaluations, we show that AutoPhyX effectively bridges the gap between high-level semantic descriptions and low-level physical dynamics in an end-to-end manner.
+Dataset and Settings.
+We evaluate text-conditioned physical parameter prediction on the test set of Text2PhyX , detailed in Sec.   3.3 . We measure the discrepancy between the estimated and ground-truth physical parameters. Furthermore, we assess the visual and dynamic quality of renderings from simulations driven by the predicted properties and the ground-truth.
+Furthermore, to rigorously assess real-world generalization, we incorporate the ABO-500 dataset as an additional out-of-
+distribution test set. The ABO-500 dataset contains the density and mass of 500 real-world objects, which allows us to
+evaluate the discrepancy between our predicted physical properties and the real-world ground truth. Since this dataset lacks
+detailed physical descriptions, we solely use text prompts following the simple template: “This is a [object name].”
+We also include additional human-annotated and cross-dataset evaluations in Supplementary Material , where natural language descriptions are
+provided by annotators after observing simulated object behavior rather than generated by our data pipeline.
+Table 1 : Quantitative comparison on Text2PhyX. We evaluate both rendering quality (PSNR, SSIM, LPIPS) and physical property prediction accuracy (Avg. Phys. err, log ⁡ E \log E err, ν \nu err, log ⁡ ρ \log\rho err). “ − - ” indicates that the method cannot predict the corresponding physical parameter. Bold and underline denote the best and second-best results, respectively. Our method, particularly when equipped with OpenCLIP, significantly outperforms all baselines across both rendering and physics metrics. Metrics.
+Quantitative Result
+Runtime.
+Qualitative Results Metrics.
+In Text2PhyX , we evaluate using physical and visual metrics. For physical accuracy, we compute the Mean Squared Error (MSE) for Young’s modulus E E , Poisson’s ratio ν \nu , and density ρ \rho . To handle large magnitude variations, E E and ρ \rho are evaluated in log-space ( log 10 \log_{10} ). This is especially important for Young’s modulus, which spans many orders of magnitude across materials; raw absolute error would be dominated by stiff materials and would underweight soft materials where small absolute changes can strongly alter dynamics. For visual fidelity, we simulate and render images with the predicted properties using PhysGaussian  [ 49 ]
+for gs , and Isaac Sim  [ 29 ] for meshes. The rendered frames are then evaluated against ground truth usin
+
+【结论/局限】
+and Future Work
+References
+0.A Text2PhyX Dataset Details
+0.A.1 Overview
+0.A.2 Gallery with Physics Property
+Multi-View Renderings and Semantic Segmentation.
+Voxel-Wise Physical Property Heatmaps.
+0.A.3 OpenCLIP-Driven 3D Semantic Segmentation
+Overview
+2D Feature Extraction
+3D Feature Distillation via Volumetric Rendering
+Internal Volume Filling via Even-Odd Rule
+Open-Vocabulary Querying
+0.A.4 labeling
+0.B Additional Evaluation and Analysis
+0.B.1 Human-Annotated Text Generalization
+0.B.2 Unconditional Cross-Dataset Validation
+0.B.3 Resolution Discussion
+0.C AutoPhyX Architecture
+0.C.1 Overview
+0.C.2 Feature Projector
+0.C.3 3D UNet Architecture
+0.C.4 FiLM-Conditioned 3D U-Net Architecture
+Conditioning Pathway
+FiLM-Integrated Residual Blocks
+Multi-Scale Modulation
+0.C.5 Comparison with Other Architectures and Future Work
+We presented AutoPhyX , a text-conditioned feed-forward framework that automates dense physical property assignment for
+diverse 3D assets. Our method uses a unified voxel field representation to bridge high-level linguistic semantics with low-
+level physical dynamics in a scalable manner. To support this cross-modal paradigm, we designed an automated, vlm -driven
+generation pipeline and constructed Text2PhyX , a large-scale, multi-part 3D physics dataset for training and testing across
+diverse object categories.
+Extensive experiments validate AutoPhyX . Quantitati

@@ -1,0 +1,242 @@
+【摘要】
+
+【方法】
+Quality ↑ \uparrow
+Efficiency ↓ \downarrow
+mIoU
+Acc.
+PSNR
+Storage
+(MB)
+Peak Mem.
+(GB)
+Occam’s LGS
+56.8
+82.5
+24.08
+7663.23
+17.83
+Dr. Splat
+43.3
+73.3
+24.22
+467.85
+6.72
+LangSplatV2
+59.9
+84.1
+24.22
+345.94
+5.54
+CCL-LGS
+57.8
+81.0
+24.11
+735.93
+5.21
+GAGS
+53.9
+75.7
+24.22
+399.06
+8.96
+CF3
+54.2
+74.2
+24.22
+327.91
+8.29
+ClunoGS
+58.3
+83.0
+24.15
+59.35
+4.60
+(b) ScanNet-10 Quality ↑ \uparrow
+Efficiency ↓ \downarrow
+mIoU
+Acc.
+PSNR
+Storage
+(MB)
+Peak Mem.
+(GB)
+Occam’s LGS
+19.8
+36.0
+20.73
+595.00
+3.75
+Dr. Splat
+45.5
+64.0
+27.24
+60.09
+3.18
+LangSplatV2
+51.3
+71.2
+27.24
+42.90
+3.57
+CCL-LGS
+25.4
+40.3
+27.10
+85.46
+5.18
+GAGS
+43.4
+61.8
+27.24
+49.58
+13.09
+CF3
+28.5
+44.8
+27.24
+41.10
+8.39
+ClunoGS
+50.7
+70.8
+27.17
+8.18
+2.94
+Table 1 : Overall performance.
+(a) LERF four-scene macro averages, where Acc. denotes localization
+accuracy. (b) ScanNet-10 ten-scene macro averages, where Acc. denotes mean
+class accuracy.   Ay First  ,   Ay Second  , and
+Ay Third  .
+Figure 3 : PCA visualizations of rendered semantic maps.
+Under the same 20% Gaussian-retention budget, sequential compression
+blurs semantic boundaries and can remove semantic regions, whereas our
+joint method better preserves their structure.
+5.2 Overall Performance
+Table  1 evaluates whether aggressive compression can preserve
+both semantic prediction accuracy and RGB rendering quality. Across LERF and
+ScanNet-10,
+we compare deployable systems from two Language 3DGS paradigms:
+direct-lifting methods and render-supervised semantic fields. Semantic metrics
+and PSNR measure quality, while storage and peak memory measure deployment cost.
+Compared with CF3, the smallest competitor on both benchmarks, ClunoGS achieves
+over 5 × 5\times storage reduction while also attaining the lowest peak memory.
+It nevertheless ranks second in every semantic and RGB quality metric; its
+maximum gaps to LangSplatV2 are only 1.6 mIoU points, 1.1 accuracy points, and
+0.07 dB PSNR.
+The same trend on both datasets shows that this advantage is not
+benchmark-specific.
+LangSplatV2 remains the quality leader because its full model retains detailed
+semantic coefficients and dictionaries at all three scales. While
+direct-lifting methods are designed for efficient querying, both Occam’s LGS
+and Dr. Splat trail this render-supervised model in semantic quality. Occam’s
+LGS is also storage-intensive on both datasets and incurs the highest peak
+memory on LERF.
+5.3 Sequential Compression Baselines
+Table  2 evaluates whether sequential
+sparsification and quantization can match our joint formulation. All baselines
+start from the same RGB 3DGS and retain 20% of the Gaussians. For fairness,
+optimization-based methods are embedded into the standard 30k-iteration
+training without extra iterations. We pair three representative sparsifiers
+(heuristic Opacity Top- K K , importance-based PUP 3D-GS, and optimization-based
+GaussianSpa) with CompGS or C3DGS, yielding six pipelines.
+GaussianSpa + C3DGS achieves the highest sequential-baseline PSNR of 24.20 dB,
+but all six pipelines degrade semantics, reaching at best 54.4 mIoU and 77.9
+Acc. At 0.25M Gaussians and 59.35 MB, ClunoGS reaches 58.3 mIoU, 83.0 Acc.,
+and 24.15 dB, improving the strongest sequential mIoU and Acc. by 3.9 and 5.1
+points while remaining within 0.05 dB of the highest sequential PSNR. The PCA maps
+in Figure  3 show that sequential compression
+blurs boundaries and can remove semantic regions, whereas ours bette
+
+【实验】
+5.1 Settings
+Benchmarks, metrics, and baselines. 5.1 Settings
+Benchmarks, metrics, and baselines.
+We evaluate on four LERF scenes  [ 17 ] and
+ScanNet-10  [ 9 ] , reporting semantic accuracy, RGB PSNR,
+storage, and peak memory. Language baselines cover direct-lifting methods
+(Occam’s LGS and Dr. Splat  [ 7 , 18 ] ) and
+render-supervised semantic fields (LangSplatV2, CCL-LGS, GAGS, and
+CF3  [ 22 , 33 , 29 , 20 ] ). Compression
+baselines pair three Gaussian sparsifiers (opacity Top- K K , PUP 3D-GS, and
+GaussianSpa) with CompGS or C3DGS for attribute
+quantization  [ 13 , 40 , 25 , 26 ] .
+On LERF , all query relevance maps use the same post-processing and a
+fixed 0.4 threshold. mIoU averages query-mask IoU, while localization Acc.
+checks whether the peak response lies inside a ground-truth box. On
+ScanNet-10 , we follow OpenGaussian’s label protocol and the ten-scene
+split used by LUDVIG  [ 37 , 23 ] . Each method
+uses its native decoder and scale-selection rule to render ten class-score maps.
+We bilinearly sample these scores at projected ScanNet points when the projected
+and sensor depths differ by at most 5 cm, average them over valid views, and
+take the pointwise argmax. Evaluation includes points observed in at least one
+view after applying the same 0.1 activated-opacity threshold to each RGB 3DGS.
+Per-scene
+mIoU and mAcc average class IoU and recall over the ground-truth classes present
+in that scene, followed by an unweighted average over the ten scenes. [ 16 , 41 , 30 ] .
+Directly attaching high-dimensional vision-language features to individual
+Gaussians incurs substantial storage and rendering
+overhead  [ 41 , 30 ] . LangSplat mitigates this
+problem using a scene-specific low-dimensional autoencoder, while LangSplatV2
+further replaces the heavyweight decoder with sparse per-Gaussian
+coefficients over shared dictionaries, enabling efficient high-dimensional
+feature splatting  [ 30 , 22 ] . These advances
+reduce the cost of semantic feature representation and inference, but do not
+target compression of the underlying RGB Gaussian scene. Consequently, a
+complete Language 3DGS model still contains the original 3DGS attributes
+together with additional semantic parameters. Its compression must therefore
+preserve both photometric fidelity and semantic responses.
+Standard 3DGS compression often combines sparsification or
+pruning  [ 38 , 1 , 40 , 13 , 12 ]
+with
+quantization  [ 24 , 21 , 25 ] .
+Applying them sequentially decouples semantic learning from Gaussian
+selection, so RGB-driven sparsification can discard semantically important
+Gaussians that subsequent stages cannot recover. Figure  1
+illustrates this failure using LangSplatV2  [ 22 ] ,
+GaussianSpa, and CompGS: semantic representations degrade whether semantic
+learning occurs before or after RGB-driven Gaussian sparsification. Our
+unified formulation instead coordinates semantic learning, sparsification,
+and quantization throughout optimization.
+To address this gap, we propose ClunoGS ( C ompact L anguage
+via Un ified O ptimization for 3D G aussian
+S platting). The framework combines RGB reconstruction and semantic
+supervision with a cardinality constraint on Gaussian opacities and vecto
+
+【结论/局限】
+References
+A Implementation Details
+Training schedule.
+Representation and export.
+B Convergence Analysis and Proof
+B.1 Preliminaries
+B.2 Analysis and Proof
+Theoretical Assumptions.
+Augmented Lagrangian and Lyapunov Function.
+Lemma 1 (Model-parameter update yields sufficient decrease).
+Lemma 2 (Auxiliary updates are non-increasing).
+Lemma 3 (Dual ascent and Lyapunov accounting).
+Lemma 4 (Monotonicity, summability, and vanishing residuals).
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.30013v1 [cs.CV] 21 Oct 2026
+ClunoGS : Compact Language 3D Gaussian Splatting via Unified Optimization
+Jian Xu
+Yi Li
+Ying Huang
+Siyi Wu
+Affiliation:  Bingzhe Li
+Yuede Ji
+Miao Yin
+Email:  {jian.xu,ying.huang,siyi.wu,yuede.ji,miao.yin}@uta.edu
+Email:  {yi.li3,bingzhe.li}@utdallas.edu We present ClunoGS , a unified framework that jointly sparsifies and quantizes
+Language 3DGS under RGB and semantic supervision. Across LERF and ScanNet-10,
+it substantially reduces storage and peak memory while retaining competitive
+RGB and semantic quality. Controlled comparisons show that semantics-aware
+selection and primal–dual co-adaptation mitigate the semantic degradation of
+sequential compression.
+References
+[1]
+Muhammad Salman Ali, Maryam Qamar, Sung-Ho Bae, and Enzo Tartaglione.
+Trimming the fat: Efficient compression of 3d gaussian splats through
+pruning.
+arXiv preprint arXiv:2406.18214 , 2024.

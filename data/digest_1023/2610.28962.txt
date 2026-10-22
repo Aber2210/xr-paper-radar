@@ -1,0 +1,59 @@
+【摘要】
+
+【方法】
+3.1 Render-and-Compare Pose Refinement
+3.2 Occlusion-Robust Mask Tracking
+3.3 SE(3) Factor Graph with Multi-Hypothesis Selection
+3.4 Global Lighting Optimization
+3.5 Failure-Aware Self-Recovery Figure 2: An Overview of the RoPT pipeline. The system integrates a mask-guided visual perception frontend with a continuous kinematic factor graph that regularizes updates and generates multi-hypothesis pose forecasts. To ensure robustness against rapid dynamics, the pipeline routes refined candidates through a pose scoring module. If catastrophic tracking loss occurs, the failure-aware self-recovery module synthesizes a virtual CAD rendering and establishes 3D-2D correspondences with the incoming RGB frame, seamlessly healing the trajectory.
+We present RoPT, a robust framework designed for continuous 6-DoF object pose tracking in monocular RGB-D video sequences.
+Serving as a critical perception module for robotic manipulation, our pipeline explicitly prioritizes robustness against agile, high-acceleration inter-frame motions.
+This architectural focus directly addresses a fundamental vulnerability in existing trackers, which frequently suffer from catastrophic tracking loss during dynamic robot-object interactions.
+Given an input RGB-D video sequence 𝒱 = { I t } t = 1 N \mathcal{V}=\{I_{t}\}_{t=1}^{N} and a known object 3D CAD model ℳ \mathcal{M} , our objective is to sequentially estimate the trajectory of poses 𝒯 = { P t } t = 1 N \mathcal{T}=\{P_{t}\}_{t=1}^{N} .
+Each pose P t ∈ SE ​ ( 3 ) P_{t}\in\text{SE}(3) represents the rigid transformation from the object-centric coordinate frame to the camera coordinate frame.
+The system must infer these transformations in a sequential, online manner while simultaneously enforcing both temporal kinematics and geometric consistency.
+The RoPT framework comprises five components that function in tandem to ensure tracking stability.
+First, a baseline, render-and-compare pose refinement module iteratively aligns the CAD model to the current observation, starting from the previous frame’s estimate.
+Second, a mask tracking module provides robust 2D segmentation that remains reliable under occlusion and fast motion, constraining the refinement search space.
+Third, a kinematic factor graph maintains the object’s SE(3) state with a constant-velocity prior, enabling multi-hypothesis generation and best-pose selection via a spread-gate scorer.
+Fourth, a global lighting optimization fits a spherical harmonics appearance model to bridge the domain gap between synthetic CAD rendering and real-world imagery.
+Fifth, a self-recovery module detects tracking failures and triggers feature-based re-localization to re-anchor the tracker before drift becomes irrecoverable.
+These five components form a closed loop to deliver robust 6-DoF tracking across challenging conditions.
+Fig.  2 shows an overview of RoPT.
+3.1 Render-and-Compare Pose Refinement
+Synthesizing multi-view 2D RGB and depth images from a 3D CAD model, followed by the iterative minimization of visual and geometric alignment errors against real-world observations, represents the dominant paradigm in 6-DoF object pose estimation and tracking.
+Within this category, FoundationPose  [ 26 ] establishes the current SOTA for tracking.
+While this framework exhibits high precision under slow, quasi-static object motions, its tracking accuracy degrades severely under standar
+
+【实验】
+4.1 Benchmark Comparison
+4.2 Ablation Study
+4.3 Real-World Robotic Experiments Mean 2.1 mm translation and 1.4 ∘ 1.4^{\circ} rotation per frame (Original Framerate).
+
+【结论/局限】
+ In this work, we presented RoPT, a resilient, closed-loop 6-DoF object pose tracking framework engineered to withstand rapid, high-acceleration dynamics in embodied systems. By tightly integrating visual perception with a continuous kinematic factor graph and a failure-aware active self-recovery module, RoPT systematically bridges the gap between fragile open-loop monocular pipelines and the rigorous demands of real-world robotic manipulation. .
+References
+A Implementation Details
+B Experiments on YCB-Video Benchmark
+C Real-World Robotic Demonstrations
+C.1 New 6-DoF Pose Tracking Benchmark
+C.2 Failure-Aware Self-Recovery Evaluation
+License: CC BY 4.0
+arXiv:2610.28962v1 [cs.CV] 20 Oct 2026
+RoPT: Robust 6DoF Object Pose Tracking in Video
+Yongqing Liang
+Yuzhong Chen
+Sihang Li
+Affiliation:  New York University
+Email:  yongqing.liang@nyu.edu
+Junsuk Kim
+Chase Kidder
+Hui-ping Wang
+Yunzhi Xu
+Raihan Haque
+Yubiao Zhang
+Affiliation:  General Motors
+Chen Feng *
+Affiliation:  New York University
+Email:  cfeng@nyu.edu .
+While RoPT demonstrates strong resilience under dynamic conditions, its architecture relies on several limiting assumptions and exhibits specific failure modes. The system fundamentally assumes the availability of an exact geometric CAD prior and relies on RGB-D sensing, limiting its applicability on highly deformable objects, transparent materials, or specular surfaces. In 

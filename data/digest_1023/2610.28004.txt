@@ -1,0 +1,83 @@
+【摘要】
+
+【方法】
+Camera Parameters
+Performance
+Coded Mask
+Focus Dist.
+f-num
+Focal Length
+Sensor Size
+Pixel Size
+All-in-Focus
+Depth
+M M
+focus ( m m )
+f f
+focal (mm)
+w × h w\times h (mm)
+p p ( μ \mu m)
+PSNR (dB) ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+RMSE (m) ↓ \downarrow
+MAE (m) ↓ \downarrow
+log 10 \text{log}_{10} ↓ \downarrow
+δ < 1.25 \delta<1.25 ↑ \uparrow
+Noise × \times 100
+Fixed Cam. + Phase + Ikoma et al.  [ 16 ]
+∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+1.70 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+1.8 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+14.29 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+14.47 × \times 9.94 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+9.00 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+22.587
+0.669
+0.308
+0.131
+0.080
+0.102
+0.910
+Fixed Cam. + Amp. + Ikoma et al.  [ 16 ]
+∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+1.70 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+1.8 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+14.29 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}}
+14.47 × \times 9.94 ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mat
+
+【实验】
+4.1 Implementations
+4.2 Monocular Camera
+4.3 Stereo Camera
+4.4 Ablation Study
+4.5 Real-World Validation We validate our method on two close-range design scenarios for depth-from-defocus and AiF reconstruction, focusing on short range because the defocus cue is less informative further out. The monocular case targets robotic grasping, recovering depth from a single camera over a confined workspace. The stereo case targets macro photography, where a zoomed-in view with a shallow depth of field (DoF) produces strong defocus blur; here a stereo pair adds complementary photometric and geometric depth cues.
+4.1 Implementations
+Dataset and Environment
+We select close-range scenes from MipNeRF 360  [ 2 ] and LLFF  [ 28 ] : 6 scenes ( leaves , flower , fortress , orchids , bonsai , room ) for the monocular case, and 7 scenes (the same 4 LLFF scenes plus counter , kitchen , bonsai from MipNeRF 360) for the stereo case. For each scene, we establish a 3D Gaussian representation with gsplat  [ 47 ] as the virtual environment, then recover metric scale by aligning the reconstruction to metric depth from Depth Anything 3  [ 22 ] . The camera design and task network are jointly optimised across all scenes, with a subset of views per scene withheld for evaluation.
+Noise Calibration
+We calibrate the noise model on a Basler Dart DaA1280-54uc camera  [ 3 ] (5 ms exposure, 10 dB gain, f/8) following  [ 44 ] . This configuration is treated as the reference point for generalisation.
+Optimisation
+All camera parameters, coded aperture masks, and task networks are jointly optimised with Adam  [ 19 ] for 20,000 steps with a batch size of 3, using a learning rate of 10 − 2 10^{-2} for the camera parameters and 10 − 3 10^{-3} for the mask and task networks.
+4.2 Monocular Camera
+The monocular camera design task focuses on close-range RGB-D imaging from a single capture, which is a common requirement in robotics applications such as grasping.
+Table 2 : Quantitative results for stereo camera design. The monocular row is our own strongest monocular configuration evaluated under the same narrow FoV, isolating the benefit of a second view; CADS  [ 12 ] is the closest existing coded-aperture baseline, included despite its dual-pixel baseline being limited to the sub-mm aperture scale. Optimised parameters are marked ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}} , fixed ∙ \mathchoice{\mathbin{\vbox{\hbox{\scalebox{2}{$\displaystyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\textstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptstyle\bullet$}}}}}{\mathbin{\vbox{\hbox{\scalebox{2}{$\scriptscriptstyle\bullet$}}}}} ; stereo values are given as Left / Right (CADS shares parameters across views). Our stereo method outperforms both, especially in AiF reconstruction.
+Scenario Table  1 reports the camera parameters, coded aperture masks, and metrics for each method under both scenarios, with qualitative results for the Noise × \times 100 scenario in Figure  
+
+【结论/局限】
+References
+A Depth-from-Defocus Networks
+A.1 Monocular
+A.2 Stereo
+B Additional Qualitative Results on Monocular Camera Design
+C Additional Qualitative Results on Stereo Camera Design
+D Additional Details on Real-World Experiments
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.28004v1 [cs.CV] 20 Oct 2026
+Differentiable Task-Driven Coded Aperture Camera
+Design with 3D Gaussian Scene Representations
+Chengyang Yan
+Donald G. Dansereau
+Affiliation:  Australian Centre for Robotics, School of Aerospace, Mechanical and Mechatronic Engineering,
+Affiliation:  The University of Sydney
+Affiliation:  chengyang.yan, donald.dansereau@sydney.edu.au We presented a differentiable framework that jointly optimises camera design and downstream perception tasks, using 3D Gaussian representations reconstructed from real captures as a differentiable virtual environment for image formation. This avoids the scalability limits of derivative-free optimisation. We validated the framework on monocular and stereo depth-from-defocus tasks with jointly optimised coded apertures, sensors, and inter-camera geometry. It consistently outperforms fixed-camera and derivative-free baselines, while revealing interpretable design trade-offs that a decoupled process would miss. We believe this is an important step toward principled, automated camera design for autonomous systems that accounts for the inter

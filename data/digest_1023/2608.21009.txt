@@ -1,0 +1,61 @@
+【摘要】
+
+【方法】
+and Experiment
+4.1 Data Splits
+4.2 Data Augmentation
+4.3 Training Details
+4.4 Probabilistic Age Regression
+4.5 Binary Age Gate (Age Assurance) and Experiment
+To characterise what is achievable with standard methods on this new problem, we evaluate four neural architectures spanning a range of capacity and efficiency trade-offs on two tasks: continuous age regression and binary adult/minor classification (the age gate). All models are trained and evaluated under identical conditions using participant-level stratified 5-fold cross-validation,
+ensuring reliable estimates of generalization to unseen participants.
+Each backbone represents a distinct design point.
+ResNet-50   [ 17 ] at 224 × 224 224\times 224 serves as a canonical CNN baseline familiar to the biometric and medical-imaging community. EfficientNetV2-S   [ 40 ] at 384 × 384 384\times 384 is the primary CNN candidate: its compound-scaled architecture preserves the fine-grained texture cues (wrinkle density, melanin distribution) that age estimation relies on.
+Swin Transformer V2-B   [ 26 ] at 384 × 384 384\times 384 provides a hierarchical attention baseline; its shifted-window self-attention is better suited to spatially localized hand texture than global-attention ViTs, and the V2 design explicitly targets high-resolution generalization. MobileNetV3-Large   [ 19 ] at 224 × 224 224\times 224 probes the accuracy–efficiency frontier relevant to on-device XR inference. Input resolutions follow each backbone’s canonical ImageNet pretraining configuration, maximizing transfer from pretrained weights given the relatively modest dataset size.
+4.1 Data Splits
+Splits are defined at the participant level to prevent identity leakage. A stratified 15% held-out test set is drawn first (age bins of 2 years up to 50, 5 years thereafter, jointly stratified on age and skin-tone group); the remaining 85% is split into 5-fold cross-validation with the same scheme, yielding approximately 68% / 17% train/val per fold.
+4.2 Data Augmentation
+Because hand orientation during XR interaction is unconstrained, the training pipeline applies spatial augmentation: random rotation over the full [ − 360 ∘ , 360 ∘ ] [-360^{\circ},360^{\circ}] range, random horizontal flip, and random vertical flip, each applied independently. Mild photometric perturbations (brightness and contrast jitter of ± 10 % \pm 10\% ) account for the variable lighting conditions of the eight capture scenarios. At inference, only a centre-crop resize is applied. All images are normalised with ImageNet channel statistics (mean [ 0.485 , 0.456 , 0.406 ] [0.485,0.456,0.406] , std [ 0.229 , 0.224 , 0.225 ] [0.229,0.224,0.225] ) to match the pre-training distribution of the backbone weights.
+4.3 Training Details
+All models are trained with AdamW  [ 28 ] ( lr = 3 × 10 − 4 \text{lr}=3\times 10^{-4} , weight decay 10 − 2 10^{-2} ) for up to 40 epochs with early stopping (patience 20 epochs, minimum delta 10 − 3 10^{-3} ) on validation loss.
+The batch size is 32; all models minimize the Gaussian NLL objective defined in Eq.  1 , and all experiments use a fixed random seed of 42. All models were trained using distributed data-parallel training across 8 × \times NVIDIA A100-SXM4 (80GB) GPUs on the University of Greenwich HPC cluster.
+4.4 Probabilistic Age Regression
+Following  [ 24 ] , each model outputs a predicted age mean μ \mu and log-variance log 
+
+【实验】
+5.1 Age Regression
+5.2 Age Gate
+5.2.1 Operating Threshold Analysis and Equivalence with NIST Challenge- T T .
+5.2.2 Skin Tone Analysis
+5.3 Multi-Capture Aggregation We evaluate the four architectures on two tasks: continuous age regression and binary adult/minor classification (age gate). All cross-model comparisons use paired tests across the 5 held-out folds (4 degrees of freedom); omnibus differences are assessed with repeated-measures ANOVA and Friedman test; post-hoc pairwise differences use a paired t t -test with Holm–Bonferroni correction for the ( 4 2 ) = 6 \binom{4}{2}=6 comparisons ( α = 0.05 \alpha=0.05 ).
+5.1 Age Regression
+We report MAE and RMSE as point-accuracy measures, and intra-user STD (16 per-participant captures) as a measure of stability for the age-gate decision. SwinV2-B achieves the lowest MAE ( 5.78 ± 0.64 5.78\pm 0.64  yr) and RMSE ( 7.47 ± 0.72 7.47\pm 0.72  yr), followed by EfficientNetV2-S ( 6.01 ± 0.11 6.01\pm 0.11 MAE). MobileNetV3-L performs worst across all metrics. Omnibus tests confirm significant cross-model differences in all three metrics. After Holm correction, pairwise MAE differences are not individually significant; however, the RMSE gap between MobileNetV3-L and SwinV2-B reaches significance ( p = 0.016 p{=}0.016 ).
+Figure 6 : (a)  ROC curves for the binary adult/minor age gate across architectures
+(mean  ± \pm  std, 5 held-out test folds). The dotted line marks FPR = 0.1 \mathrm{FPR}=0.1 .
+(b)  SwinV2-B ROC curves disaggregated by skin-tone group
+(Light = ITA I–III; Medium = IV; Dark = V–VII).
+Shaded bands show std across 5 folds.
+Table 2 : Age-gate results.
+(A) Cross-model AUC and pAUC@0.1 (mean  ± \pm  std, 5 folds).
+(B) SwinV2-B FPR (minors) and FNR (adults) at three thresholds (mean, 5 folds).
+(A) Cross-model AUC and pAUC@0.1
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2608.21009v2 [cs.CV] 21 Oct 2026
+Dorsal Hand Images for Immersive (XR) and Privacy-preserving
+Age Assurance and
+Child Safety
+Riccardo Bovo
+George Loukas
+Josh P. Davis
+Affiliation:  University of Greenwich, London, UK
+Email:  r.bovo@gre.ac.uk This work presents the first age-stratified, ethnodiverse dorsal hand age inference study spanning the minor–adult boundary (ages 10+) and the first empirical evidence that dorsal hand RGB images can support safety-critical age assurance. We establish a first benchmark on this dataset, finding that SwinV2-B achieves MAE 5.78 5.78  yr and pAUC@0.1 0.0587 0.0587 characterising what standard architectures can achieve at the minor–adult boundary.
+The study contributes two firsts to the field: inclusion of minor participants, enabling evaluation at the legally critical 18-year boundary; and ITA-based skin tone characterisation spanning the full Fitzpatrick spectrum for age assurance.
+The probabilistic formulation maps directly onto established age-assurance frameworks, and the privacy properties of hand-based inference (no facial biometrics, low re-identification risk) make it well suited to the child-safe, data-minimising deployment contexts that regulators increasingly require.
+References
+[1]
+Ofcom (2024)
+Technology tracker 2024 data tables .
+Note: https://www.ofcom.org.uk/siteassets/resources/documents/rese

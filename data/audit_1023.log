@@ -1,0 +1,25 @@
+registry: 573
+cs.CV attempt1: days=['2026-10-20', '2026-10-21', '2026-10-22'] pages=2 incomplete=[]
+cs.GR attempt1: days=['2026-10-16', '2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22'] pages=1 incomplete=[]
+cs.HC attempt1: days=['2026-10-16', '2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22'] pages=1 incomplete=[]
+cs.MM attempt1: days=['2026-10-16', '2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22'] pages=1 incomplete=[]
+cs.RO attempt1: days=['2026-10-20', '2026-10-21', '2026-10-22'] pages=1 incomplete=[]
+cs.AI attempt1: days=['2026-10-20', '2026-10-21', '2026-10-22'] pages=3 incomplete=[]
+eess.IV attempt1: days=['2026-10-16', '2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22'] pages=1 incomplete=[]
+
+=== 完整性校验（只列缺口）===
+  cs.AI 2026-10-21: SHORT 251/321
+  cs.GR 2026-10-21: SHORT 2/14
+  cs.MM 2026-10-21: SHORT 2/5
+  cs.RO 2026-10-21: SHORT 69/88
+  eess.IV 2026-10-21: SHORT 2/5
+  cs.AI 2026-10-22: SHORT 177/211
+  cs.GR 2026-10-22: SHORT 2/4
+  cs.HC 2026-10-22: SHORT 16/18
+  cs.MM 2026-10-22: SHORT 3/6
+  cs.RO 2026-10-22: SHORT 64/78
+  eess.IV 2026-10-22: SHORT 2/4
+2026-10-21: total=532 | missed=512
+2026-10-22: total=402 | missed=402
+TOTAL MISSED: 914
+saved data/missed_listing_1023.json

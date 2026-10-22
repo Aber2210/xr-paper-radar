@@ -1,0 +1,147 @@
+【摘要】
+
+【方法】
+RMSE ↓ \downarrow
+PSNR ↑ \uparrow
+Naive
+0.491
+6.205
+Weight Matching
+0.294
+11.07
+Progressive Weight Matching
+0.306
+10.64
+OT4P ( τ = 0.3 \tau=0.3 )
+0.489
+6.239
+OT4P ( τ = 0.5 \tau=0.5 )
+0.495
+6.118
+OT4P ( τ = 0.7 \tau=0.7 )
+0.494
+6.160
+Progressive OT4P ( τ = 0.3 \tau=0.3 )
+0.493
+6.170
+Progressive OT4P ( τ = 0.5 \tau=0.5 )
+0.493
+6.167
+Progressive OT4P ( τ = 0.7 \tau=0.7 )
+0.492
+6.182
+Proposed (Ours) w/o Ref.
+0.199
+14.22
+Proposed (Ours)
+0.199
+14.40
+λ = 0.0 \lambda=0.0
+λ = 0.25 \lambda=0.25
+λ = 0.50 \lambda=0.50
+λ = 0.75 \lambda=0.75
+λ = 1.0 \lambda=1.0
+Ground Truth
+(a)
+(b)
+(c)
+(d)
+(e)
+(f)
+(g)
+Figure 3 : Example of interpolation results for different λ \lambda values. (a) Naive, (b) Weight Matching, (c) Progressive Weight Matching, (d) OT4P, (e) Progressive OT4P, (f) Proposed (w/o weight matching refinement), and (g) Proposed.
+As a realistic and challenging alignment task for NeRF, we evaluated whether the proposed method can mitigate the loss barrier between models independently trained from different random initializations.
+In this setting, ground-truth permutation is unavailable. Therefore, the evaluation was conducted by comparing rendered images from linearly interpolated models with the corresponding ground-truth images.
+We generated interpolated models in the parameter space as follows:
+W λ = ( 1 − λ ) ​ W A + λ ​ W B ′ , W_{\lambda}=(1-\lambda)W_{A}+\lambda W_{B^{\prime}},
+(8)
+where W B ′ W_{B^{\prime}} denotes the weights of Model B after alignment.
+The interpolation coefficient λ \lambda was varied from 0.0 0.0 to 1.0 1.0 in increments of 0.1 0.1 , and the rendering quality along the interpolation path was evaluated.
+In this experiment, we considered a pair of random seeds.
+For each scene, 10 images were randomly sampled from the test views for evaluation.
+The reported results correspond to the mean and variance computed over 10 test views for each of the eight scenes.
+In this experiment, we used τ = 0.5 \tau=0.5 for OT4P and Progressive OT4P. Category
+RMSE ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+AM
+Data-dependent
+0.161
+16.22
+0.775
+STE
+Weight-based
+0.268
+11.84
+0.661
+Ours
+Weight-based
+0.199
+14.40
+0.710
+Appendix 0.B Ablation Study
+In this section, we conduct ablation studies to evaluate the contribution of each component in our proposed method and to analyze the sensitivity of the performance to the temperature scheduling of τ \tau . All experiments in this section were performed using the NeRF Synthetic dataset.
+0.B.1 Importance of Temperature-Controlled Spectral Projection
+To verify the effectiveness of our spectral sharpening and projection mechanism, we compared the variants of our proposed method. For reference, we also include the baseline methods (Naive, Weight Matching, and Progressive Weight Matching) detailed in Section 4.1 of the main manuscript:
+•
+Ours (w/o SVD, w/o Ref.) : Progressive alignment that bypasses the SVD and spectral flattening steps (Lines 9–10 in Algorithm 1 ). Instead of the sharpened matrix M l ⟨ τ ⟩ M_{l}^{\langle\tau\rangle} , it directly uses the raw matrix M l M_{l} for the continuous relaxation (Line 11: P l ← P ^ l ​ [ τ ​ M l + ( 1 − τ ) ​ I ] P_{l}\leftarrow\hat{P}_{l}[\tau M_{l}+(1-\tau)I] ), and omits the final refinement stage.
+•
+Ours (w/o SVD) : The variant without spectral flattening (as described above), but followed by the sequential layer-wise refinement.
+•
+Ours (w/o Ref.) : The method 
+
+【实验】
+4.1 Comparison Methods In this section, we present two experimental results using traditional evaluation of neural network alignment and NeRF alignment to evaluate the alignment capability and effectiveness of the proposed method. All experiments were conducted on a computer with an NVIDIA GeForce RTX 5090 GPU.
+4.1 Comparison Methods
+To evaluate the performance of the proposed method, we compared it with the following approaches.
+1.
+Naive Interpolation: Linear interpolation is performed directly on the weights without any permutation alignment.
+2.
+Weight Matching [ 1 ] :
+The neuron alignment problem is formulated as a linear assignment problem and solved using greedy weight matching.
+3.
+Progressive Weight Matching:
+In contrast to the original weight matching [ 1 ] , which selects layers in random order for optimization, this variant optimizes the permutations sequentially from the input layer toward the output layer.
+4.
+OT4P [ 12 ] :
+This method relaxes the discreteness of permutation matrices and performs optimization in a continuous space using stochastic gradient descent (SGD).
+5.
+Progressive OT4P [ 12 ] :
+A modified version of standard OT4P normally optimizes all layers jointly, where gradient-based optimization is performed sequentially from the input side of the network to the output.
+6.
+Ours w/o weight matching refinement:
+An ablated version of our method that relies solely on correlation-based relaxation and temperature-controlled progressive projection, omitting the final refinement stage.
+7.
+Ours:
+Our complete two-stage approach. It utilizes the continuously aligned solution obtained from the spectral projection as a robust initialization, followed by iterative layer-wise weight matching to achieve highly stable optimization.
+For weight matching, random correspondence estimation was performed 10 times using shuffled layer orders covering all layers.
+For progressive variants, 100 sequential sweeps were conducted.
+For the proposed method, the temperature schedule was set to 𝒯 = { 1.0 , 0.5 , 0.0 } \mathcal{T}=\{1.0,0.5,0.0\} and a single sweep was performed for each temperature value, followed by a final sequential layer-wise refinement.
+For OT4P-based optimization, we used AdamW [ 20 ] as the optimizer and terminated the optimization if no improvement was observed for 10 consecutive steps.
+The learning rate was set to 0.05 0.05 for OT4P. on MLPs, CNNs, and Neural Radiance Fields (NeRFs) show that the proposed method reliably recovers neuron correspondences and achieves stable alignment across architectures. In practical experiments aligning independently trained NeRF models, our method reduces the loss barriers under weight interpolation compared with existing approaches. on MLPs and CNNs have demonstrated the accurate recovery of known permutations.
+Extending permutation alignment to NeRF, we showed reliable permutation recovery and reduced loss barriers between independently trained models, enabling smoother interpolation in the weight space. Our evaluation of independently trained models is limited to MLP-based NeRFs on NeRF Synthetic; other INRs and real scenes remain future work.
+Acknowledgements
+This work was supported by JST P
+
+【结论/局限】
+References
+0.A Additional Baseline Comparisons: Activation Matching and STE
+0.B Ablation Study
+0.B.1 Importance of Temperature-Controlled Spectral Projection
+0.B.2 Effect of Temperature Scheduling for τ \tau
+0.C Additional Quantitative and Qualitative Results
+0.C.1 Computational Efficiency
+0.C.2 Extended Qualitative Comparisons
+0.D Derivation of the Trace-Maximization Form
+0.E An example where Progressive Weight Matching fails
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.29396v1 [cs.LG] 21 Oct 2026
+Progressive Permutation Alignment with Temperature-Controlled Spectral Sharpening
+Yuta Horioka
+† † thanks: Equal contribution.
+Naoya Chiba ⋆
+Yuki Uranishi
+Affiliation: The University of Osaka In this paper, we addressed permutation symmetry in Neural Fields and INRs by proposing progressive alignment with temperature-controlled spectral sharpening.
+Each layer-wise update is reduced to trace maximization over a correlation matrix. Starting from this continuous representation, we combined a Hungarian anchor with temperature- τ \tau -controlled spectral annealing to converge progressively to a discrete permutation.
+This strategy mitigates premature hard decisions in weight matching while avoiding the costly iterative optimization required by gradient-based relaxations, such as OT4P, yielding a deterministic and efficient alignment procedure.
+A subsequent sequential laye

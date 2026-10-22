@@ -1,0 +1,268 @@
+【摘要】
+
+【方法】
+in Natural Language Processing , pp. 12044–12068, Suzhou, China,
+November 2025c. Association for Computational Linguistics.
+ISBN 979-8-89176-332-6.
+doi: 10.18653/v1/2025.emnlp-main.605 .
+URL https://aclanthology.org/2025.emnlp-main.605/ .
+Zhou et al. (2025)
+Junjie Zhou, Yan Shu, Bo Zhao, Boya Wu, Zhengyang Liang, Shitao Xiao, Minghao
+Qin, Xi Yang, Yongping Xiong, Bo Zhang, Tiejun Huang, and Zheng Liu.
+MLVU: Benchmarking multi-task long video understanding.
+In Proceedings of the IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR) , 2025.
+URL https://arxiv.org/abs/2406.04264 .
+Appendix A Comparison with Existing Benchmarks
+Table  5 situates ProactEgoMem among existing video
+benchmarks.
+Offline suites
+( Fu et al., 2025 ; Wu et al., 2024 ; Zhou et al., 2025 ; Mangalam et al., 2023 ; Chandrasegaran et al., 2024 ; Yang et al., 2025 )
+evaluate query-driven answers over completed clips; streaming benchmarks
+( Lin et al., 2024b ; Li et al., 2025 ) still prompt the model at
+chosen timestamps; streaming episodic-memory benchmarks
+( Forte et al., 2026 ; Wang et al., 2026 ) test recall from a continuous
+stream but supply the question; and a fast-growing proactive line
+( Wang et al., 2025d ; Zhang et al., 2025c ; Wang et al., 2025b ; Gong et al., 2026 ; Ran et al., 2026 ; Kundu et al., 2026 ; Du et al., 2026 )
+drops the query yet scores only a single respond-now decision.
+ProactEgoMem uniquely combines streaming egocentric input, query-free
+proactivity, and a start–maintain–stop tool lifecycle whose acquired
+memory is then verified by downstream questions, graded jointly on timing
+and semantics.
+Table 5: Benchmark comparison .
+Proactive : acting without an explicit query; Multi-Level : two
+proactive depths; Tool Lifecycle : a maintained background lifecycle;
+Mem. QA : questions verify self-acquired memory. (✓) marks a
+partial case; ProactEgoMem marks all four.
+Benchmark
+Video Domain
+Setting
+Proactive
+Multi-Level
+Tool Lifecycle
+Mem. QA
+Ave. Dur. (s)
+Response Type
+Offline video QA
+Video-MME ( Fu et al., 2025 )
+General
+Offline
+✗
+✗
+✗
+✗
+1018
+Multi-choice
+LongVideoBench ( Wu et al., 2024 )
+General
+Offline
+✗
+✗
+✗
+✗
+473
+Multi-choice
+MLVU ( Zhou et al., 2025 )
+General
+Offline
+✗
+✗
+✗
+✗
+930
+Multi-choice
+EgoSchema ( Mangalam et al., 2023 )
+Egocentric
+Offline
+✗
+✗
+✗
+✗
+180
+Multi-choice
+HourVideo ( Chandrasegaran et al., 2024 )
+Egocentric
+Offline
+✗
+✗
+✗
+✗
+2742
+Multi-choice
+EgoLifeQA ( Yang et al., 2025 )
+Egocentric
+Offline
+✗
+✗
+✗
+✗
+∼ \sim 44 h
+Multi-choice
+HoloAssist ( Wang et al., 2023 )
+Egocentric
+Offline
+✗
+✗
+✗
+✗
+–
+Intervention type
+Ego2Web ( Yu et al., 2026 )
+Egocentric
+Offline
+✗
+✗
+✗
+✗
+180
+Web actions
+Streaming QA (prompted)
+StreamingBench ( Lin et al., 2024b )
+General
+Streaming
+(✓)
+✗
+✗
+✗
+–
+Multi-choice
+OVO-Bench ( Li et al., 2025 )
+General
+Streaming
+(✓)
+✗
+✗
+✗
+∼ \sim 429
+Multi-choice
+Streaming episodic memory
+EgoStream ( Forte et al., 2026 )
+Egocentric
+Streaming
+(✓)
+✗
+✗
+(✓)
+–
+Open-ended
+S-EMBER ( Wang et al., 2026 )
+Egocentric
+Streaming
+(✓)
+✗
+✗
+(✓)
+∼ \sim 445
+Open-ended
+Proactive interaction
+OmniMMI ( Wang et al., 2025d )
+General
+Streaming
+✓
+✗
+✗
+✗
+∼ \sim 611
+Open-ended
+ProAssist ( Zhang et al., 2025c )
+Egocentric
+Streaming
+✓
+✗
+✗
+✗
+∼ \sim 438
+Dialogue
+ProactiveVideoQA ( Wang et al., 2025b )
+General
+Streaming
+✓
+✗
+✗
+✗
+∼ \sim 126
+Open-ended
+EgoServe (Vinci2) ( Gong et al., 2026 )
+Egocentric
+Streaming
+✓
+✗
+✗
+✗
+–
+Service response
+EgoPro-Bench ( Ran et al., 2
+
+【实验】
+5.1 Metrics and Baselines
+5.2 Streaming Evaluation Protocol
+5.3 Main Results
+5.4 Effects of Proactive Memory Acquisition
+5.5 From Daily Life to the Laboratory
+5.6 Failure Modes 5.1 Metrics and Baselines
+Common metrics.
+Predictions are matched and scored separately at the two proactive levels.
+Predictions at both levels are matched to ground truth by Hungarian
+matching  ( Kuhn, 1955 ) , which requires that an LLM-judge’s semantic
+similarity exceeds a threshold and that the temporal offset falls within the
+matching window; among admitted edges the assignment minimizes the cost
+α ⁡ ( 1 − sim ) + ( 1 − α ) ​ ( | Δ | / W ) p \alpha(1-\mathrm{sim})+(1-\alpha)\,(|\Delta|/W)^{p}   ( Zhang et al., 2025c ) . Intervention
+predictions are first converted into intervals and matched on temporal
+overlap. Three metric groups are then shared by the two levels:
+(1)  Timing (Start@ τ \tau ): the fraction of matched actions whose
+start falls within various τ \tau seconds of the ground-truth moment. We
+report Start@0.2 as the main result: the 200 ms tolerance reflects the
+residual inter-annotator disagreement on notification timing
+(Table  3 ) and is widely used in real-time streaming
+models.
+(2)  Abs Error ( | Δ s | |\Delta_{s}| , σ \sigma ): the mean absolute start
+offset and its standard deviation, in seconds, measuring how far and how
+consistently a model deviates from the annotated moment.
+(3)  Detection (Prec, Recall, F1): precision over emitted actions,
+recall over ground-truth events, and their harmonic mean F1,
+penalizing spurious interruptions and missed ones.
+Intervention -level specific metrics.
+The Intervention-level metrics score the lifecycle itself through two further groups:
+(4)  Overlap (mIoU): interval IoU averaged over all
+ground-truth opportunities, scoring unmatched opportunities as zero, so a high
+score requires starting, maintaining, and stopping the tool lifecycle at the
+right boundaries; various thresholds in IoU@ τ \tau are also reported.
+(5)  QA (Acc): accuracy of the ProactEgoMem-QA dataset requiring
+proactive memory.
+Baselines.
+The comparison includes proprietary models (Gemini 2.5 Flash ( Comanici et al., 2025 ) and
+GPT-5.4-mini ( OpenAI, 2026 ) ), general open-source models (Gemma4-31B ( Gemma Team, 2026 ) ,
+Qwen3.8-27B ( Qwen Team, Alibaba Group, 2026c ) , Qwen3.6-27B ( Qwen Team, Alibaba Group, 2026b ) ,
+Qwen3.5-9B ( Qwen Team, Alibaba Group, 2026a ) ), video-language models (VideoLLaMA3-7B ( Zhang et al., 2025a ) , LLaVA-OV-1.5-8B ( An et al., 2025 ) ,
+MiniCPM-o-4.5 ( OpenBMB Team, 2026 ) ), and streaming models (MMDuet ( Wang et al., 2025c ) , VideoLLM-Online ( Chen et al., 2024a ) , Inkling-Small ( Thinking Machines Lab, 2026 ) , and JoyAI-VL ( Yao et al., 2026 ) ).
+All baselines are run with the exact same streaming setting as follows.
+5.2 Streaming Evaluation Protocol
+Every baseline receives the same prompt for a given task and proactive level; model-specific code
+only wraps it in the model’s chat template. FPS rate of 1 is used throughout the evaluation. At every step the prompt is followed by a JSON
+assistant context and the window of video frames, and the model answers with one JSON object. Complete description in Appendi
+
+【结论/局限】
+References
+A Comparison with Existing Benchmarks
+B Data Leakage Mitigation and Annotation Novelty
+C Tool Interface
+D Quality of the Proactive Message
+E Effects of Timing in Proactivity
+Effect of the Timing Threshold.
+F ProactEgoMem-Sci : from Daily Life to the Laboratory
+G Results at the Two Proactive Levels
+H Qualitative Failure Cases ProactEgoMem evaluates proactive ambient memory in streaming egocentric video through
+two proactive modes and three task families, IC , ST and
+LT , across daily-life and laboratory co-scientist tracks. The (Table  6 ).
+Transferring from daily life to the laboratory amplifies every joint failure
+mode: the best notification F1 drops to 10.8 % 10.8\% (Gemma4-31B on LT ) and
+the best intervention overlap to 10.2 % 10.2\% mIoU (Gemma4-31B on ST ), while
+7 7 of 30 30 model–task cells emit no valid notification and 10 10 of 30 30 no
+valid intervention at all.
+Proprietary access does not rescue the laboratory track.
+The proprietary pair buys coverage but not competence. Averaged over models and
+tasks, it leads notification recall ( 32.3 % 32.3\% against 22.9 % 22.9\% for the
+open-source group) yet trails on notification precision ( 4.1 4.1 against 7.1 7.1 ),
+intervention overlap ( 1.9 1.9 against 2.9 2.9 mIoU), intervention recall ( 7.2 7.2
+against 12.1 12.1 ), and memory-backed QA ( 32.6 32.6 against 37.8 37.8 ), with the two
+families level on notificat

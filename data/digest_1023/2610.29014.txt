@@ -1,0 +1,305 @@
+【摘要】
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab) choices.
+We select a variety of different models to evaluate. From the Google Gemini family, we evaluate
+gemini-3.1-pro-preview
+,
+gemini-3.5-flash
+,
+gemini-3.6-flash
+,
+gemini-3.7-flash
+, and
+gemini-3.8-flash
+, all at the
+high
+thinking level. From the OpenAI GPT family, we evaluate
+gpt-5.6-luna
+and
+gpt-5.6-sol
+, both at the
+xhigh
+reasoning level. From the Anthropic Claude family, we evaluate
+claude-opus-5
+at the
+medium
+reasoning level 1 1
+1
+We evaluate
+claude-opus-5
+at
+medium
+due to cost constraints. . For open-weight models, we evaluate
+deepseek-v4-pro-0813
+and
+deepseek-v4.1-flash
+at the
+xhigh
+reasoning level.
+Metrics.
+For all evaluations, we use Pass@1 , the percentage of tasks completed successfully in one attempt, to evaluate the functionality of proposed solutions. Tasks are only considered successful when all required tests pass. For application-generation tasks, we report the mean of the 10 heuristic ratings produced by the VLM judge described in Section   3.5 as the Design Score . This metric supplements the evaluation of functional correctness through Pass@1.
+Table 3: Pass@1 (%)
+Design
+Efficiency
+↑ \uparrow
+Overall
+↑ \uparrow
+↑ \uparrow
+Repair
+↑ \uparrow
+↑ \uparrow
+Feature
+↑ \uparrow
+↑ \uparrow
+App
+↑ \uparrow
+↑ \uparrow
+Score
+↑ \uparrow
+T/E
+Turns
+Tokens (M)
+↓ \downarrow
+Cost ($)
+↓ \downarrow
+claude-opus-5
+50.9
+85.7
+29.2
+47.8
+3.86
+0.44
+0 74.1
+0 6.17
+5.74
+deepseek-v4.1-flash
+46.4
+95.2
+20.8
+40.3
+3.81
+0.22
+114.9
+14.77
+0.71
+gpt-5.6-sol
+44.6
+95.2
+29.2
+34.3
+4.03
+0.81
+0 26.4
+0 1.74
+2.95
+gemini-3.8-flash
+42.9
+90.5
+25.0
+34.3
+3.71
+0.89
+127.0
+11.91
+1.73
+gemini-3.7-flash
+41.1
+90.5
+29.2
+29.9
+3.89
+0.96
+0 69.6
+0 4.14
+0.84
+deepseek-v4-pro-0813
+39.3
+85.7
+12.5
+34.3
+3.53
+0.38
+0 90.5
+0 8.77
+0.63
+gemini-3.6-flash
+31.2
+85.7
+20.8
+17.9
+3.32
+0.96
+0 58.7
+0 3.08
+0.67
+gpt-5.6-luna
+30.4
+85.7
+16.7
+17.9
+3.48
+0.41
+0 33.8
+0 2.22
+0.36
+gemini-3.5-flash
+29.5
+85.7
+12.5
+17.9
+3.58
+0.93
+0 51.2
+0 1.81
+0.95
+gemini-3.1-pro-preview
+23.2
+81.0
+12.5
+0 9.0
+2.37
+0.32
+0 37.5
+0 0.67
+0.64 -written tests are not indicative of success.
+Notably, models were relatively incapable of writing effective tests where the testing-to-editing ratio for each model was not indicative of overall success. Instead, models tend to overwrite unit tests that did not validate actual XR functionality and fail to have the foresight to predict real runtime conditions. Models that were more willing to evaluate code through runtime tests were also more successful. We report a detailed breakdown of agent tool usage
+
+【实验】
+Setup SWE
+SWE-bench
+Repository repair
+✗
+✗
+✗
+Repository tests
+( Jimenez et al., 2024 )
+SWE-bench Multimodal
+Repository repair
+✗
+✓
+✓
+Repository tests; UI-event checks; pixel-level visual tests
+( Yang et al., 2025 )
+Web
+Interaction2Code
+Interactive page reconstruction
+✗
+✓
+✓
+Interaction tests; visual metrics; human assessment
+( Xiao et al., 2025 )
+WebGen-Bench
+Website generation
+✗
+✓
+✓
+Browser-agent tests; VLM judge
+( Lu et al., 2025 )
+Games
+GameDevBench
+Feature implementation
+✗
+✓
+✗
+Deterministic engine tests
+( Chi et al., 2026 )
+GameCraft-Bench
+Game generation
+✗
+✓
+✓
+Solver-submitted input replay; VLM judge
+( Luo et al., 2026 )
+OpenGame-Bench
+Browser-game generation
+✗
+✓
+✓
+Automated play; runtime metrics; VLM judge
+( Jiang et al., 2026 )
+GameXpert-Bench
+Game generation; repair; refinement
+✗
+✓
+✓
+Behavioral probes; task-specific judgments
+( Chen et al., 2026a )
+3D
+WorldCoder-Bench
+Interactive world generation
+✗
+✓
+✗
+Expert-authored runtime contracts
+( Lu et al., 2026 )
+Visual
+ArtifactsBench
+Artifact generation
+✗
+✓
+✓
+Interaction screenshots; VLM checklists
+( Zhang et al., 2025 )
+InteractScience
+Scientific demo generation
+✗
+✓
+✓
+Scripted interaction; assertions; visual assessment
+( Chen et al., 2026b )
+VCXR60
+App generation
+✓
+✗
+✗
+Error-free simulator startup
+( Du et al., 2026 )
+GenXR-Bench
+XR
+(Ours)
+SDK features; repair; app generation
+✓
+✓
+✓
+Expert-authored interaction tests; runtime assertions; scoped VLM judge
+2.1 Interactive Software Engineering Benchmarks
+Interactive software often requires its own set of runtime evaluations. Recent agent benchmarks treat interactivity as the benchmark itself, using operating systems and interactive worlds to evaluate agents in controlled application environments ( Xie et al., 2024 ; Rawles et al., 2025 ; Trivedi et al., 2024 ; Koh et al., 2024 ) , while embodied-agent benchmarks similarly test long action sequences in fixed 3D environments ( Kolve et al., 2017 ; Puig et al., 2018 ; Savva et al., 2019 ; Shridhar et al., 2020 ) . Interactive software generation benchmarks often leverage these systems to evaluate generated software: website development benchmarks use agent-controlled browser actions to evaluate functionality ( Lu et al., 2025 ; Koh et al., 2024 ) ; ArtifactsBench ( Zhang et al., 2025 ) , Interaction2Code ( Xiao et al., 2025 ) , and InteractScience ( Chen et al., 2026b ) combine runtime interaction and rendering with multimodal evaluations using vision-language models as judges ( Zheng et al., 2023 ; Chen et al., 2024 ; Wu et al., 2024 ) ; game-development benchmarks ( Chi et al., 2026 ; La et al., 2026 ; Luo et al., 2026 ; Chen et al., 2026a ) combine functional, visual, and behavioral evaluations with interaction testing. GenXR-Bench extends runtime evaluations to XR software by simulating embodied interactions and environmental sensing to become the first benchmark to formalize evaluations of physically grounded interactive applications beyond relying purely on LLM judges. A systematic comparison of GenXR-Bench against these existing benchmarks is shown in Table   1 .
+2.2 Generative 3D and XR Authoring
+Natural-language 3D authoring predates coding agents, with early systems such as WordsEye ( Coyne a
+
+【结论/局限】
+6 AI Use Disclosure
+7 Ethics Statement
+8 Reproducibility Statement
+References
+A GenXR-Bench Implementation
+A.1 Runtime Verifier Implementation
+B XR App Prompt Creation
+C XR Heuristics
+D Examples of GenXR-Bench Tasks
+E Analysis of XR App Judge Alignment
+F Detailed Evaluation Results
+G Extended Failure Analysis
+H Examples of Generated Apps We present GenXR-Bench, the first benchmark to evaluate the functional and interactive correctness of agent-generated XR software. To create GenXR-Bench, five XR experts hand-wrote and curated 112 tasks spanning core XR engineering workflows within XR Blocks, using our novel automated XR testing framework, GenXR-Test. We find that frontier coding agents still struggle with XR development tasks, especially when tasks require continuous reasoning over embodied interactions and asynchronous XR runtime state. Our findings highlight the need to improve the embodied understanding of agents. We envision GenXR-Bench as a foundational testbed for advancing spatially situated software engineering across spatial AI, perception, and embodied interactions.
+6 AI Use Disclosure
+In this work, we used generative AI tools for dataset generation, benchmark authoring, data analysis, paper writing and editing. We did not use generative AI tools to develop conceptual frameworks. We developed GenXR-Bench alongside human evaluators, ensuring that domain experts guided

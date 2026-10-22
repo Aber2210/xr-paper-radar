@@ -1,0 +1,73 @@
+【摘要】
+
+【方法】
+III-A Preliminaries
+III-B Foundational Architecture
+III-C Iterative Gaussian Synopsis
+III-D Level-Specific Adaptation III-A Preliminaries
+3D Gaussian Splatting   [ 1 ] represents a 3D scene using a collection of anisotropic 3D Gaussians, enabling real-time, high-quality rendering through efficient tile-based rasterization. Each 3D Gaussian is defined by its spatial position and a covariance matrix that describes its anisotropic extent in 3D space:
+G ⁡ ( x ) = exp ⁡ ( − 1 2 ​ ( x − μ ) ⊤ ​ Σ − 1 ​ ( x − μ ) ) , G(x)=\exp\left(-\frac{1}{2}(x-\mu)^{\top}\Sigma^{-1}(x-\mu)\right),
+where μ \mu denotes the Gaussian center, and Σ \Sigma is the 3D covariance matrix. As Σ \Sigma is positive semi-definite, it admits a decomposition Σ = R ​ S ​ S ⊤ ​ R ⊤ \Sigma=RSS^{\top}R^{\top} with a rotation matrix R R and a diagonal scaling matrix S S .
+In addition to its geometric parameters, each Gaussian is associated with an opacity value α \alpha and a set of Spherical Harmonics (SH) coefficients that represent its view-dependent color c c .
+To render an image from a given viewpoint, each 3D Gaussian is first projected onto the 2D image plane using an affine approximation of the camera projection matrix, resulting in a 2D elliptical Gaussian with transformed mean and covariance. A tile-based rasterizer then sorts these projected Gaussians in front-to-back depth order and applies alpha compositing to accumulate color contributions. Specifically, the final color at a pixel x ′ x^{\prime} is computed as follows:
+C ⁡ ( x ′ ) = ∑ i ∈ 𝒩 ⁡ ( x ′ ) c i ⋅ σ i ​ ( x ′ ) ⋅ ∏ j = 1 i − 1 ( 1 − σ j ​ ( x ′ ) ) , C(x^{\prime})=\sum_{i\in\mathcal{N}(x^{\prime})}c_{i}\cdot\sigma_{i}(x^{\prime})\cdot\prod_{j=1}^{i-1}(1-\sigma_{j}(x^{\prime})),
+where σ i ​ ( x ′ ) = α i ​ G i ′ ​ ( x ′ ) \sigma_{i}(x^{\prime})=\alpha_{i}G_{i}^{\prime}(x^{\prime}) denotes the weighted 2D density, c i c_{i} is the view-dependent color obtained via Spherical Harmonics, and 𝒩 ⁡ ( x ′ ) \mathcal{N}(x^{\prime}) is the set of Gaussians that contribute to pixel x ′ x^{\prime} , sorted by depth. This formulation allows 3DGS to efficiently approximate volumetric rendering with high fidelity and real-time performance.
+Scaffold-GS   [ 10 ] introduces a more compact representation for 3D Gaussians by predicting them from a sparse set of anchor points, thereby significantly reducing storage overhead. Instead of storing the properties of every 3D Gaussian individually, Scaffold-GS voxelizes the 3D scene and initializes each voxel with an anchor point that contains a feature 𝐟 a ∈ ℝ 32 \mathbf{f}_{a}\in\mathbb{R}^{32} , a position 𝐱 a ∈ ℝ 3 \mathbf{x}_{a}\in\mathbb{R}^{3} , a base scaling factor 𝐥 a ∈ ℝ 3 \mathbf{l}_{a}\in\mathbb{R}^{3} , and k k learnable offsets 𝐎 a ∈ ℝ k × 3 \mathbf{O}_{a}\in\mathbb{R}^{k\times 3} .
+Given a camera position 𝐱 c \mathbf{x}_{c} , each anchor point uses the associated features 𝐟 a \mathbf{f}_{a} , the relative viewing distance σ c \sigma_{c} and direction d → c \vec{d}_{c} to predict the properties of k k neural Gaussians within its voxel via neural prediction:
+{ α i , 𝐜 i , 𝐬 i , 𝐫 i } i = 0 k = ℱ ⁡ ( 𝐟 a , σ c , d → c ) , \{\alpha^{i},\mathbf{c}^{i},\mathbf{s}^{i},\mathbf{r}^{i}\}_{i=0}^{k}=\mathcal{F}(\mathbf{f}_{a},\sigma_{c},\vec{d}_{c}),
+with
+σ c = ‖ 𝐱 − 𝐱 c ‖ 2 , d → c = 𝐱 − 𝐱 c ‖ 𝐱 − 𝐱 c ‖ 2 . \sigma_{c}=\|\mathbf{x}-\mathbf{x}_{c}\|_{2},\quad\vec{d}_{c}=\frac{\math
+
+【实验】
+IV-A Experimental Setups
+IV-B Results and Evaluation
+IV-C Architectural Analysis
+IV-D Ablation Studies
+V Conclusion
+References
+License: CC BY-NC-SA 4.0
+arXiv:2604.11685v2 [cs.CV] 21 Oct 2026
+Unfolding 3D Gaussian Splatting via
+Iterative Gaussian Synopsis
+Yuqin Lu
+Yihua Dai
+Yang Zhou
+Guiqing Li
+Shengfeng He
+† † thanks: This work was supported in part by the Guangdong Natural Science Funds for Distinguished Young Scholars (Grant 2023B1515020097), the Singapore Ministry of Education Academic Research Fund Tier 2 (Award No. MOE-T2EP20125-0016), the Singapore Ministry of Education Academic Research Fund Tier 1 (Proposal ID: 24-SIS-SMU-015), the Lee Kong Chian Fellowships, the National Natural Science Foundation of China (Grant 62472180), and the Natural Science Foundation of Guangdong (Grant 2024A1515011995). (Yuqin Lu and Yihua Dai contributed equally to this work.) (Corresponding authors: Yang Zhou; Shengfeng He.) † † thanks:
+Yuqin Lu, Yihua Dai, and Yang Zhou are with the School of Computer Science and Engineering, South China University of Technology, Guangzhou, Guangdong 510006, China; they are also with the School of Computing and Information Systems, Singapore Management University, Singapore 188065 (e-mail: matrixgle19@gmail.com ).
+† † thanks:
+Guiqing Li is with the School of Computer Science and Engineering, South China University of Technology, Guangzhou, Guangdong 510006, China.
+† † thanks:
+Shengfeng He is with the School of Computing and Information Systems, Singapore Management University, Singapore 188065 (e-mail: shengfenghe@smu.edu.sg ). show that our method maintains high rendering quality across all LODs while achieving substantial storage reduction. These results demonstrate the practicality and scalability of our approach for real-time 3DGS rendering in bandwidth- and memory-constrained scenarios.
+Project page: https://cs-luyq.github.io/UnfoldingGS/ .
+Index Terms:
+Novel view synthesis, 3D reconstruction, level-of-detail, progressive rendering.
+Fig. 1: Iterative Gaussian Synopsis enables hierarchical “unfolding” of 3D Gaussian Splatting. The top rows illustrate the anchor structure alongside the derived 3D Gaussians at both full resolution and progressively condensed levels. The bottom rows compare the Level-of-Detail progression from a compact synopsis (starting at 6.5MB) to the highest fidelity (50.7MB) for our method, against a standard 3DGS baseline with a total size of 601.1MB. Our approach achieves clearer intermediate representations and significantly improved efficiency, delivering comparable visual quality at a fraction of the storage cost. IV-A Experimental Setups
+This section details the experimental setup used to validate our proposed Iterative Gaussian Synopsis framework. We outline the datasets, baseline methods for comparison, evaluation metrics, and specific implementation details of our approach.
+Datasets
+We conduct a comprehensive evaluation of our method across several public datasets to demonstrate its effectiveness in diverse scenarios, including Mip-NeRF360  [ 43 ] , Tanks & Temples  [ 44 ] , DeepBlending  [ 45 ] , and BungeeNeRF  [ 40 ] . These datasets encompass complex indoor and outdoor scenes that chal
+
+【结论/局限】
+and Future Work: Despite its strengths, the framework introduces additional training complexity and, like most current methods, is limited to static scenes. Furthermore, while our shared anchor representation naturally minimizes spatial discontinuity during LOD transitions compared to independent-parameter baselines, the discrete nature of the hierarchy can still introduce mild visual “popping” artifacts as new anchors activate. These constraints suggest promising directions for future work. Potential extensions include exploring continuous transition mechanisms or client-side interpolation techniques to fully eliminate popping, adapting the unfolding mechanism to dynamic content, incorporating perceptually guided pruning to better align LOD transitions with human visual sensitivity, and integrating the framework into an end-to-end adaptive streaming pipeline for evaluation under real-world network conditions.
+References
+[1]
+B. Kerbl, G. Kopanas, T. Leimkühler, and G. Drettakis (2023)
+3D gaussian splatting for real-time radiance field rendering .
+ACM Transactions on Graphics 42 ( 4 ).
+Cited by: §I ,
+§II-A ,
+§II-B ,
+§III-A ,
+§IV-A ,
+§IV-B ,
+TABLE I .
+[2]
+B. Mildenhall, P. P. Srinivasan, M. Tancik, J. T. Barron, R. Ramamoorthi, and R. Ng (2020)
+Nerf: representing scenes as neural radiance fields for view synthesis .
+In ECCV ,
+pp. 405–421 .
+Cited by: §I ,
+§II-A .
+[3]
+Z. Fan, K. Wa

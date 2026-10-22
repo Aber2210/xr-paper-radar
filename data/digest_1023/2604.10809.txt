@@ -1,0 +1,91 @@
+【摘要】
+
+【方法】
+3.1 Assumptions
+3.2 Data Collection
+3.3 Interactive Scene Initialization
+3.4 Hand-Object Optimization
+3.5 Retargeting and Rendering
+3.6 Policy Training WARPED transforms
+RGB egocentric human demonstrations into wrist-camera robotic observation-action datasets to train visuomotor policies for tabletop manipulation tasks. An overview of our pipeline is shown in Fig.  2 . The pipeline consists of five stages: data collection, interactive scene initialization, hand-object optimization, wrist-view retargeting and rendering, and policy training and deployment. The system is designed to be portable and easy to use, enabling demonstration collection using only a single monocular RGB camera
+without specialized hardware or sensing.
+3.1 Assumptions
+We primarily consider rigid-object tabletop manipulation tasks with a gripper end-effector and without significant scene changes beyond the hand-object interaction. The manipulated object is assumed to remain partially visible, avoiding full occlusions that would prevent tracking. We assume limited in-hand object motion and demonstrations without repeated re-grasping or abrupt shifts in hand-object contact points. We also evaluate on an articulated object whose base remains stationary during demonstration and whose manipulated part is limited to one dominant axis of rotation.
+3.2 Data Collection
+The user first records a short RGB scan of the workspace without the manipulated objects, analogous to the environment scan used by UMI  [ 41 ] . The scan typically takes less than one minute. Structure-from-Motion (SfM) with LightGlue  [ 102 ] feature matching is then used to estimate camera poses and build a sparse 3D reconstruction of the environment. The resulting camera poses are used to initialize a 3D Gaussian Splat of the scene and to localize subsequent demonstrations.
+The user then records task demonstrations in the workspace wearing a head-mounted egocentric camera. In our experiments, we use a GoPro Hero9 with a standard linear lens, modeled as a pinhole camera, although other monocular RGB cameras and mounting configurations could be used.
+Figure 2: Overview of WARPED. Images of the scene are used to build a Gaussian Splat representation. The user then performs a tabletop manipulation task, recording an egocentric demonstration from a helmet-mounted GoPro. The demonstration is aligned with the Gaussian Splat, and the object pose is localized using vision foundation models. The object pose is then tracked via hand-object optimization. The resulting trajectories are retargeted to a robot gripper, and wrist-view renderings are synthesized and used to train a diffusion policy.
+3.3 Interactive Scene Initialization
+Interactive Scene Reconstruction.
+For each demonstration, frames are localized within the static scene using Hierarchical Localization  [ 103 ] to estimate per-frame camera poses. SpatialTrackerV2  [ 104 ] is used to extract temporally consistent monocular depth maps, which are scale-aligned with the SfM reconstruction and Gaussian Splat. Additional details are provided in Appendix  B .
+Hand Pose Initialization.
+HAMER  [ 105 ] is used to obtain initial per-frame hand shape and pose estimates. The hand parameters are refined using a sequence-level optimization that enforces temporal smoothness and monocular depth consistency. A complete description can be found in Appendix  C .
+Object Pose Initial
+
+【实验】
+and Results
+4.1 Experimental Setup and Results
+4.1 Experimental Setup
+(a) (b) (c) (d)
+Figure 6: Experimental setup: (a) helmet-mounted demonstration camera, (b) wrist-mounted rollout camera, (c) task objects, and (d) novel objects.
+We evaluate WARPED on five rigid-object tabletop manipulation tasks and one articulated-object task using a UFactory xArm7 with an xArm G1 Gripper. For human demonstrations, a GoPro Hero9 is attached to a helmet (Fig.  6 (a)) worn by the user. For policy rollout, a GoPro Hero9 with Max Lens Mod 1.0 is mounted above the gripper to capture wrist-view observations (Fig.  6 (b)). For each task, we collect 30 demonstrations within a fixed workspace using a single object instance, and separately capture a single RGB image of the manipulated object for SAM3D mesh reconstruction. The demonstrations are then processed through WARPED and augmented 10 times (Sec.  3.6 ), and a diffusion policy is trained using four NVIDIA Tesla V100s.
+Success rates are evaluated over 20 trials. Further details are provided in Appendix  H .
+The evaluated tasks are shown in Fig.  7 . Object placement varies across trials. Rotate Box: The robot must rotate a box 90 degrees onto a new face. Pour Mug: The robot must grasp a mug by its handle and execute a pouring motion. Bottle from Dish Rack: The robot must pick up a bottle from the middle shelf of a dish rack. Wipe Plate with Brush: The robot must pick up a brush and wipe a plate. Can on Plate: The robot must pick up a can and place it onto an additionally localized plate. Open Microwave: The robot must pull the microwave door open by its handle.
+Figure 7: Real-world rollouts for the evaluated tasks.
+We compare WARPED against policies trained from teleoperated demonstrations collected with a Meta Quest 2 VR headset and controller. We additionally evaluate against the Alter baseline presented in RwoR  [ 43 ] .
+The teleoperation and Alter baselines also use 30 demonstrations, but do not use the synthetic demonstration augmentations from Sec.  3.6 . Generating additional trajectories and observations from the original demonstrations is an advantage of WARPED’s synthetic data pipeline.
+All methods are evaluated with the same single wrist-camera observation modality. We note that RwoR is a relevant baseline, but no public code or trained models were available at the time of testing. Render-to-Real Fidelity. in addressing the scalability and high cost of data collection required
+to train robust visuomotor policies. However, existing approaches are often
+constrained by a reliance on multiview camera setups, depth sensors, or custom
+hardware, and are typically limited to policy execution from third-person or
+egocentric cameras. In this paper, we present WARPED, a framework designed to
+synthesize realistic wrist-view observations and actions from human
+demonstration videos to facilitate the training of visuomotor policies
+using
+only monocular RGB data. With data collected from an egocentric RGB camera, our
+system leverages vision foundation models to initialize the interactive scene.
+A hand-object interaction pipeline is then employed to track the hand and
+manipulated object and retarget the trajectories
+
+【结论/局限】
+References
+A Data Collection
+A.1 Fiducial Marker
+A.2
+Camera Calibration
+B Scene-Level Scale Alignment
+C Hand Pose Initialization
+D Object Pose Initialization
+E Hand-Object Optimization
+E.1 Object Pose Estimation
+E.2 Contact Start and End Estimation
+E.3 Joint Hand-Object Refinement
+E.4 Auxiliary Losses
+F Retargeting and Rendering
+F.1 Hand-to-End-Effector Mapping
+F.2 Pre-Contact Trajectory Optimization
+F.3 Contact Point Selection
+F.4 Contact Grasp Refinement
+G Demonstration Augmentation
+H Training and Evaluation Details
+I Hand-Object Optimization Ablations
+J Object Pose Tracking Visualization
+K Render-to-Real Fidelity Visualization
+L Additional Experiments
+L.1 Data Augmentation Ablation
+L.2 Robustness to Background Distractors
+L.3 Co-training with Teleoperated Demonstrations
+L.4 Out-of-Distribution Scenes
+L.5 Comparison with UMI
+M Data Processing Times
+License: CC BY 4.0
+arXiv:2604.10809v2 [cs.RO] 21 Oct 2026
+WARPED: Wrist-Aligned Rendering for Robot Policy Learning from
+Egocentric Human Demonstrations
+Harry Freeman
+† † thanks: Corresponding author.
+Chung Hee Kim
+Jenny Wang
+George Kantor
+Affiliation:  Carnegie Mellon University
+Affiliation:  https://kantor-lab.github.io/WARPED/ In this paper, we present WARPED, a framework for learning wrist-camera visuomotor policies from egocentric human demonstration videos by synthesizing wrist-view robot observations and retargeted end-effec

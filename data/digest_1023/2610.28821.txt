@@ -1,0 +1,102 @@
+【摘要】
+
+【方法】
+3.1 Overview
+3.2 Geometry-aware Normalization
+3.3 Register Anything Model
+Feature extraction.
+3.4 Loss Functions 3.1 Overview
+Given two point clouds 𝒫 = { 𝐩 i ∈ ℝ 3 ∣ i = 1 , … , M } \mathcal{P}=\{\mathbf{p}_{i}\in\mathbb{R}^{3}\mid i=1,\dots,M\} and 𝒬 = { 𝐪 j ∈ ℝ 3 ∣ j = 1 , … , N } \mathcal{Q}=\{\mathbf{q}_{j}\in\mathbb{R}^{3}\mid j=1,\dots,N\} , our goal is to estimate the rigid transformation 𝐓 ∈ 𝒮 ​ ℰ ​ ( 3 ) \mathbf{T}\in\mathcal{SE}(3) aligning 𝒫 \mathcal{P} to 𝒬 \mathcal{Q} , where 𝐓 \mathbf{T} consists of a 3D rotation 𝐑 ∈ 𝒮 ​ 𝒪 ​ ( 3 ) \mathbf{R}\in\mathcal{SO}(3) and a 3D translation 𝐭 ∈ ℝ 3 \mathbf{t}\in\mathbb{R}^{3} . Our method follows the traditional registration pipeline where we first extract point correspondences 𝒞 = { ( 𝐱 i , 𝐲 i ) ∣ 𝐱 i ∈ 𝒫 , 𝐲 i ∈ 𝒬 } \mathcal{C}=\{(\mathbf{x}_{i},\mathbf{y}_{i})\mid\mathbf{x}_{i}\in\mathcal{P},\mathbf{y}_{i}\in\mathcal{Q}\} , and then estimate 𝐓 \mathbf{T} based on the correspondences by solving:
+𝐑 , 𝐭 = arg ​ min 𝐑 ∈ 𝒮 ​ 𝒪 ​ ( 3 ) , 𝐭 ∈ ℝ 3 ∑ ( 𝐱 i , 𝐲 i ) ∈ 𝒞 ∥ 𝐑𝐱 i + 𝐭 − 𝐲 i ∥ 2 . \mathbf{R},\mathbf{t}=\argmin_{\mathbf{R}\in\mathcal{SO}(3),\mathbf{t}\in\mathbb{R}^{3}}\sum_{(\mathbf{x}_{i},\mathbf{y}_{i})\in\mathcal{C}}\lVert\mathbf{R}\mathbf{x}_{i}+\mathbf{t}-\mathbf{y}_{i}\rVert^{2}.
+(1)
+Previous methods  [ 2 , 21 , 3 , 20 , 5 ] assume that point clouds to register share the training domain, leading to poor generalizability across domains.
+In this work, we break this gap by jointly training a unified point cloud registration model on data from various domains.
+To address cross-domain geometric discrepancy, we first design a geometry-aware normalization module which jointly voxelizes and normalizes point clouds into a domain-agnostic standardized geometric space ( Sec.   3.2 ).
+RAM then employs a hierarchical registration pipeline  [ 21 , 3 , 20 ] , which first extracts superpoint correspondences and then refine them into dense point correspondences ( Sec.   3.3 ).
+Finally, the rigid transformation is estimated by LGR  [ 3 ] . Fig.   2 illustrates the overall pipeline.
+Figure 2: Overall pipeline of RAM. Point clouds are first adaptively voxelized and normalized into a standardized geometric space by a geometry-aware normalization module. Aftering extracting hierarchical features, RAM extracts superpoints correspondences with an EGeoTR, and then refines them into dense point correspondences. At last, the transformation is recovered from the correspondences.
+3.2 Geometry-aware Normalization
+A unified registration model must handle the geometric discrepancy among point clouds from different domains, e.g. , in scene scale and point density. For instance, outdoor LiDAR scans are sparse and long-range (typically ∼ 100 ​ m {\sim}100\text{m} ), while indoor point clouds are denser and short-range (typically < 10 ​ m {<}10\text{m} ). Modern point operators  [ 17 , 40 , 20 , 19 , 18 , 4 , 5 , 1 ] encode local geometry within a fixed search radius, which is problematic across domains: a small radius on large-scale scenes yields insufficient receptive fields, whereas a large radius on small-scale scenes oversmooths local details.
+To address this issue, we design a geometry-aware normalization module to jointly voxelize and normalize the point clouds into a domain-agnostic standardized geometric space with consistent scales and densities, enabling effective processing with a unified search ra
+
+【实验】
+4.1 Benchmarks and metrics. on Indoor Benchmarks on Outdoor Benchmarks on Object Benchmarks
+4.5 Ablation Studies
+4.6 Qualitative Results 4.1 Benchmarks and metrics.
+Benchmarks.
+Following  [ 13 ] , we evaluate RAM on 12 12 point cloud registration benchmarks, including 4 4 indoor benchmarks: 3DMatch  [ 7 ] , 3DLoMatch  [ 2 ] , ScanNet++  [ 47 ] and TIERS  [ 48 ] , 6 6 outdoor benchmarks: KITTI  [ 9 ] , nuScenes  [ 10 ] , ETH  [ 49 ] , MIT  [ 50 ] , WOD  [ 51 , 52 ] and Oxford  [ 53 ] , and 2 2 object benchmarks: ModelNet  [ 11 ] and ShapeNet  [ 12 ] .
+We train RAM on a hybrid set combining 3DMatch, KITTI, nuScenes and ModelNet. Additional details are in the appendix.
+Metrics.
+Following  [ 3 , 13 ] , we report the results on 4 4 metrics:
+(1) Inlier Ratio (IR), the percentage of correspondences whose residuals are below a certain threshold under the ground-truth transformation.
+(2) Relative Rotation Error (RRE), the geodesic distance between the estimated and the ground-truth rotations.
+(3) Relative Translation Error (RTE), the ℓ 2 \ell_{2} -distance between the estimated and the ground-truth translations.
+(4) Registration Recall (RR), the percentage of successfully registered pairs. A pair is successful if its RMSE is below 0.2 0.2 m (3DMatch/3DLoMatch) or if both RRE and RTE are below certain thresholds (other benchmarks).
+We adopt stricter RRE and RTE thresholds to enable more rigorous performance assessment.
+Please refer to the appendix for more details. on Indoor Benchmarks
+Table 1: on Outdoor Benchmarks
+Table 2: on Object Benchmarks
+Table 3: , and lessons learned.
+In IROS , pages 11027–11034. IEEE, 2023.
+[51]
+Pei Sun, Henrik Kretzschmar, Xerxes Dotiwalla, Aurelien Chouard, Vijaysai
+Patnaik, Paul Tsui, James Guo, Yin Zhou, Yuning Chai, Benjamin Caine, et al.
+Scalability in perception for autonomous driving: Waymo open dataset.
+In CVPR , pages 2446–2454, 2020.
+[52]
+Quan Liu, Hongzi Zhu, Zhenxi Wang, Yunsong Zhou, Shan Chang, and Minyi Guo.
+Extend your own correspondences: Unsupervised distant point cloud
+registration by progressive distance extension.
+In CVPR , pages 20816–20826, 2024.
+[53]
+Milad Ramezani, Yiduo Wang, Marco Camurri, David Wisth, Matias Mattamala, and
+Maurice Fallon.
+The newer college dataset: Handheld lidar, inertial and vision with
+ground truth.
+In IROS , pages 4353–4360. IEEE, 2020.
+[54]
+Haiping Wang, Yuan Liu, Qingyong Hu, Bing Wang, Jianguo Chen, Zhen Dong, Yulan
+Guo, Wenping Wang, and Bisheng Yang.
+Roreg: Pairwise point cloud registration with oriented descriptors
+and local rotations.
+IEEE TPAMI , 45(8):10376–10393, 2023.
+Appendix A Appendix
+A.1 Implementation Details
+Voxel size initialization.
+We set the reference voxel size v ref = 0.025 ​ m v_{\text{ref}}=0.025\text{m} , a conventional choice for 3DMatch. And we define ϕ ⁡ ( ⋅ ) \phi(\cdot) as a monotonically increasing piecewise function:
+ϕ ⁡ ( x ) = { 0.1 ​ log 2 ​ ( x 25 ) , x ≥ 50 0.001 ​ ( x − 25 ) + 0.075 , 25 ≤ x < 50 0.0025 ​ ( x − 1 ) + 0.015 , x < 25 . \phi(x)=\begin{cases}0.1\log_{2}\left(\dfrac{x}{25}\right),&x\geq 50\\[11.99998pt]
+0.001\,(x-25)+0.075,&25\leq x<50\\[11.99998pt]
+0.0025\,(x-1)+0.015,&x<25\end{cases}.
+(7)
+This function is designed based on s
+
+【结论/局限】
+6 Acknowledgements
+References
+A Appendix
+A.1 Implementation Details
+A.2 Benchmarks
+A.3 Metrics
+A.4 Additaional Results
+A.5 Discussions
+A.6 Broader Impacts
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.28821v1 [cs.CV] 20 Oct 2026
+Register Anything Model for Generalizable and Robust Point Cloud Registration
+Zheng Qin
+Affiliation:  Defense Innovation Institute, Academy of Military Sciences, China
+Junhua Xi
+Affiliation:  College of Computer Science and Technology, National University of Defense Technology, China
+Affiliation:  College of Data Intelligence, Information Support Force Engineering University, China
+Yan Huang
+Affiliation:  Defense Innovation Institute, Academy of Military Sciences, China
+Jiahong Lai
+Affiliation:  Defense Innovation Institute, Academy of Military Sciences, China
+Affiliation:  College of Computer Science and Technology, National University of Defense Technology, China
+Anwen Huang
+Affiliation:  Defense Innovation Institute, Academy of Military Sciences, China
+Qiong Li    Guangda Zhang    Kai Xu 1 1 footnotemark:
+1
+† † thanks: Corresponding authors: Qiong Li ( 517066092@qq.com ), Kai Xu ( kevin.kai.xu@gmail.com ).
+Affiliation:  Defense Innovation Institute, Academy of Military Sciences, China
+Affiliation:  Institute of AI for Industry, Chinese Academy of Sciences, China https://github.com/qinzheng93/RegisterAnything In this paper, we investig

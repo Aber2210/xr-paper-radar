@@ -1,0 +1,109 @@
+【摘要】
+.
+
+【方法】
+3.1 Preliminaries: Neural Radiance Fields
+3.2 The Cross-Ray Gap
+3.3 Cross-Ray Drifting Field
+Masked proximity kernel.
+Frozen cross-ray consensus.
+Drifting field.
+Drifting loss.
+Drifting gradient.
+Equilibrium.
+3.4 Training Objective Novel view a a ? Input view b b Input view 𝒅 a {\bm{d}}_{a} 𝒅 b {\bm{d}}_{b} 𝒙 a , i {\bm{x}}_{a,i} 𝒙 b , j {\bm{x}}_{b,j} ray:  𝒓 ⁡ ( t ) = 𝒐 + t ​ 𝒅 {\bm{r}}(t)={\bm{o}}+t\,{\bm{d}} density field σ a , i \sigma_{a,i} σ b , j \sigma_{b,j} cross-ray consensus σ ¯ cross = 1 Z ​ ∑ b ≠ a , j k i ​ j ​ σ b , j \bar{\sigma}_{\mathrm{cross}}=\frac{1}{Z}\!\sum_{b\neq a,\,j}k_{ij}\,\sigma_{b,j} sg ⁡ ( σ b , j ) \operatorname{sg}(\sigma_{b,j}) ( 𝒙 , 𝒅 ) ({\bm{x}},{\bm{d}}) f 𝜽 f_{\bm{\theta}} ( 𝒄 , σ ) ({\bm{c}},\;\sigma) σ \sigma σ \sigma vol. rendering C ⁡ ( 𝒓 ) C({\bm{r}}) Predicted view a a ℒ total = ℒ render + λ ​ ℒ drift \mathcal{L}_{\mathrm{total}}={\color[rgb]{0.8359,0.3672,0}\mathcal{L}_{\mathrm{render}}}+\lambda\,{\color[rgb]{0,0.4348,0.3145}\mathcal{L}_{\mathrm{drift}}} ∇ 𝜽 \nabla_{\!{\bm{\theta}}} Ground truth a a C ∗ ​ ( 𝒓 ) C^{*}({\bm{r}}) ℒ render = 𝔼 𝒓 ​ [ ‖ C ⁡ ( 𝒓 ) − C ∗ ​ ( 𝒓 ) ‖ 2 ] \mathcal{L}_{\mathrm{render}}=\mathbb{E}_{{\bm{r}}}\!\left[\|C({\bm{r}})-C^{*}({\bm{r}})\|^{2}\right] pixel loss drifting field V = σ ¯ cross − σ a , i V=\bar{\sigma}_{\mathrm{cross}}-\sigma_{a,i} ℒ drift = 𝔼 a , i ​ [ ‖ V ⁡ ( 𝒙 a , i ) ‖ 2 ] \mathcal{L}_{\mathrm{drift}}=\mathbb{E}_{a,i}\!\left[\|V({\bm{x}}_{a,i})\|^{2}\right] cross-ray loss σ ¯ cross \bar{\sigma}_{\mathrm{cross}} V V
+Figure 2. Overview of DriftNeRF.
+Scene (left): rays from a novel view a a and input views
+sample nearby points 𝒙 a , i {\bm{x}}_{a,i} , 𝒙 b , j {\bm{x}}_{b,j} inside a shared volume.
+Density field (bottom-left): the anchor density σ a , i \sigma_{a,i}
+is compared with cross-ray neighbors sg ⁡ ( σ b , j ) \operatorname{sg}(\sigma_{b,j}) , whose
+stop-gradiented values are pooled into a consensus target
+σ ¯ cross \bar{\sigma}_{\mathrm{cross}} .
+Pipeline (right): the MLP f 𝜽 f_{\bm{\theta}} produces color and
+density; the σ \sigma portal feeds two paths. Volume rendering
+yields pixel colors C ⁡ ( 𝒓 ) C({\bm{r}}) compared against ground truth
+C ∗ ​ ( 𝒓 ) C^{*}({\bm{r}}) via ℒ render \mathcal{L}_{\mathrm{render}} . Cross-ray consensus
+defines the drifting field
+V = σ ¯ cross − σ a , i V=\bar{\sigma}_{\mathrm{cross}}-\sigma_{a,i} , minimized by
+ℒ drift \mathcal{L}_{\mathrm{drift}} . The combined
+ℒ total \mathcal{L}_{\mathrm{total}} trains f 𝜽 f_{\bm{\theta}} end-to-end. A schematic in two parts. On the left, camera rays from several views cross inside a shared volume, and an anchor sample point on one ray is surrounded by nearby sample points belonging to other rays. On the right, a block diagram: the MLP outputs color and density; density feeds both the volume renderer, which produces a pixel color compared against ground truth by the rendering loss, and the cross-ray consensus branch, which produces the drifting field and the drifting loss. The two losses are summed into the total training objective.
+3.1. Preliminaries: Neural Radiance Fields
+Given a sparse set of posed images { I 1 , … , I N } \{I_{1},\ldots,I_{N}\} of a single scene, our goal is to synthesize novel views from unseen camera poses.
+Following standard practice  ( Mildenhall et al., 2020 ) , we optimize a neural radiance field per scene and query it at test time.
+The scene is repr
+
+【实验】
+4.1 Setup
+Matched 3DGS protocol.
+4.2 Is Cross-Ray Disagreement Real, and Does It Matter?
+4.3 Sparse-View Results
+Matched comparison with sparse-view 3DGS.
+Backbone portability and tensorial baselines.
+4.4 Ablations and Sensitivity
+Efficiency.
+4.5 Dense-View Behavior 4.1. Setup
+We evaluate on NeRF-Synthetic  ( Mildenhall et al., 2020 ) , 15 DTU scans  ( Jensen et al., 2014 ) , and eight LLFF scenes  ( Mildenhall et al., 2019 ) under 3-, 6-, and 9-view protocols.
+The bundled loaders reserve every eighth camera for testing on DTU and LLFF and select sparse training cameras evenly from the remainder; NeRF-Synthetic uses evenly spaced training frames and all test frames.
+Table   1 gives the rest of the protocol, including coordinate conventions and near/far bounds; no NDC transform is applied on any dataset, and the drifting distance is evaluated in these loader coordinates with no additional scene-scale normalization.
+Our MLP has eight layers of width 256, a skip after layer 4, 10/4 positional-encoding octaves for position/direction, softplus density, 1024 rays per minibatch, and 200k Adam steps with learning rate 5 × 10 − 4 5\times 10^{-4} decayed exponentially to 5 × 10 − 5 5\times 10^{-5} .
+Our rows average seeds 0, 1, and 2. PSNR, TorchMetrics SSIM  ( Wang et al., 2004 ) , and LPIPS-Alex  ( Zhang et al., 2018 ) are computed for every held-out view and then averaged; the ten-minibatch Lightning validation pass is used only for progress monitoring.
+Every number we report was recomputed under Table   1 rather than copied from a published table.
+This matters for absolute comparability: the sparse-view literature scores DTU with object masks and LLFF in normalized device coordinates, whereas our loaders do neither.
+Masked DTU evaluation discards exactly the background region that sparse-view methods reconstruct worst, so published DTU numbers sit well above ours at the same view count; FreeNeRF, for instance, reports 19.92 19.92  dB on masked DTU 3-view against the 17.89 17.89  dB it reaches here.
+Values in this paper are therefore internally comparable across rows but should not be read against published tables collected under the masked or NDC protocols.
+Matched 3DGS protocol.
+To avoid mixing metrics from incompatible camera subsets and evaluators, the comparison in Table   3 uses exactly the 3-view train/test indices, resolutions, and held-out-view evaluator in Table   1 .
+Each method is run from its official release with its recommended initialization and auxiliary priors; any learned prior is applied only to the sparse training images.
+We render every held-out view and recompute PSNR, SSIM, and LPIPS with the same evaluator used for our rows.
+We use seeds 0, 1, and 2 for stochastic runs and record the code commit, optimization steps, preprocessing, and hardware in the reproduction sheet in Appendix   E .
+The main 3DGS table is restricted to 3 views because this is the regime in which DriftNeRF has a measurable effect.
+Two exclusions follow from requiring an unmodified official release on all three splits.
+CoMapGS  ( Jang and Pérez-Pellitero, 2025 ) is discussed but not evaluated: its covisibility construction is defined for the LLFF and Mip-N
+
+【结论/局限】
+Scope and extensions.
+References
+A Per-Scene Results
+A.1 DTU (15 Scans)
+A.2 LLFF (8 Scenes)
+A.3 NeRF-Synthetic (8 Scenes)
+B Dense-View Results
+C Extended Hyperparameter Sensitivity
+D Implementation Details
+D.1 Drifting Loss Pseudocode
+D.2 Training Hyperparameters per Dataset
+D.3 Wall-Clock Timing
+E Reproduction Sheet for the Matched 3DGS Comparison
+F Additional Qualitative Comparisons
+License: CC BY 4.0
+arXiv:2610.29106v1 [cs.CV] 21 Oct 2026
+DriftNeRF: Cross-Ray Density Drifting for Sparse-View Neural Radiance Fields
+Juntang Wang
+Affiliation:  Harvard University , Cambridge , USA
+,
+Yihan Wang
+Affiliation:  Duke University , Durham , USA
+,
+Sheng’en Li
+Affiliation:  Duke Kunshan University , Kunshan , China
+,
+Hao Wu
+Affiliation:  Duke Kunshan University , Kunshan , China
+,
+Dongmian Zou
+Affiliation:  Duke Kunshan University , Kunshan , China
+and
+Shixin Xu
+Note:  Corresponding author.
+Affiliation:  Duke Kunshan University , Kunshan , China
+© none
+Reference
+Field agreement
+Sparse-view methods
+Per-ray only
+[Ground Truth]
+[Ours]
+[DNGaussian]
+[FreeNeRF]
+[NeRF]
+Figure 1. Novel-view synthesis from 3 training views (DTU Scan 34). NeRF’s per-ray photometric loss leaves nearby densities from different rays free to contradict each other, producing floaters and haze. Sparse-view methods (DNGaussian, FreeNeRF) reduce these artifacts but do not eliminate them. DriftNeRF (ours) enforces local fi

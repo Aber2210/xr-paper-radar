@@ -1,0 +1,123 @@
+{
+ "batch": "backfill-1023",
+ "orig_window": "backfill-1023：10-21 公告批次漏网 5 篇（listing 摘要级对账补录）+ 旧稿 replace/cross 再公告 4 篇（首次入馆）；均非 10-23 当日新提交",
+ "pool": [
+  {
+   "id": "2604.11685",
+   "title_zh": "Unfolding 3DGS：迭代高斯概要实现紧凑渐进渲染",
+   "track": "神经渲染",
+   "announce": "replace",
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  {
+   "id": "2608.21009",
+   "title_zh": "手背图像用于 XR 沉浸式年龄保障与儿童安全",
+   "track": "感知与认知",
+   "announce": "replace",
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  {
+   "id": "2610.28004",
+   "title_zh": "可微任务驱动编码孔径相机设计（3DGS 场景表示）",
+   "track": "渲染与显示",
+   "announce": "leak-1021",
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  {
+   "id": "2610.28585",
+   "title_zh": "SceneRig：单图生成仿真就绪 3D 场景的智能体系统",
+   "track": "世界模型与仿真",
+   "announce": "leak-1021",
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  {
+   "id": "2604.10809",
+   "title_zh": "WARPED：手腕对齐渲染（第一视角示范→机器人策略）",
+   "track": "内容生成",
+   "announce": "replace",
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  {
+   "id": "2610.27622",
+   "title_zh": "单头戴相机标注的无电子 UMI 手套数据采集",
+   "track": "系统与平台",
+   "announce": "leak-1021",
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 3
+  },
+  {
+   "id": "2610.26918",
+   "title_zh": "GTSM：热状态空间动力学高斯泼溅（4D 热场重建与预测）",
+   "track": "神经渲染",
+   "announce": "leak-1021",
+   "IMP": 2,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  {
+   "id": "2610.28131",
+   "title_zh": "OV-Foam：幂图划分表示下的开放词汇特征提升",
+   "track": "神经渲染",
+   "announce": "leak-1021",
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 3
+  },
+  {
+   "id": "2607.06464",
+   "title_zh": "Hilti-Trimble-Oxford：360° 视觉惯性基准（户型图先验）",
+   "track": "评估与数据集",
+   "announce": "replace",
+   "IMP": 3,
+   "NOV": 2,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 4
+  }
+ ]
+}

@@ -1,0 +1,182 @@
+【摘要】
+
+【方法】
+AVE  ↓ \downarrow
+ATE  ↓ \downarrow
+AVE  ↓ \downarrow
+ATE  ↓ \downarrow
+AVE  ↓ \downarrow
+ATE  ↓ \downarrow
+AVE  ↓ \downarrow
+ATE  ↓ \downarrow
+AVE  ↓ \downarrow
+ATE  ↓ \downarrow
+AVE  ↓ \downarrow
+ATE  ↓ \downarrow
+Supervised Learning
+AirIMU  [ 22 ]
+20.83
+–
+13.42
+–
+46.95
+–
+1.958
+39.07
+2.448
+334.8
+0.618
+–
+RoNIN  [ 17 ]
+0.160
+2.420
+0.661
+9.011
+0.948
+16.49
+0.157
+0.429
+0.102
+3.894
+0.163
+1.989
+TLIO  [ 19 ]
+0.161
+2.872
+0.656
+8.541
+0.972
+15.54
+0.160
+0.487
+0.106
+4.327
+0.163
+1.737
+AirIO  [ 23 ]
+0.081
+1.890
+0.335
+3.720
+0.318
+6.100
+0.120
+0.310
+0.068
+3.190
+0.087
+1.260
+AirIO † - baseline
+0.084
+2.080
+0.344
+3.720
+0.362
+6.390
+0.121
+0.310
+0.070
+3.380
+0.096
+1.400
+Self-Supervised From Scratch (ours)
+Ours
+0.104
+(+0.020)
+3.040
+(+0.960)
+0.423
+(+0.079)
+9.030
+(+5.310)
+0.475
+(+0.113)
+18.39
+(+12.00)
+0.182
+(+0.061)
+1.630
+(+1.320)
+0.096
+(+0.026)
+4.370
+(+0.990)
+0.167
+(+0.071)
+4.360
+(+2.960)
+Ours (w/ PGD)
+0.100
+(+0.016)
+3.010
+(+0.930)
+0.401
+(+0.057)
+10.23
+(+6.51)
+0.430
+(+0.068)
+17.93
+(+11.54)
+0.166
+(+0.045)
+1.640
+(+1.330)
+0.095
+(+0.025)
+4.340
+(+0.960)
+0.148
+(+0.052)
+4.270
+(+2.870)
+“–” denotes error too large to report.
+Ours denotes integration self-supervision and Ours (w/ PGD) adds the pose graph distillation refinement.
+AirIO † is our customized AirIO model without the attitude encoder.
+Parenthesized numbers give the difference to AirIO † ; green marks a difference below + 0.1 +0.1  m/s in AVE or + 1 +1  m in ATE; gray a larger one.
+The teacher uses standard IMU preintegration  [ 11 ] over each short window ( i , j ) (i,j) to obtain a relative rotation Δ ​ 𝐑 i ​ j \Delta\mathbf{R}_{ij} and a gravity-compensated velocity change Δ ​ 𝐯 i ​ j \Delta\mathbf{v}_{ij} , both expressed in the body frame at i i .
+Before integration, we subtract constant accelerometer and gyroscope biases estimated from static frames in each sequence.
+A constant bias is the simplest correction that static frames can estimate without labels, and Fig.  8 shows that bias, not noise, is the error the teacher cannot average away.
+The teacher requires an estimate of gravity direction and relative rotation; the attitude source used in our experiments is stated in Sec.  IV .
+For each sampled window ( i , j ) (i,j) , the network outputs the body-frame velocities 𝐯 ^ i ℬ {}^{\mathcal{B}}\hat{\mathbf{v}}_{i} and 𝐯 ^ j ℬ {}^{\mathcal{B}}\hat{\mathbf{v}}_{j} at the two endpoints, from which we form the network’s velocity increment in the body frame at i i ,
+Δ ​ 𝐯 ^ i ​ j net = Δ ​ 𝐑 i ​ j ​ 𝐯 ^ j ℬ − 𝐯 ^ i ℬ , \Delta\hat{\mathbf{v}}^{\mathrm{net}}_{ij}=\Delta\mathbf{R}_{ij}\,{}^{\mathcal{B}}\hat{\mathbf{v}}_{j}-{}^{\mathcal{B}}\hat{\mathbf{v}}_{i},
+(2)
+where Δ ​ 𝐑 i ​ j \Delta\mathbf{R}_{ij} brings the velocity at j j into the frame at i i .
+We match this prediction to the integrated increment Δ ​ 𝐯 i ​ j \Delta\mathbf{v}_{ij} with
+ℒ int = ∑ ( i , j ) ‖ Δ ​ 𝐯 ^ i ​ j net − Δ ​ 𝐯 i ​ j ‖ 2 2 . \mathcal{L}^{\mathrm{int}}=\sum_{(i,j)}\left\|\Delta\hat{\mathbf{v}}^{\mathrm{net}}_{ij}-\Delta\mathbf{v}_{ij}\right\|_{2}^{2}.
+(3)
+The sum runs over sampled training windows.
+III-B Velocity Regularization
+At rest, residual noise and bias produce small nonzero integration targets that the network would otherwise reproduce as spurious motion.
+Static frames supply a label-free zero-velocity constraint, and detecting them from the raw IMU is the most straightforward signal available on every platform, so we adopt it as 
+
+【实验】
+IV-A Self-Supervised Learning from Scratch
+IV-B Self-Supervision with Proprioceptive Input
+V Analysis of the Learned Velocity Model
+VI Limitations
+VII Conclusion
+References
+A Integration Covariance Propagation
+B Training Details
+B-A Integration Self-Supervision
+B-B Pose Graph Distillation
+B-C Proprioceptive Input Fusion Architecture
+B-D MIPO Data Preparation
+C Efficient Implementation of Pose Graph Distillation
+Sparsity.
+Cost. We first evaluate self-supervised training from scratch across all six datasets, then isolate the effect of proprioceptive inputs on the three articulated platforms.
+Integration teacher.
+We use the standard IMU preintegrator of Sec.  III-A , with constant biases estimated from static frames; the already calibrated TLIO and MIPO measurements require no additional correction.
+Bias correction affects only the training targets, while the student consumes raw IMU measurements.
+The integration loss sums velocity-change residuals over a geometric series of gaps, from a single network step up to a few seconds.
+The short gaps keep the teacher nearly exact while the long ones make the target informative about motion rather than noise; the largest gap is chosen per dataset so that the teacher’s integration error over it stays below the target velocity error (Fig.  5 ).
+The static-frame detector of Sec.  III-B uses one set of thresholds for the regularization mask on every dataset: over a centered window of 1 1  s, the rolling standard deviations of the specific-force and angular-rate magnitudes must fall below 0.20 ​ m / s 2 0.20\,\mathrm{m/s^{2}} and 0.05 ​ rad / s 0.05\,\mathrm{rad/s} , the mean angular rate below 0.10 ​ rad / s 0.10\,\mathrm{rad/s} , and the mean specific force within 0.40 ​ m / s 2 0.40\,\mathrm{m/s^{2}} of gravity; only the regularization weight is tuned per dataset.
+The bias estimate reuses this mask, so the teacher needs no calibration step beyond the static frames already detected for regularization.
+In Tab.  II and Tab.  III , for ease of implementation and to keep the protocol identical to AirIO, the teacher initializes the gravity direction from each dataset’s reference orientation at the window start and propagates rotation with the bias-corrected gyroscope within the window.
+This is an experimental choice, not a requirement of the method: Tab.  V (Sec.  VI ) replaces the reference attitude with a gyroscope-integrated attitude on TLIO and the onboard AHRS on MIPO, and self-supervision still works.
+PGD also needs an initial state for each graph, so we set the rotation and velocity of the first frame of every sequence from the reference trajectory.
+No velocity or position labels serve as training targets, and the teacher requires no separately trained sensor model.
+Datasets.
+We evaluate on six datasets covering distinct embodiments, all summarized in Tab.  I : TLIO  [ 19 ] (pedestrians), EuRoC  [ 6 ] (micro aerial vehicles), Blackbird  [ 1 ] (racing drones), MIPO  [ 28 ] (a Unitree Go1 quadruped indoors), GrandTour  [ 12 ] (an ANYmal quadruped on in-the-wild outdoor terrain), and our own Humanoid set.
+The set spans pedestrians, drones, quadrupeds, and a humanoid and stresses different regimes: Blackbird 

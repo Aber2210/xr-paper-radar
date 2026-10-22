@@ -1,0 +1,144 @@
+【摘要】
+
+【方法】
+3.1 Gaussian Mapping Backbone
+3.2 Coarse Exploration Criterion
+Geometric score.
+Semantic novelty.
+Combined criterion.
+3.3 Parallel CLIP Mask Embedding Extraction
+3.4 Language Field Construction and Query Figure  1 gives a system-level overview:
+(A–B) posed RGB-D mapping (Sec.  3.1 );
+(C) active NBV planner with semantic stage 0 and geometry-only stage 1+
+(Sec.  3.2 ; Fig.  2 );
+(D) CLIP mask embeddings (Sec.  3.3 ; Fig.  3 );
+(E–F) language-field training/query (Sec.  3.4 ; Fig.  4 ).
+Figure 1: AOV-GS system overview.
+Online loop : posed RGB-D updates a Gaussian map; the planner selects NBVs;
+CLIP mask embeddings are extracted in parallel on keyframes.
+Offline stage : a language field is trained on Gaussians and queried by text.
+3.1 Gaussian Mapping Backbone
+We adopt SplaTAM  [ 11 ] as the reconstruction backbone with ActiveGS-style
+active planning infrastructure  [ 10 ] .
+Habitat  [ 25 ] provides synchronized RGB-D frames with ground-truth camera
+poses.
+In both Replica and Matterport3D experiments, these poses are used as oracle SLAM input
+(Sec.  4.1 ).
+The scene is represented by isotropic 3D Gaussians optimized through differentiable rendering
+with RGB and depth L 1 L_{1} losses over silhouette pixels  [ 11 , 10 ] .
+Following ActiveGS  [ 10 ] , we maintain a voxel-based exploration map for collision-free candidate
+pose sampling and execute selected views with an RRT-based local planner  [ 16 ] .
+3.2 Coarse Exploration Criterion
+Exploration proceeds in two stages following ActiveGAMER  [ 3 ] :
+stage 0 augments geometry with semantic novelty; stage 1+ reverts to pure
+geometry as in ActiveGS  [ 10 ] .
+Geometric score.
+For each candidate pose v v , we render the current map and count unseen silhouette pixels
+N v S N_{v}^{S} .
+Following ActiveGAMER  [ 3 ] , the geometric information gain is
+I v geo = σ ⁡ ( log ⁡ N v S ) , I_{v}^{\mathrm{geo}}=\sigma(\log N_{v}^{S}),
+(1)
+where σ ⁡ ( ⋅ ) \sigma(\cdot) denotes softmax normalization over all candidates.
+Let T x v ∈ ℝ 3 T_{x}^{v}\in\mathbb{R}^{3} and T x t ∈ ℝ 3 T_{x}^{t}\in\mathbb{R}^{3} denote, respectively, the translation
+of candidate pose v v and the robot translation at planning step t t .
+With distance l v = ‖ T x v − T x t ‖ 2 l_{v}=\|T_{x}^{v}-T_{x}^{t}\|_{2} , the distance-weighted score is
+w v geo = ( 1 − σ ⁡ ( l v ) ) ​ I v geo . w_{v}^{\mathrm{geo}}=\bigl(1-\sigma(l_{v})\bigr)\,I_{v}^{\mathrm{geo}}.
+(2)
+Semantic novelty.
+For the top- K K candidates ranked by w v geo w_{v}^{\mathrm{geo}} , the current Gaussian map renders an
+RGB view at each candidate pose. We apply SAM to obtain instance masks and encode each masked region with CLIP to produce
+embeddings { e i } \{e_{i}\} , e i ∈ ℝ 512 e_{i}\in\mathbb{R}^{512} (Sec.  3.3 ).
+Thus semantic scoring uses only the appearance currently represented by the map, matching the
+information available to the geometry branch and the corresponding ActiveSGM setup.
+Each e i e_{i} is compared against keyframe bank ℬ \mathcal{B} .
+Candidate embeddings are used only transiently to score the current candidate set and are
+not inserted into ℬ \mathcal{B} ; the bank contains embeddings extracted from RGB observations
+at accepted keyframes reached by the executed trajectory.
+Let sim ⁡ ( a , b ) \mathrm{sim}(a,b) denote cosine similarity.
+The semantic novelty score is
+I v sem = Agg i ​ ( 1 − max b j ∈ ℬ ⁡ sim ⁡ ( e i , b j ) ) , I_{v}^{\mathrm{sem}}=\mathrm{
+
+【实验】
+shows a consistent advantage over geometry-only exploration. 4.1 Experimental Setup
+Datasets.
+Baselines.
+Metrics.
+4.2 Open-Vocabulary Semantic Segmentation on Replica
+Failure modes.
+When semantic exploration helps.
+Trajectory transfer.
+4.3 RGB-D Reconstruction on Replica
+4.4 Computational Cost 4.1 Experimental Setup
+Datasets.
+We evaluate in Habitat  [ 25 ] on two photorealistic indoor benchmarks.
+All methods in our comparisons receive the same ground-truth Habitat camera poses; none is
+evaluated with estimated poses or SLAM localization noise.
+Replica   [ 27 ] : eight scenes ( office0 – office4 ,
+room0 – room2 ).
+Replica follows the standard ActiveGS  [ 10 ] /ActiveSGM  [ 4 ]
+benchmark and therefore enables direct comparison with previous active mapping work.
+Following ActiveGS  [ 10 ] /ActiveSGM  [ 4 ] , each Replica
+exploration is limited to 2000 steps.
+RGB-D is captured at 680 × 1200 680\times 1200 .
+Novel-view semantic evaluation uses held-out camera views that are not used for mapping.
+Matterport3D (MP3D)   [ 2 ] : five scenes from the benchmark
+used by NARUTO  [ 6 ] , ActiveGAMER  [ 3 ] , and
+ActiveSGM  [ 4 ] . The scenes are GdvgFV5R1Z5 ,
+gZ6f7yhEvPG , HxpKQynjfin , pLe4wQe7qrG , and
+YmJkqBEsHnH .
+We use the same Habitat rendering settings as on Replica.
+Novel-view semantic evaluation likewise uses held-out camera views that are not used for mapping.
+We follow the MP3D protocol of ActiveSGM  [ 4 ] ,
+ActiveGAMER  [ 3 ] , and NARUTO  [ 6 ] using the same five
+benchmark scenes and a 5000-step exploration budget.
+No established passive semantic baseline exists for this protocol; therefore, passive
+comparisons are reported only on Replica.
+Baselines.
+Passive (Replica only, semantic evaluation): fixed NVS trajectory, SAM–CLIP
+embedding extraction, and offline language-field training.
+Geometry-based : geometry-only ActiveGS  [ 10 ] planner with the same
+SAM–CLIP and language-field pipeline.
+Geometry-based + CorrCLIP : the same geometric planner with CorrCLIP applied to
+accepted keyframe masks and embeddings; candidate views are still ranked only by geometry.
+ActiveSGM traj. + LangSplatV2 : we replay ActiveSGM’s recorded pose sequence and
+keyframe schedule on each scene, replacing OneFormer with our SAM–CLIP extraction and
+LangSplatV2 language-field training.
+This comparison keeps the open-vocabulary perception stack fixed, but does not isolate
+trajectory quality completely because the replay contains 868 steps versus 956 for AOV-GS.
+ActiveSGM   [ 4 ] : per-scene OneFormer fine-tuning on closed
+Replica and Matterport3D label sets, run in our Habitat setup on both datasets; shown for
+context only, not as an open-vocabulary baseline.
+AOV-GS (Ours) : our semantic stage-0 planner without CorrCLIP.
+AOV-GS + CorrCLIP (Ours) : the same semantic planner with CorrCLIP applied both to
+candidate masks during re-ranking and to accepted keyframe masks used for the embedding bank.
+Metrics.
+Primary: open-vocabulary language-field mIoU  [ 5 ] on text-query
+pairs over held-out novel views.
+For each dataset category present in a held-out view, its category name is used as the text
+query, the dataset semantic annotation supplies the binary ground-truth mask, and
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.29374v1 [cs.CV] 21 Oct 2026
+AOV-GS: Active Open-Vocabulary Semantic Mapping with 3D Gaussian Splatting
+Rodion Shkokov *
+Affiliation:  Moscow Institute of Physics and Technology (MIPT), Dolgoprudny, Russia
+( * corresponding author)
+E-mail  r.shkokov@gmail.com
+Tatiana Zemskova
+Affiliation:  Moscow Institute of Physics and Technology (MIPT), Dolgoprudny, Russia
+( * corresponding author)
+E-mail  r.shkokov@gmail.com
+Affiliation:  AIRI, Moscow, Russia
+Dmitry Yudin
+Affiliation:  Moscow Institute of Physics and Technology (MIPT), Dolgoprudny, Russia
+( * corresponding author)
+E-mail  r.shkokov@gmail.com
+Affiliation:  AIRI, Moscow, Russia We presented AOV-GS, an active open-vocabulary semantic mapping pipeline that guides
+exploration with CLIP mask-embedding novelty from frozen SAM and CLIP and trains a
+scene-specific LangSplatV2 language field on the collected embeddings for text-query
+segmentation on novel views.
+Across Replica and Matterport3D, the resulting maps improve average open-vocabulary
+language-field mIoU over geometry-only exploration while preserving comparable novel-view
+reconstruction quality. Replica gains vary by scene, while the five-seed office0

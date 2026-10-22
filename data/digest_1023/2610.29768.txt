@@ -1,0 +1,533 @@
+【摘要】
+
+【方法】
+Size
+RefCOCO [ 118 ]
+RefCOCO+ [ 118 ]
+RefCOCOg [ 119 ]
+ReasonSeg [ 14 ]
+val
+testA
+testB
+val
+testA
+testB
+val(U)
+test(U)
+gIoU
+cIoU
+Non-LLM-based Specialists
+ReLA [ 120 ]
+–
+73.8
+76.5
+70.2
+66.0
+71.0
+57.7
+65.0
+66.0
+–
+–
+X-Decoder [ 121 ]
+–
+–
+–
+–
+–
+–
+–
+64.6
+–
+22.6
+17.9
+SEEM [ 122 ]
+–
+–
+–
+–
+–
+–
+–
+65.7
+–
+25.5
+21.2
+LLM-based Image Generalists
+NExT-Chat [ 102 ]
+7B
+74.7
+78.9
+69.5
+65.1
+71.9
+56.7
+67.0
+67.0
+–
+–
+PixelLM [ 101 ]
+7B
+73.0
+76.5
+68.2
+66.3
+71.7
+58.3
+69.3
+70.5
+–
+–
+LISA [ 14 ]
+7B
+74.9
+79.1
+72.3
+65.1
+70.8
+58.1
+67.9
+70.6
+61.3
+62.9
+Groundhog [ 103 ]
+7B
+78.5
+79.9
+75.7
+70.5
+75.0
+64.9
+74.1
+74.6
+56.2
+–
+LaSagnA [ 123 ]
+7B
+76.8
+78.7
+73.8
+66.4
+70.6
+60.1
+70.6
+71.9
+48.8
+47.2
+M 2 SA [ 105 ]
+13B
+74.6
+77.6
+71.0
+64.0
+68.1
+57.6
+69.0
+69.3
+–
+–
+LLM-based Video Generalists
+VISA [ 107 ]
+7B
+72.4
+75.5
+68.1
+59.8
+64.8
+53.1
+65.5
+66.4
+52.7
+57.8
+Vitron [ 124 ]
+7B
+75.5
+79.5
+72.2
+66.7
+72.5
+58.0
+67.9
+68.9
+–
+–
+UniPixel [ 15 ]
+7B
+80.8
+83.0
+77.4
+75.3
+80.1
+70.0
+76.4
+77.1
+60.5
+58.7
+Sa2VA [ 108 ]
+8B
+81.9
+–
+–
+76.5
+–
+–
+78.9
+–
+57.9
+44.7
+VideoLISA [ 106 ]
+3.8B
+73.8
+76.6
+68.8
+63.4
+68.8
+56.2
+68.3
+68.8
+61.4
+67.1
+Sa2VA [ 108 ]
+4B
+78.9
+–
+–
+71.7
+–
+–
+74.1
+–
+52.3
+44.9
+UniRAP (Ours)
+3B
+80.9
+82.6
+78.1
+75.1
+79.3
+70.4
+76.1
+77.5
+57.9
+59.0
+Referring and Reasoning Video Object Segmentation.
+To evaluate UniRAP’s ability in mask prediction under implicit textual queries and spatiotemporal reasoning, we conducted experiments on ReVOS [ 107 ] . As shown in Tab. 2 , UniRAP achieves strong overall performance on ReVOS across both referring and reasoning settings, outperforming representative 3B-scale baselines such as HyperSeg [ 125 ] and InstructSeg [ 126 ] . It remains competitive compared to recent larger-scale models (e.g., UniPixel-7B), demonstrating a favorable efficiency–performance trade-off.
+Table 2 : Referring and Reasoning Video Object Segmentation on ReVOS val [ 107 ] split. Size
+Referring
+Reasoning
+Overall
+ℛ \mathcal{R}
+𝒥 \mathcal{J}
+ℱ \mathcal{F}
+𝒥 & ℱ \mathcal{J\&F}
+𝒥 \mathcal{J}
+ℱ \mathcal{F}
+𝒥 & ℱ \mathcal{J\&F}
+𝒥 \mathcal{J}
+ℱ \mathcal{F}
+𝒥 & ℱ \mathcal{J\&F}
+Non-LLM-based Specialists
+MTTR [ 127 ]
+–
+29.8
+30.2
+30.0
+20.4
+21.5
+21.0
+25.1
+25.9
+25.5
+5.6
+LMPM [ 128 ]
+–
+29.0
+39.1
+34.1
+13.3
+24.3
+18.8
+21.2
+31.7
+26.4
+3.2
+ReferFormer [ 129 ]
+–
+31.2
+34.3
+32.7
+21.3
+25.6
+23.4
+26.2
+29.9
+28.1
+8.8
+LLM-based Generalists
+LISA [ 14 ]
+13B
+45.2
+47.9
+46.6
+34.3
+39.1
+36.7
+39.8
+43.5
+41.6
+8.6
+VISA [ 107 ]
+13B
+55.6
+59.1
+57.4
+42.0
+46.7
+44.3
+48.8
+52.9
+50.9
+14.5
+GLUS [ 130 ]
+7B
+56.0
+60.7
+58.3
+48.8
+53.9
+51.4
+52.4
+57.3
+54.9
+17.9
+ViLLa [ 131 ]
+6B
+–
+–
+–
+–
+–
+–
+54.9
+59.1
+57.0
+–
+UniPixel [ 15 ]
+7B
+63.9
+67.8
+65.8
+59.4
+63.7
+61.5
+61.7
+65.7
+63.7
+19.4
+Sa2VA [ 108 ]
+8B
+–
+–
+–
+–
+–
+–
+–
+–
+57.6
+–
+HyperSeg [ 125 ]
+3B
+56.0
+60.9
+58.5
+50.2
+55.8
+53.0
+53.1
+58.4
+55.7
+–
+InstructSeg [ 126 ]
+3B
+54.8
+59.2
+57.0
+49.2
+54.7
+51.9
+52.0
+56.9
+54.5
+–
+Sa2VA [ 108 ]
+4B
+–
+–
+–
+–
+–
+–
+–
+–
+53.2
+–
+UniRAP (Ours)
+3B
+61.8
+66.5
+64.1
+56.8
+62.4
+59.6
+59.3
+64.4
+61.9
+19.4
+Table 3 : Referring Affordance Segmentation. Size
+HANDAL
+GraspNet seen
+GraspNet novel
+3DOI
+gIoU
+cIoU
+gIoU
+cIoU
+gIoU
+cIoU
+gIoU
+cIoU
+Non-LLM Foundation Models
+VLPart  [ 27 ] + SAM2  [ 113 ]
+-
+40.9
+28.9
+40.7
+27.6
+-
+-
+-
+-
+G-DINO  [ 58 ] + SAM2  [ 113 ]
+-
+34.7
+26.8
+34.9
+26.9
+-
+-
+-
+-
+Florence 2  [ 132 ] + SAM2  [ 113 ]
+-
+39.7
+22.4
+39.4
+22.5
+-
+-
+-
+-
+LLM-based Generalists
+LISA  [ 14 ]
+7B
+15.4
+11.8
+17.7
+17.7
+25.2
+24.1
+21.5
+13.7
+GLaMM  [ 104 ]
+3.8B
+25.1
+17.0
+21.6
+10.5
+19.2
+8.6
+19.7
+14.1
+UniPixel [ 15 ]
+7B
+26.0
+16.4
+4
+
+【实验】
+statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer: [No]
+Justification: Due to the limited computational resources, we conducted each experiment only once.
+Guidelines:
+•
+The answer [N/A] means that the paper does not include experiments.
+•
+The authors should answer [Yes] if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+•
+The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+•
+The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+•
+The assumptions made should be given (e.g., Normally distributed errors).
+•
+It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+•
+It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis of Normality of errors is not verified.
+•
+For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+•
+If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text. 4.1 General Segmentation Performance
+4.2 Referring and Reasoning Affordance Segmentation Performance
+4.3 Actionable Perception Performance
+4.4 Ablation Study
+4.5 Application: Actionable Perception for Robotic Grasping This section demonstrates that UniRAP preserves strong general segmentation performance while extending to affordance segmentation and actionable perception, enabling a more grounded understanding of functional regions and physical interactions. Details on implementation ( B.1 ), evaluation metrics ( B.4 ), qualitative results ( B.5 ), and real-world robotic experiments ( C.2 ) are provided in the Appendix.
+4.1 General Segmentation Performance
+Referring Expression and Reasoning Segmentation.
+As shown in Tab. 1 , we evaluated UniRAP on RefCOCO/+/g [ 118 , 119 ] and ReasonSeg [ 14 ] to assess its image segmentation capability under both explicit and implicit textual queries. The results demonstrate that UniRAP achieves state-of-the-art performance on referring expression segmentation (RES) benchmarks. Among models of comparable scale, UniRAP significantly outperforms existing methods and, in most settings, attains performance on par with larger models such as UniPixel-7B [ 15 ] and Sa2VA-8B [ 108 ] , indicating a favorable trade-off between parameter efficiency and performance. On ReasonSeg [ 14 ] , UniRAP remains competitive but does not achieve the best performance. This is primarily because ReasonSeg requires stronger multi-step reasoning capabilities,
+
+【结论/局限】
+References
+A UniRAP Model
+A.1 Architecture
+A.2 Visual Referring Encoder
+B Experiments
+B.1 Implementation Details
+B.2 Training Recipe
+B.3 Training Objective
+B.4 Evaluation Metrics
+B.5 Qualitative Results
+C Transferring Actionable Perception to Robotic Manipulation
+C.1 Motivation
+C.2 UniRAP for Reasoning-Aware Robotic Grasping
+D Discussions
+D.1 Limitations & Future Work
+D.2 Potential Societal Impacts
+E Licenses
+License: CC BY 4.0
+arXiv:2610.29768v1 [cs.CV] 21 Oct 2026
+UniRAP: Towards Unified Part-level Physical Affordance Reasoning and Actionable Perception
+Linfei Li
+Affiliation:  School of Computer Science and Technology, Tongji University
+Email:  cslinfeili@tongji.edu.cn
+Ruining Hu
+Affiliation:  School of Computer Science and Technology, Tongji University
+Email:  2534075@tongji.edu.cn
+Lin Zhang
+† † thanks: Corresponding author: Lin Zhang
+Affiliation:  School of Computer Science and Technology, Tongji University
+Email:  cslinzhang@tongji.edu.cn
+Zhong Wang
+Affiliation:  School of Computer Science and Technology, Tongji University
+Email:  cszhongwang@tongji.edu.cn
+Fengyi Zhang
+Affiliation:  School of Electrical Engineering and Computer Science, The University of Queensland
+Email:  yingshen@tongji.edu.cn
+Ying Shen
+Affiliation:  School of Computer Science and Technology, Tongji University
+Email:  fengyi.zhang@uq.edu.au
+Binqiang Wang
+Affiliation:  IEIT SYSTEMS (Beijing) Co., Ltd
+Emai

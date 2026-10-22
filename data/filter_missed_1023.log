@@ -1,0 +1,50 @@
+pool: 914 篇（day>=2026-10-21），registry 已有 0 篇
+meta fetched: 914
+
+## 2026-10-21：摘要级 XR 命中 19 篇
+  2610.26918 [cs.CV] reg=False GTSM: Gaussian Splatting with Thermal State-Space Dynamics for Spatio-Temporal Thermal F
+  2610.26925 [cs.CV] reg=False SuperClip Pyramid for Video Temporal Grounding
+  2610.27110 [cs.CV] reg=False MatchCityLoc: Aerial Localization in LoD City Models via Surface Normal Matching
+  2610.27140 [cs.AI] reg=False Representing short-term movement to reveal animal identity and learning progress
+  2610.27148 [cs.HC] reg=False Who Takes the Lead? Model Ability and Task-Conditioned Collaboration with Humans
+  2610.27400 [cs.AI] reg=False ProMemAgent: Long-Horizon Proactive Assistance with Context-Aware Prospective Memory fro
+  2610.27580 [cs.AI] reg=False Factual Access States in Diffusion Language Models: From Mechanism to Knowledge Editing 
+  2610.27622 [cs.RO] reg=False A Head Camera Is (Almost) All You Need: An Electronics-Free UMI Glove Labelled and Obser
+  2610.27998 [cs.RO] reg=False LocoPilot: Single-Operator Bilateral Teleoperation for Loco-Manipulation Policy Learning
+  2610.28004 [cs.CV] reg=False Differentiable Task-Driven Coded Aperture Camera Design with 3D Gaussian Scene Represent
+  2610.28131 [cs.CV] reg=False OV-Foam: How 3D Representations Shape Semantic Feature Lifting
+  2610.28476 [cs.CV] reg=False CLOSER: Evidence-Aware Active Visual Verification for Embodied Object-Goal Navigation
+  2610.28500 [cs.AI] reg=False BitMTP: When Multi-Token Prediction Meets Low-Bit Large Language Models
+  2610.28508 [cs.CV] reg=False Deep Learning-Based Road Lane Quality Assessment from Egocentric Dashcam Video
+  2610.28523 [cs.CV] reg=False VLM-Guided Contact Retargeting and Generative Partner Modeling for Humanoid-Human Intera
+  2610.28530 [cs.CV] reg=False CoGaussian: Open-Vocabulary Gaussian-based Collaborative 3D Scene Understanding
+  2610.28559 [cs.AI] reg=False Large Flow Language Models
+  2610.28566 [cs.RO] reg=False MAPLE: Mondrian-Anchored Prior for Learning-free Indoor Exploration
+  2610.28585 [cs.CV] reg=False SceneRig: An Agentic System for Simulation-Ready 3D Scene Reconstruction from Single Ima
+
+## 2026-10-22：摘要级 XR 命中 22 篇
+  2610.28821 [cs.CV] reg=False Register Anything Model for Generalizable and Robust Point Cloud Registration
+  2610.28909 [cs.AI] reg=False DiffResearch: Accelerating Deep Research with Diffusion Language Models
+  2610.28962 [cs.CV] reg=False RoPT: Robust 6DoF Object Pose Tracking in Video
+  2610.29014 [cs.GR] reg=False GenXR-Bench: Benchmarking Coding Agents for Interactive XR Development
+  2610.29098 [cs.CV] reg=False UNIVERS: Learning UNIversal Voxel-wise Embedding via Randomized Synthesis for generaliza
+  2610.29106 [cs.CV] reg=False DriftNeRF: Cross-Ray Density Drifting for Sparse-View Neural Radiance Fields
+  2610.29374 [cs.CV] reg=False AOV-GS: Active Open-Vocabulary Semantic Mapping with 3D Gaussian Splatting
+  2610.29396 [cs.CV] reg=False Progressive Permutation Alignment with Temperature-Controlled Spectral Sharpening
+  2610.29438 [cs.RO] reg=False A2I-Calib++: A Kinematics-Driven Anti-noise Active Calibration Framework for Whole-Body 
+  2610.29452 [cs.RO] reg=False Distance Field Driven Reinforcement Learning for Reactive and Robust Collision Avoidance
+  2610.29474 [cs.CV] reg=False Extending Affordance Segmentation for Wearable Robots to Multi-Object Images
+  2610.29517 [cs.CV] reg=False AutoPhyX: Automatic Text-Condition Physics Property Generation
+  2610.29533 [cs.AI] reg=False Block Diffusion for Longitudinal EHR: Accuracy, Efficiency, and Representation Trade-off
+  2610.29618 [cs.CV] reg=False FogTTA: Online Test-Time Adaptation for Robust Transformer-based Object Detection in Fog
+  2610.29647 [cs.CV] reg=False Reading the Room: Scale-ambiguous Semantic Registration of Sparse VSLAM Maps to Floor Pl
+  2610.29699 [cs.RO] reg=False AirPlayground: Benchmarking Aerial Navigation across Diverse Reconstructed Environments
+  2610.29768 [cs.CV] reg=False UniRAP: Towards Unified Part-level Physical Affordance Reasoning and Actionable Percepti
+  2610.29936 [cs.CV] reg=False DewHand: Direct Metric World-Space Hand Motion Reconstruction from Egocentric Videos
+  2610.29964 [cs.RO] reg=False Object- and Task-Aware Active Perception for Safe Navigation of Mobile Manipulators in S
+  2610.30013 [cs.CV] reg=False ClunoGS: Compact Language 3D Gaussian Splatting via Unified Optimization
+  2610.30032 [cs.HC] reg=False Measurement-Guided Conversion of Laboratory Eye-Tracking Data for VR Authentication
+  2610.30089 [cs.CV] reg=False ProactEgoMem: Benchmarking Proactive Memory in Streaming Egocentric Video
+
+合计摘要级 XR 命中 41 篇
+saved data/missed_xr_abstract_1023.json

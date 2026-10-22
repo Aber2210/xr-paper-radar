@@ -1,0 +1,154 @@
+【摘要】
+
+【方法】
+Inputs
+Short
+Medium
+Long
+Low light
+Moving
+Avg.
+Aria’s SLAM (r) ‡
+bino, IMU
+90.7
+78.5
+70.9
+84.2
+55.0
+75.9
+ORB-SLAM3 (r)  [ 7 ]
+mono, IMU
+23.0
+10.9
+11.2
+3.1
+2.0
+10.0
+OKVIS2 (r)  [ 30 ]
+bino, IMU
+20.0
+11.6
+2.6
+14.5
+4.7
+10.7
+OpenVINS+Maplab (r)
+bino, IMU
+27.7
+23.4
+12.8
+19.8
+13.9
+19.5
+Best of other submissions
+mono, IMU
+34.2
+29.3
+16.8
+25.4
+15.5
+24.2
+Ours
+bino, IMU
+80.2
+61.6
+59.9
+67.7
+41.9
+62.3
+pose recall @5 m (%)
+99.9
+96.2
+99.3
+99.9
+–
+Table 2: Official LaMAria test-set results (control-point score, higher is better). (r): reproduced by the benchmark authors. “Best of other submissions” is the highest score per category over all other public entries. ‡ Shown in gray as a reference and excluded from the ranking: Aria’s SLAM is the device manufacturer’s own system, developed together with the glasses, and is the solution used to initialize the benchmark’s ground-truth pipeline (its pose recall is therefore not reported). Bold marks the best result among the remaining methods.
+4 3D estimation
+The most common way to retarget motions from human data is to define a unified action space across embodiments as the 3D end-effector pose. Therefore, the role of the 3D stack is to recover this pose, together with the geometry needed to contextualize it, at metric scale in a consistent world frame. In this section, we describe our SLAM, depth estimation, and hand tracking implementations that we have evaluated to be state-of-the-art on several cross-rig and in-rig benchmarks.
+4.1 Online self-calibration
+Centimeter precision demands tight alignment between the matcher and the device calibration. One pixel of disparity corresponds to ∼ 1 {\sim}1  cm of depth at 0.65 0.65  m, and stereo error grows as z 2 / ( f ​ b ) z^{2}/(fb) . In practice, the rig drifts slightly from its factory calibration through mechanical and thermal stress. Across our fleet, the relative rotation shifts by 0.2 0.2 – 1.1 ∘ 1.1^{\circ} (median ≈ 0.5 ∘ {\approx}0.5^{\circ} ), producing 1 1 – 5 5  px of epipolar residual and a distance-dependent depth bias of 1 1 – 2 2  cm at manipulation range. Our observations are consistent with what Aria reports ≈ 25 {\approx}25  arcmin of instantaneous deformation between its stereo cameras from the act of removing the device  [ 15 ] .
+Drift is dominated by rotation, so we only estimate the residual rotations once per recording session from natural correspondences  [ 35 , 12 ] with no calibration target and no operator intervention. The left-front camera is the anchor and is never moved. Each pair is constrained by its own correspondences and fit independently against the Sampson epipolar distance rather than the vertical residual of a rectified pair. Corrections are accepted only if they improve a held-out residual and fall within ≈ 1 ∘ {\approx}1^{\circ} of that device’s own factory value. Figure  3 shows the spread of online self-calibrated rotations and Figure  2 visualizes epipolar lines before and after online calibration.
+Figure 5 : FFS depth with factory vs. online calibration, and the depth change between them. Factory calibration does not visibly degrade FFS depth maps: they remain sharp and complete, but are systematically distorted in scale and shape. Online calibration leaves the maps’ appearance unchanged while removing this distortion, halving depth error within reach. See Figure  for more examples.
+FFS  [ 57 ]
+FS  [ 56 ]
+Pixels
+% px
+A
+
+【实验】
+on LaMAria. on public benchmarks.
+4.3 Depth estimation
+Evaluating zero-shot transfer to egocentric scenarios.
+Evaluating the effect of online calibration.
+4.4 Hand tracking
+Evaluating the benefit of the pretraining corpus.
+Comparison to multi-view reconstruction.
+Evaluating performance on RoboCap. on LaMAria.
+LaMAria  [ 29 ] is the closest public match to our setting: a head-worn multi-camera visual-inertial device recording everyday walking, at city scale. Its 63 test recordings total 27.5 h and 76 km, with single walks of up to 48 minutes and 2.2 km. Two categories target known failure modes: walks at night (Low light) and rides on moving platforms (Moving). The ground truth is withheld, and trajectories are scored by the benchmark server against surveyed control points. We made two submissions; the second added the divergence reset and changed three sequences.
+The benchmark is far from saturated. Apart from ours, only Aria’s own SLAM scores above 35 in any category; established and recent learned systems lose track on the long walks (Table  2 ). Our system ranks second and exceeds the best other entry by 26–46 points in every category. Its trajectories lie within 5 m of the control points for 96–100% of the points, against 37–73% for the best other entries. on public benchmarks.
+Run unchanged on five public benchmarks with different rigs and motion (Table  ), with only scene-scale settings such as the largest accepted loop-closure correction following the environment, the system is on par with or better than the strongest published systems on TUM-VI rooms, Monado, and the Aria datasets, and close to OKVIS2 on EuRoC. Two limitations remain. Very fast rotation (above roughly 500  ∘ /s, where some gyroscopes also saturate) defeats the patch tracker, causing two of the three Monado failures (boxing-game sequences) and the larger errors on the fast VECtor sequences. Loop-closure recall in long featureless halls is weaker than with longer feature tracks: across all 20 TUM-VI sequences, where hall sequences have ground truth only in the start and end room, our median error is 8.1 cm.
+(a) Motion blur
+(b) Visual ambiguity
+(c) Complex hand poses
+(d) Gloves
+(e) Occlusion
+(f) Lighting
+Figure 6 : Examples from our hand tracking model, which fuses multi-view images into a single hand mesh. Our model’s pretraining makes it robust to blur, visual ambiguity, complexity, gloves, occlusion, and lighting. See Figures  10 and   11 for more difficult examples.
+4.3 Depth estimation
+We estimate metric depth on both stereo pairs with Fast-FoundationStereo (FFS)  [ 57 ] , a lightweight model distilled from FoundationStereo (FS)  [ 56 ] , and find that model performance is dictated more by calibration than generalization ability.
+Evaluating zero-shot transfer to egocentric scenarios.
+To evaluate the ability of these zero-shot models in egocentric settings, we benchmark them on UnrealEgo2  [ 2 ] , a synthetic head-mounted stereo benchmark with dense ground truth. FFS reaches AbsRel 0.016 on surfaces both cameras see at 0.3–1.0 m, at the benchmark’s 2 cm quantization limit and on par with FS (Table  3 ). The remaining error lies on pixels only one camera sees, where t
+
+【结论/局限】
+References
+A Hand tracking
+A.1 Evaluation Setup
+Metric
+A.2 Egocentric datasets
+UmeTrack
+HOT3D
+SHOW3D
+A.3 Multi-view benchmarks
+DexYCB
+OakInk
+HO3D
+A.4 Synthetic Dataset
+License: CC BY 4.0
+arXiv:2610.07217v2 [cs.RO] 20 Oct 2026
+RoboCap: A New Platform for Egocentric Robot Learning
+Qasim Ali
+Affiliation:  Grounded Superintelligence
+Nikash Bhardwaj
+Affiliation:  Grounded Superintelligence
+Kheri Hughes
+Affiliation:  Grounded Superintelligence
+Sam Cho
+Affiliation:  BitRobot gsi.company
+Ethan Lee
+Affiliation:  BitRobot gsi.company
+Paul Luo
+Affiliation:  BitRobot gsi.company
+Shinn Chong
+Affiliation:  BitRobot gsi.company
+Sunny Yu
+Affiliation:  BitRobot gsi.company
+Owen Akhibi
+Affiliation:  Grounded Superintelligence
+Alex Proshkin
+Affiliation:  Grounded Superintelligence
+Haotian Zhan
+Affiliation:  Grounded Superintelligence
+Niresh Dravin
+Affiliation:  BitRobot gsi.company
+Vivek Sharma
+Affiliation:  BitRobot gsi.company
+Jonathan Victor
+Affiliation:  BitRobot gsi.company
+Amanda Young
+Affiliation:  BitRobot gsi.company
+Michael Cho
+Affiliation:  BitRobot gsi.company
+Ademi Adeniji
+Affiliation:  Grounded Superintelligence
+Vincent Liu
+Affiliation:  Grounded Superintelligence Egocentric data is one of the most scalable data sources available to robot learning. However, collecting it at the precision and scale that policy learning requires has demanded hardware built for 3D estimation and algori

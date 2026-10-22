@@ -1,0 +1,128 @@
+[
+  {
+    "id": "2604.11685",
+    "slug": "unfoldinggs-iterative-synopsis",
+    "venue": "arXiv preprint（cs.CV，CC BY-NC-SA 4.0；华南理工大学、新加坡管理大学）",
+    "tags": ["3D Gaussian Splatting", "LOD", "渐进渲染", "anchor 表示", "场景压缩", "流式传输"],
+    "conclusion": "Unfolding 3DGS 以 top-down unfolding 把 3DGS anchor 结构组织成层次 synopsis：从 6.5MB 概要逐级展开至 50.7MB 最高保真（标准 3DGS 为 601.1MB），在四数据集上各级保持渲染质量，服务带宽/内存受限的实时流式场景。",
+    "problem": "实时 3DGS 渲染在带宽与内存受限场景（移动 XR、云流式传输）中需要 LOD 与渐进传输，但标准 3DGS 为每个高斯单独存储全部属性，模型体积大（本文实验中基线总大小 601.1MB）；已有压缩/LOD 方法多独立训练各级或缺乏清晰的层次渐进组织，LOD 切换时易出现空间不连续与视觉 popping。如何从单一紧凑表示逐级展开出多个质量档位、各级均保持渲染质量，并让过渡尽量连续，是核心问题。",
+    "method": "基础表示沿用 3DGS：每个 3D 高斯由中心 μ 与协方差 Σ=RSS^T R^T 定义，G(x)=exp(-1/2(x-μ)^T Σ^{-1}(x-μ))，附带 opacity α 与 SH 视角相关颜色；渲染时投影为 2D 椭圆并按深度 alpha compositing：C(x′)=Σ_{i∈N(x′)} c_i σ_i(x′) Π_{j=1}^{i-1}(1-σ_j(x′))，其中 σ_i(x′)=α_i G_i′(x′)。在此之上采用 Scaffold-GS 式 anchor：每个 anchor 含特征 f_a∈R^32、位置 x_a∈R^3、基础缩放 l_a∈R^3 与 k 个可学习偏移 O_a∈R^{k×3}，由相机距离 σ_c=||x-x_c||_2 与方向 d_c 经神经预测 F(f_a, σ_c, d_c) 生成 k 个神经高斯的 {α^i, c^i, s^i, r^i}。核心为 Iterative Gaussian Synopsis：对全分辨率 anchor 结构做 top-down unfolding，逐级凝结出层次化 LOD，训练从最紧凑 synopsis（6.5MB）开始迭代展开至最高保真级（50.7MB），并配 level-specific adaptation；推理时按带宽/内存选择档位，实现从紧凑概要到高保真的渐进渲染。",
+    "experiments": "在 Mip-NeRF360、Tanks & Temples、DeepBlending、BungeeNeRF 四个公开数据集上评测，覆盖复杂室内外场景。核心对比见 Fig.1 的 LOD 阶梯：本方法从 6.5MB 的紧凑 synopsis 渐进展开到 50.7MB 最高保真级，标准 3DGS 基线总大小 601.1MB；中间级表示比基线更清晰，在相当视觉质量下存储成本大幅降低。作者结论为全部 LOD 保持高渲染质量，验证了在带宽/内存受限场景做实时 3DGS 渲染的实用性与可扩展性。实验章节含 Architectural Analysis 与 Ablation Studies，但 digest 未收录逐数据集 PSNR/SSIM 数值表，压缩-质量的具体 trade-off 曲线待核。",
+    "innovation": [
+      "首次以 top-down unfolding 组织 3DGS anchor 结构，把单一模型变成 6.5MB→50.7MB 的层次 synopsis 阶梯",
+      "Iterative Gaussian Synopsis 训练框架：从最紧凑级迭代展开，各级共享 anchor 表示",
+      "相对标准 3DGS 601.1MB 的存储压缩约一个数量级，且中间 LOD 表示更清晰",
+      "共享 anchor 天然抑制 LOD 过渡的空间不连续，优于独立参数基线"
+    ],
+    "limits": [
+      "引入额外训练复杂度（作者自述）",
+      "仅限静态场景，动态内容需要扩展 unfolding 机制",
+      "离散层次结构在新 anchor 激活时仍可能产生 mild popping 伪影",
+      "digest 未含逐数据集定量数值，压缩率-质量曲线待核"
+    ],
+    "relation": "直接对标库内 3DGS 压缩/LOD 家族：MoQSplat 3.75（自适应渐进流式）、Budgeted-GS 4.65（LOUD）、COSA-GS、TopoGS、Towards Practical Compression of 3DGS 3.85；其 anchor 神经预测路线继承 Scaffold-GS 系（如库内 2610.29041）。差异在 top-down unfolding 与迭代 synopsis 的层次渐进组织及 MB 级 LOD 阶梯，可作库内渐进传输方案的对照锚点。",
+    "repro": "Project page：https://cs-luyq.github.io/UnfoldingGS/ ；digest 未提及代码/数据开源；License CC BY-NC-SA 4.0。",
+    "action": "① 做 XR 云渲染/流式传输时，把 6.5→50.7MB 的 LOD 阶梯作为带宽自适应档位设计参考；② 复现重点在 anchor 共享与迭代展开的损失调度，并在四数据集上量化 popping 伪影；③ 与库内 MoQSplat 的自适应渐进流式做同场景对照，评估存储-带宽-质量 trade-off。"
+  },
+  {
+    "id": "2608.21009",
+    "slug": "dorsal-hand-age-assurance-xr",
+    "venue": "arXiv preprint（cs.CV，CC BY 4.0；University of Greenwich, London, UK）",
+    "tags": ["年龄保障", "手背生物特征", "儿童安全", "XR 隐私", "年龄估计", "公平性"],
+    "conclusion": "首个跨 minor-adult 边界（10 岁+）并以 ITA 覆盖全 Fitzpatrick 谱系的年龄分层手背研究：participant-level 5 折下 SwinV2-B MAE 5.78yr、pAUC@0.1 0.0587，论证手背 RGB 支持隐私友好的 XR 年龄保障与儿童安全。",
+    "problem": "XR 平台的年龄保障与儿童安全需要低成本年龄推断，但主流依赖面部生物特征，隐私与重识别风险高；手背是 XR 交互中自然暴露的部位且无面部争议，却缺乏系统研究——没有跨法定 18 岁边界、含未成年参与者的数据集与基准，也没有全 Fitzpatrick 谱系的肤色公平性证据。本文要在标准架构上刻画手背 RGB 在 minor-adult 边界的可达到精度，评估其作为 safety-critical age gate 的可行性与偏差。",
+    "method": "两任务评测：连续年龄回归与二元 adult/minor 分类（age gate），统一 participant-level 分层 5 折交叉验证。概率化回归：每模型输出均值 μ 与 log-variance，最小化 Gaussian NLL（Eq.1），gate 由概率输出导出。四个骨干各代表一个设计点：ResNet-50 224×224、EfficientNetV2-S 384×384（主 CNN 候选，保留 wrinkle density、melanin distribution 细纹理）、Swin Transformer V2-B 384×384（shifted-window 注意力适配手部局部纹理）、MobileNetV3-Large 224×224（端上 XR 推理效率前沿）。数据划分防身份泄漏：先按年龄×肤色联合分层抽 15% held-out test（2 年 bin 至 50 岁、其后 5 年 bin），其余 85% 同方案 5 折（每折约 68%/17%）。因 XR 中手姿态不受限，增强含 [-360°,360°] 全旋转、水平/垂直翻转与 ±10% 亮度对比度抖动，ImageNet 归一化；AdamW（lr 3e-4、weight decay 1e-2）≤40 epoch、early stopping（patience 20、min delta 1e-3）、batch 32、seed 42，8×A100 训练；统计用 5 折配对检验、repeated-measures ANOVA + Friedman 与 Holm–Bonferroni 校正。",
+    "experiments": "年龄回归：SwinV2-B 最低 MAE 5.78±0.64 yr、RMSE 7.47±0.72 yr；EfficientNetV2-S MAE 6.01±0.11 yr 次之；MobileNetV3-L 全面最差；另报 intra-user STD（每人 16 次采集）衡量 gate 决策稳定性。Omnibus 检验确认三指标跨模型差异显著；Holm 校正后 pairwise MAE 差异不显著，但 MobileNetV3-L 与 SwinV2-B 的 RMSE 差距达显著（p=0.016）。Age gate：Table 2(A) 报跨模型 AUC 与 pAUC@0.1，SwinV2-B pAUC@0.1=0.0587；Fig.6(a) 给四架构 5 折 ROC（mean±std，FPR=0.1 参考线），(b) 将 SwinV2-B ROC 按肤色组分解（Light=ITA I–III、Medium=IV、Dark=V–VII）；Table 2(B) 报三阈值下 minors FPR 与 adults FNR；另做 multi-capture aggregation 实验。",
+    "innovation": [
+      "首个跨 minor-adult 边界、含未成年参与者（10 岁+）的手背年龄推断研究与基准",
+      "首次将 ITA 全 Fitzpatrick 谱系肤色刻画引入年龄保障公平性评估",
+      "概率化 Gaussian NLL 回归直接映射既有 age-assurance 框架，输出不确定度供 gate 决策",
+      "针对 XR 手姿不受限设计 [-360°,360°] 全旋转增强，并评估端上候选 MobileNetV3-L",
+      "利用手背无面部生物特征、低重识别风险的隐私属性，契合数据最小化监管要求"
+    ],
+    "limits": [
+      "手背推断精度有限（MAE 5.78yr），18 岁边界附近的误分类风险需部署前评估",
+      "digest 未报告数据集总样本量与逐肤色组样本数，泛化估计的统计功效待核",
+      "仅静态 RGB 手背图像，未覆盖 XR 实际使用中的遮挡、传感器噪声与运动模糊",
+      "跨设备、跨场景泛化未验证（作者列为未来工作）"
+    ],
+    "relation": "属库内感知与认知方向：与 Gaze2HOI 4.00 同属 XR 感知输入，但首次把手背生物特征用于 age assurance；库内 VR 安全/隐私方向薄弱，本文以「非面部、低重识别风险」模态填补年龄门控空白，可与 gaze 交互安全、家长控制类研究组合成 XR 儿童安全证据链。其概率回归与分组公平性协议也可复用到库内其他生物特征模态。",
+    "repro": "digest 未提及代码/数据开源；License CC BY 4.0；训练于 University of Greenwich HPC（8×NVIDIA A100-SXM4 80GB）。",
+    "action": "① 做 XR 年龄保障/儿童安全功能时，将手背作为面部之外的补充模态评估，重点核对 18 岁边界 FPR/FNR 及肤色分组差异；② 复现须严格遵守 participant-level 划分与 ITA 分组协议，避免身份泄漏与公平性高估；③ 参考其 multi-capture aggregation 提升 gate 稳定性。"
+  },
+  {
+    "id": "2610.28004",
+    "slug": "diff-task-driven-coded-aperture",
+    "venue": "arXiv preprint（cs.CV；Australian Centre for Robotics, The University of Sydney）",
+    "tags": ["可微相机设计", "编码孔径", "depth-from-defocus", "3D Gaussian Splatting", "all-in-focus", "计算摄影"],
+    "conclusion": "提出可微任务驱动相机设计框架：以真实采集重建的 3DGS 作可微虚拟成像环境，相机参数、编码孔径 mask 与任务网络端到端联合优化，在单目/立体 depth-from-defocus 与 AiF 重建上一致优于固定相机与无导数优化基线，并揭示解耦设计会错过的可解释权衡。",
+    "problem": "编码孔径等计算摄影相机的设计（mask 图案、焦距、f-number、传感器、立体基线）长期依赖手工解耦设计与无导数优化，难以联合考虑下游感知任务（深度估计、AiF 重建）的真实目标，可扩展性受限；同时缺乏可微的「虚拟环境」仿真成像过程——真实场景采集成本高、覆盖有限。要把相机设计与下游任务放进同一可微管线，并用重建的 3D 场景表示充当可微图像形成环境，是关键挑战。",
+    "method": "框架核心是用 gsplat 重建的 3D Gaussian 表示作为可微虚拟环境：仿真编码孔径相机的图像形成（defocus blur 由 focus、焦距、f-num、传感器与像素尺寸等参数驱动），梯度可经任务损失反传到相机参数、coded aperture mask 与任务网络，实现三者（含立体场景的 inter-camera geometry）的端到端联合优化，避免无导数优化的可扩展性上限。环境度量尺度用 Depth Anything 3 的度量深度对齐重建恢复。优化用 Adam 20,000 步、batch size 3，相机参数 lr=1e-2、mask 与任务网络 lr=1e-3；噪声模型在 Basler Dart DaA1280-54uc（5ms 曝光、10dB gain、f/8）上标定，作为泛化参考点。任务选取两个 close-range 场景：单目面向机器人抓取工作空间的单捕获 RGB-D，立体面向微距摄影（浅 DoF 强 defocus，立体对补充 photometric 与 geometric 深度线索）。",
+    "experiments": "场景取自 MipNeRF360 与 LLFF 的 close-range 子集：单目 6 场景（leaves、flower、fortress、orchids、bonsai、room），立体 7 场景（4 个 LLFF 场景 + counter、kitchen、bonsai）。每场景建 3DGS 虚拟环境并对齐 Depth Anything 3 度量尺度，相机设计与任务网络跨场景联合优化，留部分视图评估。指标含 AiF 的 PSNR/SSIM/LPIPS 与深度的 RMSE/MAE/log10/δ<1.25，并设 Noise×100 场景。Table 1 中 Fixed Cam.+Phase+Ikoma et al. 配置：AiF PSNR 22.587dB、SSIM 0.669、LPIPS 0.308，深度 RMSE 0.131m、MAE 0.080m、log10 0.102、δ<1.25 0.910。Table 2 立体对比中，monocular row 为同窄 FoV 下自身最强单目配置以隔离第二视角收益，并与 CADS（最近 coded-aperture 基线，dual-pixel 限于亚毫米孔径尺度）比较；作者报告立体设计在 AiF 重建上优势尤其明显。另做消融与 real-world validation；digest 未含完整分方法数值表。",
+    "innovation": [
+      "用 3DGS 重建充当可微虚拟成像环境，把相机设计从无导数搜索/真实采集依赖中解放",
+      "相机参数、coded aperture mask、任务网络（含立体几何）端到端联合可微优化",
+      "设计准则直接优化 depth-from-defocus 与 AiF 等下游任务目标，而非间接成像指标",
+      "真实相机噪声标定 + real-world validation，揭示解耦流程会错过的可解释设计权衡"
+    ],
+    "limits": [
+      "聚焦 close-range（defocus 线索在远处信息量不足），中远距场景未覆盖",
+      "依赖 3DGS 重建质量与 Depth Anything 3 的尺度对齐，上游误差会传入设计",
+      "digest 未含完整定量表，相对基线的提升幅度与最优设计参数待核",
+      "3DGS 虚拟环境与真实传感器（噪声、畸变、运动）间的 sim-to-real 差距需逐硬件标定"
+    ],
+    "relation": "属库内渲染与显示（硬件类）：与 HoOPOE 4.27（全息 CGH 感知损失）同属用感知/任务损失设计光学元件，与 CVQPG 2609.11434（全息/近眼显示 3DGS）、Foveated Compression 4.00、Masking Judder 3.78 构成计算成像-近眼显示谱系。独特之处是把 3DGS 从「被渲染对象」转为「可微相机设计的虚拟光场」，与库内 3DGS 压缩家族（Scaffold-GS 系、同批 Unfolding 3DGS）形成表示质量→成像设计的上下游。",
+    "repro": "digest 未提及代码开源；License：arXiv.org perpetual non-exclusive license；实验基于 gsplat、Depth Anything 3 与 Basler Dart DaA1280-54uc 噪声标定。",
+    "action": "① 设计 XR 环境感知/近眼相机时，用「3DGS 虚拟环境+任务损失」联合优化孔径、焦距与立体基线，替代手工解耦；② 复现先建 gsplat 场景并完成 Depth Anything 3 尺度对齐，再按 20k 步 Adam（相机 lr 1e-2）联合训练；③ 重视其噪声标定协议以缩小 sim-to-real 差距。"
+  },
+  {
+    "id": "2610.28585",
+    "slug": "scenerig-agentic-sim-ready",
+    "venue": "arXiv preprint（cs.RO，CC BY 4.0；Luma AI、Cornell University）",
+    "tags": ["仿真就绪重建", "单图 3D 场景", "agentic system", "relational scene graph", "real-to-sim", "机器人"],
+    "conclusion": "SceneRig 用智能体系统从单图重建仿真就绪 3D 场景：VLM 提出 relational scene graph，MoGe-2 度量初始化，物理沉降与 physics-grounded pose refinement 精修，在 80 图基准上超四基线，支持 real-to-sim 策略评估。",
+    "problem": "机器人仿真需要与真实场景外观和物体摆放一致的 3D 场景，但单图重建不知道物体间支撑/结构关系、缺乏度量尺度与重力对齐坐标系，生成摆放常不满足物理稳定（穿模、悬空），资产也不可直接仿真（无碰撞体/材质）。已有方法或忽略关系与物理，或不能端到端产出 simulator-ready 场景；需要把感知（关系解析、度量估计）、生成（几何/材质/光照）与物理仿真（沉降、位姿修正）组织为一个智能体系统。",
+    "method": "实体表示：可动物体 O 与根表面 R（桌/地/墙）构成 V=O∪R，每个实体有持久身份与状态 x_v=(M_v, τ_v, θ_v^phys, X_v)——几何、外观、碰撞与物理属性、度量变换；场景图 G=(V,E)，E=E_sup∪E_surf 分别记录物体-支撑边与根间结构边；另维护光照 L。流水线三阶段：① relational & metric initialization——VLM 提出物体/根表面及支撑结构关系与逐实例描述，MolmoPoint 定位并取 SAM3 候选实例 mask，后检查补漏、修复分裂/合并 mask、修订根表面，遮挡物体可选 LanPaint 去遮挡再分割；MoGe-2 估相机内参与密集度量 3D 点图（有 RGB-D 则替换），主支撑面拟合平面定义重力对齐坐标系（支撑面 z=0），拟合平面与接触几何作为关系验证证据；② agentic scene construction——几何、材质、光照 agent 构建周围场景并经 support-ordered settling 物理沉降初始化；③ physics-grounded object pose refinement——pose-refinement agent 检查成对 reference/render crops，调用几何与物理 grounded 工具修正物体摆放，最终导出仿真器。",
+    "experiments": "基准含 80 张桌面图像，其中 44 张为 RoboDojo 仿真渲染图。基线与对照：VIGA、REST3D、SceneConductor、SimFoundry 四个方法（VIGA 加 object-grouping contract 以支持物体中心评测）；SAM3D* 共享分割、相机、物体与场景上下文但保留 SAM3D 预测位姿，去掉度量 grounding、物理沉降与位姿修正，用于隔离各组件贡献；另有 GPT-6 Astra 时代的 Codex（通用 harness 直接在 Blender 重建）。默认 VLM 为 Claude Opus 5。评测重建保真、物体恢复、3D layout 与物理稳定性，并消融 physics-grounded placement、VLM backbone 与重建 harness；机器人应用含 real-to-sim policy evaluation 与 open-loop trajectory replay，比 SimFoundry 更忠实复现真实世界结果。digest 未含具体数值表（原文有）。",
+    "innovation": [
+      "把单图场景重建组织为关系解析→度量初始化→agentic 构建→物理 grounded 修正的智能体流水线",
+      "relational scene graph + 支撑面拟合的重力对齐度量坐标系（z=0），直接产出 simulator-ready 摆放",
+      "physics-grounded pose refinement：agent 对比参考/渲染 crop 并调用几何+物理工具迭代修正",
+      "在 80 图基准上系统对比 4 基线 + SAM3D* + Codex，并以 real-to-sim 策略评估闭环验证"
+    ],
+    "limits": [
+      "复杂房间场景仍困难：遮挡、深度歧义与频繁接触",
+      "SAM3D 缺 PBR 材质，真实感受限",
+      "每个物体视为单一刚体，不恢复关节结构或变形",
+      "依赖 VLM 与多个基础模型（MoGe-2/SAM3/MolmoPoint/LanPaint），计算成本高且误差传播未量化"
+    ],
+    "relation": "属库内世界模型与仿真方向：与 SnapPhysics 4.12（单视图物理场景图）共享「单图→物理场景」目标，但 SceneRig 走 agentic 多工具路线并直接导出仿真；与 GaussianBench 3.57（高斯物理保真度基准）互补——后者评测、前者产出；与 Astronex-World 4.32、EgoExplorer 4.30 同属场景/世界构建线。其 MoGe-2 度量初始化与库内 3DGS 重建线（本批 Unfolding 3DGS、2610.29041）共享度量点图上游。",
+    "repro": "项目页 https://red-fairy.github.io/SceneRig/ ；License CC BY 4.0；digest 未明确代码开源；默认 VLM 为 Claude Opus 5，仿真器导出细节见附录。",
+    "action": "① 做 real-to-sim/机器人仿真时，用「场景图+物理沉降+位姿修正 agent」从单图快速搭场景，替代手工摆放；② 复现先接 MoGe-2 度量深度与 SAM3 分割，再实现 pose-refinement agent 的成对 crop 检查回路；③ 以 80 图基准与 SimFoundry 对比协议作为验收标准。"
+  },
+  {
+    "id": "2604.10809",
+    "slug": "warped-wrist-aligned-rendering",
+    "venue": "arXiv preprint（cs.RO，CC BY 4.0；Carnegie Mellon University）",
+    "tags": ["机器人学习", "第一视角示范", "手腕相机视图", "3D Gaussian Splatting", "diffusion policy", "数据增强"],
+    "conclusion": "WARPED 用单目 RGB 第一视角示范合成手腕相机观测与重定向动作：SfM+3DGS 场景、hand-object optimization 跟踪、手腕视图渲染并增强 10 倍，diffusion policy 在 6 个真实 xArm7 任务上优于 Meta Quest 2 VR 遥操作基线。",
+    "problem": "训练 robust 手腕相机视觉运动策略需要大量机器人示范，采集成本高、难扩展；人类第一视角示范易获取，但观测视角（第一视角 vs 手腕视图）与动作空间（人手 vs 夹爪）双重不匹配，无法直接使用。已有方法常依赖多视角相机、深度传感器或定制硬件，且只能从第三/第一视角执行策略。需要仅用单目 RGB 把人类示范转为手腕视图的机器人观测-动作对，并支持低成本数据增强。",
+    "method": "五阶段流水线：data collection、interactive scene initialization、hand-object optimization、wrist-view retargeting & rendering、policy training & deployment；仅需单目 RGB 相机。假设：刚性物体桌面操作（另评一个单轴 articulated 物体）、夹爪末端、物体保持部分可见、有限手内运动且无重复重抓。采集：先扫工作空间（<1 分钟），LightGlue 特征匹配的 SfM 估位姿并建稀疏 3D，用于初始化 3DGS 并定位后续示范；用户戴头盔 GoPro Hero9（线性镜头、针孔模型）录示范。初始化：Hierarchical Localization 逐帧定位，SpatialTrackerV2 提取时序一致单目深度并与 SfM/3DGS 尺度对齐，HAMER 初始化手部形状位姿并经序列级优化（时序平滑+深度一致）精修。hand-object optimization：接触起止估计 + 关节手-物联合精修 + 辅助损失。重定向与渲染：hand-to-end-effector mapping、pre-contact trajectory optimization、contact point selection、contact grasp refinement，轨迹重定向到夹爪并合成手腕视图渲染。示范增强 10 倍后训练 diffusion policy。",
+    "experiments": "硬件：UFactory xArm7 + xArm G1 Gripper；示范用头盔 GoPro Hero9，rollout 手腕侧 GoPro Hero9 + Max Lens Mod 1.0。任务：5 个刚性桌面任务（Rotate Box、Pour Mug、Bottle from Dish Rack、Wipe Plate with Brush、Can on Plate）+ 1 个 articulated 任务（Open Microwave）。每任务 30 个示范（固定工作空间、单一物体实例）+ 单张物体图供 SAM3D 网格重建，增强 10 倍，4×NVIDIA Tesla V100 训练 diffusion policy，成功率按 20 次试验评估。基线：Meta Quest 2 VR 头显+手柄遥操作示范训练的策略（同样 30 示范、不用合成增强），以及 RwoR 的 Alter 基线（测试时无公开代码/模型）；所有方法统一手腕相机观测模态。附录含 hand-object optimization 消融、数据增强消融、背景干扰物鲁棒性、与遥操作共训练、OOD 场景、与 UMI 对比及数据处理时间。",
+    "innovation": [
+      "仅用单目 RGB 第一视角视频合成手腕视图观测-动作对，免多视角/深度传感器/定制硬件",
+      "视觉基础模型栈初始化交互场景：SfM+3DGS+SpatialTrackerV2+HAMER，再以 hand-object optimization 联合精修",
+      "重定向含接触点选择与抓取精修，渲染观测直接匹配部署时手腕相机模态",
+      "合成增强 10 倍 + diffusion policy，真实机器人上超过 Quest 2 VR 遥操作数据基线"
+    ],
+    "limits": [
+      "假设较强：刚性/单轴 articulated、物体部分可见、无重复重抓与接触点突变",
+      "依赖 SAM3D 等基础模型的网格与位姿质量，误差传播未量化",
+      "每任务单一物体实例与固定工作空间采集，泛化仅部分验证（附录 OOD 实验）",
+      "RwoR 无公开代码/模型，与最强竞品的直接对比缺失"
+    ],
+    "relation": "属库内内容生成/具身方向：与 UMI-Bridge 3.80（人-机动作空间映射）同属人类示范→机器人策略，但 WARPED 增加 3DGS 手腕视图渲染层，直接弥合观测模态差；与 EgoJEPA 3.85（第一视角灵巧操作）互补——后者学第一视角表征、前者产手腕视图训练数据；库内暂缺其竞品 RwoR，本条可作该方向基准锚点。其 SfM+3DGS 场景构建与本批 Unfolding 3DGS、SceneRig 的度量重建线呼应。",
+    "repro": "项目页 https://kantor-lab.github.io/WARPED/ ；License CC BY 4.0；digest 未明确代码开源；训练用 4×NVIDIA Tesla V100。",
+    "action": "① 需低成本机器人操作数据时，用「单目 RGB+3DGS 手腕视图渲染」转化人类示范，先核对任务是否满足刚体/部分可见假设；② 复现重点是 hand-object optimization 的接触起止估计与 contact grasp refinement；③ 与库内 UMI-Bridge 的动作空间映射对照，量化手腕视图渲染的 sim-to-real 增益。"
+  }
+]

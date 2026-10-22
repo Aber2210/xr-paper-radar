@@ -1,0 +1,92 @@
+【摘要】
+
+【方法】
+3.1 Relational and Metric Initialization
+3.2 Agentic Scene Construction
+3.3 Physics-Grounded Object Pose Refinement Given a single RGB image, we reconstruct an editable, simulation-ready 3D scene that matches its appearance and object arrangement. The system primarily targets tabletop scenes for robotics and can also process room scenes by treating the floor as the main support surface.
+Figure 2 : Overview of SceneRig .
+From a single image, SceneRig recovers objects, supporting surfaces, and their relations, and initializes a gravity-aligned metric scene through physical settling. Geometry, material, and lighting agents construct the surrounding scene. Finally, a pose-refinement agent inspects paired reference/render crops and invokes geometry- and physics-grounded tools to correct object placement.
+Let 𝒪 \mathcal{O} denote movable objects and ℛ \mathcal{R} denote root surfaces, such as tables, floors, and walls. Each entity has a persistent identity and a state defined by
+x v = ( M v , τ v , θ v phys , X v ) , v ∈ V = 𝒪 ∪ ℛ . x_{v}=\left(M_{v},\tau_{v},\theta_{v}^{\mathrm{phys}},X_{v}\right),\qquad v\in V=\mathcal{O}\cup\mathcal{R}.
+(1)
+Here, M v M_{v} is geometry, τ v \tau_{v} appearance, θ v phys \theta_{v}^{\mathrm{phys}} collision and physical properties, and X v X_{v} a metric transform with translation, rotation, and scale. Illumination is L L , and the scene graph is
+G = ( V , E ) , E = E sup ∪ E surf , G=(V,E),\qquad E=E_{\mathrm{sup}}\cup E_{\mathrm{surf}},
+(2)
+where E sup E_{\mathrm{sup}} links objects to direct supports and E surf E_{\mathrm{surf}} records structural relations among roots.
+Figure 2 summarizes the pipeline. We describe relational scene graph construction and scene object creation under Section 3.1 , followed by Agentic scene construction (Section 3.2 ) and physics-grounded object pose refinement (Section 3.3 ).
+3.1 Relational and Metric Initialization
+We first recover which entities are present, how they support one another, and where they lie in metric 3D. This relational and geometric evidence guides object reconstruction and physical settling.
+Relational parsing.
+A VLM proposes movable objects 𝒪 \mathcal{O} , root surfaces ℛ \mathcal{R} , and their support and structural relations, with a distinct description for each instance. MolmoPoint [ molmopoint ] localizes each entity from its description, and its predicted points select instance masks from SAM3 [ sam3 ] candidates for that category. Subsequent checks recover objects omitted from the initial inventory, repair split or merged masks, and revise root surfaces and their relations. For occluded objects, we optionally remove foreground occluders with LanPaint [ zheng2025lanpaint ] and re-segment the target. Entity identities persist throughout reconstruction (Appendix ).
+Metric initialization.
+The scene graph tells us what is present and how entities are related, but not their metric placement in 3D. We use MoGe-2 [ wang2025moge2 ] to estimate camera intrinsics and a dense metric 3D point map. When metric depth and calibrated intrinsics are available, such as from a robot’s RGB-D camera, they replace these estimates. A plane fitted to the main support defines a gravity-aligned coordinate frame in which the support lies at z = 0 z=0 . Fitted planes and estimated contact geometry also provide geometric evidence for validating the proposed scene relations. SAM
+
+【实验】
+4.1 Experimental Setup
+4.2 Reconstruction Quality
+4.3 Ablation Studies
+5 Robotics Applications
+5.1 Real-to-Sim Policy Evaluation
+5.2 Open-Loop Trajectory Replay
+6 \par Discussion
+References
+A \par Supplementary Material Overview
+B \par Additional Implementation Details
+B.1 \par Relational perception and mask recovery
+B.2 \par Metric initialization and support-ordered settling
+B.3 \par Agentic scene construction
+B.4 \par Physics-Grounded Pose Refinement
+B.5 \par Implementation settings and simulator export
+C \par Additional Experimental Details
+C.1 \par Baseline implementation details
+C.2 \par Benchmark and metric details
+C.3 \par Pairwise VLM and physics protocols
+C.4 \par Real-to-sim policy evaluation protocol
+C.5 \par Open-loop trajectory replay protocol
+D \par Additional Experiments
+D.1 \par Ablation Studies
+D.2 \par Additional Quantitative Results
+D.3 \par Additional Qualitative Results
+License: CC BY 4.0
+arXiv:2610.28585v1 [cs.RO] 20 Oct 2026
+1]Luma AI
+2]Cornell University
+\checkdata [Project Page] https://red-fairy.github.io/SceneRig/
+Figure 1 : Single-image simulation-ready scene reconstruction for robotics. SceneRig combines vision tools, agentic reasoning, and physical simulation to create an editable, simulation-ready scene from a single image (top). Its reconstructions support real-to-sim policy evaluation and open-loop trajectory replay, reproducing real-world outcomes more faithfully than SimFoundry (bottom).
+SceneRig : An Agentic System for Simulation-Ready 3D Scene Reconstruction from Single Images
+Rundong Luo
+\par
+Yunong Liu
+\par
+Di Cao
+\par
+Matthew Tancik
+\par
+Shyamal Buch
+\par
+Colton Stearns
+\par
+Wenqi Xian
+Affiliation: [
+Affiliation: [ Figure 3 : Qualitative scene reconstruction results.
+Compared with the baselines,
+SceneRig more consistently preserves object identity, scale, and relative placement while reconstructing the surrounding scene.
+We evaluate SceneRig ’s reconstruction fidelity, object recovery, 3D layout, and physical stability (Sec. 4.2 ). We then examine physics-grounded placement and the effects of the VLM backbone and reconstruction harness (Sec. 4.3 ). Section 5 evaluates robotics applications; Appendix provides additional analyses and results.
+4.1 Experimental Setup
+Baselines.
+We compare with four baselines: VIGA [ viga2026 ] , REST3D [ ma2026rest3d ] , SceneConductor [ kim2026sceneconductor ] , and SimFoundry [ simfoundry2026 ] . To support object-centric evaluation and simulation, we augment VIGA’s system prompt with a simple object-grouping contract: all parts of each movable object share a single empty Blender parent. We also evaluate SAM3D ∗ , which shares SceneRig ’s segmentation, camera, objects, and scene context but retains SAM3D’s predicted poses without our metric grounding, physical settling, or pose refinement. We use Claude Opus 5 as the default VLM wherever applicable. With GPT-6 Astra, we also compare against Codex, a general-purpose harness that reconstructs the scene directly in Blender without external models. Appendices and provide implementation details and full harness results.
+Data. Our benchmark contains 80 tabletop images, including 44 simulator renderings from RoboDojo [ chen2026r
+
+【结论/局限】
+and future work. Although SceneRig accurately places objects in tabletop scenes, complex room scenes remain challenging due to occlusion, depth ambiguity, and frequent contacts. SAM3D’s lack of PBR materials limits photorealism, and our current representation treats each reconstructed object as a single rigid body and does not recover joint structures or deformation. Future work will explore improved depth estimation and image-to-3D models.
+References
+[1]
+Andreea Ardelean, Mert Ö\parzer, and Bernhard Egger.
+Gen3DSR: Generalizable 3D scene reconstruction via divide and conquer from a single view.
+In 3DV , 2025.
+[2]
+Kevin Black, Noah Brown, James Darpinian, Karan Dhabalia, Danny Driess, Adnan Esmail, Michael Equi, Chelsea Finn, Niccolo Fusai, Manuel Y. Galliker, Dibya Ghosh, Lachy Groom, Karol Hausman, Brian Ichter, Szymon Jakubczak, Tim Jones, Liyiming Ke, Devin LeBlanc, Sergey Levine, Adrian Li-Bell, Mohith Mothukuri, Suraj Nair, Karl Pertsch, Allen Z. Ren, Lucy Xiaoyang Shi, Laura Smith, Jost Tobias Springenberg, Kyle Stachowicz, James Tanner, Quan Vuong, Homer Walke, Anna Walling, Haohuan Wang, Lili Yu, and Ury Zhilinsky.
+π 0.5 \pi_{0.5} : a vision-language-action model with open-world generalization.
+In CoRL , 2025.
+[3]
+Nicolas Carion, Laura Gustafson, Yuan-Ting Hu, Shoubhik Debnath, Ronghang Hu, Didac Suris, Chaitanya Ryali, Kalyan Vasudev Alwala, Haitham Khedr, Andrew Huan
