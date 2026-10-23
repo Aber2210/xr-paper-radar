@@ -80,17 +80,17 @@ today_max = max(value_of(s) for _, _, _, s, _, _ in MAIN)
 heavy = today_max >= gate3_mean
 print(f'门③ 现算：窗口 {gate3_window_n} 条，Top10 均分 {gate3_mean}；当日最高 {today_max} → 重磅日={heavy}')
 
-def row(pid, title_zh, track, s, announce, intop):
+def row(pid, title_zh, track, s, announce, intop, batch):
     v = value_of(s)
     g = grade_of(v, heavy)
     m = manifest.get(pid, {})
     return dict(id=pid, title=rss[pid]['title'], title_zh=title_zh, track=track,
                 value=v, grade=g, scores=s, announce_type=announce, in_top10=intop,
                 evidence=m.get('evidence', 'FULL'), fetch_level=m.get('level', 'L0'),
-                fulltext_chars=m.get('chars', 0), venue=digest[pid]['venue'])
+                fulltext_chars=m.get('chars', 0), venue=digest[pid]['venue'], batch=batch)
 
-main_rows = [row(*t) for t in MAIN]
-bf_rows = [row(*t) for t in BACKFILL]
+main_rows = [row(t[0], t[1], t[2], t[3], t[4], t[5], RUN_DATE) for t in MAIN]
+bf_rows = [row(t[0], t[1], t[2], t[3], t[4], t[5], 'backfill-1024') for t in BACKFILL]
 
 # 落 scored JSON
 json.dump(main_rows, open('data/scored_1024.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
@@ -153,7 +153,7 @@ lines += ['', '## backfill-1024 排序', '']
 for i, r in enumerate(bf_sorted, 1):
     lines.append(f"{i}. **{r['id']} {r['title_zh']}** — {r['value']:.2f} {r['grade']}（{r['track']}，旧稿 {r['announce_type']} 再公告首次入馆）")
 lines += ['', '## 淘汰记录', '',
-          '- 非 XR 误命中剔除 8 篇：2610.31494 AgentVQA（智能体视觉基准）/ 2610.30319 TerraTransfer++（机器人规划）/ 2610.30955 上肢震颤辅助装置（辅助机器人）/ 2610.30969 IORA（不规则物体 immobilization 操作）/ 2610.30774 月球视觉 SLAM 前端评估（行星机器人）/ 2610.31253 术中肿瘤定位（医学）/ 2610.31253 同前 + 2610.31284 已留——见下；',
+          '- 非 XR 误命中剔除 6 篇（23 新稿池中）：2610.31494 AgentVQA（智能体视觉理解基准）/ 2610.30319 TerraTransfer++（机器人端到端规划）/ 2610.30955 上肢震颤辅助装置（辅助机器人）/ 2610.30969 IORA（不规则物体 immobilization 机械操作）/ 2610.30774 月球视觉 SLAM 前端评估（行星机器人）/ 2610.31253 术中肿瘤弱监督定位（医学）；',
           '- 库内 v2 再公告剔除 2 篇：2610.28490（2026-10-22 批已在库）/ 2610.22363（2026-10-17 批已在库）；',
           '- 旧稿 replace 再公告单列 backfill-1024 4 篇（XR 相关）；另 4 篇旧稿非 XR 剔除（见 backfill 7 维表注）。', '']
 open('papers/daily/2026-10-24/scored.md', 'w', encoding='utf-8').write('\n'.join(lines))
