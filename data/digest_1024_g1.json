@@ -1,0 +1,164 @@
+[
+  {
+    "id": "2610.30910",
+    "title": "H-2DGS: Height-Field Gaussian Splatting for Sharp and Deformable Neurosurgical Surface Reconstruction",
+    "title_zh": "H-2DGS：用于清晰可变形神经外科表面重建的高度场高斯泼溅",
+    "track": "神经渲染",
+    "venue": "arXiv preprint（arXiv:2610.30910v1 [eess.IV]，2026-10-22）",
+    "problem": "神经外科导航通常以 2D MRI 切片呈现术野，难以与手术显微镜下暴露的皮层表面建立直观对应。常规 3DGS 在显微镜视频有限的视角覆盖下，会把不透明度铺成厚而几何模糊的密度带，遮挡皮层下方的纤维束与 MRI 解剖结构。因此需要一种既照片级真实、又具有清晰几何边界的皮层表面表示，并可与全脑 MRI 和 diffusion tractography 融合，同时支持术后组织切除后的形变对齐。",
+    "method": "提出三阶段管线，把体积化的 3DGS 逐步转换为薄表面：Stage I 用常规 3DGS 加 adaptive densification 做 photometric bootstrap 建立外观（λ=0.2 的 L1+SSIM 目标）；Stage II 提出可微的 ray-wise density concentration 目标，用 soft 1%/99% 分位数度量每条相机射线上的有效厚度 Δt 并收缩向零目标厚度（λthick=5.0，5000 迭代 warm start 后再跑 1000 迭代），在不改变 primitive 类型的前提下去除深度歧义；Stage III 把多视角深度融合进共享 TSDF，在零水平集上放置 curved height-field Gaussian primitive：每个 patch 有 tangent frame、Gaussian-basis height field（5 个高度基）、独立的 20 个 opacity 基与 50 个 color 基，ray-surface intersection 用少量 Newton 迭代求解，直接产出显式表面交点与 camera-linear depth。术后对齐用 MRI 网格渲染的深度监督表面形变（opacity 固定为 0.999），tracked-color self-preservation 把初始颜色绑定到变形后的 patch 上，几何窗口与外观窗口交替优化防止对齐破坏皮层纹理。",
+    "experiments": "数据：5 例真实神经外科视频（3 术前 + 2 术后），每例从视角覆盖最全的连续片段均匀采样 60-80 帧训练；硬件为 NVIDIA RTX 3050 4GB + i7-12700H + 32GB 内存；每例固定 2400 个 primitive。基线：2DGS、3D-HGS、QGS（默认设置）。指标：PSNR/SSIM/LPIPS、MVDC（按场景范围归一化的多视深度不一致性）、模型大小、每帧时间。关键结果：H-2DGS 的 MVDC 在 5 例上均为 1e-5 ~ 4e-5，显著低于 2DGS（3e-5 ~ 1e-4）、QGS（5e-5 ~ 1.4e-4）与 3D-HGS（1.0 ~ 1.57）；模型恒定 7.97 MB、每帧 29-42 ms；光度分较低（PSNR 21.54-25.20、SSIM 0.745-0.839、LPIPS 0.161-0.218），而光度最优的 QGS（PSNR 最高 40.07、SSIM 最高 0.986）需 78.93-142.01 MB 与 120.68-188.04 ms。术后实验中深度监督把切除腔重建拉向术后 MRI 形态，外观窗口恢复纹理，叠加配准在各视角成立。",
+    "innovation": [
+      "三阶段 volumetric→TSDF→height-field 转换管线，附带可微 ray-wise thickness 目标，把外观获取与表面构造解耦",
+      "弯曲高度场 Gaussian primitive：几何、颜色、不透明度使用分离基函数，patch 可局部弯曲以贴合皮层曲率",
+      "深度监督的术后表面形变 + tracked appearance preservation + 几何/外观交替优化",
+      "面向 tractography 与 MRI 解剖融合的锐利皮层边界，纤维束不再被弥散体积 opacity 遮挡"
+    ],
+    "limits": [
+      "光度保真度不及基线：薄显式表面损失高频高光表现，PSNR/SSIM 差距明显（如 Preop 3 上 25.20 vs QGS 40.07）",
+      "依赖 SfM 恢复的相机位姿；生理性皮层搏动使位姿混淆组织运动，已导致 1 条序列重建失败",
+      "每例固定 2400 primitive 预算，未与体积型基线的 primitive 数量对齐，比较口径不完全一致"
+    ],
+    "relation": "在 2DGS、3D-HGS、QGS 等表面化高斯表示路线上，针对外科有限视角场景提出先浓缩密度、再融合 TSDF、最后初始化曲面 patch 的新范式；是首个面向神经外科皮层-tractography-MRI 统一可视化的锐利可形变表面工作。",
+    "repro": "作者承诺论文发表后经 GitHub 开源代码（目前尚未发布）；患者数据受机构间数据共享协议与书面知情同意约束，不公开。"
+  },
+  {
+    "id": "2610.30353",
+    "title": "Exploring spatial configuration and group familiarity when co-watching 360-degree stories in social virtual reality",
+    "title_zh": "社会虚拟现实中共看 360 度故事时的空间配置与群体熟悉度探究",
+    "track": "感知与认知",
+    "venue": "arXiv preprint（arXiv:2610.30353v1 [cs.HC]，2026-10-21）",
+    "problem": "沉浸式故事的共看研究长期以个体为对象，而社交 VR 中共看者的化身会遮挡 360 度内容、引发碰撞与空间协商；虚拟空间边界类型、分配的个人空间大小以及共看者之间的熟悉度，如何影响社会临场感、叙事注意与工作负荷，缺乏系统实证。",
+    "method": "开展三个探索性被试间实验。Exp1 比较三种空间边界：general admission（400×400 m 大公共区）、box（20×20 m 小公共区）、reserved seating（每人 4×4 m 个人网格、间距 2 m）。Exp2 固定个人边界类型，变化个人空间大小（1×1 / 4×4 / 8×8 m）。Exp3 通过把同时段两组重新洗牌操作群体熟悉度（shuffled vs non-shuffled）。实验在 ENGAGE XR 平台（Meta Quest 2）进行，360 度 monoscopic 视频以 skybox 播放；采集社会/空间临场感（3 项 5 点）、故事注意（NES 注意焦点）、NASA-TLX 四项、VRSQ 晕动症，以及行为数据（人际距离、虚拟移动量、FOV 内他人数量与占比），用线性模型分析。",
+    "experiments": "样本：三实验分别为 N1=109、N2=116、N3=88，均为大学课程招募的 18-29 岁学生，组大小 5-10 人（M≈8），协议在 OSF 预注册。Exp1：box 条件对他人社会临场感显著高于 general admission（b=0.51, p=.025）与 reserved seating（b=0.52, p=.011）（总体 p=.0050）；reserved seating 心智需求最低（vs box b=0.83, p=.021；vs GA b=0.90, p=.023）；box 的 FOV 被他人覆盖率最高（p<.001）。Exp2：个人空间越大，对他人社会临场感越低（b=-0.070, p=.041），disorientation（b=-1.07, p=.030）与 frustration（b=-0.11, p=.019）越少，人际距离越大（b=0.14, p<.001），FOV 覆盖率越低（b=-0.38, p<.001）。Exp3：自评群体熟悉度越高，故事注意力越强（b=0.45, p=.043），空间临场感（b=0.34, p=.0048）与对角色社会临场感（b=0.24, p=.027）越高，感知需求（b=0.47, p=.044）与体力需求（b=0.35, p=.019）也越高，FOV 内他人更少（b=-0.37, p=.015）；熟悉度操作检验失败（p=.72），结论为相关而非因果。",
+    "innovation": [
+      "首个系统研究社交 VR 中 360 度故事共看的空间配置（边界类型与大小）及群体熟悉度的实证工作",
+      "揭示 engagement 与认知负荷/晕动症之间的系统性 tradeoff，提出以环境设计分担空间与社会协商的思路",
+      "把 FOV 覆盖率等行为指标与心理测量对应起来，为化身遮挡-社会临场感机制提供证据",
+      "给出面向共看系统的设计建议：按个体熟悉度定制空间配置、支持 transformed social interaction 与渐进社交模式"
+    ],
+    "limits": [
+      "Exp1 中边界类型与空间约束大小两个维度混淆（4×4 m 个人 vs 20×20 m vs 400×400 m），无法分离单独效应",
+      "Exp3 的熟悉度操作检验失败（p=.72），且样本熟悉度整体偏低（M=1.73/5，单项 5 点量表），只能视为相关证据",
+      "被试为大学生便利样本，组大小与构成未被操纵，共看中 verbal 交流很少，外部效度受限"
+    ],
+    "relation": "回应 Welsch 等对社交 VR proxemics 实证的呼吁，把共看空间设计从平台惯例推进到受控实验；首次将群体熟悉度作为个体级变量纳入沉浸式共看研究，补充了叙事投入模型在社交维度的空白。",
+    "repro": "研究协议在 OSF 预注册；实验基于商业平台 ENGAGE XR 与 Meta Quest 2，论文未提及代码或数据公开。"
+  },
+  {
+    "id": "2610.30731",
+    "title": "Big World, Little Me: Comparing a First-Person VR Walkthrough Video and Static Slides for Communicating Height-Related Accessibility Barriers",
+    "title_zh": "大世界，小小的我：比较第一人称 VR 漫游视频与静态幻灯片在传达身高相关无障碍障碍上的效果",
+    "track": "感知与认知",
+    "venue": "arXiv preprint（arXiv:2610.30731v1 [cs.HC]，2026-10-22）",
+    "problem": "侏儒症等身材矮小者在固定高度环境与 infantilising 社会态度下遭遇日常、公共交通与就业障碍；面向 Meta Quest 3 开发的 VR 无障碍叙事需要 HMD 硬件，传播成本高。需要检验把 VR 体验录制成屏幕端第一人称漫游视频后，与等价静态幻灯片相比能否更有效传达障碍并激发共情与支持意愿。",
+    "method": "将 Unity（Meta Quest 3）开发的第一人称 VR 体验 Big World, Little Me 录制成 10 分 52 秒的第一人称漫游视频（960×528、20 fps，固定时长，保留旁白、环境音、连续运动与场景转换），并制作对应的 27 页自定步调静音幻灯片（同一事件顺序、对白与字幕，无连续运动与音频）。采用非随机被试间设计：前 50 人看漫游视频、后 50 人看幻灯片，观看后测叙事投入（Busselle & Bilandzic 12 项 NES）、状态共情（Shen 12 项量表）、支持意图（4 项自编，前后测）及操纵检验，并用 Welch t 检验与 Hedges g 报告效应量。",
+    "experiments": "样本：N=100（每条件 50 人），香港招募，15-48 岁（M=23.51, SD=8.71，每条件各 20/15 人未成年），实验室 iPad 全屏观看。叙事投入：视频 5.54 (0.51) vs 幻灯片 4.24 (0.73)，均值差 1.30，95% CI [1.05, 1.55]，t(87.20)=10.34，Hedges g=2.05，p<.001；四维度中情绪投入（g=2.38）与叙事临场（g=2.12）差异最大。状态共情：3.15 (0.33) vs 2.21 (0.60)，差 0.94 [0.74, 1.13]，g=1.91，p<.001。支持意图（探索性）：视频组前后变化 +1.38 [1.19, 1.56]，幻灯片组 -0.21 [-0.40, -0.01]，变化差 1.58 [1.32, 1.84]，g=2.37，p<.001，4 个条目 Holm 校正后均显著。操纵检验：视频被评为更动态、连续、空间清晰且信息更丰富（信息量 6.14 vs 3.06，g=3.14）。敏感性分析剔除直线作答者（视频 7 人、幻灯片 20 人）后，投入差异仍大（g=2.16）。",
+    "innovation": [
+      "首次把 VR 创作的无障碍叙事同时落地为漫游视频与等价静态幻灯片并做受控比较",
+      "用验证过的 NES 与状态共情量表量化 VR-authored 媒体在残障议题传播上的即时效果",
+      "明确方法论边界：结果属于 screen-based VR-authored media，不等同于沉浸式 VR，也不声称再现真实生活经验",
+      "以 fictionalised、障碍聚焦的叙事框架规避残障模拟的伦理风险"
+    ],
+    "limits": [
+      "非随机分组（按招募阶段分配），且两种格式在运动、时间连续性、节奏、控制权、旁白/音频与信息量上多重混杂，无法归因于任何单一特征",
+      "仅测量即时自我报告，未评估态度或行为的持久改变；便利样本与自编支持意图量表限制外推",
+      "幻灯片条件直线作答比例偏高（20/50），其量表信度估值可能被抬高"
+    ],
+    "relation": "把 VR perspective-taking 文献从 HMD 沉浸条件扩展到屏幕端 VR 录制媒体，并与残障模拟伦理、无障碍传播两条线对话；为「VR 共情机器」式宣称提供更谨慎的实证边界。",
+    "repro": "论文未公开代码； stimuli 制作流程（Unity、Quest 3、960×528 20 fps 录制参数、27 页幻灯片对应关系）描述详尽，统计分析经 GPT-5.6 辅助并经作者核查。"
+  },
+  {
+    "id": "2610.30734",
+    "title": "Do We Need to Be There to Say Goodbye: Comparing Participatory Agency and Spatial Presence Across Digital Farewell Formats",
+    "title_zh": "告别必须「在场」吗？比较数字告别形式中的参与性施动与空间临场感",
+    "track": "感知与认知",
+    "venue": "ISMAR 2026 / IEEE TVCG（作者接受稿）；arXiv:2610.30734v1 [cs.HC]",
+    "problem": "数字媒介化的依恋关系（以云吸宠为代理）可能突然终结且缺乏结构化告别仪式；轻量社交消息、可回访网络纪念与沉浸式 VR 仪式在感知象征性闭合、空间临场感与丧亲相关情绪强度上有何差异，机制不清。直接研究人类丧亲存在伦理风险，需要受控代理情境。",
+    "method": "以 10 天剧本化云吸宠叙事建立中等依恋（Day 1-6 互动、Day 7-8 患病、Day 9 死亡、Day 10 纪念公告），Day 11 随机分配三种告别形式：Messaging（低仪式施动，仅文字/表情轻量社会参与）、Website（可 72 小时回访的纪念页：看媒体、写留言、送虚拟礼物）、VR（PetFarewellVR：Unity 6000.0.32f1 开发、Meta Quest 3 独立部署、>72 FPS、粤式宠物殡仪馆五功能区，6-DoF 导航 + 控制器仪式动作：签到、上香、鞠躬、观纪念、献礼，配空间音频与触觉反馈）。测量 LAPS（依恋操作检验）、PSCS-10（自编象征性闭合量表）、PBQ（丧亲强度）、IPQ（空间临场感）、PANAS（前后测情感变化）及 18 人半结构化访谈，单因素 ANOVA + Benjamini-Hochberg 校正 + Tukey HSD。",
+    "experiments": "样本：N=45（每条件 15），香港爱猫社群招募，24 女 21 男，多为 25-44 岁，VR 熟悉度 M=2.33/5，伦理批号 HSEARS20250723005。LAPS 操作检验：1.34→1.49，t(44)=16.52，p<.001。PSCS-10（0-30）：Messaging 16.07 (4.01) < Website 19.87 (2.07) ≈ VR 20.67 (2.06)；F(2,42)=11.06，p<.001，η²=.35；Website>Messaging（p=.002）、VR>Messaging（p<.001），Website-VR 差异不显著（p=.726）。PBQ：VR 2.16 (0.61) > Website 1.63 (0.53) > Messaging 1.55 (0.20)；F(2,42)=6.92，p=.003；VR>Messaging（p=.004）、VR>Website（p=.013）。IPQ 空间临场感：Messaging -0.20 (0.39) < Website 0.51 (0.37) < VR 1.49 (0.24)；F(2,42)=92.94，p<.001。PANAS 正/负情感变化组间均不显著（FDR 校正 p=.945 / .121）。访谈得 4 主题：参与即关系完成、VR 感觉运动 enactment 深化情绪显著性、屏幕仪式的校准距离、文化可读性支持意义建构。",
+    "innovation": [
+      "首个在同一剧本化依恋情境下横向比较消息/网页/VR 三种告别形式的受控混合方法研究",
+      "提出探索性的 Agency-Amplification 机制解释：结构化告别参与关联更高闭合感，而 VR 的沉浸+空间临场+感觉运动仪式关联更强丧亲强度而非泛化负性情绪",
+      "开发探索性 PSCS-10 量表并报告其结构与信度（α=.76）",
+      "定量结果分化（PBQ 显著 vs PANAS 不显著）与访谈主题形成三角互证"
+    ],
+    "limits": [
+      "三种形式在时长、可回访性（Website 72 小时）、部署场景与交互结构上捆绑混杂，无法分离参与施动或空间临场的单独因果贡献",
+      "N=45 的样本量不足以建立 Website-VR 等价性或排除小效应；剧本化 10 天叙事仅产生中等依恋",
+      "PSCS-10 为研究自编、全部正向措词，可能存在默许偏差；香港样本与粤式仪式语境外推受限，不能推广到人类丧亲"
+    ],
+    "relation": "把 VR 丧亲/纪念研究从「VR 作为独立支持媒介」推进到低中高媒介度的机制比较，并与 Continuing Bonds 理论、Dual Process Model 及仪式理论对话；为数字告别设计提供「参与优先、沉浸选择性使用」的初步指南。",
+    "repro": "补充材料提供完整剧本、量表与问卷；VR 应用构建细节（Unity 版本、帧率、交互序列）描述充分，但论文未给出代码或系统公开链接。"
+  },
+  {
+    "id": "2610.30293",
+    "title": "EgoHand: Monocular 3D Hand Reconstruction from Egocentric Video",
+    "title_zh": "EgoHand：从第一人称视频进行单目 3D 手部重建",
+    "track": "化身与人体",
+    "venue": "arXiv preprint（arXiv:2610.30293v1 [cs.CV]，NVIDIA，2026-10-21）",
+    "problem": "带 3D 手部标注的第一人称人类视频是 VLA/世界动作模型的可扩展监督来源，但跨多样手部外观、背景、物体与相机配置获得可靠 3D 标注仍困难；推理时还需从裁剪图中恢复相机相对的手部位姿并保持图像对齐，同时效率要足以处理上万小时视频。",
+    "method": "模型采用 SOMA-Hand（配 MHR shape backend，每手 25 关节，骨骼尺度与表面形状解耦）作为参数化表示；DINOv3 ViT-H/16+ 编码 2D 手部裁剪图，3D 分支结合 CLIFF bounding-box conditioning 与 RayPE ray positional encoding 预测 pose、shape 与 wrist translation；独立 2D 关节预测分支通过 2D-3D 对应求解（重投影误差 + 正则项）修正横向平移并保留 3D 分支深度，联合训练把图像对齐与几何耦合。数据侧构建 14M 图像语料：NVIDIA Omniverse 合成（约 49 小时）、授权 in-the-wild 视频（约 63 小时，水平 FOV 101-165°，含针孔与鱼眼）、微 marker 多相机 MoCap 真值（约 16 小时，Noitom/Bones），全部统一拟合到 SOMA-Hand 表示；另提供检测-裁剪-批推理-自适应平滑-世界坐标转换的生产级推理管线。",
+    "experiments": "zero-shot 评测（三个数据集均不在训练集）：HOT3D 2.11 小时、H2O 1.06 小时、ARCTIC 0.23 小时，均 30 fps；指标为 mean/p90 的 MPJPE、PA-MPJPE、RTE、2D EPE 与加速度误差。H2O：EgoHand（带平滑）MPJPE 13.12 mm vs HaMeR 19.35 / HaWoR 17.78 / WiLoR 17.77 / Dyn-HaMR 19.32；RTE 25.63 vs 30.70-37.25；加速度误差 1.90 vs 2.82-4.53 mm/frame²；WiLoR 的 PA-MPJPE（6.06 mm）与 2D EPE（8.96 px）最低。HOT3D：MPJPE 18.82 vs HaMeR 58.00 / Dyn-HaMR 58.16，五项指标全优。ARCTIC：MPJPE 17.21 vs HaMeR 26.44 / Dyn-HaMR 26.60；相对 HaMeR 降 34.9%（MPJPE）、51.4%（RTE）、67.5%（加速度）。延迟：RTX PRO 6000 上 9.01 ms/帧（含后处理共 10.87）；L40 上推理 18.35 ms vs WiLoR 27.43、HaMeR 35.31、HaWoR 26.64、Dyn-HaMR 总 177.06 ms。消融（40k 步、无平滑）：RayPE 使 H2O MPJPE 18.45→15.74 mm；CLIFF 18.45→16.06；2D 分支使 MPJPE 15.85→13.31、PA-MPJPE 8.24→6.97、2D EPE 12.67→9.51。人工偏好盲评（3 个公开数据集各 200 片段 × 3 名评分者 = 1800 评）：EgoHand 在 77.0% EgoDex、95.5% Xperience-10M 片段获多数偏好；在高质量标注的 EgoStandard 上 91.0% 为平局/无差异。",
+    "innovation": [
+      "相机感知双分支设计：CLIFF+RayPE 保留裁剪几何上下文，2D 关节对应求解精化相机空间手部放置",
+      "14M 三源数据（合成 + in-the-wild + MoCap）统一到 SOMA-Hand 表示的标注拟合管线，兼顾多样性与监督质量",
+      "生产级推理管线：鱼眼虚拟针孔重采样、自适应时序平滑、ViPE 相机轨迹驱动的世界坐标转换、OSMO 调度，面向超 10,000 小时视频",
+      "以 OpenMDW 许可开源模型与代码，允许免费商用"
+    ],
+    "limits": [
+      "单目深度尺度歧义未解决，无外部相机轨迹时输出仅为相机相对坐标",
+      "严重遮挡下手部重建仍困难",
+      "依赖手部检测框与相机标定质量，误差会向上游传播",
+      "部分训练数据为授权视频，无法完整公开"
+    ],
+    "relation": "在 HaMeR、WiLoR、Dyn-HaMR、HaWoR 的单目/视频手部重建路线上，以相机感知 + 数据统一表示实现第一人称场景 SOTA 与约 2 倍于 WiLoR 的推理速度；首次把千万级多源语料统一到 SOMA-Hand 供手部重建训练。",
+    "repro": "模型与代码以 OpenMDW 许可公开：HuggingFace nvidia/EgoHand-v1（模型）、NVIDIA IsaacCapture 仓库（推理）、NVlabs/GEM-X（训练）；评测数据集 HOT3D/H2O/ARCTIC 为公开数据，训练用授权视频不公开。"
+  },
+  {
+    "id": "2610.30326",
+    "title": "R4DGS: Referring Segmentation in 4D Gaussian Splatting",
+    "title_zh": "R4DGS：4D 高斯泼溅中的指代表达分割",
+    "track": "神经渲染",
+    "venue": "ACM MM '26（Proceedings of the 34th ACM International Conference on Multimedia，2026-11-10 至 11-14，Rio de Janeiro；DOI 10.1145/3767308.3836021）",
+    "problem": "4DGS 动态场景的现有语言理解工作多面向开放词表分割或场景特化语义拟合，无法处理涉及时序状态变化、多目标与关系推理、集合排除以及零目标/干扰项的自然语言指代表达；该任务此前没有被系统定义，也缺乏评测基准。",
+    "method": "定义 Referring 4D Gaussian Splatting（R4DGS）任务：给定多视动态视频、预计算 4DGS 场景与自然语言查询，输出帧对齐的集合值分割 mask（可为单目标、多目标或空集）。提出 training-free 框架 ReferGaussian：MLLM（Qwen3-VL-8B）Refer-Planner 把查询分解为可跟踪对象短语和结构化指涉约束（身份、状态、关系、排除、时序、基数、零目标标志），Grounded-SAM 2 生成短语条件 mask tracks，再经 mask-supported 迭代 Gaussian lifting（每轮 6 帧、最多 10 轮、render-back IoU≥0.70 早停）提升为持久 Gaussian 实体；实体连同外观/状态描述、运动线索、关系与有效时序支撑存入可检查的 EntityBank；约束感知选择在闭集上联合校验全部约束并显式产出空选择，最后光栅化选中实体得到时空 mask，全程不做场景特化语义训练。",
+    "experiments": "构建 R4D-Bench-QA：12 个场景（6 个 HyperNeRF + 6 个 Neu3D）、89 个句级查询（47+42），覆盖 4D-varying、multi-target/reasoning、zero-target/distractor 三类，带像素级时空标注，经 3 名专家与 MLLM 质检。主结果（R4D-Bench-QA）：ReferGaussian 76.5% Acc / 34.4% vIoU，对比 Segment then Splat 55.6/28.4、4D LangSplat 58.4/32.1。4D LangSplat 协议（4 场景 americano/chickchicken/split-cookie/espresso）：ReferGaussian 平均 93.01% Acc / 62.95% vIoU，对比 4D LangSplat 90.83/72.26、LangSplat 54.01/22.65，Acc 高出 2.18 个点且无逐场景语义拟合。消融：one-pass Gaussian voting 12.4 → iterative lifting 34.4 vIoU；mask 腐蚀/膨胀/丢弃 10%-25% proposal 后保持 32.1-33.9（降幅≤2.3 点），merge/split 错误降至 19.4/22.7。效率：EntityBank 复用使运行时间约 600 s→200 s、本地 MLLM 调用 6→3 次。Planner 对比中 Qwen3-VL-8B 在 5 个 MLLM 里综合最佳。失败模式：拥挤接触事件、歧义长查询、破碎与严重遮挡。",
+    "innovation": [
+      "首个 R4DGS 任务定义与首个基准 R4D-Bench-QA，支持时序、集合、排除与零目标约束的统一评测",
+      "Gaussian-to-Entity 抽象：用 mask 证据把低层动态 Gaussian 组织成持久、语言可寻址实体并建成可检查 EntityBank",
+      "training-free 约束感知指涉，替代场景特化语言场/语义优化",
+      "查询解释、实体证据与指涉决策全程可检视，错误可按查询分解、mask 证据、实体关联分别诊断"
+    ],
+    "limits": [
+      "性能依赖底层 4DGS 重建与 Grounded-SAM 2 mask 证据质量，实体身份错误（merge/split）会显著掉点",
+      "拥挤接触、破碎、严重遮挡等拓扑剧变场景仍失败",
+      "基准规模有限（12 场景、89 查询），覆盖的场景类型与表达多样性有待扩充"
+    ],
+    "relation": "把静态 3D 指代分割（ReferSplat 等）与动态语义分割（SA4D、4D LangSplat）推进到动态 4D 场景的复杂指代理解；作为 training-free 实体级推理路线与场景特化语义拟合路线形成对照。",
+    "repro": "项目页公开资源（chenbangpu.github.io/R4DGS）；方法基于公开 4DGS 协议与 HyperNeRF/Neu3D 公开数据，使用 Qwen3-VL 与 Grounded-SAM 2 等开源基础模型。"
+  },
+  {
+    "id": "2610.30468",
+    "title": "SplatLab: Autonomous Scientific Discovery for 3DGS Research",
+    "title_zh": "SplatLab：面向 3DGS 研究的自主科学发现",
+    "track": "系统与平台",
+    "venue": "arXiv preprint（arXiv:2610.30468v1 [cs.CV]，UC San Diego，2026-10-21）",
+    "problem": "复现一篇已发表 3DGS 论文需要数周专家工程；已有自主研究系统依赖未经外部验证的 LLM 重实现、模板短、不可执行、数字不可追溯（PaperBench 上最强 agent 对 ICML 2024 论文平均复现率仅 21.0%），且从未在活跃 CV 子领域完成端到端验证。",
+    "method": "六阶段管线 + 36 个 agent（Professor/PhD 协调/本科叶子三级层次，无固定 DAG）：Stage 1 Grounding 读文献生成 L-IDs 局限条目，并在已验证 splatify 插件上 profile 训练瓶颈生成 B-IDs；Stage 2 以七类 3DGS novelty taxonomy 做 grounded ideation，经 Precedent/Novelty/Saturation/Orthogonality 四项检查与 LLM-judge Elo 括号赛预排名（不训练）；Stage 3 在已验证匹配目标的 splatify 插件上按 9 个 EVOLVE-BLOCK 钩子生成结构化 diff 并通过 100 迭代 smoke test；Stage 4 cascade-weighted Elo 锦标赛（smoke/probe/multi-scene/full 四级权重 0.2/0.5/1.0，K=32，按 (B,L) 条件评分，八岛五算子变异，常驻 falsifier 每次失败扣 30 Elo，ReEvo 式 verbal gradients 回流）；Stage 5 六项完整性审计（provenance、faithfulness、novelty、compute match、cross-codebase port、claim check）；Stage 6 reviewer-driven 手稿合成，审稿面板可触发重新训练。",
+    "experiments": "16 次运行、198 个实验分支：5 个验证正例、5 个带限定声明的边际结果、5 个非 PSNR 贡献、1 个记录失败。基准：Mip-NeRF 360（9 个无界场景）与 LLFF，每第 8 张留出测试，全部 30k 迭代、NVIDIA A6000；另自采 3 个 OOD 场景（nebula、bubble、diamond）。结果：每篇手稿比复现目标高 +0.18 ~ +3.78 dB PSNR，最大增益在天文星云场景（32.58→36.36 dB，SSIM 0.914→0.945，LPIPS 0.278→0.201，此前无 3DGS 方法涉足）；代表对比：FastGS 29.12→TileFocalGS 29.69；splatfacto@50s 20.53→View-Curriculum-GS 23.36；MSAA-3DGS 25.35→MSAA-Bilat 26.19；DWTGS 18.68→DWTGS-Patch 21.09。多种子：GNS-AA 26.18±0.05 vs GNS 25.95±0.07 dB（+0.23±0.09）。创意盲评（1-10）：SplatLab Stage-2 综合 5.8 vs 博士生 5.1、已接收预印本 6.0。手稿评分（0-100）：SplatLab 90 vs 人类 GT 93、PaperOrchestra 79、SingleAgent 38、AI Scientist-v2 32、GPT-5 ET 17。同行评审：多 agent 审稿 3.6 vs 人类 3.5；人类图形学审稿人给 SplatLab 3.5（边缘）vs 人类论文 4.1（明确接收），新颖性 3.5 vs 3.1。3 篇手稿被 CVPR 2026 workshop 接收（AttDis & Friends、NeedleSwap、AuditSplat）。成本：每次运行 24-48 小时、约 113M API token、1000-1500 次 LLM 调用、2-36 GPU 小时、$150-250。消融：去掉 claim-backed 审计则 16/16 手稿含无据数字（完整管线 0/16）；去掉 falsifier 则 5/16 冠军通不过 held-out 攻击；taxonomy 引导 +3.78 vs 无分类 +3.45 dB，token 消耗 47.5M vs 85.5M（+80%）。",
+    "innovation": [
+      "首个在活跃 CV 子领域端到端运行的自主研究系统，全部候选都变异自已验证复现的 splatify 插件",
+      "以真实 GPU PSNR 做 grounding-conditional、cascade-weighted Elo 排序，取代 LLM 评审假说分数",
+      "常驻 falsifier 与选择机制耦合（失败扣 Elo），把压力测试生存变为选择信号",
+      "claim-to-log 绑定与六项完整性审计，闭合既有管线遗留的幻觉/不可追溯失效模式"
+    ],
+    "limits": [
+      "单次运行成本高（24-48 小时、约 113M token、$150-250 API 费用、2-36 GPU 小时）",
+      "已验证复现骨干的构建偏向预工程化、资源充足的子领域，小领域迁移需专家投入",
+      "人类专家评审仍认为其在 soundness 与 presentation 上不及顶会人类论文；存在论文洪水与评审负担风险（作者在 broader impacts 中自述）"
+    ],
+    "relation": "在 AI Scientist、AI co-scientist、AlphaEvolve 等自主研究/程序搜索路线基础上，以已验证复现骨干、全环精炼与 claim-log 绑定补齐领域框架、验证基线、全环精炼、声明-测量绑定四大缺口；是首个同时满足全部五项能力轴的自主研究系统。",
+    "repro": "系统、全部生成手稿、实验账本与跨运行论文库公开于 seemandhar.github.io/splatlab；复现骨干基于作者此前的 splatify/nerfify 与公开 gsplat 生态。"
+  }
+]

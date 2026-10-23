@@ -1,0 +1,156 @@
+[
+  {
+    "id": "2610.30619",
+    "title": "GSHeadRelight: Fast Relightability for 3D Gaussian Head Synthesis",
+    "title_zh": "GSHeadRelight：面向 3D 高斯头部合成的快速可重光照方法",
+    "track": "化身与人体",
+    "venue": "SIGGRAPH Conference Papers '25（2025 年 8 月 10–14 日，加拿大温哥华），DOI: 10.1145/3721238.3730614",
+    "problem": "3D 感知的人像重光照需要同时满足照片级真实感、实时渲染和对未见主体的一次性泛化。现有方法要么依赖昂贵且通常不公开的 light stage 数据，要么基于生成式 NeRF，存在 3D 一致性差、实时性能低的问题；且每次更换光照都需要重新进行神经网络评估，难以实时。",
+    "method": "以生成式 3D 高斯骨干（GSGAN）为基础，提出 Unified Neural Radiance Transfer 光照模型：为每个高斯椭球分配球谐系数表示辐射传输，并将传输向量设为视角方向的函数，从而统一建模漫反射与低频镜面反射。训练时采用白光假设（单通道光照标签）缓解 albedo 与光照的歧义；由于辐射传输对入射光呈线性响应，测试时可按通道外推到彩色光照。所有成分均为与光照无关的高斯属性，合成只需一次前向推理，重光照无需再次评估生成器。",
+    "experiments": "训练数据 FFHQ（15M 图像，4×NVIDIA H800）。生成质量与速度（512 分辨率，Table 1）：Ours FID 5.71 / KID 0.151 / 243 fps；对比 NeRFFaceLighting FID 4.16 但仅 2.8 fps，ShadeGAN 0.5 fps，Volux-GAN FID 59.79 / 21 fps，GSGAN 5.60 / 245 fps；重光照速度比此前 3D 感知人像重光照工作快至少 12×（H800 上约 240 FPS）。光照质量（Table 2，1000 样本均值）：Ours Lighting Error 0.6213 / Lighting Stability 0.1537，优于 NeRFFaceLighting（0.6377/0.1455）、ShadeGAN（1.0714/0.2149）。空间一致性（Table 3，30 个主体）：Ours PSNR 35.57 / SSIM 0.9521 / 身份相似度 0.7538（身份相似度为所有方法最高）。真实人像重光照（Goliath 子集，VGGFace 余弦相似度）：Ours 0.443 vs NeRFFaceLighting 0.298。消融（Table 4）：去掉辐射传输 Lighting Error 升至 1.2296，去掉视角条件为 0.7019，完整模型 0.6520。",
+    "innovation": [
+      "在 3D 高斯上实现统一神经辐射传输：每个高斯的 SH 传输系数以视角方向为条件，同时覆盖漫反射与低频高光，且免去了逐光照的网络评估",
+      "用白光假设从 in-the-wild 图像蒸馏出合理的 albedo 与光传输函数，无需 light stage 数据，并靠线性响应泛化到彩色光照",
+      "重光照速度比既有 3D 感知人像重光照方法快至少 12×，且空间一致性（身份相似度）最优"
+    ],
+    "limits": [
+      "受球谐基限制，主要建模低频与漫反射效果，对高频反射表达力不足，albedo 中可能残留高光（右脸颊案例）",
+      "来自面部的自下而上光照在 in-the-wild 图像中稀少，此类重光照可能不合理",
+      "训练依赖 FFHQ 与 DPR 提取的单色三阶 SH 光照标签，对域外数据的效果未验证"
+    ],
+    "relation": "改进生成式 NeRF 路线（NeRFFaceLighting、LumiGAN 等）的实时性与 3D 一致性，将预计算辐射传输思想引入生成式 3D 高斯头部合成，替代对 light stage 监督的依赖。",
+    "repro": "项目主页公开（geometrylearning.com/GSHeadRelight），训练使用 FFHQ 与 4×NVIDIA H800；正文未明确声明代码与模型权重是否开源。"
+  },
+  {
+    "id": "2610.30908",
+    "title": "Query-Time Calibration of CLIP Features for Open-Vocabulary 3D Segmentation",
+    "title_zh": "面向开放词汇 3D 分割的 CLIP 特征查询时校准",
+    "track": "感知与认知",
+    "venue": "arXiv preprint",
+    "problem": "将 CLIP 特征提升到 3D 高斯场景后，单个场景的提升特征存在强方向集中，而原始余弦相似度不考虑场景特定的特征分布，限制了开放词汇查询的分割精度。同时用户可能只给出单个查询词（如 fire extinguisher）而不列举场景全部类名，需要能拒绝背景的单查询分割能力，而多类 argmax 性能无法保证这一点。",
+    "method": "提出查询时校准，完全固定已提升的特征场：场景中心化（减去归一化平均场景方向，λ=0.3，对称作用于视觉特征与文本原型）；用固定的 45 个通用词参考词表（object/things/texture 等，不含类名）拟合正则化白化变换（ρ=1e-3，α=0.40）并仅白化文本查询；多类预测采用 TransCLIP 式软聚类（β=50、11 次迭代，去掉图正则）后 argmax；单查询采用缩减版 CSLS（每类取 top-1000 相似度均值 r_c 校正）并计算查询对参考词表最强竞争者的相关性 margin，以阈值 τ 判定前景/背景。",
+    "experiments": "评测 7 种特征提升方法（SFS、NormLift、LUDVIG、OpenGaussian、LangSplat、Occam、VALA）× 4 个数据集（LERF-OVS、3D-OVS、ScanNet 10/19 类、ScanNet++ 20/100 类）。多类 mIoU（SFS）：LERF-OVS 49.09→65.67（+16.57）、3D-OVS 70.79→89.80（+19.01）、ScanNet-19 26.87→39.37（+12.50）、ScanNet++-100 19.92→23.74（+3.81）。单查询（SFS）：LERF-OVS 45.71→53.86（+8.15）、3D-OVS 69.21→83.59（+14.39）；VALA 单查询 LERF-OVS 21.30→54.15（+32.85）、3D-OVS 31.19→75.01（+43.82）。与其他查询时自适应对比（SFS 多类 ScanNet）：Ours 39.37（+12.50）vs TransCLIP 35.54（+8.68）、PTC 27.92（+1.05）、Frolic 启发基线 28.37（+1.51）、UMFC 11.31（−15.55）。特征几何诊断（12 个 ScanNet++ SFS 场景）：vMF 集中度 κ 1600→517，首特征值占比 76.8%→47.3%，参与秩 1.69→4.15；类间/类内分离比 ScanNet 1.820→2.056、ScanNet++ 100 类 2.854→3.163，每个场景均提升。",
+    "innovation": [
+      "首个针对已提升 CLIP 特征场的查询时校准：无需重训练、重新编码源图像或重新提升特征",
+      "固定通用参考词表既独立于查询类列表地决定白化统计量，又为单查询分割提供负竞争者",
+      "单查询分支用缩减版 CSLS 相关性 margin 实现背景拒绝；跨 7 种提升方法 × 4 数据集、多类与单查询双设置均一致提升"
+    ],
+    "limits": [
+      "仅评测室内场景；中心化与白化参数基于 SFS 在室内 held-out 场景选择，迁移到其他环境与嵌入模型未验证",
+      "单查询评测使用 GT 存在类与 held-out 阈值，不能保证对完全缺失目标的可靠拒绝",
+      "校准不改变几何与特征提升本身，无法恢复缺失的表面或语义信息"
+    ],
+    "relation": "与 LERF/LangSplat/Feature 3DGS 等特征提升路线互补（作为后处理即插即用）；将 All-but-the-Top、白化、CSLS 等思想适配到 3D 提升特征场景，并在受控对比中超过 TransCLIP、PTC、UMFC、Frolic 的适配版本。",
+    "repro": "作者声明随论文发布完整源代码，并将上传重建的 3DGS 场景、提升特征集与复现 Table 1 的 Python 脚本。"
+  },
+  {
+    "id": "2610.31284",
+    "title": "Retrieval-Augmented Online Textual Memory for Episodic Memory Video Question Answering",
+    "title_zh": "面向情景记忆视频问答的检索增强在线文本记忆",
+    "track": "感知与认知",
+    "venue": "arXiv preprint",
+    "problem": "长第一人称视频压缩为文本记忆后，问答时应该把记忆的哪些部分交给推理器，此前缺乏系统研究。检索不仅缩短上下文，还改变推理器看到的证据分布：长视频中大量视觉相似片段可能引入似是而非的干扰项，使时间覆盖度与答案准确率脱节。",
+    "method": "在既有在线文本记忆流水线（Qwen3-VL-8B 将 15 秒无重叠片段转为带时间戳 caption，切块后用 llama-3.2-nemoretriever-300m-embed-v1 嵌入并入向量库）基础上，把问题与全部候选答案拼接为检索查询，系统比较检索单元与策略：Flat（整条 caption）、Sub（子块直接给推理器）、Parent（检索 36 个子块、展开至多 12 条唯一父 caption 交给 Gemini 2.5 Flash 推理器）、Parent-Rerank（nvidia/rerank-qa-mistral-4b 重排）、Hybrid（dense+BM25 的 RRF 融合，k0=60）、Parent-Time（时间截断诊断）。",
+    "experiments": "QAEgo4D-Closed 测试集，固定检索预算 K=12：Parent 准确率 56.4%（Hit@K 79.0%、Recall@K 70.7%）；Flat 55.6%（80.4%/72.3%）；Sub 54.2%（76.6%/67.5%）；Parent-Rerank 53.8%；Sub-Rerank 53.4%（但检索指标最高 82.4%/74.3%）；Hybrid 53.0%；Parent-Time 52.8%。检索预算曲线：K 增大时 Hit@K 53.4%→98.2%、Recall@K 42.7%→97.9%，准确率在 K=12 处达峰 56.4% 后下降。与 SOTA 对比：Ground VQA 48.7%（1.29 MB/min）；ReKV-LLaVAOneVision 0.5B 50.0%（68.92 MB/min，12,544 tokens）；ReKV 7B 56.0%（329.64 MB/min）；Lando et al. Gemini 方案 56.0%（3.57 KB/min，10,880 tokens）；Parent（本文）56.4%（66.07 KB/min，仅 3,600 tokens，约为全记忆输入的 33%）。",
+    "innovation": [
+      "首个以检索为中心的文本记忆 OEM-VQA 系统研究：固定生成记忆，仅隔离检索为变量",
+      "Parent 检索在细粒度子块匹配与完整上下文推理间取得最佳平衡",
+      "揭示时间覆盖度（Hit@K/Recall@K）与答案准确率的非单调关系：更多证据会引入高置信干扰项"
+    ],
+    "limits": [
+      "准确率对检索预算敏感：超过 K=12 后引入视觉可信但错误时刻的证据，准确率下降",
+      "对细粒度空间细节缺失或模糊时失败（案例：检索到 knife near sink 却答错 in the strainer）",
+      "仅在 QAEgo4D-Closed 选择题设置、单一描述/推理模型组合上验证"
+    ],
+    "relation": "构建于 Lando et al. 的免训练在线文本记忆流水线，把其全记忆推理改为检索增强，以 1/3 的查询时 token 达到并略超此前最佳 56.0%。",
+    "repro": "训练-free 流程，依赖 Qwen3-VL-8B、Gemini 2.5 Flash 与 NVIDIA 嵌入/重排模型；正文未提及代码发布。"
+  },
+  {
+    "id": "2610.31293",
+    "title": "RecallGS: Geometry-Grounded Recall for Online Semantic Gaussian Splatting",
+    "title_zh": "RecallGS：面向在线语义高斯泼溅的几何接地回忆机制",
+    "track": "重建与SLAM",
+    "venue": "arXiv preprint",
+    "problem": "在线语义 3DGS（如 EmbodiedSplat）用额外学习的 3D 分支（稀疏 3D U-Net + 时序记忆适配器）恢复图像语义特征缺失的几何上下文，带来昂贵的大规模 3D 数据训练、显存与延迟（0.75 FPS）。作者提出：这类几何-语义证据或许已存在于智能体观察历史中，可以检索而不必学习。",
+    "method": "在 EmbodiedSplat-fast/FreeSplat++ 骨架上提出免训练 recall-ground-fuse 流水线：语义回忆用图像级 CLIP 嵌入与情景记忆（最近 W 帧）做余弦相似度，取 top-B_rec=16 候选；几何接地将当前局部高斯通过各候选相机光栅化，用 alpha-compositing 渲染责任度 w=T·ᾱ 累积每个高斯的贡献 A_i，按覆盖率 κ_j（A_i>τ=0.9 的高斯占比）重排取 top-B_geo=3；合成融合在各高斯完整渲染足迹上以 w 加权聚合缓存的历史稠密 CLIP 特征，与当前帧特征按 s_final=Norm(s_cur+λ·s_hist) 融合（λ=0.75），上游供给稀疏码本，无需任何训练。",
+    "experiments": "ScanNet 10/15/19 类与 ScanNet++ 20 类（单卡 RTX5090）：RecallGS mIoU 50.96/46.40/44.41/48.75，mAcc 81.55/76.97/73.26/75.12；较 EmbodiedSplat-fast（47.86/43.21/41.03/45.53）提升 +3.10/+3.19/+3.38/+3.22 mIoU；与完整 EmbodiedSplat（49.81/49.23/46.22/41.93）接近，而速度为 2.48 FPS vs 0.75 FPS（约 3×），但仍慢于 EmbodiedSplat-fast 的 5.18 FPS。基线含 LangSplat、LEGaussians、Online-LangSplat（1.12 FPS）、OpenGaussian、Occam's LGS、Dr. Splat、InstanceGaussian。消融：CLIP 检索 vs 最近历史 +0.44–0.63 mIoU，再加几何重排 +0.54–0.88，完整策略较最近历史高约 1.14–1.51；投影中心 vs 中心提升 vs 完整 Tα：完整较投影中心高 1.22–1.69、较中心提升高 0.69–0.91；预算敏感性：偏离默认 B_rec=16/B_geo=3 降 0.12–0.50 mIoU。",
+    "innovation": [
+      "把智能体观察历史视为非参数几何-语义先验，替代额外学习的 3D 分支",
+      "用 alpha-compositing 渲染责任度（含遮挡与部分覆盖）做几何验证，而非投影中心式的二元可见性判断",
+      "在高斯完整渲染足迹上做责任度加权的历史特征合成融合，全程免训练"
+    ],
+    "limits": [
+      "质量受历史观测限制：历史视图稀疏或质量差时收益有限",
+      "几何接地只光栅化当前局部高斯，未建模全局地图中的遮挡物，可见性可能被高估",
+      "默认预算 B_rec/B_geo 在同一评测场景上选择，无 held-out 验证"
+    ],
+    "relation": "改进 EmbodiedSplat 路线：以其 fast 版本为骨架，用检索-验证-回放的历史证据替代学习的 3D U-Net 分支，在接近完整模型精度下提速约 3×。",
+    "repro": "基于官方 EmbodiedSplat-fast 实现，全部实验在单卡 NVIDIA RTX5090 完成；正文未声明代码是否开源。"
+  },
+  {
+    "id": "2610.31299",
+    "title": "PiHand: Latent Hand-Object Interaction Priors for Physics-Based Policy Learning",
+    "title_zh": "PiHand：面向物理策略学习的隐空间手-物交互先验",
+    "track": "交互与输入",
+    "venue": "arXiv preprint",
+    "problem": "为 VR/AR、游戏与机器人合成物理可信的灵巧手-物交互，需要同时尊重微妙接触动力学、多样物体几何与目标轨迹并保持自然抓握。既有 mocap 跟踪方法难以迁移到新物体；hand-only 生成先验无法刻画手-物耦合运动，接触保真度与样本效率差；动作空间直接探索则依赖工程化奖励与课程。",
+    "method": "三阶段流水线（IsaacGym + MANO 手）。Stage I：PPO 专家策略在仿真中跟踪 mocap，采用参考锚定的残差 PD 目标（增量积分保证平滑、逐关节偏差限幅），接触感知奖励（表面采样损失 + 单边接触损失 + 关键点 copo/pose 加权损失），按物体训练单手/双手通才专家并做难例挖掘。Stage II：将专家池蒸馏为单一目标条件 VAE——先验只看未来物体轨迹，特权编码器看参考手部轨迹，解码器输出残差 PD 目标；用 DAgger  rollout 做 PD 目标级行为克隆 + KL。Stage III：PPO 在冻结先验均值上加有界残差潜变量（B·tanh 压缩，B=5）探索，仅用单一物体跟踪奖励、无课程。",
+    "experiments": "每序列 100 次仿真 rollout。Stage I（GRAB50，3 seeds，5cm 阈值）：SR 93.3±3.0% vs ManipTrans 69.6±1.5%（TC 95.8 vs 77.6，Et 0.28 vs 0.43 cm，Er 4.9° vs 7.3°，MPJPE 1.01 vs 1.97 cm）；全 GRAB 按物体专家 SR 84.8%。桌面操作（未见物体+轨迹，10cm 阈值，3 seeds）：GRAB SR 74.0±0.9 vs 动作空间探索 59.1±4.7、hand-only 先验 60.0±3.1（+14.0）；DexYCB 77.7 vs 60.8/59.5（+16.9）；900 epochs 即达基线 8900 epochs 峰值（约 10× 训练效率）。新任务：接球 87.0%（双手，45 个训练物体 900 episodes + 5 个未见物体 100 episodes）vs 最强基线 43.0%（2.0×），右手限定 78.0%；双手交接 51.9% vs 11.9%（4.3×）。Stage III 消融：直接 rollout 先验 30.8%，动作空间残差 49.6%，去掉随机轨迹 67.9%，完整 74.0。",
+    "innovation": [
+      "首个联合建模手部状态、物体几何/轨迹与接触动力学的灵巧手-物交互先验（interaction-first）",
+      "以目标条件 VAE 蒸馏物理专家池，Stage III 在有界潜空间做残差 RL，单一奖励、无课程即泛化到新物体/轨迹/任务",
+      "同一先验零相关数据地迁移到接球（训练数据中缺失）与双手交接（极少见），成功率分别为最强基线 2.0× 与 4.3×"
+    ],
+    "limits": [
+      "跟踪专家在全 GRAB 上未达 100% 成功，失败集中于高动态与 mocap 噪声序列",
+      "仅支持刚体，不涉及 ARCTIC 类铰接物体；仅控制双手，不含全身运动",
+      "全部实验为仿真、单一 MANO 手模型，未做真实机器人迁移"
+    ],
+    "relation": "沿用 PULSE 的潜空间 RL 配方但把 human-only 先验替换为手-物交互先验；Stage I 相比 ManipTrans 将跟踪 SR 从 69.6% 提升到 93.3%；与并发工作 InterPrior 互补。",
+    "repro": "项目页公开（virtualhumans.mpi-inf.mpg.de/PiHand），作者声明将发布处理后的数据与模型 checkpoint；实验基于 IsaacGym 与 GRAB/DexYCB。"
+  },
+  {
+    "id": "2610.31320",
+    "title": "Stream4D: Streaming 4D Reconstruction with Training-free Motion Decoupling via Causal KV-Cache Attention",
+    "title_zh": "Stream4D：通过因果 KV 缓存注意力实现免训练运动解耦的流式 4D 重建",
+    "track": "重建与SLAM",
+    "venue": "ACM Multimedia 2026（MM '26，2026 年 11 月 10–14 日，巴西里约热内卢），DOI: 10.1145/3767308.3836547",
+    "problem": "现有流式重建方法默认静态场景假设，动态物体破坏光度一致性与对极几何，导致长序列位姿漂移与鬼影残留。已有的免训练动态分割方法（VGGT4D 依赖全局双向注意力、Easi3R 只捕获邻帧关系）与因果流式架构不兼容，且无法阻止动态信息随时间在 KV Cache 中累积。",
+    "method": "免训练、可插拔到因果骨干（StreamVGGT、Stream3R）：发现因果注意力的 KV Cache 隐式编码时序运动线索（动态物体呈高方差-低均值模式），跨浅/中/深层与时间窗自适应聚合显著性 S=(1-μ̄)⊙σ̄；与深度先验（前景量化先验 + 时窗深度变化）融合，经时序平滑、Otsu 阈值与形态学处理生成动态掩码；再用 soft key masking 直接修改缓存键 K̃_i=K_i⊙(1−γ·M_i)（作用于前几层解码器），抑制动态区域在历史聚合中的干扰；光度/几何一致性损失限制在静态区域，静态点云增量更新。",
+    "experiments": "动态分割（DAVIS，流式单遍因果）：J_M 在 DAVIS-2016/2017/all 上分别为 43.39/46.45/43.06，较最强流式基线 StreamVGGT*（34.91/37.33/33.20）绝对提升 +8.48/+9.12/+9.86；J_R 39.34/42.90/41.32 vs 23.52/33.86/29.24；离线上界 VGGT4D 为 62.12/56.45/50.75。DyCheck 位姿（vs Stream3R）：ATE 0.014（↓6.7%）、RTE 0.017（↓5.6%）、RRE 0.539（↓1.1%）。效率（512×384，单卡 A100，序列 10–200 帧）：Easi3R 在 N=100 达 260.0s 且在 200 帧前 OOM；Stream4D 在 N=200 为 93.1s，与 StreamVGGT 84.1s 相当（约 +10% 开销），近线性扩展。",
+    "innovation": [
+      "首个面向因果流式架构的免训练 4D 重建框架（区别于全局双向的 VGGT4D 与成对的 Easi3R）",
+      "揭示并利用 KV Cache 中因果注意力隐式编码的时序运动线索，跨层跨窗自适应聚合",
+      "直接在 KV Cache 上做 soft key masking 解耦动态/静态，无需重训练或改结构，显著抑制长序列鬼影"
+    ],
+    "limits": [
+      "当前聚合主要依赖注意力统计与深度先验，作者计划引入跨尺度时序模式与语义感知显著性",
+      "仅输出动态掩码与静态场景重建，动态物体本身的重建留作未来工作",
+      "评测限于 DAVIS/DyCheck，未覆盖更广泛的流式场景类型"
+    ],
+    "relation": "作为即插模块改进 StreamVGGT/Stream3R 等因果流式骨干；把 VGGT4D/Easi3R 的免训练动态分割思想首次适配到因果流式设定，并以二者离线结果为性能上界。",
+    "repro": "免训练集成于预训练因果骨干，实验在单卡 NVIDIA A100 完成；正文未声明代码发布计划。"
+  },
+  {
+    "id": "2610.31321",
+    "title": "MVLoMa: Multi-View Local Feature Matching with Any Geometry Foundation Model",
+    "title_zh": "MVLoMa：使用任意几何基础模型的多视图局部特征匹配",
+    "track": "重建与SLAM",
+    "venue": "arXiv preprint",
+    "problem": "成对匹配器的计算单元（图像对）与下游几何所需的证据单元（互相重叠的视图组）不匹配：星图（参考图+检索邻居）中每条边都要重算参考描述子，且在看不到其他边证据前就提交匹配。同时，多视图几何基础模型的末层 token 已编码跨视图几何上下文，但局部匹配通常另起一路冻结的 2D 描述子骨干，造成信息浪费。",
+    "method": "LoMa 的多视图星图扩展：用冻结多视图几何基础模型（默认 DA3-Giant，另评 π³、VGGT、VGGT-Ω）的末层空间对齐 token 替换 DINOv2-L 冻结流，与可训练 VGG 流经卷积细化器/MLP 融合为描述子（每图 4096 DaD 关键点）；星图注意力按视图内自注意力（RoPE）→ 中心查询全部邻居 → 全部邻居查询更新后中心的双向中心-邻居交叉注意力堆叠，邻居间不交互，每条边仍输出常规 dual-softmax 得分矩阵供 RANSAC；监督采用 RoMa v2 可见性过滤正样本（深度有效、重投影在图内、遮挡/深度一致性），并引入几何负样本损失：挖掘互相最大且置信过阈但极线误差 >3px 的匹配逐层惩罚（权重 1/(N−1)）。",
+    "experiments": "25 视图星图协议（frame 0 为中心，24 条边），PoseLib RANSAC 2.5px，AUC@1°/5°/10°。784 分辨率 MVLoMa 宏平均 58.65/85.41/90.99，为所有方法三档最优；HyperSim 53.90 vs LoMa-L 51.99（+1.91）、ScanNet++ 38.44 vs 37.68（+0.76）；Mip-NeRF 360 上稠密 RoMa 的 AUC@1° 仍最强（75.42），T&T 上 LoMa-L 最佳，MVLoMa 差距很小。消融（四视图训练、784 测试，HyperSim AUC@1°）：完整 52.84；去 GT 过滤 51.93；去几何负样本 51.04。骨干消融：DA3-G 较 DINOv2-G 在四个子集 AUC@1° 提升 +1.16/+11.44/+0.41/+0.65；编码器消融：DA3-G 在 HyperSim AUC@1° 超其他编码器 1.62–2.40。视图数：2 视图宏平均 62.21/86.63/91.34（较最佳低约 0.8），25 视图 62.92/87.45/92.17，非单调。复杂度：25 视图星图匹配较顺序成对减少 37.0% Transformer FLOPs、实测延迟降 54.6%（2.20×），峰值显存 979 MiB vs 176 MiB。",
+    "innovation": [
+      "首次在星图上做联合稀疏匹配：一次前向输出全部中心-邻居匹配且保留逐边得分矩阵接口",
+      "复用冻结几何基础模型的跨视图融合 token 作为描述子输入（默认 DA3-Giant），免训编码器",
+      "可见性过滤 GT + 极线几何负样本损失，直接抑制高置信错误匹配对 RANSAC 的伤害"
+    ],
+    "limits": [
+      "依赖冻结基础特征质量，弱纹理/不确定区域仍会产生稀疏或歧义匹配",
+      "中心-邻居拓扑不做邻居间信息交换；显存随关键点数与视图数增长",
+      "训练仅 2–8 视图而评测 25 视图，外推非单调；仅验证相对位姿估计，未接入完整 SfM 系统"
+    ],
+    "relation": "将 LoMa 从成对匹配扩展为星图多视图匹配，区别于 CoMatcher/MV-RoMa 的密集或成组输出；作为匹配原语与 SfM/定位流水线互补。",
+    "repro": "基于公开 LoMa 组件与多视图几何基础编码器构建，作者承诺发表后发布实现与评测配置；训练用单卡 A800、200k iterations。"
+  }
+]

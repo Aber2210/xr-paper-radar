@@ -1,0 +1,94 @@
+[
+ {
+  "id": "2605.22190",
+  "title": "No Pose, No Problem in 4D: Feed-Forward Dynamic Gaussians from Unposed Multi-View Videos",
+  "title_zh": "4D 无需位姿：从未知位姿多视角视频前馈重建动态高斯",
+  "track": "神经渲染",
+  "value": 4.15,
+  "grade": "A",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "announce_type": "replace",
+  "in_top10": true,
+  "evidence": "FULL",
+  "fetch_level": "L0",
+  "fulltext_chars": 66915,
+  "venue": "arXiv preprint (cs.CV, 2026-10-22, v2)"
+ },
+ {
+  "id": "2609.16684",
+  "title": "MEgoVista: Multi-view Ego-aware Motion Estimation for Metric 4D Hands and Head in the Wild",
+  "title_zh": "MEgoVista：野外第一视角多视角感知的运动估计，输出度量化的 4D 手与头",
+  "track": "化身与人体",
+  "value": 4.15,
+  "grade": "A",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "announce_type": "replace",
+  "in_top10": true,
+  "evidence": "FULL",
+  "fetch_level": "L0",
+  "fulltext_chars": 43564,
+  "venue": "arXiv preprint (cs.CV, 2026-10-11, v2; Maniformer Technical Report 001)"
+ },
+ {
+  "id": "2601.14895",
+  "title": "SpatialMem: Metric-Aligned Long-Horizon Video Memory for Language Grounding and QA",
+  "title_zh": "SpatialMem：面向语言 grounding 与问答的度量对齐长时程视频记忆",
+  "track": "感知与认知",
+  "value": 3.55,
+  "grade": "B",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "announce_type": "replace",
+  "in_top10": true,
+  "evidence": "FULL",
+  "fetch_level": "L0",
+  "fulltext_chars": 54130,
+  "venue": "arXiv preprint (cs.CV, 2026-03-05, v2)"
+ },
+ {
+  "id": "2508.15169",
+  "title": "MeSS: City Mesh-Guided Outdoor Scene Generation with Cross-View Consistent Diffusion",
+  "title_zh": "MeSS：城市网格引导、跨视角一致的扩散户外场景生成",
+  "track": "内容生成",
+  "value": 3.23,
+  "grade": "B",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 2
+  },
+  "announce_type": "replace",
+  "in_top10": true,
+  "evidence": "FULL",
+  "fetch_level": "L0",
+  "fulltext_chars": 62633,
+  "venue": "arXiv preprint (cs.CV, 2025-08-25, v2)"
+ }
+]
