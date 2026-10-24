@@ -20,4 +20,5 @@
 ## 数据与过程
 
 - [7 维对比表](../daily/backfill-1024/7dim-table.md) · [执行日志](../daily/backfill-1024/run_log.md)
+- [Backfill 报告](../../reports/XR-Backfill-Report-1024.md)
 - 甄别入口：RSS 10-23 公告批次 33 命中中 8 篇旧稿（2508/2601/2604/2605/2607/2609 前缀），XR 相关性甄别留 4 篇。
