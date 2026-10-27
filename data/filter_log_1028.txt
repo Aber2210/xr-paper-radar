@@ -1,0 +1,61 @@
+pool: 1145 篇（day>=2026-10-26），registry 已有 0 篇
+meta fetched: 1145
+
+## 2026-10-26：摘要级 XR 命中 11 篇
+  2610.31801 [cs.RO] reg=False KiRoSe: Using Kinematic Data for Efficient Segmentation of Robot Demonstrations
+  2610.31845 [cs.CV] reg=False EgoForesight: Effectively Scaling Policy Learning with Noisy Egocentric Actions
+  2610.32259 [cs.RO] reg=False Incremental-Smoothing-Based ARAIM Protection Levels for Tightly Coupled GNSS/IMU Integra
+  2610.32485 [cs.CV] reg=False PCFBench: How Far Can Large Vision-Language Models Go in Physics-aware Photonic Inverse 
+  2610.32491 [cs.CV] reg=False L0-Norm-Based CycleGAN for Unpaired Brain CT-to-MR Synthesis
+  2610.32525 [cs.RO] reg=False From Freehand Demonstrations to Autonomous Robotic Ultrasound: An Anatomy-Anchored Learn
+  2610.32612 [cs.CV] reg=False DriveOSS: Dataset and Benchmark for 3D Anomaly Segmentation and Open-set Semantic Segmen
+  2610.32664 [cs.CV] reg=False The Answer Knows Where to Look: Zooming before MLLMs Answer under Visual-Token Budgets
+  2610.32697 [cs.CV] reg=False SP-Guide: Enhancing Aerial Vision-Language Navigation with Spatial Priors
+  2610.32961 [cs.RO] reg=False Robotic Optical Coherence Tomography-Guided Geometric Modeling of Soft Tissue: 3D Repres
+  2610.32969 [cs.RO] reg=False DexPort: A Hand-Held Skill Interface for Dexterous Hand Data Collection
+
+## 2026-10-27：摘要级 XR 命中 41 篇
+  2610.33071 [cs.CV] reg=False DuoPIC: Uncertainty-Aware Voxel-Level Digital Twins of Cerebral Perfusion with Transport
+  2610.33124 [cs.CV] reg=False Spectrally optimized implicit neural representations mitigate acquisition-related image 
+  2610.33158 [cs.CV] reg=False Gaussian Episodic Memory for Long-Term Spatiotemporal Reasoning
+  2610.33174 [cs.RO] reg=False Bracketing Shows the Way: Adaptive Multi-Exposure Policy as Input for Robust Visual SLAM
+  2610.33191 [cs.HC] reg=False Whale You Go Green? Immediate and Longitudinal Effects of Embodied Conversational AI Ava
+  2610.33317 [cs.RO] reg=False Active Reachability Learning for Humanoid Recoverability Monitoring
+  2610.33356 [cs.CV] reg=False Tight Learned Event-Inertial Odometry (TLEIO): a Transformer-Based Architecture for End-
+  2610.33554 [cs.CV] reg=False End-to-end prostate lesion segmentation and detection from undersampled diffusion-weight
+  2610.33558 [cs.CV] reg=False GeoLift: Grounding Video Spatial Reasoning in Explicit 3D Maps
+  2610.33685 [cs.CV] reg=False EXE: Egocentric Cross-Embodiment Pretraining via Factorized Latent Actions for VLA Model
+  2610.33868 [cs.CV] reg=False RelateGS: Reliable Semantic and Relational Evidence for 3D Scene Understanding with Gaus
+  2610.33966 [cs.CV] reg=False InteractiveWorld: A Verifiable Human-Centric Environment for Building Better Interactive
+  2610.34041 [cs.RO] reg=False T-ConSG: A LiDAR-Based Real-Time Temporal Construction Scene Graph for Dynamic and Evolv
+  2610.34092 [cs.CV] reg=False Learning the Autoregressive: Direct Score-Difference Estimation with Amortized Future Cr
+  2610.34093 [cs.CV] reg=False LegoOcc++: Towards Consistent Open-Vocabulary 3D Occupancy Prediction
+  2610.34186 [cs.RO] reg=False HuGe: Scaling Humanoid Generalist Vision-Language-Action Models with Egocentric Experien
+  2610.34223 [cs.GR] reg=False Single Camera based Simulation and Try-on Ready Avatar Modeling
+  2610.34233 [cs.CV] reg=False BoundedGS: Memory-Efficient High-Resolution Training for 3D Gaussian Splatting
+  2610.34235 [cs.CV] reg=False ParetoGS: High-Quality Continuous-Budget 3D Gaussian Splatting with Sparse Adapted Ancho
+  2610.34263 [cs.CV] reg=False RacerGS: Residual-Autoregressive Context for 3D Gaussian Splatting Compression
+  2610.34283 [cs.CV] reg=False ChronoReplay: One Answer Interface Is Not Enough for Streaming Spatial Intelligence
+  2610.34344 [cs.CV] reg=False Birth-Death Structural Learning for 3D Gaussian Splatting
+  2610.34534 [cs.RO] reg=False Multimodal Socially Aware Framework for Human-Robot Interaction in Virtual Reality
+  2610.34564 [cs.CV] reg=False FlockWorld: Toward Population-Scale Multi-Agent Video World Models through Artificial Li
+  2610.34597 [cs.CV] reg=False Finetuning Prompt-Based Image Editor for Geometry-Consistent Room Defurnishing
+  2610.34600 [cs.CV] reg=False FlexiMIND: Combined Pretrained Vision Features and Local Structure for Training-Free Def
+  2610.34632 [cs.CV] reg=False RIDE-Splat: Reflection Removal for In-the-Wild Driving Environments
+  2610.34745 [cs.CV] reg=False SceneAgent: An Agentic Pipeline from 3D and 4D Captures to Simulation Environments
+  2610.34845 [cs.CV] reg=False PosePlaner: Denoising Any Feed-Forward Pose Predictor from Pairwise Planar Geometry
+  2610.34865 [cs.HC] reg=False ECHOES: An Adaptive LLM-Powered AR Glasses Docent for Evidence-Grounded Urban Heritage I
+  2610.34893 [cs.CV] reg=False MMGNet: Multi-Modal 6-DoF Grasp Synthesis for Cluttered Scenes
+  2610.34952 [cs.CV] reg=False DimFlow: Bidirectional Grid-Expert Learning for Dynamic Gaussian Reconstruction
+  2610.35002 [cs.CV] reg=False DUET4D: Self-Corrective Coupled Guidance for Sparse-View 4D Reconstruction
+  2610.35152 [cs.CV] reg=False Complexity-guided Regularization for Generalizable Human Gaussian Splatting
+  2610.35224 [cs.CV] reg=False GaussianSpline: Adaptive Bézier Splines for Highly Dynamic 4D Gaussian Splatting
+  2610.35361 [cs.CV] reg=False SG-Splat: Stable Geometry Learning under Pose Uncertainty for Pose-Free 3D Gaussian Spla
+  2610.35414 [cs.CV] reg=False Unveil the Mask: Jointly-Optimized Diffusion Masked Pretraining for Appearance-Agnostic 
+  2610.35554 [cs.CV] reg=False Metric Scale for Insta360 Structure-from-Motion from the Camera's Embedded IMU
+  2610.35626 [cs.RO] reg=False Robot-Aligned 3D Gaussian Splatting for Precise Reaching with Wrist-Camera VLA Policies
+  2610.35642 [cs.CV] reg=False VPR-Space: A Benchmark for Visual Place Recognition in Space Analog Domains
+  2610.35756 [cs.CV] reg=False VidEdit3D: Flexible 3D Gaussian Editing with Video Diffusion
+
+合计摘要级 XR 命中 52 篇
+saved data/missed_xr_abstract_1028.json

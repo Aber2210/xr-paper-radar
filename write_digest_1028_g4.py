@@ -1,0 +1,118 @@
+# -*- coding: utf-8 -*-
+"""写入 digest_1028_g4.json：6 篇 XR 相关论文的结构化中文 digest。"""
+import json
+import os
+
+digests = [
+    {
+        "id": "2605.18553",
+        "slug": "stablehand-quality-aware-flow-matching-dual-hand",
+        "venue": "arXiv preprint (arXiv:2605.18553 [cs.CV]，MBZUAI / UIUC / ShanghaiTech / Imperial College London；首次公告 2026-05，v2 2026-10-26，backfill 补录)",
+        "tags": ["第一人称视觉", "双手运动估计", "流匹配", "质量感知生成", "机器人策略学习"],
+        "conclusion": "StableHand 以四通道质量信号驱动流匹配，HOT3D/ARCTIC 全指标 SOTA，W-MPJPE 较最强基线降约 20%（57.83 mm）与 25%（124.59 mm）。",
+        "problem": "第一人称视频中头动使双手频繁长时间出画，手物交互造成持续遮挡，而现有方法对所有帧的手部观测施加同等条件，导致世界空间 4D 双手运动估计在长缺失与强遮挡下严重退化；手腕平移漂移（数十毫米级）与手指关节误差（毫米级）尺度不同、双手受不对称遮挡影响，单一标量质量无法刻画。",
+        "method": "质量按手×组件分解为 q∈[0,1]^4：手腕通道为平移误差加按 MANO 掌半径 85 mm 缩放的旋转误差，手指通道为腕系 MPJPE，RBF 核转换并按语料将误差前 20% 帧校准至 q<0.1。质量网络以世界空间 MANO 观测、置信标志与相机 pose 为输入，RoPE 时序自注意力加 [geo] token 预测误差，MSE+Wasserstein-1 联合训练后冻结，推理经 Error-to-Quality 转换并重校准带宽。生成模型为 DiT：逐通道前向调度 α=1−(1−τ)(1−q̃) 冻结高质量通道、从噪声重建低质量通道；速度目标乘 (1−q̃)；每帧 4 token 由 AdaLN 按 q̃ 调制；ODE 初始化 x0=q̃⊙ȳ+(1−q̃)⊙ε 与训练前向严格对齐；总损失含流匹配、二阶时序平滑(λ=0.1)与手腕平移项(λ=5.0)。",
+        "experiments": "HOT3D：W-MPJPE 57.83 mm（PA 4.02、WA 21.02、AccEr 3.83），较最强开源基线 HaWoR(71.89)降约 20%，全指标最优；ARCTIC：W-MPJPE 124.59 mm、MRRPE 93.71 mm，降约 25%。分层显示高缺失片段优势最大。H2O 零训练迁移 56.77 mm/30.62 s vs Dyn-HaMR 60.88 mm/323.89 s。消融：无质量调度升至 92.32 mm(1.6×)，四 token 合一 118.61 mm(2.1×)，oracle 48.16 mm 仅低 9.7 mm。QN 在 8 个第一人称语料约 10M 帧预训练，两个 benchmark 各自训练生成模型；单卡 H100，T=150 帧、20 步 Euler ODE。",
+        "innovation": "①将第一人称世界空间双手恢复表述为按组件×手的不对称质量感知生成，显式利用两轴异质性；②同一四值质量信号统一驱动逐通道前向调度、质量调整速度目标、DiT AdaLN 与质量感知 ODE 初始化四机制；③提出经 Wasserstein-1 校准、带宽语料自适应的四通道质量信号及学习预测网络。",
+        "limits": "质量网络与带宽拟合单一上游手部估计器的误差分布；长低质量时段可能漂移到合理但无观测支撑的构型；换估计器仅重校准效果有限(104.81→103.84 mm，重训练才 62.16 mm)；无双手间碰撞项，允许互穿；低视差视频(HOI4D)世界定位受限；未做端到端策略评估。",
+        "repro": "项目页 https://huajian-zeng.github.io/projects/stablehand；单卡 H100 + AdamW 训练；基线以官方代码复现，UniHand 数字引自原文（代码未公开）；代码与数据发布状态正文未明示。",
+        "relation_hint": "与 HaMeR/WiLoR+DROID-SLAM、HaWoR、Dyn-HaMR、UniHand 等第一人称手部恢复工作同任务对比，是质量条件化生成式双手运动估计的新一支。",
+        "track_hint": "化身与人体",
+    },
+    {
+        "id": "2605.30488",
+        "slug": "como3r-slam-collaborative-monocular-dense-slam",
+        "venue": "arXiv preprint (arXiv:2605.30488 [cs.RO]，ETH Zurich / 哈工程 / Liverpool / 澳大 / Ottawa / SJTU / Imperial；首次公告 2026-05，v2 2026-09-08，backfill 补录)",
+        "tags": ["多机器人SLAM", "单目稠密建图", "3D重建先验", "MASt3R", "室外场景"],
+        "conclusion": "CoMo3R-SLAM 以 MASt3R 先验做跨智能体验证与统一优化，Tanks&Temples 四场景三个 ATE 最低(均值0.0875m)，无深度传感器，3080 Ti 上 6-8 FPS。",
+        "problem": "室外多机器人协作稠密 SLAM 依赖深度传感器（载荷、功耗、标定成本）；单目方案则面临独立坐标系、尺度不确定、重叠窄、重复立面导致关联歧义，错误跨智能体链接会扭曲局部地图。前馈重建先验（DUSt3R/MASt3R/VGGT）此前只服务单智能体单规范场景，无法直接完成跨智能体尺度锚定与链接几何验证。",
+        "method": "各智能体运行 MASt3R 引导前端：投影匹配加局部描述子窗口细化得稠密匹配，射线-范围残差(σ_r=0.003、σ_d=10、Huber κ=1.345、IRLS)估计 Sim(3) 位姿，置信加权平均更新规范点图。协调器用先验编码器特征+HOW 式检索头+ASMK 倒排索引跨智能体检索(kNN=3、相似度阈值 5×10⁻³)，双向稠密点图匹配的有效高置信像素比例均≥0.1 才接受链接；首链接以≥64 对对应点经 Umeyama 闭式解同步规范(不足退化为端点变换)，全部关键帧纳入统一多智能体 Sim(3) 图(7 维切空间扰动、解析雅可比、CUDA 匹配与法方程、稀疏 Cholesky、LM 阻尼升级)；终端对每关键帧约 200 个 SLIC 几何感知段做对数尺度深度精修，与位姿交替优化。",
+        "experiments": "4 个 Tanks&Temples 场景切低重叠子轨迹给两智能体：Barn/Caterpillar/Ignatius ATE 最低(0.051/0.102/0.144m)，四场景均值 0.0875(MNE-SLAM 0.165、MAGiC-SLAM 0.385)；Caterpillar 较拼接 MASt3R-SLAM 由 0.829 降至 0.102；稠密精度/完备度中位 0.072/0.014，F-score 均值 76.1%(Ignatius 高 11.0pp)。Waymo 两序列最低(1.773/1.965m)；重叠 5%→10% 错误全降(Ignatius 1.628→0.144)。消融：去回环 Barn/Truck 升 48.5%/41.8%，给内参后 0.0440。另测昼夜采集、3-4 智能体、长航时；2→3 智能体 7.81→6.73 FPS、RSS 10.9→14.3GB。",
+        "innovation": "①把前馈 3D 重建先验置于多智能体问题中心：点图锚定跨智能体尺度，稠密对应支撑双向几何验证；②统一多智能体 Sim(3) 图+终端段级结构精修，使跨智能体观测同时修正轨迹与表面；③评测覆盖真实昼夜独立采集、至 4 智能体与长航时 traversal。",
+        "limits": "依赖学习先验、足够共享静态结构与成功的跨智能体验证；近似学习尺度与分别对齐的 ATE 不保证绝对度量精度；强光学畸变与非中心相机超出验证范围；集中式计算、未测终端延迟、扩展性测量不完整。",
+        "repro": "代码与项目页 https://como3r-slam.github.io（正文声明已发布）；PyTorch+自研 CUDA，RTX 3080 Ti；评测用 evo、Tanks&Temples、Waymo、Oxford Spires 公开数据。",
+        "relation_hint": "与 MASt3R-SLAM/VGGT-SLAM(单智能体先验 SLAM)及 MAGiC-SLAM/MNE-SLAM/CP-SLAM(RGB-D 协作稠密 SLAM)同表对比，属单目室外多智能体稠密 SLAM 的稀疏工作。",
+        "track_hint": "重建与SLAM",
+    },
+    {
+        "id": "2605.31352",
+        "slug": "haptic-sorter-bo-shape-estimation-haptic-ode",
+        "venue": "arXiv preprint (arXiv:2605.31352 [cs.RO]，A*STAR ARTC / NTU Singapore；首次公告 2026-05，v2 2026-10-24；正文注明 Manuscript received 2026-05-29、accepted 2026-09-29 并获编辑推荐发表，期刊名未明示，backfill 补录)",
+        "tags": ["触觉感知", "形状推理", "贝叶斯优化", "准静态操作", "机器人分拣"],
+        "conclusion": "Haptic Sorter 融合 BO 触觉探索与可微操作势，Haptic ODE 以力残差估计位姿：分拣圆/矩形 10/10、椭圆 8/10，RMSE 较点云低 15.74mm，观测约 300Hz。",
+        "problem": "接触富集操作通常假设事先已知物体形状与位姿，实际中精确几何常不可得，位姿推断受传感器不确定性与遮挡影响；视觉对透明/反射物体失效且末端遮挡视场；现有触觉方法把形状估计当作与操作模型脱节的预处理，累积的完整接触表面难以嵌入在线梯度控制，GP 探索对尖角与实时性亦欠佳。",
+        "method": "统一可微框架：物体边界以超椭圆 {a1,a2,ε} 近似，接触点由力向量、探针位姿与半径经 wrench axis 算出；BO 探索以 Matérn-5/2 核加单位圆角度映射建 GP 表面模型，EI 采集函数在 N=48 个离散扇区上优先探索最大半径/高不确定区域，预测方差低于阈值即停，接触点喂入 Superellipse Recovery；恢复参数直接实例化操作势 W=W_ctrl+W_contact（阻抗弹簧势加 relaxed-Signoriki 非线性接触势，k(d)=k_min+(1−tanh(d/d0))/2·k_max）；Adaptive ODE 沿平衡流形演化系统；Haptic ODE 用法向力残差驱动平移、力向量差驱动旋转，在线更新位姿并周期以 DMP 重规划，双 2-DoF 阻抗控制加 6-DoF 位置控制执行。",
+        "experiments": "仿真(σ_thresh=1 mm)与真机(5 mm)各 10 次试验：EI 策略下圆形 RMSE_R 0.39±0.01 mm、矩形 0.45±0.01/0.48±0.02 mm，覆盖率 64.2%/73.5%；真机圆形 1.96±0.12 mm vs 点云基线 16.38±1.01 mm，矩形 L/D 3.81/5.77 mm vs 22.05/18.78 mm。ANOVA 显示策略主效应显著(F3,144=176.80, p<0.001)，EI 显著优于 Random；真机平均降 RMSE 15.74 mm。分拣 10 次/形状：本文 10/10(14.57 mm)、10/10(28.71 mm)、8/10(19.43 mm)，点云参数闭环反而差于开环(3/1/1)；轨迹位置 RMSE<30 mm、姿态 RMSE≈5°。",
+        "innovation": "①BO(EI)引导触觉探索从稀疏接触恢复超椭圆参数，无需全域覆盖且保留尖角特征；②恢复形状直接实例化可微操作势，把形状估计嵌入在线梯度式准静态操作模型；③提出以力残差为反馈的 Haptic ODE 在线位姿观测器，实现约 300 Hz 闭环纠偏。",
+        "limits": "仅限凸形(圆/矩形/椭圆/六边形)与整洁场景的 2D 交互；准静态假设忽略惯性与科氏力；相机仅提供粗略初始位姿；闭环对形状精度高度敏感——点云参数的偏差会系统性误导校正方向，反而差于开环。",
+        "repro": "MATLAB 2024b + ODE45；HEBI X-Series 多臂、ATI F/T 传感器、ZED2 相机、PhaseSpace 动补真值；正文未提及代码或数据公开。",
+        "relation_hint": "与 Tactile-SLAM、GelSlam、cost-aware 主动触觉探索、Superquadric Recovery 等单点累积式触觉建图对照，主打同时多接触加探索-建模-控制同参数化。",
+        "track_hint": "触觉与多模态",
+    },
+    {
+        "id": "2606.01950",
+        "slug": "mro-gwm-object-centric-gaussian-world-model",
+        "venue": "arXiv preprint (arXiv:2606.01950 [cs.RO]，University of Augsburg；首次公告 2026-06，v2 2026-10-26，backfill 补录)",
+        "tags": ["世界模型", "高斯泼溅", "刚体动力学", "模型预测控制", "机器人操作"],
+        "conclusion": "MRO-GWM 以物体中心高斯加时序-空间 Transformer 预测刚体动力学：位置误差0.717cm、旋转12.484°，MPC成功率0.79/0.74(启发式0.14)，并支持跟踪与真机演示。",
+        "problem": "多刚体紧密相邻的桌面场景中，世界模型需处理物体交互与遮挡造成的部分观测；现有高斯动力学方法多面向单物体或要求完整形状观测，物理仿真受模型类限制且需形状完全已知；缺乏在同一高斯表示上同时支持动力学预测、位姿跟踪与规划的方案。",
+        "method": "基于 ObjectGS(2D 高斯变体)从多视角 RGB-D 与掩码重建物体中心高斯，anchor 特征拆为 16 维空间+16 维颜色(空间编码器跨场景共享以泛化)，末端执行器单独高质量重建。时序-空间 Transformer 以物体与末端 SE(3) 位姿历史(h=3)刚体变换高斯表示为 token，PTv2 式空间注意力保证平移不变，网格池化逐阶段聚合并建立跨时刻对应，按空间→时序-空间→时序注意力堆叠，线性头预测未来 p=4 步相对 SE(3) 运动(9D 旋转+正交化，归一化空间计损)，未来末端位姿即动作条件，背景 token 按 10 cm 阈值剪裁；跟踪用增强 FoundationPose 的 render-and-compare。",
+        "experiments": "ManiSkill 合成桌面场景(YCB 65 训练/5 验证/5 测试，1-5 物体)：100 测试场景×3 轨迹，基础模型平均位置误差 0.717 cm、旋转 12.484°；消融中去时序-空间注意力层(0.754/12.787°)、单物体 token(0.827/14.107°)、少训练物体(0.816/13.611°)明显变差，快模型推理 0.063 s vs 基础 0.168 s。MPC(iCEM 变体，40 场景×5 回合)：任务1 成功率 0.79、任务2 全体 0.74/单体 0.88，启发式 0.14。2.4 s 视界跟踪位置 0.35 cm/旋转 5.09°，ADD 0.57 cm、ADD-S 0.29 cm；跟踪位姿输入使预测误差升高。真机 RealSense D435+Panda 演示。H100 训练 60k 步约 10.7 h。",
+        "innovation": "①物体中心高斯泼溅作为统一场景表示，无缝支持动力学预测与渲染式感知；②新的时序-空间 Transformer(含新时序-空间注意力层)在其上预测动作条件多步相对 SE(3) 运动；③世界模型同时用于图像级物体跟踪与 MPC 非抓握操作的仿真加真机演示。",
+        "limits": "高斯重建与跟踪/规划为分离阶段，无增量重建；旋转误差较大(滚动/倾覆)，细长物体难预测；sim2real 依赖噪声建模与域随机化(未做)；真机后期预测偏出分布(物体与末端穿透)；实时控制效率待提升。",
+        "repro": "项目页 https://embodiedvision.github.io/mro-gwm/；ManiSkill+YCB 公开数据，H100 训练；真机 Intel RealSense D435、Franka Panda；正文未明确声明代码开源。",
+        "relation_hint": "与 PIN-WM/ContactGaussian-WM(可微物理+高斯，单物体)、3DGSim(高斯形变 Transformer)、NGFF(物体中心力场)及 NeRF 世界模型构成谱系，差异在多物体动作条件刚体预测与部分观测。",
+        "track_hint": "世界模型与仿真",
+    },
+    {
+        "id": "2609.02847",
+        "slug": "roge-end-to-end-implicit-reconstruction-generation-nvs",
+        "venue": "arXiv preprint (arXiv:2609.02847 [cs.CV]，小米汽车 / 东北大学；首次公告 2026-09，v2 2026-09-04，backfill 补录)",
+        "tags": ["新视角合成", "视频扩散", "前馈重建", "端到端联训", "DL3DV"],
+        "conclusion": "RoGe 以相机条件 VGGT 的射线查询隐式特征条件化视频扩散并端到端联训，DL3DV PSNR 20.92、LPIPS 0.124、TSED 0.9977、FVD 58，超重建/生成/混合基线。",
+        "problem": "稀疏位姿图像的新视角合成既需观测视图的几何 grounding，又需未观测区域的生成先验；现有混合方法以渲染图或显式 3D(点图/高斯)桥接两者，生成器只看到有损投影并继承误差，重建侧又收不到生成信号的纠正，模块解耦导致次优。",
+        "method": "稀疏观测与目标轨迹统一用 Plücker 射线图表示；相机条件 VGGT(内外参 MLP 投成 1024 维 token 加入相机 token，末层局部+全局注意力 token 拼为 2048 维场景 token)构建隐式场景表示，不实例化深度/点云/高斯；射线编码器(8×8 patch+4 个 register token)对上下文与目标视图编码，经 L=12 个 ray-scene 交叉注意力块(前 11 块双向、末块单向)查询场景 token，输出目标视图逐视图几何特征 F_r。混合 VAE 保持上下文置换不变与目标时序先验；几何适配器(1×1 卷积降至 384 通道+双线性重采样+Pack4 对齐)与像素 unshuffle 射线图经 3D patch 嵌入注入 DiT；联训损失 L=L_FM+0.1·L_render(FM 仅计目标 slot，渲染头 MSE 辅助)。",
+        "experiments": "DL3DV 10 条 SEVA 选定序列：PSNR 20.92、SSIM 0.642、LPIPS 0.124、DreamSim 0.087 均第一(LagerNVS 20.90/0.193/0.122，SEVA 18.63/0.158/0.089)；视频级 TSED 0.9977、MEt3R 0.0771、FID 23、FVD 58、TransAPE 0.0403、RotAPE 2.5121°(LagerNVS FVD 206、GEN3C 281)。消融：无几何 19.01 dB，裸 VGGT token 18.50，相机条件化 19.35，渲染 RGB 20.35，射线查询 20.59，联训 20.92。训练 M=6 上下文、N=81 目标，Wan2.1-I2V-14B-480P 加 LoRA，16×H20 312,500 步；ScanNet 轨迹外插验证。",
+        "innovation": "①去除显式 3D 中间表示，以前馈重建网络的射线查询隐式特征直接条件化视频扩散；②提出 ray-scene 交叉注意力与 latent 对齐几何适配器，桥接重建特征与视频 VAE 潜空间；③端到端联训使生成目标反塑几何条件，图像与视频级指标全面 SOTA。",
+        "limits": "正文未设专列局限节；稀疏输入下大范围未观测区域本质欠约束，效果依赖 Wan2.1 生成先验；上下文视图数固定为 6；训练与评测集中于 ARKitScenes/DL3DV 等室内外分布，其他域泛化未测。",
+        "repro": "项目页 https://jerry-locker.github.io/roge/；PyTorch，16×H20 训练；前馈模块初始化自 LagerNVS，生成骨干 Wan2.1-I2V-14B-480P；训练数据 ARKitScenes/BlendedMVS/DL3DV/MVS-Synth/WildRGB-D 均公开。",
+        "relation_hint": "承接 LagerNVS(VGGT token 直接渲染)与 SEVA/FrameCrafter(生成式 NVS)，与 GEN3C/NeoVerse/Difix3D+ 等解耦两阶段混合方法直接对比。",
+        "track_hint": "神经渲染",
+    },
+    {
+        "id": "2609.31418",
+        "slug": "cognitivereality-semantic-gaussian-mapping-vr-teleop",
+        "venue": "arXiv preprint (arXiv:2609.31418 [cs.RO]，Skoltech Intelligent Space Robotics Laboratory / NLP Research Center Moscow；首次公告 2026-09，v2 2026-10-26，backfill 补录)",
+        "tags": ["语义高斯建图", "VR遥操作", "LLM智能体", "开放词汇", "多机器人平台"],
+        "conclusion": "CognitiveReality 合 Gaussian-TSDF 语义建图、LLM 路由与 VR 交互：工具匹配 81.24%(规则基线 48.33%)，实机导航 26/30、重观测 20/20。",
+        "problem": "3DGS 遥操作场景虽逼真但被动：操作者难以理解场景内容、各物体观测质量，也难把指向与语音转为机器人动作；开放词汇高斯映射多不维护持久物体 ID 与质量属性，agent 与操作者无法引用同一实体，语言解释与执行缺乏验证分离；机器人定位中断时的地图连续性亦难保证。",
+        "method": "沿用 GPS-SLAM 的 Gaussian-SDF 设计：位姿源可插拔(机器人SLAM/运动学/动补/内联ORB-SLAM3切换)，陀螺仪门控加噪声加权深度融合，异步高斯优化；影子跟踪器桥接定位中断，双失效时对最近 3 个 RGB-D 关键帧做 PnP-RANSAC 注册，地图不重置。Label Splats 将几何一致的语义像素置于 SDF 表面，携带语义 ID 但不进光度光栅化(office0 覆盖 47.6%→100%)。异步双速率语义：2-3Hz 快环+0.5Hz 发现环(中位延迟 0.6s，本地 VLM 验证+同义词门控)，每 2s 导出版本化 Scene Model(类/ID/质心/框/质量)；agent 侧预路由+Qwen3-VL-8B 模式约束路由产出 typed 决策，后置校验参数/物体存在/合并 ID，机器人动作需确认；VR 支持 RSIS/3SLR。",
+        "experiments": "重建：较 GPS-SLAM 基线各平台 PSNR +2-8dB(四足26.54vs22.86、UR10 24.23vs22.83、手持22.17vs21.50、动补21.91vs16.11)，720p 达 51-66FPS。语义：Replica 51 类零样本分割闭词表 mIoU 29.53vs29.93、mAcc 46.63vs43.60、f-mIoU 65.73vs57.00(HoloAgent)。VR：Pico 4 Ultra 上 RSIS 54-84fps/25-46ms，3SLR 66-85fps、PC-HS 36.7dB。Agent：1,471 案例工具匹配 81.24%vs48.33%、完整调用 72.88%vs42.96%、效果 84.70%；重放 117/167 集重定向 101 个合并 ID；实机导航 26/30、重观测 20/20(质量+2-5dB)。",
+        "innovation": "①机器人无关在线 Gaussian-SDF 映射：位姿源可插拔加影子跟踪/PnP 桥接定位中断；②Label Splats 实现 100% 语义覆盖并向真几何中心纠偏；③版本化 Scene Model+typed tools+确认门把语言、指向与机器人动作统一到持久物体 ID，多平台实机验证。",
+        "limits": "集中式 GPU 工作站计算，未测分布式部署；确认门在提议后不再对照后续地图更新重校验(40 例挂起确认保持旧引用)；VLM 与地图标签一致率不等于独立视觉识别；共享 GPU 下命令率使高斯往返时延+12.7%；导航失败可源于噪声高斯导致地面点偏移。",
+        "repro": "硬件：i9-14900K+RTX 5090 32GB 重建机+第二同型机跑语义(SAM3+本地 VLM)，四足 ZSL-1/ZSM-1(Jetson Orin NX+D455+Livox MID-360/RoboSense Airy)、UR10、G1/TienKung 人形、Vicon 无人机；正文称接收后公开源代码与数据集，当前未给出链接。",
+        "relation_hint": "与 VRSplat/RFFR/HIL-GS(高斯 VR 遥操作)、ConceptGraphs/LangSplat/OpenGS-SLAM(开放词汇映射)及 GSMem/3DGSNav/VISTA(高斯地图+VLM 探索)同域，差异在 live robot-built map+指向落地+质量感知闭环。",
+        "track_hint": "空间计算与UI",
+    },
+]
+
+out_path = os.path.join("D:/Agent/WorkBuddy/Research/data", "digest_1028_g4.json")
+os.makedirs(os.path.dirname(out_path), exist_ok=True)
+with open(out_path, "w", encoding="utf-8") as f:
+    json.dump(digests, f, ensure_ascii=False, indent=1)
+
+# 校验字段字数限制
+limits = {"conclusion": 100, "problem": 150, "innovation": 150, "limits": 150}
+ranges = {"method": (250, 400), "experiments": (200, 400)}
+print("written:", out_path)
+for d in digests:
+    flags = []
+    for k, cap in limits.items():
+        n = len(d[k])
+        if n > cap:
+            flags.append(f"{k}={n}>{cap}")
+    for k, (lo, hi) in ranges.items():
+        n = len(d[k])
+        if not (lo <= n <= hi):
+            flags.append(f"{k}={n} not in [{lo},{hi}]")
+    print(d["id"], "OK" if not flags else " ".join(flags))

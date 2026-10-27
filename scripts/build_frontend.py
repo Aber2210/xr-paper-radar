@@ -37,12 +37,14 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "2026-10-25": "2026-10-25 · 无新稿（周日漏网对账日，10-23 公告组复核 0 漏网）",
                 "2026-10-26": "2026-10-26 · 无新稿（周一凌晨，周末积压公告未到时刻，10-23 公告组 411 篇全量复核 0 漏网）",
                 "2026-10-27": "2026-10-27 · 10-26 公告批次（周末积压，非重磅，listing+RSS 互证）",
+                "2026-10-28": "2026-10-28 · 10-27 公告批次（非重磅，listing+RSS 互证 0 漏网）",
                 "backfill-1012-1015": "backfill · 10-12~10-15 漏网补录",
                 "backfill-1020": "backfill · 10-16 漏网 + 旧稿再公告补录",
                 "backfill-1021": "backfill · 旧稿 replace/cross 再公告补录",
                 "backfill-1023": "backfill · 10-21 漏网补录 + 旧稿 replace/cross 再公告",
                 "backfill-1024": "backfill · 10-23 公告 RSS 混入旧稿 replace 再公告",
                 "backfill-1027": "backfill · 10-26 公告 RSS 混入旧稿 replace/cross 再公告（8 篇）",
+                "backfill-1028": "backfill · 10-27 公告 RSS 混入旧稿 replace/cross 再公告（10 篇）",
                 "backfill-2603-2609": "backfill · 2603–2609 旧稿补录"}
 
 

@@ -1,0 +1,53 @@
+=== 1) 源可达性探针 ===
+  export.arxiv.org/api/query: 200
+  arxiv.org/api/query: 200
+  rss.arxiv.org/rss/cs.CV: 200
+
+=== 2) RSS 拉取 + 去重比对 ===
+  文献库当前条目数: 633
+  RSS 全量去重: 1047 条; 关键词命中: 50 条
+  最新公告日(max published): 2026-10-27
+  与文献库去重后真新稿: 43 条
+  命中稿公告日分布: {'2026-10-27': 50}
+
+  公告日 >= 2026-10-09 的真新稿: 43 篇
+    2610.34223  [2026-10-27]  Single Camera based Simulation and Try-on Ready Avatar Modeling
+    2610.35224  [2026-10-27]  GaussianSpline: Adaptive B\'ezier Splines for Highly Dynamic 4D Gaussi
+    2610.34263  [2026-10-27]  RacerGS: Residual-Autoregressive Context for 3D Gaussian Splatting Com
+    2606.19609  [2026-10-27]  Building Drift: Documenting On-Site Construction Adaptations Across Ma
+    2610.33191  [2026-10-27]  Whale You Go Green? Immediate and Longitudinal Effects of Embodied Con
+    2610.33966  [2026-10-27]  InteractiveWorld: A Verifiable Human-Centric Environment for Building 
+    2610.33158  [2026-10-27]  Gaussian Episodic Memory for Long-Term Spatiotemporal Reasoning
+    2610.33558  [2026-10-27]  GeoLift: Grounding Video Spatial Reasoning in Explicit 3D Maps
+    2610.33868  [2026-10-27]  RelateGS: Reliable Semantic and Relational Evidence for 3D Scene Under
+    2610.34093  [2026-10-27]  LegoOcc++: Towards Consistent Open-Vocabulary 3D Occupancy Prediction
+    2610.34233  [2026-10-27]  BoundedGS: Memory-Efficient High-Resolution Training for 3D Gaussian S
+    2610.34235  [2026-10-27]  ParetoGS: High-Quality Continuous-Budget 3D Gaussian Splatting with Sp
+    2610.34344  [2026-10-27]  Birth-Death Structural Learning for 3D Gaussian Splatting
+    2610.34564  [2026-10-27]  FlockWorld: Toward Population-Scale Multi-Agent Video World Models thr
+    2610.34632  [2026-10-27]  RIDE-Splat: Reflection Removal for In-the-Wild Driving Environments
+    2610.34845  [2026-10-27]  PosePlaner: Denoising Any Feed-Forward Pose Predictor from Pairwise Pl
+    2610.34952  [2026-10-27]  DimFlow: Bidirectional Grid-Expert Learning for Dynamic Gaussian Recon
+    2610.35002  [2026-10-27]  DUET4D: Self-Corrective Coupled Guidance for Sparse-View 4D Reconstruc
+    2610.35152  [2026-10-27]  Complexity-guided Regularization for Generalizable Human Gaussian Spla
+    2610.35361  [2026-10-27]  SG-Splat: Stable Geometry Learning under Pose Uncertainty for Pose-Fre
+    2610.35414  [2026-10-27]  Unveil the Mask: Jointly-Optimized Diffusion Masked Pretraining for Ap
+    2610.35756  [2026-10-27]  VidEdit3D: Flexible 3D Gaussian Editing with Video Diffusion
+    2610.33685  [2026-10-27]  EXE: Egocentric Cross-Embodiment Pretraining via Factorized Latent Act
+    2610.34745  [2026-10-27]  SceneAgent: An Agentic Pipeline from 3D and 4D Captures to Simulation 
+    2610.35642  [2026-10-27]  VPR-Space: A Benchmark for Visual Place Recognition in Space Analog Do
+    2511.22459  [2026-10-27]  Gaussians on Fire: High-Frequency Reconstruction of Flames
+    2601.00913  [2026-10-27]  CleanGS: Pareto-Guided Post-Hoc Cleanup of 3D Gaussian Splatting Scene
+    2603.28064  [2026-10-27]  \textit{4DSurf}: High-Fidelity Dynamic Scene Surface Reconstruction
+    2604.05475  [2026-10-27]  A Synthetic Eye Movement Dataset for Script Reading Detection: Real Tr
+    2604.07279  [2026-10-27]  Mem3R: Streaming 3D Reconstruction with Hybrid Memory
+    2605.18553  [2026-10-27]  StableHand: Quality-Aware Flow Matching for World-Space Dual-Hand Moti
+    2609.02847  [2026-10-27]  RoGe: Novel View Synthesis via End-to-End Implicit Reconstruction and 
+    2602.13444  [2026-10-27]  FlowHOI: Flow-based Semantics-Grounded Generation of Hand-Object Inter
+    2606.01950  [2026-10-27]  Learning Action-Conditional and Object-Centric Gaussian Splatting Worl
+    2610.33174  [2026-10-27]  Bracketing Shows the Way: Adaptive Multi-Exposure Policy as Input for 
+    2610.34041  [2026-10-27]  T-ConSG: A LiDAR-Based Real-Time Temporal Construction Scene Graph for
+    2610.34186  [2026-10-27]  HuGe: Scaling Humanoid Generalist Vision-Language-Action Models with E
+    2610.34534  [2026-10-27]  Multimodal Socially Aware Framework for Human-Robot Interaction in Vir
+    2610.35626  [2026-10-27]  Robot-Aligned 3D Gaussian Splatting for Precise Reaching with Wrist-Ca
+    2605.30488  [2026-10-27]  CoMo3R-SLAM: Collaborative Monocular Dense SLAM with Learned 3D Recons
