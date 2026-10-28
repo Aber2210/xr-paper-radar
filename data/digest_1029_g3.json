@@ -1,0 +1,151 @@
+[
+ {
+  "id": "2610.37036",
+  "slug": "graftray",
+  "venue": "arXiv preprint（慕尼黑工业大学 TUM；arXiv:2610.37036v1 [cs.CV] 2026-10-27）",
+  "tags": [
+   "3D高斯泼溅",
+   "路径追踪",
+   "虚拟物体插入",
+   "光照估计",
+   "差分渲染"
+  ],
+  "conclusion": "在 FIPT 合成场景上，GraftRay 以 ΔPSNR 35.17、阴影 IoU 0.76（DiffusionRenderer 版；RGB↔X 版为 34.29/0.77）刷新 mesh 插入高斯场景的 SOTA，大幅超过 IRGS（28.40/0.50）与 EAG-PT（24.26/0.40）等基线，且单卡 RTX 3090 上每帧插入仅需 1.6 min（同采样量下 EAG-PT 约 12×）。",
+  "problem": "将虚拟 mesh 物体插入 2D/3D 高斯泼溅（2DGS/3DGS）场景时，物体既要被场景光照正确照亮，又要向场景投射物理一致的阴影并贡献间接光。现有图像空间 harmonization 方法牺牲多视图一致性；环境图（environment map）方法无法显式表示窗户、灯具等近场面光源及其与几何的遮挡；联合 inverse rendering 引入超出插入所需的未知量，且 LDR 观测难以区分自发光体与高反表面。",
+  "method": "流程分四步。① 材质与法线估计：从高斯场景渲染 V 个虚拟视角，用内在图像扩散模型 RGB↔X（或 DiffusionRenderer）加 S 个随机种子预测 albedo/roughness/metallic/normal；按透射率定义可见表面深度 z（累积透射率首次低于 1/2 处），仅当 |r−z|/z<τ_z 时把预测反投影到该高斯；先对接受视图按种子平均，再跨种子取逐通道中值，得到场景级材质并在光照估计中固定不变。② 发射器初始化：用户用 SAM 在少数视图标记窗、灯等光源，反投影得 3D 点集，拟合单侧解析矩形 E_j（RANSAC 加权亮高斯定平面 + PCA 细化），贴墙发射器轴向对齐水平/垂直方向。③ 高斯场景路径追踪：每个高斯用 3σ 轴对齐包围盒表示，峰响应求交 t_i*=−p·q/‖q‖²、m_i²=‖p‖²−(p·q)²/‖q‖²，当 m_i²<9 时命中，有效不透明度 α_i=o_i·exp(−m_i²/2)；any-hit 以概率 α_i 随机接受（随机透明），首个被接受概率 w_i=α_i∏_{j∈F_i}(1−α_j)；阴影射线用独立 ray type 确定性累积透射率、低于 5×10⁻³ 终止；光传输遵循 Mitsuba 式路径积分，Cook–Torrance/GGX BRDF + 解析矩形上的 NEE + BSDF 采样经 MIS（power heuristic）组合，Russian roulette 终止。④ 发射器辐射度估计：几何与材质固定时 I(L)=Σ_j L_j B_j（B_j 为仅 E_j 单位辐射度的基图，渲染时剔除 E_j 附近薄板内亮高斯）；饱和通道（阈值 τ=0.98）只提供下界，目标函数对未裁剪观测直接拟合、对裁剪观测用单边惩罚 [τ−g(B^TL_c)]_+²，每通道解非负最小二乘（J 个未知数通常 <20，GPU 上 Levenberg–Marquardt 解 J×J 法方程）；最后差分合成 I_out=M·k·I_with+(1−M)·I_3dgs⊙clip(I_with/I_without,0,c)（c=3，k 为背景像素 I_3dgs/I_without 比值的中值以补偿曝光）。",
+  "experiments": "数据集：4 个 FIPT 房间 + 2 个 NFINITE（合成，路径追踪 GT）、2 个 FIPT-Real + 5 个 ScanNet++（真实）、5 个 SpAItial 平台生成的 3DGS 场景；所有方法用相同物体、放置与灯光，每场景 3 个视角。有 GT 报 ΔPSNR/mask PSNR/阴影 IoU/阴影 RMSE，无 GT 报无参考 VQAScore ratio（LightHarmony3D）。\n\nFIPT 合成场景主结果（Table 1）：\n| 方法 | ΔPSNR↑ | Mask PSNR↑ | 阴影 IoU↑ | 阴影 RMSE↓ |\n| Ours (DiffusionRenderer) | 35.17 | 29.14 | 0.76 | 0.08 |\n| Ours (RGB↔X) | 34.29 | 28.49 | 0.77 | 0.07 |\n| IRGS（最强基线） | 28.40 | 22.56 | 0.50 | 0.15 |\n| EAG-PT | 24.26 | 21.19 | 0.40 | 0.29 |\n| ComGS | 13.09 | 8.27 | 0.26 | 0.33 |\n\n材料恢复（Fig. 5，FIPT 四房间平均）：Ours 对齐后 albedo 19.9 dB，EAG-PT 20.2 dB 但仅恢复 diffuse albedo；GS-IR/GI-GS 把阴影与窗光烘进 albedo，低 6–8 dB；GS-IR 全零 metallic 得分尚可，因仅约 1–6% 像素为金属。\n\n效率（单卡 RTX 3090）：bedroom 重建 22 min；DiffusionRenderer 先验 1.5 h/seed；反投影 6 min；辐射度拟合 13.5 min；插入一帧 1024×576@256 spp 1.6 min（含两次路径追踪）；EAG-PT 在其 1024 spp 下 14.4 min/帧，等采样量约 12×。\n\n消融（bedroom，Table 2；格式 ΔPSNR/Mask/IoU/RMSE）：完整 35.4/31.6/0.80/0.08；点光源 26.5/20.5/0.51/0.12；环境图 27.6/27.4/0.56/0.55（PT/3DGS）；反弹 1/2/3/4 次 ΔPSNR 25.7/30.8/32.9/34.0（4 次与完整追踪器差 1.4 dB 内）；GT 窗口几何 35.4/31.7/0.80/0.08；窗口尺寸 ×0.8/1.25/1.5 → 34.2/35.4/35.4；位移 5/10/20 cm → 35.4/35.1/34.3（IoU 均 0.80）；shadow only / one-way IoU 降至 0.58/0.00；emissive 3DGS IoU 0；灰 albedo mask PSNR 腰斩至 15.6；去掉差分合成 ΔPSNR 跌至 24.8。",
+  "innovation": [
+   "仅凭 LDR 图像：把多视角 2D 材质/法线预测反投影到单个 2D/3D 高斯，无需传统 inverse rendering 的联合优化即可提供场景级物理属性，且支持无原始训练图的合成高斯场景",
+   "扩展 OptiX 路径追踪器联合追踪随机透明高斯与插入 mesh，用 3σ AABB + 峰响应求交实现高斯场景上的显式光传输（光照、阴影、间接光）",
+   "把饱和像素视为删失观测，用路径追踪单位辐射度基图 + 非负最小二乘高效估计发射器强度，并以未饱和区域区分真光源与亮反射面",
+   "差分合成把插入物体的光照变化迁移到原 3DGS 渲染，在获得阴影/间接光的同时保留原重建的视角相关外观"
+  ],
+  "limits": "正文 4.3 节明示两条主要局限：① 光源必须手动标记——用户需用 SAM 在一个或少数视图中框选窗户与灯具（只需近似 mask）；② 依赖先验信息——albedo、roughness、metallic 与法线来自 2D 估计器（RGB↔X 或 DiffusionRenderer），先验误差会传导到拟合灯光与插入效果。另实验中观察到 metallic 通道会溢到漫反射表面（Fig. 5），且真实/生成场景的无 GT 指标 VQAScore 几乎无法区分方法。",
+  "relation": "最相关者为 AEGIR（用可微 deferred renderer 联合优化面发射器/材质/几何）与 EAG-PT（重建 emission-aware 2DGS、仅 albedo、用于路径追踪编辑）；GraftRay 定位为受约束优化——材质取自先验、几何固定、仅优化发射器辐射度。高斯求交策略与 3DGRT 共享峰响应思想，但目标从视图合成转为物理光照；差分渲染传统可追溯至 Debevec 与 Karsch 等。",
+  "repro": "正文未提及代码/数据公开链接。硬件：全部步骤在单张 NVIDIA RTX 3090 完成。软件栈：OptiX 加速路径追踪器、Mitsuba 式路径积分器、SAM、RGB↔X 与 DiffusionRenderer 先验模型；评测数据为 FIPT/NFINITE/FIPT-Real/ScanNet++ 与 SpAItial 生成场景（SpAItial 为商业平台，Plant-Wall 场景用初步物体放置）。"
+ },
+ {
+  "id": "2610.37149",
+  "slug": "gcsr-occ",
+  "venue": "arXiv preprint（阿里巴巴 Amap；arXiv:2610.37149v1 [cs.CV] 2026-10-27）",
+  "tags": [
+   "开放词汇",
+   "3D占用预测",
+   "3D高斯",
+   "几何校准",
+   "语义路由"
+  ],
+  "conclusion": "在 Occ-ScanNet 上不使用任何 3D 语义标注即取得几何 IoU 63.31%、开放词汇 mIoU 27.44%，较最强开放词汇基线 LegoOcc（59.50/21.05）提升 +3.81/+6.39，几何 IoU 超过全部闭词汇方法（RoboOcc 56.48），同时 Gaussian-voxel 对从 3.115×10⁶ 降至 1.517×10⁶（−51.3%），几何聚合延迟 19.76→12.88 ms（−34.8%）、端到端 60.16→50.88 ms（−15.4%）。",
+  "problem": "单目 RGB 室内开放词汇占用预测面临深度歧义与前景遮挡；RTO（先重建再转占据）范式下，LegoOcc 的 Poisson 高斯到占据算子允许模型通过高斯尺度膨胀与重叠虚增占据响应而不提升几何精度，且单个高斯的贡献被 1−e⁻¹≈0.63 封顶、复制高斯即可涨占据；语义侧先聚合高斯特征再文本匹配会把跨类语义混入同一体素特征，3D–2D 特征对齐亦会造成语义混合。",
+  "method": "几何侧提出 EC-G2O 替代 Poisson 聚合：① 质量归一化核 h_i(x)=α_i·V·𝒩(x;μ_i,Σ_i)=α_iV/((2π)^{3/2}s_i1s_i2s_i3)·exp(−½(x−μ_i)ᵀΣ_i⁻¹(x−μ_i))，积分质量 ∫h_i=α_iV 与尺度无关，放大高斯即降低局部峰值，驱动紧凑化；② p 范数聚合 z(x)=(Σ_i h_i^p)^{1/p}（p≥1，实验 p=2），强贡献占主导、弱贡献梯度消失，相同复制仅次线性涨占据（∂z/∂h_i=(h_i/z)^{p−1}）；③ 可学习增益 γ=e^θ（初值 1）重校准 p_occ=1−exp(−γz) 并补偿单 primitive 上限。几何目标 L_geo=L_occ+λ_logz·L_logz+λ_over·L_over（λ_logz=0.5、λ_over=0.05；z*=−log(1−0.95)≈3；L_logz 为 log(1+z) 的 Huber 回归、L_over 仅在 GT 占据体素上惩罚 relu(z−z*)²），另加深度 Huber 与冻结 2D 特征对齐作辅助。语义侧提出 MM-QGSR：query-first——先对单高斯做文本匹配再聚合，证据 e_ic=f_iᵀt_c、logit ℓ_ic=e_ic+tanh(η)·cos_sim(W_gf_i,W_tt_c)、路由权重 r_ic=exp[clip(βℓ_ic,−L,L)]；每高斯扩展 K=2 个潜在语义模式（f_ik=norm(f_i+ρ·tanh([F_θ(f_i)]_k))、π_ik=softmax(P_ψ(f_i))，ρ=0.25，r_ikc=π_ik·exp[clip(βℓ_ikc,−L,L)]）；体素处聚合 0/1/2 阶矩 A_c^(j)(x)=Σ_i ḡ_i(x)Σ_k r_ikc·e_ikc^j，导出支持度 m_c、平均匹配 μ_c、分歧 v_c，打分 S_c(x)=μ_c(x)+λ_m·log m̃_c(x)/β−λ_v·v_c(x)，ŷ=argmax_c S_c。平滑聚合 w_i(x)=h_i^q/Σh_j^q（q=0.5，仅作用于语义分支、不改动几何）；furniture 与 objects 父查询分别扩展为 6/12 个细粒度子类查询后与父查询一起 max-pooling（共 29 个查询）；路由器由冻结 Trident 教师蒸馏训练（L_router=λ_imgL_img+λ_fitL_fit+λ_divL_div+λ_massL_mass）。",
+  "experiments": "数据集：Occ-ScanNet，输入单目 RGB，输出 60×60×36 体素（4.8 m×4.8 m×2.88 m@0.08 m）；1 个空类 + 11 个语义类；45,755 训练帧 / 19,764 验证帧，全验证集评测。\n\n主结果（Table 1，IoU / mIoU）：\n| 组别 | 方法 | IoU | mIoU |\n| 开放词汇（仅几何标注） | POP-3D | 35.32 | 5.96 |\n| 开放词汇 | LOcc | 36.70 | 9.25 |\n| 开放词汇 | LegoOcc | 59.50 | 21.05 |\n| 开放词汇 | Ours | 63.31 | 27.44 |\n| 闭词汇（全语义标注） | RoboOcc | 56.48 | 47.76 |\n| 闭词汇 | EmbodiedOcc++ | 54.90 | 46.20 |\n| 闭词汇 | ISO | 42.16 | 28.71 |\n\n要点：几何 IoU 63.31 超过所有闭词汇方法（RoboOcc 56.48）；mIoU 27.44 超过 MonoScene（24.62）与 TPVFormer（24.94），仍略低于 ISO（28.71）及全监督 embodied-occupancy 模型。显著类别增益：furniture 5.88→26.92（+21.04）、ceiling 17.81→35.27（+17.46）、bed 33.05→38.87（+5.82）。\n\n效率（Table 2，同硬件）：Gaussian-voxel 对 3.115×10⁶→1.517×10⁶（−51.3%）；孤立聚合延迟 19.76→12.88 ms（−34.8%）；端到端前向 60.16→50.88 ms（−15.4%，主干与高斯头开销不变）。\n\n累积消融（Table 3，IoU/mIoU）：Poisson 基线 59.50/21.05 → +质量归一化 61.46/22.82 → +p 范数 63.31/22.64 → +MM-QGSR 63.31/23.79 → +平滑聚合 63.31/24.73 → +细粒度子类查询 63.31/27.44（末步语义增益最大，+2.71）。\n\n子类查询对照（Table 5）：同一套子类查询加于 Poisson 基线（LegoOcc）mIoU 21.05→24.63（IoU 不变 59.50），完整模型再 +2.81 达 27.44。\n\n高斯尺度（Table 6，100 个验证场景前三半轴均值）：均值 0.0479→0.0349 m（−27.1%），中位 0.0458→0.0341 m（−25.4%），验证质量归一化偏向紧凑 primitive。\n\n实现：Depth Anything V2 (ViT-B) 主干、冻结 CLIP ViT-B/16 文本编码器、冻结 Trident 分割器（CLIP ViT-B/16 + DINO + SAM）；3×RTX 4090；AdamW（lr 2×10⁻⁴、wd 0.01、梯度裁剪 1.0、cosine + warmup）；几何训练 15 epoch、路由器冻结占据参数后再训 2 epoch（lr 1×10⁻⁴）；p=2、K=2、q=0.5、β=4、λ_m=λ_v=0.25、L=5；输入长边 518 px。",
+  "innovation": [
+   "提出 EC-G2O（核质量归一化 + p 范数聚合 + 可学习增益），在不破坏与渲染共享 α_i 的前提下抑制尺度膨胀与局部证据过累积，并让单个高斯可产生高置信占据响应",
+   "提出 MM-QGSR：多模式、query-first 的高斯语义路由，以可学习文本条件路由器把语言证据在体素聚合前分配到各 primitive，缓解跨/高斯内语义混合",
+   "细粒度子类查询（父查询 max-pooling）与平滑聚合（q=0.5，仅语义分支）进一步精化体素级开放词汇识别",
+   "聚合效率大幅提升（Gaussian-voxel 对 −51.3%），把几何设计与计算效率统一到同一框架"
+  ],
+  "limits": "正文未设独立 Limitations 节。从实验与讨论推断：① p 范数聚合适度压制占优高斯也削弱细粒度语义所需的集中特征响应，mIoU 从 22.82 轻微回落至 22.64；② mIoU（27.44）仍略低于全监督 ISO（28.71）与 embodied-occupancy 模型，作者归因于缺乏密集语义标注时细粒度类别校准的固有困难；③ 结论节未来工作称将探索用生成模型从单目 RGB 补全遮挡区域的几何与语义，暗示当前对遮挡区域补全能力有限；④ 仅在 Occ-ScanNet 单一室内基准、单目设定下验证，跨数据集泛化未测。",
+  "relation": "几何侧直接基线与对比对象为 LegoOcc（Poisson G2O 的 RTO 代表，同为室内单目开放词汇占据），并明确区别于 GaussianFormer-2（人为把单高斯峰值占据设为 1 而放弃共享 α，本文无法照搬该技巧）；语义侧区别于 GaussTR（先文本匹配但每高斯仅单语义特征、聚合权重无文本条件）与 POP-3D/LangOcc 的 2D 蒸馏路线；整体延续 Reconstruction-then-Occupancy（RTO）范式，沿用 ISO 引入的 Occ-ScanNet 基准。",
+  "repro": "摘要与结论称『code will be made publicly available』，但正文未给出具体 URL。硬件：3×NVIDIA RTX 4090。软件/数据：Depth Anything V2 (ViT-B)、冻结 CLIP ViT-B/16 与 Trident（CLIP ViT-B/16+DINO+SAM）教师；输入长边 518 px；超参 p=2、K=2、q=0.5、β=4、λ_m=λ_v=0.25、L=5、ρ=0.25、C=64 个固定文本查询（openai_imagenet_template 集成）；子类查询由语言模型 prompt 生成后人工保留（furniture 6 个、objects 12 个）。"
+ },
+ {
+  "id": "2610.37172",
+  "slug": "domegs",
+  "venue": "arXiv preprint（雅盖隆大学；arXiv:2610.37172v1 [cs.GR] 2026-10-27；页眉为 IEEE vgtc 模板，疑投 TVCG/CG&A）",
+  "tags": [
+   "3D高斯泼溅",
+   "虚拟现实",
+   "背景补全",
+   "全景外扩",
+   "用户研究"
+  ],
+  "conclusion": "N=36 完全被试内用户研究显示，相比传统无限 skybox，DomeGS 显著提升运动中的背景一致性（SKY Δ=+1.24，p<0.001，d=0.85）与沉浸感（IMM Δ=+0.44，p<0.001，d=0.35），IPQ 空间临场感（1.73 vs 1.41，p=0.042）与真实感（0.36 vs −0.07，p=0.042）显著更高，75.0% 参与者因更愿意久留而偏好 DomeGS，且眩晕程度与任务负荷无差异。",
+  "problem": "用 3DGS 重建无界室外场景时，远场（天空、远景立面、地平线）因多视图视差与几何标志缺失而无法重建，出现锯齿边界、漂浮伪影与空洞，破坏 VR 沉浸；传统做法是把全景图贴到无限远 skybox（cubemap）或手工搭建 skydome，前者与重建几何存在颜色/光照不一致与可见接缝、无平移视差，后者需定制 mesh 与 shader；已有生成式方法或生成全新环境、或把背景当独立 HDRI 处理，无法在场景一致性约束下补全现有 3DGS 重建的未观测周边，且其评估多在静态视点进行。",
+  "method": "三阶段流水线。① 全景提取与外扩（Stage I）：虚拟全景相机置于轨迹质心 e=(1/K)Σt_k，剔除距 e 为 r+s_i^max 排斥球内的高斯得 G_pano，渲染等距柱状投影 I_0 并构造二值补全 mask M（M=1 为未观测天空/空洞）；用 360° 感知潜扩散模型（FLUX.2-klein-base-9B + 360 ERP LoRA）以 I_0、M 为条件全局外扩得 I⁽¹⁾，再循环平移 180° 使接缝重定位，对新边界处竖直条带 M_seam 二次 inpainting 得无缝全景 I⁽²⁾。② 场景自适应数据集（Stage II）：由 e 处 6 面 cubemap 可见高斯的深度分布估计球壳半径 R=m·Quantile_q({‖μ_i−e‖})（q=98%、m=1）；以 ψ*=argmax_ψ(|G(ψ)∩G_fg|/|G_fg|−λ_ψ|G(ψ)∖G_fg|/|G(ψ)|)（λ_ψ=0.3）求最优基准俯仰；用 180° yaw 翻转、俯仰偏离的 look-back 探针相机识别背面 floater 并剪除；在分层相机环（向下 p_down、水平过渡 p_scene、向上 p_bg）上按角色相关目标合成多视图监督 I_sup：向下视角直接用清理后场景渲染，过渡/天空视角用 I_G′(T)+I_bg(T)⊙(1−α(T))（α 为累积 2D 不透明度），I_bg 由相机射线与半径 R 包围球求交后采样 I⁽²⁾ 得到。③ 统一天空高斯优化（Stage III）：固定 r_f=max_k‖t_k−e‖ 内的高斯不动，在上半球壳 μ_j=e+r_jd_j（d_j∼Unif(S₊²)、r_j∼Unif([γR,R])、γ=0.99）播种种子高斯，尺度适配局部采样密度；联合目标 L=L_photo+λ_shellL_shell+λ_planL_plan，其中 L_photo=(1−λ_ds)‖Î_G−I_sup‖₁+λ_ds(1−SSIM)，径向壳损失 L_shell 惩罚 d_j=‖μ_j−e‖ 越出 [γR,R]，平面率损失 L_plan=(s_j^max/(s_j^min+ε))·(1−|a_j^min·r̂_j|) 抑制尖刺高斯；种子高斯免于剪枝/密度重置，背景高斯禁用尺度剔除，最终得统一场景 G=G′∪G_bg。",
+  "experiments": "用户研究：4 个室外无界 3DGS 场景（Panoramic：Buddha、Tower；Close：Garden、Bear），2×2 被试内设计（技术 × 场景类型），N=36（31 男 5 女，20–37 岁，M=26.2、SD=3.8；VR/AR 经验 M=0.8 年）；两条件共享同一前景高斯、同一补全全景 I* 与同一传送点布局；Meta Quest Pro + Unity 90 Hz（i7-14700K + 32 GB + RTX 4070 SUPER）。\n\n微观探针 LMM（N=288，−3…+3 量表；Table 2）：\n| 项目 | Δ(DomeGS−Skybox) | 95% CI | F(1,245) | Holm p | d |\n| SKY 运动背景一致性 | +1.24 | [0.95, 1.53] | 70.70 | <0.001 | 0.85 |\n| IMM 沉浸感 | +0.44 | [0.21, 0.68] | 14.01 | <0.001 | 0.35 |\n\n场景级 SKY 对比：Buddha +2.08（p<0.001）、Bear +1.14（p=0.002）、Garden +1.08（p=0.004）、Tower +0.67 不显著（Holm p=0.225，该场景 Skybox 基线本身已高分）；technology×scene 交互显著（F(3,245)=4.10，p=0.007）。\n\nIPQ（Wilcoxon + Holm 校正）：SP 1.73 vs 1.41（Δ=+0.32，p=0.042）、REAL 0.36 vs −0.07（Δ=+0.44，p=0.042）显著；G1/INV/Total 不显著（p=0.117/0.374/0.055）；内部一致性 α=0.86（DomeGS）/0.80（Skybox）。\n\n偏好（非平手二项检验）：久留 75.0% vs 8.3%（p<0.001）、全景观看 69.4%（p=0.004）、总体沉浸 66.7%（p=0.004）、Close 场景 52.8% vs 22.2% 未达显著（p=0.0522，25.0% 平局为四项最高）。\n\n任务负荷等效（TOST，Table 3；边界 ±60 s/±6 m/±2600°）：搜索时长 Δ=−6.7 s [−38.8, 25.4]（p_TOST=0.004）、头部路径 −0.40 m [−3.74, 2.95]（0.004）、转头量 −220° [−1694, 1254]（0.005）；SSQ 总分 16.5 vs 17.9（n.s.，轻度范围），前后累计不显著（14.4→18.0，p=0.931）。\n\nQwen3-VL-32B 自动视觉评测（Table 4，1–5 分；成对 −2…+2，位置交换）：均值 B/C/P：Skybox 2.71/2.98/2.91 vs DomeGS 3.63/3.71/3.63；成对偏好均值 +0.672（Tower +0.747、Buddha +1.083、Garden +0.475、Bear +0.383）。\n\n生成器消融（Fig. 3/§4）：FLUX.2-klein-base-9B + 360 ERP LoRA 色彩一致性与接缝最优并用于 VR 条件；FLUX.2-dev 色彩不匹配、FLUX.1-Fill-dev 结构重复、512-inpainting-ema 地平线处不连续、Nano Banana 天空可见接缝。",
+  "innovation": [
+   "把 skydome 思想落到高斯表示内部：远景不再是扁平背景壳，而是统一 3DGS 资产中有限半径球壳上的背景高斯，在头部平移时提供深度一致的运动视差",
+   "360° 感知生成外扩 + wrap-seam 调和 + 角色相关 alpha 监督，实现与前景光照/色调一致的无接缝补全，且不破坏主重建（固定 r_f 内前景高斯、种子高斯免剪枝）",
+   "系统化用户研究（36 人、2×2 完全被试内、微观探针 + IPQ + TOST 等效 + SSQ + 视觉语言模型自动评审）证明显著增益且无舒适度代价"
+  ],
+  "limits": "正文未设独立 Limitations 节。从实验设置与讨论推断：① 仅 4 个室外场景、36 名被试，Tower 场景 SKY 优势不显著（Skybox 在该场景已高分，作者归因于其主要缺失为天空、恰适于无限远假设），Close 场景偏好未达显著（p=0.0522、25% 平局，近景密集几何已提供足够深度线索，远景增益被稀释）；② 补全质量依赖生成模型，不同生成器存在色彩不匹配/结构重复/接缝（Fig. 3），对遮挡严重或几何特殊的场景未验证；③ 壳厚 γ=0.99、q=98%、m=1、λ_ψ=0.3 等为全场统一设定，未做场景自适应；④ 单次会话（≈30–40 min，含 15–25 min HMD 暴露）未考察长期适应与学习效应；⑤ 论文以 skybox 为唯一基线，未与 EnvMap-GS 等 3DGS 补全方法定量比较。",
+  "relation": "基线为 Unity 原生无限 skybox（cubemap/HDRI）；概念上继承 skydome（有限球面/半球），但将其实现为高斯壳而非手工 mesh；与 WildGaussians（天空 masking）、EnvMap-GS（有限球壳拟合已观测背景辐射、不生成缺失天空，烘焙后仍为无视差背景）形成对比；与 LayerPano3D、DreamScene360、Persistent Nature、SceneDreamer 等生成整条全景世界的路线区别在于『在场景一致性约束下补全现有重建的未观测周边』，作者称该设定此前未被探索；全景生成模型对比 CubeDiff/PanoDiffusion/DiffPano/FLUX 系列。",
+  "repro": "代码公开：https://github.com/Anastasiya999/DomeGS。硬件：Meta Quest Pro HMD（Quest Air Link，5/6 GHz Wi-Fi）、Unity 90 Hz、Intel Core i7-14700K + 32 GB RAM + NVIDIA RTX 4070 SUPER（Windows 11 Home）。生成模型：FLUX.2-klein-base-9B + 360 ERP LoRA（https://huggingface.co/nomadoor/flux-2-klein-9B-360-erp-outpaint-lora）；关键超参：R 分位 q=98%、m=1、λ_ψ=0.3、壳厚 γ=0.99；语料为 4 个既有室外 3DGS 重建（Garden、Bear、Buddha、Tower）。"
+ },
+ {
+  "id": "2610.37271",
+  "slug": "himarts",
+  "venue": "arXiv preprint（康考迪亚大学；arXiv:2610.37271v1 [cs.HC] 2026-10-27；License CC BY-NC-SA 4.0）",
+  "tags": [
+   "增强现实",
+   "手术导航",
+   "胸外科",
+   "点云配准",
+   "移动AR"
+  ],
+  "conclusion": "在 16 人实体 phantom 研究中，两阶段 coarse-to-fine 注册于约 4 min（手动对齐 87.55±59.05 s + 采云 149.36±124.93 s）内达到 3.31±1.26 mm 平均 TRE，较手动粗对齐的 12.82±15.40 mm 显著降低（配对 Wilcoxon p=0.0052），SUS 84.06±10.82 显著高于可用性基准 68（p<0.001）。",
+  "problem": "VATS 端口放置目前依赖术者经验与术前 CT/MRI 到患者解剖的心智映射，主观且个体差异大；现有 AR 导航要么依赖 fiducial/marker 与昂贵外部光学跟踪（可及性差），要么依赖 HoloLens 等 HMD（内置传感器分辨率不足、人体工学与成本门槛），markerless 方案又需专用 3D 扫描仪、跟踪阵列或 hybrid C-arm；此外 ICP 精配准需要足够好的初始化以避免局部最优，FPFH+RANSAC 全局配准对手术台、设备与人员等非目标物敏感。",
+  "method": "系统 HILMARTS 采用两阶段 coarse-to-fine 工作流。① 交互式手动粗对齐（设备耦合）：长按按钮进入 grab 模式后，虚拟模型镜像 iPad 相机的增量 6-DoF 运动，用户以手持平板的自然移动完成全局位姿初始化，大幅缩小后续精配准搜索空间。② LiDAR 点云自动精配准：经 ARKit 同步采集 RGB、LiDAR 深度图、相机内参与 6-DoF 位姿；深度先经物理量程约束与统计离群剔除去除无效测量，再用保边双边滤波降噪；随后用 BlazePose（33 个身体关键点 + 逐像素分割 mask）从 RGB 提取躯干区域并投影到深度图，仅保留躯干 3D 点，最后 DBSCAN 抑制残留稀疏离群。采集充分性由 Surface Coverage Score 实时反馈：PCA 估计患者有向包围盒，3D 点投影到主导平面并离散为 G×G 占据栅格，识别连通空区并以最大连通空区 I_max 计分 Coverage=(1−|I_max|/G²)×100%，只有覆盖率超过 70% 阈值才触发注册，避免欠约束配准。点云下采样后以 FPFH 描述，RANSAC 三点采样 + SVD 位姿估计求初始刚体变换，再以 point-to-plane ICP 精化，最终变换作用于虚拟模型。Unity 客户端运行于带 LiDAR 的 iPad（Pro 2020 或更新），重计算在本地服务器经安全无线链路完成以保护诊室隐私。",
+  "experiments": "被试：16 人（27.13±5.26 岁；6 女 10 男；1 名临床医生 + 15 名 STEM 学生；AR 熟悉度 4.07±1.34、人体解剖熟悉度 3.40±1.64，5 分制）。Phantom：Visible Human Project 男性 CT（1×1×1 mm³）经 3D Slicer 分割体外表面与器官，Modix BIG-60 PLA 3D 打印、哑光喷涂减少镜面反射；前（摄像头侧）表面放置 18 个非对称地标；真值由 OptiTrak Duo 光学跟踪 + 跟踪探针在世界系下测得。\n\n精度（Fig. 2C，mTRE，mm）：\n| 条件 | mTRE |\n| 手动粗对齐 | 12.82 ± 15.40 |\n| 自动点云精配准（有 Surface Coverage Score 反馈） | 3.31 ± 1.26 |\n| 自动点云精配准（无反馈） | 3.99 ± 2.50 |\n\n手动 vs 自动配对 Wilcoxon p=0.0052；有/无反馈差异 p=0.33 不显著，但有反馈方差明显更小（鲁棒性更好）。\n\n效率：手动对齐 87.55±59.05 s；结构化采云 149.36±124.93 s；重采 0.25±0.45 次/人（16 人中仅 4 人重采 1 次）；全程约 4 min。\n\n可用性：SUS 84.06±10.82（单样本 t 检验 vs 68，p<0.001）；自定义 10 项 UX 问卷均值 3.94±0.68 至 4.88±0.34，全部显著高于中性值 3（p<0.001），其中 Surface Coverage Score 有用性项 Q10=4.88±0.34。质性反馈：14/16 作答，8/14 赞易用/直观/有趣，5/14 认可临床相关（如提供『Xray view』），3/14 指手动粗对齐的深度与旋转控制偶有困难。",
+  "innovation": [
+   "提出设备耦合（device-coupled）手动粗对齐交互：虚拟模型镜像平板 6-DoF 运动，以自然手持操作初始化位姿，免除外设跟踪",
+   "基于商用 iPad LiDAR + BlazePose 语义隔离躯干的无标记点云精配准流程（量程/统计/双边滤波 + 语义 mask + DBSCAN），无需专用光学跟踪",
+   "设计占据栅格 Surface Coverage Score 实时反馈采集几何完整性（70% 阈值触发注册），降低欠约束配准风险",
+   "端到端移动 AR 框架 HILMARTS（iPad/Unity/ARKit 客户端 + 本地服务器），phantom 研究验证其精度、效率、鲁棒性与可用性"
+  ],
+  "limits": "Discussion 明示：① CT 为仰卧位采集，而实验为侧卧体位，软组织形变可能影响精度，拟用可变形模型解决；② 有/无反馈条件按固定顺序呈现（先完整体验工作流），可能引入顺序效应，故对 Surface Coverage Score 的独立作用持谨慎态度，留待随机化多会话评估；③ 被试以 STEM 学生为主、仅 1 名在职临床医生，不能完全代表最终用户群，未来将开展以临床医生为中心的评估与更广泛采用框架；④ 单次试验设计（考察 walk-up-and-use 直觉性、最小化学习效应），长期使用与学习曲线未测；⑤ 少数被试报告平板疲劳等人体工学顾虑（作者认为短时使用可缓解）；⑥ 实体 phantom 与哑光喷涂表面近似组织，真实术野（光滑、形变、血迹等）表现待验证。",
+  "relation": "承接作者此前的 VATS 术前 VR 规划工作（VR-based preoperative planning for optimized trocar placement，Healthcare Technology Letters 2024）；区别于 HoloLens 等 HMD 方案（内置传感器分辨率不足、需 fiducial/marker）与依赖外部 3D 扫描仪/跟踪阵列/hybrid C-arm 的 markerless 方案；算法组件沿用 point-to-plane ICP（Chen & Medioni 1991）、FPFH（Rusu 2009）、RANSAC（Fischler & Bolles 1981）、BlazePose（Bazarevsky 2020）、Open3D 与 ARKit；作者指出 AR 跟踪在神经外科、腹部与骨科已相对成熟，而 AR 引导胸外科探索不足。",
+  "repro": "正文未提及开源代码/数据公开链接。硬件：带 LiDAR 的 iPad（Pro 2020 或更新）+ Unity/ARKit 客户端 + 本地服务器（安全无线链路）；真值测量需 OptiTrak Duo 光学跟踪系统与跟踪探针。数据/模型：Visible Human Project 男性 CT、3D Slicer 分割、Modix BIG-60（PLA）打印 phantom；评测为离线用户研究，无公开数据集链接。"
+ },
+ {
+  "id": "2610.37427",
+  "slug": "tsae",
+  "venue": "arXiv preprint（奥格斯堡应用技术大学 THA；arXiv:2610.37427v1 [cs.HC] 2026-10-27；License CC BY 4.0）",
+  "tags": [
+   "协同VR",
+   "团队沟通",
+   "同步性度量",
+   "语义纠缠",
+   "基尼系数"
+  ],
+  "conclusion": "在 15 个德语协同 VR 会话（每队 5–8 人、平均约 25 min）上，TSAE + Gini 显示团队沟通纠缠呈低到中度不均分布：session 级 Gini 0.139–0.355，累计纠缠前 20%/40%/60% 参与者约占 31%/54%/74%，与 Gloor et al.（2022）的 core–periphery 模式形成定性对比；跨会话中位 Gini 随窗口变长从约 0.25（45 s）降至 0.14（200 s）。",
+  "problem": "协同 VR 产生丰富的多模态团队行为痕迹，但刻画时变团队沟通的实用方法仍有限；CPS 团队过程是非静态的，聚合的端态摘要会丢失时间动态；方法学前驱 Gloor et al. 的 entanglement 基于有向邮件网络的沟通量，而 VR 自由流对话中受话者/对象模糊（无向），且完全不包含语义内容；因此需要一种能同时保留二元对、个体与团队分布多层粒度、并随时间分辨的沟通同步度量。",
+  "method": "将游戏时间线划分为 m 个离散窗口，对窗口 T_k 内参与者 p_i 统计词数 a_i^k 与话语集 U_i^k；用长上下文嵌入模型 Jina v2 以 late-chunking 策略编码每条话语 v(u)（保留短话语对上下文的依赖），取窗口内平均（mean pooling）得 z̄_i^k。对参与者对 (p_i,p_j) 定义三个分量：发言活动占比 A_ij^k=(a_i^k+a_j^k)/Σ_l a_l^k、语义余弦对齐 C_ij^k=z̄_i^k·z̄_j^k/(‖z̄_i^k‖₂‖z̄_j^k‖₂)（∈[−1,1]）、几何分离惩罚 Δ_ij^k=‖z̄_i^k−z̄_j^k‖₂；二元纠缠 E_ij^k=A_ij^k·C_ij^k/(1+Δ_ij^k)（分母 +1 防零并把欧氏距离变成衰减因子）。个体级 E_i^k=(1/(n−1))Σ_{j≠i}E_ij^k（固定分母保证跨窗口尺度一致），归一化份额 π_i^k=E_i^k/Σ_lE_l^k，团队级以 Gini 系数 G_k=(1/2n)Σ_iΣ_j|π_i^k−π_j^k| 表征沟通同步的分布不均衡（越低越均匀），跨会话用有限团队校正 G_k*=n/(n−1)G_k 归一到 [0,1]。流程：Meta Quest Pro 录制的 48 kHz 单声道逐玩家音频 → Whisper 转录德语话语 → 人工核对完整性并对齐公共游戏时钟（保留并发语音）→ Jina v2 + late chunking 编码 → 在有效时间窗口（默认 45 s，另评 90 s、200 s）计算指标；沉默/不活动记为零活动量，纠缠为零。",
+  "experiments": "数据：15 个有效德语会话，每队 5–8 名成人，共址 VR 环境完成 CPS 任务；Meta Quest Pro HMD 录制 48 kHz 单声道玩家级音频；平均约 25 min/会话；数据匿名化，隐私约束下无人口统计或既往玩家关系元数据。\n\n代表性 6 人会话（45 s 窗口，Fig. 2）：二元纠缠 (1,3) 于 225 s 达 E=0.58、(3,4) 于 540 s 达 E=0.55；个体 0 与 4 于 1080 s 相对抬升；多数窗口 Gini 落在 0.07–0.27，540 s（G=0.39）与末窗（G=0.42）出现集中峰；纠缠热度间歇变化，对齐快速更替而非稳定同步。\n\n跨会话分析（15 会话，Fig. 3 + Table 1）：中位 Gini ≈0.25（45 s）→0.17（90 s）→0.14（200 s），多数会话呈同样趋势（长窗口平滑瞬时差异、降低表观集中度）；降序 Lorenz 曲线显示排名前 20%/40%/60% 的参与者累计纠缠份额约 31%/54%/74%（前 40% 略过半），总体偏分布但存在不均。\n\nsession 级 Gini（Table 1，由 Lorenz 曲线下面积计算）：0.179、0.288、0.181、0.211、0.296、0.255、0.307、0.217、0.355、0.139、0.268、0.172、0.303、0.259、0.192（范围 0.139–0.355；对应人数 n=7,6,6,7,8,8,7,8,8,7,7,5,5,8,7）。结论：纠缠分布相对均匀、随时间间歇再分配，与 foundational work 的 core–periphery 定性对比，且观察时间尺度显著影响结论。",
+  "innovation": [
+   "提出 TSAE：把相对发言活动与上下文语义对齐（余弦 + 欧氏衰减）组合成二元对时变纠缠，适配 VR 无向自由对话（区别于有向邮件网络的 entanglement）",
+   "将二元分数聚合为个体级轨迹，并以 Gini 系数把团队级沟通同步刻画为分布问题，提供二元/个体/分布三层可解释视图",
+   "采用 late-chunking 长上下文嵌入表示短话语，保留对话上下文语义",
+   "在 15 个真实协同 VR 会话上给出与 Gloor et al. core–periphery 模式不同的描述性证据，并量化时间尺度效应"
+  ],
+  "limits": "正文未设独立 Limitations 节，Discussion 指出：① 转录经人工质量核对，对未校正 ASR 错误的鲁棒性未测试；② 德语数据集与人口统计信息缺失（隐私约束）限制泛化；③ TSAE 是描述性度量，不建立主观团队 flow 或协作质量；④ 需与参与者报告、行为标注或任务结果对照、经显式假设验证，才能确定这些模式在 CPS 中的意义；⑤ 时间窗口选择显著影响结论（45 s 与 200 s 的中位 Gini 约 0.25 vs 0.14），结论对观察尺度敏感；⑥ 单会话热图仅为示例性展示，无跨会话统计检验（如按团队规模或任务阶段的分层检验）。",
+  "relation": "方法学前驱为 Gloor et al.（2022，Social Networks）的 entanglement 指标（基于沟通量的有向邮件网络，高性能团队表现为少数强纠缠核心 + 弱纠缠外围的 core–periphery）；TSAE 将其改造为 VR 无向二元对并引入语义对齐；理论动机还来自 team flow/『in sync』（van den Hout et al. 2018）与团队动态时测（Delice et al. 2019；Lehmann-Willenbrock & Hung 2024）；作者称本文提供与该 foundational work 相对的描述性对比，而非直接继承其性能关联结论。",
+  "repro": "正文未提及开源代码/数据公开链接。复现需要：Meta Quest Pro HMD 录制的 48 kHz 单声道逐玩家音频、Whisper 转录、jina-embeddings-v2-base-de 模型 + late chunking、公共游戏时钟对齐、默认 45 s（或 90 s/200 s）时间窗。数据为 15 个德语私有会话（VR 游戏与实验设施由 Lumium GmbH 提供），正文未公开；计算流程如图 1 五阶段管线所示。"
+ },
+ {
+  "id": "2610.37602",
+  "slug": "respl2",
+  "venue": "arXiv preprint（林雪平大学 / ETH Zürich / 多伦多大学等；arXiv:2610.37602v1 [cs.RO] 2026-10-27）",
+  "tags": [
+   "多传感器里程计",
+   "连续时间估计",
+   "B样条",
+   "迭代EKF",
+   "全局精化"
+  ],
+  "conclusion": "在 GrandTour、JEPLO、PPS TV、HOPPER、HANDI 等手持/履带/腿式/腿式四旋翼平台上，RESPLE2 以非均匀 B 样条 + IEKF 实现与 SOTA 相当或更优的实时估计：JEPLO 全部 8 条序列 APE 最低（LKIO 0.005–0.010 m），HOPPER 在 ±4 g 内置 IMU 频繁饱和、约 25 g 峰值加速度与 18 rad/s 角速率下仍为除 flip4（内置 IMU）外全部序列最低 APE，消融显示惯性知情控制点预测使 APE 相对降低约 39%–76%，且每帧仅占时间预算 10.6%–18.3%。",
+  "problem": "激进动力学、非结构化环境与有限机载算力持续挑战 6-DoF 自运动估计；现有多传感器里程计多为传感器特定且离散时间表示，异步测量需插值近似，LiDAR 与卷帘相机在机动中还产生运动畸变；连续时间估计几乎全是滑动窗优化，实时部署与新增模态集成困难；RESPLE 的均匀节点间隔难以同时兼顾激进运动精度与每步充分约束（几何退化风险）；理论上 B 样条控制点一般不在轨迹上，故无法像离散时间/GP 方法那样用 IMU 积分直接预测新控制点，且当时无非均匀 B 样条里程计原生支持回环全局精化。",
+  "method": "6-DoF 轨迹以非均匀三次 B 样条表示：位置 s(t)=[s_{n−3},s_{n−2},s_{n−1},s_n]Ωu（u=(t−t_{n−1})/τ_{n−1}），姿态 r(t)=r_{n−4}∙∏_{i=n−3}^{n}Exp(λ_iδ_i)（δ_i=Log(r_{i−1}⁻¹∙r_i)，λ=Φu），由运动学插值得速度/加速度/角速度。核心是 knot-clamping 边界性质：新边界节点以三重度加入（t_n=t_{n+1}=t_{n+2}），使 t_n 处 s(t_n)=s_n、ṡ(t_n)=3(s_n−s_{n−1})/τ_{n−1}、s̈(t_n)=6(μs_{n−2}−(1+μ)s_{n−1}+s_n)/τ_{n−1}²、r(t_n)=r_n、ω(t_n)=6δ_n/τ_{n−1}——最新控制点恰在轨迹上，从而可用 IMU strapdown 精确预测（子步状态含 3 个旧 RCP、新 CP、双 IMU 偏置与速度：f_s=s+vΔt+½a^WΔt²、f_v=v+a^WΔt、f_δ=Log(Exp(δ)∙Exp(Δtω/2))，a^W=R(z_acc−b_acc)−g）。节点扩展准则：LiDAR 批几何充分性（点数>N1、IMU 数>N2，加权法矩阵 G=Σn_in_iᵀ/σ_i² 满足 λ_min(G)≥γ 且 λ_min/tr(G)≥η，0<η≤1/3）、间隔>τ_max、位移>d_max、姿态增量>θ_max、速度变化>v_max。新节引入后反钳制改变局部基，用 RCP reset 恢复 t_{n−1} 处位置/速度/加速度与姿态/角速度：位置 reset 闭式（s⁺=J_ss⁻），姿态 reset 以牛顿迭代解最小二乘（通常 5 次内收敛），协方差 P⁺=JP⁻Jᵀ（J=diag(J_s,J_r,I₆)）。更新为 IEKF：δx_i=K_i(z_k−h(x̂_i))−(I−K_iH_i)(x̂_i−x̂_{k|k−1})，K_i=PH_iᵀ(HPH_iᵀ+Σ_k)⁻¹。多传感器测量模型按各自原生时间戳接入：LiDAR point-to-plane（VoxelMap 局部地图，残差方差融合平面与点协方差并设方差下限）、IMU（对加速度残差施加 block-Huber 权重 β_i=δ_acc/s_i 抑制饱和/离群）、视觉投影（KLT 跟踪 + LiDAR 同配准深度）、腿式运动学（前向运动学足速 + point-to-plane，假设接触无滑移）。全局精化：iBTC 检测回环后直接优化非均匀控制点，最小化 m 个回环残差 + N−1 个相邻控制点间相对平移/旋转里程计残差（LM 求解，每个里程计残差雅可比支撑仅 2 个控制点，保持稀疏），修正累积漂移同时保住局部高阶运动学。",
+  "experiments": "数据集与平台（Table I）：GrandTour（ANYmal D + Boxi，室内/室外/野外，6 测试 + 4 训练序列）、JEPLO（Unitree Go2 楼梯/箱子机动，Mid360 倒装有限视场，EIL_Mask1/2 贴胶带诱导感知退化）、PPS TV（履带车昼夜高速机动，night_street 峰值角速率 4.5 rad/s，Mid360 内置 IMU ±4 g 频繁饱和）、HOPPER（腿式四旋翼 12 条室内序列，瞬时加速度约 25 g、角速率至 18 rad/s；外置 BMI088 ±24 g@1000/500 Hz vs 内置 ICM40609 200 Hz；Vicon 10 相机真值）、HANDI（手持 13 条序列，Avia/Mid360/ZedX1/D455 多种 LVI 配置）。基线：Coco-LIC、FAST-LIVO2、CTE-MLO、Point-LIO、Leg-KILO、RESPLE（其 ikd-Tree 换成 VoxelMap 以隔离估计差异）。评测主机 Ubuntu 24.04 + Ryzen 9 9950X + 32 GB RAM，evo 按 0.5 m 路径增量算 RPE。\n\nJEPLO（Table III，APE RMSE m）：RESPLE2-LKIO 8/8 序列最低——EIL_Box 0.005（LeKILO 0.032、CoLIC 0.054、FLIVO2 3.200）、EIL_Mask1 0.008、EIL_Mask2 0.010、EIL_Mix 0.010、EIL_Stairs 0.007、Long_Stairs 0.007、Outdoor1 0.007、Outdoor2 0.006；FLIVO2 在 5 条序列失败（✗）。\n\nHOPPER（Table V，APE m）：RESPLE2 在两种 IMU 配置下除 flip4（内置）外全部最低；high2 外置 IMU：RESPLE2 0.005、CoLIC 0.017、FLIVO2 0.021、RESPLE 0.011；内置 IMU 下 CoLIC 与 FLIVO2 全部序列失败，Point-LIO 靠饱和轴拒绝完成但误差更高（high2 0.594），RESPLE2-LO 无 IMU 亦完成全部序列且优于 Point-LIO 内置 IMU 表现。速度估计（Table VI）：内置 IMU 下 RESPLE2 所有序列精度最高（如 base1 0.617 vs RESPLE 0.732、PLIO 1.674）。\n\nHANDI（Table VII，APE m；括号为 +LC 全局精化后）：az-corri 6.166→1.339(0.044)、az-inout 1.334→0.031(0.030)、mz-inout 1.491→0.668(0.026)、ar-inout 10.177→0.394(0.076)、az-out2 5.355→2.767(0.009)、az-out1 4.780→0.009(0.009)；RESPLE2 完成全部序列，LVIO 在退化长廊与室内外过渡优于所有对照，长距离端到端误差最低；首次回环处轨迹位置误差最多修正近 2 m 且保持速度连续。\n\nGrandTour（Table II）：用较低端 Mid360 内置 IMU 仍总体竞争或更优，RESPLE2-LKVIO 为变体最优；Coco-LIC RPE 低但 APE 未转化为全局精度优势。\n\n消融（Table VIII，HOPPER  enclosed 序列 APE m）：惯性知情预测 vs 常数转移矩阵——base1 0.015→0.005、high1 0.017→0.004、high2 0.012→0.005、side1 0.010→0.004、side2 0.011→0.004、flip1 0.015→0.008、flip2 0.016→0.008、flip3 0.018→0.011、flip4 0.017→0.009（相对降约 39%–76%，high1 最大）。节点放置：flip1 全程 RESPLE2 用 2087 个控制点 vs Coco-LIC 2362（−11.6%）且精度更高；RESPLE2 在着陆冲击处加密节点、弹道段稀疏，Coco-LIC 近均匀。\n\n运行时（Table IX，ms/帧）：flip1(LIO) 7.7/50（15.4%）、day_open(LVIO) 18.3/100（18.3%）、Outdoor1(LKIO) 5.3/50（10.6%）；IEKF 更新为最大项（LIO 约 1/3、LKIO 约 1/2），RCP 预测+reset ≤0.51 ms 且 <7%；ar-inout 上 16 次全局优化每次约 15 次迭代、最新一次约 2 s。",
+  "innovation": [
+   "首个非均匀 B 样条递归连续时间多传感器里程计：借 knot-clamping 边界性质实现控制点的精确 IMU 积分预测，节点放置随运动与测量可得性自适应",
+   "反钳制后的 RCP reset（位置闭式 J_s + 姿态牛顿迭代 + 协方差变换）在节点扩展时保持轨迹局部一致性，支撑后续数据关联",
+   "统一框架支持 LO/LIO/LVIO/LKIO/LKVIO 与 LiDAR-only，各模态在原生时间戳经连续时间观测模型接入，IMU 样本交替划分为预测/更新子集",
+   "轻量全局精化：iBTC 回环 + 直接优化非均匀控制点（相邻控制点里程计残差保持稀疏），原生支持回环并保持局部高阶运动学一致"
+  ],
+  "limits": "正文未设独立 Limitations 节。从实验边界与未来工作推断：① 结论节称未来将研究自适应传感器加权与不依赖 LiDAR 深度的视觉特征约束，以改善传感器退化下的鲁棒性，暗示当前视觉特征深度来自 LiDAR 同配准、严重退化场景仍受制于此；② RESPLE2-LO（无 IMU）退化为常速过程模型（位置按线性速度预测、姿态增量按节点间隔比缩放），与 IMU 配置存在精度差距；③ GrandTour 测试序列结果经 COMFORT Localization Benchmark 提交获得，而其他系统使用其高端 HG4930 MEMS IMU（RESPLE2 不可用），横向对比存在硬件不对等；④ 内置 ±4 g IMU 下 flip4 并非最优（RESPLE 更优）；⑤ 验证集中于作者与公开数据集上的三类平台，更广泛平台与场景泛化待测；⑥ 全局精化依赖 iBTC 在 LVIO 配置下的回环检测，LO/LIO/LKIO 配置下未启用。",
+  "relation": "直接前身为 RESPLE（Cao、Talbot、Li，IEEE RA-L 2025：首个 6-DoF B 样条递归估计器，支持 LO/LIO，均匀节点 + 常数转移矩阵预测，本文换用 VoxelMap 作受控对比）；连续时间侧对比 Coco-LIC（非均匀 B 样条 LVIO 滑动窗、复制最近控制点初始化、IMU 平均布点致约 200 ms 优化延迟）、CLINS/SLICT2/CLIC（均匀 B 样条滑动窗）与 CTE-MLO（GP 递归 LO）；离散时间侧对比 FAST-LIVO2（ESIKF + VoxelMap，据报优于 FAST-LIO2）、Point-LIO、Leg-KILO；回环检测采用 iBTC，全局修正区别于 CLINS 的『关键扫描位姿 pose-graph + 控制点对齐』两阶段方案。",
+  "repro": "代码与实验数据集公开：https://github.com/ASIG-X/RESPLE2。实现为 ROS2 包，依赖 Eigen、OpenMP（每节点约 5 线程）、Pinocchio（腿式正向运动学）、Eigen 的 CHOLMOD 接口（稀疏线性求解、跨迭代复用符号分解）。评测环境：Ubuntu 24.04 + AMD Ryzen 9 9950X + 32 GB RAM。数据集：GrandTour（grand-tour.leggedrobotics.com）、JEPLO、PPS TV（datasets.leggedrobotics.com）及自采 HOPPER/HANDI（随代码发布）；真值：Vicon（HOPPER，10×Vantage）、Qualisys（HANDI）；评估用 evo 包（RPE 按 0.5 m 路径增量）。"
+ }
+]
