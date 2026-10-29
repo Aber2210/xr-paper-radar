@@ -3,7 +3,7 @@ import urllib.request, re, json, time, sys
 CATS = ["cs.CV","cs.GR","cs.HC","cs.MM","cs.RO","cs.AI","eess.IV"]
 MONTHS = {'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
 DAY_RE = r'<h3>((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} \w{3} \d{4})([^<]*)</h3>'
-TARGET_LO = "2026-10-27"   # 目标窗口下界（含）= 上一批次公告日（10-29 运行：复核 10-27 组 + 审计 10-28 公告批次）
+TARGET_LO = "2026-10-28"   # 目标窗口下界（含）= 上一批次公告日（10-30 运行：复核 10-28 组 + 审计 10-29 公告批次）
 
 def get(url, tries=8):
     req = urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"})

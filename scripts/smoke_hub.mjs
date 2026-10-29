@@ -88,6 +88,7 @@ async function main() {
         hasBF1028: d ? d.papers.some(p => p.batch === 'backfill-1028') : false,
         has1029: d ? d.papers.some(p => p.batch === '2026-10-29') : false,
         hasBF1029: d ? d.papers.some(p => p.batch === 'backfill-1029') : false,
+        has1030ref: d ? (d.batches.some(b => b.key === '2026-10-30' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
         bodyLen: document.body ? document.body.innerHTML.length : -1,
         optTexts: optTexts.slice(-4)
       });
@@ -98,7 +99,7 @@ async function main() {
   console.log('PROBE:', JSON.stringify(info, null, 1));
   console.log('PAGE_ERRORS:', errors.length ? errors.join('\\n') : 'none');
   const ok = info.hasData && info.papers === 693 && info.notes === 384 &&
-             info.has1021 && info.hasBF1021 && info.has1022 && info.has1023 && info.hasBF1023 && info.has1024 && info.hasBF1024 && info.has1025ref && info.has1026ref && info.has1027 && info.hasBF1027 && info.has1028 && info.hasBF1028 && info.has1029 && info.hasBF1029 &&
+             info.has1021 && info.hasBF1021 && info.has1022 && info.has1023 && info.hasBF1023 && info.has1024 && info.hasBF1024 && info.has1025ref && info.has1026ref && info.has1027 && info.hasBF1027 && info.has1028 && info.hasBF1028 && info.has1029 && info.hasBF1029 && info.has1030ref &&
              info.bodyLen > 10000 && errors.length === 0;
   console.log(ok ? 'SMOKE: PASS' : 'SMOKE: FAIL');
   sock.close();
