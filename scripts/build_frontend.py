@@ -40,6 +40,7 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "2026-10-28": "2026-10-28 · 10-27 公告批次（非重磅，listing+RSS 互证 0 漏网）",
                 "2026-10-29": "2026-10-29 · 10-28 公告批次（非重磅，listing+RSS 互证 0 漏网；含 ParetoGS 补录）",
                 "2026-10-30": "2026-10-30 · 无新稿（10-29 公告批次未释放：listing/API/RSS 三源互证；10-28 公告组复核 0 漏网）",
+                "2026-10-31": "2026-10-31 · 10-30 公告批次（10-29 公告跳空后延迟释放，非重磅，listing+RSS 互证 0 漏网）",
                 "backfill-1012-1015": "backfill · 10-12~10-15 漏网补录",
                 "backfill-1020": "backfill · 10-16 漏网 + 旧稿再公告补录",
                 "backfill-1021": "backfill · 旧稿 replace/cross 再公告补录",
@@ -48,6 +49,7 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "backfill-1027": "backfill · 10-26 公告 RSS 混入旧稿 replace/cross 再公告（8 篇）",
                 "backfill-1028": "backfill · 10-27 公告 RSS 混入旧稿 replace/cross 再公告（10 篇）",
                 "backfill-1029": "backfill · 10-28 公告 RSS 混入旧稿 replace/cross 再公告（4 篇）",
+                "backfill-1031": "backfill · 10-30 公告 RSS 混入旧稿 replace/cross 再公告（6 篇）",
                 "backfill-2603-2609": "backfill · 2603–2609 旧稿补录"}
 
 
@@ -326,8 +328,16 @@ for key in sorted(os.listdir(daily_root)):
     grades = {g: sum(1 for r in rows if r["grade"] == g) for g in "SABC"}
     links = {}
     if key.startswith("backfill"):
-        cand = {"report": "reports/XR-Backfill-Report-2603-2609.md",
-                "moc": "papers/MOC/MOC-backfill-2603-2609.md"}
+        cand = {"report": "reports/XR-Backfill-Report-%s.md" % key,
+                "moc": "papers/MOC/MOC-%s.md" % key,
+                "table": "papers/daily/%s/7dim-table.md" % key,
+                "log": "papers/daily/%s/run_log.md" % key}
+        # 兜底：2603-2609 专用报告/MOC（其 key 即 backfill-2603-2609，天然命中自身）
+        fb = {"report": "reports/XR-Backfill-Report-2603-2609.md",
+              "moc": "papers/MOC/MOC-backfill-2603-2609.md"}
+        for k, v in fb.items():
+            if not os.path.exists(os.path.join(ROOT, cand[k])):
+                cand[k] = v
     else:
         cand = {"report": "reports/XR-Daily-Report-%s.md" % key,
                 "moc": "papers/MOC/MOC-%s.md" % key,
