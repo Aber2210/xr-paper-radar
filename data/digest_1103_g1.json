@@ -1,0 +1,82 @@
+[
+  {
+    "id": "2610.40760",
+    "slug": "personalised-3d-mnemonics",
+    "venue": "arXiv preprint（University of Primorska、Stellenbosch University，cs.HC，2026-10；IEEE VGTC 模板短文，姊妹系统 demo 发表于 ISMAR-Adjunct 2026）",
+    "tags": ["AR 词汇学习", "关键词记忆法", "3D 助记符", "生成式 AI", "个性化学习"],
+    "conclusion": "本文提出让学习者把身边熟悉物体实时转化为个性化 3D 助记锚点的生成式 AR 词汇学习概念，并以 Gemini 3 Pro Image+TRELLIS.2 本地管线与 Meshy AI 云端管线完成资产生成可行性验证；论文无任何定量结果与学习效果评估，证据强度仅限概念与管线示例层面。",
+    "problem": "既有 AR 词汇学习系统（如 VocabulARy）依赖设计师预定义的视觉助记素材，可扩展性差，学习者只能被动接受他人设定的助记关联；关键词记忆法本身也要求学习者自行完成找关键词、建构联想、想象画面等高认知负荷步骤。作者希望借助生成式 3D 技术，让学习者按自身经验改造身边真实物体来承载助记关联，把新词汇直接接入已有心理模型与具体情境。",
+    "method": "本文为概念+流程验证型短文，无算法模块。核心概念 object-transforming mnemonics：学习者注视现实物体、描述助记意图后，系统实时生成 3D 助记资产并锚定到该物体，使其成为助记关联本身。可行性实验一为本地五步管线：环境拍摄→Gemini 3 Pro Image（Nano Banana Pro）把助记意象合成进场景（如日语 Shokupan/面包拆出 Sock+Pan，生成平底锅往面包上倒煎袜子）→再次用 Gemini 3 Pro Image 做主体隔离→TRELLIS.2 以单张隔离图 image-to-3D 生成带纹理 .glb 资产→手动对齐叠加到原物体静态图。实验二把 3D 合成换成云端 Meshy AI（Meshy 6+HD Texture），示例为日语 sara（盘子）生成 Sahara 沙漠。另给出五步交互故事板：系统初始化、场景捕获、凝视/指点选物、助记提示、实时合成与空间持久化。",
+    "experiments": "本文无定量实验与用户研究，仅两条生成管线的人工示例验证：实验一本地管线（Gemini 3 Pro Image+TRELLIS.2）产出 Shokupan→Sock/Pan 的 .glb 资产；实验二云端管线（Meshy 6+HD Texture）产出 sara→Sahara 资产；除最终叠加外无人工修图。学习效果评估被作者明确列为未来工作，端到端 AR 系统另见姊妹 demo 论文（VocabulARy 2.0，ISMAR-Adjunct 2026）。",
+    "innovation": [
+      "提出「个性化 3D 助记符」设计点：不只在环境中放置内容，而是把熟悉真实物体改造为助记关联本身",
+      "梳理从 1970 年代关键词记忆法、TransPhoner 自动关键词生成、VocabulARy 情境化到 LLM 生成材料与人机共创的研究时间线",
+      "用两条 2D 引导 3D 生成管线完成离线概念验证：本地 TRELLIS.2 与云端 Meshy AI",
+      "给出面向 AR 实现的五步交互故事板，含实时合成与空间持久化",
+      "明确三项限定贡献，诚实声明无系统实现与学习效果评估"
+    ],
+    "limits": "论文自述：无 AR 系统实现（仅故事板，系统在姊妹 demo 中另文呈现）、无学习效果评估、叠加为离线单图手动对齐、未验证实时性与自动空间锚定。客观看：证据仅限两个资产生成示例，无定量指标、无用户实验、无基线比较，延迟、可用性、隐私均未评估；作为短文只能支撑设计可行性假设。",
+    "relation": "该文处于 AR 教育与助记符研究交叉线：上游为 Atkinson 关键词记忆法及 VocabulARy（TVCG 2022）的 AR 情境化标注，旁支为 TransPhoner、SmartPhone、LLM overgenerate-and-rank 等自动助记生成与 MnemoMaker、WordCraft 等人机共创，下游对标本团队的 VocabulARy 2.0 demo（ISMAR-Adjunct 2026）。技术上首次把 TRELLIS.2/Meshy 类 2D 引导 3D 生成管线引入助记资产构造，但学术定位是设计概念而非方法突破。",
+    "repro": "原文未承诺代码或数据开源；实验依赖 Gemini 3 Pro Image（闭源 API）、TRELLIS.2（开源模型）与 Meshy AI（付费云 API），文中提到演示视频但未给出仓库或数据集链接。"
+  },
+  {
+    "id": "2610.40832",
+    "slug": "egohsi3r",
+    "venue": "arXiv preprint（清华大学，cs.CV，2026-10）",
+    "tags": ["第一视角视频", "4D 手-场景重建", "MANO 手模型", "在线前馈重建", "稠密接触估计"],
+    "conclusion": "EgoHSI3R 以 CUT3R 循环场景表征为底座，融合 WiLoR 手部先验与交互感知接触建模，用单一在线前馈网络联合恢复相机运动、稠密场景几何、世界空间双侧 MANO 手与逐顶点接触，在 ARCTIC 取得最优 W-MPJPE 108.80 mm（较最强基线 StableHand 降 15.79 mm），端到端 10.07 FPS。",
+    "problem": "第一视角视频蕴含丰富手-物交互信息，但相机系方法只恢复相机坐标系手姿而无世界坐标位置，世界空间方法靠外部 SLAM 估相机轨迹却不重建场景几何、不建模接触，两者都不完整。把专用预测拼成完整 4D 重建通常需要逐序列离线优化，难以满足机器人示教、人机协作等在线更新场景；且独立估计的手与场景常出现浮空手或穿模，需在预测阶段本身建模手-场景空间关系。",
+    "method": "EgoHSI3R 以 CUT3R 循环场景状态为底座（持久累积几何与相机证据，提供共享世界空间与尺度），把 WiLoR 裁剪式手部先验（M=18 token：16 姿态+形状/全局平移）注入解码器。Hand Prompt Builder 用在线检测框经 RoIAlign 提取局部场景特征并池化为上下文，以特征门控 g=σ(φ_g([q;s])) 融合：P=φ_mix(q+g⊙s)，缺失手用学习 mask token 保持固定双手布局。Interaction-Aware Contact Builder 以固定 MANO skinning 矩阵 W∈R^{778×16} 把 16 个关节 token 传播到 778 个顶点，顶点查询对同框场景上下文做多头交叉注意力输出接触概率，并经门控 α 残差反馈精化手部 token，形成接触→手闭环。训练损失 L=L_rec+L_MANO+0.3(L_focal+0.1 L_part)，MANO 项含参数、相机系、腕相对与 2D 重投影监督。",
+    "experiments": "训练用 HOT3D、ARCTIC、TACO、H2O、HOI4D、DexYCB 六个第一视角手-物数据集（接触标签按 1 cm 几何阈值生成）。世界空间手重建（ARCTIC，150 帧片段）：W-MPJPE 108.80 mm、WA-MPJPE 25.82 mm 均最优，较 StableHand 降 15.79/6.84 mm；相机系（p-free 协议）PA-p 7.025（ARCTIC）/6.312 mm（HOT3D）最优；接触估计（ARCTIC/DexYCB）precision 52.15/51.62 超 HACO，但 recall 45.02/50.38 偏低；H2O 场景重建 Abs Rel 0.027、δ<1.25 0.993 最优。消融：WiLoR 微调使 ARCTIC MPJPE 22.916→19.952 mm，接触反馈再降 W-MPJPE 4.495 mm。效率：端到端 10.070 FPS、峰值显存 6.650 GiB、参数 1470.25M。",
+    "innovation": [
+      "首个在线、前馈、无测试时优化的统一 4D 手-场景交互重建框架，一次前向同时输出相机、稠密场景、世界空间双手与逐顶点接触",
+      "统一循环场景表征为手与场景提供共享世界空间和尺度，从预测本身缓解浮空手/穿模不一致",
+      "Hand Prompt Builder 以 RoIAlign+特征门控把参数化手先验注入循环重建，兼顾先验结构与局部场景上下文",
+      "基于 MANO skinning 矩阵的顶点级接触查询与交互感知残差反馈，把接触建模闭合进手-场景推理环",
+      "在六个第一视角手-物数据集上联合训练，并在手重建、场景重建、接触、效率四类评测上系统验证"
+    ],
+    "limits": "论文自述：因果推理无法做未来帧平滑，AccEr（16.91）与 MRRPE（120.77 mm）偏高；时间抖动高于专做运动平滑的方法；接触 recall 低、预测偏保守；手重建与接触联合训练存在优化不稳定。客观看：WiLoR 先验原本只针对右手；接触标签为几何距离生成而非力或人工标注；参数 1470.25M 偏大；代码尚未发布。",
+    "relation": "该工作位于前馈几何基础模型线（DUSt3R/VGGT→Spann3R/SLAM3R/CUT3R 的序列化路线）与第一视角手部重建线（HaMeR/WiLoR 相机系，HaWoR/Dyn-HaMR/StableHand 世界空间系）的交叉点，并首次把稠密接触估计（HACO、ContactPose 一系）纳入统一前馈框架；与 MINT（相机+手轨迹）、UniSH/Human3R（第三人称 SMPL）互补，对标并超越 HaWoR、StableHand、HandFlow 等世界空间方法。",
+    "repro": "原文称「正在准备代码公开」（preparing the code for public release），截至撰写时未发布，未承诺数据集开源；实验设置、数据划分、训练细节与硬件（单卡 NVIDIA H200）在正文与附录给出，项目页 https://pmz-enterprise.github.io/egohsi3r-page/ 。"
+  },
+  {
+    "id": "2610.41011",
+    "slug": "priorgs",
+    "venue": "arXiv preprint（University of Waterloo，cs.CV，2026-10）",
+    "tags": ["HDR 新视图合成", "3D Gaussian Splatting", "单曝光 HDR", "相机响应函数 CRF", "base-gain 表征"],
+    "conclusion": "PriorGS 以伪 HDR 监督、base-gain 高斯表征与 DoRF 先验约束的可学习 CRF 解决无 HDR GT 的单曝光 HDR-NVS，真实场景重曝光 LDR PSNR 24.31/23.00 dB、合成场景 HDR-NVS PSNR 31.22 dB，较全部基线提升约 4-8 dB。",
+    "problem": "单曝光 LDR 视图作为唯一直接监督源时，高光裁剪与阴影噪声造成的信息丢失使 HDR 重建在数学上欠约束，缺先验的方法能复现训练曝光却恢复错误辐射度。同时单曝光只能监督 CRF 在有限 unsaturated 区间内的行为，现有 MLP-CRF 泛化差且不保证单调性，启发式固定 CRF 又有响应失配风险。此外逐视图生成的伪 HDR 目标存在跨视图不一致，直接编码为高斯颜色会引发严重颜色与几何伪影。",
+    "method": "PriorGS 基于 3DGS，每个高斯携带两组 RGB SH 系数：β^c 编码 LDR base 颜色、β^g 编码 log-gain，HDR 辐射度 h=(l+δ)⊙2^g−δ（δ=1/64，l 为反 gamma 线性值），同一几何分别渲染 LDR base 与 HDR 视图。训练前用 2D 单曝光 HDR 方法（主选 IntrinsicHDR）为每个训练视图生成伪 HDR 目标施加先验。CRF 为 f(E)=t(η(E))：t(x)=(1+σ)x^n/(x^n+σ) 取 DoRF 201 条曲线平均响应的双参数单调近似，η(E)=sigmoid(a·ln(E+ε)+b) 为可学习软归一化，逐场景学习四参数、RGB 三通道共享、构造上严格单调；拟合 DoRF 平均 MSE 2.081e-5（较双参数响应降 63.6%）。闭环重建要求 HDR 渲染经 CRF 重曝光后匹配输入 LDR；总损失 L=L_base+0.5L_HDR+0.5L_ReExp（HDR 项 μ-law 压缩，μ=5000）。base-gain 表征另支持以系数 ρ 缩放 gain field 做视图一致的 3D HDR 外观编辑。",
+    "experiments": "在 HDR-NeRF（4 真实+8 Blender 合成）与 HDR-Plenoxels（4 真实）按单曝光协议评测：每场景 5 个曝光、只训 1 个、其余 4 个做重曝光并取平均；18 训练/17 测试视图（HDR-NeRF）、27/13（HDR-Plenoxels）。真实场景重曝光 PSNR 24.31/23.00 dB、SSIM 0.9248/0.9021、LPIPS 0.064/0.092，超 GaussHDR（16.28/17.73）与 SeHDR（13.75/14.21）约 7-8 dB；合成 HDR-NVS PSNR 31.22 dB（基线最高 26.96）、重曝光 22.96 dB（基线最高 15.76）。消融：去先验跌至 18.39；直接编码在 HDR-Plenoxels 跌至 15.05；固定 gamma CRF 跌至 14.87。训练曝光处 LDR-NVS 亦最优（真实 36.10 dB），且对 4 种 2D HDR 方法均鲁棒。",
+    "innovation": [
+      "首次把学习式 LDR-to-HDR 重建先验以伪 HDR 监督引入单曝光 HDR-NVS，并实验证明其对欠约束问题的必要性",
+      "提出 3D base-gain HDR 表征（LDR base+3D gain field），把 2D LDR-gain 格式扩展到 3D，缓解跨视图伪 HDR 不一致",
+      "提出 DoRF 先验约束的可学习 CRF：构造上严格单调、监督区外响应合理且保留逐场景适应性，附容量分析与单调性证明",
+      "构建 LDR base→HDR→重曝光 LDR 闭环，在两端锚定输入 LDR 观测",
+      "展示 3D HDR 外观编辑新应用：缩放 gain field（ρ=0-1.5）实现视图一致的动态范围扩展"
+    ],
+    "limits": "论文自述：受 2D HDR 重建方法质量限制，伪 HDR 目标中丢失纹理恢复不佳会拖累重建；跨视图不一致仍可能被编码为虚假视角相关外观。客观看：数据集小（每数据集 4-8 个场景）且仅静态场景；真实场景性能对所选 2D HDR 方法敏感（GMNet 变体在 HDR-Plenoxels 的 PSNR 不及 GaussHDR）；HDR 指标依赖逐场景亮度校正与 μ-law 协议；伪 HDR 按全场景最大辐射度归一化引入额外假设。",
+    "relation": "该文位于 HDR-NVS 主线：从多曝光的 HDR-NeRF/HDR-GS/GaussHDR 到单曝光的 SeHDR、Mono-HDR-GS 演进线，直接对标这两个同期单曝光工作。其伪 HDR 先验承接 2D 单曝光 HDR 重建（Eilertsen、IntrinsicHDR 一系），base-gain 表征对应 2D 域 LDR-gain 格式（ISO 21496-1、Ultra HDR、Gain-MLP），CRF 先验源于 DoRF 数据库与 Eilertsen 双参数近似，是把 2D 逆色调映射知识系统迁移进 3DGS 框架的代表工作。",
+    "repro": "实现基于公开的 HDR-GS 代码，使用公开 HDR-NeRF/HDR-Plenoxels 数据集与公开 IntrinsicHDR；作者声明发表后将在 GitHub 公开实现；单张 RTX 3090（24GB）可复现全部实验；CRF 初始化（DoRF 平均响应）与超参见附录 A.3。"
+  },
+  {
+    "id": "2610.41127",
+    "slug": "motorsense",
+    "venue": "arXiv preprint（University of Maryland, College Park 等，cs.CV，2026-10；含 NeurIPS 论文清单，应为 NeurIPS 投稿）",
+    "tags": ["视频-EMG 数据集", "表面肌电 EMG", "传感器运动对齐", "第一视角视频", "视频扩散条件生成"],
+    "conclusion": "MotorSense 发布 100 小时配对 egocentric 视频与双臂 EMG 数据集，CLIP 式传感器运动对齐预训练使冻结视觉 backbone 在动作识别（EPIC-Kitchens-100 动词较最佳基线 +15.86）、3D 手重建（H2O MPJPE 降 4.63 mm）与接触重建（IoU +4.61）上全面超越纯 RGB 自监督，EMG 运动码条件化还将视频扩散 FVD 从 373 降至 304（仅 50M 可训练参数）。",
+    "problem": "视觉模型只能从动作的视觉后果学习，看不到产生动作的肌肉活动等具身运动信号，动作结构隐式分布在高维像素流中；而 EMG 提供无遮挡、无标注偏差的稠密替代监督。同时语言、关键点等现有可控生成条件无法描述精细的力与手指构型：语言过于高层、关键点靠近接触时噪声大且不含力信息。作者需要大规模配对数据验证「传感器运动对齐」能否成为比纯视频自监督更强的视觉预训练范式，以及 EMG 能否作为细粒度生成控制信号。",
+    "method": "采集：每腕佩戴 MindRove Armband（8 通道干电极环状分布、500 Hz、24-bit）+6 轴 IMU（50 Hz），与 Project Aria Gen1/Gen2 眼镜及头戴手机（896×504@30fps）视频同步，共 100 小时厨房/家务无脚本操作；85 条录制标注动作（5,209 段、57 动词、180 名词），57 条手机录制标注手部接触（4,700 区间）。传感器运动对齐：Hiera-B 视频塔（K400-MAE 初始化）与 EMG/IMU 塔（1D 卷积+残差深度可分离块+双向 LSTM）经对称 InfoNCE 对齐至 1024 维共享空间，不做时间池化，批内样本取自同一录制；训练 180 epoch、全局批 328、4×H200。运动码：EMG+IMU 经 VQ-VAE（1.5 s 窗、嵌入 256、码本 64、码率 64 codes/s、λ=0.25）离散化，再以 Video2LoRA 式 HyperNetwork 预测 LoRA 权重条件化冻结的 CogVideoX-Fun I2V 骨干，仅 50M 参数可训。",
+    "experiments": "动作识别（Hiera-B，冻结/端到端）：冻结下全面胜出——EK100 动词 59.85/noun 29.79/action 21.29、SSv2 33.57、Ego-Exo4D 36.11、MotorSense 35.02，较最佳基线分别 +15.86/+5.06/+7.50/+4.40/+8.29/+14.71；同录制的 SimCLR/MoCo/BYOL 基线多数不及 K400-MAE 初始化。3D 手重建（ArcticNet-SF hand-only+ResNet-50）：ARCTIC MPJPE 21.71（-2.58）、H2O 19.65（-4.63）、HOT3D 28.39（-2.46）。接触重建 IoU 55.20±0.62、AUROC 97.19±0.15（较最佳基线 +4.61/+3.83）。视频扩散 FVD 304、LPIPS 0.27、PSNR 22.5，优于 video history 条件（373）与全量监督微调（772，5.57B 参数）。",
+    "innovation": [
+      "发布大规模配对 egocentric 视频与双臂 EMG 数据集：100 小时无脚本操作，含动作与接触标注子集，经 IRB、去标识化与选择偏差披露（作者在评审后收窄了「首个」表述，承认 ActionSense 在先）",
+      "提出传感器运动对齐范式：EMG 作为预训练期特权信号、推理期丢弃，冻结表征即在四类动作理解基准全面超越纯 RGB 自监督",
+      "提出无人工标签的 motor codes 离散表征（VQ-VAE，64 codes/s）",
+      "首次以运动码经 HyperNetwork-LoRA 条件化视频扩散，实现细粒度、力感知的操控生成控制",
+      "配套完整预训练消融、局限与伦理/隐私披露"
+    ],
+    "limits": "论文自述：8 通道消费级 EMG 信息有限（商用 16 通道、研究系统可达 128 通道）；参与者少（Aria 仅 8 人）且存在前臂周径选择偏差（与性别、体型相关，细腕易滑脱产生伪影），不代表总体人群；解剖差异影响 EMG 幅度与电极-肌肉对应；跨主体评测仅覆盖运动码预测；活动域迁移（装配、清洁、洗衣）下降幅大于主体迁移；IMU 对快速腕动有稳定作用；egocentric 视频与生理 EMG 存在隐私/生物特征风险。",
+    "relation": "该文位于具身感知与第一视角理解交叉线：数据侧上承 ActionSense、Ego4D/EPIC-Kitchens 及 FEEL/OpenTouch/TouchScale 等力-触觉数据集，以 EMG 提供更稠密且不遮挡手部的信号；表征侧对标 IMU2CLIP 及音频/触觉/语言对比预训练，把 CLIP 式对齐从视觉-文本/音频扩展到视觉-肌肉信号；生成侧与语言/关键点/音频条件扩散（CogVideoX、MimicMotion 一系）并列，首次引入 EMG 运动码条件并复用 Video2LoRA 轻量控制；下游直接用 ARCTIC/H2O/HOT3D 等手-物基准评测。",
+    "repro": "数据集、训练模型（EMG tokenizer、对齐 backbone、扩散适配器）与训练/评测代码全部公开：项目页 https://www.cs.umd.edu/~edessale/motorsense/ ，匿名仓库 https://anonymous.4open.science/r/MotorSense-7173/ ；附录含采集协议、硬件、预处理、超参与算力（4×H200、RTX A5000）；IRB 批准、每场次 25 美元报酬、EgoBlur 去标识化后按研究用途条款发布。"
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "2610.41496",
+    "slug": "vr-hand-feedback-tremor",
+    "venue": "arXiv preprint（西班牙萨拉戈萨大学 I3A/BSICoS 组、马德里 12 de Octubre 大学医院神经科、CIBERNED 等，cs.HC，2026-10）",
+    "tags": ["虚拟现实", "病理性震颤", "视觉反馈", "手部追踪", "人机交互"],
+    "conclusion": "Meta Quest 3 原生手部追踪可使视觉呈现的震颤频段（3–9 Hz）运动衰减 15.79–22.49 dB 而不妨碍全部 6 项日常任务完成；在 8 例特发性震颤（ET）患者中，伸手类任务（指鼻、用勺进食）的物理震颤频段功率在 VR 中分别中位降低 47% 与 57%（7/8 例患者），效应强烈依赖任务类型与个体。",
+    "problem": "病理性震颤（ET 频率 4–12 Hz，影响约 0.9% 人口、65 岁以上约 5.79%）机制未明且治疗常不充分；视觉反馈是调节震颤表达的重要传入通路（提高视觉增益可放大 ET 震颤幅度），但真实世界中手的视觉运动与物理运动天然耦合、无法单独操纵。VR 可将二者解耦，本研究要回答：在 VR 中视觉抑制手的非自主高频成分，能否反过来影响其物理表达，并验证消费级头显能否可靠复现日常手部任务范式。",
+    "method": "基于 Meta Quest 3（Unity 6000.1.9f1，单眼 2064×2208、110°×96° FOV、120 Hz）搭建客厅场景，受试在匹配的 VR 与真实世界（RW）条件下完成 6 项借鉴 TETRAS/FTMTRS 量表的日常任务（姿势保持 30 s、捏持移杯、指鼻、全手握杯移动、用勺进食、持手机 30 s），条件顺序 counterbalanced。震颤带功率用独立于头显的 x-IMU3（100 Hz）测量，视觉衰减量化为 10·log10(P_MQ3/P_IMU)；患者实验加测 ECR/FCR 双 32 通道 HDsEMG（2000 Hz）。健康人实验以 FES（50 Hz 载波、400 μs 脉宽，FCR 9.2±2.2 mA、ECR 14.2±3.7 mA）诱导 4–8 Hz 模拟震颤。统计用 Wilcoxon signed-rank、Friedman 检验、Holm 校正与 Kendall's W。",
+    "experiments": "实验一（15 名健康受试：8 女 6 男 1 非二元，22–40 岁，均值 28.4±5.38）：FES 使 IMU 震颤功率升高 1.98–7.76 dB（各任务 Holm 校正后 p≤.025），而 MQ3 视觉表征衰减 15.79–22.49 dB（用勺最小、捏持最大，均 p<.001），VR 与 VR-FES 的头显端功率无显著差异；全部任务成功完成，SSQ 无显著升高，NASA-TLX 仅 VR-FES 负荷偏高（总体 4.33 vs RW 1.67）；捏持与握杯任务 VR 完成时间显著变长（44.64→73.30 s、44.18→82.54 s）。实验二（8 例 ET：58–85 岁，68.8±10.6）：指鼻与用勺的 VR/RW 陀螺仪震颤功率中位比 0.528、0.427（均 7/8 例降低，Holm 校正后未达显著，指鼻 p_Holm=.094）；四任务分组比较显著（χ²(3)=11.10，p=.011，W=.463），reaching 组 0.475（8/8 降低）优于 fine interaction 组 1.115（4/8）；EMG 趋势一致且 ECR 功率与陀螺仪强相关（Spearman ρ=.964，p=.0028）。",
+    "innovation": [
+      "首个在真实 ET 患者中检验「视觉抑制震颤能否改变其物理表达」的发表研究，填补 hand redirection 文献在病理震颤方向的空白",
+      "设计并验证可在 VR/RW 间匹配比较的 6 任务日常手部范式，任务集源自 TETRAS 与 FTMTRS 临床量表",
+      "量化消费级 MQ3 手部追踪对高频非自主运动的自发衰减（约 16–22 dB 且任务依赖），提示该特性可作为震颤研究工具",
+      "联合 IMU 运动学与 HDsEMG，发现 VR 中震颤运动学的改变伴随 tremorgenic 神经驱动变化，而非仅视觉表征变化",
+      "揭示强任务依赖（reaching 类降低、fine interaction 类反升）与个体异质性，提出按用户自适应调节视觉反馈的干预方向"
+    ],
+    "limits": "患者样本仅 8 例、单次会话，统计效力与可推广性受限，无法评估纵向适应效应；VR 无触觉反馈、追踪误差与执行速度差异可能污染测量；MQ3 原生追踪滤波为专有系统、参数不可控；单项比较经多重校正后均未达显著；论文明示未确立任何临床或治疗收益，需更大队列与更精确的视觉操纵控制。",
+    "relation": "该工作处于「感知反馈操纵」与「神经运动障碍康复」的交叉线：上游承接 redirected walking 与 hand redirection（Zenner & Krüger、Steinicke 组等）关于视觉-运动差异可被不被察觉地操纵的结论，以及 Cohn et al. 2018 以移动平均滤除虚拟手震颤的单被试探索；与多发性硬化、帕金森病的屏幕式视觉反馈研究（Feys et al.、Liu et al.）同属视觉调制震颤的谱系，但首次把 VR 手部视觉反馈操纵用于 ET 患者物理震颤的实验检验，为 TREMOvR 等个性化在线震颤调节路线提供实证起点。",
+    "repro": "原文未承诺代码或数据开源；装置为商用 Meta Quest 3、x-IMU3 与 Muovi HDsEMG，任务演示视频见补充材料，复现需自行搭建 Unity 场景、FES 刺激与信号处理管线（论文对带通滤波、PSD 估计与统计检验有完整参数描述）。"
+  },
+  {
+    "id": "2610.41501",
+    "slug": "voxlution",
+    "venue": "arXiv preprint（慕尼黑工业大学（TUM）与弗吉尼亚大学，cs.CV，2026-10）",
+    "tags": ["3D 场景生成", "自回归 transformer", "体素八叉树", "多分辨率", "稀疏表示"],
+    "conclusion": "VoxLution 用训练-free 的 resolution-invariant octant coding（ROC）把多分辨率稀疏体素八叉树串行化为单一序列，将室内场景生成转化为 coarse-to-fine 的逐块超分辨率；体素分辨率 1.5625 cm（比现有基线细 41%），3D-FRONT 上 FPD/FID 较 LT3SD 分别降低 59.6%/51.1%，ScanNet++ 上降低 70.5%/73.8%，并可扩展至含噪真实扫描。",
+    "problem": "高保真室内场景生成需同时保证全局布局合理与家具级细节丰富，而高体素分辨率下 3D 空间维度灾难严重、表面占空比极低；现有方法要么依赖学习式潜空间压缩（几何过平滑、分辨率受限），要么只能处理完整整洁的合成数据，难以利用真实扫描的稀疏、含噪与不完整特性。核心难点是：如何不按分辨率重训 tokenizer、并原生利用场景稀疏性来扩展生成分辨率。",
+    "method": "VoxLution 以多分辨率体素八叉树表示场景（体素 25 cm 逐级减半至 1.5625 cm，K=4 级联加粗场景生成器 Φ(0)）。核心 ROC：父体素 8 个子体素占用按 z-y-x 遍历编码为单 token T=Σo_i·2^i，256 项 codebook 跨所有层级共享且训练-free，空间序列长度较逐体素表示缩减 8×。稀疏多分辨率序列化：场景切分为轴对齐 chunk（raster-scan 顺序生成），每块序列由三级粗层条件 S_C(k-3..k-1)、已生成左/后/角邻块的边界条件（共享 GRU 压缩的全局摘要 B_global 加保留 3D 位置信息的 1-ring 局部前缀 B_local）与目标级 token 组成，丢弃空 token；位置编码为层级、空间、类型三类可学习嵌入之和。最后由稀疏 VAE Φ_m（基于 Flexible Dual Grid/SC-VAE 改造，decoder 可预测并增删子占用）预测 dual-contouring 属性以提取三角网格。另支持以语义 bounding box layout（CLIP 文本特征加 Fourier 坐标特征）进行条件生成。",
+    "experiments": "3D-FRONT（5 类房间、19,237 个）与 ScanNet++（过滤后 781 个），80/5/15 划分；基线为 WorldGrow、BlockFusion、LT3SD、微调的 OctGPT 与 Seen2Scene；指标为 FPD（Uni3D 特征）、FID/KID（DINOv2 ViT-B/14）。3D-FRONT：FPD 11.03×10²、FID 2.40×10⁻²、KID 1.49×10²，较 LT3SD 降 59.6%/51.1%/62.6%；ScanNet++：FPD 10.14×10²、FID 1.96×10⁻²、KID 2.08×10²，降 70.5%/73.8%/72.5%；layout 条件生成全面优于 Seen2Scene（FPD 降 31.6%）。单卡 H100 每房间约 22 分钟（级联占约 20 分钟），稀疏化较 dense 提速 20.7×（1,321 s vs 27,335 s，dense 在 level 4 仅完成 38/101 个测试房间）；22 人用户研究总体偏好 84.6%、房间类型识别 90.6%。",
+    "innovation": [
+      "提出 ROC：训练-free、分辨率不变的八叉树 token 化，单一 256 项 codebook 跨全部级联层级共享，克服 VQ-VAE 需按分辨率分别训练量化器的限制",
+      "设计稀疏多分辨率 token 序列：chunk 划分加三级粗层条件加邻块边界条件（GRU 全局摘要与 1-ring 局部前缀），实现无缝逐块 coarse-to-fine 超分辨率",
+      "首次把高分辨率场景生成扩展到含噪、不完整的真实扫描（ScanNet++），natively 支持稀疏与部分观测",
+      "构建基于 Flexible Dual Grid 的生成式稀疏 VAE，decoder 可增删体素以补小洞、去除杂散体素",
+      "生成体素分辨率比现有基线细 41%，几何（FPD）与感知（FID/KID）指标同时取得 SOTA，消融验证 ROC、多分辨率序列、稀疏化与级联设计各自不可替代"
+    ],
+    "limits": "仅支持单层室内场景，多层建筑需高度感知的位置编码；级联由 K+1 个独立训练的 transformer 组成，要更细分辨率须新增训练一级而非扩展现有级；在真实数据上继承扫描的孔洞与噪声，场景级几何补全留作未来工作；每房间生成约 22 分钟（未做 KV cache/批化解码等优化），离实用有距；输出为几何网格，不涉及纹理外观生成。",
+    "relation": "该工作位于「3D 几何自回归生成」与「稀疏层次表示」两条技术线的交汇：向上追溯至 PolyGen、MeshGPT 的网格 token 自回归，以及 OctFormer、OctGPT（本文直接基线，被从物体级微调改造到场景级对比）、ShapeFormer 等的八叉树/占用自回归，并受图像域 VAR 的 next-scale 多尺度预测启发；coarse-to-fine 扩散一线（BlockFusion、LT3SD、WorldGrow）与 layout 组合式方法（ATISS、SceneFormer、DiffuScene）为其主要对照。与 Scaffold-GS、TRELLIS.2 结构化 latent 路线相比，VoxLution 放弃学习式潜压缩、直接在稀疏体素占用上做序列建模，代表场景级生成中「显式稀疏自回归」的一支，并直接服务具身智能的真实几何仿真需求。",
+    "repro": "论文提供项目主页 daoyig.github.io/VoxLution/；训练与评价细节披露充分（PyTorch、AdamW、峰值学习率 1×10⁻⁴，GPT-2 decoder 骨干 24 层/1024 维/16 头，每个 transformer 于 4 张 NVIDIA H100 训练约 4 天；mesh VAE 初始化自 TRELLIS.2 的 SC-VAE 预训练权重、在 2 张 RTX A6000 上训练 30K 迭代），但代码与模型权重是否开源原文未述。"
+  },
+  {
+    "id": "2610.41602",
+    "slug": "drawsplat",
+    "venue": "arXiv preprint（日本东北大学、RIKEN AIP、东京大学、中国科学技术大学、萨拉戈萨大学等，cs.CV，2026-10）",
+    "tags": ["Gaussian SLAM", "RGB-D 重建", "Atlanta World", "点线特征", "隐式高斯"],
+    "conclusion": "DrawSplat 让显式点线几何先「起稿」结构、隐式神经高斯再「填充」细节，用 Atlanta World 共享重力先验把线诱导结构面转为高斯中心与法向的可微正则；Replica Apartment 上位姿误差较次优基线降 60%（1.09 cm vs MG-SLAM 2.77 cm），ScanNet 渲染 PSNR 提升 2.54 dB（27.07 vs 24.53），并以 18.29 MB 模型、4.5 GB 显存取得高斯 SLAM 中最高 F1（93.7）。",
+    "problem": "现有 Gaussian SLAM 在弱纹理、大平面、遮挡、深度噪声与长轨迹的室内场景中，仅靠光度、深度或局部 frame-to-model 约束易产生位姿漂移、表面厚度伪影、法向噪声与结构边界模糊；已有结构先验方法（如 MG-SLAM）未把结构充分接入可微高斯优化，NeRF 先验方法（DenseSplat）则引入额外模型开销。需要一种把显式几何跟踪与隐式高斯建图耦合、同时保持紧凑高效的在线框架。",
+    "method": "DrawSplat 采用混合 Gaussian SLAM 范式。前端：基于 ORB 点特征加 EDLines 线段（LBD 描述子关联）联合估计位姿，2D 重投影残差加 3D 几何残差（Huber 核）构成 L_T；局部 BA 与 BoW 回环触发的全局 BA 抑制长时漂移；由结构线最小化 L_g(n)=Σω_i·min(|d_i·n|,1-|d_i·n|)（ω_i 为几何可靠度乘语义结构置信度）估计重力方向。后端：anchor-based 隐式高斯——体素化 anchor（分辨率 0.01、32 维特征、每 anchor K=10 个 offset）经轻量 MLP 解码颜色/透明度/旋转/尺度/语义，统一可微渲染颜色-深度-法向-语义四种模态。Atlanta World 结构正则：由跟踪线拟合结构面（方向一致性 e_dir、位置一致性 e_pos、AW 一致性 e_aw），经语义软权重 w_kj 转为高斯位置正则 L_gp=Σw_kj(n_j·P_k+δ_j)²、法向正则 L_gn=Σw_kj(1-|n_k·n_j|) 与平面 AW 项 L_aw；自适应结构采样以线响应 ρ_ℓ、深度梯度 ρ_d、光度残差 ρ_c 构造结构权重，调制 densification 分数 s(x)=||g(x)||·(1+w(x))。地图目标 L_M=L_rgb+λ_d L_d+λ_n L_n+λ_s L_struct+λ_sem L_sem+λ_o L_dist（λ_gp=0.2、λ_gn=0.2、λ_aw=0.1、λ_d=0.4、λ_n=0.1、λ_s=1、λ_sem=1、λ_o=100）。",
+    "experiments": "在 Replica、ScanNet、ScanNet++、Replica Apartment 四数据集对比 SplaTAM、MonoGS、Photo-SLAM、RTG-SLAM、Splat-SLAM、LoopSplat、HI-SLAM2、MG-SLAM、SEGS-SLAM，几何重建另加 NICE-SLAM、Co-SLAM、ESLAM（单卡 A100 40 GB 加 EPYC 7542，5 次平均）。跟踪 ATE RMSE：Replica 0.27 cm、ScanNet 6.52 cm（最优，MG-SLAM 6.77）、Apartment 1.09 cm（最优，MG-SLAM 2.77）。渲染 PSNR：Replica 39.43 dB（最优）、ScanNet 27.07 dB（最优，LoopSplat 24.53）、Apartment 38.79 dB/LPIPS 0.029。几何：Replica Depth L1 0.52 cm、F1 93.7（高斯类最高）；ScanNet Depth L1 4.41（SplaTAM 6.46、LoopSplat 28.88）。效率：跟踪 24.55 FPS、渲染 209 FPS、SLAM 2.02 FPS，显存 4.5 GB 与模型 18.29 MB 为全场最小。",
+    "innovation": [
+      "提出 Atlanta World 引导的 Gaussian SLAM：把跟踪线、重力与结构面统一转为高斯原语的可微正则（L_gp/L_gn/L_aw），将 AW 先验首次接入在线增量高斯地图优化",
+      "显式点线跟踪加隐式 anchor-based 神经高斯的混合设计，点线联合在位姿估计上互补，且前端不依赖演化中的外观图",
+      "语义辅助的平面-高斯软关联（w_kj）与自适应结构采样，把高斯容量重分配到墙角、门框、深度不连续等结构信息区",
+      "质量-效率-模型大小的实用平衡：18.29 MB 模型、4.5 GB 显存下达高斯 SLAM 最优 F1 与 PSNR",
+      "消融完整：点/线/全局 BA 组合、平面来源（点诱导 vs 线诱导）、重力来源、各结构损失分量、语义来源（GT vs Mask2Former 预测）均有量化分析"
+    ],
+    "limits": "面向具主导建筑结构的 RGB-D 室内场景，高动态环境、室外或弱 AW 假设空间性能不稳；严重深度误差或不可靠线段会连带损害位姿、重力与平面估计；无法像生成式方法那样补全未观测孔洞；隐式表示带来解码开销，渲染速度（209 FPS）低于高度优化的显式高斯系统（MonoGS 465 FPS）；语义图依赖 Mask2Former 预计算（9.2 FPS，单独计时）；论文未承诺代码开源。",
+    "relation": "该工作处于 Gaussian SLAM 与结构先验 SLAM 的汇合点：承接 SplaTAM/MonoGS 的显式高斯在线建图、LoopSplat 的回环一致性与 SEGS-SLAM 的隐式/结构增强路线，直接对标 Manhattan World 假设的 MG-SLAM（论文指出其结构先验未接入可微优化）、NeRF 先验稠密化 DenseSplat 与预计算位姿的 AtlasGS。相较 ORB-SLAM 点线传统与 NeRF 系（NICE-SLAM、Co-SLAM、ESLAM），它以 3DGS 可微光栅化换实时性，以 Atlanta World（多水平主导方向加共享重力）替代单一 Manhattan 框架以适配多房间布局，是「结构先验 × 隐式高斯」方向在 RGB-D 室内 SLAM 的代表性推进。",
+    "repro": "原文未承诺代码或数据开源；但硬件与实现细节披露完整（单卡 NVIDIA A100 40 GB、AMD EPYC 7542、C++ 前端加 Python/CUDA 后端、Adam、每序列 30K 迭代映射预算、体素 0.01、K=10、特征 32 维、语义用预训练 Mask2Former 预计算、全部损失权重已列），具备复现条件，需自行实现。"
+  },
+  {
+    "id": "2610.41671",
+    "slug": "openvio",
+    "venue": "arXiv preprint（韩国首尔国立大学，cs.RO，2026-10）",
+    "tags": ["视觉惯性里程计", "VIO", "MSCKF", "360° 全景相机", "开源系统"],
+    "conclusion": "OpenVIO 是 MIT 许可的滤波器式 VIO，以统一的单位光线相机接口同时支持 pinhole、fisheye 与拼接 360° ERP 图像（单目/双目），完成 EuRoC 与 TUM-VI 全部 31 条序列，TUM-VI 单目平均 ATE 0.377 m 为九个对比系统中最优，并在 PanoAir 全部 17 架次（总长 15.5 km）取得平均 ATE 1.14 m，同时在线估计 ERP 拼接误差与双镜头曝光延迟。",
+    "problem": "VIO 已被广泛用于机器人、无人机、AR 与自动驾驶，但既有开源系统（MSCKF-VIO、ROVIO、OKVIS、VINS 系列、SVO Pro、OpenVINS、Basalt、Kimera-VIO）大多只支持 pinhole/fisheye、许可各异（GPL/BSD），无一支持 360° 全景 ERP 输入；而全景相机存在拼接标定误差与前后镜头曝光不同步两类额外误差源。缺少一个许可宽松、用同一估计器覆盖全部相机模型、并对全景误差在线自校的滤波器式 VIO。",
+    "method": "OpenVIO 采用 MSCKF 加持久 landmark（逆深度参数化）的 EKF：状态含 IMU（姿态/位置/速度/bias）、相机-IMU 时间偏移 t_d、后镜头曝光延迟 δt_b、标定状态 x_cal（相机-IMU 外参加 ERP 拼接误差 k）、历史位姿 clone（默认 20 个）与 landmark（150 个）；IMU 以四阶 Runge–Kutta 传播、协方差用闭式 ACI² 方法与 first-estimate Jacobians；出窗 track 三角化后经 nullspace 投影去点贡献、χ² 门控并 QR 压缩为单次更新。前端为金字塔 Lucas–Kanade 光流加前后向校验加基于单位光线的 RANSAC 旋转拟合外点剔除，按网格配额保留长 track，丢失 landmark 用 NCC patch 在射线切平面采样上重识别（ERP 跨左右接缝连续采样）。初始化按静止/运动自动选择：静止法以陀螺均值定 bias、加速度均值定重力方向与沿重力 bias；动态法先解线性初始化 min‖Az-b‖²（约束 ‖g0‖=g），再以 Ceres 联合精化（Cauchy loss）。360° 扩展在线估计拼接误差 θ'=θ+k·g(θ)（g(θ)=θ(1-(2θ/π)²）与后镜头延迟 δt_b，并以匀速模型预测后曝光位姿。",
+    "experiments": "与 9 个开源 VIO 系统对比（均关回环）：EuRoC（11 条无人机序列，双目 pinhole）单目平均 ATE 0.135 m（最优，OpenVINS/VINS-Fusion 0.160）、双目 0.077 m（次于 Basalt 0.061）；TUM-VI（20 条室内序列，手持双目鱼眼 512×512）单目 0.377 m、双目 0.718 m，均优于 OpenVINS（0.851/1.022）与 Basalt（双目 0.819）；单目与双目配置下 EuRoC 11/11、TUM-VI 20/20 序列全部完成。PanoAir（17 架次，阴天/晴天/夜间，双镜头 ERP 1280×640@30 Hz，RTK-GNSS 真值）全部成功，平均 ATE 1.14 m；15 架次 k 估计落在 0.0055–0.0068，δt_b 除第 10 架次 35 ms（约一帧）外均小于 0.5 ms。",
+    "innovation": [
+      "首个以像素到单位光线的统一接口同时支持 pinhole、fisheye 与 360° ERP 的开源 VIO，同一滤波器处理全部相机模型（含相机后方的光线）",
+      "对双镜头 360° 相机在线估计拼接误差 k 与后镜头曝光延迟 δt_b，滤波内以匀速模型预测后曝光位姿",
+      "面向丢失 landmark 的切平面 patch 重识别：容忍透镜畸变与 ERP 拉伸，支持跨 ERP 左右接缝匹配",
+      "静止/动态自动选择的初始化与启动期时间偏移标定（含双镜头偏移差估计），降低人工场景设定依赖",
+      "MIT 宽松许可加覆盖 EuRoC/TUM-VI/PanoAir 的全序列完成率基准，并导出 keyframe 与特征观测接口供回环扩展"
+    ],
+    "limits": "不含回环检测与地图复用（作者明示，仅提供导出接口）；360° ERP 输入仅支持单目模式；滤波器式估计在长时一致性上通常弱于优化式后端；论文未报告计算耗时/帧率，实时性与资源占用未知；PanoAir 上 k 与 δt_b 无参考真值，在线估计仅作自洽性展示；依赖预先标定的相机-IMU 外参。",
+    "relation": "该工作属于滤波器式 VIO 谱系的系统化延伸：核心估计器是 Mourikis & Roumeliotis 的 MSCKF 结合 Li & Mourikis 的持久 landmark 与逆深度参数化，动态初始化沿用 Geneva & Huang 的视觉惯性 SfM 线性求解加 Ceres 精化框架；对标表中所列九大开源系统（MSCKF-VIO、ROVIO、OKVIS、VINS-Mono/Fusion、SVO Pro、OpenVINS、Basalt、Kimera-VIO），以 360° ERP 支持形成差异化。全景方向上衔接 PanoAir 数据集及其全景视觉惯性评测，与多相机/全景 SLAM 文献互补；相对 ORB-SLAM 式点线方案，它以单位光线抽象加 EKF 换取跨相机模型的统一实现与轻量部署，是开源 VIO 基础设施方向的实用贡献。",
+    "repro": "代码以 MIT 许可开源于 github.com/93won/openvio（论文首页即给出地址）；基准使用公开数据集（EuRoC、TUM-VI、PanoAir）与发布配置，重复运行通过缩放 IMU 噪声密度（0.9/1.1）与微调光流终止容差实现（系统本身确定性），复现门槛低。"
+  }
+]

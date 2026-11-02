@@ -1,0 +1,28 @@
+[
+  {
+    "id": "2602.21535",
+    "slug": "adags",
+    "venue": "作者团队来自香港科技大学（广州）（Beizhen Zhao、Sicheng Yu、Guanzhi Ding、Yu Hu，通信作者 Hao Wang），cs.CV 预印本（arXiv:2602.21535），2026 年 2 月首帖、v2 于 2026 年 10 月 30 日再公告；属 backfill 批次旧稿，原文未述正式会议投稿信息",
+    "tags": [
+      "无位姿重建",
+      "稀疏视图 3D 高斯泼溅",
+      "扩散模型先验",
+      "置信度门控",
+      "幻觉抑制"
+    ],
+    "conclusion": "AdaGS 用两阶段训练的 artifact-aware adapter 抑制 floater 线索、以双向置信融合门控扩散伪视图、并以表征侧高斯稳定化打断 artifact amplification loop，在 DL3DV/Waymo/KITTI 三个户外数据集上取得 PSNR 24.27/23.76/17.95 与 ATE RMSE 0.077/1.352/2.471，全面优于 11 个基线。",
+    "problem": "无位姿稀疏视图下的户外 3D 高斯泼溅重建中，早期高斯优化欠约束，渲染图常含 floating Gaussian artifacts（深度不稳、视图相关瑕疵）。现有工作直接用预训练扩散模型做恢复或生成伪视图监督，但扩散模型倾向把渲染瑕疵解释为合理的物体级结构，补全为并不存在的车辆、树木或建筑部件，形成 floater→幻觉→回吸收进高斯的 artifact amplification loop，污染后续位姿与高斯联合优化。",
+    "method": "整体为 adapter + 冻结扩散骨干 + 置信门控联合优化框架：先用 MASt3R 初始化位姿与深度先验，场景表示为高斯集合 𝒢={(μ,Σ,c,o)}。核心一，轻量 artifact-aware adapter A_θ（带 skip connections 的 encoder-decoder），输入当前渲染图与相邻两参考图 Î_t=A_θ(I_k^ref, I_t^gs, I_{k+1}^ref)；两阶段训练：Stage I 在自建 Gaussian artifact 数据集（1 万余样本，覆盖 floating Gaussians、ghosting、模糊边界、深度畸变）上用像素重建+结构相似度损失预训练；Stage II 级联冻结的 Difix3D 扩散模型 𝒟_φ 仅更新 θ，使中间图与冻结扩散先验兼容。核心二，双向恢复与残差置信融合：按重叠度 C_ab(p)=O_ab(p)·s_d(p)·s_t 选参考帧，融合 Î_t^fix=I_t^gs+W_k⊙R_t^k+W_{k+1}⊙R_t^{k+1}，权重 W_i=C_{t,i}/(C_{t,k}+C_{t,k+1}+ε)，幻觉门控 C_m(p)=½(𝕀_Mk(p)+𝕀_Mk+1(p)) 仅放行有跨视图几何支撑的区域。核心三，表征侧高斯稳定化：深度项 A_i^z=1-Norm(σ_z(i)/v̄_i) 与密度项 A_i^ρ=1-Norm(Σexp(-‖μi-μj‖²/2σρ²)) 合成 artifactness A_i=αA_i^z+(1-α)A_i^ρ，对稀疏弥散高斯软衰减并随机剪枝。位姿经 se(3) Lie 代数更新 T_t←exp(Δξ_t)T_t，配逐视图仿射曝光校正，总损失 ℒ=ℒ_real+λ_pvℒ_pv+λ_dℒ_d+λ_scaleℒ_scale。",
+    "experiments": "三个户外数据集：DL3DV（易，300 帧序列每 30 帧取 1 得 10 个输入视图）、Waymo（中）与 KITTI（难）（各取前 200 帧每 10 帧取 1 得 20 视图，其余帧做测试），平均视图重叠由 0.98 降至约 0.75；指标 PSNR/SSIM/LPIPS 与 ATE RMSE；对比 11 个基线（CF-3DGS、VideoLifter、InstantSplat、LongSplat、RegGS、OpenGS-SLAM、AnySplat、ProSplat、Depth Anything 3、DGGT、S3PO-GS）。全面最优：DL3DV PSNR 21.26→24.27；KITTI PSNR 15.58→17.95、SSIM 0.510→0.605；Waymo PSNR 23.76、SSIM 0.777；ATE RMSE 0.077/1.352/2.471 三数据集最低。消融（Waymo PSNR）：仅扩散 18.16、去 adapter 22.65、去 fusion 22.98、去 RSGS 23.01、完整模型 23.76。实现：PyTorch，单卡 A6000 重建；adapter 用 4×A6000、AdamW、1000 epochs 约 10 小时收敛。",
+    "innovation": [
+      "首次识别并形式化 diffusion-guided 稀疏重建中的 artifact amplification loop：3D floater 被渲染为 2D 瑕疵、被扩散补全为幻觉、再作为监督回吸收进高斯场",
+      "提出两阶段训练的 artifact-aware adapter：Stage I 在自建 Gaussian artifact 数据集预训练，Stage II 与冻结扩散骨干联合调优，保留预训练扩散恢复能力的同时只适配任务特定的 conditioning interface",
+      "提出双向残差置信融合与幻觉门控：伪视图像素只有获得双向跨视图对应支撑才允许参与监督，从像素级阻止无依据生成内容进入优化",
+      "提出表征侧高斯稳定化（RSGS）：以深度一致性与局部密度弥散度构造 artifactness 分数，对持久 floater 源做软衰减与随机剪枝，与图像空间门控互补",
+      "构建含 1 万余样本的 Gaussian artifact 数据集，涵盖稀疏重建典型瑕疵类型"
+    ],
+    "limits": "论文明示局限：视图重叠极低或大面积无纹理时，跨视图证据不足以验证所有恢复区域，置信融合失效；adapter 虽在多样瑕疵上训练，对未见重建误差的泛化仍有限；当前公式化仅假设静态场景。客观不足：评测限于户外驾驶类场景，未覆盖室内或动态场景；仍属逐场景优化范式，每轮需渲染加扩散恢复，训练与显存开销大；依赖 MASt3R 初始化，初始化失败场景未讨论；未承诺代码与数据集开源，复现依赖自建 artifact 数据集。",
+    "relation": "backfill 论文，位于 unposed sparse-view 3DGS 与 diffusion prior 两条技术线的交汇点。位姿侧承接 CF-3DGS（COLMAP-free）、InstantSplat（DUSt3R 初始化）、LongSplat（MASt3R/VGGT）及同组前作 RegGS（ICCV 2025）、OpenGS-SLAM/S3PO-GS 的免 COLMAP 联合优化路线；生成先验侧承接 Difix3D+、3DGS-Enhancer、ViewCrafter、SGD、GaussianScenes 的扩散伪监督思路，但区别于这些工作直接采信生成内容，本文核心贡献在门控而非生成本身。与 AnySplat、ProSplat、Depth Anything 3、DGGT 等 feed-forward 路线互为对照，代表 per-scene 优化系在稀疏无位姿户外场景下的演进。",
+    "repro": "原文未承诺代码或数据集开源，未给出仓库链接。实现细节披露较完整：PyTorch，重建用单卡 NVIDIA A6000；adapter 训练用 4×A6000（AdamW、cosine 学习率、1000 epochs、约 10 小时）；扩散骨干为公开预训练的 Difix3D，位姿初始化用 MASt3R；自建 Gaussian artifact 数据集（1 万余样本）未承诺公开，硬件配置已披露。"
+  }
+]

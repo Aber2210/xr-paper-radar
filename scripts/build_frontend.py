@@ -43,6 +43,7 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "2026-10-31": "2026-10-31 · 10-30 公告批次（10-29 公告跳空后延迟释放，非重磅，listing+RSS 互证 0 漏网）",
                 "2026-11-01": "2026-11-01 · 无新稿（周日周末无公告，listing/API/RSS 三源互证；10-30 公告组 728 篇全量重采复核 0 漏网）",
                 "2026-11-02": "2026-11-02 · 无新稿（周一凌晨，周末积压公告时刻 08:00 晚于运行时刻；10-30 公告组单页复采 declared=got，710 篇摘要级复核 0 漏网）",
+                "2026-11-03": "2026-11-03 · 11-02 公告批次（周末积压周一释放，非重磅，listing+RSS 互证 0 漏网；Top10 实数 9 篇）",
                 "backfill-1012-1015": "backfill · 10-12~10-15 漏网补录",
                 "backfill-1020": "backfill · 10-16 漏网 + 旧稿再公告补录",
                 "backfill-1021": "backfill · 旧稿 replace/cross 再公告补录",
@@ -52,6 +53,7 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "backfill-1028": "backfill · 10-27 公告 RSS 混入旧稿 replace/cross 再公告（10 篇）",
                 "backfill-1029": "backfill · 10-28 公告 RSS 混入旧稿 replace/cross 再公告（4 篇）",
                 "backfill-1031": "backfill · 10-30 公告 RSS 混入旧稿 replace/cross 再公告（6 篇）",
+                "backfill-1103": "backfill · 11-02 公告 RSS 混入旧稿 replace 再公告（2 篇）",
                 "backfill-2603-2609": "backfill · 2603–2609 旧稿补录"}
 
 
