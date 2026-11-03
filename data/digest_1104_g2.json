@@ -1,0 +1,340 @@
+[
+ {
+  "id": "2611.01543",
+  "slug": "gsexplorer-worldgen",
+  "venue": "arXiv preprint（The Hong Kong University of Science and Technology (Guangzhou)、Horizon Robotics、The University of Hong Kong，cs.CV，2026-11-01）",
+  "tags": [
+   "交互式世界生成",
+   "3D Gaussian Splatting",
+   "视频扩散模型",
+   "SLAM",
+   "长程一致性"
+  ],
+  "conclusion": "GSExplorer 围绕持久化 3D Gaussian 世界状态构建生成-重建闭环：每步用当前 3DGS 渲染多模态条件驱动视频生成，生成视频再经 SLAM 后端选择性回灌。在 WorldScore 单步外推取得最佳平均分 82.85（超出最强基线 6.24 分），Camera Control 99.07；三步外推平均分 71.56（+7.48）。在 R2M-Bench 50 个 leave-and-return 用例、481 帧长程回访中 PSNR 19.85、SSIM 0.623、LPIPS 0.369、Match Ratio 0.481 均为最佳（PSNR 较最强基线 +3.99 dB）。",
+  "problem": "交互式世界生成要求局部精确相机控制与长程场景一致性兼得。现有方法的目标视图条件不完整，位姿误配与冲突生成内容会在反复场景更新中累积；同时长历史上下文难以持续维护。核心问题是如何维持一个可靠、可查询、能随探索持续演化的 3D 世界状态。",
+  "method": "框架以 3DGS-SLAM 为后端维护持久世界状态。从当前 3DGS 沿规划轨迹渲染退化 RGB、depth、accumulated opacity 及 hole mask 作为多模态条件，经共享 Wan VAE 与轻量 3D 卷积编码融合，通过 1 个 zero-initialized 输入投影和 5 个残差投影注入 DiT（Wan2.2-TI2V-5B 骨干）；相机几何经独立 Relative Ray Encoding（RRE，取自 UCPE）分支与自注意力并行注入。生成视频回灌 SLAM 后端，inconsistency filtering 按像素一致性分数过滤冲突内容，cross-chunk bundle adjustment 联合优化跨 chunk 相机位姿。训练使用 293K 对退化条件-目标视频对，目标为加权 flow-matching。",
+  "experiments": "WorldScore 单步：avg 82.85（最强基线 UniWorld-View 76.61），Camera Control 99.07、3D Consistency 90.83 均第一；三步：avg 71.56（最强 64.08）。长程回访（R2M-Bench 50 例、481 帧）四项指标全面最佳。消融：去掉 inconsistency filtering，三步 avg 71.56→65.14、回访 PSNR 19.85→17.15；去掉 cross-chunk BA，avg 68.91、PSNR 17.41。训练对 293,943 个（RealEstate10K 231,644、ScanNet 38,037、DL3DV 14,279、ACID 9,983）；训练 30K 迭代、32×NVIDIA H20、全局 batch 32、640×352。",
+  "innovation": [
+   "提出以持久化 3DGS 世界状态为中心的生成-重建闭环，把长时程空间记忆与局部视频生成分离",
+   "inconsistency filtering 与 cross-chunk bundle adjustment 实现选择性、空间连贯的场景更新",
+   "多模态 3DGS 渲染条件与独立 RRE 相机几何分支互补，避免把相机线索与渲染内容混注",
+   "构建复现场景外推退化的 293K 训练对流水线（记录 Gaussian birth frame 保留 context Gaussians）"
+  ],
+  "limits": [
+   "自述：相比纯前馈生成增加运行时，每个生成 chunk 后需相机估计与 3DGS 精化",
+   "自述：面向静态或基本静态环境，未显式建模动态物体",
+   "自述：长程 rollout 中反复生成-重建可能柔化极细纹理与小室内细节",
+   "未与生成式视频大模型（如 Sora 类）做定性或定量对比，基准限于 WorldScore 与 R2M-Bench"
+  ],
+  "relation": "上游为相机可控视频生成（CameraCtrl、Plücker 射线条件化）与显式 3D 记忆世界模型（Voyager、Spatia、WonderWorld、LSM-World）；直接对标基线为 UniWorld-View、NeoVerse、DreamWorld、DreamX-World、Spatia 等。本文位于生成-重建闭环谱系中最新一环，把显式 3DGS 记忆的选择性更新与相机对齐作为核心贡献。",
+  "repro": "项目页面已在摘要中给出；正文未明确承诺代码或数据开源，Reproducibility statement 称提供方法与训练细节。训练数据为公开数据集 RealEstate10K、DL3DV、ACID、ScanNet；训练需 32×NVIDIA H20。",
+  "action": "研究世界模型者可将生成结果的选择性回灌与跨 chunk BA 作为标准组件验证；工程落地需权衡 SLAM 精化带来的额外时延，优先在静态室内场景做长程回访测试。"
+ },
+ {
+  "id": "2611.01627",
+  "slug": "egomo3r-ego-motion-scene",
+  "venue": "arXiv preprint（Stanford University、Panasonic R&D Company of America、Panasonic Holdings，cs.CV，2026-11-01）",
+  "tags": [
+   "第一视角视觉",
+   "人体运动重建",
+   "3D 重建",
+   "运动扩散先验",
+   "交替优化"
+  ],
+  "conclusion": "EgoMo3R 用一阶联合优化从普通单目第一视角视频同时恢复相机轨迹、metric 且重力对齐的 3D 场景几何与 SMPL-X 人体运动。EgoExo4D 上 3D 重建 metric Acc/Comp（mean）0.357/0.187，显著优于 VGGT、CUT3R、ViPE、EgoMono4D；metric ATE 0.226 优于所有基线；运动重建 Head Rot 0.188、MPJPE 0.271 优于所有不依赖 canonical 轨迹的基线；Nymeria 上 Head Rot 0.180、MPJPE 0.319 同为最佳。",
+  "problem": "第一视角运动重建通常假设可获得惯性 SLAM 提供的 metric、重力对齐相机轨迹；单目视频因头部快速旋转与运动模糊导致经典 SLAM 对应稀疏、前馈重建存在域差。且第一视角中人体基本不可见，运动与场景的天然耦合难以显式利用。",
+  "method": "以单目相对深度（MoGe-2）为几何基并优化每帧尺度 S 得 metric 深度；RAFT 前后向光流构成 L_flow（Procrustes 闭式解初始化），CoTracker3 长程对应构成 L_track，L_depth 正则尺度接近初始值，L_scene 用运动隐含地面对齐世界系，L_egocam 对齐相机轨迹与 SMPL-X 头部轨迹，L_motion 为去噪 score matching。运动先验是条件于 SE(3) 不变轨迹 A(C)=C0^{-1}Ci 的条件扩散模型（仅 AMASS 训练）。交替优化两阶段：固定 M 优化 (C,S)，再固定 (C,S) 优化 M（等价于 L_egocam 引导的 DDIM 采样），MAD 过滤外点对应。",
+  "experiments": "EgoExo4D 与 Nymeria 组合测试集（718 + 828 个 8 秒片段）。3D 重建全指标最佳：EgoExo4D metric Acc 0.357/Comp 0.187、scale-invariant 0.309/0.158；相机位姿 EgoExo4D metric ATE 0.226、RPE Trans 0.065，Nymeria RPE Rot 2.142 最佳。运动：EgoExo4D Head Rot 0.188/Head Trans 0.219/MPJPE 0.271，对比 EgoEgo 0.574/0.449/0.441。消融显示直接联合优化导致 motion collapse（MPJPE 0.456），交替优化降至 0.320；第三轮进一步改善。单条 8 秒片段在单卡 NVIDIA L40S 上约 8 分钟。",
+  "innovation": [
+   "首个面向第一视角的运动-场景联合一阶优化框架，同时输出 metric 相机轨迹、pointmaps 与 SMPL-X 运动",
+   "用 SE(3) 不变轨迹条件化 motion diffusion 先验，使先验可在优化早期、轨迹未对齐时稳定介入",
+   "交替优化避免直接联合优化中运动塌缩到次优解",
+   "零样本设置：运动先验仅用 AMASS 训练，直接在 EgoExo4D/Nymeria 评测"
+  ],
+  "limits": [
+   "自述：长程 point tracking 失败（单调纹理区、手持物体附近）会把轨迹优化带入坏局部极小",
+   "自述：极端运动模糊帧的相对深度与尺度先验不可靠，造成位姿抖动",
+   "自述：部分帧无地面检测会削弱 motion 与重建对齐；面向 locomotion，手腕/手部运动建模不足",
+   "自述：动态物体像素占比高时 MAD 过滤可能误删有效对应；推理慢于前馈几何模型"
+  ],
+  "relation": "上游包括经典 SLAM/VIO、前馈重建 VGGT/CUT3R、第一视角运动重建 EgoEgo、UniEgoMotion、EgoAllo、HMD2，以及第三方视角联合重建 Human3R。本文首次把人体-场景联合重建带入第一视角域，并以 GT 轨迹驱动的 EgoAllo/UEM 作为 oracle 上界，显示轨迹误差是运动误差主要来源。",
+  "repro": "项目页面 chaitanya100100.github.io/EgoMo3R/；附录声明代码将发布。评测用公开 EgoExo4D、Nymeria；运动先验训练仅 AMASS；硬件单卡 NVIDIA L40S（先验计算约 32 s）。",
+  "action": "做第一视角感知的研究者可用其输出作为前馈模型的伪标签；工程部署注意 tracking 失败模式，可加动态物体 mask 与显式 loop closure；一轮优化（约一半耗时）已超所有基线，可作为实时档位。"
+ },
+ {
+  "id": "2611.01759",
+  "slug": "vr-teleop-service-robot",
+  "venue": "arXiv preprint（葡萄牙高校团队，cs.CV，2026-11-01 提交；仅 ar5iv 摘要页，17 页 16 图）",
+  "tags": [
+   "遥操作",
+   "服务机器人",
+   "VR 头显",
+   "姿态估计",
+   "人机交互"
+  ],
+  "conclusion": "该文提出 VR 头显 + 人体姿态估计的服务机器人遥操作系统：用 Mediapipe 做 2D 姿态检测，结合 Intel RealSense D455 的 RGB-D 数据扩展为 3D 人体姿态，再映射到机器人运动学实现自然控制，并以 VR 界面提供沉浸式第一视角；在 CHARMIE 服务机器人上完成物体操作真机实验。全文较短（ar5iv L1，约 5.3k 字符），细节有限，摘要中未见任何量化指标。",
+  "problem": "服务机器人部署在复杂动态环境中，需要直观、低成本的远程操控方式；同时操作者需要良好的态势感知。如何从人体姿态自然映射到机器人运动并保持映射精度是主要难点。",
+  "method": "摘要层面：Mediapipe 框架做 2D 关键点检测；RealSense D455 提供 RGB-D 数据，将其扩展为完整 3D 人体姿态估计；3D 姿态经运动学映射驱动机器人；VR 头显界面呈现沉浸式视角以增强操作者态势感知。摘要自称提出用 Mediapipe 实时计算关节角的算法。",
+  "experiments": "原文未述定量实验：真机平台为 CHARMIE 服务机器人，任务为物体操作；未报告样本量、任务成功率、延迟或精度等指标（全文较短，ar5iv L1，约 5.3k 字符，细节有限）。",
+  "innovation": [
+   "摘要自称：结合 RGB-D 传感与 Mediapipe 的实时关节角计算算法",
+   "VR 沉浸式界面与机器人遥操作结合，提升操作者态势感知",
+   "面向服务机器人（CHARMIE）的整套人机运动映射流程"
+  ],
+  "limits": [
+   "全文较短（ar5iv L1，约 5.3k 字符），仅摘要可读，细节有限",
+   "摘要自述：某些关节角（如 wrist yaw）捕获不准确",
+   "摘要自述：人体与机器人运动的精确映射仍有挑战；未来拟引入 IMU 改进旋转跟踪与更先进控制算法"
+  ],
+  "relation": "属于 HRI 中基于视觉人体姿态映射的 VR 遥操作一脉（相对传统主从遥操作与共享自治）；因仅摘要可见，无法确认其直接对标基线与引用谱系，摘要中亦未给出可对比的量化基线。",
+  "repro": "原文未提及（仅摘要页）：已知硬件为 VR 头显、Intel RealSense D455、CHARMIE 服务机器人；代码/数据开源情况不可见。",
+  "action": "建议先获取 PDF 全文再决定是否深入；若做人机遥操作，可参考其 RGB-D + IMU 融合与关节角映射思路，但须核实定量效果与映射误差。"
+ },
+ {
+  "id": "2611.01937",
+  "slug": "spade-slam",
+  "venue": "arXiv preprint（Technical University of Munich、Munich Center for Machine Learning，cs.CV，2026-11-01；已投 IEEE，CC BY 4.0）",
+  "tags": [
+   "自监督 SLAM",
+   "3D 重建",
+   "相机跟踪",
+   "稀疏到密集",
+   "自标定"
+  ],
+  "conclusion": "Spade-SLAM 在 DROID-SLAM 骨架上用亮度对齐光度损失 + 稀疏对应锚定（不足 1% 像素）实现自监督密集视觉 SLAM：TartanAir hard ATE RMSE 0.50 m（较 D3FlowSLAM 0.79 提升 37%，且对方需在评测域微调），EuRoC 0.021 m 与 TUM-RGBD 0.041 m 均追平监督版 DROID-SLAM/DroidCalib；7-Scenes 重建 Acc 0.026、Chamfer 0.045 具竞争力；ScanNet 域自适应使 ATE 0.309→0.166 m（-47%）。",
+  "problem": "自监督 SLAM 仅靠光度一致性，在光照变化、非朗伯表面与弱纹理区域病态，与全监督方法存在长期差距；且多数方法依赖预标定内参或 ground-truth 位姿/深度标注。",
+  "method": "沿用 DROID-SLAM 的 RAFT ConvGRU 更新算子与 differentiable Dense Bundle Adjustment；光度项前估计帧间全局仿射 (a_ij, b_ij) 对齐亮度（闭式解、回传时视为常数），与 SSIM 按 α=0.85 组合；对每对图像用 SuperPoint+LightGlue（或 SIFT+NN）提取经极线过滤的对应，以置信度加权 Huber（δ=1）重投影误差直接约束与 DBA 相同的 pose-depth 状态；焦距作为优化变量（f_init=(H+W)/2）实现自标定，支持未标定视频测试时自适应。",
+  "experiments": "TartanAir hard avg 0.50 m（自监督最佳；监督 DROID-SLAM 0.54、DroidCalib 0.34）；EuRoC avg 0.021 m（与 DROID-SLAM/DroidCalib 持平）；TUM-RGBD avg 0.041 m（DroidCalib 0.043）；7-Scenes ATE 0.061/Acc 0.026/Comp 0.065/Chamfer 0.045。较 D3FlowSLAM 在 TartanAir/TUM-RGBD/EuRoC 分别提升 37%/68%/96%。域自适应 ScanNet 0.309→0.166 m（7/8 场景改善）；DL3DV 无标注续训使 TartanAir 0.50→0.37 m。训练 250k 步、batch 4、384×512、4×NVIDIA L40S 一周。",
+  "innovation": [
+   "稀疏到密集互补训练：不足 1% 像素的高置信对应即可稳定自监督优化",
+   "亮度对齐（全局仿射）光度监督，抵御自动曝光与光照变化",
+   "焦距-位姿-深度联合自标定，无需预标定内参",
+   "同一自监督目标支持域自适应与无标注真实数据扩展（DL3DV）"
+  ],
+  "limits": [
+   "自述：白墙等弱纹理长序列与天空、移动 foliage 等少稳定对应区域性能下降",
+   "自述：性能上界受 matcher 精度与空间覆盖限制（GT 对应训练显著更好）",
+   "自述：面向静态场景，大动态物体可能导致失败（MAGSAC 仅过滤小动态物）",
+   "计算仍基于 DROID 式迭代优化，未评估实时性"
+  ],
+  "relation": "上游为 DROID-SLAM、DroidCalib、MASt3R-SLAM、ORB-SLAM2/3、DSO 与自监督谱系 SfMLearner/Monodyn/Dynamo-Depth、D3FlowSLAM、AnyCam。直接对标 D3FlowSLAM（自监督 SOTA）与监督 DROID-SLAM；本文占据稀疏锚定密集自监督的生态位，把单目深度中的 sparse-to-dense 先例引入端到端 SLAM 训练。",
+  "repro": "代码承诺开源：github.com/JulianPSchmitt/Spade-SLAM。训练用合成 TartanAir，评测 TartanAir/EuRoC/TUM-RGBD/7-Scenes/ScanNet/DL3DV；4×NVIDIA L40S 训练一周。",
+  "action": "缺少 GT 的真实场景（内镜、工业巡检）可用其自监督目标做域自适应；稀疏对应质量是瓶颈，升级 matcher 可直接受益；建议后续把混合监督迁移到 VGGT 类前馈模型。"
+ },
+ {
+  "id": "2611.01939",
+  "slug": "vlsplat-scene-graph",
+  "venue": "arXiv preprint（Sungkyunkwan University、KAIST，cs.CV，2026-11-01）",
+  "tags": [
+   "3D Gaussian Splatting",
+   "语义分割",
+   "场景图",
+   "视觉语言模型",
+   "开放词汇"
+  ],
+  "conclusion": "VLSplat 把 codebook 式 3DGS 语义提升推进到类别感知的物体级：用场景图 + VLM 语言先验引导 intra-node refinement 与 inter-node acquisition。ScanNet++ 渲染级 thing mIoU 69.81/mAcc 70.31（Unified-Lift+Ours 64.42、LangSplatV2 39.94）；Replica thing mIoU 68.59；点级 ScanNetV2 全场景 mIoU 40.49，ROI 限制评估 61.89/mAcc 79.12；Replica 点级 mIoU 64.03、PRQ(T) 47.87。",
+  "problem": "现有 2D-to-3D 语义提升依赖 SAM 掩膜监督，视图不一致与多层级预测会把同一物体拆碎或把异类区域合并，学到的表示由局部掩膜证据驱动而非整体物体结构，缺乏物体级先验。",
+  "method": "SAM3 按类别文本提示生成主要室内物体掩膜、SAM2 填补剩余区域，构成混合 2D 监督；Gaussian 特征与可训练 object-level codebook 按点积关联成组；以组为节点构建 ROI 场景图（各向异性协方差几何边 + 特征相似度 + VLM 生成描述 + CLIP 优化）。intra-node refinement 按特征置信度拆分可靠核与不确定集，inter-node acquisition 从邻近背景候选回收缺失部件；候选经合成物体视图上的可学习标量门 q_i 以 CLIP 相对提升为目标评估，随后只更新 Gaussian 特征方向、不改几何。",
+  "experiments": "ScanNet++（10 场景）渲染级 thing mIoU 69.81、stuff 67.79；Replica（8 场景）thing 68.59、stuff 67.75。点级 ScanNetV2：全场景 mIoU 40.49 vs OpenGaussian 29.73（PanoGS 54.50 更高），ROI 评估 61.89/79.12、PRQ(T) 46.18；Replica 点级 64.03/74.34、PRQ(T) 47.87。消融：场景图加入特征相似度使 mIoU 40.49→58.51，再组合各向异性连接达 61.89；intra/inter 均单独有效（69.31→69.81 合并）。单卡 NVIDIA RTX 3090 24GB，每场景单次运行。",
+  "innovation": [
+   "首次把 codebook 分组从类别无关实例聚类扩展为类别感知的物体表示学习",
+   "把场景图用作 3DGS 优化过程中的先验骨架，而非仅作输出抽象",
+   "语言引导 Gaussian gating：以 gated 渲染相对 base 渲染的 CLIP 提升为目标",
+   "SAM3 类别提示 + SAM2 补全的混合 2D 监督，兼顾类别感知与密集覆盖"
+  ],
+  "limits": [
+   "自述：依赖初始 lifting 形成合理粗分组，罕观测或罕检测物体难以建成可靠节点",
+   "自述：对 SAM3、VLM、CLIP 等基础模型选择的敏感性未系统研究",
+   "自述：评测聚焦室内 thing 类别；refinement 的离线优化成本随目标节点数增长",
+   "stuff 类提升小甚至略降，大面积布局区域未直接精化"
+  ],
+  "relation": "上游为语言嵌入 3DGS（LangSplat/LangSplatV2、OpenGaussian、Feature3DGS、LegGaussian）与 panoptic 方法 PanoGS；直接基线为 Unified-Lift（codebook 提升）与 OpenGaussian。场景图谱系中 Hydra/ConceptGraphs 等多把图当推理基底，本文首次将图结构作为优化器内部先验用于 Gaussian 精化。",
+  "repro": "代码与模型开源：vlsplat.github.io。评测 ScanNet++/Replica/ScanNetV2；单卡 RTX 3090 24GB；基于 Unified-Lift 15k 迭代结果再做 15k-30k 迭代图引导精化。",
+  "action": "做语义 SLAM 与机器人场景理解者可将物体级场景图 + CLIP 门控精化挂到自有 3DGS 管线；对罕观测物体需补 SAM3D 或视频扩散等更强先验，并评估对基础模型版本的敏感性。"
+ },
+ {
+  "id": "2611.02034",
+  "slug": "surgicalts-4d-triangle-splatting",
+  "venue": "arXiv preprint（Institut de Robòtica i Informàtica Industrial, CSIC-UPC、Imperial College London，cs.CV，2026-11-01）",
+  "tags": [
+   "4D 重建",
+   "内镜",
+   "triangle splatting",
+   "自监督",
+   "形变建模"
+  ],
+  "conclusion": "SurgicalTS 用自监督 triangle splatting 从静态单目视频重建动态内镜 4D 场景：四元数变形网络 + 颜色偏移参数化 + 时空物理先验 + 变形感知初始化。Endo-NeRF pulling 序列 PSNR 39.890/SSIM 0.969/LPIPS 0.027，深度 MAE 2.259/RMSE 6.539 显著优于 Endo-4DTS（7.171/16.803），训练时间 221 min（-33%）；NeRFscopy 四个序列光度与深度全面领先 Endo-4DTS（如 TECAB1 PSNR 29.473 vs 28.260、RMSE 14.805 vs 15.358、训练 80 min vs 158 min）。",
+  "problem": "单目内镜 4D 重建面临非刚性组织形变、镜面反射与光照变化、器械遮挡、 viewpoints 受限与低纹理；此前 triangle splatting 方法 Endo-4DTS 视觉指标好但几何与外观未联合建模，深度图存在大量不连续。",
+  "method": "规范空间静态三角形集合 + 8 层 MLP 变形网络：输入三顶点与时间的位置编码，输出单位四元数旋转、平移/缩放/颜色偏移（颜色定义为规范色加偏移而非重估）；Video Depth Anything 提供伪深度，损失含光度 L1+D-SSIM、深度 L1、深度梯度对齐、法线对齐、opacity 与尺度正则、四元数/平移一阶时间平滑及规范-变形空间边长保持；初始化跨帧聚合深度（含器械掩膜，时变掩膜检测遮挡与深度变化）以恢复遮挡区。",
+  "experiments": "Endo-NeRF pulling：PSNR 39.890 vs Endo-4DTS 40.39（略低），但 MAE 2.259 vs 7.171、RMSE 6.539 vs 16.803、训练 221 min vs 329 min、FPS 14.95 vs 16.50；cutting：PSNR 36.468 vs 38.876（更低），MAE 2.715 vs 5.759、RMSE 8.018 vs 15.593。NeRFscopy TECAB1/TECAB2/Lung lob./Bronco 四项 PSNR 与深度误差全部最优（Bronco PSNR 36.304、RMSE 5.731、训练仅 62 min）。深度以 Video Depth Anything 伪 GT 评估；单卡 NVIDIA RTX A5000。",
+  "innovation": [
+   "面向遮挡的变形感知初始化：跨帧深度聚合并显式保留器械几何，避免遮挡区幻觉组织",
+   "四元数旋转表示替代欧拉角，避免万向锁并提升数值稳定性",
+   "颜色偏移参数化替代完全重估的颜色预测",
+   "时空物理先验（旋转/平移平滑 + 边长保持）提升 4D 几何一致性"
+  ],
+  "limits": [
+   "自述/观察：cutting 等极端场景仍出现局部不连续；几何精度与光度一致性存在权衡（部分序列 PSNR 低于 Endo-4DTS）",
+   "深度评测依赖 Video Depth Anything 伪 GT，无真实 3D ground truth",
+   "性能数值依赖输入分辨率与最终三角形数量，泛化结论有限",
+   "假设相机静态，未处理内镜运动轨迹联合估计"
+  ],
+  "relation": "上游为 3DGS 及其动态变体、NeRF 内镜重建 EndoNeRF/NeRFscopy、EndoGaussian、triangle splatting 及其内镜扩展 Endo-4DTS。直接对标 Endo-4DTS（唯一先前 TS 内镜方法）；本文以几何-外观联合建模、物理先验与训练效率取胜。",
+  "repro": "原文未提及代码或数据开源。实验用公开 Endo-NeRF 与 NeRFscopy 数据集（7:1 训练/测试划分），与 Endo-4DTS 用相同 densification/pruning 策略与迭代数；单卡 NVIDIA RTX A5000。",
+  "action": "内镜导航与术后监测落地应以深度一致性为主要选型指标；临床测量场景注意保留器械几何以避免幻觉组织导致体积误判；后续建议在真实 3D GT 数据上复验。"
+ },
+ {
+  "id": "2611.02044",
+  "slug": "loss-aware-density-control-3dgs",
+  "venue": "arXiv preprint（Sungkyunkwan University，cs.CV，2026-11-01）",
+  "tags": [
+   "3D Gaussian Splatting",
+   "自适应密度控制",
+   "损失感知",
+   "二阶优化",
+   "渲染效率"
+  ],
+  "conclusion": "把 3DGS 自适应密度控制重构为逐操作的局部损失削减决策：归一化联合 position-scale 分裂（6×6 分裂矩阵最小特征对）、surrogate 引导克隆（η=-g/h）与选择性 opacity decay。Mip-NeRF360 PSNR 27.72（3DGS 27.35、SteepGS 27.05）且仅 1.9M Gaussian（3DGS 3.4M）；Tanks&Temples 24.20（23.39）/1.0M（1.8M）；Deep Blending 29.79（29.52）/1.3M（3.0M），三数据集 PSNR 全面第一。",
+  "problem": "标准 ADC 依赖 view-space 梯度阈值、尺度阈值与全局 opacity reset 等启发式规则，不评估 split/clone/opacity 操作对训练损失的影响，导致已充分区域产生冗余 primitive、欠重建结构被遗漏、全局透明度重置扰动训练。",
+  "method": "训练中在光栅器内累积逐 Gaussian Taylor 代理统计。分裂：S_φ=E[∂L/∂α·∇²_φ α]，φ=[p; log s] 为 6 维，经 J=[L 0; 0 I/√2] 归一化到联合坐标后取最小特征对，λ_min<0 且位姿/尺度近静止才分裂，子代沿 v_min 继承扰动。克隆：用图像空间效应 Δ_dup 的二次代理得 η_dup=-g_dup/h_dup，仅在 0<η≤1e-2 小扰动区间复制子代。opacity decay：η_dec=g_dec/h_dec，只降低预测有害的 primitive 的透明度，替代全局 reset。",
+  "experiments": "Mip-NeRF360 PSNR 27.72/SSIM 0.818/LPIPS 0.219/1.9M；Tanks&Temples 24.20/0.853/0.174/1.0M；Deep Blending 29.79/0.906/0.245/1.3M，PSNR 均第一且 Gaussian 数少于 3DGS。较最相关基线 SteepGS 全面更优（27.05→27.72，2.1M→1.9M）。消融（Mip-NeRF360）：SteepGS 27.05 → +joint split 27.10 → +cloning 27.37（1.6M）→ +opacity decay 27.72/0.818/0.219。代价：训练 47.5 min（3DGS 32.5）、峰值显存 11.32 GB（9.91）、FPS 232（157）。单卡 NVIDIA A6000，5 次重复取均值±标准差。",
+  "innovation": [
+   "loss-aware 视角首次统一覆盖 split、clone、opacity 三类 ADC 操作",
+   "从 position-only 分裂扩展到归一化联合 position-scale 分裂空间，子代同时适应位置与尺度",
+   "克隆与 opacity decay 的逐 Gaussian 二次代理，附小扰动区间与强度阈值约束",
+   "选择性 soft opacity decay 替代全局 reset，训练轨迹更稳定"
+  ],
+  "limits": [
+   "自述：曲率估计是对完整训练目标的近似，偶发次优 densify 决策",
+   "自述：代理逐点建模，未显式建模 Gaussian 间交叉影响",
+   "自述：代理统计增加训练时间与峰值显存（推理无需）",
+   "自述：重复高频纹理的细节保持仍困难，限制感知保真度"
+  ],
+  "relation": "上游为 3DGS ADC 与 SteepGS（position-only loss-aware splitting，最直接基线），以及 AbsGS、PixelGS、DC4GS、GDAGS、ResGS 等 densification 改进。本文是 SteepGS 的统一化扩展，在质量-紧凑度权衡上同时优于启发式与 loss-aware 基线，并附 matched-budget 对比。",
+  "repro": "原文未提及代码开源（正文与附录未给链接）；用官方实现同环境同协议复现全部基线；每实验重复 5 次报均值±标准差；单卡 NVIDIA A6000。",
+  "action": "追求存储与渲染预算的 3DGS 工程可直接替换 ADC 模块，以约 45% 训练时间与 1.4 GB 显存换更少 Gaussian 与更高 FPS；移植时代理统计需在光栅器内累积，且对薄结构（自行车把手、塔尖）收益明显。"
+ },
+ {
+  "id": "2611.02051",
+  "slug": "unigs-slam",
+  "venue": "arXiv preprint（Shanghai Jiao Tong University、The Hong Kong University of Science and Technology (Guangzhou)、XGRIDS，cs.CV，2026-11-01）",
+  "tags": [
+   "单目 SLAM",
+   "3D Gaussian Splatting",
+   "开放词汇语义",
+   "体素融合",
+   "机器人"
+  ],
+  "conclusion": "UniGS-SLAM 以 RGB-only 单目输入实现语义-几何解耦：Gaussian 管几何、独立稀疏 voxel 管开放词汇语义（带观测溯源、几何更新后可修订），语义再回流指导 floater 过滤与表面精化。Replica ATE 0.247/PSNR 38.65/LPIPS 0.026；ScanNet PSNR 28.65（超最强 RGB-only 基线 4.00 dB）；KITTI-360 ATE 1.366（-9.8%）/PSNR 25.39（+1.66 dB）；开集语义 mIoU 较 RADIO-ViPE 在 Replica +11 pp、ScanNet +12 pp；重建速度较最快语义 SLAM 基线 SNI-SLAM 快 2.37×（20.40 min vs 48.32 min）。",
+  "problem": "语义 Gaussian SLAM 把语义绑在持续优化、分裂、剪枝的 Gaussian 上，空间支持不稳定、融合难维护且引入额外优化与渲染开销；混合 Gaussian-voxel 方法多依赖 RGB-D 与已知位姿，且几何更新后不修订历史语义证据，旧位姿下融合的语义会残留不一致。",
+  "method": "基础几何用 Depth Anything 3 先验：几何上下文选择与锚点对齐保证跨窗口一致，置信度感知深度融合 α=C̄·exp(-|log D_F-log D_S|/τ_e)，长时程 Sim(3) 位姿提议引导全局视觉 BA。语义侧：region-language frontend 提取区域掩膜、语言嵌入与置信度，以观测级贡献 Δz_ov=w_ov·e_o 融合进独立稀疏 voxel 并保留原始观测；几何更新时先撤回旧贡献、按新位姿/深度重投影再插入。语义回流：语义支持弱的 Gaussian 经多视角反证（free-space 违背或光度证据）后做 verified floater 过滤；按空间邻近 + 语言相似 + 实体兼容选邻域，以加权 PCA 估局部平面，施加 point-to-plane 与法向厚度约束。",
+  "experiments": "Replica 8 场景、ScanNet 6 场景、KITTI-360 4 段。Replica ATE 0.247/PSNR 38.65/SSIM 0.975/LPIPS 0.026（RGB-only 最佳 ATE 与 LPIPS）；ScanNet PSNR 28.65、ATE 7.15；KITTI-360 四指标全面领先（ATE 1.366 m）。几何：Replica Acc 1.48/L1 1.170/F-score 89.84（较 HI-SLAM2 降 26.4%/23.4%），ScanNet Acc 9.18/F-score 52.86。闭集语义 mIoU 95.92（Hier-SLAM++ 90.35；距 RGB-D GS3LAM 96.63 仅 0.71 pp）；开集 Replica mIoU 0.38/fIoU 0.69、ScanNet 0.50/0.56，均超 FreeOcc 与 RADIO-ViPE。消融：历史修订使 mAcc/mIoU 55.85/45.43→60.80/49.86；几何增强逐步将 ATE 2.010→0.207 cm。单卡 NVIDIA RTX A6000。",
+  "innovation": [
+   "语义-几何表示解耦但优化联动：voxel 语义带观测级溯源，支持几何更新后修订",
+   "retract-and-reproject 修订机制，复用缓存掩膜与嵌入、无需语义重编码",
+   "基础先验三件套：跨窗口上下文/锚点对齐、置信度感知深度融合、长时程位姿引导",
+   "语义回流指导 floater 过滤与语义兼容表面精化，且不引入额外语义损失项"
+  ],
+  "limits": [
+   "依赖 Depth Anything 3 与 region-language frontend 的先验质量，失败模式随之传播",
+   "评测限于室内外静态场景与已选段，未系统测试高动态场景",
+   "附录自述的完整局限未在正文展开，长时程（小时级）运行未评估",
+   "闭集语义仍略低于最强 RGB-D 方法（差距 0.71-0.84 pp）"
+  ],
+  "relation": "上游为 Gaussian-SLAM（Matsuki 2024）、Splat-SLAM、DROID-Splat、HI-SLAM2、MASt3R-SLAM、ARTDECO、S3PO-GS；语义 SLAM 谱系含 SGS-SLAM、SemGauss-SLAM、GS3LAM、OpenGS-SLAM、Open-set SLAM、OmniMap/OpenGS-Fusion、RADIO-ViPE。本文是首个 RGB-only 且支持历史语义修订的单目 Gaussian 语义 SLAM。",
+  "repro": "项目页面 3dagentworld.github.io/UniGS-SLAM/；正文未明确代码开源承诺。评测 Replica/ScanNet/KITTI-360 公开数据；单卡 NVIDIA RTX A6000；几何先验为 Depth Anything 3。",
+  "action": "机器人语言导航与物体搜索落地宜采用几何-语义解耦 + 观测溯源架构以兼容后端修正；语义修订可复用缓存掩膜/嵌入避免重编码，是在线语义建图提速关键。"
+ },
+ {
+  "id": "2611.02363",
+  "slug": "gear-outfit-retrieval",
+  "venue": "arXiv preprint（University of Science, VNU-HCM、Vietnam National University，cs.CV，2026-11-02，CC BY-NC-SA 4.0）",
+  "tags": [
+   "场景条件检索",
+   "时尚检索",
+   "图像编辑扩散",
+   "VR",
+   "用户研究"
+  ],
+  "conclusion": "GEAR 用生成式编辑构造中间视觉查询做场景条件穿搭检索：VLM（Qwen3-VL-4B-Instruct）描述适配服装 → FLUX.2-klein-9B 编辑标准参考角色 → 裁剪服装区域 → PE-Core-L14-336 嵌入 + FAISS 检索。自动化瑞士制评审（Gemma 4 26B A4B 裁判）基准上 GEAR 取得最高 mean Elo@5 1012.75 与 top-10 overlap 0.180，pairwise agreement 0.539 次于 VLM 基线 0.548；10 人用户研究（20 场景）中 GEAR 视觉吸引力与场景适配选择率均最高（34.5%），但 Holm 校正后无显著差异。",
+  "problem": "虚拟环境中选择穿搭需与场景和谐，但 3D 环境第一视角截图与商品目录服装资产间存在跨域视觉差距；直接预测场景-穿搭兼容性困难，直接生成 3D 服装又带来生成与绑定难题。",
+  "method": "VLM 从场景图生成不超过 50 词穿搭描述；指令引导扩散模型 FLUX.2-klein-9B（1024×1024、30 步、guidance 7.0）在默认男性参考角色上换装；固定裁剪（宽 50%、高下部 65%）得查询图，与候选共用 PE-Core-L14-336 编码、L2 归一化内积排序、FAISS flat 索引。检索输出仍为既有资产；Unity 6000.2.1f1 + Meta Quest 2 + Meta XR SDK v78 原型，资产为 1,624 张标准化 2D 渲染图与 105 个 .glb 3D 模型（Ready Player Me）。",
+  "experiments": "基准 10 场景 × 100 候选，3,500 次比较（双向 7,000 次呈现，Elo 初值 1000、K=32）。指标（pairwise agreement / mean Elo@5 / top-10 overlap）：GEAR 0.539/1012.75/0.180；VLM 0.548/1012.59/0.170；CLIP 0.506/998.80/0.140；Aesthetic 0.480/995.60/0.080。用户研究 10 人（20-22 岁）、20 场景、每标准 200 次选择：GEAR 34.5% 双第一；对 VLM +10.0 pp（视觉）/ +8.0 pp（适配），CI 含 0；对 CLIP 视觉 +21.5 pp（p=0.029，Holm p=0.088 不显著）。",
+  "innovation": [
+   "将 generation-guided retrieval 用于场景条件穿搭：以生成图像作中间查询而非直接预测兼容性",
+   "检索输出仍为存量资产，避免生成与绑定 3D 服装，保留资产保真度",
+   "2D 检索与 Unity 3D 呈现解耦的原型架构（1,624 张 2D 索引 + 105 个 3D 模型）",
+   "自动化瑞士制 Elo 评审与真人用户研究双轨评估场景适配"
+  ],
+  "limits": [
+   "自述：比较的是完整管线（查询构造/编码器/重排各异），未分离图像生成的贡献",
+   "自述：缺同描述、同编码器的 matched text-only 基线；未评估参考角色外观、裁剪与生成随机性敏感性",
+   "自述：基准仅 10 场景/100 候选；Elo 对配对与更新顺序敏感性未验证；镜像不一致判平混淆不确定与无偏好",
+   "自述：未与 SAFRS、GLOSS 直接比较；无 VR 内交互评测"
+  ],
+  "relation": "上游为 Fashion IQ 反馈检索、SAFRS/GLOSS 场景-穿搭兼容建模、GeCo 与 Imagine-and-Seek 的生成引导检索、InstructPix2Pix/IDM-VTON 指令编辑与试穿。GEAR 把生成引导检索迁入 VR 场景条件设定，差异在于输出限定为既有资产并通过 3D 原型落地。",
+  "repro": "原文未提及代码或数据开源；资产来自 Ready Player Me（1,624 张 2D + 105 个 .glb）；基准为自建 10 场景/100 候选子集；运行环境 Unity 6000.2.1f1、Meta Quest 2。",
+  "action": "做 VR 电商/虚拟形象推荐可复用生成中间查询 + 存量资产检索路线以规避 3D 服装生成；评估务必补 matched text-only 基线与更大场景集，当前结论的统计稳健性不足。"
+ },
+ {
+  "id": "2611.02447",
+  "slug": "drumr-mr-air-drumming",
+  "venue": "arXiv preprint（University of Minnesota, Twin Cities，cs.HC，2026-11-02）",
+  "tags": [
+   "混合现实",
+   "音乐教育",
+   "MIDI",
+   "Quest 3",
+   "定量反馈"
+  ],
+  "conclusion": "DruMR 是面向学鼓的 MR 系统：AeroDrum（反光标记 + 高速相机）捕获鼓棒 3D 位置与速度，MIDI 经 Loop MIDI→UDP socket 实时推送到 Meta Quest 3（Unity 应用），打击时虚拟鼓亮红，会话后给出 note accuracy、tempo accuracy（±150 ms 容差）等定量反馈。本文为系统设计与研究计划论文：物理鼓 vs DruMR 的对照用户研究尚在计划阶段，暂无任何实验数据。",
+  "problem": "学鼓受乐器成本、噪音与场地限制；现有 VR 鼓应用（如 Paradiddle）以谱面游戏化提示为主，缺乏教学反馈，用户难以自知进步；需要把定量指标与视觉反馈结合以促成 flow state。",
+  "method": "硬件为 Meta Quest 3 + AeroDrum（鼓棒反光尖、高速相机如 PlayStation Eye 加红外照明，需暗光少反射环境）。软件链路：AeroDrum 输出 MIDI，经 Mido 库与 UDP socket 服务器把每次击打的 note/velocity/timestamp 发送到头显；33 hits/s 队列防双触发。Unity 端支持鼓组在 3D 空间重定位、倒计时开始、击中鼓面变红、会话后指标面板；指标与预定义 MIDI 文件比对计算音符与节奏准确率。",
+  "experiments": "原文未述定量实验。计划中的用户研究：两组交叉设计（一组先练物理鼓、一组先用 DruMR），各 10 分钟熟悉与专业鼓手培训后测试 10 分钟，再经培训演示 5 分钟由专业鼓手盲评；辅以 NASA TLX、系统可用性量表（SUS）、Likert 量表、半结构化访谈与前后测 MIDI 量化比较。",
+  "innovation": [
+   "专用光学跟踪硬件（AeroDrum）与商用 VR 头显结合的混合 MR 鼓系统",
+   "实时提取 MIDI 音符/力度/时间戳并转成定量反馈指标（±150 ms 容差）",
+   "规划中基于指标的 LLM 个性化反馈、响应式虚拟观众与击打热图，以支持 flow state"
+  ],
+  "limits": [
+   "论文为项目/系统报告，用户研究尚未开展，无任何定量结果可引",
+   "AeroDrum 要求暗光、少反射物的使用环境，普适性受限",
+   "依赖预置曲库与固定鼓组映射，自定义内容流程未打通",
+   "LLM 反馈、弱点定位、热图等核心教学功能均为 future work"
+  ],
+  "relation": "上游为 Paradiddle（VR/MR 鼓，谱面式提示）、Mimi（滚动钢琴卷 + factor oracle 的即兴反馈系统）、音乐教育反馈策略研究（McPherson 等）与 flow state 理论。DruMR 的差异在以硬件跟踪 + 定量指标替代游戏化谱面提示，但尚未提供对照证据。",
+  "repro": "原文未提及开源；已知硬件为 Meta Quest 3 与 AeroDrum，软件为 Unity + Mido + UDP 方案；无公开数据集或指标结果。",
+  "action": "做 MR 音乐教育者可借鉴其 MIDI 时间戳 + 容差窗口的指标设计与低延迟 UDP 链路；但目前证据仅够作工程参考，落地前需自行补齐对照实验与统计检验。"
+ },
+ {
+  "id": "2611.02490",
+  "slug": "context-ai-ar-decisions",
+  "venue": "arXiv preprint（University of Minnesota, Twin Cities，cs.HC，2026-11-02，CC BY-NC-ND 4.0）",
+  "tags": [
+   "增强现实",
+   "AI 辅助决策",
+   "适当依赖",
+   "部分可观察",
+   "用户实验"
+  ],
+  "conclusion": "AR 研究（N=32，Meta Quest 3，物理桌面 + Unity 渲染钥匙）发现：在无法直接核验的 focal trials 上，combined context（25% 目标先验 + 可见半场无钥匙）使 AI 辅助准确率从基线 73.7% 升至 83.1%（+9.5 pp，p_Holm<.001）；但探索性分解显示 +3.9 pp 来自目标构成、+4.1 pp 来自留存 AI 建议的准确率变化，响应变化仅 +1.4 pp（不显著）。更强先验使跟随正确 Present 建议从 85.2% 降至 70.4%（-14.7 pp），无钥匙半场使决策时间 +40.3%（有 AI）/ +53.3%（无 AI）；未检测到 agreement selectivity 提升。",
+  "problem": "部分可观察物理环境中，独立于 AI 的上下文（目标先验、可见半场）会改变隐藏状态的可能性但无法验证 AI 的空间性声明；已有研究未区分观察到的准确率变化、响应策略变化与对正确/错误建议的选择性，也难以判断准确率增益是行为改善还是被评测案例构成变化驱动。",
+  "method": "within-subjects 2×2×4 设计：prevalence 25%/50% × visibility 0%/50% × AI（无/verbal/arrow/x-ray），AI 每 40 trial 块 32 正确 8 错误（80% 准确率，受试者不知数值）。focal 分析剔除可见目标与指向可见行的可核验建议，保留目标状态与 AI 指示位置均未消解的 trial。用 baseline-response 估计加三分解（目标构成、留存建议准确率、响应变化）；决策时间用对数时间 GEE 检验 context×AI 交互；Holm 校正 27 项主检验与 42 项后续检验族。",
+  "experiments": "N=32（16 男 16 女，27 人 18-28 岁），16 blocks × 40 trials，计划 20,480 trials、记录 20,479、作答 20,456；focal 分析含 13,418 个 AI 与 4,637 个无 AI 已答 trial。基线 AI 准确率 73.7%；stronger prior +3.1 pp（ns）、target-free half +3.3 pp（ns）、combined +9.5 pp（p<.001）。无 AI：49.9%→66.3%（+16.4 pp）/57.8%（+7.9）/78.4%（+28.5）均显著。决策时间：有 AI 1.38→1.94 s（+40.3%），无 AI 1.08→1.66 s（+53.3%），交互不显著。定性：381 份区块问卷 + 32 人半结构化访谈。",
+  "innovation": [
+   "在 AR 中把可验证性操作化为 focal unresolved trials，系统测量上下文对 fallible AI 决策的影响",
+   "baseline-response 分解把观察到的准确率增益拆成案例构成与响应变化，避免把构成效应误读为行为改善",
+   "区分一般响应偏移与 agreement selectivity 的度量体系",
+   "提出三类设计启示：标注空间声明当前可否核验、引导针对性检查、审计评测案例构成"
+  ],
+  "limits": [
+   "自述：32 名多为年轻成人、单一二值搜索任务、模拟 AI（80%），向真实物体搜索迁移待验",
+   "自述：prevalence 显示而 AI 可靠性需学习；基准假设编程可靠性与等错误成本、不建模主观信念与 trial 历史",
+   "自述：focal 剔除改变被试分布，AI 与无 AI 子集不同；分解为描述性而非因果；pooling 三种格式可能掩盖格式差异",
+   "自述：事后二值判断无法区分独立同意与建议诱导转换；非显著不等于等价"
+  ],
+  "relation": "上游为适当依赖研究（Parasuraman & Riley、Buçinca 等认知强制）、Fok & Weld 的 verifiability 区分、视觉搜索 prevalence 效应（Wolfe 2007）与 Manavalan 等的 visibility×prevalence 非 AI 研究、Hemmer 的人机互补、Liu 的 AR x-ray 依赖研究。本文首次把 prevalence/visibility 操控与 fallible AI 建议放进同一 AR 实验，并引入准确率构成分解。",
+  "repro": "原文未提及代码/数据开源；设备为 Meta Quest 3 + Unity 客户端 + 服务器控制条件；AI 为编程模拟（80% 准确率）；流程、度量与统计细节报告完整。",
+  "action": "评测 situated AI 必须同时报告保留 trial 数、prevalence 与 AI-only 准确率，并对照可行策略（跟随 AI/恒答 Absent）在同一案例集的表现；界面应显式提示该声明当前可否核验，并引导用户获取能消解隐藏状态的证据。"
+ }
+]

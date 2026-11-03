@@ -1,0 +1,2176 @@
+{
+ "main": [
+  {
+   "id": "2611.01534",
+   "title": "AbacusGS: Gaussian Splatting without Per-Splat Sorting",
+   "title_zh": "AbacusGS：免逐 splat 排序的高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Memphis / National University of Singapore，cs.CV，2026-11-01，arXiv:2611.01534v1）",
+   "announce": "cross",
+   "tags": [
+    "3D Gaussian Splatting",
+    "排序",
+    "渲染优化",
+    "压缩格式",
+    "Web 渲染"
+   ],
+   "conclusion": "AbacusGS 把 3DGS 混合顺序存进场景布局（八叉树盒 ≤128 splat，写时沿训练相机导出轴排序，渲染时只排可见盒+每盒一次点积决定正/反读）：13 个标准场景平均仅损失 0.13 dB PSNR（较等步数微调的 3DGS 对照；order-aware fine-tuning 把两级顺序损失从 1.27 dB 降到 0.13 dB）；OpenGL CPU 排序场景帧时间 26.8→6.0 ms（4.5×，排序 24.1→4.6 ms）；紧凑格式 17 字节/splat（文件 19.3 vs 248.0 字节，GPU 内存 17.3 vs 236.5，加载 69 ms vs 293 ms）；CUDA tile renderer 同序更快（0.97 vs 1.64 ms @1×）。",
+   "problem": "3DGS 每帧按深度排序全部 splat；Web/移动查看器在 CPU 排序（Visionary 报告 600 万 splat 173 ms；本文 OpenGL 查看器 26.8 ms 帧中排序占 24.1 ms）并上传逐 splat 索引缓冲；既有的少排序/无排序/组排序方案或改变 over 算子（需重训）、或仍需帧内排序、或需专用硬件；需要把顺序存进布局、保持 over 算子、可短微调转换既有模型的两级顺序。",
+   "method": "48 位 Morton 码自适应八叉树分盒（K=128，平均 31 splat/盒，CSR 式连续区间）；写时按轴 a_b（训练相机到盒质心向量外积矩阵主特征向量）升序存储，渲染时 s_b=sign((μ̄_b-o)·a_b) 决定正反读；盒间按质心深度排序（较八叉树 BSP 顺序更接近训练时逐 splat 顺序）；order-aware fine-tuning 用 κ_i=2¹²r(b_i)+ℓ_i 替换深度键（禁 densification，float 3k 步/compact 10k 步）；硬件光栅化用 glMultiDrawElementsIndirect 每可见盒一条 20 字节间接命令、无逐 splat 索引缓冲；紧凑格式：位置相对八叉树 cell 10 bit/轴、8 bit 不透明度/DC 色/log-scale、16 bit 形状码本+16 bit SH 1-3 色码本（各 65536 项）。",
+   "experiments": "13 场景（Mip-NeRF 360/Tanks&Temples/Deep Blending），基模型 1.07-4.88 M splats；AbacusGS +3k 步 PSNR 27.29/23.56/29.56（对照 +3k 27.43/23.71/29.64），平均 -0.13 dB（compact +10k -0.22/-0.17/+0.00）；StochasticSplats 16 spp 差更多（M360 -1.25 dB）。时序：CPU 排序 3DGS 排序 24.1 ms vs AbacusGS multi-draw 4.6 ms；GPU 排序 1.3→1.1 ms；4K 下 13 场景中 4 个略慢；浏览器模拟（CPU 4× 节流）3DGS 26-51 FPS vs AbacusGS 60 FPS；相机偏离训练视角 30% 后两级顺序 vs 逐 splat 顺序 PSNR 中位 37.1-38.0 dB、最大降幅为后移 5.0 dB。",
+   "innovation": [
+    "把混合顺序作为数据存入场景布局（算盘隐喻）并保持 over 算子不变",
+    "可逆存储顺序+逐盒点积选择方向",
+    "order-aware fine-tuning 使既有模型短微调即可转换（等步数对照设计严谨）",
+    "同序驱动紧凑格式与 CUDA 渲染器",
+    "定量证明质心深度盒顺序优于 BSP、K=128 优于 64/256"
+   ],
+   "limits": [
+    "两级顺序仍近似（盒间深度重叠+轴仅部分相机平行）",
+    "每模型都需微调，盒顺序仍每帧排序可见盒",
+    "大于盒的 splat 无特殊处理；桌面 GPU 快排序下 CUDA 增益有限",
+    "OpenGL 渲染器不解码紧凑格式；浏览器结果为节流桌面 CPU+桌面 GPU，未测真机"
+   ],
+   "relation": "排序优化谱系：OneSweep/FlashGS/HiGS/StopThePop/Neo/Lumina/WebSplatter/CoherentRaster；无排序合成：WSR/Mobile-GS/Moment-based OIT/StochasticSplats/Gaussian Stippling；组排序：Duplex-GS（cell 内加权和）、StreamingGS（voxel 内逐帧排序）、Voxlines（最接近设计：存轴序+反向）；压缩：Niedermayr 码本、LightGaussian、HAC、PlayCanvas 16 字节；本文以「存储布局即顺序」统一三条路线。",
+   "repro": "代码称将发布（The code will be released）；实现细节充分（gsplat 可微光栅器、OpenGL 基于 GaussianSplattingViewer、单卡 RTX 6000 Ada 计时、基模型为官方 3DGS 30K 步）；LLM（Claude）广泛用于代码/实验/文献/文本。",
+   "action": "研究者可把两级顺序+order-aware fine-tuning 作为 Web/移动 3DGS 查看器默认路径，并注意报告等步数对照；工程落地者用 multi-draw+17 字节格式做浏览器部署，CPU 排序瓶颈场景收益最大（4.5×），GPU 排序场景需按平台权衡。",
+   "value": 3.93,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.00375",
+   "title": "MoRE-GS: Motion-Regime Experts for Future Gaussian Splatting",
+   "title_zh": "MoRE-GS：面向未来高斯泼溅的运动机制专家路由",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Texas A&M University，cs.CV，2026-11-30，arXiv:2611.00375v1）",
+   "announce": "new",
+   "tags": [
+    "3D Gaussian Splatting",
+    "动态场景预测",
+    "专家混合",
+    "因果预测",
+    "新视角合成"
+   ],
+   "conclusion": "MoRE-GS 在 D-NeRF 8 场景 80/20 前向预测上取得 27.47 dB PSNR、0.9480 SSIM、0.0446 LPIPS，较 GaussianPrediction +2.13 dB、MoGaF +1.60 dB、ODE-GS +0.82 dB，24 项逐场景指标中 16 项第一；HyperNeRF 真实采集 90/10 协议下较 ODE-GS +0.389 dB PSNR、LPIPS -0.0496；后规范化训练时间从 10444 s 降至 1135 s（9.20× 加速），全管线吞吐 39.00→84.83 FPS（2.18×），峰值显存 -11.5%。",
+   "problem": "未来动态新视角合成需在同一场景中同时外推静止区域、协同运动、局部交互与铰接轨迹等异构运动模式；单一预测器族无法同时适配，且最佳预测器随预测视距（horizon）变化。既有前馈方法多为观测时刻插值，缺少对保留未来后缀的因果外推与可证明的防泄漏协议。",
+   "method": "冻结仅用观测前缀重建的 GaussianPrediction 动态 3DGS（控制关键点平移+旋转，L=10 观测位姿预测 H 步）；四个互补专家：persistence（无参数保守假设）、coefficient Transformer（固定正交基 B 的系数空间预测，BᵀB=I 无损重参数化，优于 DCT-II）、GCN（关键点关系传播，自回归 rollout）、structured Transformer（8 个硬分组+Kabsch 刚/非刚性约束，PCA rank 6 保留 99.87% 位移方差）。16 个 soft k-means 组×4 个 horizon bin 的 256 参数路由表+persistence gate；用冻结渲染器的图像空间损失（前景/动态变化掩码）校准路由；observed-only 75/25 fit-calibrate-refit 协议确保未来信息零泄漏。",
+   "experiments": "D-NeRF 8 场景 800×800，30K 迭代重建；均值 PSNR/SSIM/LPIPS：GaussianPrediction 25.34/0.936/0.053、MoGaF 25.87/0.936/0.049、ODE-GS 26.64/0.942/0.057、MoRE-GS 27.47/0.948/0.045；最远视距 quartile 仍较 persistence +1.728 dB。HyperNeRF：Chicken 18.49→19.52 dB。消融：较最强单专家 +0.96 dB、observed-only 选择 +0.86 dB、均匀混合 +0.81 dB；去 persistence -0.62 dB；shuffled groups -0.55 dB；G=32 另 +0.20 dB。",
+   "innovation": [
+    "首个面向冻结高斯场景的异构运动专家+组-视距路由框架",
+    "渲染感知路由校准（图像空间监督而非关键点空间）",
+    "严格的 observed-only 时间划分协议杜绝未来信息泄漏",
+    "persistence gate 显式弃权机制与失败案例（Hell Warrior）透明报告"
+   ],
+   "limits": [
+    "场景特定路由校准，跨场景泛化未解决",
+    "只预测平移旋转、冻结外观，无法建模新可见内容与外观变化（HyperNeRF SSIM 反被 ODE-GS 超出 0.0121）",
+    "仅在 3DGS 变体与两类数据上验证",
+    "专家库增加计算开销（相对 GaussianPrediction）"
+   ],
+   "relation": "建立在 3DGS、D-NeRF、HyperNeRF 之上并沿用 GaussianPrediction 的高斯表示与关键点接口；直接对标 NVFi（速度场）、ODE-GS（神经 ODE）、MoGaF（运动分组）、MoE-GS（观测时刻重建的专家混合）；本文把这些线索统一为因果外推场景下的组-视距路由。",
+   "repro": "原文未提及代码开源（有项目页 advanced-vision-and-learning-lab.github.io/MoRE-GS-website/）；硬件单卡 RTX 4090；路由器 200 次 AdamW（lr 0.05），专家训练 2001 更新（lr 1e-3→1e-5）。",
+   "action": "研究者可把路由表与防泄漏协议迁移到其他前馈式场景预测任务；工程上 9.2× 训练加速与 84.83 FPS 适合实时预测场景，但外观冻结限制其用于带新视野内容的应用。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01543",
+   "title": "GSExplorer: Interactive World Generation with a Persistent 3D Gaussian World State",
+   "title_zh": "GSExplorer：以持久化 3D 高斯世界状态进行交互式世界生成",
+   "track": "世界模型与仿真",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（The Hong Kong University of Science and Technology (Guangzhou)、Horizon Robotics、The University of Hong Kong，cs.CV，2026-11-01）",
+   "announce": "new",
+   "tags": [
+    "交互式世界生成",
+    "3D Gaussian Splatting",
+    "视频扩散模型",
+    "SLAM",
+    "长程一致性"
+   ],
+   "conclusion": "GSExplorer 围绕持久化 3D Gaussian 世界状态构建生成-重建闭环：每步用当前 3DGS 渲染多模态条件驱动视频生成，生成视频再经 SLAM 后端选择性回灌。在 WorldScore 单步外推取得最佳平均分 82.85（超出最强基线 6.24 分），Camera Control 99.07；三步外推平均分 71.56（+7.48）。在 R2M-Bench 50 个 leave-and-return 用例、481 帧长程回访中 PSNR 19.85、SSIM 0.623、LPIPS 0.369、Match Ratio 0.481 均为最佳（PSNR 较最强基线 +3.99 dB）。",
+   "problem": "交互式世界生成要求局部精确相机控制与长程场景一致性兼得。现有方法的目标视图条件不完整，位姿误配与冲突生成内容会在反复场景更新中累积；同时长历史上下文难以持续维护。核心问题是如何维持一个可靠、可查询、能随探索持续演化的 3D 世界状态。",
+   "method": "框架以 3DGS-SLAM 为后端维护持久世界状态。从当前 3DGS 沿规划轨迹渲染退化 RGB、depth、accumulated opacity 及 hole mask 作为多模态条件，经共享 Wan VAE 与轻量 3D 卷积编码融合，通过 1 个 zero-initialized 输入投影和 5 个残差投影注入 DiT（Wan2.2-TI2V-5B 骨干）；相机几何经独立 Relative Ray Encoding（RRE，取自 UCPE）分支与自注意力并行注入。生成视频回灌 SLAM 后端，inconsistency filtering 按像素一致性分数过滤冲突内容，cross-chunk bundle adjustment 联合优化跨 chunk 相机位姿。训练使用 293K 对退化条件-目标视频对，目标为加权 flow-matching。",
+   "experiments": "WorldScore 单步：avg 82.85（最强基线 UniWorld-View 76.61），Camera Control 99.07、3D Consistency 90.83 均第一；三步：avg 71.56（最强 64.08）。长程回访（R2M-Bench 50 例、481 帧）四项指标全面最佳。消融：去掉 inconsistency filtering，三步 avg 71.56→65.14、回访 PSNR 19.85→17.15；去掉 cross-chunk BA，avg 68.91、PSNR 17.41。训练对 293,943 个（RealEstate10K 231,644、ScanNet 38,037、DL3DV 14,279、ACID 9,983）；训练 30K 迭代、32×NVIDIA H20、全局 batch 32、640×352。",
+   "innovation": [
+    "提出以持久化 3DGS 世界状态为中心的生成-重建闭环，把长时程空间记忆与局部视频生成分离",
+    "inconsistency filtering 与 cross-chunk bundle adjustment 实现选择性、空间连贯的场景更新",
+    "多模态 3DGS 渲染条件与独立 RRE 相机几何分支互补，避免把相机线索与渲染内容混注",
+    "构建复现场景外推退化的 293K 训练对流水线（记录 Gaussian birth frame 保留 context Gaussians）"
+   ],
+   "limits": [
+    "自述：相比纯前馈生成增加运行时，每个生成 chunk 后需相机估计与 3DGS 精化",
+    "自述：面向静态或基本静态环境，未显式建模动态物体",
+    "自述：长程 rollout 中反复生成-重建可能柔化极细纹理与小室内细节",
+    "未与生成式视频大模型（如 Sora 类）做定性或定量对比，基准限于 WorldScore 与 R2M-Bench"
+   ],
+   "relation": "上游为相机可控视频生成（CameraCtrl、Plücker 射线条件化）与显式 3D 记忆世界模型（Voyager、Spatia、WonderWorld、LSM-World）；直接对标基线为 UniWorld-View、NeoVerse、DreamWorld、DreamX-World、Spatia 等。本文位于生成-重建闭环谱系中最新一环，把显式 3DGS 记忆的选择性更新与相机对齐作为核心贡献。",
+   "repro": "项目页面已在摘要中给出；正文未明确承诺代码或数据开源，Reproducibility statement 称提供方法与训练细节。训练数据为公开数据集 RealEstate10K、DL3DV、ACID、ScanNet；训练需 32×NVIDIA H20。",
+   "action": "研究世界模型者可将生成结果的选择性回灌与跨 chunk BA 作为标准组件验证；工程落地需权衡 SLAM 精化带来的额外时延，优先在静态室内场景做长程回访测试。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01627",
+   "title": "EgoMo3R: Joint Egocentric Motion and Scene Reconstruction",
+   "title_zh": "EgoMo3R：第一视角运动与场景的联合重建",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Stanford University、Panasonic R&D Company of America、Panasonic Holdings，cs.CV，2026-11-01）",
+   "announce": "new",
+   "tags": [
+    "第一视角视觉",
+    "人体运动重建",
+    "3D 重建",
+    "运动扩散先验",
+    "交替优化"
+   ],
+   "conclusion": "EgoMo3R 用一阶联合优化从普通单目第一视角视频同时恢复相机轨迹、metric 且重力对齐的 3D 场景几何与 SMPL-X 人体运动。EgoExo4D 上 3D 重建 metric Acc/Comp（mean）0.357/0.187，显著优于 VGGT、CUT3R、ViPE、EgoMono4D；metric ATE 0.226 优于所有基线；运动重建 Head Rot 0.188、MPJPE 0.271 优于所有不依赖 canonical 轨迹的基线；Nymeria 上 Head Rot 0.180、MPJPE 0.319 同为最佳。",
+   "problem": "第一视角运动重建通常假设可获得惯性 SLAM 提供的 metric、重力对齐相机轨迹；单目视频因头部快速旋转与运动模糊导致经典 SLAM 对应稀疏、前馈重建存在域差。且第一视角中人体基本不可见，运动与场景的天然耦合难以显式利用。",
+   "method": "以单目相对深度（MoGe-2）为几何基并优化每帧尺度 S 得 metric 深度；RAFT 前后向光流构成 L_flow（Procrustes 闭式解初始化），CoTracker3 长程对应构成 L_track，L_depth 正则尺度接近初始值，L_scene 用运动隐含地面对齐世界系，L_egocam 对齐相机轨迹与 SMPL-X 头部轨迹，L_motion 为去噪 score matching。运动先验是条件于 SE(3) 不变轨迹 A(C)=C0^{-1}Ci 的条件扩散模型（仅 AMASS 训练）。交替优化两阶段：固定 M 优化 (C,S)，再固定 (C,S) 优化 M（等价于 L_egocam 引导的 DDIM 采样），MAD 过滤外点对应。",
+   "experiments": "EgoExo4D 与 Nymeria 组合测试集（718 + 828 个 8 秒片段）。3D 重建全指标最佳：EgoExo4D metric Acc 0.357/Comp 0.187、scale-invariant 0.309/0.158；相机位姿 EgoExo4D metric ATE 0.226、RPE Trans 0.065，Nymeria RPE Rot 2.142 最佳。运动：EgoExo4D Head Rot 0.188/Head Trans 0.219/MPJPE 0.271，对比 EgoEgo 0.574/0.449/0.441。消融显示直接联合优化导致 motion collapse（MPJPE 0.456），交替优化降至 0.320；第三轮进一步改善。单条 8 秒片段在单卡 NVIDIA L40S 上约 8 分钟。",
+   "innovation": [
+    "首个面向第一视角的运动-场景联合一阶优化框架，同时输出 metric 相机轨迹、pointmaps 与 SMPL-X 运动",
+    "用 SE(3) 不变轨迹条件化 motion diffusion 先验，使先验可在优化早期、轨迹未对齐时稳定介入",
+    "交替优化避免直接联合优化中运动塌缩到次优解",
+    "零样本设置：运动先验仅用 AMASS 训练，直接在 EgoExo4D/Nymeria 评测"
+   ],
+   "limits": [
+    "自述：长程 point tracking 失败（单调纹理区、手持物体附近）会把轨迹优化带入坏局部极小",
+    "自述：极端运动模糊帧的相对深度与尺度先验不可靠，造成位姿抖动",
+    "自述：部分帧无地面检测会削弱 motion 与重建对齐；面向 locomotion，手腕/手部运动建模不足",
+    "自述：动态物体像素占比高时 MAD 过滤可能误删有效对应；推理慢于前馈几何模型"
+   ],
+   "relation": "上游包括经典 SLAM/VIO、前馈重建 VGGT/CUT3R、第一视角运动重建 EgoEgo、UniEgoMotion、EgoAllo、HMD2，以及第三方视角联合重建 Human3R。本文首次把人体-场景联合重建带入第一视角域，并以 GT 轨迹驱动的 EgoAllo/UEM 作为 oracle 上界，显示轨迹误差是运动误差主要来源。",
+   "repro": "项目页面 chaitanya100100.github.io/EgoMo3R/；附录声明代码将发布。评测用公开 EgoExo4D、Nymeria；运动先验训练仅 AMASS；硬件单卡 NVIDIA L40S（先验计算约 32 s）。",
+   "action": "做第一视角感知的研究者可用其输出作为前馈模型的伪标签；工程部署注意 tracking 失败模式，可加动态物体 mask 与显式 loop closure；一轮优化（约一半耗时）已超所有基线，可作为实时档位。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01937",
+   "title": "Spade-SLAM: Sparse Correspondence Anchors for Dense Self-Supervised Visual SLAM",
+   "title_zh": "Spade-SLAM：稀疏对应锚定的稠密自监督视觉 SLAM",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Technical University of Munich、Munich Center for Machine Learning，cs.CV，2026-11-01；已投 IEEE，CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "自监督 SLAM",
+    "3D 重建",
+    "相机跟踪",
+    "稀疏到密集",
+    "自标定"
+   ],
+   "conclusion": "Spade-SLAM 在 DROID-SLAM 骨架上用亮度对齐光度损失 + 稀疏对应锚定（不足 1% 像素）实现自监督密集视觉 SLAM：TartanAir hard ATE RMSE 0.50 m（较 D3FlowSLAM 0.79 提升 37%，且对方需在评测域微调），EuRoC 0.021 m 与 TUM-RGBD 0.041 m 均追平监督版 DROID-SLAM/DroidCalib；7-Scenes 重建 Acc 0.026、Chamfer 0.045 具竞争力；ScanNet 域自适应使 ATE 0.309→0.166 m（-47%）。",
+   "problem": "自监督 SLAM 仅靠光度一致性，在光照变化、非朗伯表面与弱纹理区域病态，与全监督方法存在长期差距；且多数方法依赖预标定内参或 ground-truth 位姿/深度标注。",
+   "method": "沿用 DROID-SLAM 的 RAFT ConvGRU 更新算子与 differentiable Dense Bundle Adjustment；光度项前估计帧间全局仿射 (a_ij, b_ij) 对齐亮度（闭式解、回传时视为常数），与 SSIM 按 α=0.85 组合；对每对图像用 SuperPoint+LightGlue（或 SIFT+NN）提取经极线过滤的对应，以置信度加权 Huber（δ=1）重投影误差直接约束与 DBA 相同的 pose-depth 状态；焦距作为优化变量（f_init=(H+W)/2）实现自标定，支持未标定视频测试时自适应。",
+   "experiments": "TartanAir hard avg 0.50 m（自监督最佳；监督 DROID-SLAM 0.54、DroidCalib 0.34）；EuRoC avg 0.021 m（与 DROID-SLAM/DroidCalib 持平）；TUM-RGBD avg 0.041 m（DroidCalib 0.043）；7-Scenes ATE 0.061/Acc 0.026/Comp 0.065/Chamfer 0.045。较 D3FlowSLAM 在 TartanAir/TUM-RGBD/EuRoC 分别提升 37%/68%/96%。域自适应 ScanNet 0.309→0.166 m（7/8 场景改善）；DL3DV 无标注续训使 TartanAir 0.50→0.37 m。训练 250k 步、batch 4、384×512、4×NVIDIA L40S 一周。",
+   "innovation": [
+    "稀疏到密集互补训练：不足 1% 像素的高置信对应即可稳定自监督优化",
+    "亮度对齐（全局仿射）光度监督，抵御自动曝光与光照变化",
+    "焦距-位姿-深度联合自标定，无需预标定内参",
+    "同一自监督目标支持域自适应与无标注真实数据扩展（DL3DV）"
+   ],
+   "limits": [
+    "自述：白墙等弱纹理长序列与天空、移动 foliage 等少稳定对应区域性能下降",
+    "自述：性能上界受 matcher 精度与空间覆盖限制（GT 对应训练显著更好）",
+    "自述：面向静态场景，大动态物体可能导致失败（MAGSAC 仅过滤小动态物）",
+    "计算仍基于 DROID 式迭代优化，未评估实时性"
+   ],
+   "relation": "上游为 DROID-SLAM、DroidCalib、MASt3R-SLAM、ORB-SLAM2/3、DSO 与自监督谱系 SfMLearner/Monodyn/Dynamo-Depth、D3FlowSLAM、AnyCam。直接对标 D3FlowSLAM（自监督 SOTA）与监督 DROID-SLAM；本文占据稀疏锚定密集自监督的生态位，把单目深度中的 sparse-to-dense 先例引入端到端 SLAM 训练。",
+   "repro": "代码承诺开源：github.com/JulianPSchmitt/Spade-SLAM。训练用合成 TartanAir，评测 TartanAir/EuRoC/TUM-RGBD/7-Scenes/ScanNet/DL3DV；4×NVIDIA L40S 训练一周。",
+   "action": "缺少 GT 的真实场景（内镜、工业巡检）可用其自监督目标做域自适应；稀疏对应质量是瓶颈，升级 matcher 可直接受益；建议后续把混合监督迁移到 VGGT 类前馈模型。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02044",
+   "title": "Unified Loss-Aware Density Control for 3D Gaussian Splatting",
+   "title_zh": "3D 高斯泼溅的统一损失感知密度控制",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Sungkyunkwan University，cs.CV，2026-11-01）",
+   "announce": "new",
+   "tags": [
+    "3D Gaussian Splatting",
+    "自适应密度控制",
+    "损失感知",
+    "二阶优化",
+    "渲染效率"
+   ],
+   "conclusion": "把 3DGS 自适应密度控制重构为逐操作的局部损失削减决策：归一化联合 position-scale 分裂（6×6 分裂矩阵最小特征对）、surrogate 引导克隆（η=-g/h）与选择性 opacity decay。Mip-NeRF360 PSNR 27.72（3DGS 27.35、SteepGS 27.05）且仅 1.9M Gaussian（3DGS 3.4M）；Tanks&Temples 24.20（23.39）/1.0M（1.8M）；Deep Blending 29.79（29.52）/1.3M（3.0M），三数据集 PSNR 全面第一。",
+   "problem": "标准 ADC 依赖 view-space 梯度阈值、尺度阈值与全局 opacity reset 等启发式规则，不评估 split/clone/opacity 操作对训练损失的影响，导致已充分区域产生冗余 primitive、欠重建结构被遗漏、全局透明度重置扰动训练。",
+   "method": "训练中在光栅器内累积逐 Gaussian Taylor 代理统计。分裂：S_φ=E[∂L/∂α·∇²_φ α]，φ=[p; log s] 为 6 维，经 J=[L 0; 0 I/√2] 归一化到联合坐标后取最小特征对，λ_min<0 且位姿/尺度近静止才分裂，子代沿 v_min 继承扰动。克隆：用图像空间效应 Δ_dup 的二次代理得 η_dup=-g_dup/h_dup，仅在 0<η≤1e-2 小扰动区间复制子代。opacity decay：η_dec=g_dec/h_dec，只降低预测有害的 primitive 的透明度，替代全局 reset。",
+   "experiments": "Mip-NeRF360 PSNR 27.72/SSIM 0.818/LPIPS 0.219/1.9M；Tanks&Temples 24.20/0.853/0.174/1.0M；Deep Blending 29.79/0.906/0.245/1.3M，PSNR 均第一且 Gaussian 数少于 3DGS。较最相关基线 SteepGS 全面更优（27.05→27.72，2.1M→1.9M）。消融（Mip-NeRF360）：SteepGS 27.05 → +joint split 27.10 → +cloning 27.37（1.6M）→ +opacity decay 27.72/0.818/0.219。代价：训练 47.5 min（3DGS 32.5）、峰值显存 11.32 GB（9.91）、FPS 232（157）。单卡 NVIDIA A6000，5 次重复取均值±标准差。",
+   "innovation": [
+    "loss-aware 视角首次统一覆盖 split、clone、opacity 三类 ADC 操作",
+    "从 position-only 分裂扩展到归一化联合 position-scale 分裂空间，子代同时适应位置与尺度",
+    "克隆与 opacity decay 的逐 Gaussian 二次代理，附小扰动区间与强度阈值约束",
+    "选择性 soft opacity decay 替代全局 reset，训练轨迹更稳定"
+   ],
+   "limits": [
+    "自述：曲率估计是对完整训练目标的近似，偶发次优 densify 决策",
+    "自述：代理逐点建模，未显式建模 Gaussian 间交叉影响",
+    "自述：代理统计增加训练时间与峰值显存（推理无需）",
+    "自述：重复高频纹理的细节保持仍困难，限制感知保真度"
+   ],
+   "relation": "上游为 3DGS ADC 与 SteepGS（position-only loss-aware splitting，最直接基线），以及 AbsGS、PixelGS、DC4GS、GDAGS、ResGS 等 densification 改进。本文是 SteepGS 的统一化扩展，在质量-紧凑度权衡上同时优于启发式与 loss-aware 基线，并附 matched-budget 对比。",
+   "repro": "原文未提及代码开源（正文与附录未给链接）；用官方实现同环境同协议复现全部基线；每实验重复 5 次报均值±标准差；单卡 NVIDIA A6000。",
+   "action": "追求存储与渲染预算的 3DGS 工程可直接替换 ADC 模块，以约 45% 训练时间与 1.4 GB 显存换更少 Gaussian 与更高 FPS；移植时代理统计需在光栅器内累积，且对薄结构（自行车把手、塔尖）收益明显。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02051",
+   "title": "UniGS-SLAM: Monocular Gaussian SLAM with Enhanced Geometry and Open-Vocabulary Semantics",
+   "title_zh": "UniGS-SLAM：几何与开放词汇语义增强的单目高斯 SLAM",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Shanghai Jiao Tong University、The Hong Kong University of Science and Technology (Guangzhou)、XGRIDS，cs.CV，2026-11-01）",
+   "announce": "new",
+   "tags": [
+    "单目 SLAM",
+    "3D Gaussian Splatting",
+    "开放词汇语义",
+    "体素融合",
+    "机器人"
+   ],
+   "conclusion": "UniGS-SLAM 以 RGB-only 单目输入实现语义-几何解耦：Gaussian 管几何、独立稀疏 voxel 管开放词汇语义（带观测溯源、几何更新后可修订），语义再回流指导 floater 过滤与表面精化。Replica ATE 0.247/PSNR 38.65/LPIPS 0.026；ScanNet PSNR 28.65（超最强 RGB-only 基线 4.00 dB）；KITTI-360 ATE 1.366（-9.8%）/PSNR 25.39（+1.66 dB）；开集语义 mIoU 较 RADIO-ViPE 在 Replica +11 pp、ScanNet +12 pp；重建速度较最快语义 SLAM 基线 SNI-SLAM 快 2.37×（20.40 min vs 48.32 min）。",
+   "problem": "语义 Gaussian SLAM 把语义绑在持续优化、分裂、剪枝的 Gaussian 上，空间支持不稳定、融合难维护且引入额外优化与渲染开销；混合 Gaussian-voxel 方法多依赖 RGB-D 与已知位姿，且几何更新后不修订历史语义证据，旧位姿下融合的语义会残留不一致。",
+   "method": "基础几何用 Depth Anything 3 先验：几何上下文选择与锚点对齐保证跨窗口一致，置信度感知深度融合 α=C̄·exp(-|log D_F-log D_S|/τ_e)，长时程 Sim(3) 位姿提议引导全局视觉 BA。语义侧：region-language frontend 提取区域掩膜、语言嵌入与置信度，以观测级贡献 Δz_ov=w_ov·e_o 融合进独立稀疏 voxel 并保留原始观测；几何更新时先撤回旧贡献、按新位姿/深度重投影再插入。语义回流：语义支持弱的 Gaussian 经多视角反证（free-space 违背或光度证据）后做 verified floater 过滤；按空间邻近 + 语言相似 + 实体兼容选邻域，以加权 PCA 估局部平面，施加 point-to-plane 与法向厚度约束。",
+   "experiments": "Replica 8 场景、ScanNet 6 场景、KITTI-360 4 段。Replica ATE 0.247/PSNR 38.65/SSIM 0.975/LPIPS 0.026（RGB-only 最佳 ATE 与 LPIPS）；ScanNet PSNR 28.65、ATE 7.15；KITTI-360 四指标全面领先（ATE 1.366 m）。几何：Replica Acc 1.48/L1 1.170/F-score 89.84（较 HI-SLAM2 降 26.4%/23.4%），ScanNet Acc 9.18/F-score 52.86。闭集语义 mIoU 95.92（Hier-SLAM++ 90.35；距 RGB-D GS3LAM 96.63 仅 0.71 pp）；开集 Replica mIoU 0.38/fIoU 0.69、ScanNet 0.50/0.56，均超 FreeOcc 与 RADIO-ViPE。消融：历史修订使 mAcc/mIoU 55.85/45.43→60.80/49.86；几何增强逐步将 ATE 2.010→0.207 cm。单卡 NVIDIA RTX A6000。",
+   "innovation": [
+    "语义-几何表示解耦但优化联动：voxel 语义带观测级溯源，支持几何更新后修订",
+    "retract-and-reproject 修订机制，复用缓存掩膜与嵌入、无需语义重编码",
+    "基础先验三件套：跨窗口上下文/锚点对齐、置信度感知深度融合、长时程位姿引导",
+    "语义回流指导 floater 过滤与语义兼容表面精化，且不引入额外语义损失项"
+   ],
+   "limits": [
+    "依赖 Depth Anything 3 与 region-language frontend 的先验质量，失败模式随之传播",
+    "评测限于室内外静态场景与已选段，未系统测试高动态场景",
+    "附录自述的完整局限未在正文展开，长时程（小时级）运行未评估",
+    "闭集语义仍略低于最强 RGB-D 方法（差距 0.71-0.84 pp）"
+   ],
+   "relation": "上游为 Gaussian-SLAM（Matsuki 2024）、Splat-SLAM、DROID-Splat、HI-SLAM2、MASt3R-SLAM、ARTDECO、S3PO-GS；语义 SLAM 谱系含 SGS-SLAM、SemGauss-SLAM、GS3LAM、OpenGS-SLAM、Open-set SLAM、OmniMap/OpenGS-Fusion、RADIO-ViPE。本文是首个 RGB-only 且支持历史语义修订的单目 Gaussian 语义 SLAM。",
+   "repro": "项目页面 3dagentworld.github.io/UniGS-SLAM/；正文未明确代码开源承诺。评测 Replica/ScanNet/KITTI-360 公开数据；单卡 NVIDIA RTX A6000；几何先验为 Depth Anything 3。",
+   "action": "机器人语言导航与物体搜索落地宜采用几何-语义解耦 + 观测溯源架构以兼容后端修正；语义修订可复用缓存掩膜/嵌入避免重编码，是在线语义建图提速关键。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02658",
+   "title": "OctreeSplat: Hierarchical Octree-Guided Feed-Forward Gaussian Splatting",
+   "title_zh": "OctreeSplat：层次八叉树引导的前馈高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（East China University of Science and Technology 与 Shanghai Open University，cs.CV，2026-11-02；License CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "3D Gaussian Splatting",
+    "前馈重建",
+    "八叉树细分",
+    "视觉基础模型",
+    "新视角合成"
+   ],
+   "conclusion": "OctreeSplat 以冻结的 DA3-GIANT VFM backbone（DINOv2 编码器，11.9 亿参数）加 76M 可训练参数（feature DPT 36M、SPUNet 与解码 MLP 40M）、35 GPU-hours（单卡 RTX PRO 6000）完成训练；Replica 10 视图 PSNR 32.10 dB（QuerySplat 30.03、AnySplat 23.25、DA3 23.64），Gaussian 数量 8.32M 约为 Finest 变体 22.83M 的 36%；深度合成 Replica 10 视图 RMSE 5.35 cm、AbsRel 0.48%（QuerySplat 8.88 cm/2.36%）；DTU 位姿经 TTO 后 Trans 1.134 mm、Rot 0.254°；Replica 表面重建 ICP 后 CD 11.895 mm，TTO 后 8.333 mm（AnySplat 40.196、QuerySplat 32.750）。",
+   "problem": "前馈 3DGS 的 pixel-aligned 表示引入重叠基元与 floating artifacts，voxel-aligned 与固定 token 方法又不按局部场景复杂度分配密度；需要在免 per-scene 优化的前提下同时改善几何精度、渲染质量与基元紧凑性。",
+   "method": "VFM backbone 遵循 DA3 架构：DINOv2 提取 patch tokens，拼接 camera/register tokens 经 40 层注意力（前 12 层单视图自注意力、之后交替全局多视图自注意力），DPT 解码深度图；DPT 上采样得像素特征，与深度反投影的 3D 点配对成全局点云特征，按 L=3 级体素（最粗 8 mm）做 depth-confidence 加权聚合，SPUNet（SpConv）预测各层 Gaussian 参数与层间 densification scores；推理从最粗层起按分数排序细分固定比例（默认 2 轮、每轮 30%）构建稀疏八叉树。stochastic-solid volume rendering 把 Gaussian 表示为等价随机实体沿射线积分（vacancy v=sqrt(1−G(t*))，深度用二分定位 T(t)=0.5 的中值深度）。可选 TTO 以 LoRA（r=4、α/r=4、自第 13 层插入）用旋转损失、SmoothL1 平移损失与内参 L1 对齐相机参数。",
+   "experiments": "训练集为 Infinigen+ScanNet+++ARKitScenes+DL3DV 共 6,810,309 图/12,419 场景，100k iterations AdamW（lr 3e-6 余弦退火至 1e-8），分辨率 244×448，每场景随机采 3–18 图。评测覆盖 Replica/TUM/Tanks and Temples 的 PSNR/SSIM/LPIPS/基元数、深度 RMSE/AbsRel/δ1.05/δ1.10、DTU 与 Replica 位姿（Trans/Rot）、DTU/Replica 表面 CD（Umeyama+ICP 对齐）。关键数字：Replica 3 视图 PSNR 34.27（Finest 36.22）、T&T 10 视图 22.28、TUM 10 视图 21.86；位姿 DTU Trans mean 2.007 mm→TTO 1.134 mm、Rot 0.530°→0.254°；推理总时长 2.66 s（DA3 为 2.33 s，+14.2%），开 TTO 全程低于 15 s（前向 287.9 ms、反向 426.0 ms）。消融：换成 vanilla 3DGS 渲染器后 Replica 深度 RMSE 由 5.35 升至 9.58 cm；最粗体素 8 mm 为默认；score 引导与 Grad 引导相当但免多视图渲染。",
+   "innovation": [
+    "首次用预测的 densification scores 引导八叉树细分，使 Gaussian 基元按局部场景复杂度空间自适应分配",
+    "引入 stochastic-solid volume rendering 替代 vanilla 3DGS 渲染器，显著改善深度渲染并支撑表面重建",
+    "冻结 VFM backbone 仅训练 76M 参数、35 GPU-hours 的低成本前馈训练方案",
+    "可选 camera-conditioned TTO（LoRA）在推理期对齐相机参数，DTU 旋转误差从 0.530° 降至 0.254°",
+    "在大多数设置下把基元数量削减约一半以上而保持重建质量"
+   ],
+   "limits": [
+    "论文自述：当前方法主要针对静态场景，不显式建模物体运动与非刚性形变",
+    "八叉树使用预定义层级与固定细分比例，学习自适应细分与合并留作未来工作",
+    "VFM 固有尺度歧义需靠首帧对齐与相机平均距离归一化缓解",
+    "OctreeSplat 相对 Finest 变体存在 quality-compactness 权衡，且对 PGSR 这类强几何约束 backbone 增益有限"
+   ],
+   "relation": "上游为 3DGS（Kerbl 2023）与 VGGT/DUSt3R 系几何基础模型；直接对标 pixelSplat、MVSplat、VolSplat、AnySplat、YoNoSplat、DA3、QuerySplat 等前馈 3DGS 与 token 回归方法；密度分配思路与 F4Splat 前馈预测致密化、SVR 最大多视图采样率相邻。本文处于前馈 3DGS 走向复杂度自适应基元分配的位置，以八叉树加 densification score 区别于像素/体素对齐。",
+   "repro": "原文未提及代码或数据公开方式（正文无 code/data availability 声明）；训练硬件为单张 NVIDIA RTX PRO 6000（35 小时），推理时长在正文报告，训练超参（体素层级、损失权重、采样策略）完整给出。",
+   "action": "需要免优化 3D 重建的 XR 引擎团队，可直接试用 TTO 模式改善位姿；研究前馈 3DGS 者值得复现其 densification score 机制并测试动态场景扩展。",
+   "value": 3.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01162",
+   "title": "SHield: Watermarking 4D Gaussian Splatting via Spherical Harmonic Coefficient Perturbation",
+   "title_zh": "SHield：经球谐系数微扰的 4D 高斯泼溅水印",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 5,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（IIIT Hyderabad / Tufts University，cs.CV，2026-10-31，arXiv:2611.01162v1，CC BY-SA 4.0）",
+   "announce": "cross",
+   "tags": [
+    "数字水印",
+    "4D Gaussian Splatting",
+    "球谐系数",
+    "版权保护",
+    "模型文件"
+   ],
+   "conclusion": "SHield 在 30 个场景（7 D-NeRF、17 HyperNeRF、6 DyNeRF）×5 载荷共 150 个模型上实现近完美恢复（Pearson r≥0.991），平均渲染损失 ≤0.13 dB（三数据集 0.048/0.047/0.127 dB，最差场景 ≤0.314 dB）；held-out 评测 400 次真试验全检出、1600 次错误子集零误报；可抗 INT8 量化（平均 r=0.994，150/150 通过）与 30% opacity 剪枝（r=0.892，150/150）；跨威胁模型对比 Mark4D：32/48/64 位准确率 100%、PSNR 44.16-44.40 dB。",
+   "problem": "4DGS 模型文件易复制，既有水印在渲染域微调神经解码器提取比特，受动态场景时序抖动（FVD collapse）影响且需数千步微调（Mark4D 4000 步仅数十比特）；若威胁模型针对再分发的文件本身，验证可大幅简化——需要原生嵌入全分辨率 RGB 图像、免解码器、时间/视角不变的水印。",
+   "method": "利用 4DGS 规范 SH 系数时间/视角不变性：密钥伪随机选 K 个 Gaussian，把零均值载荷平铺到 SH 槽（位消息白化映射 ±1，coprime stride σ 与 L、C_tot 互质以抗 SH 阶数截断）；T 步 anchored optimization（L=λ_render L_render+λ_wm L_wm）适配可见性并锚定目标；验证：基于规范中心的几何 re-association（ε=0.01 s_nn，静态属性决胜）→(h̃-h_orig)/α₀ 隔离扰动→fold-and-average 闭式恢复→Pearson r≥τ（τ=0.6）；只改 SH，几何与形变网络冻结。",
+   "experiments": "150 模型（载荷 50k-217k 像素）；较 plain tiling 渲染代价降 1.6×/5.6×/3.0×（149/150 改进），DyNeRF WM-PSNR 从 56.2 降到 36.6 dB 但 r≥0.995；wm1 830 测试视图 RMS 残差 ≤1.85 8-bit 级；held-out 80 模型：640 真试验全过（最小 r=0.815）、2320 零试验零误报（错误子集最大 0.498）；re-association 在 30% 低透明度或 20% 随机删除后仍全对（误匹配 0.008%/0.116%）；对抗攻击：SH-only 微调 5000 步（代价 0.39 dB）破验证，几何微调 2000 步（1.00 dB）破 4/5 场景；SH degree-1 截断移除图像载荷（114/150 失败），位载荷经 coprime stride 42/42 全解。",
+   "innovation": [
+    "首个 4DGS 全分辨率图像水印",
+    "免解码器非盲验证（闭式算术）",
+    "中心重关联+coprime stride 对抗重排/剪枝/截断",
+    "anchored optimization 量化渲染-提取权衡",
+    "系统化鲁棒性边界测绘（含自适应攻击成本）"
+   ],
+   "limits": [
+    "只保护文件，渲染视频需渲染域水印互补",
+    "非盲需 0.5-18.1 MB（中位 2.8 MB）密钥并预注册",
+    "要求中心基本不变（float16 后 135/150 失败；几何噪声 0.01 s_nn 仅 19.9% 匹配）",
+    "无中心统计量有载荷相关零下限 η²（0.029-0.368）；未测专用 3DGS 压缩管线；时间稳定性仅用代理"
+   ],
+   "relation": "静态 3DGS 水印谱系：CopyRNeRF/StegaNeRF（NeRF）、GuardSplat/3D-GSW/GaussianMarker（渲染域解码）、CompMarkGS/Robust3DGSW（压缩鲁棒）、GS-Hider/KeySS/Splats in Splats/WhisperSplat（隐写）；4DGS：Mark4D（轨迹对齐偏移+视频解码器）、4D-GSW（曲率门控）、Guard4D、Hide-in-Motion；本文把验证对象从渲染视频移回模型文件。",
+   "repro": "原文未提及代码开源承诺（有可复现性声明：公开数据集 D-NeRF/HyperNeRF/DyNeRF，附录含超参与 per-scene/per-payload/per-seed 细分）；LLM 助手用于写作编辑。",
+   "action": "研究者应把文件级水印与渲染域水印互补部署，并攻关 position-robust 重关联；工程落地者发布 4DGS 资产时采用 τ=0.6+密钥注册流程，同时认知其对自适应微调不鲁棒。",
+   "value": 3.8,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03228",
+   "title": "AnchorComplete: Recovering Complete Scene Meshes from Partial Point Clouds",
+   "title_zh": "AnchorComplete：从部分点云恢复完整场景网格",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 4,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Technical University of Munich、Munich Center for Machine Learning、University of Oxford、Nanyang Technological University，cs.CV，2026-11-02；License CC BY-SA 4.0）",
+   "announce": "new",
+   "tags": [
+    "场景补全",
+    "3D 生成",
+    "TRELLIS",
+    "稀疏视图重建",
+    "网格重建"
+   ],
+   "conclusion": "AnchorComplete 在 TRELLIS.2 上用 partial-point conditioning（冻结 Utonia 骨干加 4 层 Q-Former 生成 m=768 anchor tokens 做全局交叉注意力；可见体素注入结构隐空间做 warm start 加逐步 mask 拼接）与 metric-scale coarse-to-fine generation（固定物理尺寸窗口八叉树、512³ 网格、父窗口 warm start α=0.8、窗口重叠 1/4 保留中心）从部分点云生成完整场景网格。Replica（N=4 视图）CD_all 0.067、F0.1 0.819、F0.05 0.684，SCRREAM CD_all 0.076、F0.1 0.786、F0.05 0.584，均优于 Seen2Scene（0.132/0.777/0.647 与 0.167/0.692/0.525）、NKSR、TRELLIS* 等基线；N=2 最稀疏时优势最大；N=10 时 F0.05 0.829 对 NKSR 0.754（Replica）。",
+   "problem": "前馈重建器（DUSt3R/VGGT 系与 DROID-SLAM/VGGT-SLAM）只恢复可见表面，未观测区域留大洞；物体级补全不适配场景尺度；PaSCo/NOVA3R/Seen2Scene 等或限于视场内、或只输出点云/体素而不输出可用网格；把整场景归一化到单立方体会使网格 cell 尺寸随场景增大而丢失椅腿、隔板等细节。",
+   "method": "双阶段 rectified-flow 微调 TRELLIS.2：Stage 1 在 8 通道 16³ 稀疏结构隐空间生成活跃体素，解码为 64³ 占据并 max-pool 到 32³ 支撑；Stage 2 在支撑上生成 32 通道 O-Voxel 形状隐空间，最终在 512³ 网格提面；denoiser 为 30 块 DiT（1536 通道、12 头、RoPE）。训练数据为 InternScenes 约 16k 场景加 SAGE 约 7k 房间（640×480、85° FOV 多视图 RGB-D，面积自适应多锚点加角点相机采样），AdamW lr 2e-5、weight decay 0.01、10% condition dropout、每 GPU 40k 步（4×L40）；推理每阶段 12 flow 步。局部路径用父窗口占据编码 z_par 与 α=0.8 混合做 warm start，全局路径以 anchor tokens 交叉注意力注入点云证据。",
+   "experiments": "训练 4×NVIDIA L40、推理 RTX PRO 6000 Max-Q（每场景约 3 min，Seen2Scene 约 10.4 min、GenRC 约 6.6 min）。基线三组：前馈密集重建（VGGT-Ω、DA3、CUT3R、PI-3）、图像生成（TRELLIS、TRELLIS*、GenRC、Surflo）、场景补全（SG-NN、NKSR、Seen2Scene，同 Sim(3) 对齐同评测码）。消融：去局部注入 CDvis 0.072/CDall 0.105/F0.1 0.749；去全局 tokens 0.060/0.086/0.787；完整 0.055/0.067/0.819；coarse-to-fine 层级 ℓ=0/1/2 的 F0.02 为 0.485/0.675/0.801。输入鲁棒性：保留 1/4 点与体素尺度内高斯噪声下性能稳定，更严重稀疏/噪声渐进下降。",
+   "innovation": [
+    "提出从部分点云直接生成完整场景网格的新问题设定与评测协议（CDvis/CDall/F-score 分解，accuracy 仅在输入视锥内计算）",
+    "partial-point conditioning 双路设计（全局 anchor tokens 加局部体素注入）把生成锚定到观测几何",
+    "metric-scale coarse-to-fine 八叉树窗口把网格分辨率（米）与场景尺寸解耦",
+    "对稀疏视图与含噪输入鲁棒，N=2 时相对可见表面基线优势最大"
+   ],
+   "limits": [
+    "论文自述：只预测几何不建模外观，无法输出带纹理网格",
+    "性能依赖上游几何质量，漂移、尺度误差或系统深度偏差会传播到生成网格；低光/运动模糊/噪声下围绕缺失观测补全而非恢复它们（附录 A.5 失败案例）",
+    "训练与评测集中于室内场景，室外、无界或差异较大场景分布的泛化未验证",
+    "代码与检查点暂未公开（计划发表后发布）"
+   ],
+   "relation": "上游为 DUSt3R/MASt3R/VGGT/VGGT-Ω/DA3/CUT3R/PI-3 前馈重建与 DROID-SLAM/VGGT-SLAM 在线密集 SLAM；生成先验来自 TRELLIS/TRELLIS.2 基础 3D 生成器与 Hunyuan3D、SAM 3D、ShapeR 等 amodal 方法；场景补全直接对标 PaSCo、SG-NN、NKSR、NOVA3R、Seen2Scene、GenRecon、Surflo（Seen2Scene 为最近基线）。本文是首个以预训练 3D 生成先验加原始场景尺度部分重建为条件、在原始坐标系输出完整网格的工作。",
+   "repro": "项目页 wrchen530.github.io/anchor-complete；正文声明计划发表后公开代码与预训练检查点（暂未放出）；架构、训练数据构建、相机采样器与评测协议在正文与附录完整；训练 4×NVIDIA L40，推理 RTX PRO 6000 Max-Q。",
+   "action": "需要完整场景网格做碰撞检测/物理仿真的机器人仿真团队值得跟进（代码发布后即试）；使用时应评估上游重建质量并在 degraded 输入下加人工核验。",
+   "value": 3.78,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02537",
+   "title": "Interactive 3D Cutaway Visualization for Subsurface Target Localization in Robot-Assisted Surgery",
+   "title_zh": "Virtual Box：机器人辅助手术中皮下目标定位的交互式 3D 剖面可视化",
+   "track": "空间计算与UI",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "门②赛道回补入选：纯值 Top10 仅覆盖 4 赛道，以本篇（空间计算与UI）替换同分冗余赛道论文后达 5 赛道",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（The University of British Columbia，cs.RO，2026-11-02；License CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "机器人辅助手术",
+    "增强现实",
+    "3D 剖面可视化",
+    "皮下目标定位",
+    "深度感知"
+   ],
+   "conclusion": "Virtual Box 交互式 3D cutaway 界面在 da Vinci Si 平台的 15 名工程学生被试内研究中，把平均 3D 定位误差从 12.92±2.69 mm 降至 4.96±1.74 mm（降 61.6%），深度误差从 9.48±2.90 mm 降至 2.07±0.57 mm（降 78.2%，均 p<0.001）；浅/深目标分别降 61.9%/61.1%；空间理解、深度感知、信心中位数从 3/2/3 升至 6/6/6，14/15（93.3%）被试偏好 Virtual Box；代价是完成时间从 21.64±11.17 s 增至 32.58±11.61 s（+10.94 s，p=0.008），总体 NASA-TLX 无显著差异（29.33 对 34.78，p=0.397）。",
+   "problem": "blended AR 叠加中皮下结构看似漂浮在组织表面上方、深度线索歧义，影响机器人辅助手术中对皮下目标的定位；已有剖面与交互体数据方法缺乏在物理靶向任务中与 depth-enhanced blended AR 的直接对照证据，无法确定可操纵 cutaway 场景是否真能改善定位。",
+   "method": "Virtual Box 在统一 3D 场景中呈现立体重建表面、配准的 MRI/US 体数据、US 分割目标与机器人跟踪的器械尖端：可移动旋转的 inspection box 以 q_B=R_B^T(p−c_B)、|q_{B,i}|≤h_i 定义局部区域，盒内表面点被剔除形成局部 cutaway、US 目标仅在盒内显示，盒面对 MRI/US 体数据动态重采样显示横截面，整个场景可独立旋转而不移动物理内窥镜，尖端指示球不受盒边界限制。AR 条件用 depth-dependent opacity 的 alpha 混合：α(z)=αmin+(αmax−αmin)·clip((z−zmin)/(zmax−zmin),0,1)。配准链 T_{C0←US}=T_{C0←ECM}·T_{ECM←DV}·T_{DV←US}，采用 IGEV-Stereo 立体匹配、nnInteractive 分割、ICP 配准 MRI 表面，US-机器人配准用 RANSAC 刚体配准。",
+   "experiments": "系统验证：20 个标定无关位点上 US-机器人 3D RMS 2.09 mm（最大 2.72 mm，X/Y/Z 轴 0.89/1.04/1.59 mm）；重投影误差 25.57±10.40 px（RMSE 27.51，最大 40.00，1280×1024）。用户研究：15 名工程学生（13 名有 AR/US/3D 可视化经验），counterbalanced within-subject，每人 3 个随机目标（2 浅 1 深）×2 条件×2 重复共 12 trial、总计 180 trial；主要指标为 registered 3D TRUS 测量的 3D 误差与深度误差，辅以完成时间、NASA-TLX 与主观评分。Table 1：浅目标 12.70±3.61→4.84±1.43 mm，深目标 13.36±4.48→5.20±2.81 mm，总体 12.92±2.69→4.96±1.74 mm；配对差 7.96 mm（95% CI 6.27–9.65，p<0.001），15 人全部改善。",
+   "innovation": [
+    "提出 Virtual Box 交互式 3D cutaway 导航界面，整合局部表面剖面、动态更新的 MRI/US 横截面、独立视点操纵与实时机器人跟踪尖端显示",
+    "在 da Vinci 平台上以 counterbalanced within-subject 设计，首次把完整 cutaway 界面与 depth-enhanced blended AR 做物理靶向任务的系统对照",
+    "用 registered 3D TRUS 同时测量 3D 定位误差与深度误差，给出 61.6%/78.2% 的误差下降和 10.94 s 的时间代价这一精度-效率权衡的量化证据",
+    "附带完整的系统精度验证（US-机器人 RMS 2.09 mm、重投影 RMSE 27.51 px）与 93.3% 的用户偏好结果"
+   ],
+   "limits": [
+    "论文自述：目标虽来自组织仿体，但定位在水箱中完成，无组织穿透、变形、呼吸运动与动态解剖变化",
+    "被试为工程学生而非经验丰富的医生，每人仅评估 3 个来自有限候选集的目标",
+    "AR 条件存在残余相机投影未对准，其贡献无法与界面设计效应分离；两种界面均为 monoscopic，立体呈现待评",
+    "次要与探索性分析未做多重比较校正；残余 4.96 mm 误差本身不能确立临床适用性"
+   ],
+   "relation": "上游为 Samei et al. 2020（MRI+US 配准引导机器人前列腺切除术）与 Kalia et al. 2020/2021（markerless AR 校准与临床前评估）；直接对标 depth-enhanced blended AR（Olthof et al. 2026 的深度依赖透明度、Ramalhinho et al. 2025 的 AR 显示比较），剖面与交互体数据传统可追至 Bichlmeier 2007 与 Chu 2018。本文把 cutaway 场景作为完整界面与 blended AR 对照，处于多模态手术可视化走向可交互剖面导航的谱系节点。",
+   "repro": "原文声明数据与代码可向作者合理索取（Available from the authors upon reasonable request），未给公开仓库；伦理批号 UBC H24-01947；硬件为 da Vinci Si、bk3500 US 系统与 E14CL4B 探头、水槽实验装置，均可在正文复刻。",
+   "action": "做手术 AR 落地的团队，可把 cutaway 界面作为 depth-enhanced AR 的替代方案做临床前对照，重点测效率补偿手段（如交互日志分析）；研究者应跟进立体呈现与动态配准下的误差变化。",
+   "value": 3.65,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03062",
+   "title": "MuCHMDPoser: Multiview RGB-Camera Full-Body Pose Tracking for Virtual Reality",
+   "title_zh": "MuCHMDPoser：面向 VR 的多视 RGB 相机全身姿态追踪",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 4,
+    "REP": 4
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（比利时 UMONS ISIA Lab 与英国 University of Bath，cs.CV，2026-11-02；正文含 IEEE TVCG 投稿版式标记）",
+   "announce": "new",
+   "tags": [
+    "虚拟现实",
+    "全身姿态估计",
+    "多视角相机",
+    "自化身",
+    "传感器融合"
+   ],
+   "conclusion": "MuCHMDPoser 把 HMD+双手柄 18-DoF 稀疏信号与外部多视 RGB 相机的 3D 关键点融合估计全身自化身姿态：扩展 HMD-Poser 架构（channel-wise embedding+LSTM+Transformer+FC 头），DLT 加 Kalman 滤波从置信度最高两视图三角化 12 个关节（遮挡阈值 κ=0.5、遮挡置零）。一次性 marker-free HMD-相机标定（MRUK 房间扫描锚定 H_f 加单张棋盘格快照 PnP）残差 ε2D 均值 3.19 px、ε3D 均值 0.81 cm。AMASS 上 Protocol 1 MPJPE 3.67→2.35 cm（−36%）、L-PE 6.71→3.97 cm；Protocol 2 MPJPE 5.28→3.26 cm（−38%）、L-PE 9.73→5.48 cm（−44%），代价是 jitter 1.74→2.40 与 2.10→3.44；端到端 60 FPS（RTX3080 加 Unity Inference Engine）。",
+   "problem": "消费级 HMD 与手柄仅提供 3 个上肢关节，下半身姿态强欠约束、误差大；光捕需昂贵基础设施与身体标记；单视 RGB 方案难以扩展到大场景与多用户；纯 HMD 相机方案受自遮挡与窄视场限制。",
+   "method": "输入为 HMD/手柄运动特征（全局系与 HMD 空间的位置、6D 旋转、线速度、角速度）拼接外部 3D 关节位置；YOLOv8-nano 做每视图 2D 检测，每帧每关节选置信度最高两相机做 DLT，低于 κ=0.5 判遮挡并置零，Kalman 滤波平滑轨迹。模型在 HMD-Poser 基础上扩展通道-wise embedding 后接 LSTM+Transformer 时空编码与 FC 输出头。标定：外部相机对已知几何棋盘格 PnP 求 T_{W→k}，HMD 左 passthrough 相机单快照 PnP 求 T_{W→C}，组合得 T_{Hf→W}=T_{W→C}⁻¹·T_{Hf→C} 与 T_{H→W}=T_{Hf→W}·T_{H→Hf}；H_f 由 Meta MRUK 语义房间扫描（地面加最长墙）确定性构建，会话内不变。",
+   "experiments": "AMASS 两协议：Protocol 1 为 CMU+HDM05+BMLrub 约 20 小时；Protocol 2 用 11 个子集约 43 小时训练、在 Transitions Mocap 与 HumanEva 测试；40 帧时间窗、60 Hz、400 epochs、单卡 RTX 4090、batch 128、Adam one-cycle（max lr 1e-3）。硬件：2×ZED2（1280×720 左目）、棋盘格 5×6 内角 25 cm、MetaQuest 3。DLT 提升质量：MPJPE 12.94/21.31 cm、MPJVE 155.78/206.80 cm/s、jitter 51.12/72.53。表 3：P1 三跟踪器 MPJPE 3.67/U-PE 1.57/L-PE 6.71/MPJRE 5.43°/MPJVE 17.79/jitter 1.74，本文 2.35/1.23/3.97/4.62°/16.20/2.40；P2 基线 5.28/2.19/9.73/9.45°/26.60/2.10，本文 3.26/1.73/5.48/8.12°/23.73/3.44。标定：ε2D 2.37–3.86 px（均值 3.19）、ε3D 0.62–1.03 cm（均值 0.81），MRUK 帧与原生跟踪空间完全一致（Δ=0.00）。",
+   "innovation": [
+    "把外部多视 RGB 3D 关键点作为额外运动线索融入 3-tracker 全身姿态估计，显著降低下半身误差且对 DLT 噪声鲁棒",
+    "提出一次性 marker-free HMD-相机标定流程并支持可变数量相机",
+    "设计 cross-reprojection 双指标协议（ε2D/ε3D）定位参考帧漂移与投影误差来源",
+    "完整管线在消费级 GPU 上以 60 FPS 端到端运行并开源"
+   ],
+   "limits": [
+    "论文自述：定量评测基于 AMASS 虚拟相机渲染，真实场景仅定性，域间隙（光照/衣着/运动模糊）未测",
+    "DLT 提升噪声大（MPJPE 12.94–21.31 cm）且遮挡置零，导致 jitter 上升",
+    "标定残差 0.81 cm 来自头显 VIO 漂移；MRUK 会话不变性未跨应用重启/重定位验证，且依赖 Meta Quest 3 与 MRUK",
+    "未做用户研究（SoE 影响未知），当前仅支持单用户大场景"
+   ],
+   "relation": "上游为 HMD-Poser（CVPR 2024，直接扩展基线）、SSD-Poser、DragPoser、ReliaAvatar 等稀疏 IMU 全身姿态线，以及 DUSt3R/MASt3R/VGGT 几何基础模型与 HybridTrak/PoseVR 多视融合线；标定对照标准多视标定协议。本文处于稀疏 VR 跟踪加 outside-in RGB 的融合位置，以一次性标定与可变相机数区别于单视方案。",
+   "repro": "代码开源：https://github.com/antmaio/MuCHMDPoser；硬件清单明确（2×ZED2、MetaQuest 3、棋盘格），训练单卡 RTX 4090 400 epochs，推理 RTX3080 60 FPS，架构与标定细节在正文完整。",
+   "action": "大空间 VR 定位/动捕团队可基于其开源代码做多用户扩展与真实光捕同步数据集验证；建议补充 SoE 用户研究确认精度增益是否可感知。",
+   "value": 3.65,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01939",
+   "title": "VLSplat: Vision-Language Guided Object-Centric 3D Gaussian Splatting via Scene Graph",
+   "title_zh": "VLSplat：经场景图的视觉-语言引导物体中心 3D 高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "A",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Sungkyunkwan University、KAIST，cs.CV，2026-11-01）",
+   "announce": "new",
+   "tags": [
+    "3D Gaussian Splatting",
+    "语义分割",
+    "场景图",
+    "视觉语言模型",
+    "开放词汇"
+   ],
+   "conclusion": "VLSplat 把 codebook 式 3DGS 语义提升推进到类别感知的物体级：用场景图 + VLM 语言先验引导 intra-node refinement 与 inter-node acquisition。ScanNet++ 渲染级 thing mIoU 69.81/mAcc 70.31（Unified-Lift+Ours 64.42、LangSplatV2 39.94）；Replica thing mIoU 68.59；点级 ScanNetV2 全场景 mIoU 40.49，ROI 限制评估 61.89/mAcc 79.12；Replica 点级 mIoU 64.03、PRQ(T) 47.87。",
+   "problem": "现有 2D-to-3D 语义提升依赖 SAM 掩膜监督，视图不一致与多层级预测会把同一物体拆碎或把异类区域合并，学到的表示由局部掩膜证据驱动而非整体物体结构，缺乏物体级先验。",
+   "method": "SAM3 按类别文本提示生成主要室内物体掩膜、SAM2 填补剩余区域，构成混合 2D 监督；Gaussian 特征与可训练 object-level codebook 按点积关联成组；以组为节点构建 ROI 场景图（各向异性协方差几何边 + 特征相似度 + VLM 生成描述 + CLIP 优化）。intra-node refinement 按特征置信度拆分可靠核与不确定集，inter-node acquisition 从邻近背景候选回收缺失部件；候选经合成物体视图上的可学习标量门 q_i 以 CLIP 相对提升为目标评估，随后只更新 Gaussian 特征方向、不改几何。",
+   "experiments": "ScanNet++（10 场景）渲染级 thing mIoU 69.81、stuff 67.79；Replica（8 场景）thing 68.59、stuff 67.75。点级 ScanNetV2：全场景 mIoU 40.49 vs OpenGaussian 29.73（PanoGS 54.50 更高），ROI 评估 61.89/79.12、PRQ(T) 46.18；Replica 点级 64.03/74.34、PRQ(T) 47.87。消融：场景图加入特征相似度使 mIoU 40.49→58.51，再组合各向异性连接达 61.89；intra/inter 均单独有效（69.31→69.81 合并）。单卡 NVIDIA RTX 3090 24GB，每场景单次运行。",
+   "innovation": [
+    "首次把 codebook 分组从类别无关实例聚类扩展为类别感知的物体表示学习",
+    "把场景图用作 3DGS 优化过程中的先验骨架，而非仅作输出抽象",
+    "语言引导 Gaussian gating：以 gated 渲染相对 base 渲染的 CLIP 提升为目标",
+    "SAM3 类别提示 + SAM2 补全的混合 2D 监督，兼顾类别感知与密集覆盖"
+   ],
+   "limits": [
+    "自述：依赖初始 lifting 形成合理粗分组，罕观测或罕检测物体难以建成可靠节点",
+    "自述：对 SAM3、VLM、CLIP 等基础模型选择的敏感性未系统研究",
+    "自述：评测聚焦室内 thing 类别；refinement 的离线优化成本随目标节点数增长",
+    "stuff 类提升小甚至略降，大面积布局区域未直接精化"
+   ],
+   "relation": "上游为语言嵌入 3DGS（LangSplat/LangSplatV2、OpenGaussian、Feature3DGS、LegGaussian）与 panoptic 方法 PanoGS；直接基线为 Unified-Lift（codebook 提升）与 OpenGaussian。场景图谱系中 Hydra/ConceptGraphs 等多把图当推理基底，本文首次将图结构作为优化器内部先验用于 Gaussian 精化。",
+   "repro": "代码与模型开源：vlsplat.github.io。评测 ScanNet++/Replica/ScanNetV2；单卡 RTX 3090 24GB；基于 Unified-Lift 15k 迭代结果再做 15k-30k 迭代图引导精化。",
+   "action": "做语义 SLAM 与机器人场景理解者可将物体级场景图 + CLIP 门控精化挂到自有 3DGS 管线；对罕观测物体需补 SAM3D 或视频扩散等更强先验，并评估对基础模型版本的敏感性。",
+   "value": 3.65,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03646",
+   "title": "EgoActionBench: Benchmarking Dense Action Captioning for Egocentric Human Videos",
+   "title_zh": "EgoActionBench：第一视角人类视频稠密动作描述基准",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（S-Lab, Nanyang Technological University + Shanghai Jiao Tong University；cs.CV；v1 于 2026-11-02 posted）",
+   "announce": "new",
+   "tags": [
+    "第一视角视频",
+    "原子动作理解",
+    "基准测试",
+    "视觉语言模型",
+    "具身智能"
+   ],
+   "conclusion": "EgoActionBench 含 1,407 个 episode、41,132 条人工精修标注（总时长 7.982 小时，动作时长中位数 0.60 秒；左手 17,319/右手 19,758/双手 4,055 条）。20 个基线系统评测显示：最强模型 GPT-6 Astra 的 EgoActionScore 仅 59.6，人类专家达 90.4；GPT-6 Astra 的 m-tIoU 为 40.6 vs 人类 88.4。经自动标注数据上的 SFT+GRPO 适配后，Qwen3-VL-4B 的 EgoActionScore 达 41.8（比未适配基线高 15.9 分）、LLaVA-OneVision-2-8B 达 47.9（高 23.2 分），均超过所有开源基线；时长小于 0.5 秒的动作上两个基座 m-tIoU 不足 4，短暂动作边界恢复是核心瓶颈。",
+   "problem": "从连续第一视角视频恢复细粒度人类操作，需同时满足 action atomicity（把连续操作分解为原子动作）、temporal precision（含亚秒级动作的起止边界）与 hand–action association（左右手/双手轨道）三项要求，而现有 benchmark 只覆盖其中部分能力；且密集预测评估协议常把时间分割误差与语义误差混为一谈。",
+   "method": "数据表示为左手/右手/双手三条独立轨道上的时间局部化原子动作（标注 verb、object、tool）。5 阶段 human-in-the-loop 标注：CaRe-Ego 提取左右手掩膜并渲染高亮、VLM 滑窗（1 秒）生成 per-hand 草稿并按时间邻接+文本相似度合并、人工校正、agentic QC（依据 hand–object contact、hand–motion phase、object–state change 三视觉线索提修订）、最终人工验证。渐进式评估协议：先按时间合格性检索候选预测，再按内容一致度（Qwen3-32B 裁判评 Verb/Objects/Tools/Motion 四字段）为每个 ground-truth 选一个预测，联合评 semantic fidelity、temporal overlap（m-tIoU）与 hand 标签；另以一对一正内容匹配的 micro-averaged F1 度量 action precision/recall。EgoActionScore = mean(Temporal=m-tIoU 与 F1 的均值, Semantic)。",
+   "experiments": "数据源：Ego4D（451 clips/16,774 动作/3.130h）、EgoLife（485/13,306/2.676h）、EPIC-KITCHENS-100（471/11,052/2.176h），覆盖 6 大活动组、17 类场景。对比 20 个模型系统：GPT-5.6 Sol（EgoActionScore 49.8）、GPT-6 Astra（59.6）、Gemini 3.1 Pro（34.8）、Qwen2.5-VL-72B（24.7）、Qwen3-VL-32B（29.2）、InternVL3.5-8B（20.4）、VideoLLaMA3-7B（14.2）、EgoGPT-7B、Flora（9B segmenter+27B captioner）等；人类基线由 3 名标注员独立标注评测集。消融：GRPO 使 Qwen3-VL-4B 40.6→41.8、LLaVA-OV2-8B 46.9→47.9；模型排名对候选 overlap 阈值（0.3/0.5/0.7）稳健；输入帧 2→5 fps 提升、10 fps 增益有限；裁判 Qwen3-32B 与两名人工评审一致率 88.89%/89.03%，且与 GPT-5.6 Sol 裁判给出相同模型排名。评测：2 fps、temperature 0、seed 42。",
+   "innovation": [
+    "首个联合评估动作原子性、时间精度与手-动作关联（独立手部轨道）的第一视角 dense captioning benchmark",
+    "渐进式评估协议把语义保真度与时间分割误差解耦，可分别诊断 what/when/which-hand",
+    "5 阶段人机协同标注流水线，其中 agentic QC 用三类视觉线索做密集标注质检",
+    "在自动标注训练 episode 上做 SFT+GRPO 适配，验证目标粒度监督可在不改架构的前提下显著提升"
+   ],
+   "limits": [
+    "论文自述当前模型在动作原子性、时间精度、手-动作关联上均与人类差距巨大，短暂动作（<0.5s）边界恢复是核心难点",
+    "评测依赖 LLM 语义裁判，存在裁判偏差风险（论文以一致性与跨裁判稳定性部分缓解，但无法完全消除）",
+    "数据以室内场景为主，室外与跨域泛化未充分验证",
+    "人类基线仅 3 名标注员；自动标注训练数据的质量依赖 VLM 与 agent 质检能力"
+   ],
+   "relation": "谱系上游为 ActivityNet Captions、EPIC-KITCHENS-100、Ego4D/Ego-Exo4D、HD-EPIC、EgoYC2 等第一视角与 dense captioning 基准；直接对标 WGO-Bench（指令条件时间戳子任务标注）、Flora/DenseCaptionBench 与 HanDyVQA（手-物 QA）。本文定位为把 dense captioning 推进到原子动作+独立手部时间线的通用 benchmark，填补三要求无法联合评估的空白；基线覆盖闭源/开源 VLM、视频 captioning 与第一视角专用模型四大类。",
+   "repro": "完全开源：project page https://egoaction-bench.github.io ，代码 github.com/player0718/EgoActionBench ，数据集 huggingface.co/datasets/play0718/EgoActionBench ；原文未提及训练/推理所用 GPU 硬件；评测设置为 2 fps 采样、temperature 0、seed 42。",
+   "action": "做具身智能人类数据筛选时，用原子动作+手部轨道标注替代粗粒度 activity label，可直接复用其 5 阶段标注流水线与渐进式评估协议；把 <0.5 秒短暂动作的边界回归作为专项优化方向；采用 SFT+GRPO 的目标粒度适配作为低成本提升手段。",
+   "value": 3.57,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02767",
+   "title": "GaussFlaw: Fine-Grained Perceptual Diagnosis for 3D Gaussian Splatting",
+   "title_zh": "GaussFlaw-80K 与 GeoCritic：3D 高斯泼溅的细粒度感知诊断",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Shanghai Jiao Tong University，cs.CV，2026-11-02；License CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "3DGS 质量评估",
+    "渲染伪影诊断",
+    "数据集",
+    "显著性检测",
+    "靶向修复"
+   ],
+   "conclusion": "提出首个 3DGS 细粒度感知诊断数据集 GaussFlaw-80K（26 个场景、14,289 张渲染图、80,049 个像素级伪影区域、8 类缺陷、平均每图 5.6 个区域）与几何引导多任务模型 GeoCritic：AUC-J 0.9507、NSS 2.1680、CC 0.7062、SIM 0.6201、Acc@1 80.08%、Acc@3 97.60%（RGB-only 变体为 0.9493/78.97%）。诊断引导的 Gaussian densification、attribute correction 与 outlier pruning 在 Mip-NeRF 360 与 TandT 上对 3DGS/Scaffold-GS/Octree-GS 全部 backbone 均改善全局与 crop 级指标：Mip-NeRF 360 平均 LPIPS_c 降 0.025、DISTS_c 降 0.015，TandT 分别降 0.023/0.011；densification 单项贡献最大（LPIPS_c 0.231→0.212、DISTS_c 0.148→0.138）。",
+   "problem": "3DGS 渲染伪影空间局部且退化模式多样（floater、ghosting、针状拉伸、过平滑等），全局指标与图像级 QA 基准无法回答伪影在哪里、是什么类型；通用 VLM 缺乏 3DGS 先验，密集空间定位与细粒度辨别不可靠；且既有评估不能直接指导靶向修复。",
+   "method": "数据构建：3 种 3DGS（vanilla 3DGS/FastGS/HAC++）×5 数据集（Mip-NeRF 360/DeepBlending/LERF/TandT/Tanks & Temples）×26 场景，每模型 6 个 checkpoint（5K 起步、5K 间隔，共 468 个中间模型）渲染采样。四阶段 model-assisted human-in-the-loop：17,444 人工种子区域→GeoCritic-v1 生成 62,510 候选→保留 52,359（92.9% 修边界、39.99% 面积变更超 10%、15.3% 改标签）→补 10,246 遗漏区域→专家多数投票交叉验证（一致率超 95%）。GeoCritic：SigLIP 2 与 Depth Anything 3 双流编码器（LoRA rank 16），投影层+空间对齐+通道拼接的多级融合、FPN 式 pixel decoder、CNN Depth Adapter 注入深度边界线索，统一多任务头输出 saliency map S 与 class map C（focal loss+保真项+分布对齐项）。靶向修复经 region lifting（多探针视图投影、可见性/深度一致性/表面支撑约束）把 2D 诊断投回 3D：densification（每场景至多 12,000 seeds、scale 0.35、opacity 0.15，30K 次迭代中于 8K/15K/23K 调用 GeoCritic）、attribute correction（opacity×0.65、最大 scale×0.75/0.90、高阶 SH×0.70）与 outlier pruning。",
+   "experiments": "定位对比 SR/PFT/SWD/SUN/Murray/Salicon/MLNet/SAM-VGG/SAM-ResNet/TranSalNet 与 Qwen3-VL-8B/GLM-4.6V-9B/Ovis 2.5-9B/Gemma 4-E4B：最强传统基线 TranSalNet AUC-J 0.9436，Qwen3-VL-8B 零样本 0.5138、LoRA 后 0.7164；分类 Acc@1：Qwen3-VL-8B†75.37%、GLM-4.6V-9B†75.11%、Ovis 2.5-9B†67.12%、Gemma 4-E4B†71.07%，Ours 80.08%。修复评测：Mip-NeRF 360+TandT×3 backbone，报告 PSNR/SSIM/LPIPS/DISTS 及 crop 级 LPIPS_c/DISTS_c；如 3DGS backbone 在 Mip-NeRF 360 PSNR 27.749→27.895、TandT 23.826→23.959。训练：2×NVIDIA A100、60 epochs、AdamW lr 2e-5、weight decay 1e-4、batch 8。",
+   "innovation": [
+    "首个 3DGS 细粒度感知诊断数据集，把评估从全局分数推进到像素级定位加 8 类拓扑分类",
+    "几何引导双流多任务诊断模型 GeoCritic，联合预测伪影显著性与缺陷类型",
+    "把类别感知诊断转化为三种靶向 Gaussian 操作，实现可解释、可行动的 3DGS 优化",
+    "证明诊断引导修复跨多种 3DGS backbone 通用且不扰动已重建区域"
+   ],
+   "limits": [
+    "论文自述有限：伪影分类为固定 8 类 taxonomy，覆盖范围有限",
+    "标注依赖 human-in-the-loop 管线，进一步扩规模仍有成本",
+    "修复沿用各 backbone 官方训练配置，未做感知-重建端到端联合训练（无辅助感知损失）",
+    "实验集中于静态场景渲染，动态/视频 3DGS 伪影诊断未涉及"
+   ],
+   "relation": "承接 GSC-QA、GS-QA、NVS-QA、3DGS-IEval-15K、MUGSQA 等 3DGS 质量评估线（均停留在图像/序列级分数）；视觉侧对照经典 saliency 模型与通用 VLM；修复侧与 Scaffold-GS、Octree-GS、GOF 等几何约束方法互补。本文把评估升级为可定位、可分类、可修复的诊断范式，位于 QA 到 diagnosis 再到 rectification 谱系的新节点。",
+   "repro": "原文未提及代码或数据集公开链接（仅称补充材料含进一步统计）；训练硬件 2×NVIDIA A100，模型与训练超参（LoRA rank、损失权重、迭代数）在正文完整给出。",
+   "action": "3DGS 工具链开发者可将 GeoCritic 式诊断作为自动化质检与靶向修复模块嵌入训练后处理；数据集构建的 human-in-the-loop 四阶段流程对同类感知数据标注有直接借鉴价值。",
+   "value": 3.57,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03283",
+   "title": "ReVA-HPE: Relative 6DoF Head Pose Estimation with Synthetic Pose Supervision and Personalized Virtual Anchors",
+   "title_zh": "ReVA-HPE：以合成位姿监督与个性化虚拟锚点估计相对 6DoF 头姿",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 4
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（HERON/Athena Research Center、National Technical University of Athens、University of Pennsylvania，cs.CV，2026-11-02）",
+   "announce": "new",
+   "tags": [
+    "头部姿态估计",
+    "6DoF 位姿",
+    "相对位姿学习",
+    "合成监督",
+    "个性化头像"
+   ],
+   "conclusion": "ReVA-HPE 把 VGGT-HPE 相对位姿扩展到完整 6DoF：新增深度归一化相对平移（δx=(xq−xa)/za、δy=(yq−ya)/za、δz=log(zq/za)）并以 exp/log 解码回相机系度量平移；推理不需要 ground-truth anchor pose——从单张无标注 enrollment 图重建个性化 Gaussian 头像（FaceLift）渲染 M=20 个已知位姿虚拟锚点，姿态空间 RANSAC 共识（τR=10°、τt=50 mm、≥3 inlier、SO(3) 投影均值）得旋转，enrollment 图 68 关键点 EPnP-RANSAC 定度量平移；仅用 25,000 张 FLAME 程序化渲染训练（冻结 VGGT 加 rank-8 LoRA）。BIWI 首帧协议 MAEr 2.53°（SemiUHPE 3.20°）、MAEt 17.10 mm；α≤15° 引导协议 2.49°/18.94 mm；GT-anchor 变体 2.08°/9.57 mm。FaMoS 首帧 3.78°/29.13 mm，α≤15° 协议 2.47°/22.61 mm（SemiUHPE 同子集 3.00°），GT 变体 1.95°/9.87 mm。",
+   "problem": "绝对回归式 HPE 学习数据集特定的绝对参考、跨域泛化差；VGGT-HPE 的相对形式仍需推理时已知 anchor pose（oracle 不可部署，用弱绝对估计会引入持续偏移，自回归锚定会漂移），且原仅为旋转估计，缺少实用 6DoF 所需的平移目标、度量解码与相机系评测。",
+   "method": "复用 VGGT 多视图相机分支（冻结 backbone、关闭 depth/point-map/tracking 头），attention 与 MLP 投影插 rank-8 LoRA（scale 16）；成对图像输入预测 ΔR_{q←a}=RqRa^T 与 (δx,δy,δz)，锚旋转只进旋转合成、锚平移只进平移解码实现分支解耦。训练用 250 身份（200 合成发型加 50 光头）×2 HDR 环境光×10 表情×5 视角共 25,000 基图、54 种肤色，10⁶ 预定义 anchor-query 对、固定焦距副本、统一 crop（margin 0.5）与解析更新内参，去掉几何随机性只保留外观增强；损失 Lcam 对 K 个中间级指数衰减监督（λR=1 四元数 L1、λT=1、λF=0.5 焦距比 log-tangent）。虚拟锚库由三角化 68 关键点加 RANSAC 相似变换把头像注册到标准头坐标系后渲染前半球固定方向锚点。",
+   "experiments": "BIWI：24 段录制/20 人，首帧为 enrollment、余 15,654 查询，MTCNN 检测（附录另做 RetinaFace 消融验证检测器影响极小）；复现基线 6DRepNet、TokenHPE-v1、OPAL、SemiUHPE、PerspNet、TRG*、VGGT-HPE-Abs。VA-fast 高效变体：M=20 时每查询 0.109 s，相对 Direct-1r/Direct-5r 提速 20.0×/89.7×；M 从 20 增至 50，MAEr 仅 2.53→2.51° 但耗时 9.774→30.877 s。敏感性：enrollment 图模糊 σ=2 使 MAEr 3.22°/MAEt 18.64 mm，12.5% 遮挡最伤（4.46°/38.46 mm）；关键点抖动 σ=4 px 主要腐蚀 Tz（45.55 mm）；enrollment 越偏离正脸旋转误差越大（FaMoS α>45° 覆盖率 0%）。",
+   "innovation": [
+    "将相对头部姿态估计从旋转扩展到完整度量 6DoF（深度归一化相对平移加分支解耦解码）",
+    "用单张无标注 enrollment 图重建的个性化虚拟锚库加 RANSAC 共识，彻底移除推理时 GT anchor pose 需求",
+    "提出 VA-fast 高效变体把锚库成本摊销到 enrollment，查询期单次推理最高提速 89.7×",
+    "全程仅合成位姿监督（25,000 张 FLAME 渲染）即在真实 BIWI/FaMoS 上取得 SOTA 或接近的旋转精度"
+   ],
+   "limits": [
+    "论文自述：度量平移仍依赖 enrollment 图 PnP，对关键点质量与 enrollment 位姿敏感，极端姿态下 landmark 定位与 PnP 劣化",
+    "依赖头像与标定质量：身份、头发、轮廓或未见侧面几何误差会削弱锚点共识",
+    "头像重建、关键点标定与相对位姿估计为分离阶段未联合优化；每帧独立处理未利用视频时序连续性",
+    "域迁移仍在，表现依赖数据集、锚几何、头像质量与相机标定"
+   ],
+   "relation": "直接上游为 VGGT-HPE（相对 HPE 开创工作，本文扩展其到 6DoF 并去掉 GT anchor）与 VGGT 几何基础模型；绝对式 HPE 谱系 HopeNet/FSA-Net/WHENet/6DRepNet/TokenHPE 与 6DoF 派 img2pose/PerspNet/TRG/OPAL/SemiUHPE 为基线；合成监督沿用 300W-LP 扩展与 FLAME 程序化渲染传统；个性化头像线 FaceLift/LAM/SEGA 被转用为标定装置。本文位于相对位姿基础模型乘个性化头像先验的交叉点，以虚拟锚共识加真实锚 PnP 解决免 GT 部署问题。",
+   "repro": "项目页与代码：https://vasilikivas.github.io/ReVA-HPE/；FaceLift、VGGT、MTCNN、FAN 均用公开预训练检查点，任务适配仅训练 LoRA（AdamW 加混合精度）；评测硬件细节原文未述（致谢提及 EuroHPC Leonardo 访问权）。",
+   "action": "需要免标定 6DoF 头姿的落地系统（如注视分析、遥现）可部署 ReVA-HPE，但 enrollment 图须引导近正脸，并对遮挡敏感场景加 landmark 质量监控；研究者可探索头像联合优化与时序连续性利用。",
+   "value": 3.57,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03052",
+   "title": "Selfrionette: A Fingertip Force-Input Controller for Continuous Full-Body Avatar Manipulation and Diverse Haptic Interactions",
+   "title_zh": "Selfrionette：驱动全身化身操控与多样触觉交互的指尖力输入控制器",
+   "track": "交互与输入",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "UIST ’24 正式论文（The 37th Annual ACM Symposium on User Interface Software and Technology，2024-10-13 至 16，Pittsburgh, PA；DOI 10.1145/3654777.3676409）；arXiv 版（The University of Tokyo 与 Nara Institute of Science and Technology，cs.HC，2026-11-02）",
+   "announce": "new",
+   "tags": [
+    "虚拟现实",
+    "化身操纵",
+    "力输入",
+    "具身感",
+    "伪触觉"
+   ],
+   "conclusion": "Selfrionette 用 5 个单臂梁 loadcell（食指 3 DoF+拇指/中指各 1 DoF，HX711 以 80 Hz 采样）把指尖力映射为全身化身运动（Fv=αFl，弹簧-阻尼模型 k=c=10 N/m、mv=1 kg，FinalIK+SHeF-WIP 行走+AutoHand 2 抓握）。User Study 1（18 人，9 男 9 女，25.83±7.13 岁）中 Selfrionette 与 Finger 的到达速度分别约为 Body 的 47%/42%，embodiment 显著低于 Body 但与 Finger 无显著差异，疲劳显著高于 Finger（p<.01, r=.52）；User Study 2（8 人，25.38±2.77 岁）中触觉真实感与 Body 无显著差异且显著高于 Finger（p<.01, r=.62），NASA-TLX 高于 Body（p=.049, r=.67）；熟练作者可达 Body 约 83% 的速度（1.50 s 对 1.24 s）。",
+   "problem": "动作追踪式化身操纵受物理空间与身体能力限制且难以呈现触觉；心理物理实验表明 pseudo-haptics 在动作输入下仅能改变 3–5% 重量感知，而力输入可改变 20–35% 柔度感知；全身力输入方案（Motion-less VR）体积大且需全身约束，存在疲劳与安全问题。",
+   "method": "硬件：每手 5 个 12.5×12.5×55 mm、量程 20 kg 的 loadcell 加球壳，束线带与低回弹氨酯泡沫固定手指，双手共 10 DoF。映射：食指 3 DoF→虚拟手位移（目标点虚拟质量 1 kg，弹簧常数与阻尼均取 10），双拇指交替输入→SHeF-WIP 原地踏步行走（施力轴 45° 斜向前上），中指→0–1 连续抓握（AutoHand 2 自动适配抓握形状）。触觉渲染在运动方程上叠加材料力 fm：重量 fm=−mẍ−mg、黏度/摩擦 fm=−cẋ 与静/动摩擦切换模型、柔度 fm=−k(x−xc)。",
+   "experiments": "Study 1：Body/Finger/Selfrionette 三条件 counterbalanced，30 s 到达任务加自定位任务共 10 轮，Meta Quest 3+Unity 3D，全程约 45 分钟。双向 ANOVA（条件×学习）：操纵条件主效应 F(2,102)=111.5, p<.01，学习 F(1,102)=12.9, p<.01；post-hoc：body vs finger（p<.01, r=1.1）、body vs Selfrionette（p<.01, r=1.1）、finger vs Selfrionette（p=.047, r=.33）；自定位误差 Body 显著更低（F(1.54,26.14)=89.34, p<.01）。Study 2：重量/摩擦/柔度各 5 级属性排序任务（约 1 小时）；真实感条件主效应 F(2,63)=7.0, p<.01，body>finger（r=.58）、Selfrionette>finger（r=.62），Selfrionette 与 Body 无显著差异；NASA-TLX：body<finger（r=.86）、body<Selfrionette（p=.049, r=.67）；SUS 三对两两显著。",
+   "innovation": [
+    "提出用指尖力输入经间接映射驱动全身化身（提线木偶式）的控制器形态，突破空间与身体限制",
+    "给出可呈现触觉属性的分类学（几何属性+材料属性）并以阻抗控制项逐一实现",
+    "两个用户研究分别量化运动学习/具身感与触觉属性感知，证明力输入伪触觉显著优于手指动作输入",
+    "讨论拇指 WIP 行走、动态增益学习与工效设计等全身交互方向"
+   ],
+   "limits": [
+    "论文自述：约 5 分钟体验不足以更新 body schema，部分被试 10 次重复仍未掌握",
+    "抓握需用力紧导致手指疲劳；增益设置保守，需动态增益学习",
+    "鼠标式外壳使食指外展与前后施力困难，偶发过度用力与化身不稳定",
+    "行走（拇指 WIP）比手臂控制更难学；全身尤其腿部效果仅试实现未充分验证；样本量小（8/18 人）需更多被试验证"
+   ],
+   "relation": "位于 avatar manipulation 的 motion-based（FingerMapper、全身追踪）与 force-based（Tsumori 控制、Motion-less VR/Imanaga 2022）之间；触觉呈现承接 pseudo-haptics（Lécuyer 2009 综述）与 Hirao et al. 2023（力输入伪重量优于动作输入）；具身理论框架用 Kilteni 2012 与 Gonzalez-Franco & Peck 2018 问卷。本文是力输入加间接映射加具身交叉点的首个系统验证。",
+   "repro": "原文未提及代码或硬件开源；设备由 loadcell+HX711+Pro Micro 构成，软件基于 Unity 3D、FinalIK、AutoHand 2 与 SHeF-WIP 等可获得组件，硬件参数在正文完整。",
+   "action": "有限空间或行动不便用户的 VR 无障碍场景可优先尝试该力输入方案，但须设计渐进式增益与更符合工效的指套；研究者应补腿部行走控制与长期 body schema 学习实验。",
+   "value": 3.5,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.00482",
+   "title": "A Straight Line Is Not a Camera Pose: Auditing Short-Clip Pose Benchmarks",
+   "title_zh": "直线不是相机位姿：短片段位姿基准审计",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 4
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Duke University，cs.CV，2026-10-31，arXiv:2611.00482v1）",
+   "announce": "new",
+   "tags": [
+    "位姿评测",
+    "ATE",
+    "基准审计",
+    "SLAM",
+    "前馈重建"
+   ],
+   "conclusion": "在 MonST3R 短片段协议下，一条不用图像的匀速直线（the line）在 Sintel 上平均 ATE 0.092，击败 11 个用官方代码重跑模型中的 10 个与 110 篇已发表方法中的 85 个；残差 SNR 判据对 1056 个开发对 95%、792 个 held-out 对 98%、1034 个 ScanNet 对 97% 正确预测「拉直何时降 ATE」；把位置旋转 30° 不改变 ATE 却使全部 11 个模型静态点重投影变差（Sintel +8~13 px）；PA-ATE（0.17 ms/片段）把所有无图像参考排在模型之后，与重投影误差 Spearman 0.61 vs ATE 0.32。",
+   "problem": "ATE 是 SLAM 到前馈 3D 重建的标准位姿指标，但其 Sim(3) 对齐只拟合位置：匀速直线会被对齐到真实路径的回归残差（基准直线性被计入分数），且位置-朝向不一致完全不计分；Sintel/TUM/ScanNet 短片段基准因此可能奖励运动先验而非感知，方法排名缺乏可信度。",
+   "method": "证明两个 ATE 位置对齐的精确性质（匀速预测=真实路径回归残差；位置相对朝向旋转不变）；提出 straightening（P_α=cv(P)+(1-α)(P-cv(P))）与残差 SNR=S/N 判据（固定对齐下 SNR<-βc+√(β²c²+(2-α)/α)，c=0 时为 √(2-α)/α，α=0.5 即 √3）；以静态点重投影（5 帧间隔、40×30 网格、真值深度、2%/3% 深度容差）作独立几何检查；提出 PA-ATE：用预测朝向拟合对齐旋转（chordal mean）后再拟合尺度与平移，一函数可改、可重评旧预测。",
+   "experiments": "11 个模型（VGGT、π³/π³X、DA3 Small/Base/Large/Giant、MapAnything、CUT3R、TTT3R、StreamVGGT）+MonST3R 等 4 个后续方法；Sintel 14 片段、TUM 8 段 90 帧、ScanNet 94 场景；直线 Sintel ATE 0.092 排第 2/12，77% clip-bootstrap 仍胜至少 8 个模型；TUM 上所有模型在至少 6/8 段胜直线（最佳约 14×）、ScanNet 至少 89/94（约 8×）；R²_line 中位数：Sintel 0.988、KITTI 10s 0.993、TUM 0.51、ScanNet 0.67；重投影：直线 33 px vs 模型 6-26 px（Sintel）、81 px vs 3-11 px（ScanNet）；PA-ATE 下 Kendall τ≥0.78 基本保持模型序。",
+   "innovation": [
+    "首次给出匀速基线的精确得分解释（回归残差）与逐片段闭式判据",
+    "把「近线性数据」启发式变成可测量量（残差 SNR）",
+    "证明位置-朝向旋转是 ATE 的结构性盲区并用重投影独立验证",
+    "提出一函数可改的 PA-ATE 及 4 条短片段报告协议"
+   ],
+   "limits": [
+    "只覆盖主要方法家族，非全部",
+    "直线沿光轴在 KITTI 前向驾驶仍胜 4-9/11 个模型（PA-ATE 下）",
+    "重投影需真值深度且只分辨大效应",
+    "PA-ATE 需要相机朝向；发布值按原文引用"
+   ],
+   "relation": "谱系：ATE/RPE（Sturm 等、evo）、Umeyama 对齐、DUSt3R/MASt3R 点图回归、MonST3R 动态场景协议、CUT3R/TTT3R 流式方法、MegaSaM 优化参考；同类审计有 FVD 内容偏差、重定位伪真值等；本文与 DTE、ORE、RPE_t 互补但保留 ATE 形式。",
+   "repro": "代码、预测与结果称将发布（Code, predictions and results will be released）；ATE 复现与官方 CUT3R/TTT3R 评测器误差在 5×10⁻⁷ 内；单 CPU 线程计时（ATE 0.11 ms、RPE_t 0.16 ms、DTE 297 ms、PA-ATE 0.17 ms）；LLM（Claude/GPT）用于写作、代码与实验。",
+   "action": "研究者报告短片段位姿时应同时给出 PA-ATE、straightening 测试与残差 SNR，差异需 clip 重采样支持；工程落地者应把直线作为持续监控的健全性基线，对 Sintel 类动态短片段排名保持警惕。",
+   "value": 3.49,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02034",
+   "title": "4D Triangle Splatting Reconstruction of Dynamic Endoscopic Scenes from Monocular Videos",
+   "title_zh": "SurgicalTS：单目视频动态内镜场景的 4D 三角形泼溅重建",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Institut de Robòtica i Informàtica Industrial, CSIC-UPC、Imperial College London，cs.CV，2026-11-01）",
+   "announce": "new",
+   "tags": [
+    "4D 重建",
+    "内镜",
+    "triangle splatting",
+    "自监督",
+    "形变建模"
+   ],
+   "conclusion": "SurgicalTS 用自监督 triangle splatting 从静态单目视频重建动态内镜 4D 场景：四元数变形网络 + 颜色偏移参数化 + 时空物理先验 + 变形感知初始化。Endo-NeRF pulling 序列 PSNR 39.890/SSIM 0.969/LPIPS 0.027，深度 MAE 2.259/RMSE 6.539 显著优于 Endo-4DTS（7.171/16.803），训练时间 221 min（-33%）；NeRFscopy 四个序列光度与深度全面领先 Endo-4DTS（如 TECAB1 PSNR 29.473 vs 28.260、RMSE 14.805 vs 15.358、训练 80 min vs 158 min）。",
+   "problem": "单目内镜 4D 重建面临非刚性组织形变、镜面反射与光照变化、器械遮挡、 viewpoints 受限与低纹理；此前 triangle splatting 方法 Endo-4DTS 视觉指标好但几何与外观未联合建模，深度图存在大量不连续。",
+   "method": "规范空间静态三角形集合 + 8 层 MLP 变形网络：输入三顶点与时间的位置编码，输出单位四元数旋转、平移/缩放/颜色偏移（颜色定义为规范色加偏移而非重估）；Video Depth Anything 提供伪深度，损失含光度 L1+D-SSIM、深度 L1、深度梯度对齐、法线对齐、opacity 与尺度正则、四元数/平移一阶时间平滑及规范-变形空间边长保持；初始化跨帧聚合深度（含器械掩膜，时变掩膜检测遮挡与深度变化）以恢复遮挡区。",
+   "experiments": "Endo-NeRF pulling：PSNR 39.890 vs Endo-4DTS 40.39（略低），但 MAE 2.259 vs 7.171、RMSE 6.539 vs 16.803、训练 221 min vs 329 min、FPS 14.95 vs 16.50；cutting：PSNR 36.468 vs 38.876（更低），MAE 2.715 vs 5.759、RMSE 8.018 vs 15.593。NeRFscopy TECAB1/TECAB2/Lung lob./Bronco 四项 PSNR 与深度误差全部最优（Bronco PSNR 36.304、RMSE 5.731、训练仅 62 min）。深度以 Video Depth Anything 伪 GT 评估；单卡 NVIDIA RTX A5000。",
+   "innovation": [
+    "面向遮挡的变形感知初始化：跨帧深度聚合并显式保留器械几何，避免遮挡区幻觉组织",
+    "四元数旋转表示替代欧拉角，避免万向锁并提升数值稳定性",
+    "颜色偏移参数化替代完全重估的颜色预测",
+    "时空物理先验（旋转/平移平滑 + 边长保持）提升 4D 几何一致性"
+   ],
+   "limits": [
+    "自述/观察：cutting 等极端场景仍出现局部不连续；几何精度与光度一致性存在权衡（部分序列 PSNR 低于 Endo-4DTS）",
+    "深度评测依赖 Video Depth Anything 伪 GT，无真实 3D ground truth",
+    "性能数值依赖输入分辨率与最终三角形数量，泛化结论有限",
+    "假设相机静态，未处理内镜运动轨迹联合估计"
+   ],
+   "relation": "上游为 3DGS 及其动态变体、NeRF 内镜重建 EndoNeRF/NeRFscopy、EndoGaussian、triangle splatting 及其内镜扩展 Endo-4DTS。直接对标 Endo-4DTS（唯一先前 TS 内镜方法）；本文以几何-外观联合建模、物理先验与训练效率取胜。",
+   "repro": "原文未提及代码或数据开源。实验用公开 Endo-NeRF 与 NeRFscopy 数据集（7:1 训练/测试划分），与 Endo-4DTS 用相同 densification/pruning 策略与迭代数；单卡 NVIDIA RTX A5000。",
+   "action": "内镜导航与术后监测落地应以深度一致性为主要选型指标；临床测量场景注意保留器械几何以避免幻觉组织导致体积误判；后续建议在真实 3D GT 数据上复验。",
+   "value": 3.43,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.00898",
+   "title": "Trading Transparency for Stability: Friction-Cone-Constrained Bilateral Teleoperation for Opening Doors of Unsecured Furniture",
+   "title_zh": "以透明度换稳定性：摩擦锥约束的双边遥操作开启无固定家具门",
+   "track": "触觉与多模态",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Tencent Robotics X，cs.RO，2026-10-31，arXiv:2611.00898v1，CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "双边遥操作",
+    "力反馈",
+    "摩擦锥",
+    "共享控制",
+    "家具稳定性"
+   ],
+   "conclusion": "RFCP（robust friction-cone projection）+触觉 guard 在 100 次实物试验（5 名操作者、3 个柜子、2 种支撑）中把家具位移从 9.4±3.1 mm 降到 0.9±0.4 mm、成功率从 72% 升到 96%、NASA-TLX 从 61±13 降到 40±9，力传输误差 0.41±0.13 N 保持在 0.5 N 感知阈以下；P vs POS 差异 Fisher p=0.004（Bonferroni 后 0.012）；NG（无 guard）5/25 次违约、NP（无投影）3/25，只有完整 P 达成 0/25。",
+   "problem": "打开仅静置于桌面的家具门时，把手处 wrench 由家具-支撑库仑接触反力平衡；拉力过大将滑动或倾覆（高柜倾覆阈比滑动阈更紧），闩锁突破还需未知力尖峰；现有双边遥操作只保证通信通道稳定与透明，未把被操作物体的静稳性编码进通道，也未量化其透明度代价。",
+   "method": "由支撑 wrench 锥（摩擦、自旋、倾覆 Lemma 1，三个标量测试每毫秒运行）构造对 m/μ 有界误差鲁棒的可行集 F̂(η)（按稳定性因子 η 收缩、扣减 Δ=δ_W+ε_dyn+δ_kin=2 N）；RFCP 为加权投影（Λ=diag(I₃,r⁻²I₃)，循环投影收敛，98% 周期 3 遍达 0.1 N 增量）；haptic guard f_vf=-k_g[g(W_d)]₊²n̂_g（k_g=3 N）；五态门控制器（C0 接近导纳/C1 抓取力伺服/C2 突破力斜坡/C3 自适应摆动/C4 释放阻尼），操作者只发标量摆幅、朝向由铰链运动学解算；预任务证书 F_bw≤min{η μm̄g, ηm̄g d_e/h}-δ_W-ε_dyn（C1 为 26 N vs 实测 14-22 N）；Prop 2 传输误差上界、Prop 3 无源、Thm 1 无记忆安全滤波器下界（RFCP 取等）。",
+   "experiments": "UR10+RG2 从端、Phantom 主端（约 8 N）、1 kHz 环、250 Hz 通道、RGB-D 跟踪约 0.5 mm；C1（12 kg 倾覆主导）、C2（20 kg 滑动主导，把手偏轴 0.28 m）、C3（7 kg 可行边界）；木材 μ≈0.47、laminate μ≈0.28。P/NG/NP/POS 各 25 次：位移 0.9/6.8/4.1/9.4 mm，>5 mm 违约 0/5/3/8，峰值力 20.8/27.4/25.1/30.6 N，传输误差 0.41/0.28/0.33/0.62 N，成功率 96/84/88/72%，TLX 40/50/47/61，RMSE 2.7/3.1/2.9/4.8°；峰值需求占 c̄=26 N 比例 0.80/0.97/1.05/1.18；C1 全程倾覆约束绑定（自旋<5%），C2 偏轴把手使自旋成为裁剪约束。",
+   "innovation": [
+    "首次把物体静稳性约束写进双边遥操作回路并以共享控制（Lipschitz 混合）解释",
+    "静态性 Prop 1 与传输误差 Prop 2 的先验界",
+    "Thm 1/Cor 1 证明 RFCP 在无记忆滤波器中最优",
+    "一维 stability-transparency 前沿（η 旋钮）与预任务可行性证书"
+   ],
+   "limits": [
+    "NG/NP 差异是计数而非确认推断；Δ 在 C1 标定",
+    "在线摩擦辨识未解（尘面 δ_μ≈0.15 吃掉大部分裕度）",
+    "时延与丢包、学习型仲裁器、快拉与多体场景为开放问题",
+    "依赖准静态假设"
+   ],
+   "relation": "双边遥操作谱系：两端口透明性/四通道、散射波变量、时域无源（TDPA）、distributed passivity；共享控制：blended vs arbitrated、虚拟 fixtures；接触稳定性：Caron 等 ZMP 支撑面积、Zhou & Mason 力-运动模型、自主开门；本文把接触力学作为仲裁伙伴放进遥操作通道，区别于以策略/目标集为伙伴的既有工作。",
+   "repro": "原文未提及代码开源；硬件与参数完整（κ_p=1.6、κ_f=0.35、η=0.7、k_g=3 N、ε_tr=0.5 N、θ_max=95° 等）；100 次试验全为实物测量，拉丁方顺序。",
+   "action": "研究者应继续攻 O1-O4（尤其在线摩擦辨识与非无记忆滤波）；工程落地者把 η 作为唯一部署旋钮，用预任务证书筛选可行门，并把 guard+projection 当互补组合而非二选一。",
+   "value": 3.38,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03021",
+   "title": "MetamorphX: An Ungrounded 3-DoF Moment Display that Changes its Physical Properties through Rotational Impedance Control",
+   "title_zh": "MetamorphX：经旋转阻抗控制改变物理特性的非接地 3-DoF 力矩显示器",
+   "track": "触觉与多模态",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "UIST ’22 正式论文的 arXiv 作者版（非新成果），触觉硬件方向稀缺文献",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "UIST ’22 正式论文（The 35th Annual ACM Symposium on User Interface Software and Technology，2022-10-29 至 11-02，Bend, OR；DOI 10.1145/3526113.3545650）；arXiv 版（The University of Tokyo，cs.HC，2026-11-02）",
+   "announce": "new",
+   "tags": [
+    "触觉反馈",
+    "非接地力反馈",
+    "控制力矩陀螺",
+    "阻抗控制",
+    "虚拟现实"
+   ],
+   "conclusion": "MetamorphX 用 4 个金字塔排布 CMG（各倾斜 54.3°）实现非接地 3-DoF 力矩反馈：方波响应上升延迟 60 ms（推进器式 Thor’s Hammer/Aero-plane 约 300 ms），可呈现的惯性差约 0.01 kgm²、黏度差约 0.1 Ns，最大角冲量 0.25 Nms（Winfree 2010 为 0.38 Nms），功耗约 23 W，噪声 75 dB@1m；9 名被试（21–29 岁男性）Campfire VR 用户研究中 Q1/Q2 中位数 4（IQR 4–5），6 人明确感到风扇尺寸与惯性/阻力相关、5 人提到真实感与乐趣；设备初始阻抗 (Ix,Iy,Iz)=(0.0065,0.0075,0.003) kgm²。",
+   "problem": "power grasp 下人用整条手臂甚至躯干移动物体，body-grounded 设备无法覆盖上臂与肩受力；推进器式非接地设备延迟约 300 ms 难以响应高速人体运动；惯性/黏度等静态属性需要阻抗控制式的连续低延迟力反馈，而传统设备无法在 power grasp 下做阻抗控制。",
+   "method": "核心为旋转阻抗控制：I·ω̇+D·ω+K·∫ω dt=τh+τgen，设备生成 τgen=−ΔI·ω̇−ΔD·ω−ΔK·∫ω dt，使运动表现为 (I+ΔI)、(D+ΔD)、(K+ΔK)。硬件：4 个 CMG 金字塔排布（gimbal 互成 90°、各倾 54.3°），PLA 飞轮外/内径 70/50 mm、30 g、惯量 2.4×10⁻⁵ kgm²、恒定 800 rad/s，Pololu 20D 63:1 齿轮电机经 MDD10A 驱动、PID 控制频率 500 Hz、滑环实现无限旋转，MPU9250 IMU 以 500 Hz 输出姿态与角速度（角加速度由差分求得），Teensy 4.0 经 ROS 与 PC 通信，gimbal 速度由 DSEA 方法解算。",
+   "experiments": "固定态：0.2 Nm 方波上升时间 60 ms；0.4 Nm 正弦在 0.5/1/2/4 Hz 跟踪良好；最大角冲量 0.25 Nms（0.5 Hz 正弦峰值积分）。运动态：单被试按节拍器 120/240 BPM（对应 1/2 Hz）摆动手持设备，ΔI_j 取 {0,0.005,0.010,0.015} kgm²、ΔD_j 取 {0,0.05,0.10,0.15} Ns，每轴 2 频率各 24 trial，波形验证 τ_imp=−(I+ΔI)ω̇−ΔDω；ΔI=0.015 与 ΔD=0.15 时出现 CMG 饱和扰动。用户研究：9 人戴 VIVE Pro 与 Sony WH-1000XM4 体验 Campfire VR，5 点 Likert 问卷 Q1–Q5，Q3/Q5 被试间分化大；设备重 840 g（机架 310 g 占 36%、gimbal 电机 170 g 占 21%）。",
+   "innovation": [
+    "提出基于 CMG 金字塔阵列、可连续低延迟（60 ms）输出非接地 3-DoF 力矩的手持显示设备",
+    "把旋转阻抗控制用于 power grasp 下的物体属性呈现，惯性/黏度可瞬时切换与动态变化",
+    "技术评估量化了延迟、频率响应、角冲量上限与饱和边界",
+    "两个 VR 应用（Auto Hand 2 手-工具交互场景与 Campfire VR）演示多惯性/多黏度表示并用定性研究验证可感知性"
+   ],
+   "limits": [
+    "论文自述：仅做定性用户研究，缺少定量知觉实验与感知表征范围刻画",
+    "设备重 840 g，远比常规 VR 控制器重，有时难以感到所生成的力矩",
+    "工作噪声 75 dB（接近吸尘器水平），依赖降噪耳机缓解",
+    "CMG 力矩饱和不可避免，大幅值短时输出会产生不均匀阻力与振动感；被试仅 9 名男性（疫情限制），且存在视觉预期重量与触感重量差距、方向敏感度差异（roll>yaw>pitch）"
+   ],
+   "relation": "属 ungrounded haptics 谱系：Thor’s Hammer/Aero-plane（推进器式，约 300 ms 延迟）、JetController/AirRacket（气喷脉冲）与 iTorqU（CMG 脉冲，0.38 Nms）为代表；阻抗控制思想源于 Hogan 1985，dynamic touch 知觉理论源于 Turvey 1996/1998；与 passive haptic（TorqueBAR/Shifty/Drag:on）及 body-grounded（PIVOT/CapstanCrunch/Grabity）互补。本文首次把 4-DoF CMG 用于连续力矩呈现加阻抗控制，是 CMG 触觉从脉冲走向连续属性渲染的关键节点。",
+   "repro": "原文未提及代码或硬件文件开源；但电机型号、Teensy 4.0、ROS、DSEA 方法与 3D 打印 PLA 件参数在正文充分给出，具备复刻条件；无公开仓库链接。",
+   "action": "VR 触觉硬件团队若要复刻，需先核算目标运动的角速度/加速度预算以避免 CMG 饱和，并用更高比强度材料减重；后续做定量 JND 实验补知觉表征范围。",
+   "value": 3.28,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03114",
+   "title": "3D Gaussian Splatting within Self-Learned Neural View-Dependent Color Fields",
+   "title_zh": "在自学习神经视图相关颜色场内的 3D 高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Tsinghua University 软件学院与 Wayne State University，cs.CV，2026-11-02；正文附 NeurIPS 论文清单，疑为 NeurIPS 投稿）",
+   "announce": "new",
+   "tags": [
+    "3D Gaussian Splatting",
+    "神经颜色场",
+    "几何重建",
+    "光谱偏置",
+    "Lipschitz 正则"
+   ],
+   "conclusion": "把 3DGS 辐射场约束在神经网络参数化的视图相关颜色场 F(f_j, r) 中（哈希特征网格 H 加 4 层 MLP、四面体晶格插价，仅对 3D bounding box 内 Gaussian 启用、背景保留 SH），利用光谱偏置加 Lipschitz 约束（可学习每层界 softplus(ku)、η=1e-6、10k/30k 迭代后启用）把高频颜色变化推给几何。DTU 上平均 CD 较 3DGS 降 41.1%（1.92→1.13）、较 2DGS 降 3.8%（0.80→0.77）、较 FastGS 降 30.0%（2.37→1.66），PGSR 上 0.53→0.51；TnT F-score 0.13→0.16；MipNeRF-360 渲染指标与基线相当。消融：Base 1.29→加 Lipschitz 1.23→加采样 1.17→Full 1.13；视图相关 1.13 对非视图 1.86；哈希容量 2^15 最优（2^18 略降）。",
+   "problem": "离散 3D Gaussian 难以拟合高频颜色变化，导致几何恢复粗糙、不完整并伴生 floater；直接几何约束（距离场、多视图一致性、单目先验）存在映射敏感、迭代验证昂贵或外部先验泛化受限等问题，需要更一般的光滑辐射场方案。",
+   "method": "自学习颜色场：以渲染深度反投影得表面样本并用图像颜色监督 L_On；沿射线在表面前后采样高斯扰动点（δbefore=0.1/1.0、δbehind=0.01/0.1，表面前置信更高）约束零色 L_Before/L_Behind；Lipschitz 约束经归一化权重 W̄=normalization(W, softplus(ku)) 软化实现。总损失 L_Img+αL_On+βL_Before+γL_Behind+ηL_Lip（α/β/γ 在 TnT 为 0.05、其余 0.01）；3D 监督期对 Gaussian 位置等属性梯度 detach 以解耦外观与几何；网格在 DTU 用 18 级 32 维、TnT/MipNeRF 360 用 20 级 48 维；几何经 TSDF 融合（voxel 0.004）与 marching cubes（Open3D）提取。",
+   "experiments": "单卡 RTX 3090；数据集 DTU（CD）、Tanks and Temples（F-score）、MipNeRF 360（PSNR/SSIM/LPIPS，留出 1/8 图像）；基线含 3DGS、2DGS、PGSR、FastGS、SplatFields、Mini-Splatting、AnySplat、Instant-NGP、MipNeRF 360、BakedSDF。DTU 渲染：Ours(3DGS) PSNR 32.77/SSIM 0.956/LPIPS 0.065，对 3DGS 32.56/0.953/0.063、2DGS 32.32/0.955/0.058。MipNeRF-360 室内 Ours(3DGS) 30.43/0.926/0.199 对 3DGS 30.41/0.920/0.189。消融：估计深度每迭代更新最优（1.13 对间隔 100/300/500 的 1.54/1.51/1.53）；采样策略 Surface 1.62、加前 1.31、加后 1.18、Full 1.13；颜色场 CD 0.77 对透明度场 2.94（GOF 0.74）。",
+   "innovation": [
+    "首次把 3DGS 辐射场建模进自学习神经视图相关颜色场，用颜色连续性正则几何",
+    "利用神经网络光谱偏置加 Lipschitz 约束，迫使大幅颜色变化对应显著几何变化",
+    "提出不依赖外部先验或数据驱动的自监督采样策略（表面监督加前后自由空间非对称方差）",
+    "证明该正则可叠加在 3DGS/2DGS/FastGS/PGSR 多种 backbone 上并兼容已受几何约束的 PGSR"
+   ],
+   "limits": [
+    "论文自述：MLP 预测颜色无法与原始光栅化管线直接融合，渲染有额外计算开销",
+    "神经颜色场增加参数量与显存消耗",
+    "NeurIPS 清单自答：结果来自单次运行、固定随机种子、无误差条，未报告统计显著性",
+    "训练评测集中于 DTU/TnT/MipNeRF 360 场景，室外强反射等困难场景仅在附录定性讨论"
+   ],
+   "relation": "直接对标 3DGS（Kerbl 2023）及其几何改进线 2DGS、PGSR、SuGaR、GOF、SplatFields、FastGS、Mini-Splatting、AnySplat；理论渊源为神经隐式场光谱偏置（Rahaman 2019）、PermutoSDF 的颜色场变分约束与 1-Lipschitz 神经距离场。本文换一个角度：不约束几何而约束颜色连续性，把低频谱偏置当作几何正则器，位于 3DGS 几何正则与神经属性场的交叉点。",
+   "repro": "项目页 https://github.com/yangyixi21/Neural-Color-Fields-3DGS（NeurIPS 清单注明仓库当前仅含文档，代码与检查点正在准备公开）；实验超参（网格层级/维度、损失权重、η、迭代数、TSDF voxel）完整给出；硬件单卡 RTX 3090。",
+   "action": "3DGS 几何质量不达标的团队可用最小代价（仅改颜色场）尝试该正则，尤其适合与 PGSR 等强几何 backbone 叠加；注意其渲染开销与单次运行无误差条的统计局限。",
+   "value": 3.08,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.00356",
+   "title": "Unpacking the process of watching a 360-degree video: How physiological responses and head rotation relate to affective and cognitive outcomes",
+   "title_zh": "拆解 360° 视频观看过程：生理反应与头部旋转如何关联情感与认知结果",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 3
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Stanford University，cs.HC，2026-11，arXiv:2611.00356v1）",
+   "announce": "new",
+   "tags": [
+    "360° 视频",
+    "生理测量",
+    "头动",
+    "帧差",
+    "情感与认知结果"
+   ],
+   "conclusion": "N=200、10 段 360° 视频的受控实验表明：头动与生理信号（HRV、瞳孔直径）可预测自我报告的情感与认知结果，效应量为小到中等（效价与评论语气效应最大）。头动越大，报告效价越高、注意力聚焦越强、评论越长；中介分析显示头动→效价→模拟器病感的通路几乎完全由感知变化解释（总帧差中介比例 0.48、刺激成分 FD_stim 中介 0.66），而头动→注意力聚焦与评论字数由非感知通路贡献。瞳孔放大与更低效价、更低评分和更负面评论语气相关（首次在沉浸视频中发现）。",
+   "problem": "360° 视频观看是高度个体化的体验，但缺乏逐时刻（moment-to-moment）量化框架；已有工作多为线性相关，未揭示头动与主观体验之间的机制通路（感知变化 vs 非感知通路），也未系统刻画内容特征（虚拟相机运动、叙事元素运动）与感知、观看行为的关系。",
+   "method": "HP Omnicept Reverb G2 同步采集头动、心率、HRV、瞳孔；提出帧差法（frame differencing）：以 2 Hz 对 FOV（94°×60°）与中央凹（15° 半径）计算帧间 RGB 差，并把感知变化分解为 FD_stim（刺激+用户视点变化）与 FD_head（纯头动成分）；对虚拟相机运动与叙事元素运动按 5 秒片段人工编码（κ_camera=.91/.89，κ_element=.73/.69）；用 R/lmerTest 建线性混合模型（participant 与 video 交叉随机效应），并以中介分析检验通路。",
+   "experiments": "N=200（18-68 岁），10 段 4-15 分钟视频；平均头动速度 22.01 deg/s（SD=9.89）；效价 M=3.69（SD=0.90）、模拟器病感 M=14.03（SD=14.92）、评论评分 M=5.58。混合模型：头动受叙事元素运动（b=0.49）与相机运动（b=0.41）正向影响、交互负向（b=-0.34，均 p<.001）；心率仅受相机运动影响（b=-0.53，p=.017）；瞳孔受相机运动抑制（b=-0.06，p<.001）；FD_stim 模型 R²c=0.63；内容与感知相关性：仅有叙事运动时 ρ=-0.85（p=.002），仅有相机运动时 ρ=0.69（p=.028）。",
+   "innovation": [
+    "提出 FD_stim/FD_head 分解，把感知变化确立为头动→体验的机制通路",
+    "首次发现瞳孔直径与沉浸视频数值评分及评论语气的显著关系",
+    "建立 5 秒粒度内容特征编码与逐时刻建模方案",
+    "跨 200 人大样本同步生理-行为-主观-内容四类测量"
+   ],
+   "limits": [
+    "线性模型牺牲预测精度，作者建议改用深度学习",
+    "帧差仅刻画感知体验一个方面，未来应结合 AOI/视觉显著性",
+    "仅分析所采集数据子集，记忆回忆与面部表情待扩展",
+    "相关不等于因果，作者明确不宣称因果"
+   ],
+   "relation": "上游为 Bailenson 等 360° 视频头动-效价公开数据库（2017）、Jun 等 stimulus sampling、CEAP-360VR 生理标注数据集；本文把相关研究推进到机制层面（中介分析）并首次系统引入内容特征侧，是同时覆盖生理、头动、主观与内容编码的少数大样本工作。",
+   "repro": "原文未提及代码/数据开源；硬件为 HP Reverb G2 Omnicept（内置眼动与生理传感）；统计环境为 R/lmerTest。",
+   "action": "研究者可将 FD_stim 分解用于 360° 内容评估与注意力预测基准；工程落地者可在 VR 播放器中以头动/瞳孔做实时 engagement 监测，但效应量仅为小到中等，需谨慎用于自动决策。",
+   "value": 3.07,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02490",
+   "title": "How Contextual Information in Physical Environments Shapes Decisions with AI",
+   "title_zh": "物理环境中的上下文信息如何影响人与 AI 的决策（AR 研究）",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 3
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Minnesota, Twin Cities，cs.HC，2026-11-02，CC BY-NC-ND 4.0）",
+   "announce": "new",
+   "tags": [
+    "增强现实",
+    "AI 辅助决策",
+    "适当依赖",
+    "部分可观察",
+    "用户实验"
+   ],
+   "conclusion": "AR 研究（N=32，Meta Quest 3，物理桌面 + Unity 渲染钥匙）发现：在无法直接核验的 focal trials 上，combined context（25% 目标先验 + 可见半场无钥匙）使 AI 辅助准确率从基线 73.7% 升至 83.1%（+9.5 pp，p_Holm<.001）；但探索性分解显示 +3.9 pp 来自目标构成、+4.1 pp 来自留存 AI 建议的准确率变化，响应变化仅 +1.4 pp（不显著）。更强先验使跟随正确 Present 建议从 85.2% 降至 70.4%（-14.7 pp），无钥匙半场使决策时间 +40.3%（有 AI）/ +53.3%（无 AI）；未检测到 agreement selectivity 提升。",
+   "problem": "部分可观察物理环境中，独立于 AI 的上下文（目标先验、可见半场）会改变隐藏状态的可能性但无法验证 AI 的空间性声明；已有研究未区分观察到的准确率变化、响应策略变化与对正确/错误建议的选择性，也难以判断准确率增益是行为改善还是被评测案例构成变化驱动。",
+   "method": "within-subjects 2×2×4 设计：prevalence 25%/50% × visibility 0%/50% × AI（无/verbal/arrow/x-ray），AI 每 40 trial 块 32 正确 8 错误（80% 准确率，受试者不知数值）。focal 分析剔除可见目标与指向可见行的可核验建议，保留目标状态与 AI 指示位置均未消解的 trial。用 baseline-response 估计加三分解（目标构成、留存建议准确率、响应变化）；决策时间用对数时间 GEE 检验 context×AI 交互；Holm 校正 27 项主检验与 42 项后续检验族。",
+   "experiments": "N=32（16 男 16 女，27 人 18-28 岁），16 blocks × 40 trials，计划 20,480 trials、记录 20,479、作答 20,456；focal 分析含 13,418 个 AI 与 4,637 个无 AI 已答 trial。基线 AI 准确率 73.7%；stronger prior +3.1 pp（ns）、target-free half +3.3 pp（ns）、combined +9.5 pp（p<.001）。无 AI：49.9%→66.3%（+16.4 pp）/57.8%（+7.9）/78.4%（+28.5）均显著。决策时间：有 AI 1.38→1.94 s（+40.3%），无 AI 1.08→1.66 s（+53.3%），交互不显著。定性：381 份区块问卷 + 32 人半结构化访谈。",
+   "innovation": [
+    "在 AR 中把可验证性操作化为 focal unresolved trials，系统测量上下文对 fallible AI 决策的影响",
+    "baseline-response 分解把观察到的准确率增益拆成案例构成与响应变化，避免把构成效应误读为行为改善",
+    "区分一般响应偏移与 agreement selectivity 的度量体系",
+    "提出三类设计启示：标注空间声明当前可否核验、引导针对性检查、审计评测案例构成"
+   ],
+   "limits": [
+    "自述：32 名多为年轻成人、单一二值搜索任务、模拟 AI（80%），向真实物体搜索迁移待验",
+    "自述：prevalence 显示而 AI 可靠性需学习；基准假设编程可靠性与等错误成本、不建模主观信念与 trial 历史",
+    "自述：focal 剔除改变被试分布，AI 与无 AI 子集不同；分解为描述性而非因果；pooling 三种格式可能掩盖格式差异",
+    "自述：事后二值判断无法区分独立同意与建议诱导转换；非显著不等于等价"
+   ],
+   "relation": "上游为适当依赖研究（Parasuraman & Riley、Buçinca 等认知强制）、Fok & Weld 的 verifiability 区分、视觉搜索 prevalence 效应（Wolfe 2007）与 Manavalan 等的 visibility×prevalence 非 AI 研究、Hemmer 的人机互补、Liu 的 AR x-ray 依赖研究。本文首次把 prevalence/visibility 操控与 fallible AI 建议放进同一 AR 实验，并引入准确率构成分解。",
+   "repro": "原文未提及代码/数据开源；设备为 Meta Quest 3 + Unity 客户端 + 服务器控制条件；AI 为编程模拟（80% 准确率）；流程、度量与统计细节报告完整。",
+   "action": "评测 situated AI 必须同时报告保留 trial 数、prevalence 与 AI-only 准确率，并对照可行策略（跟随 AI/恒答 Absent）在同一案例集的表现；界面应显式提示该声明当前可否核验，并引导用户获取能消解隐藏状态的证据。",
+   "value": 3.07,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03106",
+   "title": "A Tightly Coupled Magnetic-Inertial SLAM System for Field Robots",
+   "title_zh": "MISLAM：紧耦合的磁-惯性 SLAM 系统",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 2,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（letter 体裁，cs.RO，2026-11-02；正文仅列作者 Chuan Huang、Tongxing Peng，未标注机构）",
+   "announce": "new",
+   "tags": [
+    "磁-惯性 SLAM",
+    "野外机器人",
+    "室内定位",
+    "误差状态卡尔曼滤波",
+    "高斯过程"
+   ],
+   "conclusion": "MISLAM 以 IMU 加九磁强计阵列（181×160×87 mm，BMI160 加 9×PNI RM3100，IMU 200 Hz 插值到磁强计 100 Hz）在单一 ESKF 中融合惯性传播、局部多项式磁场模型（n=2、15 系数、χ² 检验 αfit=0.01、minRefAge 40 ms/maxRefAge 250 ms、用后即退）与全局降秩标量势 GP 模型（Laplacian 特征函数、M=50/100/300、ℓ=1 m、每 20 次接受的局部更新选关键帧）。三个手持数据集上总端点闭合误差较 MAINS 降 78.0%/58.9%/45.7%（multi-loop 0.274 m 对 1.248 m；single-loop 1.576 m 对 3.831 m；visually degraded 3.502 m 对 6.453 m）；弱光下 OpenVINS 约 80 s 丢失跟踪而 MISLAM 水平闭合误差 0.332 m（MAINS 6.318 m，降 94.7%），但垂直误差 3.486 m（MAINS 1.315 m）仍是主要局限。",
+   "problem": "矿井、隧道与灾区 GNSS 拒止且相机/LiDAR 受粉尘烟雾与光照劣化；磁指纹定位需预先测绘，GP 磁 SLAM 依赖 VIO/PDR 外部里程计；自包含磁 SLAM 面临高计算复杂度（每平方米需 50–500 基函数）与退化空间采样两大挑战。",
+   "method": "九磁强计分两组：局部组 L（除中心外全部）围绕参考位姿拟合无散度约束多项式场 B(s)=Φ(s)η_r（Np=n²+4n+3），加权最小二乘加 χ² 拟合残差检验通过后把参考位姿克隆入联合状态，一次更新尝试后退休；全局组 G 用归一化 Laplacian 特征函数 ∇φj 的降秩 GP（先验 Λjj=σp²(2πℓ²)^(3/2)·exp(−ℓ²λj/2)）在世界系表示磁场，按累计 Nacc=20 次接受的局部更新选关键帧做全局更新。ESKF 联合状态含导航状态、GP 系数与克隆位姿，创新 χ² 检验（α=0.01），SO(3) 左雅可比重置协方差。磁强计-IMU 联合标定用最大似然估计硬/软铁、尺度与非正交误差；静止初始化由加速度计求 roll/pitch（ψ0=0）。",
+   "experiments": "三数据集：Multi-loop（94 s/90 m，五楼三方 laps）、Single-loop（117 s/90 m，六楼大厅）、Visually degraded（153 s/120 m，地下停车场弱光）。表 3 端点闭合误差（总/水平/垂直，m）：Multi-loop MAINS 1.248/0.628/1.079、MISLAM 0.274/0.161/0.223、OpenVINS 0.989/0.989/0.025；Single-loop MAINS 3.831/3.813/0.364、MISLAM 1.576/1.568/0.163、OpenVINS 0.891/0.883/0.119；Visually degraded MAINS 6.453/6.318/1.315、MISLAM 3.502/0.332/3.486、OpenVINS 约 80 s 跟丢终止。滤波器参数（Σfit=0.01²·I、局部/GP 噪声、M、σb、σp、Nacc、α）按数据集手工调优并在表 2 给出。",
+   "innovation": [
+    "提出不依赖外部里程计与平台运动假设的自包含磁-惯性 SLAM，用 IMU 加九磁强计阵列联合估计轨迹与磁场图",
+    "局部多项式场提供短时相对运动、全局 GP 图提供回环校正的双尺度磁场建模",
+    "ESKF 更新策略：χ² 验证局部参考、用后即退、按接受的局部更新数选 GP 关键帧",
+    "在弱光视觉失效场景下保持跟踪并把水平闭合误差降低 94.7%"
+   ],
+   "limits": [
+    "论文自述：垂直漂移未解决，弱光场景垂直闭合误差 3.486 m 甚至超过 MAINS 的 1.315 m 并主导总误差",
+    "滤波器参数按估计轨迹手工调优，泛化性待验证",
+    "仅手持平台三个室内数据集离线评测，未上真实机器人平台验证",
+    "全局 GP 域范围与基函数数需预先指定"
+   ],
+   "relation": "上游为磁场定位二十年积累（Vissiere 2007、Vallivaara 2010、Kok & Solin 2018 GP 磁 SLAM、Skog 2018/2021 磁里程计）；直接对标 MAINS（Huang et al. 2024，同组前作的磁-惯性里程计）与 SC-EKF-MIO、FSS-EMD-MIO 等 MIO 线，VIO 对照 OpenVINS。本文处于磁-惯性里程计升级到磁-惯性 SLAM 的位置：首次把局部阵列模型与全局 GP 图在单一 ESKF 中紧耦合且不依赖外部里程计。",
+   "repro": "原文未提及代码开源；硬件规格明确（BMI160、9×PNI RM3100、阵列尺寸、立体相机 640×480@25 Hz/60 mm 基线），三个数据集与全部滤波器参数在表 2 给出，具备离线复现条件；未说明计算平台。",
+   "action": "地下/弱光巡检机器人团队可把 MISLAM 作为 VIO 失效时的互补模态，但必须正视垂直漂移，建议与气压计/激光测高融合并做真实平台验证。",
+   "value": 3.0,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.00509",
+   "title": "MESSPa: A Multi-modal Embodiment Stimulation Shoulder Pad for Preserving the Sense of Agency in a Detachable Robotic Arm",
+   "title_zh": "MESSPa：可拆卸机器人臂中保持主体能动感的多模态体感刺激肩垫",
+   "track": "触觉与多模态",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（早稻田大学现代机械工程系，cs.RO，2026-10-31，arXiv:2611.00509v1）",
+   "announce": "cross",
+   "tags": [
+    "可穿戴机器人",
+    "超数机械臂",
+    "可拆卸身体",
+    "体感拥有",
+    "气动触觉"
+   ],
+   "conclusion": "MESSPa（HTC VIVE 追踪器一对一运动迁移+4 气球肩部位置触觉）在 detached 条件较键盘控制显著缩短任务完成时间（单任务 Welch t(15.7)=8.365，p<0.001；双任务 U=0，p<0.001），并显著提升 sense of agency（t(21)=2.582，p=0.017），SoO 无显著变化（p=0.734）；分离代价从 2.1 s/目标缩至 0.6 s（单任务）、1.8 s→0.3 s（双任务），缩小但未消除附着/分离差距；单任务 detached 精度反而更低（t(23.0)=-2.925，p=0.023），双任务精度差异不显著。",
+   "problem": "超数机械臂（SRL）脱离身体后可一人两处作业，但分离削弱操作者的 sense of agency 与任务表现；如何在 attached/detached 两种穿戴状态下都保持 agency 与 ownership，并兼顾单/双任务认知负荷，缺少同时结合本体运动迁移与位置触觉的可穿戴方案。",
+   "method": "MESSPa 肩垫集成 HTC VIVE 追踪器的一对一相对位姿映射（7-DoF，实验中限 2-DoF 平面，命令经 pymycobot 发给 MyCobot 280）与 4 个 25×25 mm、间距 80 mm（超过躯干两点辨别阈 31-44 mm）的气动气球，按机械臂工作空间四象限充气（0.05 MPa、最大 13 N，Arduino MEGA 驱动电磁阀，Unity 判定象限）；采用 Gonzalez-Franco & Peck 标准化体感问卷（SoA=A1+A2+A3-A4，SoO=O1+O2）；2×2 混合设计+Bonferroni 校正。",
+   "experiments": "MESSPa 组 N=13（12 男 1 女，21-30 岁，M=24.7），键盘组 N=12（来自作者前研）；激光指向主任务+颜色朗读副任务，各 5 分钟循环。单任务：on-shoulder 显著快于 detached 无 MESSPa（t(11)=-6.888，p<0.001）与有 MESSPa（t(12)=-4.012，p=0.005）；双任务：detached+MESSPa vs on-shoulder 差异不显著（Z=-2.205，p=0.082）。SoA 提升显著、SoO 不变；作者指出任务可能接近精度天花板。",
+   "innovation": [
+    "把运动迁移与分布式肩部气球触觉整合进单一可穿戴形态因子",
+    "2×2 设计系统比较接口×附着状态×认知负荷",
+    "证明恢复 agency（而非 ownership）足以挽回大部分分离代价",
+    "给出气球力标定测试台（0.05 MPa 下 13 N）与间距设计依据"
+   ],
+   "limits": [
+    "样本小（13/12）且偏男性",
+    "任务对速度敏感但可能过易，难分离精度效应",
+    "附着状态与观看几何混淆",
+    "接口组间比较且键盘数据来自前研；无法分离运动迁移与触觉各自贡献；只评估单一象限编码"
+   ],
+   "relation": "上游为 SRL（Parietti & Asada）、rubber hand illusion、可拆卸身体（Iwasaki 等）与作者 2023 SII 基线研究；对标 TELESAR VI 遥操作与 balloon haptics（Hapballoon、Altukhaim 所有权增强）；本文是首个把肩部位置触觉用于 detached SRL agency 保持的工作。",
+   "repro": "原文未提及代码/数据开源；硬件清单完整（HTC VIVE Tracker、MyCobot 280、Arduino MEGA、外部相机+OpenCV 追踪激光点、Unity3D）；统计用 Python SciPy 1.18。",
+   "action": "研究者应联合报告 SoA/SoO 与客观指标，并按作者规划做长期穿戴实验（每天 1-2 小时、连续数天）检验 ownership 收敛；工程上需权衡气球线索对精细定位精度的干扰，并在更高负荷任务中验证。",
+   "value": 2.85,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.00870",
+   "title": "A Reproducible Reconstruction and Evaluation Framework for Photorealistic Lunar Analog Scene Reconstruction Toward Digital Twins",
+   "title_zh": "面向数字孪生的月面模拟场景可复现重建与评测框架",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 3
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Colorado School of Mines，cs.RO，2026-10-31，arXiv:2611.00870v1，© 2026 IEEE）",
+   "announce": "new",
+   "tags": [
+    "月面模拟",
+    "数字孪生",
+    "3D Gaussian Splatting",
+    "NVS 评测",
+    "COLMAP"
+   ],
+   "conclusion": "在 MLSS 月壤模拟场（108 m²）上，六种 3DGS 变体的训练指标无法预测跨重建保真度：BAGS 在 rover 数据训练指标最差却在 CRPNVS 全面最佳（「BAGS inversion」）；rover 重建相对人控重建平均 PSNR 降 46-60%、SSIM 降 31-51%、LPIPS 升 89-220%；Coverage Score S_c 与最高可达 CRPNVS SSIM 同序（rover 场景 0.036-0.129 vs 人控 0.56-0.97），可作无参考预诊断；推荐 traversal 效应用 BAGS、人控用 Mip-Splatting、极稀疏 rover 用 SparseGS。",
+   "problem": "月面数字孪生需要针对物理真值的光度法定量，但文献缺少直接光度评测、把训练指标等同于保真度、人控 vs rover 差距量化、覆盖稀疏度量化、可复现标准流程；rover 遍历效应（运动模糊、扬尘、轨迹偏置、稀疏视角）使 held-out 测试指标虚高（近重复视角导致过拟合）。",
+   "method": "GoPro Hero 8（4K60，「N 形」扫掠，约 7 万帧）vs RealSense D456 桅杆相机（848×480@12 FPS，约 5 千帧）；phash 去重后选 1000 张最佳清晰图，LightGlue+COLMAP 重建，Depth Anything 3 补深度；评测 vanilla 3DGS、GaussianPro、Mip-Splatting、BAGS、3DGRUT、SparseGS（均 30K 迭代）；CRPNVS：ArUco/AprilTag+RANSAC Umeyama 对齐、[-0.3,+0.3] m 共 7 个高程偏移补偿 floater、物理真值/人控/rover 三面板度量；S_c=(W_f/W_f,ref·W_d/W_d,ref)^0.5（θ*=30°，W_f,ref=0.143，W_d,ref=16.51）；最优 splat 经 NVIDIA NuRec+3DGRUT 转 USDZ 进 Isaac Sim 5。",
+   "experiments": "3 场景×2 传感器。训练指标：rover Scene1 3DGRUT PSNR 33.26 最高、BAGS 最差（Scene2 仅 20.54）；CRPNVS：BAGS 反转为最优（Scene3 PSNR 16.32 vs R_Ctrl，Scene2 15.72）；SparseGS(20%) 保留大部分 CRPNVS（Scene1 12.77 dB）；尺度误差 rover 23.33% vs 人控 2.85%（Scene1 ArUco）；S_c：rover 三场景 0.092/0.036/0.129，人控 0.97/0.91/0.56。",
+   "innovation": [
+    "提出并验证 CRPNVS 跨重建评测框架（对齐+高程补偿+三面板）",
+    "首次量化人控 vs rover 光度保真差距（PSNR 降 46-60% 等）",
+    "提出纯 COLMAP 几何的 Coverage Score 预诊断",
+    "发现 BAGS inversion 推翻训练指标排名",
+    "端到端产出 Isaac Sim 5 USDZ 资产"
+   ],
+   "limits": [
+    "S_c 为先导研究，需更多场景验证",
+    "依赖 COLMAP 现有点云，不能关联非几何指标与扩散式补全",
+    "单目带来尺度歧义（靠基准标记恢复）",
+    "仅评测后处理型 3DGS，未测近实时变体；共享设施灯光变化造成轻微偏差"
+   ],
+   "relation": "数据集上游：POLAR（NASA Ames）、SPICE-HL3（卢森堡大学）、OmniLRS、LuPNT；3DGS 月面重建上游：Zhang 等（TGRS 2025）、Prosvetov 等、Casadesus Vila 等；变体基线：3DGS/GaussianPro/Mip-Splatting/BAGS/3DGRUT/SparseGS；本文定位为可复现评测框架而非新渲染算法。",
+   "repro": "代码与项目页 https://rose-lab-admin.github.io/rose-lunar-dt-rec；硬件：GoPro Hero 8、RealSense D456、RoSey CubeRover；工具链 COLMAP/LightGlue/DA3/Isaac Sim 5/NuRec；训练 30K 迭代。",
+   "action": "研究者应采用 CRPNVS 式跨重建评测而非仅 held-out 指标，并在采集前用 S_c 诊断遍历计划；工程落地者做 rover 重建优先选 BAGS（抗模糊/扬尘）并用基准标记恢复尺度，人控采集用 Mip-Splatting。",
+   "value": 2.77,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03254",
+   "title": "TRAILS: Trajectory Generation for Automated Indoor Locomotion Studies",
+   "title_zh": "TRAILS：自动化室内移动研究的轨迹生成",
+   "track": "系统与平台",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 2,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 4
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Oulu 与 Maastricht University，cs.RO，2026-11-02；License CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "程序化内容生成",
+    "轨迹生成",
+    "虚拟现实实验",
+    "远程呈现",
+    "刺激采样"
+   ],
+   "conclusion": "TRAILS 用三阶段自动生成完整 VR 导航场景：WFC 启发的约束式 tile 扩张环境生成（界面标签邻接约束、闭包期偏好减少开口、伯努利障碍放置，构造性保证全局连通）、多边形开口图随机游走粗路径加 cubic Bézier 曲线 COBYLA 优化（端点沿边偏移≤αmax=0.4、控制点角≤1.0 rad、距离 0.25–1.5 m、最小墙距 0.30 m、ωmax=π rad/s）、固定时长与目标平均速度的速度剖面生成（分段常速加常加速度、解析校正平均速度），最后以 VIF≤2.5 剔除多重共线性轨迹。数值示例中 100 s 轨迹平均生成耗时 85.97±23.15 s，200 s 轨迹 416.57±44.47 s（含废弃重生成）。",
+   "problem": "VR、远程呈现与人机交互实验需要大量逼真环境与多条既多样又受控（几何/运动学约束、时长一致）的轨迹；手工设计耗时且可能引入变量间无意相关；已有 PCG 多只生成环境布局，不生成包含真实轨迹与运动剖面的完整导航场景。",
+   "method": "环境生成：模块 tile 四边界面标签（走廊口/厅口/带侧墙厅口/门口/封闭墙），前沿扩张加满足邻接约束的加权随机采样，达到 Nmin=500 后只保留开口数最少的 tile 促闭包。路径：unicycle 运动学（ẋ=v cosθ、ẏ=v sinθ、θ̇=ω），开口图上随机不重复访问生成粗路径，Bézier 段内联合优化、段间固定起点与首控制点保连续，目标 J=woNo+wωNω+wdNd+λcC+λlL（直线段 λc>0、弯曲段 λc<0，目标长度按粗路径加减偏移，角速度估计 ωi=κi·vn）。速度剖面：Nseg 段每档目标速、半数缩短半数等量加长以保持各速度总时长、约束检查后随机选取有效段、末段减速回零、解析调整两段时长匹配 vavg=1.0 m/s。验证：轨迹的曲率、墙距、速度特征 VIF 超阈值即弃重生。",
+   "experiments": "数值示例参数表：500 tile、αmax 0.4、ϕmax 1.0 rad、d∈[0.25,1.5] m、dwall 0.30 m、ωmax π rad/s、T=100 s、vavg 1.0 m/s、VIFmax 2.5；计时实验各生成 10 条 100 s 与 10 条 200 s 轨迹并计入废弃重生成耗时。框架面向与 Double 3 等商用远程呈现机器人一致的 unicycle 运动学，生成的场景用于 VR 遥现与 human-subject 实验。",
+   "innovation": [
+    "首个把环境布局、路径与时序运动剖面整合为单一管线的导航场景自动生成框架",
+    "约束式 tile 扩张在生成过程中构造性保证全局连通（区别于 WFC 的事后验证）",
+    "Bézier 约束优化显式控制曲率、墙距与角速度可行性，并用直线/弯曲段随机指定实现几何风格可控变化",
+    "固定时长、目标均速与分段保时的速度剖面设计使轨迹跨实验条件可比",
+    "VIF 阈值验证主动抑制轨迹特征间的多重共线性"
+   ],
+   "limits": [
+    "论文自述：环境多样性受预定义 tile 库限制（框架附带默认 tile 集，用户可自定义但未验证大规模扩展）",
+    "轨迹生成为启发式优化加预定义参数范围，而非全局优化",
+    "场景面向仿真环境，未显式处理真实机器人导航的不确定性",
+    "VIF 阈值只排除线性多重共线性，非线性关系仍可能隐藏；轨迹集间依赖未评估（仅轨迹内）"
+   ],
+   "relation": "环境生成承接 WFC（Gumin 2016；Karth & Smith 2017 的约束求解视角）与 ProcTHOR、Scenic 大规模 PCG；路径规划对照 RRT-connect、状态格规划、同伦感知规划（Sakcak 2019、Kuderer 2014）与 Bézier 平滑及时间参数化文献；实验动机来自 Riecke & Feuereissen（曲率-vection）、Rouhani 等（VR sickness 基准）与 Suomalainen/LaValle 组远程呈现舒适度系列。本文把三条线整合为可控实验刺激生成，补足 stimulus sampling 方法论空白。",
+   "repro": "代码开源：https://github.com/JucciK/Trails；数值示例全部参数在表 I 给出；算法为显式 seed 控制的程序化过程，透明、可复现、可配置，无数据驱动组件；原文未提及硬件需求。",
+   "action": "做 VR 遥现/晕动症研究的团队可用其批量生成受控轨迹替代手工设计，注意非线性混杂仍存，实验设计宜配合 Latin square 类平衡。",
+   "value": 2.77,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01495",
+   "title": "Endless VR Walk: Dynamic Mapping of Limited Physical Spaces into Infinite Linear Paths",
+   "title_zh": "Endless VR Walk：把有限物理空间动态映射为无限线性路径",
+   "track": "交互与输入",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 2,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 3
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "ACM SIGGRAPH Conference on Motion, Interaction and Games (MIG '26)，2026-12-11~13，Charleston, SC；arXiv:2611.01495v1 [cs.HC] 01 Nov 2026（CC BY-NC-SA 4.0）",
+   "announce": "new",
+   "tags": [
+    "VR",
+    "locomotion",
+    "程序化生成",
+    "不可能空间",
+    "无限行走"
+   ],
+   "conclusion": "Endless VR Walk 用递归前向块生成把有限物理空间（实验室 6 m×6 m）实时映射为有效无限的线性虚拟路径：仅允许前进/90° 左/90° 右（禁锐 U 转），块 1.2 m×1.2 m，用户前方 5 块可见+4 块预生成、后方 5 块可见。100 条随机路径统计：3×3 块网格（12 m²）只有环形路径且无变异，5×5 块网格（36 m²）是出现全部变异的最小空间（左 25.2%/右 24.9%/直 50.0%/方向变化 1.6%/zigzag 20.3%），9×9（117 m²）zigzag 达 32.0%。",
+   "problem": "自然行走是缓解晕动症与提升存在感的最佳 VR locomotion，但无限虚拟环境所需物理空间不可得；万向 treadmill 与人工 locomotion 或不可及或增加晕动症；需要在不限制自由度前提下把有限空间复用为连续线性行走。",
+   "method": "递归算法 GenerateForward(origin, remaining)：取下一象限→边界/重叠检查（w=5 窗口不重叠）→按允许类型洗牌尝试放块→失败回溯；用户出块即调用 GenerateForward(getBlock(current+5), 4)；三种主题资产库（Alley Way、Frutiger Aero、Castle）；Unity 实现、Maya/Blender 资产、Meta Quest 3 测试；每类型预实例化 10 个对象复用消除实例化 lag；已访路径结构保留内存以重建持久空间感知。",
+   "experiments": "仿真式路径变异性统计（每面积 100 条随机路径）：4×4（23 m²）左 43.4%/右 5.2%/直 51.3%/zigzag 10.4%；5×5（36 m²）左 25.2%/右 24.9%/直 50.0%/dir.ch. 1.6%/zigzag 20.3%；9×9（117 m²）左 26.6%/右 26.4%/直 47.0%/dir.ch. 5.0%/zigzag 32.0%；尚无论文级用户感知/晕动症实验（列为 future directions）。",
+   "innovation": [
+    "把 impossible spaces 思想扩展到不间断线性无限路径",
+    "三方向限制+递归回溯兼顾空间利用率与结构合理",
+    "前后 5+5 块双缓冲支持双向自由移动",
+    "以 100 条路径频率统计定量给出全变异最小物理空间=5×5 块"
+   ],
+   "limits": [
+    "初步测试为路径统计而非用户感知实验",
+    "未测真实手机等更多硬件",
+    "分支/迷宫路径未实现（列为未来）",
+    "面积缩小时重复性风险上升（3×3 无变异）"
+   ],
+   "relation": "直接继承 Lochner & Gain 2021（VR Natural Walking in Impossible Spaces，MIG '21）与同组 Tian et al. 2026（Circular-Path VR，HCII）；上下文为 treadmill/人工 locomotion/离散旋转/注视预测/stuttered locomotion 等 VR locomotion 谱系。",
+   "repro": "代码开源：https://github.com/digitalworlds/MiDAS-Infinite-Walk；Unity+Maya/Blender+Meta Quest 3；实验室物理空间 6 m×6 m。",
+   "action": "研究者应补齐用户感知实验（无限感/物理空间感知/晕动症）并测试主题、走廊宽度、分支迷宫与物理治疗场景；工程落地者可直接复用开源代码，按约 36 m²（5×5 块）阈值规划场地。",
+   "value": 2.7,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.03389",
+   "title": "CrowdForge: Effects of Audio and Visual Audience Participation Modalities on Agency, Collaboration, and Engagement in AI-Mediated MR Performances",
+   "title_zh": "CrowdForge：AI 中介 MR 演出中观众参与模态对能动性、协作与投入的影响",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 2,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 3
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Colorado, Boulder，ATLAS Institute/SolJAMM Research + University of Trento；cs.HC；v1 于 2026-11-02 posted；受 EIC Pathfinder MUSMET 项目 grant 101184379 资助）",
+   "announce": "new",
+   "tags": [
+    "技术介导的观众参与",
+    "混合现实",
+    "生成式 AI 音乐",
+    "现场演出",
+    "感知控制感"
+   ],
+   "conclusion": "在 19 名观众（17 男 2 女，平均 28.89±9.89 岁）参与的两场 AI+MR 现场演出研究中：含音频的条件显著提升 SAM Dominance（Audio p=0.006、r=0.73；Both p=0.025、r=0.60）与情感唤起（Valence：Audio p=0.021、r=0.62，Both p=0.003、r=0.80；Arousal：Audio p=0.002、r=0.84，Both p=0.004、r=0.76），Both 条件的社会存在感显著高于 Visual-only（p=0.015，r=0.65）。行为数据与主观一致：tempo 跳过率 0%，human guitar tone 是唯一显著提升 agency 的音频元素（p=0.007，r=0.72）且影响力最高（p=0.002，r=0.85），而细粒度 AI 音效跳过率达 30.8%–38.5%，audio 条件下视觉参数跳过率 93.3%。核心结论：observability（可观测性）是观众 agency 的首要驱动；音频驱动情感投入，视觉提供非冲突的可观测反馈。",
+   "problem": "TMAP（technology-mediated audience participation）系统中，音频与视觉参与模态如何各自及协同影响观众的 agency、协作与 engagement 缺乏系统实证；同时 TMAP 设计长期面临两难：既要交互低门槛可及，又要让观众做出有意义的创造性贡献，这一权衡在 AI 生成音乐与 MR 语境下尚无经验证据。",
+   "method": "CrowdForge 系统四组件：手机 web 投票端聚合观众参数（audio 14 项/visual 14 项/both 28 项，每个 set 约 7 分钟投票一次）；Llama-Z（Llama-3.2-1B + REMI-z tokenization；训练数据为 LAMD 与 Slakh2100 采样的共 20,000 个 4/4 拍段，Krumhansl-Schmuckler 算法检测调性并统一归一化到 C-Major 或 A-Minor）自回归生成多轨 MIDI；经 AbletonOSC 送入 Ableton Live 12 由 DJ 实时编排（约 10 秒内可试听生成片段）；Unity 3D MR viewer 部署于 Meta Quest 3，经 OSC 驱动 8 个虚拟乐手角色动画与环境切换，并投影给现场观众。",
+   "experiments": "混合方法设计：一天两场演出（N=5 与 N=14），每场 3 个条件 set（audio-only/visual-only/both，各约 7 分钟）；问卷 N=14（5 人弃答）、行为日志 N=17（2 人连接故障）、半结构化访谈 N=6（10–20 分钟）。统计用 Friedman omnibus + Wilcoxon 事后检验，三条件比较用 Bonferroni、6 个音频子元素 15 组比较用 Holm-Bonferroni，效应量报 r。关键数字：Both 条件 tempo 0% 跳过、视觉角色 7.7%–15.4%、genre/environment 15.4%；SAM Dominance 总体检验不显著（Friedman p=0.368）但 Audio/Both 均显著高于中性基线；Social Presence 三条件均未超过中性基线（p>0.20）。两位 10 年以上经验乐手（吉他手+DJ）的自省报告佐证了观众推向混乱的 adversarial tension。",
+   "innovation": [
+    "提出并实证 observability 是 perceived agency 主驱动因素的概念模型（模态→可观测性→agency→engagement）",
+    "揭示感官不对称：音频参与驱动情感性投入（Dominance/Valence/Arousal），视觉参与提供低冲突的可观测反馈",
+    "发现观众借 AI 参数做 boundary testing 与极端选择，形成观众-乐手间 productive adversarial tension",
+    "首个在统一演出框架内系统对比 AI 生成音乐与 MR 视觉参与模态的 TMAP 研究"
+   ],
+   "limits": [
+    "样本量小（定量行为指标 N=17），两场演出观众分布不均（5 vs 14），存在 ordering effects 与统计功效不足",
+    "视觉参数不影响人类表演者，与音频模态不对等（论文建议未来加入即兴人类舞蹈使模态可比）",
+    "仅限同址(co-located)演出，未测试完全沉浸 VR、个人 MR 与远程参与",
+    "可配置参数数与观众人数的数学关系仅观察未正式建模；AR 条件只有单人 demonstrator 视角投影"
+   ],
+   "relation": "TMAP 谱系上游为 Wu et al. 2017 Open Symphony 与 Hödl/Turchet 的 TMAP 设计空间文献；直接相关系统有 Open Symphony、Pharosphones 等数据驱动参与作品。本文首次把 AI 生成音乐（Llama-Z+REMI-z）与 MR 视觉（Unity+Quest 3）放进同一受控演出框架做模态对比，并用 observability 统一解释 agency 差异，补齐了 TMAP 框架中 participation modality 维度的实证空白。",
+   "repro": "原文未提及代码或数据开源；仅提供演出录像 YouTube 链接；硬件为 Meta Quest 3、Ableton Live 12 与 Unity 3D。",
+   "action": "设计 TMAP 时优先提供效果可观测、可归因的参数（tempo、genre、人类乐手音色、可见环境变化）而非堆叠参数数量；用视觉层并行反馈补偿音频的组合冲突；把 episodic 投票改为实时透明的连续共创以增强社会存在感；参数数量应按观众规模建模配置。",
+   "value": 2.57,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02363",
+   "title": "GEAR: Generative Editing for Scene-Conditioned Outfit Retrieval for VR Travel",
+   "title_zh": "GEAR：面向 VR 旅行的场景条件穿搭检索生成式编辑",
+   "track": "内容生成",
+   "scores": {
+    "IMP": 2,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Science, VNU-HCM、Vietnam National University，cs.CV，2026-11-02，CC BY-NC-SA 4.0）",
+   "announce": "new",
+   "tags": [
+    "场景条件检索",
+    "时尚检索",
+    "图像编辑扩散",
+    "VR",
+    "用户研究"
+   ],
+   "conclusion": "GEAR 用生成式编辑构造中间视觉查询做场景条件穿搭检索：VLM（Qwen3-VL-4B-Instruct）描述适配服装 → FLUX.2-klein-9B 编辑标准参考角色 → 裁剪服装区域 → PE-Core-L14-336 嵌入 + FAISS 检索。自动化瑞士制评审（Gemma 4 26B A4B 裁判）基准上 GEAR 取得最高 mean Elo@5 1012.75 与 top-10 overlap 0.180，pairwise agreement 0.539 次于 VLM 基线 0.548；10 人用户研究（20 场景）中 GEAR 视觉吸引力与场景适配选择率均最高（34.5%），但 Holm 校正后无显著差异。",
+   "problem": "虚拟环境中选择穿搭需与场景和谐，但 3D 环境第一视角截图与商品目录服装资产间存在跨域视觉差距；直接预测场景-穿搭兼容性困难，直接生成 3D 服装又带来生成与绑定难题。",
+   "method": "VLM 从场景图生成不超过 50 词穿搭描述；指令引导扩散模型 FLUX.2-klein-9B（1024×1024、30 步、guidance 7.0）在默认男性参考角色上换装；固定裁剪（宽 50%、高下部 65%）得查询图，与候选共用 PE-Core-L14-336 编码、L2 归一化内积排序、FAISS flat 索引。检索输出仍为既有资产；Unity 6000.2.1f1 + Meta Quest 2 + Meta XR SDK v78 原型，资产为 1,624 张标准化 2D 渲染图与 105 个 .glb 3D 模型（Ready Player Me）。",
+   "experiments": "基准 10 场景 × 100 候选，3,500 次比较（双向 7,000 次呈现，Elo 初值 1000、K=32）。指标（pairwise agreement / mean Elo@5 / top-10 overlap）：GEAR 0.539/1012.75/0.180；VLM 0.548/1012.59/0.170；CLIP 0.506/998.80/0.140；Aesthetic 0.480/995.60/0.080。用户研究 10 人（20-22 岁）、20 场景、每标准 200 次选择：GEAR 34.5% 双第一；对 VLM +10.0 pp（视觉）/ +8.0 pp（适配），CI 含 0；对 CLIP 视觉 +21.5 pp（p=0.029，Holm p=0.088 不显著）。",
+   "innovation": [
+    "将 generation-guided retrieval 用于场景条件穿搭：以生成图像作中间查询而非直接预测兼容性",
+    "检索输出仍为存量资产，避免生成与绑定 3D 服装，保留资产保真度",
+    "2D 检索与 Unity 3D 呈现解耦的原型架构（1,624 张 2D 索引 + 105 个 3D 模型）",
+    "自动化瑞士制 Elo 评审与真人用户研究双轨评估场景适配"
+   ],
+   "limits": [
+    "自述：比较的是完整管线（查询构造/编码器/重排各异），未分离图像生成的贡献",
+    "自述：缺同描述、同编码器的 matched text-only 基线；未评估参考角色外观、裁剪与生成随机性敏感性",
+    "自述：基准仅 10 场景/100 候选；Elo 对配对与更新顺序敏感性未验证；镜像不一致判平混淆不确定与无偏好",
+    "自述：未与 SAFRS、GLOSS 直接比较；无 VR 内交互评测"
+   ],
+   "relation": "上游为 Fashion IQ 反馈检索、SAFRS/GLOSS 场景-穿搭兼容建模、GeCo 与 Imagine-and-Seek 的生成引导检索、InstructPix2Pix/IDM-VTON 指令编辑与试穿。GEAR 把生成引导检索迁入 VR 场景条件设定，差异在于输出限定为既有资产并通过 3D 原型落地。",
+   "repro": "原文未提及代码或数据开源；资产来自 Ready Player Me（1,624 张 2D + 105 个 .glb）；基准为自建 10 场景/100 候选子集；运行环境 Unity 6000.2.1f1、Meta Quest 2。",
+   "action": "做 VR 电商/虚拟形象推荐可复用生成中间查询 + 存量资产检索路线以规避 3D 服装生成；评估务必补 matched text-only 基线与更大场景集，当前结论的统计稳健性不足。",
+   "value": 2.5,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01759",
+   "title": "Teleoperation System for Service Robots using Virtual Reality Headset and Pose Estimation",
+   "title_zh": "基于 VR 头显与姿态估计的服务机器人遥操作系统",
+   "track": "交互与输入",
+   "scores": {
+    "IMP": 3,
+    "NOV": 2,
+    "TEC": 2,
+    "EXP": 2,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "证据等级 L1/PARTIAL：ar5iv 仅摘要页，摘要级评估",
+   "evidence": "PARTIAL",
+   "level": "L1",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（葡萄牙高校团队，cs.CV，2026-11-01 提交；仅 ar5iv 摘要页，17 页 16 图）",
+   "announce": "new",
+   "tags": [
+    "遥操作",
+    "服务机器人",
+    "VR 头显",
+    "姿态估计",
+    "人机交互"
+   ],
+   "conclusion": "该文提出 VR 头显 + 人体姿态估计的服务机器人遥操作系统：用 Mediapipe 做 2D 姿态检测，结合 Intel RealSense D455 的 RGB-D 数据扩展为 3D 人体姿态，再映射到机器人运动学实现自然控制，并以 VR 界面提供沉浸式第一视角；在 CHARMIE 服务机器人上完成物体操作真机实验。全文较短（ar5iv L1，约 5.3k 字符），细节有限，摘要中未见任何量化指标。",
+   "problem": "服务机器人部署在复杂动态环境中，需要直观、低成本的远程操控方式；同时操作者需要良好的态势感知。如何从人体姿态自然映射到机器人运动并保持映射精度是主要难点。",
+   "method": "摘要层面：Mediapipe 框架做 2D 关键点检测；RealSense D455 提供 RGB-D 数据，将其扩展为完整 3D 人体姿态估计；3D 姿态经运动学映射驱动机器人；VR 头显界面呈现沉浸式视角以增强操作者态势感知。摘要自称提出用 Mediapipe 实时计算关节角的算法。",
+   "experiments": "原文未述定量实验：真机平台为 CHARMIE 服务机器人，任务为物体操作；未报告样本量、任务成功率、延迟或精度等指标（全文较短，ar5iv L1，约 5.3k 字符，细节有限）。",
+   "innovation": [
+    "摘要自称：结合 RGB-D 传感与 Mediapipe 的实时关节角计算算法",
+    "VR 沉浸式界面与机器人遥操作结合，提升操作者态势感知",
+    "面向服务机器人（CHARMIE）的整套人机运动映射流程"
+   ],
+   "limits": [
+    "全文较短（ar5iv L1，约 5.3k 字符），仅摘要可读，细节有限",
+    "摘要自述：某些关节角（如 wrist yaw）捕获不准确",
+    "摘要自述：人体与机器人运动的精确映射仍有挑战；未来拟引入 IMU 改进旋转跟踪与更先进控制算法"
+   ],
+   "relation": "属于 HRI 中基于视觉人体姿态映射的 VR 遥操作一脉（相对传统主从遥操作与共享自治）；因仅摘要可见，无法确认其直接对标基线与引用谱系，摘要中亦未给出可对比的量化基线。",
+   "repro": "原文未提及（仅摘要页）：已知硬件为 VR 头显、Intel RealSense D455、CHARMIE 服务机器人；代码/数据开源情况不可见。",
+   "action": "建议先获取 PDF 全文再决定是否深入；若做人机遥操作，可参考其 RGB-D + IMU 融合与关节角映射思路，但须核实定量效果与映射误差。",
+   "value": 2.28,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01229",
+   "title": "Precision Through Play: Enhancing Fundamental Laparoscopic Skill Acquisition Via Gamified XR and Pseudo-Haptics",
+   "title_zh": "Precision Through Play：经游戏化 XR 与伪触觉增强腹腔镜基础技能训练",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 2,
+    "TEC": 2,
+    "EXP": 1,
+    "PER": 2,
+    "TRL": 2,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "证据等级 L1/PARTIAL：ar5iv 仅摘要页，摘要级评估",
+   "evidence": "PARTIAL",
+   "level": "L1",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（cs.HC/cs.GR，2026-10-31 提交，arXiv:2611.01229v1）",
+   "announce": "cross",
+   "tags": [
+    "XR",
+    "腹腔镜训练",
+    "游戏化",
+    "伪触觉",
+    "手术教育"
+   ],
+   "conclusion": "原文为短文（ar5iv L1 抓取，约 4.9k 字符，仅摘要页内容）：提出集成伪触觉的游戏化 XR 腹腔镜训练平台，实时监测器械朝向、计算与理想参考矢量的角偏差并计分，偏差超限时给实时触觉反馈；摘要称初步评估表明游戏化反馈显著提升精度、降低角度方差并促进持续练习，但未给出任何具体数值或统计量。",
+   "problem": "腹腔镜手术基础技能（器械握持与对准）需要大量重复练习而传统训练资源受限；XR 有潜力，但缺乏沉浸、有吸引力且低成本可扩展的连续练习环境，以及维持练习动机的实时反馈机制。",
+   "method": "XR 平台+游戏化层：实时监测器械朝向并计算与理想参考矢量的角偏差；积分制计分强化正确技术、惩罚超阈对准偏差；伪触觉（pseudo-haptics）机制在偏差超容差时提供实时触觉反馈，构成动机反馈环；配合低成本硬件与易部署架构提升训练可扩展性。",
+   "experiments": "原文未述（全文仅摘要，无实验设计、样本量、数据与统计结果）。",
+   "innovation": [
+    "把伪触觉与游戏化计分结合用于腹腔镜器械对准训练",
+    "以角度偏差为统一度量耦合计分与触觉反馈",
+    "低成本可扩展部署定位"
+   ],
+   "limits": [
+    "全文较短（ar5iv L1，约 4.9k 字符），细节有限",
+    "无实验数据、样本量与统计结果",
+    "原文未述验证方式、对照与平台细节"
+   ],
+   "relation": "原文未述（摘要未给出具体引用谱系）；领域背景为 XR 手术技能训练与伪触觉感知研究。",
+   "repro": "原文未提及（摘要未涉及代码、数据或硬件细节）。",
+   "action": "研究者需获取 PDF 全文后补充评估细节再判断可信度；工程落地者可参考其「角度偏差+计分+伪触觉」闭环设计腹腔镜 XR 训练模块，但落地前应补受控实验。",
+   "value": 2.05,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.01361",
+   "title": "Reasoning Across Scales: Learning Challenges and Opportunities for Immersive Technologies in Chip Design Education",
+   "title_zh": "跨越尺度推理：芯片设计教育中沉浸式技术的学习挑战与机遇",
+   "track": "空间计算与UI",
+   "scores": {
+    "IMP": 2,
+    "NOV": 2,
+    "TEC": 2,
+    "EXP": 2,
+    "PER": 1,
+    "TRL": 1,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Emory University 计算机系，cs.HC，2026-10-31，arXiv:2611.01361v1，CC BY 4.0）",
+   "announce": "new",
+   "tags": [
+    "沉浸式学习",
+    "VR",
+    "芯片设计教育",
+    "跨尺度空间推理",
+    "定性研究"
+   ],
+   "conclusion": "通过课程分析+5 名参与者（3 名教师+2 名高级学习者，每场访谈 45-60 分钟）的半结构化访谈，将芯片设计学习需求归纳为四类（描述性、程序性、关系与设计推理、策略决策），识别五类反复出现的难点（连接抽象层级、解读空间结构、理解时序行为、理论联系实际、权衡与下游后果），并构建学习需求与六种沉浸式可供性（空间可视化、多尺度导航、交互操作、时序动态可视化、即时反馈、协作）的概念映射；提出 Cross-Scale Spatial Reasoning（CSSR）概念透镜；未测量学习结果。",
+   "problem": "芯片设计横跨多物理尺度与抽象层级，传统讲授+软件实验难以支撑学生在表示（RTL/网表/时序报告/版图）之间与设计阶段之间建立连接；沉浸式技术虽有潜力，但「在哪里、如何」有意义地支持半导体教育缺乏系统研究，且沉浸并不天然带来更好学习。",
+   "method": "混合归纳-演绎主题分析：课程分析把内容分为器件物理与电路基础/芯片设计周期/流片与制造三区（Tables 2-4 列各学习单元需求与推理挑战）；5 场半结构化访谈（E1-E5，purposive sampling，录音转录）；把学习需求映射到六种 affordance 并用 Table 6 做任务级映射；作者明确声明该映射为研究者开发的概念综合而非经验验证，并讨论 7 类设计机会与 5 类设计/评估挑战。",
+   "experiments": "无对照组实验。样本 N=5（3 教师：研究生 VLSI、高级 SoC/EDA、数字逻辑；2 高级学习者：博士候选/前 TA、研究生/前 TA），每场 45-60 分钟；产出 4 类学习需求、5 类挑战、6 种可供性、Table 6 任务级映射与 Table 7 设计机会。",
+   "innovation": [
+    "芯片设计学习需求的四类实证刻画",
+    "学习需求→沉浸可供性的结构化任务级映射",
+    "提出 CSSR 概念透镜",
+    "明确「选择性沉浸」立场（不把整个 EDA 搬进 VR）"
+   ],
+   "limits": [
+    "样本仅 5 人且共享机构背景，可迁移性有限",
+    "基于课程分析与自述经验而非直接观察或学习测评",
+    "映射为概念综合，未证明沉浸优于现有方法",
+    "CSSR 未经认知测量验证"
+   ],
+   "relation": "上游：Ainsworth 多表示学习、Dalgarno & Lee/Merchant 等沉浸学习可供性、Makransky 等 2019（沉浸或反效果）、Paszkiewicz 2022 VR 电路教育、Lie/Studer VR 加工训练、Turakhia 创客空间教育技术、ZeroToASIC/TinyTapeout/Croc 开源芯片教育；本文把沉浸 STEM 教育方法系统引入芯片设计课程分析。",
+   "repro": "原文未提及（定性研究，无代码/数据；课程清单称保留在补充材料）。",
+   "action": "研究者应以 CSSR 为框架设计受控研究（多层布线、时钟树、时序优化任务）并与桌面可视化对照；工程落地者优先做单主题小模块嵌入现有 EDA 课程，而非全课程 VR 化。",
+   "value": 1.77,
+   "batch": "2026-11-04"
+  },
+  {
+   "id": "2611.02447",
+   "title": "DruMR: A Feedback Driven Mixed Reality Air Drumming System",
+   "title_zh": "DruMR：反馈驱动的混合现实空气架子鼓系统",
+   "track": "交互与输入",
+   "scores": {
+    "IMP": 2,
+    "NOV": 2,
+    "TEC": 2,
+    "EXP": 1,
+    "PER": 1,
+    "TRL": 2,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Minnesota, Twin Cities，cs.HC，2026-11-02）",
+   "announce": "new",
+   "tags": [
+    "混合现实",
+    "音乐教育",
+    "MIDI",
+    "Quest 3",
+    "定量反馈"
+   ],
+   "conclusion": "DruMR 是面向学鼓的 MR 系统：AeroDrum（反光标记 + 高速相机）捕获鼓棒 3D 位置与速度，MIDI 经 Loop MIDI→UDP socket 实时推送到 Meta Quest 3（Unity 应用），打击时虚拟鼓亮红，会话后给出 note accuracy、tempo accuracy（±150 ms 容差）等定量反馈。本文为系统设计与研究计划论文：物理鼓 vs DruMR 的对照用户研究尚在计划阶段，暂无任何实验数据。",
+   "problem": "学鼓受乐器成本、噪音与场地限制；现有 VR 鼓应用（如 Paradiddle）以谱面游戏化提示为主，缺乏教学反馈，用户难以自知进步；需要把定量指标与视觉反馈结合以促成 flow state。",
+   "method": "硬件为 Meta Quest 3 + AeroDrum（鼓棒反光尖、高速相机如 PlayStation Eye 加红外照明，需暗光少反射环境）。软件链路：AeroDrum 输出 MIDI，经 Mido 库与 UDP socket 服务器把每次击打的 note/velocity/timestamp 发送到头显；33 hits/s 队列防双触发。Unity 端支持鼓组在 3D 空间重定位、倒计时开始、击中鼓面变红、会话后指标面板；指标与预定义 MIDI 文件比对计算音符与节奏准确率。",
+   "experiments": "原文未述定量实验。计划中的用户研究：两组交叉设计（一组先练物理鼓、一组先用 DruMR），各 10 分钟熟悉与专业鼓手培训后测试 10 分钟，再经培训演示 5 分钟由专业鼓手盲评；辅以 NASA TLX、系统可用性量表（SUS）、Likert 量表、半结构化访谈与前后测 MIDI 量化比较。",
+   "innovation": [
+    "专用光学跟踪硬件（AeroDrum）与商用 VR 头显结合的混合 MR 鼓系统",
+    "实时提取 MIDI 音符/力度/时间戳并转成定量反馈指标（±150 ms 容差）",
+    "规划中基于指标的 LLM 个性化反馈、响应式虚拟观众与击打热图，以支持 flow state"
+   ],
+   "limits": [
+    "论文为项目/系统报告，用户研究尚未开展，无任何定量结果可引",
+    "AeroDrum 要求暗光、少反射物的使用环境，普适性受限",
+    "依赖预置曲库与固定鼓组映射，自定义内容流程未打通",
+    "LLM 反馈、弱点定位、热图等核心教学功能均为 future work"
+   ],
+   "relation": "上游为 Paradiddle（VR/MR 鼓，谱面式提示）、Mimi（滚动钢琴卷 + factor oracle 的即兴反馈系统）、音乐教育反馈策略研究（McPherson 等）与 flow state 理论。DruMR 的差异在以硬件跟踪 + 定量指标替代游戏化谱面提示，但尚未提供对照证据。",
+   "repro": "原文未提及开源；已知硬件为 Meta Quest 3 与 AeroDrum，软件为 Unity + Mido + UDP 方案；无公开数据集或指标结果。",
+   "action": "做 MR 音乐教育者可借鉴其 MIDI 时间戳 + 容差窗口的指标设计与低延迟 UDP 链路；但目前证据仅够作工程参考，落地前需自行补齐对照实验与统计检验。",
+   "value": 1.7,
+   "batch": "2026-11-04"
+  }
+ ],
+ "backfill": [
+  {
+   "id": "2603.22174",
+   "title": "Feasibility of Augmented Reality-Guided Robotic Ultrasound with Cone-Beam CT Integration for Spine Procedures",
+   "title_zh": "AR 引导机器人超声联合锥束 CT 用于脊柱操作的可行性",
+   "track": "空间计算与UI",
+   "scores": {
+    "IMP": 4,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Technical University of Munich，Chair for Computer-Aided Medical Procedures and Augmented Reality + Munich Center for Machine Learning；cs.HC；正文标注为 Healthcare Technology Letters 期刊 Original Article，与 AE-CAI/CARE/OR 2.0/PRiSM Joint MICCAI Workshop 2026 特刊相关；v1 于 2026-03 首次投稿（据 arXiv 编号 2603 推断），v2 于 2026-10-30 更新）",
+   "announce": "replace",
+   "tags": [
+    "增强现实",
+    "机器人超声",
+    "脊柱介入",
+    "CBCT",
+    "用户研究"
+   ],
+   "conclusion": "16 名受试者（6 女 10 男，22–43 岁，平均 28.75±4.49）的 phantom within-subject 研究显示：AR 相较常规屏幕总体执行时间降 49%（W=5.0，p=0.0003）、放置误差降 25%（t=3.29，p=0.0050）。分任务：LP 时间降 42%（78.25±56.46→45.31±24.90 s，p=0.002）、LP 误差降 32%（13.12±5.43→8.89±2.71 mm，p=0.015，显著）；FJ 时间降 54%（95.25±54.51→43.50±19.17 s，p=0.003）、FJ 误差降 18%（11.76±6.37→9.69±2.93 mm，p=0.228，不显著）。主观：可用性 +50%（p=0.00060）、NASA-TLX 负荷 -37%（p=0.0025）、信任 +41%（p=0.00070）、空间理解 +89%（p=0.0004）。系统精度：US-CBCT 目标配准误差 1.72±0.62 mm、探头标定 0.65±0.2 mm、点云配准 RMSE 9.1 mm。",
+   "problem": "脊柱介入（腰椎穿刺 LP、小关节注射 FJ）依赖 CT/透视辐射且缺乏实时 3D 反馈；超声受声影遮挡缺少全局解剖上下文；屏幕显示要求临床医生在 bedside 做 2D-3D 心理配准；现有 AR 导航多基于静态 CT 叠加或人工配准，未与机器人及实时超声集成，缺少 AR vs 屏幕的同受试者配对证据。",
+   "method": "系统整合 KUKA LBR iiwa 14 R820 机械臂（手持手柄控制）+ Siemens ACUSON Juniper 5C1 凸头超声（3D 打印夹具含可拆卸针导）+ 机器人 CBCT 三维脊柱模型（3D Slicer 从 DICOM 提取网格）。预标定：光学跟踪相机与探头 marker、机器人末端-基座变换构手-眼问题 AX=XB 解 T^R_O，链式求 US-CBCT 变换 T^C_U。虚拟-真实配准：用户框选机械臂 3D bounding box 滤噪，多视角累积深度点云，与同步关节角采样的虚拟机器人表面点云做 maximal cliques 全局配准 + point-to-point ICP 精配准（任意时刻可做、无需预设姿态）。AR 界面（Unity + Microsoft HoloLens 2，TCP/IP 通信）原位显示配准好的脊柱模型；针导轴线参数化为射线 r(t)=o_R+t·d_R，与三角网格做 Möller–Trumbore ray–triangle 相交，最小正交点渲染为红色小球，无交点则不显示。",
+   "experiments": "within-subject 2 条件（屏幕 vs AR，顺序 counterbalanced）×2 任务（FJ 如左 L2–L3、LP 如 L3–L4 中线，目标随机分配、每目标仅出现一次），无练习试次；腰椎 phantom 置于 35×25×24 cm 容器、水面声耦合、泡沫粒遮挡直视；单场约 40 分钟。主观量表：SUS、NASA-TLX、SEQ（7 点）、Jian 信任量表、IPQ 空间理解问卷；统计用 Shapiro–Wilk 正态性 + paired t-test/Wilcoxon（α=0.05）。针尖位置由不知情的实验者在最终冻结超声帧上鼠标标定，再经标定变换转入 CBCT 坐标系，放置误差定义为与预定义目标点的三维欧氏距离。",
+   "innovation": [
+    "OST-AR 原位可视化 CBCT 全局 3D 上下文 + 实时超声局部验证的统一坐标系框架",
+    "抗干扰的流线式虚拟-真实配准流程（maximal clique 全局 + ICP 精配准，无需预设机器人姿态）",
+    "针轨 raycasting 命中点预测叠加，支持快速轨迹规划与解剖有效性反馈",
+    "同受试者 AR vs 常规屏幕的配对比较，覆盖效率-精度-负荷-信任-空间理解多维终点"
+   ],
+   "limits": [
+    "论文自述：rigid phantom 未模拟组织变形、呼吸、针弯曲与 CBCT 采集后体位变化，可能引入 registration drift",
+    "未测量端到端 AR guidance/display TRE；放置误差混合了受试者执行与技术误差及人工针尖定位误差",
+    "受试者均非执业临床医生，结论不能直接外推到介入放射/麻醉/脊柱外科",
+    "VAC 等 OST 深度感知效应未正式评估；CBCT-AR 条件数据与 Song et al. 2026 共享、非独立新观测；任务完成以受试者口头声明为准"
+   ],
+   "relation": "谱系：robotic ultrasound 脊柱应用自 Rasoulian 2014、Tirindelli（US+力反馈融合）到 Esteban 的 OR 集成工作流（扫描规划-体积合成-针导对齐模板）；AR 脊柱导航对标 Agten（AR 小关节注射）、Jiang（可穿戴 AR 腰椎穿刺）与 pedicle screw AR 研究；Li et al. 的 CBCT+RUS 共配准是本系统直接前作。本文位置：首次把 CBCT-AR 界面与常规屏幕做同受试者配对比较，补齐可视化模态维度的效率/负荷证据。",
+   "repro": "原文未提及代码或数据开源；硬件 KUKA LBR iiwa 14 R820、Siemens ACUSON Juniper + 5C1 探头、Meta HoloLens 2、机器人 CBCT（Ouster OS1-128 用于真实采集验证）；AR 用 Unity 开发、TCP/IP 通信。",
+   "action": "落地时优先补端到端 guidance/display TRE 的独立测量（刚体跟踪靶标分布工作体积）；临床转化需动态解剖跟踪或周期性 US-CBCT 再配准以应对形变；用临床专家与尸体/临床试验验证；可与纯超声 shape completion 方案做辐射-精度权衡对比。",
+   "value": 3.58,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2603=2026-03 投稿（Healthcare Technology Letters），v2 于 2026-11-03 公告"
+  },
+  {
+   "id": "2512.17541",
+   "title": "FLEG: Feed-Forward Language Embedded Gaussian Splatting from Any Views via Compact Semantic Representation",
+   "title_zh": "FLEG：经紧凑语义表示的任意视角前馈语言嵌入高斯泼溅",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Shanghai Jiao Tong University + East China Normal University + Shanghai Artificial Intelligence Laboratory；cs.CV；v1 于 2025-12 首次投稿（据 arXiv 编号 2512 推断），v2 于 2026-04-05 更新）",
+   "announce": "replace",
+   "tags": [
+    "前馈重建",
+    "语言嵌入高斯",
+    "开放词汇",
+    "3D 语义",
+    "机器人导航"
+   ],
+   "conclusion": "FLEG 在 2 视角 ScanNet++ 上 mIoU 46.61/mAcc 71.18/PSNR 28.14，超过 Uni3R（39.54/58.59/24.95）与 LSM（39.36/58.35/19.87）；ScanNet 2 视角 mIoU 48.01/mAcc 73.59。32 密集视角下 ScanNet mIoU 60.97 显著高于 per-scene 优化的 LangSplat（41.24）。DGLE 稀疏语义高斯仅用 73.89K 个 embedding（密集像素对齐 2.012M 的约 3.7%，论文表述为不足 5%）、存储 18.04 MB vs 491.3 MB，语义保真度相当。消融：去掉 instance-guided contrastive learning mIoU 从 46.87 跌至 40.22；去掉几何蒸馏跌至 18.56、训练不稳定。",
+   "problem": "前馈 language-embedded 高斯重建此前面局限于固定 2 视图输入或需要相机参数；给每个高斯挂语言 embedding 造成语义冗余，embedding 数量随输入视图线性增长、存储开销大；3D 几何+语义标注稀缺限制训练规模与数据多样性，难以支撑可扩展的前馈语义重建。",
+   "method": "网络沿用 VGGT 式大 transformer（DINOv2 patchify + 可学习 camera token + 4 个 register token，24 层 global/frame-wise attention，深度与相机头），DPT-based Gaussian head 预测 μ/s/r/σ/SH 颜色与 D 维语义 emb，体素化聚合成标准高斯 G={μ,s,r,σ,c}。双分支蒸馏免 3D 标注：几何分支用 frozen VGGT 做 novel-view-based distillation（按 context views 点云投影覆盖率阈值 τ 选 target views， photometric+LPIPS 与深度/相机伪标签监督，防止对输入视角过拟合）；语义分支用 SAM2 实例掩膜 + CLIP 实例特征对齐，并以 instance-guided contrastive learning（anchor-pixel 相似度，复杂度 O(Np·K) 替代逐像素 O(Np²)）增强实例判别。DGLE 用更大 voxel 把语言 embedding 软加权融合成稀疏语义高斯 G_sem={μ,s,r,σ,emb}（各向同性协方差由 moment matching 近似、旋转固定单位四元数），与标准高斯解耦。",
+   "experiments": "ScanNet + ScanNet++ 训练（与 LSM/Uni3R 相同数据以公平对比），输入视角 2–16（另测密集 32），约 1B 参数，8×NVIDIA H200 训练约 2 天；指标 mIoU/mAcc（LangSplat 开放词汇分割协议）/PSNR/SSIM/LPIPS。基线：AnySplat、LSM、Uni3R（前馈）、LangSplat、LangScene-X（per-scene 优化）、LSeg/SAM2+CLIP（2D）。超参：λ1=2.0、λ2=1.0、λ3=0.5、λ4=0.05、η1=0.5、η2=0.2，蒸馏深度 MSE 权重 0.1、相机 Huber 10.0，输入长边最大 518 像素。消融（ScanNet++，2/4/8/16 视角平均）：w/o sparse(voxel) 1.625M emb/396.7MB、w/o sparse(pixel) 2.012M/491.3MB、w/o novel distill PSNR 24.77、w/o geo distill 18.56。",
+   "innovation": [
+    "任意数量、无标定无姿态多视图输入的前馈语言嵌入高斯重建（2 到 30+ 视角同一模型）",
+    "novel-view-based distillation：无需相机真值即获新视角监督，缓解输入视角过拟合、保训练稳定",
+    "instance-guided contrastive learning 以 O(Np·K) 复杂度获得实例级语义判别",
+    "DGLE 解耦稀疏语义高斯：不足 5% 的 embedding 数量保持语义保真，大幅降低资产存储"
+   ],
+   "limits": [
+    "论文自述：几何精度受 VGGT 蒸馏上限约束（VGGT 数据与算力远大于本文）",
+    "跨数据集泛化主要在室内场景验证（训练限于 ScanNet/ScanNet++），室外数据待扩展",
+    "语言 embedding 仍占额外 GPU 显存，难以处理数百至数千张输入图像（需压缩或流式重建）",
+    "语义稀疏性结论基于当前任务，语义极密/极稀场景的表现未充分测试"
+   ],
+   "relation": "谱系：per-scene optimization 一线为 LangSplat、FastLGS、DF-3DGS；前馈重建上游为 PixelSplat、MVSplat、SelfSplat、AnySplat 与 3D 基础模型 VGGT；直接对标前馈语义重建 LSM（两视角）、Uni3R（多视图但需相机参数）与实例级点图 IGGT。本文位置：首个支持任意无位姿多视图 + 稀疏语言 embedding 的前馈语言高斯框架，面向机器人导航/操作的开放词汇 3D 交互。",
+   "repro": "project page https://fangzhou2000.github.io/projects/fleg ；原文未给出代码仓库链接（未明确开源）；训练用 8×NVIDIA H200 约 2 天；训练数据 ScanNet/ScanNet++ 公开。",
+   "action": "机器人开放词汇 3D 场景理解可直接采用该前馈范式，免去逐场景优化的分钟/小时级开销；用稀疏语义高斯控制重建资产存储；扩展到室内外混合数据以提升泛化；百级以上输入需配合模型压缩或流式重建。",
+   "value": 3.58,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2512=2025-12 投稿，v3 于 2026-11-03 公告"
+  },
+  {
+   "id": "2509.10759",
+   "title": "Every Camera Effect, Every Time, All at Once: 4D Gaussian Ray Tracing for Physics-based Camera Effect Data Generation",
+   "title_zh": "4D 高斯光线追踪：基于物理的相机效应数据生成",
+   "track": "神经渲染",
+   "scores": {
+    "IMP": 3,
+    "NOV": 4,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "NeurIPS 2025 Workshop on Space in Vision, Language, and Embodied AI（arXiv:2509.10759v2 [cs.CV]；v1 于 2025-09 首次投稿（据 arXiv 编号 2509 推断），v2 于 2025-10-21 更新）",
+   "announce": "replace",
+   "tags": [
+    "4D 高斯 splatting",
+    "光线追踪",
+    "相机效应",
+    "物理数据生成",
+    "世界模型"
+   ],
+   "conclusion": "在自建 8 个室内动态场景×4 种相机效应基准上，4D-GRT 渲染速度全面最快且质量与 MSTH 相当或更优：pinhole PSNR 32.801 @36.56 FPS（MSTH 29.431 @9.38 FPS）、DoF 31.2475 @3.44 FPS（MSTH 0.57 FPS）、fisheye masked PSNR 28.8927 @41.53 FPS（MSTH masked 26.7930 @9.38 FPS）、rolling shutter chunk=4 时 31.6146 @4.99 FPS（chunk=16 时 13.54 FPS，指标几乎无损）。效率：训练 3 小时/存储 364.875 MB（HexPlane 12h/238MB，MSTH 8min/889MB）。fisheye 评测需用直径 409.6 的圆形 mask 屏蔽训练视角外区域。",
+   "problem": "真实相机效应（鱼眼畸变、卷帘快门、景深）训练数据稀缺：Blender 合成人力成本高且有 sim-to-real gap；视频生成/world model 不理解相机效应参数、产出违背物理（chicken-and-egg 问题）；动态 NeRF 能建模光传输但渲染慢、质量不如 GS；3DGS 快但仅支持 pinhole 相机模型，模拟鱼眼/卷帘/景深需特殊设计与复杂 Jacobian。",
+   "method": "两阶段。阶段一：以 4D-GS（4D voxel planes 提特征 + MLP φ 融合 + φ_x/φ_r/φ_s 预测 Δx/Δr/Δs 残差）表示动态场景，在 3DGRT 可微光线追踪框架（k-buffer hit-based marching + NVIDIA OptiX）下直接对高斯图元 traced rays 端到端重建，损失 L1(C_v,t, Ĉ_v,t)+L_TV。阶段二把物理相机模型接入 ray tracer：fisheye 采用 4 次多项式径向畸变 θ=k0+k1r+k2r²+k3r³+k4r⁴，把像素转为传感器物理坐标后求球面光线方向；DoF 按 focus distance f_z 与 aperture radius r_a 在透镜面单位圆盘采样扰动光线原点并多次平均；rolling shutter 按行感知时间 t_r 取该时刻变形高斯 traced 单光线，用 chunk（Nc=1/4/16）近似 chunk 内平均感知时间以并行化。",
+   "experiments": "Blender 4.5 + BlenderKit 构建 8 个动态场景（篮球场、仓库、客厅、浴室 4 类环境），每场景 50 相机视角×4 效应（pinhole/fisheye/rolling shutter/DoF）×50 帧 512×512；PlenoBlenderNeRF 插件自动布相机与点云。基线 HexPlane/MSTH 装配与本文相同的相机效应渲染模块以保证公平；RTX 4090 训练评测，训练至收敛。pinhole：HexPlane 23.1124/0.7956/0.2942 @0.20 FPS；DoF：HexPlane 18.3722 @0.01 FPS；fisheye：HexPlane 15.6489（masked 21.6869）；rolling shutter：MSTH 28.7003/0.8927/0.1190 @9.35 FPS。另在 Neural 3D Video 真实数据集定性验证。",
+   "innovation": [
+    "首个在动态场景高斯表示上执行光线追踪的工作（4D-GS + 3DGRT 组合）",
+    "把鱼眼/景深/卷帘快门以物理相机模型统一接入 ray tracing，参数可控、物理准确且多视图一致",
+    "发布 8 动态场景×4 相机效应的配对多视角视频基准",
+    "chunk 近似策略缓解卷帘快门逐行感知时间导致的 ray tracing 无法并行问题"
+   ],
+   "limits": [
+    "论文自述：依赖充分多视图视频才能重建高质量动态场景，稀疏视角或单目输入不适用",
+    "rolling shutter 当前假设静态相机（运动相机需插值轨迹后投射光线）",
+    "chunk 尺寸过大可能因近似引入 blocking artifacts",
+    "数据为合成室内场景，真实域差距未定量评估；真实数据仅定性"
+   ],
+   "relation": "上游为 3D-GS/4D-GS、3DGRT（静态高斯 ray tracing）与 3DGUT（sigma point + unscented transform 近似）；动态渲染基线为 HexPlane/MSTH（dynamic NeRF）与 Deformable 3D Gaussians；生成式路线对标 Curved Diffusion、AKiRa 与 Genie 3 等 world model。本文位置：以 4D 重建+物理 ray tracing 绕开 world model 对相机参数的不理解，直接大规模产出带精确参数标注的相机效应视频。",
+   "repro": "project page https://shigon255.github.io/4DGRT-project-page ；论文称构建并发布 8 场景配对数据集，但原文未明确代码开源方式；硬件 GeForce RTX 4090，渲染管线基于 Blender 4.5 相机模型。",
+   "action": "需要带物理参数标注的相机效应训练数据时优先用 4D-GRT 而非 prompt 式视频生成；卷帘快门建议 chunk=4 起步（4.99 FPS、指标与 chunk=1 持平）；fisheye 评测务必 mask 训练视角盲区；后续可结合生成式/基础模型从单目视频重建动态场景以摆脱多视图依赖。",
+   "value": 3.43,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2509=2025-09 投稿（NeurIPS 2025 Workshop），v2 于 2026-11-03 公告"
+  },
+  {
+   "id": "2606.18588",
+   "title": "Splaxel: Efficient Distributed Training of 3D Gaussian Splatting for Large-scale Scene Reconstruction via Pixel-level Communication",
+   "title_zh": "Splaxel：经像素级通信的高效分布式 3D 高斯泼溅训练",
+   "track": "系统与平台",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 4,
+    "PER": 4,
+    "TRL": 3,
+    "REP": 1
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（UT Arlington 牵头，联合 Texas A&M、Rice、University of Georgia、University of Houston、University of Washington、Argonne National Labs 等；cs.DC；v1 于 2026-06 首次投稿（据 arXiv 编号 2606 推断），v2 于 2026-10-30 更新）",
+   "announce": "replace",
+   "tags": [
+    "分布式训练",
+    "3D 高斯 splatting",
+    "大规模重建",
+    "通信优化",
+    "系统优化"
+   ],
+   "conclusion": "8 GPU 下相较 SOTA 分布式 3DGS 框架 Grendel：Big City Street（120M 高斯）训练 48.8h→6.4h（7.6×，PSNR 均 23.2）、Big City Aerial 3.6h→1.2h（2.9×，PSNR 30.4→31.2）、Small City Street 7.5h→1.3h（5.9×，PSNR 21.4→21.7）、Small City Aerial 25.5m→8.0m（PSNR 26.6→27.3）。吞吐最高 90 img/s（Big City Street，Grendel 14）与 142 img/s（Big City Aerial，Grendel 52）。通信占迭代时间从 Grendel 的 73.0%–80.4% 降至 10%–20%；redundancy reduction 使 zero-pixel 比例降 39%（Small Street）/55%（Small Aerial）、saturated-pixel 降 40%/34%；GPU 利用率提升 20%–35%。",
+   "problem": "大规模 3DGS 训练需把数亿高斯分布到多 GPU：现有框架或把场景切成孤立区域分别优化（牺牲全局一致性、产生可见接缝），或做全局 Gaussian-level all-to-all（Grendel），通信量随高斯数与 GPU 数非线性暴涨并主导迭代时间（10M→50M 高斯时每迭代通信 200MB→800MB；20M 高斯 2→8 GPU 时通信占比 16.7%→74.3%）；且单视角只涉及部分分区，naive 一视角一迭代调度下 GPU 大量空闲（利用率约 50%）。",
+   "method": "Splaxel 把分布式训练重构为 pixel-level local rendering + global composition：每个 GPU 只渲染本地凸分区（AABB 凸划分保证光线与每分区至多相交一次，从而全局 alpha-blending 顺序一致），只交换逐像素 color/transmittance/depth（分辨率固定则通信量恒定、与高斯数无关），反向传播用重 formulation 的梯度公式经各 GPU 保留的 partial pixel 本地回传、无需额外通信。冗余消除：初始化时把视锥与凸分区的重叠三维区域顶点投影到像平面得可见像素区， selective all-to-all 只传有效像素（spatial redundancy，naive 下最高 64% 传输像素为零）；训练中按累计 transmittance<ε（固定 1e-4）动态判定饱和像素并跳过后续分区（saturation redundancy，去除空间冗余后仍最高 53%）。调度：conflict-free view consolidation 把 GPU 集合无交集的视图贪心分桶并行执行，配异步流水线重叠通信与计算。",
+   "experiments": "MatrixCity 四数据集：Big City Street 206,412 训练/22,744 测试/25.3 km²、Big City Aerial 51,632/9,066/25.3 km²、Small City Street 27,505/3,256/2.7 km²、Small City Aerial 5,621/741/2.7 km²（合计约 28 km²、60K 航拍+350K 街景图像，1080p），迭代数分别 1.2M/300k/150k/30k。平台 1：8×RTX 6000 Ada（48GB）；平台 2：8×RTX PRO 6000 Blackwell（96GB）；双 AMD EPYC 9254；CUDA 12.8 + PyTorch 2.9.0；batch=GPU 数。消融：Small City Street 单组件约 100ms/迭代，+redundancy 2.2×，+view consolidation 3.3×；Big City Street 约 80ms，3.1× 与 4.3×。batch 4/8/16 速度 5.8/5.9/5.9× 稳定。透射阈值 ≤1e-2 时 PSNR 稳定，固定 1e-4 无需逐场景调。",
+   "innovation": [
+    "像素级通信方案在保持数学一致性的前提下使通信量与高斯数解耦",
+    "凸分区保证全局混合顺序的几何洞察及配套的梯度重 formulation",
+    "几何不可见 + 透射饱和双通道像素冗余预测/检测，免额外通信",
+    "conflict-free view consolidation 调度消除 GPU bubble，配合异步流水线"
+   ],
+   "limits": [
+    "原文未单列 limitations 节；可推断：小场景/少 GPU 下优势有限，收益随场景与 GPU 规模增长",
+    "通信降至 10–20% 后反传成为迭代时间主要成分，瓶颈转移",
+    "透射阈值固定 1e-4，对极端透明/不透明材质的泛化未测",
+    "原文未提及代码开源，第三方复现门槛高"
+   ],
+   "relation": "直接对标 Grendel（Zhao et al. 2025，唯一保持全局一致的 Gaussian-level 通信分布式 3DGS 框架，本文的动机分析与唯一基线均基于它）；算法分区类前作（Lin et al.、Liu et al. 等 divide-and-conquer）被指牺牲全局一致性；通用 DNN 分布式框架（DeepSpeed、PyTorch DDP、Alpha）因假设静态均衡张量计算而不适配 3DGS 的动态视图访问。上游为 3DGS（Kerbl et al. 2023）与 MatrixCity 大规模数据集。本文位置：系统侧首个像素级通信的分布式 3DGS 训练框架。",
+   "repro": "原文未提及代码开源；数据 MatrixCity 公开；硬件双 AMD EPYC 9254 + 8×RTX 6000 Ada（48GB）或 8×RTX PRO 6000 Blackwell（96GB）；软件 CUDA 12.8、PyTorch 2.9.0。",
+   "action": "大规模城市/航拍 3DGS 训练采用像素级通信 + 冗余消除 + 视图合并三件套；批大小与 GPU 数可放心扩展（5.8–5.9× 稳定）；通信占比压到 20% 以下后应转向优化反传与本地渲染；复现需自建框架，建议关注作者后续开源动态。",
+   "value": 3.31,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace-cross 再公告（首次入馆）：2606=2026-06 投稿，v2 于 2026-11-03 公告"
+  },
+  {
+   "id": "2508.13537",
+   "title": "EAvatar: Expression-Aware Head Avatar Reconstruction with Generative Geometry Priors",
+   "title_zh": "EAvatar：以生成式几何先验进行表情感知的头部化身重建",
+   "track": "化身与人体",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 4,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "B",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Monash University + Chongqing University；cs.CV；v1 于 2025-08 首次投稿（据 arXiv 编号 2508 推断），v2 于 2026-11-02 更新）",
+   "announce": "replace",
+   "tags": [
+    "3D 高斯 splatting",
+    "头部 avatar",
+    "表情重建",
+    "生成式几何先验",
+    "神经渲染"
+   ],
+   "conclusion": "在 NeRSemble 多视图数据上，EAvatar 自驱重演 5 个 identity 全 16 视角平均 PSNR 25.07、SSIM 0.857、LPIPS 0.168，超过 GHA（24.56/0.853/0.175）与 TensorialGA（24.07/0.848/0.204）；新视角合成 PSNR 23.22 vs GHA 22.89、TensorialGA 21.51。RTX 3090 上渲染约 32 FPS、单主体训练约 2.5 天；相较 GaussianAvatars（183 FPS 但 PSNR 22.50、预处理 32.7 小时）以 12.0 小时预处理换取更高保真。生成式先验使 Stage I 训练时间减少 11%。消融：Case 1 PSNR 由 baseline 23.28 经 +control 23.36、+split 23.47 升至全模块 23.66；控制阈值 τ=0.3 优于 0.15 与 0.4。",
+   "problem": "3DGS 头部 avatar 在嘴部、眉宇等高形变区域难以建模细粒度表情与局部纹理连续性；早期训练几何不稳定；依赖 mesh 先验的方法又限制分布外局部几何的表达；全局线性混合（如 HeadGaS）缺乏局部控制。",
+   "method": "两阶段框架。Stage I 结构感知几何建模：逐帧拟合 3DMM（BFM）得表情系数 θ∈R^d_exp 与 pose β∈R^6；MLP 拟合 SDF，DMTet 可微提取网格，再与大规模生成模型（Xiang et al. 2024）产出的 identity-specific 先验网格做 ICP 对齐，施加只约束全局 center 与 scale 的 alignment loss（避免点级监督噪声）。Stage II 动态高斯优化：以 expression/pose 残差 MLP 分别预测位置、颜色、旋转、缩放、透明度残差；controllable Gaussian mechanism 按预测位移阈值 τ=0.3 选出 Control Gaussians，以高斯核距离加权（半径 r 内）把形变向量传播到邻域；deformation-aware splitting 在 τ_split=0.2 处把大位移高斯二分以增加局部密度。Stage I 损失为 RGB/silhouette/offset/landmark/Laplacian/mesh 加权和（λ_rgb=1.0、λ_sil=0.1、λ_offset=0.01、λ_lmk=0.1、λ_lap=100、λ_mesh=1.0），Stage II 用 RGB+LPIPS（λ=1.0/0.1）。",
+   "experiments": "NeRSemble 16 相机视角，每 identity 用 FREE 序列测试、其余训练（比 GaussianAvatars/TensorialGA 原协议更难，二者延长训练至 800k 迭代仍未充分收敛）。指标 PSNR/SSIM/LPIPS；跨身份重演无 ground truth 仅定性；新视角合成用 8 视角训练/8 视角测试。消融：Stage I 损失全模型 24.82 最佳（w/o offset+lap 24.67、w/o landmark 24.71、w/o lap 24.78）；阈值扫描 τ=0.3 PSNR 24.24/24.82 最高；效率表：NeRFace 4 天/~0.06 FPS、HAvatar 7 天/~7 FPS、GHA 3 天/~32 FPS、GaussianAvatars 1 天/~183 FPS、本文 2.5 天/~32 FPS。Stage I 训练 10,000 迭代（lr 1e-3、batch 4），Stage II 500,000 迭代。",
+   "innovation": [
+    "按预测位移大小自适应选择 Control Gaussians 并向邻域传播的局部形变控制机制",
+    "基于属性位移量（而非 opacity）触发 Gaussian splitting 的形变感知细分策略",
+    "生成模型先验网格 + 全局 center/scale 对齐损失，稳定早期几何训练并改善轮廓与遮挡区",
+    "跨身份表情重演下保持身份一致与牙齿/眼睛等高频细节"
+   ],
+   "limits": [
+    "论文自述：口腔内部等高铰合/部分遮挡区域因拓扑复杂、可见性变化频繁、有效监督弱而难稳健建模",
+    "非面部邻近区域与大姿态、光照变化未显式建模，稳定性下降",
+    "训练成本较高（单主体 2.5 天、500k 迭代），渲染 32 FPS 低于 GaussianAvatars/TensorialGA 等实时方法",
+    "框架为多视图设计，稀疏/单目输入不适用"
+   ],
+   "relation": "谱系：3DMM/FLAME → NeRF/NeuS/FaceNeRF/NeRFace/IMAvatar/Neural Head Avatars → 3DGS 头部 avatar（HeadGaS、PointAvatar、GaussianAvatars、SplattingAvatar、GHA、TensorialGA、ScaffoldAvatar）。上游工具为 3DGS（Kerbl et al. 2023）、DMTet 与生成式 3D 先验（Xiang et al. 2024）。本文以 expression-aware + deformation-aware 双机制切入，对标 GHA/TensorialGA 等高保真 3DGS avatar，差异在局部形变控制与生成先验几何初始化。",
+   "repro": "project page https://saralkun.github.io/EAvatar ；原文未提及代码或数据开源；训练/渲染硬件为单张 NVIDIA RTX 3090。",
+   "action": "关注论文点名的嘴部内部结构先验、非面部区域时序稳定、显式眼姿建模与光照感知表示等方向；fidelity 优先的离线 avatar 生产管线适合两阶段方案；需要实时渲染时与 FLAME-rigged 高斯方案按 operating point 取舍并比较预处理成本。",
+   "value": 3.08,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2508=2025-08 投稿，v2 于 2026-11-03 公告"
+  },
+  {
+   "id": "2607.20790",
+   "title": "Ocular Verification for Virtual Reality",
+   "title_zh": "VR 的眼部验证",
+   "track": "感知与认知",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（University of Wyoming + San Diego State University；cs.CV；v1 于 2026-07 首次投稿（据 arXiv 编号 2607 推断），v2 于 2026-10-30 更新；license CC BY-NC-ND 4.0；NSF REU Site 2349771 资助）",
+   "announce": "replace",
+   "tags": [
+    "虹膜识别",
+    "眼周识别",
+    "VR 认证",
+    "多模态融合",
+    "生物特征质量"
+   ],
+   "conclusion": "在 VRBiom（Meta Quest Pro 内向 NIR，400×400，900 段 bonafide 视频、25 名受试者、平均约 23K 帧/人）上：单模态虹膜 EER 0.44/AUC 0.59/d' 0.34，眼周（MobileFaceNet）EER 0.34/AUC 0.76/d' 1.08；最佳 peri-heavy 融合（w_i=0.25/w_p=0.75）EER 0.33、AUC 0.75、d' 0.99（约 3 倍于虹膜），论文自述相对单模态虹膜 AUC 提升约 16%、EER 降低约 11%。UnReflect 去高光使所有眼周模型 EER 下降（MobileFaceNet 34.70→31.97），但 UNIR-Net 照明修复反而使虹膜 AUC 从 0.62 跌至 0.59；OAC 几何校正表现最差（插值与 padding 损伤高频纹理）。ISO margin adequacy 在 MITRE 框架仅 4.38±16.37（远低于推荐阈值 80），concentricity 同样在 VR 原生影像上失效。",
+   "problem": "VR 头显采集天然是 off-axis gaze、非均匀 NIR 照明、睫毛遮挡与强镜面反射的非受控条件，传统虹膜识别协议失效；ISO/IEC 29794-6 质量指标从未在 VR 数据上系统评估（且不同实现分歧大）；图像级生成式增强对认证效用的影响未知；iris+periocular 的最优融合权重缺乏定量分析。",
+   "method": "三模块。(1) 眼部图像调整：DINOv3 + H8Net 回归 8-DoF 投影 homography 做 off-axis 校正（perspective warp 恢复圆形虹膜）；UnReflectAnything（frozen DINOv3 ViT + inpainting）去镜面反射；UNIR-Net 做非均匀照明恢复（NIR 单通道复制为 3 通道 RGB 输入）。(2) ISO/IEC 29794-6 质量评估：用 MITRE BIQTIris 与 UND 两套独立实现统计 12 项指标（Usable Iris Area、Iris-Sclera/Pupil Contrast、Circularity、Grayscale Utilization、Radius、Pupil-Iris Ratio、Concentricity、Margin Adequacy、Sharpness、Motion Blur、Overall Quality）的 μ±σ。(3) 认证与融合：虹膜用 ArcIris（UND 提交 NIST IREX X 的开源实现 openiris-cvrl），眼周用 MobileFaceNet/ResNet-18/ResNet-50，再做加权分数级融合 S_fused=w_i·S_iris+w_p·S_peri 并扫描权重。",
+   "experiments": "仅用 VRBiom bonafide 数据；3 种凝视状态（steady/moving/partially closed）×戴/不戴眼镜；眼周实验每视频随机采 3 帧（约 110 帧/人）；指标 EER、FNMR@FMR=1e-2、AUC、d'；3 个模型 fold 平均；PyEER 画误差曲线；推理用 NVIDIA L40S 或 H100。ISO 两框架分歧巨大：Usable Iris Area MITRE 97.59±7.63 vs UND 54.29±22.75，UNIR-Net 后 UND 跌至 43.26；Sharpness MITRE 原始 7.98±9.58、UNIR-Net 后 38.34±18.25。眼周各模型（Original/UnReflect/UNIR-Net 的 EER%）：MobileFaceNet 34.70/31.97/35.14、ResNet-50 36.37/32.32/36.54、ResNet-18 35.83/31.65/36.47。融合权重：50/50 EER 0.34、75/25（iris-heavy）0.38、40/60 0.33、25/75 0.33。",
+   "innovation": [
+    "首次在 VR 眼部数据上系统评估 ISO/IEC 29794-6 全部指标并用 MITRE/UND 两套独立框架交叉验证",
+    "把 off-axis 几何校正、镜面去除、照明恢复三类生成/几何增强用于 VR 眼部认证预处理并量化其双刃剑效应",
+    "定量揭示 margin adequacy 与 concentricity 在 VR 原生影像上失效（off-axis 所致而非质量差）",
+    "多权重 score-level 融合系统比较，给出 peri-heavy 最优配置（25/75）"
+   ],
+   "limits": [
+    "论文自述：UnReflect/UNIR-Net 在 RGB 而非 NIR 上训练，可能改变细微虹膜纹理，需微调/域适应",
+    "margin adequacy 与 concentricity 指标在 VR 影像上失效，ISO 阈值/指标需针对 VR 修订",
+    "仅用 bonafide 数据，未测 presentation attack；样本 25 人、单一头显型号（Quest Pro）",
+    "OAC 因 warping padding 干扰使眼周识别最差；ISO 指标结果对分割实现高度敏感"
+   ],
+   "relation": "上游：Daugman/Wildes 经典虹膜与 periocular 生物特征（LBP/BSIF/SIFT 等手工特征）；VR 生物特征一线为 Boutros et al.（HMD iris+periocular 融合）、ImmerIris（500K VR 数据集）、GazeShift（解缠凝视与外观）、SAM2 虹膜分割（Sharma et al.）与 VRBiom 数据集（Kotwal et al.）；识别模型为 ArcIris（Khan et al.，openiris-cvrl）与 Kolf et al. 轻量化眼周。本文位置：以质量评估-图像调整-认证融合三模块系统剖析 VR 眼部认证，首次给出 VR 场景 ISO 指标统计基线与双框架分歧证据。",
+   "repro": "代码开源：github.com/rtran7530/vrsyntheye-reu.git ；数据 VRBiom 公开（Meta Quest Pro NIR 400×400）；推理 NVIDIA L40S 或 H100；依赖 MITRE BIQTIris、UnReflectAnything、UNIR-Net、openiris-cvrl/ArcIris 与 PyEER 等开源组件。",
+   "action": "VR 认证落地优先眼周或 peri-heavy（25/75）融合而非纯虹膜；ISO 质量指标用于 VR 前需重订阈值（margin adequacy 等直接失效，且实现分歧巨大建议双框架交叉）；把生成式修复模型在 NIR 域微调/域适应以避免纹理幻觉；按论文未来方向实现 quality-driven adaptive fusion，用逐帧 ISO 分数动态调整模态权重。",
+   "value": 2.93,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2607=2026-07 投稿，v2 于 2026-11-03 公告"
+  },
+  {
+   "id": "2511.20348",
+   "title": "Material-informed Gaussian Splatting for 3D World Reconstruction in a Digital Twin",
+   "title_zh": "数字孪生 3D 世界重建中的材质感知高斯泼溅",
+   "track": "重建与SLAM",
+   "scores": {
+    "IMP": 3,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 2,
+    "TRL": 3,
+    "REP": 2
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（Siemens Digital Industries Software + Delft University of Technology；cs.CV；v1 于 2025-11 首次投稿（据 arXiv 编号 2511 推断），v2 于 2025-11-28 更新；ROBUSTIFAI/SYNERGIES 等 Horizon Europe 与 VLAIO 项目）",
+   "announce": "replace",
+   "tags": [
+    "数字孪生",
+    "3D 高斯 splatting",
+    "材质分割",
+    "传感器仿真",
+    "自动驾驶"
+   ],
+   "conclusion": "仅用相机的管线在 5 个城市场景上达到与 LiDAR-camera 融合（NKSR 网格）相当的 LiDAR 反射率仿真精度：MAE 10.05 vs 10.14、中位误差 6.48 vs 6.78。视觉质量上本文 adapted H3DGS 的 LPIPS 0.44 为全场最佳（3DGS 0.46、CityGaussianV2 0.50、3DGUT 0.53，5 场景中 4 个最优），但 PSNR 18.27、SSIM 0.41 低于三个基线（20.07–21.22 / 0.56–0.58）。材质分割消融（MCubes 500 图）：RMSNet 准确率 0.63/mIoU 0.28，+FastSAM 0.65/0.29，+SAM2 0.67/0.31。",
+   "problem": "Digital Twin 的 3D 重建中，LiDAR 几何准确但缺纹理与语义材质，且对玻璃/金属等透明反射材质失效；LiDAR-camera 融合需复杂标定与同步，稀疏视图下纹理仍差；把 2D 材质分割自动投影到 3D 表面并赋物理材质用于传感器仿真，一直是 camera-only GS 管线的开放问题。",
+   "method": "解耦的五阶段 camera-only 管线：(1) 单目材质提取：RMSNet（asphalt/concrete/glass/metal 等）+ FastSAM 实例边界 + 区域多数投票得 shape-aware 材质掩膜；(2) 大规模 GS：COLMAP 稀疏点云 + GPS 位姿/内外参先验（ego 车辆掩除），训练 H3DGS（可视化，关闭 LoD 与抗锯齿并自定义合并 chunk）与 MiLO（网格，同一 COLMAP 输出，共享坐标系）；(3) per-pixel 材质投影：可微光栅化渲染高斯保 3D-2D 对应，深度排序取最近高斯标签，SegAnyGS 保证跨视角一致，KNN 把标签传给最近 mesh 三角形；(4) 物理材质赋值：按 Principled BSDF（Disney 标准）从 Matsynth（4,000+ 材质、14 类）选 PBR 贴图（base color/normal/roughness/metallic）赋到三角形；(5) 仿真验证：导入 Simcenter Prescan，按 Ouster OS1-128 规格复现传感器与 MATLAB API 导入 ego 轨迹，生成带材质反射率的合成 LiDAR 点云并与真实测量对比。",
+   "experiments": "instrumented test vehicle：Ouster OS1-128 LiDAR + 6 路环视相机 + RTK-GPS，20Hz 硬件同步；5 个静态城市场景（各约 8 秒，移动 ego 车辆采集）；每场景 50 个均匀采样新视角评 PSNR/SSIM/LPIPS。传感器仿真基线为 NKSR（LiDAR 点云网格）+ 与本文相同的相机材质标签，控制变量后对比反射率 MAE/中位误差。硬件 Dell Precision 7680（64GB RAM + NVIDIA RTX A4000 ADA laptop GPU），Simcenter Prescan 2411 + MATLAB R2023b。定性显示：高反射/透明表面仍错位、侧视相机因车辆运动模糊降质、密集遮挡场景质量下降、植被反射率系统性高估。",
+   "innovation": [
+    "模块化 camera-only 数字孪生管线：GS 保真渲染 + 显式网格的混合表示，免 LiDAR 硬件与标定",
+    "基于高斯可微光栅化的自动 2D→3D 逐像素材质投影（SegAnyGS 一致性 + KNN 传标签）",
+    "把语义材质映射为 Principled BSDF 物理参数，直接服务 LiDAR 等物理传感器仿真",
+    "以真实 LiDAR 反射率为 ground truth 定量验证 camera-only 重建的传感器仿真精度"
+   ],
+   "limits": [
+    "论文自述：高反射与透明表面重建仍错位；侧视相机运动模糊降质；密集物体分布与遮挡场景质量降低",
+    "相机重建几何噪声高于 LiDAR，植被反射率因简化 PBR 材质参数而高估",
+    "仅覆盖静态场景；内部数据集未公开，泛化能力待外部验证",
+    "为兼容仿真引擎关闭 H3DGS 的 LoD 与抗锯齿，牺牲了像素级 PSNR/SSIM"
+   ],
+   "relation": "上游：NeRF/3DGS、大规模场景 GS（CityGaussianV2、H3DGS）、高斯网格提取（Poisson、SDF-based、MiLO）、NKSR（LiDAR 神经核表面重建）、材质分割（RMSNet/MCubes）、SegAnyGS、Matsynth PBR 材质库与 Simcenter Prescan 仿真平台。本文位置：把 GS 重建、语义材质投影与物理传感器仿真串成免 LiDAR 的 digital twin 替代流程，并以 LiDAR-camera 融合为基线做反射率对表。",
+   "repro": "原文未提及代码或数据开源（instrumented test vehicle 内部数据集；license CC BY-NC-SA 4.0）；硬件 Dell Precision 7680 + RTX A4000 ADA laptop GPU；软件 Simcenter Prescan 2411 + MATLAB R2023b。",
+   "action": "无 LiDAR 或标定受限的 ADAS 数字孪生场景可用该管线替代 LiDAR-camera 融合；玻璃/金属与强反射表面需专门处理；评估传感器仿真应优先看反射率 MAE/中位误差而非 PSNR；下一步动态场景与学习式材质表示（减少对预定义 PBR 库依赖）是论文明确的未来方向。",
+   "value": 2.78,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2511=2025-11 投稿，v2 于 2026-11-03 公告"
+  },
+  {
+   "id": "2605.05155",
+   "title": "Aes3D: Aesthetic Assessment in 3D Gaussian Splatting",
+   "title_zh": "Aes3D：3D 高斯泼溅的美学评估",
+   "track": "评估与数据集",
+   "scores": {
+    "IMP": 2,
+    "NOV": 3,
+    "TEC": 3,
+    "EXP": 3,
+    "PER": 3,
+    "TRL": 2,
+    "REP": 3
+   },
+   "grade": "C",
+   "grade_note": "",
+   "evidence": "FULL",
+   "level": "L0",
+   "status": "CURRENT",
+   "venue": "arXiv preprint（The University of Sydney + The University of Hong Kong；cs.CV；v1 于 2026-05 首次投稿（据 arXiv 编号 2605 推断），v2 于 2026-05-23 更新；license CC BY-SA 4.0）",
+   "announce": "replace",
+   "tags": [
+    "美学评估",
+    "3D 高斯 splatting",
+    "数据集构建",
+    "神经渲染",
+    "轻量网络"
+   ],
+   "conclusion": "Aesthetic3D 为首个 3D 场景美学数据集：278 个重建场景、92,649 个输入视图（平均 333 视角/场景，源自 DL3DV-10K 采样子集 + Bilarf），场景级分数跨度 0.184–0.825（均值 0.395、中位 0.369、std 0.129）；场景内视角分差均值 0.33（p90 0.47、max 0.85），83.2% 场景分差>0.20，证明 3D 美学强视角依赖。Aes3DGSNet 仅 3.2M 参数、29.4 GFLOPs：8-attr 标签下 PLCC 0.567/SRCC 0.554/KRCC 0.389，total 标签下 MAE 0.076/RMSE 0.101，均优于 Stochastic NR-PCQA（PLCC 0.509）、GSOQA（0.503）、MM-PCQA（0.441）、MUGSQA-DBCNN（0.311）与 ArtiMuse（0.224）等基线。",
+   "problem": "3DGS 场景评估长期侧重重建保真与感知真实（PSNR/SSIM/LPIPS、NR-IQA），忽视构图、和谐、视觉吸引力等高层美学属性；且缺少通用 3DGS 美学标注数据集；3DGS 作为低级图元表示，其美学质量还取决于高斯密度、颜色与几何等表示属性，难以直接捕捉高级美学特征。",
+   "method": "标注管线：用 MLLM 美学评估器 ArtiMuse（ArtiMuse-10K 训练，Token As Score 把 101 个 token 映射为 0–100 分）对每个输入视图打总分，并按 8 个属性维度（Composition & Design、Visual Elements & Structure、Technical Execution、Originality & Creativity、Theme & Communication、Emotion & Viewer Response、Overall Gestalt、Comprehensive Evaluation）用统一 prompt 独立查询得属性分，跨视角平均后归一化到 [0,1] 为场景级标签。Aes3DGSNet：FPS 采 2,048 个高斯（中心 p_i + RGB c_i + 单位方向 p̄_i）经 4-block point Transformer（PTv3 风格、从零训练）+ attention pooling 得场景 token s；projection-based view tokenization 用相机内外参把 3D token 投到 14×14 patch 网格（mean/max pooling + empty-cell token + view-conditioned context a_v，不渲染图像）得视角描述子；FFS 启发的 top-8 视图选择器（listwise Transformer + 稀疏 top-K 权重）做视角选择；加权融合后经 3 层回归器输出分数；损失为 Huber + pairwise ranking（λ_rank=0.1）。",
+   "experiments": "80/20 划分，seeds {7,13,42}；每场景 32 个候选视角（球面均匀采样），几何按 95 分位半径归一化；指标 PLCC/SRCC/KRCC/MAE/RMSE。基线三组：(A) 2D IAA 零样本 ArtiMuse（~8B 参数、257.7K GFLOPs）、AADB（70.9M）、NIMA（14.7M）、TANet（13.9M）；(B) 3DGS QA：MUGSQA-DBCNN（15.3M/712.2 GFLOPs）、GSOQA（27.5M/3.5 GFLOPs）；(C) 点云 QA：MM-PCQA（52.9M）、LRL-GQA（17.4K）、Stochastic NR-PCQA（25.6M/6123.7 GFLOPs）。消融：全局场景 token 替代视角选择 PLCC 0.534；无选择器均匀平均 0.513；K=16 为 0.545、K=32 为 0.540；λ_rank=0 时 0.552、0.5 时 0.548。训练 16 epochs、AdamW（lr 5e-5、wd 1e-4、batch 4），实验用 RTX 5090，标注用 2×H100。",
+   "innovation": [
+    "首个 3D 场景美学数据集 Aesthetic3D 与配套 benchmark（首个系统性的 3D 神经渲染美学评估框架）",
+    "IAA-based 标注策略：用 MLLM 的 8 维度属性 prompt 把 2D 美学评估器转化为结构化属性打分器",
+    "rendering-independent 评估：直接在 Gaussian primitives 上以几何投影获得视角证据，免渲染、降硬件门槛",
+    "视角选择性证据聚合（top-K selector）匹配美学的视角依赖本质"
+   ],
+   "limits": [
+    "标签为 ArtiMuse 代理标签而非大规模人工评分（论文做了 human study 验证但规模有限）",
+    "数据以室内场景（DL3DV/Bilarf）为主，室外泛化未验证",
+    "场景内视角分差大（均值 0.33），单视角评分不可靠，必须多视角输入",
+    "8 个属性分数高度相关（Spearman 0.933–0.994），应理解为共享美学信号的可解释分解而非独立监督目标"
+   ],
+   "relation": "上游：2D IAA（AVA、AADB、NIMA、MUSIQ、TANet、ArtiMuse）、NeRF/3DGS 感知质量评估（GSOQA、MUGSQA 等）与点云 QA（PCQA 系列）。本文位置：把评估目标从 realism/distortion 提升到 aesthetics，首个面向 3DGS 的通用美学 benchmark；实证显示 2D 美学先验（含 ArtiMuse）向 3DGS 渲染视图迁移很差（PLCC 仅 0.224），必须几何感知 + 多视角推理才能可靠评估。",
+   "repro": "代码与数据集承诺发布于 github.com/LouckXu/Aes3D（原文未确认已发布）；硬件 NVIDIA RTX 5090（实验）与 2×H100（标注）；训练 16 epochs、AdamW lr 5e-5、batch 4；3DGS 重建由 DepthSplat 从多视图图像生成（附录 E）。",
+   "action": "3D 内容创作/资产生成管线可用其做美学筛选与排序；把美学作为优化目标驱动 3D 渲染/编辑/压缩是论文指明方向；注意代理标签与人类感知的差距，关键场景建议人工抽检；输入务必多视角以覆盖场景内美学波动。",
+   "value": 2.72,
+   "batch": "backfill-1104",
+   "orig_window": "旧稿 replace 再公告（首次入馆）：2605=2026-05 投稿，v5 于 2026-11-03 公告"
+  }
+ ],
+ "top10_ids": [
+  "2611.01534",
+  "2611.01543",
+  "2611.01627",
+  "2611.00375",
+  "2611.01937",
+  "2611.02044",
+  "2611.02051",
+  "2611.02658",
+  "2611.03228",
+  "2611.02537"
+ ]
+}
