@@ -1,0 +1,88 @@
+import json
+
+digests = []
+
+digests.append({
+    'id': '2606.03994',
+    'slug': 'simuscene',
+    'venue': 'arXiv preprint（Seoul National University（snuvclab），cs.CV，2026-06，arXiv:2606.03994v2）',
+    'tags': ['单图像场景重建', '物理仿真在环', '组合式 3D 场景', '形状校正', '机器人操作'],
+    'conclusion': 'SimuScene 把物理仿真从事后校验转为重建过程中的诊断信号，在 GraspClutter6D、Aria Digital Twin、GenWild 三个数据集上取得最优物理稳定性与视图对齐：ABO_fh/fo 分别为 0.248/0.247/0.507（SAM3D 仅 0.087/0.037/0.218），穿透率降至 10.3%/8.8%/2.5%。消融显示完整流程 ABO 从 SAM3D 的 0.263 提升至 0.532；重采样网格的 VLM 成对评审 Elo 1083.4、胜率 71.9%。重建场景可直接落入物理仿真器，并支撑人形控制与机械臂操作两类下游任务。',
+    'problem': '从单张图像重建组合式 3D 场景时，物体互相穿透、悬空或沉入支撑面，放入仿真器即崩溃，而单目本身存在遮挡与深度歧义。已有物理感知方法只在布局层做事后校正，底层几何误差未解决，无法恢复合理配置。',
+    'method': '先用 MLLM 编辑器移除非基座物体并以 SAM3D 重建地板、墙面等固定碰撞体；其余物体经 RAM++/VLM 标注、SAM3 分割、SAM3D 提升，并被 VLM 打上 6-DoF 或挂点约束标签。MoGe 深度回投点云定尺度与平移，FoundationPose 精化旋转。随后按重力方向逐物体诊断仿真（已放置物体冻结为静态碰撞体、首次接触即停），把穿透位移与重力位移转为校正信号：归一化重力轴位移 ρ≥0.15 时触发 OBB 引导的 amodal 重采样（以拉伸 OBB 投影构造辅助裁剪掩码重跑 SAM3D），ρ<0.15 时沿重力轴轻量拉伸。SAM3D 形状分支另用 13,926 对合成偏好数据以 FM-DPO 加 SFT 微调（仅训练 LoRA）。最终全场景自由落定得到仿真就绪场景。',
+    'experiments': '以 MuJoCo 仿真、V-HACD 提取碰撞几何，全部指标在重力沉降 5 s 后计算（D_mean、E_pk、>2 mm 穿透率、ABO 与 ABO_fh/fo）。在 GraspClutter6D（94 个真实杂乱场景）、ADT（40 个静态场景）、GenWild（50 个 OOD 合成图）上对比 SAM3D、Gen3DSR、3D-RE-GEN、3D-Fixer 全面领先。重采样阈值 τ=0.15 相比全量重采样减少 47% 调用与时间且形状误差几乎不变；全管线在 GenWild 上每场景 347.7 s，约为预处理加 SAM3D 提升耗时（163.5 s）的 2.13 倍。',
+    'innovation': '首次把物理仿真作为重建过程中的诊断测量工具而非事后清理，将穿透与重力位移反演为几何校正信号。提出基于仿真位移的两级形状校正（重力轴拉伸对 OBB 引导 amodal 重采样）与冻结碰撞体的顺序逐物体协议。用流匹配 DPO 加 SFT 微调 SAM3D 形状分支，使其对遮挡场景的重采样输入鲁棒。',
+    'limits': '多预训练模块级联，上游误差会传播，位姿初始化是关键瓶颈。假设刚体与刚体接触，铰接或可变形物体的残差无法反映真实自由度。顺序协议依赖处理顺序，无法用后验证据修订早期物体，且绝对尺度仍受单目深度限制。',
+    'relation': '与库内 AnchorComplete（TRELLIS.2 场景级补全）同属单视图场景重建线，但本文不做整网格补全，而是产出可分体的仿真就绪资产。沿 SAM3D、Gen3DSR、3D-RE-GEN、3D-Fixer 的对象级提升路线，把物理感知重建从布局级事后校正推进到形状级在环校正。',
+    'repro': '代码开源：github.com/snuvclab/SimuScene；评测用 GraspClutter6D、Aria Digital Twin、GenWild 与 MuJoCo，SAM3D 微调在单张 RTX PRO 6000 Blackwell 上训练 5,000 步。',
+    'action': '做机器人仿真数据合成者可直接用该管线把照片转为可交互训练场景；XR 场景数字化亦可借鉴其仿真诊断驱动几何校正的思路，但需接受单场景约 6 分钟运行时与刚体假设。'
+})
+
+digests.append({
+    'id': '2606.29494',
+    'slug': 'vcs-slam',
+    'venue': 'arXiv preprint（New York University / NYU Abu Dhabi AIR Lab，cs.CV，2026-06，arXiv:2606.29494v2）',
+    'tags': ['语义 SLAM', '3D Gaussian Splatting', '语义融合', '可见性一致性', '不确定性加权'],
+    'conclusion': 'VCS-SLAM 在 Replica 上取得最低平均 ATE RMSE 0.30 cm、最低 Depth L1 0.321 cm、最佳渲染质量（PSNR 36.03、SSIM 0.984、LPIPS 0.059）与最高 SLAM 帧率 7.27 FPS。语义 mIoU 达 95.87%，仅次于使用基础模型监督的 SemGauss-SLAM（96.34%），并在 Room-0 上最高。对 2D 先验做结构化污染时，其退化量约为 SGS-SLAM 的一半（ΔmIoU 5.95 至 6.96 对 9.11 至 12.51），且优于硬门控、TV 平滑与熵加权等简化替代。',
+    'problem': '语义 3DGS SLAM 以均匀权重融合每帧 2D 语义先验，遮挡、缺乏几何支撑的语义边界与射线歧义会把持续误差固化为全局高斯地图中的语义伪影。现有方法不按几何可靠性验证观测，也缺乏对边界溢出与歧义区过早贴标的结构性约束。',
+    'method': '把每像素语义监督按几何可靠性得分加权：VCSU 以渲染深度与传感器深度残差的高斯门控（σ_vis=0.05）抑制遮挡区语义更新；SCEA 用 Sobel 提取深度与语义边缘，对缺乏几何支撑的语义边缘施加软惩罚（容差 τ_d=0.75，权重 λ_edge=0.02）；CAUW 由射线深度方差导出逐像素置信度（γ=100.0），下调几何冲突区的标签承诺。总目标为可靠性门控与标准交叉熵的混合（β=0.7）加边缘惩罚，嵌入 RGB-D 跟踪与每 8 帧一次的全局高斯建图。',
+    'experiments': '在 Replica 8 场景与 ScanNet 6 场景上评测（PyTorch、单卡 RTX 4090、在线处理），对比 NICE-SLAM、SplaTAM、SGS-SLAM、SemGauss-SLAM、Hier-SLAM、SNI-SLAM 等；ScanNet 平均 ATE 10.22 cm 与 NICE-SLAM（10.70 cm）等相当。机制分析：深度不一致像素 mIoU +4.62、边界 F1 +0.16、错误检测 AUROC +0.12；消融移除任一模块四项指标全降；均匀随机污染对照下优势消失，印证增益源于几何支撑而非一般重加权。',
+    'innovation': '把在线语义高斯建图形式化为几何验证的语义证据融合问题，用渲染几何（深度残差、表面支撑、射线深度方差）而非预测器置信度裁决每帧观测。三模块 VCSU、SCEA、CAUW 分别针对遮挡更新、语义溢出与歧义区过早贴标，作用正交互补。以定向机制指标与结构化污染实验证明增益来自具体形式而非重加权本身。',
+    'limits': '深度残差可能源于位姿误差、几何未收敛或传感器噪声，而非仅是遮挡。共面区域之间的语义边界得不到表面支撑。实验使用数据集语义标注而非在线开放词汇分割器，开放集与动态场景尚未覆盖。',
+    'relation': '与库内 UniGS-SLAM（RGB-only 单目高斯语义 SLAM、几何与语义解耦并支持历史修订）同属语义高斯 SLAM 谱系，本文走 RGB-D 在线可靠性加权路线；直接对标 SGS-SLAM、SemGauss-SLAM、Hier-SLAM 与 SNI-SLAM，可视为库内 DrawSplat 等几何先验思路在语义监督侧的对应物。',
+    'repro': '代码开源：github.com/jhakrraman/VCS-SLAM；评测基于 Replica 与 ScanNet 公开数据，单卡 RTX 4090 实时运行。',
+    'action': '做 XR 室内语义建图或数字孪生者可将三模块作为插件挂到自有 3DGS-SLAM 上抑制语义漂移；接入实时分割器时的可靠性尚待验证。'
+})
+
+digests.append({
+    'id': '2607.18539',
+    'slug': 'anigs',
+    'venue': 'arXiv preprint（University of Illinois Urbana-Champaign / Meta，cs.CV，2026-07，arXiv:2607.18539v2）',
+    'tags': ['3D 场景动画', '3D Gaussian Splatting', '视频扩散先验', '环境运动', '变形场'],
+    'conclusion': 'AniGS 把静态 3DGS 重建变为带环境运动的可动画场景，在 5 个大规模杂乱户外场景上 FVD-LTX/Cosmos/DynamiCrafter 均值 415.89/226.99/495.48，显著低于 Gaussians2Life（902.03/630.05/824.13）与 PhysDreamer（839.46/632.52/860.28）；DL3DV 户外场景 FVD-LTX 均值 381.48 亦为最优。2AFC 用户研究中运动真实感与画质偏好率为 74.5% 至 96.0%；新时刻多视角重渲染 PSNR 接近原始采集（25.94 至 27.13 对 26.29 至 28.77）。',
+    'problem': '大多数 3DGS 重建保持静态，缺少让环境生动的环境运动；已有动画方法面向物体中心或小区域，无法处理大型杂乱可导航场景。全场景缺乏多视角时间一致的运动监督，且动画必须保持墙体、地面等静态区域不漂移。',
+    'method': '场景用规范 3DGS 加时间条件变形场表示，变形以 DCT 频率域基参数化每个高斯的平移与旋转。核心是迭代式数据集与模型更新：按兴趣区分割加最远点采样选 N=4 个相机位（每位 3 个方向、FOV 95°）增量扩展视角；用当前模型渲染相机固定视频，经 ComposedV2V（SAM2 从首帧估静态掩码，把静态区域像素固化到所有帧后送 LTX-Video 整流流精炼）生成动画目标，再训练模型。训练优化变形场与规范高斯中心位置，损失为光度项加规范正则加 SDS，冻结旋转、尺度、不透明度与颜色。',
+    'experiments': '自采 5 个户外场景（Fireplace、Garden、Flowers、Forest、Trail，各约 1.5k 至 2.0k 张单目图，COLMAP 定姿）加 DL3DV 5 个户外场景（Gazebo、Courtyard、Bush、Playground、Park）；与 Gaussians2Life、PhysDreamer 在三种扩散参考分布下比较 FVD 全面领先。消融：去掉数据集与模型更新、视角扩展、ComposedV2V 后 FVD-LTX 均值分别升至 533.55、501.42、441.69（完整模型 415.89）；优化全部规范属性导致模糊漂移（476.36）。动画阶段 70k 迭代约 7.3 小时（单 GPU），静态重建 30k 迭代约 1.6 小时。',
+    'innovation': '首个面向大型杂乱可导航场景的场景级 3DGS 动画方法，无需场景级动态真值监督。迭代数据集与模型更新加增量视角扩展，把视频扩散先验自举为多视角时间一致的伪监督。ComposedV2V 在扩散前固化静态区域，抑制静态区误运动及其在迭代中的放大。',
+    'limits': '无法合成状态变化等大幅不可逆动态，如落叶、断枝或昼夜与季节强延时导致的全局色调变化，变形参数化与训练目标难以解释这类大运动。方法本质是伪监督自举，运动真实性受扩散先验限制。单场景训练成本约 9 小时量级，离实时流水线尚远。',
+    'relation': '库内 MoRE-GS 等动态高斯工作处理已观测动态的预测与外推，本文则给静态重建无中生有地添加环境运动，任务互补；相对 Gaussians2Life、PhysDreamer、Animate3D、AKD 等扩散先验动画线首次覆盖场景级。对 XR 沉浸式漫游，可作为静态捕获之后提升现场感的增强组件。',
+    'repro': '论文未提供代码或项目页链接；实现基于 3DGS、LTX-Video 与 SAM2，数据为自采 5 场景与 DL3DV 户外场景。',
+    'action': 'XR 场景重建落地者可把 AniGS 用作静态捕获后的环境运动增强后处理以提升沉浸感；须接受其单场景约 9 小时训练成本与仅限小幅可逆运动的适用边界。'
+})
+
+digests.append({
+    'id': '2608.00232',
+    'slug': 'surgical-ar-obstruction',
+    'venue': 'arXiv preprint（Duke University，cs.CV，2026-08，arXiv:2608.00232v2）',
+    'tags': ['手术增强现实', '遮挡检测', '视觉语言模型', '早退机制', '视觉 token 剪枝'],
+    'conclusion': '在自建 pseudo-AR 手术遮挡基准（350 张、7 类器械）上，级联小到大 VLM 管线取得 87.43% 遮挡检测准确率与 479 ms 平均端到端时延，较云端大模型基线时延降低 62.90%，准确率同时从 81.14% 升至 87.43%。分割引导早退叠加解码阶段 token 剪枝后准确率不变而时延由 488 ms 降至 479 ms。纯小模型最快（304 ms）但准确率仅 78.86%；边缘大模型关键物体识别率最高（92.57%）却因输出不适配分割，遮挡准确率仅 79.71%。',
+    'problem': '手术 AR 的虚拟标注可能遮挡任务关键的手术器械并干扰时间敏感任务中的感知，而现有遮挡检测面向通用 AR，缺乏兼顾领域物体识别与低时延要求的手术专用高效方案。',
+    'method': '输入同步的原始手术图与 AR 合成图；小 VLM（Qwen3-VL-2B）识别关键器械，SAM3 做文本引导分割生成物体掩码，经两两 mIoU 聚类后与关键物体数量比对，一致则早退，不一致转大 VLM（Qwen3-VL-8B）。大模型路径用小 VLM 解码阶段注意力聚合出的重要性向量，指导大模型自身视觉 token 的剪枝（保留 top-k，不跨模型传输嵌入）。最后物体掩码与两图差分所得 AR 掩码做重叠推理，输出遮挡判定；全流程在边缘服务器（2 张 RTX A6000）完成。',
+    'experiments': '基准由 Reddy Surgical Tools 数据集（6,000 张、9 类）中 7 类共 350 张单物图像叠加随机放置的虚拟内容构成，人工标注遮挡标签。对比云端 GPT-5.4（1292 ms、81.14%）、边缘纯小模型（304 ms、78.86%）、边缘纯大模型（423 ms、79.71%）、纯 token 剪枝（657 ms、76.29%，最差）与纯早退（488 ms、87.43%）等配置。失败分析显示错误主要来自关键物体误识别（手术刀误判为温度计）与 SAM3 对细长器械分割失败。',
+    'innovation': '构建首个面向手术 AR 的伪 AR 遮挡检测基准，把器械图像与虚拟内容叠加并人工标注遮挡。任务感知的级联小到大 VLM：以分割一致性作为早退判据，用小模型解码注意力指导大模型 token 剪枝。边缘部署实证表明云端大模型并不必然更准，且时延约为边缘方案的 2.7 倍。',
+    'limits': '基准为试点规模静态单物图像，标注未经临床验证，缺少多器械、人手与解剖结构共现及相机运动等时间动态复杂度。系统仍对每帧做 VLM 推理，未引入帧选择。SAM3 对细长精细器械覆盖不足，运动模糊与低清晰度会引发关键物体误识。',
+    'relation': '直接前作为同组 ViDDAR（通用 AR 的 VLM 遮挡检测），本文把任务特化到手术领域并加入时延约束。库内手术 AR 工作（脊柱机器人超声 AR、SurgicalTS 内镜 4D 重建、腹腔技能训练等）聚焦导航、重建与训练，本文补上 AR 内容安全这一运行时监测环节。',
+    'repro': '论文未提及代码或数据开源；基准基于公开 Reddy Surgical Tools 数据集叠加虚拟内容构建，模型为 Qwen3-VL-2B/8B 与 SAM3，云端基线为 GPT-5.4，硬件 2 张 RTX A6000。',
+    'action': 'XR 与手术 AR 设计者可把分割一致性早退加注意力引导 token 剪枝作为边缘侧 AR 内容安全监测的低时延模板；落地前需扩展多物动态视频基准并做临床相关性验证。'
+})
+
+out = 'D:/Agent/WorkBuddy/Research/data/digest_1105_g4.json'
+with open(out, 'w', encoding='utf-8') as f:
+    json.dump(digests, f, ensure_ascii=False, indent=1)
+
+# self-check
+with open(out, encoding='utf-8') as f:
+    loaded = json.load(f)
+assert isinstance(loaded, list) and len(loaded) == 4, 'must be 4 objects'
+required = ['id', 'slug', 'venue', 'tags', 'conclusion', 'problem', 'method',
+            'experiments', 'innovation', 'limits', 'relation', 'repro', 'action']
+for d in loaded:
+    missing = [k for k in required if k not in d]
+    assert not missing, (d.get('id'), missing)
+    assert isinstance(d['tags'], list) and 3 <= len(d['tags']) <= 6
+    for k in required:
+        if k != 'tags':
+            assert isinstance(d[k], str) and '"' not in d[k], (d['id'], k)
+print('OK: 4 objects, 13 keys each, no ASCII double quotes')
+for d in loaded:
+    print(d['id'], '|', d['slug'], '|', d['venue'])

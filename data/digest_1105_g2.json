@@ -1,0 +1,123 @@
+[
+ {
+  "id": "2611.04358",
+  "slug": "endos3-endoscopic-semantic-slam",
+  "venue": "arXiv preprint（University College London（Hawkes Institute）、University College London Hospitals（Dept of Urology），cs.CV，2026-11，arXiv:2611.04358v1，CC BY 4.0）",
+  "tags": [
+   "内窥镜 SLAM",
+   "语义 SLAM",
+   "3D 高斯 splatting",
+   "可变形重建",
+   "手术场景理解"
+  ],
+  "conclusion": "EndoS3 是基于 3D 语义高斯 splatting 的手术语义 SLAM 框架，用实例 mask 同时指导实例级运动分解、相机跟踪与可变形语义建图，并发布 ex-vivo 胆囊切除数据集 CRCD++。在 CRCD++ 与 SemSup 上，跟踪、重建、语义建图全面超过现有通用与手术语义 SLAM：CRCD++ 平均 ATE-RMSE 3.03 mm（5 条序列中 3 条最佳，平均值较次优 SNI-SLAM 的 3.67 mm 提升 17%）、平均 PSNR 23.55 dB（较次优 +2 dB）、平均 mIoU 77.7%；SemSup 上平均 PSNR 31.62 dB（较次优 +0.81 dB）、pins 重投影误差 8.20 px 亦为最佳。即便以预测分割替代 GT 分割输入，仍全面优于使用 GT 分割的 DDS-SLAM。",
+  "problem": "手术语义 SLAM 需并行解决相机位姿跟踪、高保真可变形重建与语义建图三项任务，而图像运动来源天然歧义——像素位移可能来自相机运动、组织形变或器械独立运动，误归因会同时污染位姿与重建。现有方法多用几何线索分解运动，未利用实例级语义；且场景形变异构、时变，单一共享 warp field 会在器械与组织接触点附近混合两者运动，固定控制节点也难以适应器械进出视野。此外，现有数据集缺乏相机位姿、深度与分割的联合 GT，无法对三项任务做一致评测。",
+  "method": "输入 RGB-D 序列与逐帧实例分割，采用 3D 语义高斯场景表示。实例级运动分解：用零样本 WAFT 估计 t-5 到 t 的光流，深度反投影后经 PnP-RANSAC 估计相对相机运动并得残差流；残差在沿实例边界切分的 SLIC 超像素上聚合，以两个互补统计量判定动态性——实例级 z^A（残差幅度相对局部流噪声的中位数比）与跨实例边界 z^B（相邻实例运动差异，含 MAD 稳健尺度），两者均超同一阈值且实例残差大于邻居即判动态，输出静态 mask。跟踪仅对静态高斯优化（色彩+深度+实例分割损失）。映射采用实例感知 warp field：每个动态实例拥有独立控制节点与变形 MLP，线性混合蒙皮仅在实例自身 K 近邻节点内传播形变；语义节点分配按实例动态区域面积与非刚性度量逐帧重分配固定节点预算（权重取面积平方根乘以 1+s）。CRCD++ 在 eCRCD 上精选 20 条序列（14,688 个立体对），人工密集标注背景、肝脏、胆囊、器械 4 类且每个器械独立 ID，深度由 FoundationStereo 在矫正立体对上估计。",
+  "experiments": "在 CRCD++ 的 C1、C2、E3、C3、G3 五条序列与 SemSup 测试序列（深度伪 GT 亦由 FoundationStereo 生成）上，对比 DDS-SLAM、SNI-SLAM、SGS-SLAM、SemGauss-SLAM、Semantic-SuPer、PERSEUS（均用公开仓库），全部实验在单张 NVIDIA A100（40GB）完成。ATE-RMSE、深度误差、PSNR/SSIM/LPIPS、mIoU 全面领先；SemSup 上组织跟踪（pins）与深度指标亦全部第一。消融（C4）显示运动分解模块影响最大（移除后 PSNR 22.18→24.45、mIoU 52.8→73.4 的差距中占主），实例感知变形主要提升深度精度，语义节点分配主要改善渲染、跟踪与语义；两个运动检验互补，合用最佳（PSNR 24.45、ATE 2.75、mIoU 73.4）；用 Mask R-CNN+PFedSIS 预测分割时（PSNR 24.28、ATE 3.30、mIoU 65.8）仍优于 GT 分割的 DDS-SLAM（21.55、4.34）。",
+  "innovation": [
+   "首次以实例级语义指导运动分解：相机补偿残差流 + 流噪声信噪比 + 跨实例边界运动差异的双互补检验，一个阈值通用于全部序列",
+   "实例感知 warp field：每实例独立控制节点与变形网络，运动传播限制在实例内，避免接触点附近器械与组织运动混杂",
+   "语义节点分配：固定节点预算按实例尺寸与非刚性逐帧重分配，兼顾大实例与小形变实例",
+   "CRCD++：首个同时具备相机位姿、深度与 4 类密集实例标注（含逐器械 ID）的胆囊切除语义 SLAM 基准"
+  ],
+  "limits": [
+   "依赖逐帧实例分割质量：换用预测 mask 后 CRCD++ 平均 mIoU 由 84.2 降至 65.8（Table 6）",
+   "依赖 RGB-D 输入、WAFT 光流与 FoundationStereo 深度估计，单目或深度缺失场景未覆盖",
+   "数据为离体猪胆囊切除，临床体内环境（低光照、出血、烟雾）适用性未验证，作者亦将手术图像伪影列为未来工作",
+   "全文未报告运行速度与内存，实时性未知"
+  ],
+  "relation": "库内已有大量 3DGS/SLAM 论文，本文对比的 SGS-SLAM、SemGauss-SLAM、SNI-SLAM、DDS-SLAM、Semantic-SuPer 均在库内常见引用谱系中。本文位于手术语义 SLAM 一脉，把语义的用途从地图标注与数据关联推进到运动分解与变形建模，与库内通用语义 SLAM（静态场景）形成互补。",
+  "repro": "摘要给出项目页 bwright000.github.io/EndoS3/（代码与数据）；arXiv 页为 CC BY 4.0。实验硬件为单张 NVIDIA A100（40GB）。",
+  "action": "做 AR 手术导航或内窥镜可视化的 XR 研究者，可借鉴其实例感知的动静态分离来处理器械遮挡与组织形变；落地前需实测帧率，并评估对实例分割模型与 RGB-D 硬件的依赖。"
+ },
+ {
+  "id": "2611.04374",
+  "slug": "igsw-intrinsic-decoupled-weather-gs",
+  "venue": "arXiv preprint（重庆大学机械与车辆工程学院（Chongqing University），cs.CV，2026-11，arXiv:2611.04374v1）",
+  "tags": [
+   "3D 高斯 splatting",
+   "天气编辑",
+   "内在分解",
+   "4D 场景重建",
+   "自动驾驶仿真"
+  ],
+  "conclusion": "IGSW 提出两阶段内在解耦高斯天气编辑框架：Stage I 把背景高斯外观分解为天气共享的 albedo/法线与天气特定的 irradiance/残差，Stage II 以结构保持门抑制教师图像结构误差并经每高斯天气传输强化目标天气外观。在 nuScenes 与 Waymo 的全序列评测中，四种数据集-天气设置下 CLIP-S 与 Sem-CS 全部最高、E_warp 全部最低（如 Waymo rain E_warp 0.0009，对比 WeatherCity 0.0090；nuScenes rain 0.0021、snow 0.0028），CLIP-DS 四之三最高；时序误差较 Qwen-Image 教师图降低一个数量级以上，同时保留显著的天气光照与氛围。",
+  "problem": "生成式图像编辑叠加动态高斯表示已能实现多天气城市场景重建，但天气编辑图像常含结构畸变（如生成的云遮挡本应可见的建筑），直接拟合会把教师误差传播进 4D 场景，破坏原始场景结构与时间连续性；而强锚定原图观测又会削弱预期天气效果。核心问题因此有两个：哪些场景因子应随天气改变，哪些教师区域提供可靠监督。",
+  "method": "Qwen-Image 按雨/雪文本提示生成目标天气教师图；采用 IntrinsicWeather 的 Stable Diffusion 3.5 逆渲染器分别估计原图与教师图的 albedo、法线、irradiance。Stage I：高斯外观解耦——albedo 与法线由不接收天气条件的共享头解码，irradiance 与残差由条件特定头解码，颜色为 albedo 逐通道乘 irradiance 再加加权残差并裁剪到 [0,1]；用冻结轻量编码器提取低频颜色与 Sobel 边缘幅值构成 patch 特征做特征级软监督（不把扩散估计当像素级 GT），并以内rinsic 变化方向的余弦距离约束 irradiance。Stage II：结构保持门结合 UPerNet-ConvNeXt-XL 的语义冲突（受保护类别：墙、建筑、道路、人行道、人、车辆、房屋、摩天楼）与原图-教师 albedo/法线差异，且仅在语义不一致附近评估教师可靠性；受保护区保留原图空间内容但按语义类别迁移教师颜色统计（逐通道均值/标准差映射，比例裁剪至 0.65-1.35）得到安全教师；每个背景高斯附加两个标量 u、v，分别以 exp(2tanh u) 乘性调制 irradiance、以 2tanh v 加性调制残差；Stage II 固定几何与共享内在表示，仅优化天气相关参数。",
+  "experiments": "nuScenes 10 个场景（每场景 100 个同步时间戳 × 3 个前视相机，每天气条件 300 图）与 Waymo Open Dataset；原图分辨率 1600×900 与 1920×1280；Stage I 训练 30,000 步，Stage II 先 800 步原图恢复再 3,000 步天气精化，单卡 NVIDIA RTX 4080。指标为 CLIP-S、CLIP-DS、Sem-CS 与基于 RAFT-Large 的 E_warp（297 个相机内相邻帧对）。对比 Qwen-Image、FRESCO、IntrinsicWeather、WeatherEdit、WeatherCity：IGSW 在全部四种设置中 CLIP-S/Sem-CS 最高、E_warp 最低（Waymo rain 0.0009、snow 0.0019；nuScenes rain 0.0021、snow 0.0028）；唯 nuScenes rain 的 CLIP-DS 0.1599 低于 Qwen-Image 0.2090。消融显示两阶段互补：Stage II only 时序误差最低但天气表达不足，Stage I only 接近基线，完整模型综合最佳。",
+  "innovation": [
+   "提出面向 4D 高斯天气编辑的内在解耦表示：共享 albedo/法线承载跨天气稳定内容，天气特定 irradiance/残差承载光照与氛围变化，并以内rinsic 特征软监督引导迭代优化",
+   "结构保持门把语义冲突与跨天气 albedo/法线差异结合，将教师误差传播转为可靠性感知的软监督，受保护区以颜色统计迁移替代直接贴回原图",
+   "每高斯天气传输标量构成低维消色差路径，在固定场景结构下自适应光照强度与残差响应",
+   "在 nuScenes/Waymo 上以统一教师与协议完成全序列雨/雪定量、时序与结构一致性及消融验证"
+  ],
+  "limits": [
+   "强依赖两个扩散模型：Qwen-Image 教师图质量与 SD3.5 逆渲染精度；逆渲染内在图自身含局部误差，作者因此降级为特征级监督",
+   "结构门与颜色统计迁移按自动驾驶类别（建筑、道路、车辆等）设计，迁移到其他场景需重新界定受保护类别",
+   "动态交通参与者仅以对应天气外观分支处理，论文未深入其形变与交互保真度",
+   "仅与 5 个方法对比，训练/渲染耗时细节置于补充材料，正文不可见"
+  ],
+  "relation": "库内已有天气场景重建（ClimateNeRF、WeatherGS、RainyGS）与 3DGS 编辑/压缩/评测多条线；本文把内在分解从图像空间（IntrinsicWeather）引入 4D 高斯天气编辑，直接对标 WeatherEdit、WeatherCity，与库内 3DGS 生态衔接紧密，其可靠性感知监督思路对库内生成-编辑类工作有参考价值。",
+  "repro": "项目页 akaxi6.github.io/IGSW/；摘要未明确承诺代码开源细节。训练单卡 RTX 4080，数据为公开 nuScenes 与 Waymo。",
+  "action": "做自动驾驶或 XR 仿真数据生成者可参考其共享/天气特定解耦做多天气域适配；复现门槛主要在 Qwen-Image 与 SD3.5 逆渲染的推理开销，建议先固定教师图再复现阶段二。"
+ },
+ {
+  "id": "2611.04498",
+  "slug": "3dgs-vbench-plus-assessor",
+  "venue": "arXiv preprint（上海交通大学（Shanghai Jiao Tong University）、京东（JD.COM）、Basis Independent Silicon Valley，cs.CV，2026-11，arXiv:2611.04498v1）",
+  "tags": [
+   "3D 高斯 splatting",
+   "视频质量评价",
+   "主观基准",
+   "模型压缩",
+   "多模态大模型"
+  ],
+  "conclusion": "3DGS-VBench+ 是目前最大的 3DGS 视频质量评价基准：33 个场景（22 合成 + 11 真实）× 6 种压缩算法共 3,036 个重建模型，每模型沿轨道相机渲染视频，收集 9,108 条覆盖整体、几何、色彩三维度的 MOS（原始评分 136,620 条）。基于它提出的 3DGSV-Assessor（Qwen3.5-9B 骨干的 LMM 框架）在基准上 RR/NR 双模式九项指标全部 SOTA：RR 的 SRCC 为 0.9714/0.9691/0.9663，NR 为 0.9617/0.9604/0.9590（整体维度较最强基线 DOVER 提升 6.1%）；零样本迁移 GSC-QA、NeRF-VSQA、ENeRF-QA 亦全部第一，较最稳基线 DOVER 的 SRCC 提升最高达 21.1%。",
+  "problem": "3DGS 存储开销大使压缩成为必需，训练与压缩引入表示特有畸变（结构缺失、漂浮、雾化及训练/新视角拟合不均导致的闪烁），且生成式压缩对几何与颜色属性分别参数化，造成维度特异性退化，单一总分不足以诊断；同时真实捕获缺乏与任意渲染轨迹对齐的 GT 视频，仅稀疏捕获视图可作弱参考。现有 NVS VQA 基准规模小（多数少于 500 视频）、压缩畸变覆盖有限、仅有整体 MOS，缺乏几何/色彩维度的主观监督。",
+  "method": "基准构建：22 个合成场景取自 NeRF_Synthetic 与 Explicit-NeRF-QA-Synthetic，11 个真实场景取自 Tanks&Temples、Deep Blending、Mip-NeRF360 与 PKU-DyMVHumans；6 种压缩算法（CompGS、Compact-3DGS、LightGaussian、C3dgs、Scaffold-GS、HAC）按压缩等级设计——单参数方法 8 级、多参数方法每参数 5 级，经单参数消融 + 交叉组合 + 默认最优生成每场景 8-21 个失真等级，合计 33×92=3,036 个模型；真实场景在 Blender 中构建 360° 轨道并均匀采样 600 视角（合成场景用 300 视角原生验证轨迹），PVS 以 libx265、30fps、CRF10 编码；主观实验按 ITU-T P.910 11 分制，Z-score 重标定至 [0,100] 后取 MOS。3DGSV-Assessor 分三阶段：Stage 1 以 LoRA 适配 Qwen3.5(9B)，视频采样定长帧与固定指令生成五级质量词，再从预测质量词位置的隐状态拼接表征、经三个五层 MLP 头联合回归三维分数（交叉熵 + L1 回归，回归权重 500 步预热至 0.2）；Stage 2 以 SigLIP 为骨干学习参考-视频一致度线索，场景分层 margin ranking 把同场景高分渲染拉近其参考视图锚（margin 0.1，忽略 MOS 差小于 5 的对）；Stage 3 经有界门 γ=1+0.3·tanh(A(c)) 调制冻结的 Stage-1 表征，无参考时旁路、精确退回 NR 预测。",
+  "experiments": "单卡 80GB NVIDIA A800；LoRA 学习率 2e-4、回归/融合组件 1e-3，AdamW + cosine；Stage 1/3 各 3 epoch（有效 batch 16），Stage 2 最多 10 epoch 早停（batch 12）；场景内 4:1 划分、5 折交叉验证。在 3DGS-VBench+ 上对比 9 个传统指标、10 个 LMM（含 2 个同设定微调）与 4 个深度 VQA 模型：RR/NR 全部九项第一，较最强基线 SRCC 分别提升 6.1%、4.6%、4.3%；零样本跨基准（GSC-QA/NeRF-VSQA/ENeRF-QA）RR/NR 同样包揽前二（如 ENeRF-QA SRCC 0.9644/0.9471）。消融：仅参考线索即达 0.8951 SRCC；LoRA 需视觉与语言双塔同时适配；参考视图 K=1 最佳且最经济（Intra-RankAcc 0.9683）；intra-scene ranking 优于 global ranking 及叠加 cross-NCE；有界门优于 sigmoid 门与特征拼接。",
+  "innovation": [
+   "构建最大规模多维 3DGS 视频 VQA 基准：3,036 个视频、9,108 条 MOS，首次提供整体/几何/色彩三维主观标注，并将会议版 3DGS-VBench 从 660 扩展到 3,036",
+   "首个多维、reference-flexible 的 3DGS VQA 指标：单次生成输出三维分数，RR/NR 一模型两用",
+   "有界门非侵入融合：参考不进 LMM 上下文、不改 Stage-1 权重，无参考时精确退回 NR 预测",
+   "从预测质量词的隐状态做连续回归，弥补 LMM 文本打分粗粒度、低层压缩失真敏感性不足的问题"
+  ],
+  "limits": [
+   "依赖 9B 级 LMM 推理算力（单卡 A800），端侧实时评测不可行",
+   "RR 模式需为每场景额外保存一路捕获视图（成本低但非零）",
+   "主协议为场景内 4:1 划分 + 5 折交叉验证，跨场景泛化仅经三个外部基准零样本间接验证",
+   "真实场景 11 个且以常规拍摄为主，极端捕获条件（夜间、大动态）未覆盖"
+  ],
+  "relation": "库内有 3DGS 压缩（HAC、Scaffold-GS、LightGaussian、CompGS 等）与 NVS 质量评价多篇；本文是作者前作 3DGS-VBench（VCIP 2025）与 3DGS-IEval-15K+（图像级）向视频级、多维度的扩展，并与 GSC-QA、ENeRF-QA、NVS-QA、NeRF-VSQA 等库内常见基准互为外部验证集。",
+  "repro": "摘要承诺数据集与代码将发布于 github.com/YukeXing/3DGSV-Assessor。",
+  "action": "做 3DGS 压缩或实时渲染的 XR 研究者，可直接用其 NR 模式做压缩档位选择与画质监控；端侧部署需考虑蒸馏或轻量化，RR 模式适合保留原始捕获视图的云端质检流程。"
+ },
+ {
+  "id": "2611.05359",
+  "slug": "gscv-plus-lightweight-gs-sequence-compression",
+  "venue": "arXiv preprint（作者机构未见于 ar5iv 摘要页，cs.CV，2026-11，arXiv:2611.05359v1）",
+  "tags": [
+   "3D 高斯 splatting",
+   "序列压缩",
+   "标准视频编解码器",
+   "率失真优化",
+   "轻量化"
+  ],
+  "conclusion": "GSCV++ 提出基于标准视频编解码器的轻量 3DGS 序列压缩流水线，从预处理、3D→2D 映射与实用压缩配置三方面联合改进，面向工业界的低复杂度与硬件兼容需求。摘要自称相较 SOTA 在帧内与帧间预测上分别取得超过 20% 与 60% 的率失真增益，且 2D 图生成、编码与解码更快。证据等级 L1/PARTIAL：ar5iv 仅摘要页，正文细节不可得，以上数字均转述自摘要、未经正文核实。",
+  "problem": "工业界对 3DGS 序列压缩有低复杂度与硬件兼容的要求；基于标准视频编解码器的压缩流水线在球谐系数表示（数据冗余）、3D→2D 映射（特征图不适配编解码器）与压缩配置（位深分配与编码单元选择）三个环节均有损失，限制率失真性能。",
+  "method": "摘要层面包含三个模块：EA-SHDR（能量自适应帧间球谐 AC 系数降维）产生紧凑稳定的时序 SH AC 特征空间，在降低后续映射与压缩数据量的同时去除冗余信息、减少复杂度；P-MiniPLAS（基于先验的 Inter-MiniPLAS）通过先验加权因子推理与小尺度重映射生成更平滑的 2D 特征图，较 vanilla PLAS 与 Morton 扫描更适配视频编解码器且保持低计算复杂度；CA-GC（内容感知广义压缩）以非均匀位深分割生成坐标图，并引入编码单元尺寸选择以高效控制压缩复杂度，且不涉及编解码器规范性改动。",
+  "experiments": "摘要层面：报告超过 20%（帧内预测）与 60%（帧间预测）的率失真增益，2D 图生成、编码、解码速度优于同类型视频编解码器的 SOTA 方法，并以消融验证各模块的有效性与鲁棒性。证据等级 L1/PARTIAL：ar5iv 仅摘要页，正文细节不可得——所用数据集、对比基线、率失真指标定义与具体数值、运行环境均无法核实。",
+  "innovation": [
+   "摘要层面：EA-SHDR、P-MiniPLAS、CA-GC 三模块协同，覆盖预处理-3D→2D 映射-压缩配置全链条",
+   "完全基于标准视频编解码器、不做规范性改动，硬件兼容性好，面向工业低复杂度部署"
+  ],
+  "limits": [
+   "证据等级 L1/PARTIAL：ar5iv 仅摘要页，正文细节不可得，本 digest 全部基于摘要级信息",
+   "摘要自称的 20%/60% 率失真增益缺乏可核实的数据集、基线与指标定义",
+   "开源情况、复杂度数据、与库内压缩方法（HAC、LightGaussian 等）的定量关系均不可见"
+  ],
+  "relation": "库内有大量 3DGS 压缩与质量评测论文（HAC、Scaffold-GS、LightGaussian、CompGS、C3dgs、Compact-3DGS 及 3DGS-VBench+/GSC-QA 等）。GSCV++ 属标准视频编解码器压缩 3DGS 序列路线，与库内压缩生态互补，其产物恰可作为 3DGS-VBench+ 类压缩质量基准的候选被评对象；因仅摘要可见，无法确认其直接对标基线与引用谱系。",
+  "repro": "摘要页未提及代码或数据开源信息（ar5iv 仅摘要页）。",
+  "action": "建议先获取 PDF 全文，核实其 20%/60% 率失真增益与模块细节后再决定是否深入；做 3DGS 流式分发或端侧解码的研究者可跟踪其标准编解码器路线，并留意与库内 HAC 等熵编码方法的交叉验证。"
+ }
+]

@@ -1,0 +1,1804 @@
+{
+ "2026-11-04": {
+  "2611.05377": [
+   "cs.CV",
+   "DreamX: Video Diffusion Model is a Universal Latent Action Learner"
+  ],
+  "2611.05361": [
+   "cs.CV",
+   "Visibility-Aware Reference Generation for Benchmarking Visual 3D Reconstruction in Vegetation-Rich Environments"
+  ],
+  "2611.05359": [
+   "cs.CV",
+   "GSCV++: Lightweight 3D Gaussian Splatting Sequence Compression via Standard Video Codecs"
+  ],
+  "2611.05348": [
+   "cs.CV",
+   "OpenBrain: An Auditable Generated-Label Release for Whole-Brain MRI Parcellation"
+  ],
+  "2611.05294": [
+   "cs.CV",
+   "Wonder 4: A Mixture-of-Experts Recipe for Image Quality Enhancement"
+  ],
+  "2611.05291": [
+   "cs.CV",
+   "Low-Density 3D Point Cloud Classification"
+  ],
+  "2611.05286": [
+   "cs.CV",
+   "Anchored Rank-Adversarial Fine-Tuning Pretrained Visual Place Recognition Models"
+  ],
+  "2611.05280": [
+   "cs.CV",
+   "YANAMI: A Large-Scale Multimodal Dataset and Benchmark for Multiturn Stateful Interaction"
+  ],
+  "2611.05279": [
+   "cs.CV",
+   "Möbius: A Unified Motion-Language Model Bridging Understanding and Generation"
+  ],
+  "2611.05275": [
+   "cs.CV",
+   "Route Anything: A Study of Model and Policy Routing for General-Purpose AI Systems"
+  ],
+  "2611.05231": [
+   "cs.CV",
+   "Diagnosis by Composition: Detecting and Localizing Unseen Diseases by Composing Learned Radiological Findings"
+  ],
+  "2611.05223": [
+   "cs.CV",
+   "PLANTEUR: A Crop-Type Segmentation Benchmark for Tropical Regions"
+  ],
+  "2611.05206": [
+   "cs.CV",
+   "Diffusion Plug-in Priors for Self-Supervised Ultrasound Video Restoration"
+  ],
+  "2611.05205": [
+   "cs.CV",
+   "TAQ-MOTR: Tracking-Aware Detection Query Formation for End-to-End Multiple Object Tracking"
+  ],
+  "2611.05197": [
+   "cs.CV",
+   "Robust Reconstruction of Power Lines from Incomplete Mobile and Aerial LiDAR Data"
+  ],
+  "2611.05193": [
+   "cs.CV",
+   "Factorized MLLM Embeddings for Composed Image Retrieval"
+  ],
+  "2611.05192": [
+   "cs.CV",
+   "From Natural Images to Medical Scans: Transferability of Diffusion Models for Medical Image Generation"
+  ],
+  "2611.05181": [
+   "cs.CV",
+   "What Does the Model See? Representation Validity in Multimodal LLM-Based Video Analysis"
+  ],
+  "2611.05172": [
+   "cs.CV",
+   "PadLoc: Training-Free Floor-Plan Localization by Sparse Geometric Matching"
+  ],
+  "2611.05158": [
+   "cs.CV",
+   "Perturb, Repair, Verify: Self-Play Vision-Language Verifiers for Compositional Understanding"
+  ],
+  "2611.05145": [
+   "cs.CV",
+   "When Cell Crops Share a Parent: Measuring and Isolating Acquisition Leakage in Cervical Cytology Benchmarks"
+  ],
+  "2611.05131": [
+   "cs.CV",
+   "High-fidelity training-free photovoltaic module mapping from multi-view UAV imagery"
+  ],
+  "2611.05102": [
+   "cs.CV",
+   "Characterizing the vertical continuity of fuel strata based on TLS point clouds Gaussian decomposition and overlap metrics"
+  ],
+  "2611.05084": [
+   "cs.CV",
+   "Sparse Anchors for Visual Multi-Session Registration in Changing Environments"
+  ],
+  "2611.05083": [
+   "cs.CV",
+   "Manifold Embedding of Deep Image Features for Image Matching via Neural Adjoint Maps"
+  ],
+  "2611.05066": [
+   "cs.CV",
+   "VIGOR: Visual Gain Ordering for Hallucination Mitigation in Multimodal Discrete Diffusion Language Models"
+  ],
+  "2611.05062": [
+   "cs.CV",
+   "FloMo: 3D Scene Flow as a World Action Model Intermediate for Learning from Human Video"
+  ],
+  "2611.05049": [
+   "cs.CV",
+   "On the Learnability of Footwear Robustness: Footstep Recognition Under Unseen Conditions"
+  ],
+  "2611.05024": [
+   "cs.CV",
+   "RGB Photo Enhancement with Deep Learning on Smartphone GPUs: Mobile AI 2026 Challenge Report"
+  ],
+  "2611.05011": [
+   "cs.CV",
+   "Can saliency maps flag chest radiograph classifier errors at a new hospital? An external validation study"
+  ],
+  "2611.05008": [
+   "cs.CV",
+   "Learned Smartphone ISP on Mobile GPUs: Mobile AI 2026 Challenge Report"
+  ],
+  "2611.05004": [
+   "cs.CV",
+   "ScoreDial: Precise Control of Visual Attributes in Image Generation via Regressor Guidance from Limited Human Ratings"
+  ],
+  "2611.04980": [
+   "cs.CV",
+   "ProAlign: Progressive Positional and Prototype-Guided Alignment for Aerial-Ground Person Re-Identification"
+  ],
+  "2611.04960": [
+   "cs.CV",
+   "An Agentic Framework for Quality-Aware and Scenario-Adaptive Image Compression"
+  ],
+  "2611.04959": [
+   "cs.CV",
+   "Lightweight graph transformers for clutter and target classification in automotive radar"
+  ],
+  "2611.04950": [
+   "cs.CV",
+   "DPAGait: Dynamic Pose-Knowledge-Aware Network for Robust Gait Recognition in the Wild"
+  ],
+  "2611.04948": [
+   "cs.CV",
+   "PATTS: Parallel-Aware Test-Time Scaling for Thought-Image Generation in Multimodal Discrete Diffusion LLMs"
+  ],
+  "2611.04946": [
+   "cs.CV",
+   "How Well Does Webcam Eye Tracking Work &#34;in the Wild&#34;? A Large-Scale Validation of Chiasm and a Comparison with WebGazer"
+  ],
+  "2611.04943": [
+   "cs.CV",
+   "Learning Where to Look: Observation Policy Optimization for Thinking with Images"
+  ],
+  "2611.04940": [
+   "cs.CV",
+   "HTNN-MSC: Multi-view Subspace Clustering with a Hyperbolic Tangent Tensor Low-Rank Surrogate"
+  ],
+  "2611.04939": [
+   "cs.CV",
+   "Robustness Verification against Patch Attacks via Group-Lasso Semidefinite Relaxation"
+  ],
+  "2611.04932": [
+   "cs.CV",
+   "VISTA: Vision-Language Integrated Semantic Triage Architecture for Online Face Clustering in Long Videos"
+  ],
+  "2611.04916": [
+   "cs.CV",
+   "Behind Video Generation: Observations and Insights on Multimodal Understanding from Kling"
+  ],
+  "2611.04913": [
+   "cs.CV",
+   "EP-LVMQA: Evidence-Preserving Coarse-to-Fine Localization for Low-Quality Long Video Moment Question Answering"
+  ],
+  "2611.04912": [
+   "cs.CV",
+   "MiCaDe: Online LiDAR-Camera Miscalibration Change Detection for Autonomous Driving"
+  ],
+  "2611.04903": [
+   "cs.CV",
+   "Heads That Write, Not Just Point: Image Retrieval Heads in Vision-Language Models"
+  ],
+  "2611.04894": [
+   "cs.CV",
+   "VisSearch-Bench: Evaluating Long Horizon Visual Search in Multimodal Agents"
+  ],
+  "2611.04874": [
+   "cs.CV",
+   "OCR in the Foundation Model Era: From Specialist Models to Unified Models"
+  ],
+  "2611.04822": [
+   "cs.CV",
+   "Radial distortion homography estimation from affine-covariant or orientation-covariant features"
+  ],
+  "2611.04811": [
+   "cs.CV",
+   "NightIQA: A Comprehensive Dataset and Benchmark for MLLM-Based Nighttime Image Quality Assessment"
+  ],
+  "2611.04764": [
+   "cs.CV",
+   "Pixel-space video generation with U-JiT"
+  ],
+  "2611.04759": [
+   "cs.CV",
+   "Beyond Local Refinement: Wide-Area Precise Cross-View Localization"
+  ],
+  "2611.04755": [
+   "cs.CV",
+   "iMED: A Multi-Endoscope Dataset for Surgical 3D Perception"
+  ],
+  "2611.04754": [
+   "cs.CV",
+   "Bounded AUKS: A Novel Evaluation Metric for Anomaly Detection via Bounded Area Under the Kolmogorov--Smirnov Curve"
+  ],
+  "2611.04734": [
+   "cs.CV",
+   "TEXMET: A Deep Learning Benchmark for Archaeological Textile Reconstruction"
+  ],
+  "2611.04728": [
+   "cs.CV",
+   "SPOD: Recovering Suppressed Temporal Evidence in Video-LLMs via Single-Pass Orthogonal Decomposition"
+  ],
+  "2611.04712": [
+   "cs.CV",
+   "VISAGE: Vertex-based Intrinsic Surface Appearance GEneration via Dual-Stream Diffusion for Arbitrary 3D Heads"
+  ],
+  "2611.04711": [
+   "cs.CV",
+   "Cycle WAM: Coupling Action and Video through Cycle Consistency"
+  ],
+  "2611.04710": [
+   "cs.CV",
+   "DenseTwins: Dense Modality Decoupling for Multimodal Self-Supervision"
+  ],
+  "2611.04709": [
+   "cs.CV",
+   "Learning from Unlabeled Photographs for General Oral Image Analysis"
+  ],
+  "2611.04666": [
+   "cs.CV",
+   "Phase-DGS: Phase-guided Dynamic Gaussian Splatting from Unsynchronized Multi-view Video"
+  ],
+  "2611.04654": [
+   "cs.CV",
+   "BhopalMLS: A LiDAR Dataset for Semantic Scene Understanding in Heterogeneous Urban Environments"
+  ],
+  "2611.04645": [
+   "cs.CV",
+   "Therapy-FIS: A Dataset for Assessing Facilitative Interpersonal Skills in Psychotherapeutic Setting"
+  ],
+  "2611.04633": [
+   "cs.CV",
+   "ReXMo: End-to-End Video Character Replacement with Expression and Motion Preservation"
+  ],
+  "2611.04626": [
+   "cs.CV",
+   "MambaHand: Local Identity and Behavioral Sequence Learning with Mamba for Dynamic Hand Gesture Authentication"
+  ],
+  "2611.04624": [
+   "cs.CV",
+   "Polyp Matching Using Deep Learning"
+  ],
+  "2611.04616": [
+   "cs.CV",
+   "Gradient-Guided Orientation Learning for Weakly Supervised Oriented Object Detection"
+  ],
+  "2611.04591": [
+   "cs.CV",
+   "SparseGraph-I2P: Consistency-Guided Hypothesis Selection for Efficient Image-to-Point-Cloud Registration"
+  ],
+  "2611.04583": [
+   "cs.CV",
+   "Multi-Path Mamba Diffusion for 3D Point Cloud Semantic Scene Completion"
+  ],
+  "2611.04554": [
+   "cs.CV",
+   "SEEK-VAU: Towards Evidence-Faithful Video Anomaly Understanding via Agentic Search"
+  ],
+  "2611.04548": [
+   "cs.CV",
+   "Predicting Void Points in Self-Occluding Forest Volumes"
+  ],
+  "2611.04537": [
+   "cs.CV",
+   "BtsPruner: Role-Aware Visual Token Pruning for Large Vision-Language Models"
+  ],
+  "2611.04534": [
+   "cs.CV",
+   "A Universal Raw-IQ Radar Encoder for Cross-Sensor Human Sensing"
+  ],
+  "2611.04529": [
+   "cs.CV",
+   "Learning to Falsify: Hierarchical Multiple Instance Learning for High Resolution AI-Generated Image Detection"
+  ],
+  "2611.04524": [
+   "cs.CV",
+   "E2I-Flow: EEG-to-Image Reconstruction via Wavelet-Temporal Cross-Attention and Conditional Flow Matching"
+  ],
+  "2611.04498": [
+   "cs.CV",
+   "3DGS-VBench+ and 3DGSV-Assessor: A Multi-Dimensional Subjective Benchmark and a Reference-Flexible Objective Model for 3D Gaussian Splatting Video Quality Assessment"
+  ],
+  "2611.04491": [
+   "cs.CV",
+   "SPA-Q: Structure-Preserving Adaptive Post-Training Quantization for Monocular Depth Estimation"
+  ],
+  "2611.04490": [
+   "cs.CV",
+   "Polarimetric Scattering-Structure Contrastive Learning for Few-Shot HRRP Recognition"
+  ],
+  "2611.04489": [
+   "cs.CV",
+   "Bridging CLIP with DINO: Cross-Modal Information Maximization for Online Test-Time Adaptation"
+  ],
+  "2611.04476": [
+   "cs.CV",
+   "KeyWise: Efficient Video-Only Piano Transcription with a Lightweight Per-Key Architecture"
+  ],
+  "2611.04472": [
+   "cs.CV",
+   "Beyond Token Representations: Explicit Visual Object Grounding for Video Reasoning Segmentation"
+  ],
+  "2611.04470": [
+   "cs.CV",
+   "Using GeoAI and machine learning tools for consistent high-resolution land cover mapping based on time-series NAIP imagery"
+  ],
+  "2611.04467": [
+   "cs.CV",
+   "Is Forgetting Unified? Exploring Concept Unlearning in Unified Multimodal Models"
+  ],
+  "2611.04452": [
+   "cs.CV",
+   "DynOSeg: Dynamic Object Segmentation via Motion-Geometry Fusion"
+  ],
+  "2611.04438": [
+   "cs.CV",
+   "Entropy-Gated Dynamic Rectification for Object Hallucination in Large Vision-Language Models"
+  ],
+  "2611.04435": [
+   "cs.CV",
+   "A Systematic Point Cloud Edge Detection Framework for Automatic Aircraft Skin Milling"
+  ],
+  "2611.04423": [
+   "cs.CV",
+   "SWAP-INR: Implicit Neural Representation with Switchable Attention Paths for Time-varying Multivariate Scientific Data Compression"
+  ],
+  "2611.04422": [
+   "cs.CV",
+   "GVT3D: Gesture-Vision-Text Token Enrichment for 3D Embodied Reference Understanding"
+  ],
+  "2611.04418": [
+   "cs.CV",
+   "VidUEU-Agent: A Data-Curation Agent for Multimodal Understanding, Editing, and Unified Tasks"
+  ],
+  "2611.04416": [
+   "cs.CV",
+   "Efficient and Faithful High-Resolution Image Editing with Sparse Cross-Resolution Denoising"
+  ],
+  "2611.04414": [
+   "cs.CV",
+   "SphereFlow: Missing Modality Imputation via Geometric Transport on Hypersphere"
+  ],
+  "2611.04409": [
+   "cs.CV",
+   "LCM-UNet: Scale-Selective Mamba with Reparameterizable Multi-Basis Local Modeling for Lightweight Skin Lesion Segmentation"
+  ],
+  "2611.04405": [
+   "cs.CV",
+   "DR-LiteNet: A Lightweight Explainable Hybrid CNN Framework for Imbalanced Diabetic Retinopathy Grading via Adaptive SMOTE Fusion"
+  ],
+  "2611.04397": [
+   "cs.CV",
+   "Auditing Targetless Camera-LiDAR Extrinsic Correction before Recursive Use"
+  ],
+  "2611.04389": [
+   "cs.CV",
+   "Spin Spherical Fourier Neural Operators: Efficient Equivariant Learning for Vector and Spin Fields on the Sphere"
+  ],
+  "2611.04386": [
+   "cs.CV",
+   "StepX-OPD: Rethinking Multi-Teacher On-Policy Distillation in Diffusion Models"
+  ],
+  "2611.04379": [
+   "cs.CV",
+   "Understanding Backdoor Attacks in Scene Graph Generation via Global Context Pathway"
+  ],
+  "2611.04374": [
+   "cs.CV",
+   "IGSW: Multi-Weather Urban Scene Reconstruction with Intrinsic-Decoupled Gaussian Splatting"
+  ],
+  "2611.04358": [
+   "cs.CV",
+   "EndoS3:Endoscopic Semantic Splatting SLAM"
+  ],
+  "2611.04352": [
+   "cs.CV",
+   "ReSMap: Recasting Satellite Priors for Robust and Accurate Online HD Map Construction"
+  ],
+  "2611.04337": [
+   "cs.CV",
+   "Mitigating Spatial Blindness in Multiple Instance Learning for Whole-Slide Image Analysis"
+  ],
+  "2611.04317": [
+   "cs.CV",
+   "SteelHuman: Predicting Operator Estimates of Steel-Scrap Composition from Sparse RGB Views"
+  ],
+  "2611.04305": [
+   "cs.CV",
+   "Weather Adaptive Autonomous Driving"
+  ],
+  "2611.04303": [
+   "cs.CV",
+   "FlowTranslator: Training-Free In-Image Machine Translation with Flow-Based Editing"
+  ],
+  "2611.04300": [
+   "cs.CV",
+   "CLOCs-R: Radar-Assisted Camera-LiDAR Fusion for Long-Range Object Detection"
+  ],
+  "2611.04286": [
+   "cs.CV",
+   "GroundSeek-CXR: Retrospective Evaluation-Guided Active Observation Framework for Multi-Label Chest Radiography Diagnosis"
+  ],
+  "2611.04268": [
+   "cs.CV",
+   "Weight-Space Programming for Improving Image-Restoration Diffusion Models: Technical Conjectures and a Recursive Improvement Loop"
+  ],
+  "2611.04262": [
+   "cs.CV",
+   "Sketch-Omni: Instance-Level Sketch-Based Visual Prompting for Perception MLLMs"
+  ],
+  "2611.04257": [
+   "cs.CV",
+   "ProGeo-RC: Prototype-guided Semantic Reliability and Geometric Error Calibration for Semi-supervised Cardiac Image Segmentation"
+  ],
+  "2611.04254": [
+   "cs.CV",
+   "P-SER: Physical Consistency-Constrained Scattering Expandable Representation for Class-Incremental HRRP Target Recognition"
+  ],
+  "2611.04244": [
+   "cs.CV",
+   "CounterSketch: Physics-Grounded Counterfactual Reasoning for Sketch-to-Video Generation"
+  ],
+  "2611.04242": [
+   "cs.CV",
+   "Improving Diffusion-Based Augmentation for Data-Scarce Image Classification via Mask-Guided Reference Attention and Repulsive Noise Optimization"
+  ],
+  "2611.04235": [
+   "cs.CV",
+   "TCINet: Tissue-Conditioned Adaptive Cross-Branch Interaction Network for Nuclei Instance Segmentation"
+  ],
+  "2611.04233": [
+   "cs.CV",
+   "LINDA: Low Resource Foot Ulcer Segmentation using Local Similarity and Iterative Neural Dynamics"
+  ],
+  "2611.04221": [
+   "cs.CV",
+   "Mamba3R: Fixed-Capacity Selective State Memory for Long-Sequence 3D Reconstruction"
+  ],
+  "2611.04219": [
+   "cs.CV",
+   "Reliability-Role Collaborative Learning for Semi-Supervised Cardiac Image Segmentation"
+  ],
+  "2611.04216": [
+   "cs.CV",
+   "LiSA: Linear Stochastic Attention for Long-Range Visual Modeling"
+  ],
+  "2611.04200": [
+   "cs.CV",
+   "Impact of Input Resolution in Mammographic Mass Detection: A Controlled Multi-Architecture Study"
+  ],
+  "2611.04195": [
+   "cs.CV",
+   "SettleSplat: Monocular Gaussian Mapping under In-View Scene Changes"
+  ],
+  "2611.04193": [
+   "cs.CV",
+   "Statistical Machine Learning for Medicinal Plant Leaves Classification"
+  ],
+  "2611.04173": [
+   "cs.CV",
+   "ReconDreamer#: Self-Evolving Closed-Loop Synergy of Reconstruction and Generation for Dynamic Driving Scenes"
+  ],
+  "2611.04164": [
+   "cs.CV",
+   "What Remains in Sight? Autoregressive Video Decoding as Representation-Guided Context Rewriting"
+  ],
+  "2611.04155": [
+   "cs.CV",
+   "Improving PI-RADS Prediction and Prostate Cancer Detection from Multiparametric MRI with Anatomical Guidance"
+  ],
+  "2611.04112": [
+   "cs.CV",
+   "Co-Occurrence Priors Override Visual Spatial Evidence: Understanding False Alarms in Vision-Language Models for Construction Struck-By Hazard Detection"
+  ],
+  "2611.04111": [
+   "cs.CV",
+   "Generalizable AI-Generated Image Detection with Embedding-Space Explanations"
+  ],
+  "2611.04102": [
+   "cs.CV",
+   "Is This 3D Asset Usable? Beyond the Beauty Render for Asset Curation"
+  ],
+  "2611.04092": [
+   "cs.CV",
+   "CHROMA-MILL: Joint Low-Light Enhancement and White Balance under Colored Illumination"
+  ],
+  "2611.04087": [
+   "cs.CV",
+   "ScienceVision: Can AI Observe and Reason Like a Scientist?"
+  ],
+  "2611.04084": [
+   "cs.CV",
+   "From Visual Matching to Textual Conditioning: Cross-Domain Few-Shot Segmentation via Reference Inversion"
+  ],
+  "2611.04053": [
+   "cs.CV",
+   "Spatial and Temporal Super-Resolution and Denoising of Intracardiac 4D Flow MRI"
+  ],
+  "2611.04034": [
+   "cs.CV",
+   "Do Pretrained Backbones Transfer to Physical Sensors? A Systematic Study of Multimodal Initialization Across the Sensor Stack"
+  ],
+  "2611.04028": [
+   "cs.CV",
+   "Compression Forcing: Hierarchical History Tokenization Enables Flexible World Models"
+  ],
+  "2611.04012": [
+   "cs.CV",
+   "SurgEye: Instruction Tuning-Free Perception-Reasoning Framework for Surgical Scene Understanding"
+  ],
+  "2611.03952": [
+   "cs.CV",
+   "Do We Still Need Rotation-Invariant Architectures? A Statistical Robustness Benchmark for Point Cloud Classification"
+  ],
+  "2611.03942": [
+   "cs.CV",
+   "Camera Radar LiDAR Fusion via Point-Cloud Projection for Multi-Task Learning"
+  ],
+  "2611.03940": [
+   "cs.CV",
+   "Coordinate Frame Recovery, Per Class NMS and Null Return Modelling for Sim2Real V2X LiDAR Detection"
+  ],
+  "2611.03937": [
+   "cs.CV",
+   "FlowBench: Counterfactual Imagination Training for Spatial Intelligence"
+  ],
+  "2611.03936": [
+   "cs.CV",
+   "Geometric Refinement and Distributional Alignment for Sim2Real Roadside LiDAR Detection"
+  ],
+  "2611.03775": [
+   "cs.CV",
+   "FlowRig: Unified Skeleton Generation for 3D and 4D Meshes via Flow Matching"
+  ],
+  "2611.03741": [
+   "cs.CV",
+   "Beyond Proposals: Region-Consistent Open-Set Object Detection"
+  ],
+  "2611.03717": [
+   "cs.CV",
+   "Physics-Informed Functional Tucker Method with RKHS Factors for Sparse Spatiotemporal Reconstruction"
+  ],
+  "2611.05106": [
+   "cs.CV",
+   "Label-Preserving Fourier Domain Adaptation with Generative-AI and Real Style Donors for 3D Mitral Valve Segmentation"
+  ],
+  "2611.05072": [
+   "cs.CV",
+   "Trajectory Evaluation via Rollout-Free World Model for End-to-end Autonomous Driving"
+  ],
+  "2611.05058": [
+   "cs.CV",
+   "Do Agentic Policies Need to Look at Every Step? Geometric Abstraction for Reasoning and Action"
+  ],
+  "2611.05035": [
+   "cs.CV",
+   "Federated Transfer Learning for Medical Image Classification under Mixed Skew"
+  ],
+  "2611.04873": [
+   "cs.CV",
+   "Trusting Imagined Futures: Auditing Imagined Rewards for VLA Post-Training"
+  ],
+  "2611.04780": [
+   "cs.CV",
+   "LIPS-PC: Learning Illumination Patterns for Single-Pixel Classification"
+  ],
+  "2611.04604": [
+   "cs.CV",
+   "Sparse-View 3D Coronary Reconstruction from Vessel Segmentations Using a Diffusion Prior"
+  ],
+  "2611.04492": [
+   "cs.CV",
+   "Hybrid Particle-Voxel Dynamics for Multimodal 3D World Simulation"
+  ],
+  "2611.04442": [
+   "cs.CV",
+   "Hybrid Quantum--Classical Pauli-Correlator Architecture for Image Reconstruction"
+  ],
+  "2611.04368": [
+   "cs.CV",
+   "RAFT: Reasoning-Aligned Fine-Tuning Improves Robustness of VLA Post-Training"
+  ],
+  "2611.04166": [
+   "cs.CV",
+   "Say the Same, Act Differently: Diagnosing and Steering Text-Action Divergence in Reasoning VLAs"
+  ],
+  "2611.04139": [
+   "cs.CV",
+   "COSMIO: A Benchmark for Cross-Survey Modality Imputation"
+  ],
+  "2611.04123": [
+   "cs.CV",
+   "An automated photometric pipeline for measuring the corotation radius of spiral galaxies"
+  ],
+  "2611.04025": [
+   "cs.CV",
+   "DUNEDepth: Bronchoscopic Depth and Pose Estimation via Hybrid Adaptation of a 3D-Vision Foundation Model"
+  ],
+  "2611.04002": [
+   "cs.CV",
+   "Evaluating the Impact of Nonlinear Registration on Longitudinal PET Analysis in a Rodent Stroke Model"
+  ],
+  "2611.03958": [
+   "cs.CV",
+   "A Novel Conditional Adversarial Diffusion Model for High-Fidelity OCT-to-OCT Image Translation and Precise Anti-VEGF Therapy Response Prediction in Diabetic Macular Edema"
+  ],
+  "2611.03932": [
+   "cs.CV",
+   "CoReMatch: Recurrent Continuous Coordinate Refinement for Real-Time Robotic Feature Matching"
+  ],
+  "2611.03765": [
+   "cs.CV",
+   "VagueBench: Benchmarking the Robustness of Embodied Agents on Ambient Context Illusions"
+  ],
+  "2611.03685": [
+   "cs.CV",
+   "LOLPlay: Benchmarking Real-Time Visual Agents in League of Legends"
+  ],
+  "2611.05347": [
+   "cs.HC",
+   "Whose Guardrail? User Identity Shapes the Effectiveness of Model Disclaimers in Mitigating LLM Political Persuasion"
+  ],
+  "2611.05290": [
+   "cs.HC",
+   "False Reassurance in LLM Severe-Weather Guidance: A Replayable Evaluation Against Real NWS Alerts"
+  ],
+  "2611.05001": [
+   "cs.HC",
+   "For You, Not for Everyone: Bystander-Aware Delivery of Critical Feedback in Robot Tutoring"
+  ],
+  "2611.04820": [
+   "cs.HC",
+   "AI for eGovernance: Leveraging Language Technologies For Digital Inclusion"
+  ],
+  "2611.04692": [
+   "cs.HC",
+   "Just Between Us? Exploring a Wearable-Mediated Channel for Discreet Human-Agent Interaction in a Shared Game Setting"
+  ],
+  "2611.04609": [
+   "cs.HC",
+   "Making Smell Actionable in Design: Lexicon, Movement Patterns, and Gesture Cards"
+  ],
+  "2611.04570": [
+   "cs.HC",
+   "Setting the Stage: Enhancing Music Recommendations with Spoken Introductions to Stimulate Serendipity"
+  ],
+  "2611.04466": [
+   "cs.HC",
+   "From Watching to Steering: Enabling Human-Coding Agent Collaboration through Execution Traces"
+  ],
+  "2611.04296": [
+   "cs.HC",
+   "SEAM: Situated Executable Associative Memory for a Co-located Community"
+  ],
+  "2611.04284": [
+   "cs.HC",
+   "OmniScribble: Mixed-Initiative Authoring of Animated Sketches through Inspectable and Repairable AI Decisions"
+  ],
+  "2611.04183": [
+   "cs.HC",
+   "Agentic Path Maps: Exposing an Agent&#39;s Traversal Through the Garden of Forking Paths"
+  ],
+  "2611.03976": [
+   "cs.HC",
+   "Must AI Spell It Out? Pragmatic Comprehension of Alerts in a Time-Critical Task"
+  ],
+  "2611.03939": [
+   "cs.HC",
+   "From Benchmarks to Behaviors: A Framework for Auditing AI Agents"
+  ],
+  "2611.03776": [
+   "cs.HC",
+   "Proceedings of the CSCW 2026 Workshop on Women&#39;s Health as Cooperative Work: Participatory AI Across Care, Community, and Policy"
+  ],
+  "2611.05176": [
+   "cs.HC",
+   "Extending the MM-AR Metamodeling Platform with Process Mining Capabilities"
+  ],
+  "2611.05143": [
+   "cs.HC",
+   "Better Plans, Better Outcomes: Integrating Historical Data into Student Planning in a Computing Course"
+  ],
+  "2611.05135": [
+   "cs.HC",
+   "From Opinions to Commitments: Unstable Assignments and Silent Choices in AI-Mediated Proposals"
+  ],
+  "2611.05027": [
+   "cs.HC",
+   "Haptic Shared Control for Multi-Robot Systems"
+  ],
+  "2611.04968": [
+   "cs.HC",
+   "Who is the Pronoun Pro? Comparing LLMs and Humans at Number-Disambiguation of &#39;they&#39;"
+  ],
+  "2611.04783": [
+   "cs.HC",
+   "Who Is Doing the Thinking? Characterising Human Agency in First-Year Students&#39; AI Interactions"
+  ],
+  "2611.04153": [
+   "cs.HC",
+   "Palimpsestic Accountability in the US Federal AI Inventories"
+  ],
+  "2611.03674": [
+   "cs.MM",
+   "ReVi: Recursive Recap Video Generation"
+  ],
+  "2611.04841": [
+   "cs.MM",
+   "DGC-Net: Cross-Modal Dynamic Routing with Global-Guided Compensation in Multimodal Sentiment Analysis"
+  ],
+  "2611.05372": [
+   "cs.RO",
+   "PolicyIK: High-Precision Inverse Kinematics for Robot Arms with Reinforcement Learning"
+  ],
+  "2611.05368": [
+   "cs.RO",
+   "GUILD: Guided Iterative Data Collection for Imitation Learning"
+  ],
+  "2611.05320": [
+   "cs.RO",
+   "PyRUA-DataFarm: LLM Agent as a Cost-Efficient Teleoperator for Real-Ready Robot Data"
+  ],
+  "2611.05302": [
+   "cs.RO",
+   "PACT: Pose-Robust Actuation Co-Design for Tendon-Driven Robotic Hands"
+  ],
+  "2611.05295": [
+   "cs.RO",
+   "GSBR: Geometric Support Behavior Regularization for Online RL"
+  ],
+  "2611.05249": [
+   "cs.RO",
+   "Should the Action Expert Train the VLM? Action-Token Supervision and Gradient Routing in Mixture-of-Transformer VLAs"
+  ],
+  "2611.05244": [
+   "cs.RO",
+   "Reality and Perceptual Gaps in Expressive Swarm Robotics"
+  ],
+  "2611.05163": [
+   "cs.RO",
+   "RoboTryOn: Synthesizing Dexterous Robot Demonstrations from Human Videos via Virtual Try-On"
+  ],
+  "2611.05155": [
+   "cs.RO",
+   "Asynchronous Robot Policies"
+  ],
+  "2611.05129": [
+   "cs.RO",
+   "WayTrace: A Map-to-Language-to-Trace Hierarchy for Embodied Urban Navigation"
+  ],
+  "2611.05119": [
+   "cs.RO",
+   "DexHOT: Learning Hand-Object Configuration Transfer for Dexterous Manipulation"
+  ],
+  "2611.05113": [
+   "cs.RO",
+   "HLO-AMP: Hierarchical Loco-Manipulation from Object-Aware Motion Priors"
+  ],
+  "2611.05093": [
+   "cs.RO",
+   "LoopQ: Fair, Closed-Loop Evaluation of Quantized Vision-Language-Action Models"
+  ],
+  "2611.05080": [
+   "cs.RO",
+   "CRONOS: Benchmarking Non-Episodic Reinforcement Learning for Robotic Manipulation"
+  ],
+  "2611.05074": [
+   "cs.RO",
+   "Nested Field-of-View Barriers for Teleoperated Multi-Robot Relay Chains"
+  ],
+  "2611.05023": [
+   "cs.RO",
+   "HiLo-WAM: Decoupling Long-Horizon Task Evolution and Local Dynamics in World Action Models"
+  ],
+  "2611.04974": [
+   "cs.RO",
+   "LLMs as MDP Designers: A Dependency-Aware Agentic Framework for Automated Robot Policy Generation"
+  ],
+  "2611.04972": [
+   "cs.RO",
+   "Caging Vision-Language Navigation for Legged Robots via Barrier-Certified Safety Architecture"
+  ],
+  "2611.04957": [
+   "cs.RO",
+   "Safeguarding Multi-Agent Reinforcement Learning for Connected and Automated Vehicles with Recursively Feasible Control Barrier Functions"
+  ],
+  "2611.04871": [
+   "cs.RO",
+   "Physics-Based Plausibility Assessment of AI-Predicted Vehicle Parameters for Automotive Radar in Pre-Crash Scenarios"
+  ],
+  "2611.04870": [
+   "cs.RO",
+   "PrimeSim: A Generalist World Model Simulator from Large-Scale Cross-Embodiment Demonstrations"
+  ],
+  "2611.04839": [
+   "cs.RO",
+   "Coordinating Humanoid Loco-Manipulation through Action-Conditioned Latent Foresight"
+  ],
+  "2611.04748": [
+   "cs.RO",
+   "Mass Scaling Laws for Energy-Optimal Horizontal Multirotor Flight"
+  ],
+  "2611.04708": [
+   "cs.RO",
+   "CLARA: A Cognitively-Driven Clarification Framework for Grounding Ambiguous Requests"
+  ],
+  "2611.04527": [
+   "cs.RO",
+   "Future Representation Distillation for Imagination-Free World Action Models"
+  ],
+  "2611.04522": [
+   "cs.RO",
+   "Action Intent as a Bridge: Transferring Manipulation Knowledge from Human-Centric Videos to Robots"
+  ],
+  "2611.04518": [
+   "cs.RO",
+   "LLM-Assisted Planning with Distributed Onboard Behaviour Tree Execution for Multi-AUV Missions"
+  ],
+  "2611.04493": [
+   "cs.RO",
+   "Physical Diffusion Policy via MPM-Guided 3D Gaussian Simulation"
+  ],
+  "2611.04485": [
+   "cs.RO",
+   "All-For-One: Distilling Visual Foundation Models to a Fast, Memory-Efficient Visuomotor Policy"
+  ],
+  "2611.04477": [
+   "cs.RO",
+   "Spectrally Routed Diffusion Policy for Multi-Task Robotic Manipulation"
+  ],
+  "2611.04424": [
+   "cs.RO",
+   "ReflexArc: Bottom-Up Integration of Instantaneous Tactile Reflexes into Whole-Body Humanoid Control"
+  ],
+  "2611.04334": [
+   "cs.RO",
+   "RAIPAL: A Powerful and Agile Humanoid Arm for Human Tasks"
+  ],
+  "2611.04255": [
+   "cs.RO",
+   "ActOR: Ambient AI-Based Agentic Orchestration for Humanoid Autonomy in Operating Rooms"
+  ],
+  "2611.04226": [
+   "cs.RO",
+   "DiMuRe: Diagnosis-Guided Multilevel Recovery for Robotic Task Execution"
+  ],
+  "2611.04204": [
+   "cs.RO",
+   "Online iLQR-MPC with Whole-Body Control for Robust Humanoid Locomotion"
+  ],
+  "2611.04176": [
+   "cs.RO",
+   "Grasping and Stabilizing Tumbling Objects with Rotating-Base Multi-Arm Space Manipulators"
+  ],
+  "2611.04096": [
+   "cs.RO",
+   "Online Hamilton-Jacobi Reachability Onboard the Robot Control Loop: A Real-Time GPU Solver for Safety-Critical Autonomy"
+  ],
+  "2611.04093": [
+   "cs.RO",
+   "VARP: A Visual Adaptive Rearrangement Planner for Non-Monotone Object Rearrangement Planning"
+  ],
+  "2611.04083": [
+   "cs.RO",
+   "MABEL: An Open Anthropomorphic Mobile Bimanual Platform for Teleoperation and Learning"
+  ],
+  "2611.04080": [
+   "cs.RO",
+   "FEIJOA: Task-Driven Grounding and Execution for Mobile Manipulation"
+  ],
+  "2611.04027": [
+   "cs.RO",
+   "A Practical Causal Framework for Autonomous Mobile Robots: From Simulation to Real-World Human Environments"
+  ],
+  "2611.04016": [
+   "cs.RO",
+   "Physical Experience Builds Continual Spatial World Models"
+  ],
+  "2611.03975": [
+   "cs.RO",
+   "Self-governed access control in open robot swarms using a blockchain-based DAO"
+  ],
+  "2611.03944": [
+   "cs.RO",
+   "h-NESDF: An Infinitely Differentiable Signed Distance Between Two Sets with Robotic Applications"
+  ],
+  "2611.03885": [
+   "cs.RO",
+   "Self-Consistent Neural Control: Learning Trajectories for Implicit Equilibrium"
+  ],
+  "2611.03850": [
+   "cs.RO",
+   "RoboScope Kit: Unified Interfaces for Fast and Scalable Embodied-AI Evaluation"
+  ],
+  "2611.03825": [
+   "cs.RO",
+   "A Tutorial on Shape Servoing of Deformable Objects-Part II: Advanced Concepts"
+  ],
+  "2611.03815": [
+   "cs.RO",
+   "AIRoA-0: Long-Horizon, Precise, Cross-Embodiment Manipulation from Handheld Data"
+  ],
+  "2611.03779": [
+   "cs.RO",
+   "Robot-Matched Soft Fingers for UMI Data Collection: Lessons from 100 Hours of Pick and Place"
+  ],
+  "2611.05029": [
+   "cs.RO",
+   "DRAP: Dynamics-Risk Adaptive Plasticity for Continual Learning in Physical AI"
+  ],
+  "2611.04392": [
+   "cs.RO",
+   "Aero-VPA: Few-Step Flow-Matching Control over Non-Reconstructive JEPA Latents for Agile Flight on Edge Hardware"
+  ],
+  "2611.04325": [
+   "cs.RO",
+   "Computing Invariant Reachable Sets through Sum-of-Squares Programming"
+  ],
+  "2611.03710": [
+   "cs.RO",
+   "te-comp: A Complete MLIR Compiler Generating Self-Contained C Inference Engines for MCUs"
+  ],
+  "2611.05345": [
+   "cs.AI",
+   "Adversarial Speculative Reasoning Improves Long Horizon Agents"
+  ],
+  "2611.05306": [
+   "cs.AI",
+   "You don&#39;t need long context"
+  ],
+  "2611.05272": [
+   "cs.AI",
+   "The Geometry of Ignorance: Detecting Suppressed Knowledge in LLMs through Activation Fragmentation"
+  ],
+  "2611.05263": [
+   "cs.AI",
+   "JHiMA-WebRL: A Joint Hierarchical Multi-Agent Reinforcement Learning Framework for Long-Horizon Web Tasks"
+  ],
+  "2611.05171": [
+   "cs.AI",
+   "AgentAM: An AI Agent for Spatter- and Defect-Aware Process Optimization in Laser Powder Bed Fusion"
+  ],
+  "2611.05167": [
+   "cs.AI",
+   "Learning Behaviorally Relevant Dynamics in Multimodal Neural Recordings"
+  ],
+  "2611.05151": [
+   "cs.AI",
+   "Catalyzing Interactive HTML Generation Capabilities via High-Fidelity Reinforcement Learning"
+  ],
+  "2611.05148": [
+   "cs.AI",
+   "Creating Power Flexibility in Datacenters via Query Routing"
+  ],
+  "2611.05139": [
+   "cs.AI",
+   "Meta$^2$: Precomputing Reusable Knowledge for Online Harness Evolution in Long-Horizon Agents"
+  ],
+  "2611.05108": [
+   "cs.AI",
+   "From AutoResearch to Continual AutoResearch: Do Agents Learn Across Tasks?"
+  ],
+  "2611.05097": [
+   "cs.AI",
+   "The Platonic Brain: Representational Convergence in EEG Foundation Models"
+  ],
+  "2611.05088": [
+   "cs.AI",
+   "LatentTriad: Pre-Action Risk Representations for Malicious Agent Skill Detection"
+  ],
+  "2611.05039": [
+   "cs.AI",
+   "ALBI: LLM-Guided Inductive Logic Programming via Iterative Generate-Test-Constrain Refineme"
+  ],
+  "2611.04952": [
+   "cs.AI",
+   "Artifact-to-Capability: Diagnosing Breaks in Capability Formation of Self-Evolving Agents in a Controlled Environment"
+  ],
+  "2611.04887": [
+   "cs.AI",
+   "FourSight: Stable FP4 RL Post-Training via Sequence Filtering and Sparse Channel Compensation"
+  ],
+  "2611.04886": [
+   "cs.AI",
+   "Modelling lock-in of AI adoption through skill erosion"
+  ],
+  "2611.04879": [
+   "cs.AI",
+   "ScamWorld: An Interactive Environment for Evaluating Web Agents Against Online Fraud"
+  ],
+  "2611.04848": [
+   "cs.AI",
+   "Amortized Nonlinear Variable Selection with Prior-Data Fitted Networks"
+  ],
+  "2611.04836": [
+   "cs.AI",
+   "HTCE: Homeomorphism-inspired Topological Cross-Scene Experience Canonicalization and Reuse for Object Navigation"
+  ],
+  "2611.04834": [
+   "cs.AI",
+   "Feeling of Knowing in Large Language Models"
+  ],
+  "2611.04819": [
+   "cs.AI",
+   "Reconstructing Fraudulent Strategies in Online Payments via Interpretable Inverse Reinforcement Learning"
+  ],
+  "2611.04817": [
+   "cs.AI",
+   "The Pen is Mightier than the Pixel: Natural Textual Unlearnable Example for Large Vision Language Models"
+  ],
+  "2611.04814": [
+   "cs.AI",
+   "Think Less, Locally: Local Preference Learning for Reasoning Compression"
+  ],
+  "2611.04813": [
+   "cs.AI",
+   "AgenticFinBench: Benchmarking Financial Agents on Diverse Tasks from Real-World Requests"
+  ],
+  "2611.04809": [
+   "cs.AI",
+   "RAHC: Rule-Augmented Hyper-Relational Knowledge Graph Completion for Materials Synthesis"
+  ],
+  "2611.04805": [
+   "cs.AI",
+   "Where Is the Truth When AI Agents Disagree? Dependence-Aware Belief Propagation for Unsupervised Truth Discovery (Extended Version)"
+  ],
+  "2611.04785": [
+   "cs.AI",
+   "Kierston &amp; KierstonBench: Simulation of Allentown, PA and Evaluation of Language Models in Crime Investigation and Surveillance Tasks"
+  ],
+  "2611.04782": [
+   "cs.AI",
+   "Reducing Logprob Without Causal Verification: Diagnosing SAE-Based PII Suppression in LLMs"
+  ],
+  "2611.04772": [
+   "cs.AI",
+   "TactiNavi: Serving and Revising an LLM Game Coach with Explicit Strategy Conditions"
+  ],
+  "2611.04757": [
+   "cs.AI",
+   "When Should an LLM Steering Edit Depend on the Input?"
+  ],
+  "2611.04637": [
+   "cs.AI",
+   "SAT Encoding for Set of At-Most-K Cardinality Constraints with Ladder Shape"
+  ],
+  "2611.04576": [
+   "cs.AI",
+   "ValQID: Learning the Net Value of Semantic Query Groups for Web Device Identification"
+  ],
+  "2611.04566": [
+   "cs.AI",
+   "A research world model of power engineering learns its dynamics and reveals what-ifs"
+  ],
+  "2611.04556": [
+   "cs.AI",
+   "Inter-Agent Influence: Evaluating Persuasion, Deception, and Coercion in Multi-Agent Systems"
+  ],
+  "2611.04546": [
+   "cs.AI",
+   "Are LLM Assistants Regulatory Ready? Answers from regenold&#39;s 2026 EU AI Act Q&amp;A Challenge"
+  ],
+  "2611.04515": [
+   "cs.AI",
+   "Learnings and Pitfalls from AI-Assisted A/B Experimentation at Scale"
+  ],
+  "2611.04510": [
+   "cs.AI",
+   "Fast, Cheap, and Fair? Evaluating Decision Models"
+  ],
+  "2611.04507": [
+   "cs.AI",
+   "Signals: Continuous Diagnostics of AI Agents"
+  ],
+  "2611.04494": [
+   "cs.AI",
+   "Spatial Memory for AR Glasses: Hierarchical Visual Acquisition and Source-Linked Recall"
+  ],
+  "2611.04487": [
+   "cs.AI",
+   "Reconstruction-Based Diagnosis through Gödel-Regularized Virtual Observability"
+  ],
+  "2611.04483": [
+   "cs.AI",
+   "CogniLife: Continuous Cognitive Distillation for Deployed Multi-Expert Agent Marketplaces"
+  ],
+  "2611.04481": [
+   "cs.AI",
+   "Goal-Driven Autonomous Optical Experimentation via a Self-Recursive Hardware-Software Harness"
+  ],
+  "2611.04479": [
+   "cs.AI",
+   "A Parametric Linear Conic Projection for Structured Sparse Attention"
+  ],
+  "2611.04473": [
+   "cs.AI",
+   "Treating the Symptom, Missing the Cause: Anatomy of a Scientific Reasoning Failure"
+  ],
+  "2611.04458": [
+   "cs.AI",
+   "Large Language Model-Assisted Adaptive Heuristic Search for Agile Earth Observation Satellite Scheduling"
+  ],
+  "2611.04447": [
+   "cs.AI",
+   "Formalizing PTX in Lean to Prove GPU Kernel Correctness"
+  ],
+  "2611.04420": [
+   "cs.AI",
+   "Verifier strength does not buy discovery quality: a pre-registered two-domain test of LLM-based automated research, with post-hoc evidence pointing to proposer-pool composition"
+  ],
+  "2611.04413": [
+   "cs.AI",
+   "CaliSplat: Sparse Gaussian Fitting and Calibrated Rate Allocation for Image Compression"
+  ],
+  "2611.04399": [
+   "cs.AI",
+   "Silent Instrument Errors Reorder Agent Leaderboards"
+  ],
+  "2611.04395": [
+   "cs.AI",
+   "Correct Labels Are Not Enough: Reliable Metadata Can Silently Control Model Behavior"
+  ],
+  "2611.04391": [
+   "cs.AI",
+   "Human-to-Robot Transfer via Bridging Representation and Action Space in VLAs"
+  ],
+  "2611.04380": [
+   "cs.AI",
+   "Twice as Fast, Until It Isn&#39;t: Quantized Serving of Mid-Size Open LLMs"
+  ],
+  "2611.04371": [
+   "cs.AI",
+   "Embodied AI for Scientific Discovery: From Physical Action to Scientific Evidence"
+  ],
+  "2611.04369": [
+   "cs.AI",
+   "Benchmarking Unsupervised Jamming Detection in 5G Open RAN"
+  ],
+  "2611.04342": [
+   "cs.AI",
+   "Beyond Fine-Tuning: Evaluating Prompt Engineering and Prompt Tuning for Roman Urdu Hate Speech Detection"
+  ],
+  "2611.04338": [
+   "cs.AI",
+   "Patching the Protocol: A Taxonomy of Pre-Registration Repairs in LLM-Proposer Experiments"
+  ],
+  "2611.04330": [
+   "cs.AI",
+   "CORA: Teacher-Guided Causal O-RAN Adaptation for Jamming Detection"
+  ],
+  "2611.04323": [
+   "cs.AI",
+   "FP4Quant: Efficient 4-Bit Communication Compression for Model-Parallel LLM Training"
+  ],
+  "2611.04321": [
+   "cs.AI",
+   "ATC: Agent Trajectory Control for Role-Contract Enforcement in Black-Box Multi-Agent Systems"
+  ],
+  "2611.04320": [
+   "cs.AI",
+   "Planning-Coding Separation in LLM-Based Code Generation: An Empirical Study"
+  ],
+  "2611.04315": [
+   "cs.AI",
+   "Drift No More: Spectral Locking for Long-Horizon Open-Weight Multi-Agent AI"
+  ],
+  "2611.04301": [
+   "cs.AI",
+   "OSGR: Observation-Support Graph Reasoning for Earth Observation Question Answering"
+  ],
+  "2611.04279": [
+   "cs.AI",
+   "Bidirectional Centered Score Matching for Discrete Diffusion Distillation"
+  ],
+  "2611.04277": [
+   "cs.AI",
+   "Harness-S: Learning from Sibling Harnesses for Generalizable Agent Training"
+  ],
+  "2611.04264": [
+   "cs.AI",
+   "Reliability Stress Testing of RAG Retrieval under Query-Relevant Corpus Poisoning"
+  ],
+  "2611.04260": [
+   "cs.AI",
+   "Neologism Inoculation Prompting"
+  ],
+  "2611.04241": [
+   "cs.AI",
+   "AceAction-5M: Hierarchical Goals for Generalist Action Learning Across 3D Game Worlds"
+  ],
+  "2611.04230": [
+   "cs.AI",
+   "Exact Optimality Certification of QPLIB 2096 through Complete Set Partitioning"
+  ],
+  "2611.04228": [
+   "cs.AI",
+   "DualWorldBench: Can Agents Plan Deliveries across Symbolic and Grounded Worlds?"
+  ],
+  "2611.04203": [
+   "cs.AI",
+   "Toward User-Centered Agentic Recommendation: When Does Platform Competition Benefit Users?"
+  ],
+  "2611.04196": [
+   "cs.AI",
+   "DoGNAVY-Exploit: Harnessing Parallel Open-Weight Agents for Stage-Aware Vulnerability Exploitation"
+  ],
+  "2611.04181": [
+   "cs.AI",
+   "Clocks all the way down: does sequence-processing AI need endogenous temporal structure?"
+  ],
+  "2611.04180": [
+   "cs.AI",
+   "Validation-Gated ML Pipeline Synthesis with Expert-Grounded Self-Evolving Skills"
+  ],
+  "2611.04142": [
+   "cs.AI",
+   "Interpretable Early Termination of Web Navigation Agents via Closed Sequential Pattern Mining"
+  ],
+  "2611.04126": [
+   "cs.AI",
+   "GlucoAgent: Personalized Glucose Forecasting from Multimodal Personal Context"
+  ],
+  "2611.04113": [
+   "cs.AI",
+   "The Evolution Strategies Paradox: Better Models from Worse Perturbations"
+  ],
+  "2611.04101": [
+   "cs.AI",
+   "Structured Clinical Memory as Context for Probabilistic Decision Models: A Synthetic Evaluation with Jev"
+  ],
+  "2611.04100": [
+   "cs.AI",
+   "The Agent Board: Kanban for Machines; Durable Coordination for Agents That Outlive the Conversation"
+  ],
+  "2611.04079": [
+   "cs.AI",
+   "AlgoPilot: Cross-Paradigm Reasoning in Language Models via Strategy Selection and Guidance"
+  ],
+  "2611.04061": [
+   "cs.AI",
+   "On the Primacy Bias in RLVR Training"
+  ],
+  "2611.04059": [
+   "cs.AI",
+   "Query-based Submodular Data Selection for Efficient Instruction Tuning"
+  ],
+  "2611.04057": [
+   "cs.AI",
+   "Look Before You Launch: Learned Throughput Prediction for Hardware Selection in a Production Training Fleet"
+  ],
+  "2611.04055": [
+   "cs.AI",
+   "HybridSpec: Throughput-Aware Speculative Decoding for Hybrid GDN-MoE Models"
+  ],
+  "2611.04054": [
+   "cs.AI",
+   "Forgetting to Improve: Principled Data Removal in Active Learning"
+  ],
+  "2611.04048": [
+   "cs.AI",
+   "Exploit or conform? How norm utility prompting changes the way LLMs use community beliefs"
+  ],
+  "2611.04035": [
+   "cs.AI",
+   "Recursa: Toward Recursively Self-Improving Foundation Model Systems"
+  ],
+  "2611.04032": [
+   "cs.AI",
+   "ROCm InferaSim: Cut LLM Serving Trial Costs and Deploy the Best Configuration"
+  ],
+  "2611.04006": [
+   "cs.AI",
+   "Controlling Action-Head Co-Adaptation to VLM Representation Anisotropy"
+  ],
+  "2611.04003": [
+   "cs.AI",
+   "WASP-Mem: Let Agent Organize Procedural Memory. Human Spend Effort on Diagnosis"
+  ],
+  "2611.03985": [
+   "cs.AI",
+   "Thinking Fast, Trading Late: System One Decision Models vs the Market"
+  ],
+  "2611.03983": [
+   "cs.AI",
+   "A Guideline-Grounded Multi-Agent Framework for Personalized Exercise Prescription from Clinical and Wearable Data"
+  ],
+  "2611.03980": [
+   "cs.AI",
+   "Measuring Model-Specific Alignment Drift in LLM-Based Opinion Dynamics"
+  ],
+  "2611.03946": [
+   "cs.AI",
+   "We Ran a Research Sprint With AI. The AI Worked. The Research Didn&#39;t"
+  ],
+  "2611.03930": [
+   "cs.AI",
+   "What Is This Memory Useful For? Measuring Task-Conditioned Utility in Long-Term Agent Memory"
+  ],
+  "2611.03882": [
+   "cs.AI",
+   "ProofPaths: An AI Agent Framework for Assessing Student Reasoning"
+  ],
+  "2611.03861": [
+   "cs.AI",
+   "Predictive gains, causal losses: why interventional competence cannot be learned from data alone"
+  ],
+  "2611.03853": [
+   "cs.AI",
+   "Performance, Scalability and Maintenance: An Experimental Study of RPA vs. Autonomous Agents in the Healthcare Domain"
+  ],
+  "2611.03849": [
+   "cs.AI",
+   "LaplaceDiag: Fault Diagnosis through Changes in Learned Actuator Effects"
+  ],
+  "2611.03834": [
+   "cs.AI",
+   "Low-Rank Hierarchical Merging for Efficient Long-to-Short Reasoning"
+  ],
+  "2611.03832": [
+   "cs.AI",
+   "El Agente Fármaco: A Scalable AI Scientist for Drug Discovery"
+  ],
+  "2611.03739": [
+   "cs.AI",
+   "Reasoning is topologically simple"
+  ],
+  "2611.03725": [
+   "cs.AI",
+   "From Logs to Faults: Reference-Free Fault Localization for Retrieval-Augmented Generation Pipelines"
+  ],
+  "2611.03723": [
+   "cs.AI",
+   "EMBERS: Empirically Motivated Robustness Testing of Deep Research Systems via Defect-Guided Fuzzing"
+  ],
+  "2611.03721": [
+   "cs.AI",
+   "Counterexample-driven autonomous research with application to excess radiated energy in a Z-pinch"
+  ],
+  "2611.03713": [
+   "cs.AI",
+   "Unsatz: Evaluating Scientific Discovery Without a Given Ansatz"
+  ],
+  "2611.03698": [
+   "cs.AI",
+   "Training LLM Agents to Automate LLM Post-Training with RSI-Dojo"
+  ],
+  "2611.03684": [
+   "cs.AI",
+   "Functional-Group Knowledge Is Structured in Language Models Before It Is Spoken"
+  ],
+  "2611.03662": [
+   "cs.AI",
+   "MCPGuard: Finding Conformance Gaps in MCP SDKs via Dual-Track Analysis and Dynamic Adjudication"
+  ],
+  "2611.03651": [
+   "cs.AI",
+   "CARD: A Proof-Carrying Certificate-to-Action Interface for Relative-Measurement Graphs"
+  ],
+  "2611.03650": [
+   "cs.AI",
+   "Alignment Faking Depends on the Value, Not Just the Model"
+  ],
+  "2611.05376": [
+   "cs.AI",
+   "From Autonomous Agents to Cognitive Symbionts: Toward AI-Augmented Human Intelligence"
+  ],
+  "2611.05373": [
+   "cs.AI",
+   "Aligning Language Models with General Preferences: An Empirical Study of Direct Nash Optimization"
+  ],
+  "2611.05358": [
+   "cs.AI",
+   "Suppressing Misaligned Behaviors in Language Models, Durably"
+  ],
+  "2611.05341": [
+   "cs.AI",
+   "Weight-space programming for auditing clinical decision networks"
+  ],
+  "2611.05340": [
+   "cs.AI",
+   "MedPhysBench: A Benchmark for Evaluating Language Models on Medical Physics Calculations and Error Detection"
+  ],
+  "2611.05334": [
+   "cs.AI",
+   "A simple adaptive accelerated optimistic dual averaging method for unconstrained convex optimization in $p$-norm geometry"
+  ],
+  "2611.05319": [
+   "cs.AI",
+   "HARP: Training-Free Dual-Profile Agentic Communication for LLM-Based Recommendation"
+  ],
+  "2611.05304": [
+   "cs.AI",
+   "LoopVQ: Sub 1-bit KV Cache Quantization for Looped Transformers"
+  ],
+  "2611.05292": [
+   "cs.AI",
+   "Personas Are Not People: Identity as State, Not Attribute"
+  ],
+  "2611.05287": [
+   "cs.AI",
+   "Knowingly Wrong: Training LLMs Against Their Own Beliefs can Induce Misalignment"
+  ],
+  "2611.05278": [
+   "cs.AI",
+   "Beyond Accuracy: What Language-Subspace Interventions Capture, Remove, and Improve"
+  ],
+  "2611.05255": [
+   "cs.AI",
+   "Going Deeper With Memories"
+  ],
+  "2611.05222": [
+   "cs.AI",
+   "Fairness Metrics based on the AUC in Clinical Predictive AI"
+  ],
+  "2611.05179": [
+   "cs.AI",
+   "OperAItor: An Agentic Framework for Fault-Tolerant Operation of Chemical Processes"
+  ],
+  "2611.05164": [
+   "cs.AI",
+   "Basin2Vec: Learning Basin-Centric Embeddings for Scalable Hydrological Modeling"
+  ],
+  "2611.05124": [
+   "cs.AI",
+   "The Right Source Is Not Enough: Understanding History Interference in Speech-LLM Memory"
+  ],
+  "2611.05104": [
+   "cs.AI",
+   "Workload-Static Optical Circuit Switching For Scalable LLM Inference Decode"
+  ],
+  "2611.05103": [
+   "cs.AI",
+   "Molecular Prior Networks"
+  ],
+  "2611.05012": [
+   "cs.AI",
+   "Rethinking GA2Ms: performance and out-of-distribution generalisation"
+  ],
+  "2611.04977": [
+   "cs.AI",
+   "GeoFaham: Domain-Specialized Multi-Agent Geospatial Analytics for Disaster Response"
+  ],
+  "2611.04958": [
+   "cs.AI",
+   "Shuffled OPSD: When Semantic Consistency Hurts On-Policy Self-Distillation?"
+  ],
+  "2611.04893": [
+   "cs.AI",
+   "Fault-tolerant shallow recurrent decoders for sparse sensing with missing sensor measurements"
+  ],
+  "2611.04867": [
+   "cs.AI",
+   "One Assistant, Many Memories: Benchmarking Real-World Group Assistance When Recall Is Not Enough"
+  ],
+  "2611.04838": [
+   "cs.AI",
+   "Found by Search, Broken by a Shortcut: Transfer and Tampering of Searched Intrinsic Rewards"
+  ],
+  "2611.04825": [
+   "cs.AI",
+   "UniFlow: Unified Multi-Scale Flow Matching for Time Series Generation"
+  ],
+  "2611.04807": [
+   "cs.AI",
+   "Asymptotic Optimality of $cμ$-Rule for LLM Inference Scheduling under Memory Constraint"
+  ],
+  "2611.04792": [
+   "cs.AI",
+   "Density-Aware Reward Scaling: A Reinforcement Learning Framework for Reward-Proportional Sampling"
+  ],
+  "2611.04787": [
+   "cs.AI",
+   "ReSI-Math: Exploring Recoverable Capability Frontiers for Efficient Reasoning Improvement"
+  ],
+  "2611.04779": [
+   "cs.AI",
+   "Replica-Aware Split Inference for Edge IoT Systems"
+  ],
+  "2611.04747": [
+   "cs.AI",
+   "TAPES: Task-Aligned Joint Predictive Pretraining for Transaction Event Sequences"
+  ],
+  "2611.04697": [
+   "cs.AI",
+   "When Ground Truth Is Not Ground Truth: Automatic Labeling for Hallucination Detection"
+  ],
+  "2611.04689": [
+   "cs.AI",
+   "Uncertainty-Aware Prototype Learning for Open-Set Test-Time Adaptation"
+  ],
+  "2611.04663": [
+   "cs.AI",
+   "Best-of-Depth: Learning Exploratory Dynamics in Looped Transformers"
+  ],
+  "2611.04641": [
+   "cs.AI",
+   "Does LinUCB Need Valid Confidence Sets?"
+  ],
+  "2611.04625": [
+   "cs.AI",
+   "QueryFlow: Multi-Hop Graph Retrieval with Adaptive Query Evolution"
+  ],
+  "2611.04590": [
+   "cs.AI",
+   "Can Network Models of Science Do Without Pluralist Agents?"
+  ],
+  "2611.04574": [
+   "cs.AI",
+   "Spectral Quantum Memory for Implicit Neural Representations"
+  ],
+  "2611.04555": [
+   "cs.AI",
+   "CosmosAlpha: Multi-Relational Graph Search with Pareto-Guided Exploration for LLM-Driven Alpha Mining"
+  ],
+  "2611.04543": [
+   "cs.AI",
+   "CANDO: Conservative Action-Noise Directional Optimization for Residual Reinforcement Learning"
+  ],
+  "2611.04488": [
+   "cs.AI",
+   "Perseus: A Full-Stack System for Homomorphic Model Inference"
+  ],
+  "2611.04462": [
+   "cs.AI",
+   "SaMA: Morpho Adaptation via Asymmetric Expansion of Kronecker Product"
+  ],
+  "2611.04459": [
+   "cs.AI",
+   "$τ$-Rec-Books: A Disclosure-Controlled Benchmark for Requirement Elicitation in Agentic Recommender Systems"
+  ],
+  "2611.04393": [
+   "cs.AI",
+   "Voluntary Servitude: Weaponized Safety Warning Mechanisms for Controlling AI Agents"
+  ],
+  "2611.04376": [
+   "cs.AI",
+   "Aligning Training and Rollout Policies for End-to-End FP4 RL on Mixture-of-Experts LLMs"
+  ],
+  "2611.04356": [
+   "cs.AI",
+   "CloakFEM: Agentic FEM Code Generation for Red-Teaming Computational Resource Exhaustion"
+  ],
+  "2611.04354": [
+   "cs.AI",
+   "Large Language Models for Forecasting of Electricity Price Spikes"
+  ],
+  "2611.04327": [
+   "cs.AI",
+   "Anchor: Augmented Cross-Layer Recurrent State for Long-Context Retrieval in Test-Time Training"
+  ],
+  "2611.04313": [
+   "cs.AI",
+   "Coarse Semantic Blocks for Efficient Training-Free Sparse Attention"
+  ],
+  "2611.04309": [
+   "cs.AI",
+   "What Is the Influence of Task Order in Continual Learning? An Empirical Study and Order-Aware Evaluation for Motion Forecasting"
+  ],
+  "2611.04295": [
+   "cs.AI",
+   "Reciprocity Can Erase Direction:tructural Boundaries and Controlled Utility of Magnetic Graph Networks"
+  ],
+  "2611.04289": [
+   "cs.AI",
+   "When Debate Amplifies Risk: Social-Bias Vulnerabilities in Multi-Agent Safety Deliberation"
+  ],
+  "2611.04287": [
+   "cs.AI",
+   "Predicting protein structures at any folding stage from sequence"
+  ],
+  "2611.04256": [
+   "cs.AI",
+   "OmniST: Topology-Invariant Spatiotemporal Forecasting with Guaranteed-Coverage Uncertainty at Unseen Sensor Locations"
+  ],
+  "2611.04248": [
+   "cs.AI",
+   "Navigating Runtime Dynamism in Semantic Query Serving"
+  ],
+  "2611.04239": [
+   "cs.AI",
+   "LIRA: A More Interpretable Dynamic Loss-Informed Rank Allocation for Low-Rank Adaptation"
+  ],
+  "2611.04231": [
+   "cs.AI",
+   "Constructing a Regional Slang Lexicon for Electricity Demands via Soft-Label Bidirectional Anchoring and Active Learning"
+  ],
+  "2611.04225": [
+   "cs.AI",
+   "IntentGEO: Intent-aware Generative Engine Optimization for Recommendation"
+  ],
+  "2611.04222": [
+   "cs.AI",
+   "GC-MoE: Overlapping Expert-Parallel Token Dispatch with FP8/FP4 Grouped GEMM via CUDA Green Contexts"
+  ],
+  "2611.04182": [
+   "cs.AI",
+   "When the Consumer Is an Agent: Execution-Grounded Service-Level Agreements"
+  ],
+  "2611.04169": [
+   "cs.AI",
+   "Length Is Cheap, Competition Is Not: Attention Predicts Context Rot in Retrieval"
+  ],
+  "2611.04108": [
+   "cs.AI",
+   "Separating Common and Unique Directions for Data-Free Model Merging"
+  ],
+  "2611.04090": [
+   "cs.AI",
+   "Swapping the Judge Changes the Ranking: A Preregistered Study of Cross-Provider Replication in LLM-Judged System Comparisons"
+  ],
+  "2611.04041": [
+   "cs.AI",
+   "When Model Complexity Matters in Cross-Subject Naturalistic fMRI Prediction"
+  ],
+  "2611.04005": [
+   "cs.AI",
+   "Characterizing Adversarial GEO via Implicit Brand Injection"
+  ],
+  "2611.03996": [
+   "cs.AI",
+   "Measure Before You Repair: An Explainable Agent for Blind Restoration of Multi-Artifact 3-D MRI"
+  ],
+  "2611.03995": [
+   "cs.AI",
+   "When Music Needs Meaning: Semantic Communication as a Transformative Enabler for the Musical Metaverse"
+  ],
+  "2611.03993": [
+   "cs.AI",
+   "Whose startup does the AI back? An algorithm audit of reputation and demographic signals in LLM-assisted crowdfunding"
+  ],
+  "2611.03992": [
+   "cs.AI",
+   "FlagRot: Selective Rotation for Low-Bit KV Caches"
+  ],
+  "2611.03982": [
+   "cs.AI",
+   "SLATE: A Large-Scale Benchmark for Long-Horizon API Selection in E-commerce Tool Use"
+  ],
+  "2611.03966": [
+   "cs.AI",
+   "Stacking-Based Weighting for Large Language Bayes in M-Open Settings"
+  ],
+  "2611.03963": [
+   "cs.AI",
+   "ProteoCraft: Protein Design as Proposal-Verification Search"
+  ],
+  "2611.03953": [
+   "cs.AI",
+   "P$^2$-MOPD: Accelerating Multi-Teacher On-Policy Distillation via Parameter Priors"
+  ],
+  "2611.03948": [
+   "cs.AI",
+   "Balancing Chain-of-Thought and Answer Supervision for Small Language Models on Medical Question Answering"
+  ],
+  "2611.03852": [
+   "cs.AI",
+   "Why Pay for Long Reasoning When Rewrite Do Trick? Causal Effects of Reasoning History Compaction on Future Generation and Agent Cost"
+  ],
+  "2611.03839": [
+   "cs.AI",
+   "PianoBench: Evaluating Musical Perception and Reasoning in Language Models"
+  ],
+  "2611.03826": [
+   "cs.AI",
+   "Rethinking Next-Visit Diagnosis Prediction Beyond Aggregate Metrics: Retrieval--Memory Multi-Agent Adjudication"
+  ],
+  "2611.03774": [
+   "cs.AI",
+   "What Malware Actually Does: An Empirical Analysis of Post-Infection Behavior Across Malware Families"
+  ],
+  "2611.03772": [
+   "cs.AI",
+   "RuntimeTickets: Source-Grounded Security Obligations for Agent Skills"
+  ],
+  "2611.03769": [
+   "cs.AI",
+   "Metadata-Conditioned Audio Transformers for Adaptive Respiratory Sound Classification"
+  ],
+  "2611.03768": [
+   "cs.AI",
+   "Multi-layer Indexer: Overlapping Selection and Attention in DeepSeek Sparse Attention"
+  ],
+  "2611.03764": [
+   "cs.AI",
+   "The role of injected noise in diffusion model generalization"
+  ],
+  "2611.03759": [
+   "cs.AI",
+   "JevBreak: Your Model, Their Decision"
+  ],
+  "2611.03754": [
+   "cs.AI",
+   "The Web Doesn&#39;t Sit Still: Adversarial Self-Evolving Attacks on Search Agents"
+  ],
+  "2611.03752": [
+   "cs.AI",
+   "LoRA-Patch: Defending Against Backdoored LoRA Adapters via Directional Steering"
+  ],
+  "2611.03747": [
+   "cs.AI",
+   "Enhancing Stock Market Information Retrieval with Retrieval-Augmented Generation"
+  ],
+  "2611.03743": [
+   "cs.AI",
+   "EvoMemState: Evolving Memory State for Personal Agents"
+  ],
+  "2611.03735": [
+   "cs.AI",
+   "HyVox: Rethinking Low-Power Voice Intelligence towards Neuromorphic-von Neumann Edge Computing"
+  ],
+  "2611.03729": [
+   "cs.AI",
+   "Learning to read residual images for single-pixel photography"
+  ],
+  "2611.03726": [
+   "cs.AI",
+   "DualClusterNet: Personalized Pattern-Space Composition for Next-POI Recommendation"
+  ],
+  "2611.03718": [
+   "cs.AI",
+   "NepTTS-Bench: Native-Speaker Benchmarking and NepaliMOS for Nepali Text-to-Speech"
+  ],
+  "2611.03705": [
+   "cs.AI",
+   "A Compact Formula-Aware Spreadsheet Abstraction for Large Language Models"
+  ],
+  "2611.03690": [
+   "cs.AI",
+   "From Forecasting to Feedback: Evaluating Learned Dynamics for Tokamak Control"
+  ],
+  "2611.03675": [
+   "cs.AI",
+   "Learning Directional Randers Geometry for Latent-Space Exploration"
+  ],
+  "2611.03665": [
+   "cs.AI",
+   "Development of tools for all-cause mortality prediction in heart failure patients: a systematic review"
+  ],
+  "2611.03660": [
+   "cs.AI",
+   "Behavioral Prior Elicitation via LLM for Heterogeneous-Agent Bitcoin Flash-Crash Simulation"
+  ],
+  "2611.01116": [
+   "cs.AI",
+   "Zero-Gated Cross-Attention"
+  ],
+  "2610.40488": [
+   "cs.AI",
+   "rTaste: Do Research Agents Have Taste? Evaluating Early Stage Research Judgment"
+  ],
+  "2610.33122": [
+   "cs.AI",
+   "The Digital-Energy Recomposition of the Kitchin Cycle: Exploratory Evidence from U.S. IT and Irish Data-Centre Series (1995-2025)"
+  ],
+  "2604.24693": [
+   "cs.AI",
+   "Contextual Linear Activation Steering of Language Models"
+  ],
+  "2611.05169": [
+   "eess.IV",
+   "Unified Motion Correction and Reconstruction for Accelerated Zero Echo Time MRI"
+  ],
+  "2611.05132": [
+   "eess.IV",
+   "High-Resolution Quantitative MRI Using Contrast-Domain Multiscale Energy (MuSE) Regularization"
+  ],
+  "2611.04623": [
+   "eess.IV",
+   "Deep Plug-and-Play Proximal Distance Algorithm for Robust Principal Component Analysis"
+  ],
+  "2611.04174": [
+   "eess.IV",
+   "ELiCv2: Learned LiDAR Geometry Compression under Real-Time Embedded Constraints"
+  ],
+  "2611.04068": [
+   "eess.IV",
+   "Simulation-Driven Approach for Occlusion-Based Non-Line-Of-Sight Detection Using a Low-Cost Flash LiDAR"
+  ]
+ }
+}
