@@ -1,0 +1,90 @@
+[
+ {
+  "id": "2611.06734",
+  "slug": "smartphone-vr-hiit-exergame",
+  "venue": "arXiv preprint（cs.HC，2026-11，arXiv:2611.06734v1）",
+  "tags": [
+   "VR exergame",
+   "HIIT",
+   "实时姿态估计",
+   "游戏化",
+   "LLM 教练",
+   "MCP"
+  ],
+  "conclusion": "三脚架智能手机 + MediaPipe BlazePose + MCP 服务器 + GPT-4o 报告 + Meta Quest 3 道场构成低成本家用 HIIT VR exergame：被试内实验（N=20，18–25 岁）中 VR 条件显著提升 enjoyment（3.5 vs 2.8，p=0.02，d=0.65）、focus/immersion（3.2 vs 2.8，p=0.03，d=0.58）与 recommendation likelihood（3.2 vs 2.7，p=0.04，d=0.48），motivation 与 confidence 无显著差异、perceived intensity 持平，MCP 自动评估与认证教练一致率达 87.5%（N=10 sessions）。",
+  "problem": "在家进行 HIIT 难以保持动力、保证动作规范并管理强度，缺乏专业外部监督与反馈。现有 VR 健身平台依赖 HMD 内置追踪（如 Meta Quest、HTC Vive），只能捕获头手运动，无法覆盖深蹲、跳跃、弓箭步等快速多关节全身动作。更精确的动捕服或深度传感器成本高昂，不适合家庭部署。因此需要低成本、可扩展且能给出个性化反馈的全身运动捕捉与教练方案。",
+  "method": "系统采用双流架构：置于玩家前方 2.5 m 三脚架上的标准智能手机经 WebSocket 以 5 fps 持续推送压缩视频帧，MediaPipe BlazePose 实时提取 13 个关节（鼻、左右肩/肘/腕/髋/膝/踝）的 landmark。Quest 3 游戏客户端在每个 combo 完成时发送 HTTP POST 事件，FastAPI gateway 仅按 wall-clock 时间戳融合两路流，并回看手机 landmark 缓冲中该事件前 2.5 s 的数据。Classifier MCP（基于 Anthropic 官方 MCP Python SDK、stdio transport）对每帧计算 13×13 normalized pairwise distance matrix，与 11 个预存 combo 参考矩阵做 cosine similarity，仅在滑动窗口内连续超过经验阈值才确认分类，全程 training-free，无需标注数据与 GPU 推理。每次命中按 form_score = 0.5×peak_conf + 0.3×avg_symmetry + 0.2×avg_alignment 计算形态得分，其中 peak_conf 为 2.5 s 窗口内峰值余弦相似度、avg_symmetry 为双侧关节距离比、avg_alignment 为相对参考姿势轮廓的偏差。会话结束后 Reporting MCP 汇总持久化的时序数据，由 GPT-4o（带 rule-based template 兜底）生成含 Summary、Strengths、Corrections、Next Goal 四节的个性化教练报告。游戏端为 Meta Quest 3 渲染的 3D 道场，3×2 orb grid 上 11 个 combo 按水平/对角/垂直方向映射到 sagittal、frontal、transverse 多平面运动，orb 轨迹随机而非节拍同步以增强认知参与。实测典型延迟低于 300 ms，并通过本地缓冲与回退逻辑应对罕见网络抖动。",
+  "experiments": "被试内设计 N=20（18–25 岁大学生），每人完成一次 10 分钟 instructor-led non-VR HIIT 与一次 VR exergame。后测问卷含改编 IMI、Borg RPE（6–20）、Presence Questionnaire、SUS 与自定义 Likert 题，VR 组另记录 combo 成功率、平均反应时与 form deviation。推断统计：Enjoyment VR 3.5 vs Non-VR 2.8（p=0.02，Cohen's d=0.65；Mann-Whitney U=48.0，p=0.02），Focus/Immersion 3.2 vs 2.8（p=0.03，d=0.58；U=44.5，p=0.01），Recommendation 3.2 vs 2.7（p=0.04，d=0.48；U=51.5，p=0.04）。Motivation 2.8 vs 2.6（p=0.21，d=0.22）与 Confidence to Continue 2.9 vs 2.8（p=0.15，d=0.28）无显著差异，Perceived Intensity 3.3 vs 3.4 基本持平。One-way ANOVA 显示 VR 游戏化对 enjoyment 与 recommendation likelihood 有显著效应 F(1,19)=5.92、p<0.05；Pearson 相关：Enjoyment–Recommendation r=0.82（p<0.001）、Gamification–Motivation r=0.65（p<0.01）、Technical Issues–Consistency r=-0.47（p<0.05）。自动化评估验证：从 VR 会话随机抽取 10 个交由一名认证教练盲评，MCP 综合 form score 一致率 87.5%，其中 joint alignment 90.2%、body symmetry 88.7%、reaction timing 81.3%（受手机视频延迟影响略低）。",
+  "innovation": "首次把智能手机全身姿态估计、基于 MCP 的服务器端生物力学分析、LLM 自然语言教练与反应式 VR HIIT exergame 统一为单一概念验证平台，仅需一部普通手机而非 OpenCap 式多相机系统。架构上提出三项设计：training-free 分类器（13×13 距离矩阵 + cosine similarity，单个参考姿势即可扩展新 combo）、wall-clock 双流融合（两路流无共享状态）、以及以 MCP 作为结构化上下文桥接（向 GPT-4o 递送 schema 校验的按事件指标而非原始 landmark 数组）。",
+  "limits": "自我报告问卷可能带社会期望偏差，首次 VR 新颖性可能抬高 enjoyment 评分。未集成心率等生物特征可穿戴设备，强度仅能以主观 RPE 衡量。手机摆放位置与光照影响追踪质量；样本仅限 18–25 岁大学生，难以外推至老年或临床人群。专家验证只覆盖 20 个会话中的 10 个且仅一名评分者；cosine similarity 阈值为经验设定，未经系统交叉验证。单次会话设计无法检验长期动机与依从性效应。",
+  "relation": "该工作位于库内 VR exergaming 与视觉运动监控两条线的交汇：相对 Chae et al. 的智能手机深蹲教练 RCT 补足沉浸与游戏化层，相对 VirusBoxing、HIITCopter 等 VR HIIT 游戏补足 HMD 之外的低成本全身追踪与 LLM 反馈。其单手机 markerless 评估路线与 OpenCap 多相机 3D 运动学形成高低配互补，也可为 EgoGen、EgoM2P 等第一人称数据与感知研究提供消费级落地场景。",
+  "repro": "论文未提及代码或数据集开源（全文未述及）。复现硬件要求 Meta Quest 3 头显（必需）、置于玩家前方 2.5 m 的三脚架智能手机与运行 React Native + Expo 的伴侣应用；后端需 FastAPI gateway、MCP Python SDK 及 GPT-4o API 访问。研究经 IIIT Sri City 机构伦理委员会批准，全部参与者签署书面知情同意。",
+  "action": "家用 HIIT 类产品可用“手机 BlazePose + 参考矩阵 cosine similarity + 2.5 s 时序窗口”快速搭建免训练动作识别，但需正视 reaction timing 受视频延迟拖累（一致率仅 81.3%）的问题，必要时按 OpenCap 思路引入多视角三角化。"
+ },
+ {
+  "id": "2611.06817",
+  "slug": "open-humanscale-egocentric-scaling",
+  "venue": "arXiv preprint（cs.CV，2026-11，arXiv:2611.06817v1）",
+  "tags": [
+   "具身基础模型",
+   "第一人称预训练",
+   "world–action model",
+   "数据缩放定律",
+   "人机混合训练",
+   "视觉目标条件"
+  ],
+  "conclusion": "开放 50,000 小时精选第一人称语料 Open-HumanScale-50K 与全栈训练配方，系统证实下游 out-of-distribution 成功率随预训练时长遵循经验 log-linear scaling law（SR = a + b·log10 H，R²=0.877–0.971）；纯人类数据预训练的 HumanWAM-Vanilla 经机器人 post-training 后在 RoboTwin 2.0 取得 Clean2Clean 92.08%、Clean2Random 68.88%，人机混合 + 视觉目标条件的 HumanWAM-Goal 达 92.70%/84.60%（平均 88.65%，SOTA），并把 20 项真机零样本平均成功率从 20.0% 提升至 30.5%，展现免参数更新的具身 in-context learning。",
+  "problem": "遥操作采集机器人经验成本高昂、场景多样性有限，而第一人称人类视频提供了可扩展的操作先验来源，但把原始数据规模稳定转化为可泛化机器人策略，需要严格的数据筛选与训练配方，此前缺乏系统研究。纯人类预训练还存在固有 embodiment gap：模型未经目标机器人数据适配无法直接部署，每个新任务都需演示微调。已有缩放研究多在验证损失层面开展，缺乏闭环成功率与受控比较。",
+  "method": "语料构建：汇总 HumanNet（保留 40,743.58 h）、EgoSuite-Open100K（7,081.65 h）、EgoDex（335.43 h）、Gen-HumanEgo（1,814.53 h）与 EgoVerse（24.81 h），共 50,000 h、31,396,799 个 episode 经筛选产出 35,934,235 个连续 clip。筛选依据 hand visibility（将 3D EEF 投影判断是否落在视野内）、action/camera stability（位置差、加速度、jerk 阈值切分序列）与 idle filtering（32 帧窗口活跃度不足 70% 即丢弃）。统一 16 维双臂 EEF 动作空间 a_t=[p_t^L, q_t^L, g_t^L, p_t^R, q_t^R, g_t^R]∈R^16，经 camera-frame 对齐（T_{C_cv E}^h(t)=T_{W C_cv}(t)^{-1}·T_{W E}^h(t)）、wrist-axis Procrustes 对齐与 gripper openness 归一化实现跨源一致监督。HumanWAM-Vanilla 以 Wan2.2-TI2V-5B 为视频 backbone、叠加等深 action expert 构成 Mixture-of-Transformers，采用 inverse-dynamics（IDM）attention（训练时 action denoising 以加噪的 ground-truth future video latents 为条件，推理时先生成未来视频再预测动作）与 absolute camera-frame 动作，action chunk 为 32 步、每样本 9 帧。混合阶段扩展为 49 维 hybrid action space（joint 23 + chassis 3 + EEF/head 23），以 0.12 m 通用参考宽度定义 metric gripper aperture，并把 EEF 参数化为 chunk-relative 位移以消除本体空间偏差，同时对 joint 分支做 stochastic dropout。HumanWAM-Goal 基于 Cosmos3-Nano-16B（frozen Qwen3-VL Reasoner + 共享 video-action Generator），goal image 经 frozen Wan VAE 编码并加 learnable goal embedding 后作为 clean conditioning token，用 joint rectified-flow sampling（UniPC）单阶段联合去噪预测 12 帧未来视频与 48 步动作。训练配方：egocentric pretraining 用 AdamW（lr 1e-4、weight decay 0.01、global batch 8192、100k 步、cosine 衰减），co-training 用 FusedAdam（lr 4e-5、bs 1024、500k 步、action/goal 投影 5 倍学习率、EMA 权重）。",
+  "experiments": "受控缩放实验采用统一 world–action backbone 与 RoboTwin 2.0 clean 演示 post-training（50 demos/task、12k 步）、闭环评估 clean/scene-ood/random 三设置。isolated attention 下 100→10,000 h：clean 71.2%→80.0%（无预训练 69.5%）、scene-ood 25.2%→58.1%（基线 16.2%）、random 8.4%→28.7%（基线 2.1%），log-linear 拟合 R²=0.971/0.949/0.877，数据每增 10 倍拟合增益 +4.43/+15.88/+10.24 pp。IDM attention 下 100→50,000 h：scene-ood 49.1%→73.2%、random 21.5%→42.9%（无预训练 29.2%/7.7%，R²=0.969/0.955），clean 维持在 87.4–89.0%。多样性实验（EgoSuite-Open100K 等时长子集）显示 scaled-diversity 较 matched-diversity 拟合斜率高 2.02/4.73/4.50（clean/scene-ood/random）；样本效率上 10 demos/task 时 clean 34.5%（No-Ego）→44.2%（500 h）→50.1%（5,000 h）、random 4.1%→8.3%，5,000 h 模型以 25 demos 超过 500 h 模型 50 demos 的 scene-ood（42.0% vs 37.9%）。受控消融：跨源动作对齐（1,000 h 四源语料）使 clean 72.0%→77.5%、scene-ood 43.2%→52.2%、random 18.0%→26.4；50% 人类动作监督使 scene-ood 13.0%→34.8%；等规模下 ego 优于 robot（5,000 h：scene-ood 52.3% vs 45.6%、random 27.6% vs 22.4%；1,000 h ego 超过 5,000 h robot）；IDM+absolute 动作（88.48/62.00/28.56）优于 IA+relative（76.28/46.36/22.40）。基准成绩：RoboTwin 2.0 上 HumanWAM-Vanilla 92.08/68.88/80.48（GO-3 Nano Preview 88.54/81.48/85.01、PICA-WAM 90.68/74.70/82.69），RoboDojo 平均成功率 14.17%、progress score 19.00；真机（Cobot Magic 四任务）in-distribution 57.5%→87.5%、visual OOD 2.5%→67.5%（+65 pp）。HumanWAM-Goal 零样本 RoboTwin 平均 13.94%（robot-only 11.48%，π0.5 仅 1.06%），任务覆盖 8→18→22（累计 29）；post-training 后 92.70/84.60/88.65 创 SOTA（超 GO-3 平均 3.64 pp）；真机零样本 20 任务平均 20.0%→26.0%（+15.9k h 人数据）→30.5%（+45.9k h），hard 任务 8%→19%，robot-balanced 1:1 采样再提至 27%，覆盖 10/20→16/20，progress 2.535→4.205。",
+  "innovation": "首个 fully open 的第一人称缩放配方：把 100–50,000 h 的系统缩放研究、log-linear scaling law、多样性作为第二缩放维度以及样本效率增益全部量化并开放。首次在闭环任务成功率上给出等规模 egocentric 优于 robot 预训练的证据，并提出 camera-frame/wrist-axis/gripper 三层跨源对齐的统一 EEF 动作表示。进一步以人机混合 co-training + 视觉目标条件突破单模态瓶颈，实现免参数更新的零样本执行、跨本体（人类目标图像）具身 in-context learning 与长程技能链执行，并全栈开源语料、管线、checkpoint 与评测套件。",
+  "limits": "纯 egocentric 版动作空间限于双臂操作，hybrid 版才引入 chassis 与 joint 维，head pose 维在网络接口中被掩蔽仅作几何元数据。RoboDojo Open 组成功率仅 1.50%，且未与 agentic/dual-system 类方法比较。真机零样本绝对成功率仍低（30.5%），hard 任务在按比例采样下饱和，需 robot-balanced 采样补救。RoboTwin 零样本对比中大量现有模型因缺动作归一化统计、控制映射或公开权重无法评测（ERR0–ERR2）。goal image 自动审查只保证视觉与指令一致性、不保证物理可行性；物理实验限于 Cobot Magic 与 Astribot S1 两个平台。",
+  "relation": "该工作是库内 egocentric 数据线的规模化延伸：把 HumanScale 的验证损失缩放定律、EgoScale（20k h）与 Dyna-2（1M h）推进到闭环成功率与 OOD 泛化层面，并首次全栈开放。与同团队 EgoGen、EgoM2P 构成“合成/真实数据→统一预训练→策略”链路，本文负责人机混合数据与训练配方；相对 Fast-WAM、OpenWAM、ViGAR 等 world–action 架构研究，其贡献在数据缩放维度与 embodiment-agnostic 动作接口的系统证据。",
+  "repro": "全栈开源：项目页 dagroup-pku.github.io/open-humanscale、GitHub DAGroup-PKU/HumanNet（open-humanscale 分支）、HuggingFace 数据集 Open-HumanScale-50K 与模型 collection。复现需大规模算力（50k h 语料、global batch 8192、100k 步）；仿真基准为 RoboTwin 2.0（SAPIEN、Aloha-AgileX）与 RoboDojo（Isaac Sim），真机为 Cobot Magic 与 Astribot S1，部署依赖 PhyAI（tensor parallelism + CUDA Graphs，2.2× 推理加速）。",
+  "action": "从事具身预训练者应按“时长 × 任务/场景多样性联合缩放”组织语料；混合人机数据时用 1:1 robot-balanced batch 防止人体数据稀释本体控制监督，并优先采用统一度量 EEF 空间 + 视觉目标条件实现免微调部署。"
+ },
+ {
+  "id": "2401.08739",
+  "slug": "egogen-egocentric-synthetic-data",
+  "venue": "arXiv preprint（cs.CV，2024-01，arXiv:2401.08739v3）",
+  "tags": [
+   "合成数据生成",
+   "第一人称视觉",
+   "人体运动合成",
+   "强化学习",
+   "AR/HMD",
+   "多模态渲染"
+  ],
+  "conclusion": "EgoGen 用 egocentric sensing 深度代理驱动 PPO 训练的 collision-avoiding motion primitives（CAMPs）合成虚拟人运动并渲染带精确 GT 的第一人称多模态数据，无需预定义全局路径、免 multi-agent RL 即在动态与多人场景取得 97–100% 成功率；其合成数据使 LaMAR 建图定位 recall 从 66.9% 升至 76.7%，并在 EgoBody 上把 depth-based human mesh recovery 的 G-MPJPE/MPJPE/V2V 分别降低 22.9%/20.7%/19.5%。",
+  "problem": "第一人称感知模型受困于标注数据稀缺：Ego4D、ADT、Epic-Kitchens、HoloAssist 等真实数据集采集昂贵、标注费时且引发隐私顾虑。合成数据是可行替代，但第一人称场景的关键难点在于模拟能自然驱赶 embodied camera 的人体运动——虚拟人须在复杂动态 3D 场景（含其他移动虚拟人）中自主探索、避障并走向目标，而非播放预录制动作。",
+  "method": "核心是 ego-sensing driven 的 collision-avoiding motion primitives（CAMPs）：agent 为 SMPL-X 网格，用 M=67 个人体表面 marker 紧凑表示；动作空间取自 C-VAE 运动基元模型 P 的 128 维预训练 latent，每个基元为 0.5 s、T=20 帧、前 T_s=2 帧作条件的短动作（在 SAMP 日常活动数据上训练）。策略以 PPO 训练，状态 s_t={X_t^S, X_t^{S^D}, E_t, d_t, tau_t}，其中 E_t 为 egocentric sensing 深度代理：从双眼中点（相机位置）在视野 [theta_min, theta_max] 内均匀投射 N 条射线、碰撞即停（2D 碰撞检测），以极低成本替代昂贵且易致 RL 不稳定的深度渲染。奖励 r_t = r_cont. + r_dist + r_ori + r_attention + r_pene + r_pose + r_succ，其中 attention reward = cos⟨v, a⟩ 激励虚拟人看向目标方向，r_cont. 抑制 foot skating。针对无界高斯 latent 动作空间，采用两阶段 RL：先以高 r_pene 权重、无穿透终止预训练，收敛后再以 SDF 穿透检测的严格终止条件微调。CAMP 可分解重组合：每个虚拟人顺序执行单个 CAMP，并以 body bounding box 将他人视为动态障碍、每步更新 egocentric sensing，无需 multi-agent RL 即涌现群体避障行为。数据生成管线基于 Blender：SMPL-X 双眼间相机位姿支持 Project Aria、HoloLens 等多相机 rig 与 fisheye/pinhole 模型，BEDLAM 提供 50 男 50 女、7 个族群皮肤纹理，HOOD 服装仿真网络自动化衣着动画。渲染输出含 motion blur 的 photorealistic RGB 及 depth、surface normal、segmentation mask、world position、optical flow 等精确标注。",
+  "experiments": "运动合成对比 GAMMA* 与 DIMOS*：moving obstacle 下 success rate 100% vs 96%/83%、终点距离 0.06 m vs 0.29/0.55 m、human-scene 穿透 3.4% vs 9.2%/8.4%；2 人场景 SR 100% vs 95%/88%、human-human 穿透 0 vs 27.6/10.7；4 人场景 SR 100% vs 92%/70%、穿透 0 vs 60.4/41.7。路径多样性上 std dev 1.21 vs GAMMA* 0.987、DIMOS* 1.05，SR 97%，验证无需预计算全局路径的自探索优势。egocentric sensing 消融（Replica，7 m 范围）：SR 95%、终点距离 0.12 m，而 0.8 m local map 仅 78%，7 m local map 跌至 4%（quadratic 增长阻碍策略学习）。策略消融：直接用 egocentric depth 图像训练 SR 仅 8%；无预训练直接严格终止训练导致姿态异常（||VP||₂=28.77）；去掉 attention reward 后视线一致性 cos 从 0.940 降至 0.891；完整方案 SR 92%。下游任务一（LaMAR CAB 约 120 sqm lobby，增补 248 帧）：localization recall@(1°,10 cm) 66.9%→76.7%（Ng et al. 74.9%），track length 5.2105 最高、#P3D 1,936,169。下游任务二（GIMO 约 200 段、19 场景，约 4k 合成序列预训练 EgoEgo 后微调）：camera tracking Pose/Rot 1.83/0.74→1.67/0.62，Transl 1303→1305 mm 基本持平。下游任务三（EgoBody test，300k RGB + 105k depth 合成帧预训练 ProHMR）：depth HMR G-MPJPE 117.7→90.7 mm、MPJPE 82.2→65.2、V2V 100.6→81.0；RGB HMR MPJPE 90.7→85.3、V2V 102.1→97.2。",
+  "innovation": "提出首个面向 HMD 第一人称感知的可扩展合成数据生成器，核心是“为看而动、为动而看”的闭环耦合：用 egocentric sensing 深度代理替代视觉输入驱动 CAMP，消除预定义全局路径依赖。方法直接泛化到动态环境与多人群体，无需 multi-agent RL 与重训练。两阶段 RL 方案解决高维无界 latent 动作空间下直接训练的稳定性问题；自动化服装仿真与多相机 rig 管线取代商业软件手动依赖。",
+  "limits": "human-scene interaction 仍粗糙，仅覆盖导航避障，未涉及抓握、坐下、躺下等精细交互。attention goal 为固定设定，未从历史第一人称感知预测意图；gaze 合成因数据需求受限暂缓。合成图像因场景资源质量存在噪声，依赖 SuperGlue 过滤；真机 AR 设备仅做相机模型仿真，未在真实硬件验证。群体行为为顺序 CAMP 涌现，非同时决策；与真实人体运动分布仍有 sim2real gap。",
+  "relation": "该工作是库内第一人称数据链路的源头之一：后续被同团队 EgoM2P 直接采用（约 30 h、30 FPS 合成数据，其消融显示去掉 EgoGen 后 camera tracking ATE 0.017→0.028、depth Abs Rel 0.055→0.062）。相对 BEDLAM 等 mocap 驱动合成人数据，EgoGen 强调与数字世界的自发交互；相对 Ng et al. 的真实相机位姿噪声扰动增强，其虚拟人随机探索避免穿墙、朝天等不真实位姿，也免去初始位姿依赖。",
+  "repro": "项目页 ego-gen.github.io，论文承诺 fully open-source（写作时尚未释放，全文未述及具体许可证与发布时间）。复现需要 Blender 渲染环境、SMPL-X/BEDLAM 资产、HOOD 服装仿真网络与 SAMP 训练的运动基元模型，以及 Replica、GIMO、EgoBody、LaMAR 等场景与测试集；PPO 训练需大规模并行采样。",
+  "action": "为第一人称感知任务扩充数据时，可先用 EgoGen 在目标场景扫描（如 Replica、GIMO）合成带精确 depth 与 camera trajectory GT 的视频做预训练，再在少量真实数据上微调，以规避标注成本与隐私风险。"
+ },
+ {
+  "id": "2506.07886",
+  "slug": "egom2p-egocentric-multimodal-pretraining",
+  "venue": "arXiv preprint（cs.CV，2025-06，arXiv:2506.07886v4）",
+  "tags": [
+   "第一人称视觉",
+   "多模态预训练",
+   "掩码建模",
+   "tokenizer",
+   "任意到任意预测",
+   "4D 理解"
+  ],
+  "conclusion": "EgoM2P 是首个面向 4D 第一人称数据的多模态多任务大模型：以统一 temporal tokenizer 将 RGB/depth/gaze/camera 四模态离散化，基于 T5-Base 做 multimodal masked pretraining（4B token 库上采样 400B 训练 token，约 400M 参数），在 camera tracking、gaze estimation、单目视频深度与条件视频合成上匹配或超越 specialist SOTA，且推理快一个数量级（60 帧相机轨迹 0.18 s、300+ FPS；深度 0.8 s vs 基线 37–90 s）。",
+  "problem": "第一人称数据的模态覆盖高度异构：不同设备缺失 depth/gaze，深度流常掉帧，而 gaze 与相机轨迹等缺失模态缺乏有效伪标注器，标准监督学习难以扩展。第三人称视频模型难以应对第一人称的相机快速运动与复杂人机交互，图像域多模态基模型（4M）又缺乏时序一致性，且每样本视频 token 数远超图像（>5000）、模态比例严重失衡（视频 token 约为 gaze 的 170 倍）。",
+  "method": "数据侧汇总 8 个数据集（EgoExo4D、HoloAssist、HOT3D Aria/Quest、ARCTIC、TACO、H2O 与 EgoGen 合成数据）：用 RollingDepth 生成像素对齐深度伪标签，并用 EgoGen 在 Replica 与 GIMO 场景合成约 30 h、30 FPS 数据。统一标准化为 30 FPS、inverse depth（逐序列归一）、gaze 重投影为 2D 平面动点、camera-to-world（OpenCV 约定、首帧参考）。Tokenizer：RGB/depth 采用 Cosmos tokenizer（时间压缩 4×、空间压缩 8×）；gaze/camera 采用统一 Transformer VQ-VAE 架构（Conv Nd 沿时间 2× 下采样 + 位置编码 + 12 个 Transformer block，cosine similarity 量化，损失为重建项 + commitment 项）。视频降采样至 8 FPS 使 token 数降至 1/3；每个 2 s clip（视频 16 帧、非视频 60 帧、256×256）中 RGB/depth 各 5120 token、gaze/camera 各 30 token。预训练沿用 4M 的 masked modeling，但把可见 input/target token 上限从 256 提高到 2048（消融显示平均损失 5.80→4.93）且两者互斥；数据集按样本量比例采样，模态 token 按 Dirichlet 浓度参数（0.01/0.1/1/10 四档均匀浓度）采样；缺失模态以 placeholder 掩蔽（Alg. A.1）。主干为 T5-Base（encoder/decoder 各 12 block、隐维 768、12 头），encoder 对可见输入 token 自注意力，decoder 以 cross-attention 接 encoder 输出并做同模态 masked self-attention，损失为 cross-entropy。推理为 order-agnostic autoregressive 并行解码：线性调度 n 个目标 token 于 s 步，逐步以 classifier-free guidance（ŷ=(1+ω)·ŷ_cond − ω·ŷ_uncond）融合条件/无条件分布并以 nucleus sampling 生成。训练用 AdamW（lr 1e-4、bs 1024、warmup 10B tokens、cosine decay、bf16），256 张 NVIDIA GH200 训练 16 小时，tokenizer 亦从零训练。",
+  "experiments": "camera tracking（EgoExo4D val 200 段、未见 ADT 200 段）：EgoM2P ATE/RTE/RRE=0.017/0.004/0.429 与 0.032/0.006/0.490，对比 DROID-SLAM 0.018/0.005/0.506 与 0.034/0.010/0.316、ACE-Zero 0.028/0.007/0.672、Align3R 0.019/0.006/0.762；单序列 0.18 s（基线 2.7–426 s），post-training 后 ADT 0.026/0.005/0.480。gaze estimation（EgoExo4D val 1000 段，归一化 MSE）：0.0162，优于 Huang et al. 0.0255 与 Lai et al. 0.0175。单目视频深度（H2O test 236 段、未见 HOI4D 100 段）：Abs Rel/δ1.25=0.055/96.0 与 0.061/98.0，对比 RollingDepth 0.087/90.5、Align3R 0.074/91.8；推理 0.8 s（至少 30× 加速），post-training 后 H2O 0.041/99.0。depth→RGB 视频合成（HoloAssist 142 段、未见 ASE 100 段）：FVD*/SSIM/PSNR/LPIPS=0.759/0.592/15.163/0.336 与 1.336/0.308/6.923/0.715，优于 Control-A-Video（2.309 与 2.226）与 ControlVideo（1.363 与 1.392）；ASE post-training 后 0.525/0.594/16.924/0.520。EgoGen 消融（Supp. B）：去掉 EgoGen 后 camera tracking ATE 0.017→0.028（ADT 0.032→0.053），depth H2O Abs Rel 0.055→0.062、HOI4D 0.061→0.067。另在 4D 重建上 2 s 视频 <1 s 完成（MegaSaM 需 71 s）；tokenizer 量化误差分析显示 Euclidean 数据上量化不是瓶颈（ATE 0.005），但旋转 RRE 0.272 偏高。",
+  "innovation": "提出首个 egocentric 4D 多模态多任务模型，支持 RGB/depth/gaze/camera 的 any-to-any 预测与统一训练。把 4M 的多模态掩码建模从图像域扩展到视频域，系统性解决时序一致性、单样本 token 海量（>5000）、模态比例失衡（170×）与缺失标注四大障碍。设计统一 temporal tokenizer 架构，并以 2048 可见 token + 并行解码把推理提速一个数量级，使实时第一人称应用成为可能。",
+  "limits": "合成视频视觉质量受当前 SOTA 视频 tokenizer（Cosmos）量化损失制约，作者建议后续引入 diffusion decoder。RRE 相对偏高，反映 VQ 在非欧几里得旋转空间的量化困难。模型面向离线训练，可穿戴设备算力受限下的部署优化列为 future work；未整合 hand motion、audio、text 等模态。真实深度标注稀缺，训练依赖 RollingDepth 与 EgoGen 的伪/合成标签质量；视频 8 FPS 下采样可能损失高频动态。",
+  "relation": "该工作与 EgoGen 同团队一脉相承并直接消费其合成数据（Supp. B.3 量化了增益），构成库内“第一人称数据生成→统一多模态预训练”链路的关键一环。方法上把图像域 4M 的 MMM 范式扩展到 egocentric 视频域，与库内第三人称视频基模型及 egocentric QA 类工作互补，其任意到任意预测与并行推理也可为后续 world model / VLA 研究提供 4D 感知基座。",
+  "repro": "项目页 egom2p.github.io，论文承诺 fully open-source（写作时尚未释放，全文未述及具体发布时间）。复现资源：训练需 256 张 NVIDIA GH200（16 小时）、约 400M 参数模型、4B token 数据库、400B 训练 token、bf16 与 AdamW（lr 1e-4、bs 1024、warmup 10B tokens）；评测需 EgoExo4D、ADT、H2O、HOI4D、HoloAssist、ASE 等数据集。",
+  "action": "构建第一人称多任务模型时可采用“统一 temporal tokenizer + 缺失模态 placeholder 掩蔽 + 2048 可见 token + 按数据集大小比例采样”的成熟配方，并用 EgoGen 类合成数据补齐稀缺的精确 3D GT 模态，同时提升相机跟踪与深度估计。"
+ }
+]

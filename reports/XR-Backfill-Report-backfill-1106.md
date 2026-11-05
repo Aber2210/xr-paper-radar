@@ -1,0 +1,121 @@
+# XR Backfill 补录报告 · backfill-1106（旧稿再公告）
+
+## 一、执行摘要
+- **批次性质**：backfill（非当日新提交）——11-05 公告批次中 RSS 混入的旧稿 replace/cross 再公告 6 篇，首次入馆；原始投稿 2401=2024-01-16 / 2506=2025-06-09 / 2511=2025-11-21 / 2604=2026-04-27 / 2607=2026-07-16 / 2611=2026-10-30（v2-v4 于 2026-11-04 更新）。
+- **补录 6 篇（5 A / 1 B）**：EgoM2P 4.10（上海科技大学等，首个第一人称 4D 多模态多任务模型，统一 temporal tokenizer 离散化 RGB/depth/gaze/camera 四模态，匹配或超越 specialist SOTA 且推理快一个数量级——60 帧相机轨迹 0.18 s）· AEGIS 4.09（滑铁卢大学等，首个面向 3D Gaussian avatar 的身份遮蔽框架，仅扰动 DC 球谐系数即把黑盒验证率压到近零（ε=0.2 时 0%）、保持 SSIM 0.9347/PSNR 32.66 dB 且无渲染开销，代码开源）· EgoGen 3.93（上海科技大学，PPO 训练的 collision-avoiding motion primitives 驱动第一人称合成数据生成，LaMAR 建图定位 recall 66.9%→76.7%、EgoBody 人体 mesh recovery G-MPJPE -22.9%）· EvSLAM 3.69（湖南大学，四平台 19 条室内高速机动序列 + 12 个 SOTA 方法两批评测，指出现有立体事件数据集时空不一致（左右事件数差 10%–86%）并主张 VGA 为当前最适用分辨率，数据集公开）· PIDiffSign 3.68（萨里大学等，首个把刚体动力学引入手语产生——FK 输出头 + Newton-Euler 先验，back-translation WER 降约 5 个点）· AuroraWorld 3.57（中科院自动化所等，从稀疏外部观测推断结构化 4D 世界表征指导 ego 视频生成，DROID PSNR 17.87/FVD 60.17 全面优于 6 基线，真机策略 70.7% 对真实 ego 78.0%）。
+- **覆盖 6 赛道**；门① 0.167（全池合并复核）；门③ 对 backfill 不适用；OUTDATED 0。
+- **诚实口径**：全部条目 `batch=backfill-1106` + `orig_window` 标注，绝不混入「当日新论文」。
+
+## 二、排行榜（按加权降序）
+
+| 排名 | 论文 | 赛道 | 总分 | 等级 | 证据 | 落后标记 |
+|---|---|---|---|---|---|---|
+| 1 | EgoM2P：第一人称多模态多任务预训练（2506.07886） | 感知与认知 | 4.10 | A | FULL | — |
+| 2 | AEGIS：以对抗扰动保护 3D 面部化身隐私（2511.17747） | 化身与人体 | 4.08 | A | FULL | — |
+| 3 | EgoGen：第一人称合成数据生成器（2401.08739） | 感知与认知 | 3.92 | A | FULL | — |
+| 4 | EvSLAM：面向高速机动的事件相机 SLAM 基准（2604.24033） | 评估与数据集 | 3.69 | A | FULL | — |
+| 5 | PIDiffSign：基于扩散的运动学动力学模型的三维手语产生（2607.14836） | 化身与人体 | 3.67 | A | FULL | — |
+| 6 | AuroraWorld：面向机器人操作中外部到第一人称视频生成的结构化 4D 世界建模（2611.00177） | 世界模型与仿真 | 3.56 | B | FULL | — |
+
+## 三、逐篇深度解读
+
+### 第 1 章 · EgoM2P：第一人称多模态多任务预训练（2506.07886，4.10 A，FULL）
+
+- **赛道 / 场合**：感知与认知 / arXiv preprint（cs.CV，2025-06，arXiv:2506.07886v4）
+- **公告类型**：replace（旧稿 replace 再公告（首次入馆）：2506=2025-06-09 投稿，v4 于 2026-11-04 更新）
+- **一句话结论**：EgoM2P 是首个面向 4D 第一人称数据的多模态多任务大模型：以统一 temporal tokenizer 将 RGB/depth/gaze/camera 四模态离散化，基于 T5-Base 做 multimodal masked pretraining（4B token 库上采样 400B 训练 token，约 400M 参数），在 camera tracking、gaze estimation、单目视频深度与条件视频合成上匹配或超越 specialist SOTA，且推理快一个数量级（60 帧相机轨迹 0.18 s、300+ FPS；深度 0.8 s vs 基线 37–90 s）。
+- **要解决的问题**：第一人称数据的模态覆盖高度异构：不同设备缺失 depth/gaze，深度流常掉帧，而 gaze 与相机轨迹等缺失模态缺乏有效伪标注器，标准监督学习难以扩展。第三人称视频模型难以应对第一人称的相机快速运动与复杂人机交互，图像域多模态基模型（4M）又缺乏时序一致性，且每样本视频 token 数远超图像（>5000）、模态比例严重失衡（视频 token 约为 gaze 的 170 倍）。
+- **方法详解**：数据侧汇总 8 个数据集（EgoExo4D、HoloAssist、HOT3D Aria/Quest、ARCTIC、TACO、H2O 与 EgoGen 合成数据）：用 RollingDepth 生成像素对齐深度伪标签，并用 EgoGen 在 Replica 与 GIMO 场景合成约 30 h、30 FPS 数据。统一标准化为 30 FPS、inverse depth（逐序列归一）、gaze 重投影为 2D 平面动点、camera-to-world（OpenCV 约定、首帧参考）。Tokenizer：RGB/depth 采用 Cosmos tokenizer（时间压缩 4×、空间压缩 8×）；gaze/camera 采用统一 Transformer VQ-VAE 架构（Conv Nd 沿时间 2× 下采样 + 位置编码 + 12 个 Transformer block，cosine similarity 量化，损失为重建项 + commitment 项）。视频降采样至 8 FPS 使 token 数降至 1/3；每个 2 s clip（视频 16 帧、非视频 60 帧、256×256）中 RGB/depth 各 5120 token、gaze/camera 各 30 token。预训练沿用 4M 的 masked modeling，但把可见 input/target token 上限从 256 提高到 2048（消融显示平均损失 5.80→4.93）且两者互斥；数据集按样本量比例采样，模态 token 按 Dirichlet 浓度参数（0.01/0.1/1/10 四档均匀浓度）采样；缺失模态以 placeholder 掩蔽（Alg. A.1）。主干为 T5-Base（encoder/decoder 各 12 block、隐维 768、12 头），encoder 对可见输入 token 自注意力，decoder 以 cross-attention 接 encoder 输出并做同模态 masked self-attention，损失为 cross-entropy。推理为 order-agnostic autoregressive 并行解码：线性调度 n 个目标 token 于 s 步，逐步以 classifier-free guidance（ŷ=(1+ω)·ŷ_cond − ω·ŷ_uncond）融合条件/无条件分布并以 nucleus sampling 生成。训练用 AdamW（lr 1e-4、bs 1024、warmup 10B tokens、cosine decay、bf16），256 张 NVIDIA GH200 训练 16 小时，tokenizer 亦从零训练。
+- **实验与结果**：camera tracking（EgoExo4D val 200 段、未见 ADT 200 段）：EgoM2P ATE/RTE/RRE=0.017/0.004/0.429 与 0.032/0.006/0.490，对比 DROID-SLAM 0.018/0.005/0.506 与 0.034/0.010/0.316、ACE-Zero 0.028/0.007/0.672、Align3R 0.019/0.006/0.762；单序列 0.18 s（基线 2.7–426 s），post-training 后 ADT 0.026/0.005/0.480。gaze estimation（EgoExo4D val 1000 段，归一化 MSE）：0.0162，优于 Huang et al. 0.0255 与 Lai et al. 0.0175。单目视频深度（H2O test 236 段、未见 HOI4D 100 段）：Abs Rel/δ1.25=0.055/96.0 与 0.061/98.0，对比 RollingDepth 0.087/90.5、Align3R 0.074/91.8；推理 0.8 s（至少 30× 加速），post-training 后 H2O 0.041/99.0。depth→RGB 视频合成（HoloAssist 142 段、未见 ASE 100 段）：FVD*/SSIM/PSNR/LPIPS=0.759/0.592/15.163/0.336 与 1.336/0.308/6.923/0.715，优于 Control-A-Video（2.309 与 2.226）与 ControlVideo（1.363 与 1.392）；ASE post-training 后 0.525/0.594/16.924/0.520。EgoGen 消融（Supp. B）：去掉 EgoGen 后 camera tracking ATE 0.017→0.028（ADT 0.032→0.053），depth H2O Abs Rel 0.055→0.062、HOI4D 0.061→0.067。另在 4D 重建上 2 s 视频 <1 s 完成（MegaSaM 需 71 s）；tokenizer 量化误差分析显示 Euclidean 数据上量化不是瓶颈（ATE 0.005），但旋转 RRE 0.272 偏高。
+- **创新点与贡献**：提出首个 egocentric 4D 多模态多任务模型，支持 RGB/depth/gaze/camera 的 any-to-any 预测与统一训练。把 4M 的多模态掩码建模从图像域扩展到视频域，系统性解决时序一致性、单样本 token 海量（>5000）、模态比例失衡（170×）与缺失标注四大障碍。设计统一 temporal tokenizer 架构，并以 2048 可见 token + 并行解码把推理提速一个数量级，使实时第一人称应用成为可能。
+- **局限与风险**：合成视频视觉质量受当前 SOTA 视频 tokenizer（Cosmos）量化损失制约，作者建议后续引入 diffusion decoder。RRE 相对偏高，反映 VQ 在非欧几里得旋转空间的量化困难。模型面向离线训练，可穿戴设备算力受限下的部署优化列为 future work；未整合 hand motion、audio、text 等模态。真实深度标注稀缺，训练依赖 RollingDepth 与 EgoGen 的伪/合成标签质量；视频 8 FPS 下采样可能损失高频动态。
+- **与文献库的关系**：该工作与 EgoGen 同团队一脉相承并直接消费其合成数据（Supp. B.3 量化了增益），构成库内“第一人称数据生成→统一多模态预训练”链路的关键一环。方法上把图像域 4M 的 MMM 范式扩展到 egocentric 视频域，与库内第三人称视频基模型及 egocentric QA 类工作互补，其任意到任意预测与并行推理也可为后续 world model / VLA 研究提供 4D 感知基座。
+- **可复现性**：项目页 egom2p.github.io，论文承诺 fully open-source（写作时尚未释放，全文未述及具体发布时间）。复现资源：训练需 256 张 NVIDIA GH200（16 小时）、约 400M 参数模型、4B token 数据库、400B 训练 token、bf16 与 AdamW（lr 1e-4、bs 1024、warmup 10B tokens）；评测需 EgoExo4D、ADT、H2O、HOI4D、HoloAssist、ASE 等数据集。
+- **行动建议**：构建第一人称多任务模型时可采用“统一 temporal tokenizer + 缺失模态 placeholder 掩蔽 + 2048 可见 token + 按数据集大小比例采样”的成熟配方，并用 EgoGen 类合成数据补齐稀缺的精确 3D GT 模态，同时提升相机跟踪与深度估计。
+
+### 第 2 章 · AEGIS：以对抗扰动保护 3D 面部化身隐私（2511.17747，4.08 A，FULL）
+
+- **赛道 / 场合**：化身与人体 / arXiv preprint（cs.CV，2025-11，arXiv:2511.17747v2）
+- **公告类型**：replace（旧稿 replace 再公告（首次入馆）：2511=2025-11-21 投稿，v2 于 2026-11-04 更新）
+- **一句话结论**：AEGIS 是首个面向 3D Gaussian avatar 的身份遮蔽框架：用约束 PGD 仅扰动 DC 球谐颜色系数，在 60 个 NeRSemble avatar 上把黑盒人脸验证与检索率压到近零（uniform ε=0.2 时验证率与 Rank-1 均为 0%），推荐配置 AEGIS RA（ε=0.2）验证率 1.25%、Rank-1 0.83%，同时保持 SSIM 0.9347、PSNR 32.66 dB，且无渲染开销（约 120 FPS 交互播放）。
+- **要解决的问题**：Photorealistic 3D 面部 avatar（尤其 3D Gaussian Splatting）被攻击者获取后可从任意视角重渲染，spoof 带主动活体检查（多视角确认身份）的 RGB 人脸验证，构成系统性身份盗窃风险。Fawkes/LowKey 等 2D 对抗遮蔽只作用于单帧渲染、不嵌入资产，攻击者重渲染或再分发即失效，且实时性差（512×512 下 LowKey 约 1 FPS、Fawkes 约 0.56 FPS），远低于 30 FPS 流媒体需求。2D 方法也无法保证 avatar 在头部旋转、表情变化与动画中的视角一致匿名。
+- **方法详解**：AEGIS 以后训练方式作用于 GaussianAvatars（3DGS 外观 + FLAME  articulation）表征，仅优化各 Gaussian 基元的 zeroth-order 球谐（DC）颜色系数张量 C∈R^{N×3}，几何与高阶视角相关外观不变。威胁模型假设攻击者可从任意相机参数渲染 avatar 并通过多视角活体验证。渲染图经 RetinaFace 五点 landmarks 对齐为 112×112 后送入 IRSE50/IR152/FaceNet/MobileFace 代理集成（512 维 embedding；leave-one-out 协议：优化 3 个、评测留出 1 个）。目标为最小化 masked avatar 与原始 avatar 参考 embedding 的集成平均余弦相似度，采用 EOT（pitch/yaw 在 [-0.5,0.5] rad 内均匀采样、每步 K=5 个视角、neutral reference pose）与交叉熵损失 L=log(1+e^{-2s̄λ})，由约束 PGD 求解（T_max=200 步、步长 α=(0.01/0.3)ε、λ=10、ℓ∞ 投影 clip 到 C⁰±ε）。区域自适应变体 AEGIS RA 借 FLAME 语义顶点对应按区域设定预算乘子（eyes 1.3×、nose 1.2×、lips 1.0×、skin 0.7×、forehead 0.6×、ears 0.7×、scalp 0.4×），在身份关键区集中扰动、在平滑区抑制伪影。
+- **实验与结果**：评测基于 60 个 NeRSemble subject 训练的 Gaussian avatar 及 NeRSembleGT（每 subject 22 帧、每表情类 2 帧），检索 gallery 为 60 个身份模板加 10,177 个 CelebA 干扰项，验证阈值在 LFW 上按 FAR=10^{-3} 校准；基线含 LowKey、Fawkes、WeakDiffPure、IdentityDP、PixelDP、MetricSVD、FaceAnonSimple。Table 1：AEGIS base ε=0.2 时四个黑盒识别器验证率全为 0%、Rank-1 0%、Rank-50 0.42±0.72%，VRL-AUC 0.002、泄漏率 L(τ*) 0.02、最坏视角 WC 0.02；ε=0.3 时 Rank-50 与 L(τ*) 均为 0、WC 0.03；ε=0.1 明显不足（平均验证 27.08%）。AEGIS RA ε=0.2 验证率 1.25±1.38%、Rank-1 0.83±1.44%、Rank-50 6.25±7.49%，但 WC 升至 0.36±0.16。Table 2：AEGIS RA SSIM 0.9347±0.0054、PSNR 32.66±0.32 dB、FID 29.62±3.87，Emotion/Gender 一致率 80.25%/91.00%，Race 仅 45.75%、年龄差 3.63。Face++ 商业 API：未遮蔽置信度 93.9±1.9（100% 验证），ε=0.2/0.3 降至 33.0±9.3/21.9±7.8（均 0%），RA 为 46.2±10.0（3.3%）。49 种图像变换下 base 平均验证率 0.44%（最大为 NLM/TV 去噪 3.33%），RA 平均 4.83%（完整净化管线 15%）；动画时序上 masked/unmasked temporal SSIM 为 0.948±0.069/0.955±0.060，11,180 帧中仅 0.38% 超过 IR152 阈值 0.256。
+- **创新点与贡献**：提出首个把身份保护直接嵌入 3D Gaussian avatar 资产的对抗遮蔽框架，保护随任意视角与动画持续存在、且不增加渲染开销。仅扰动 DC 球谐系数即在保真度与去识别间取得最佳权衡：附录 D/E 表明扰动 AC、position、opacity、rotation、scale 以及 FGSM/DDN 策略均更差（opacity/rotation 几乎无效，AC/position 严重毁坏画质）。设计视角鲁棒泄漏（VRL）度量族：VRL-AUC、L(τ*) 与最坏视角 WC，首次量化 3D 资产的跨视角残余泄漏。多代理集成加 EOT 保证黑盒迁移与视角一致性；区域自适应预算进一步改善隐私-质量权衡。
+- **局限与风险**：只改颜色不改几何，斜视角仍有残余泄漏，AEGIS RA 的 WC 达 0.36±0.16，隐私与保真存在直接权衡。防护局限于威胁模型定义的 RGB 识别，无法抵御 depth-based 几何验证（扰动几何需保持解剖合理，非平凡）。颜色扰动会移动肤色表观，导致 Race 属性一致率降至 45.75%。扰动预算 ε 依赖经验选择，缺少原则性判据；region-adaptive 乘子仅在 10 个 subject 上做小规模扫描确定。2D 基线只保护单帧，与其比较仅作逐帧隐私参照而非等价 3D 防护。
+- **与文献库的关系**：把 Fawkes/LowKey 式的 2D 人脸隐私保护路线首次延伸到 3D Gaussian avatar 资产层，填补了 GaussianAvatars 等可控头像工作的隐私空白。与生成式匿名（diffusion、G²Face）和差分隐私匿名（IdentityDP/PixelDP/MetricSVD）互补：后者替换身份外观，AEGIS 保留视觉 likeness、仅抑制机器可读身份签名。
+- **可复现性**：代码开源：https://github.com/Woleek/AEGIS。全部实验在单张 NVIDIA RTX 4090 Laptop GPU（16 GB）上完成；数据为公开的 NeRSemble、CelebA、LFW，商业 API 评测另需 Face++ Compare API。
+- **行动建议**：对 XR/社交 VR 从业者：avatar 训练完成后直接以 AEGIS RA（ε=0.2）对 DC 系数做后处理，可在约 120 FPS 交互播放下把自动化识别压到近零且保住 likeness；上线前应补测斜视角残余泄漏与 depth-based 攻击风险。
+
+### 第 3 章 · EgoGen：第一人称合成数据生成器（2401.08739，3.92 A，FULL）
+
+- **赛道 / 场合**：感知与认知 / arXiv preprint（cs.CV，2024-01，arXiv:2401.08739v3）
+- **公告类型**：replace（旧稿 replace 再公告（首次入馆）：2401=2024-01-16 投稿，v3 于 2026-11-04 更新）
+- **一句话结论**：EgoGen 用 egocentric sensing 深度代理驱动 PPO 训练的 collision-avoiding motion primitives（CAMPs）合成虚拟人运动并渲染带精确 GT 的第一人称多模态数据，无需预定义全局路径、免 multi-agent RL 即在动态与多人场景取得 97–100% 成功率；其合成数据使 LaMAR 建图定位 recall 从 66.9% 升至 76.7%，并在 EgoBody 上把 depth-based human mesh recovery 的 G-MPJPE/MPJPE/V2V 分别降低 22.9%/20.7%/19.5%。
+- **要解决的问题**：第一人称感知模型受困于标注数据稀缺：Ego4D、ADT、Epic-Kitchens、HoloAssist 等真实数据集采集昂贵、标注费时且引发隐私顾虑。合成数据是可行替代，但第一人称场景的关键难点在于模拟能自然驱赶 embodied camera 的人体运动——虚拟人须在复杂动态 3D 场景（含其他移动虚拟人）中自主探索、避障并走向目标，而非播放预录制动作。
+- **方法详解**：核心是 ego-sensing driven 的 collision-avoiding motion primitives（CAMPs）：agent 为 SMPL-X 网格，用 M=67 个人体表面 marker 紧凑表示；动作空间取自 C-VAE 运动基元模型 P 的 128 维预训练 latent，每个基元为 0.5 s、T=20 帧、前 T_s=2 帧作条件的短动作（在 SAMP 日常活动数据上训练）。策略以 PPO 训练，状态 s_t={X_t^S, X_t^{S^D}, E_t, d_t, tau_t}，其中 E_t 为 egocentric sensing 深度代理：从双眼中点（相机位置）在视野 [theta_min, theta_max] 内均匀投射 N 条射线、碰撞即停（2D 碰撞检测），以极低成本替代昂贵且易致 RL 不稳定的深度渲染。奖励 r_t = r_cont. + r_dist + r_ori + r_attention + r_pene + r_pose + r_succ，其中 attention reward = cos⟨v, a⟩ 激励虚拟人看向目标方向，r_cont. 抑制 foot skating。针对无界高斯 latent 动作空间，采用两阶段 RL：先以高 r_pene 权重、无穿透终止预训练，收敛后再以 SDF 穿透检测的严格终止条件微调。CAMP 可分解重组合：每个虚拟人顺序执行单个 CAMP，并以 body bounding box 将他人视为动态障碍、每步更新 egocentric sensing，无需 multi-agent RL 即涌现群体避障行为。数据生成管线基于 Blender：SMPL-X 双眼间相机位姿支持 Project Aria、HoloLens 等多相机 rig 与 fisheye/pinhole 模型，BEDLAM 提供 50 男 50 女、7 个族群皮肤纹理，HOOD 服装仿真网络自动化衣着动画。渲染输出含 motion blur 的 photorealistic RGB 及 depth、surface normal、segmentation mask、world position、optical flow 等精确标注。
+- **实验与结果**：运动合成对比 GAMMA* 与 DIMOS*：moving obstacle 下 success rate 100% vs 96%/83%、终点距离 0.06 m vs 0.29/0.55 m、human-scene 穿透 3.4% vs 9.2%/8.4%；2 人场景 SR 100% vs 95%/88%、human-human 穿透 0 vs 27.6/10.7；4 人场景 SR 100% vs 92%/70%、穿透 0 vs 60.4/41.7。路径多样性上 std dev 1.21 vs GAMMA* 0.987、DIMOS* 1.05，SR 97%，验证无需预计算全局路径的自探索优势。egocentric sensing 消融（Replica，7 m 范围）：SR 95%、终点距离 0.12 m，而 0.8 m local map 仅 78%，7 m local map 跌至 4%（quadratic 增长阻碍策略学习）。策略消融：直接用 egocentric depth 图像训练 SR 仅 8%；无预训练直接严格终止训练导致姿态异常（||VP||₂=28.77）；去掉 attention reward 后视线一致性 cos 从 0.940 降至 0.891；完整方案 SR 92%。下游任务一（LaMAR CAB 约 120 sqm lobby，增补 248 帧）：localization recall@(1°,10 cm) 66.9%→76.7%（Ng et al. 74.9%），track length 5.2105 最高、#P3D 1,936,169。下游任务二（GIMO 约 200 段、19 场景，约 4k 合成序列预训练 EgoEgo 后微调）：camera tracking Pose/Rot 1.83/0.74→1.67/0.62，Transl 1303→1305 mm 基本持平。下游任务三（EgoBody test，300k RGB + 105k depth 合成帧预训练 ProHMR）：depth HMR G-MPJPE 117.7→90.7 mm、MPJPE 82.2→65.2、V2V 100.6→81.0；RGB HMR MPJPE 90.7→85.3、V2V 102.1→97.2。
+- **创新点与贡献**：提出首个面向 HMD 第一人称感知的可扩展合成数据生成器，核心是“为看而动、为动而看”的闭环耦合：用 egocentric sensing 深度代理替代视觉输入驱动 CAMP，消除预定义全局路径依赖。方法直接泛化到动态环境与多人群体，无需 multi-agent RL 与重训练。两阶段 RL 方案解决高维无界 latent 动作空间下直接训练的稳定性问题；自动化服装仿真与多相机 rig 管线取代商业软件手动依赖。
+- **局限与风险**：human-scene interaction 仍粗糙，仅覆盖导航避障，未涉及抓握、坐下、躺下等精细交互。attention goal 为固定设定，未从历史第一人称感知预测意图；gaze 合成因数据需求受限暂缓。合成图像因场景资源质量存在噪声，依赖 SuperGlue 过滤；真机 AR 设备仅做相机模型仿真，未在真实硬件验证。群体行为为顺序 CAMP 涌现，非同时决策；与真实人体运动分布仍有 sim2real gap。
+- **与文献库的关系**：该工作是库内第一人称数据链路的源头之一：后续被同团队 EgoM2P 直接采用（约 30 h、30 FPS 合成数据，其消融显示去掉 EgoGen 后 camera tracking ATE 0.017→0.028、depth Abs Rel 0.055→0.062）。相对 BEDLAM 等 mocap 驱动合成人数据，EgoGen 强调与数字世界的自发交互；相对 Ng et al. 的真实相机位姿噪声扰动增强，其虚拟人随机探索避免穿墙、朝天等不真实位姿，也免去初始位姿依赖。
+- **可复现性**：项目页 ego-gen.github.io，论文承诺 fully open-source（写作时尚未释放，全文未述及具体许可证与发布时间）。复现需要 Blender 渲染环境、SMPL-X/BEDLAM 资产、HOOD 服装仿真网络与 SAMP 训练的运动基元模型，以及 Replica、GIMO、EgoBody、LaMAR 等场景与测试集；PPO 训练需大规模并行采样。
+- **行动建议**：为第一人称感知任务扩充数据时，可先用 EgoGen 在目标场景扫描（如 Replica、GIMO）合成带精确 depth 与 camera trajectory GT 的视频做预训练，再在少量真实数据上微调，以规避标注成本与隐私风险。
+
+### 第 4 章 · EvSLAM：面向高速机动的事件相机 SLAM 基准（2604.24033，3.69 A，FULL）
+
+- **赛道 / 场合**：评估与数据集 / arXiv preprint（cs.RO，2026-04，arXiv:2604.24033v2）
+- **公告类型**：replace（旧稿 replace 再公告（首次入馆）：2604=2026-04-27 投稿，v3 于 2026-11-04 更新）
+- **一句话结论**：EvSLAM 在无人机、直线滑轨、机械臂、Mecanum 轮车 4 个平台上用 VGA 立体事件相机（640×480、10 cm baseline）加 D435 与 IMU 采集 19 条室内高速机动序列（MoCap 亚毫米 GT），分两批评测 12 个 SOTA 方法得出：IMU 连续约束显著改善高速段速度估计 AUC、事件相机在高光流场景优于帧相机但 HDR 加高速下事件质量退化、事件与帧可互补；同时指出现有数据集立体观测时空不一致（左右事件数差约 10%–86%）与 megapixel 竞赛的数据率问题，主张 VGA 是当前最适用分辨率。
+- **要解决的问题**：现有 event-based VO/SLAM 的成功多限于 fronto-parallel 快速抖动（要求局部地图持续可见）或纯（激进）3-DoF 旋转，未证明任意激进 6-DoF 机动下事件相机的潜力已被释放。公开数据集缺陷：立体左右事件数差异约 10%–86%（时空不一致，作者归因于易被忽视的镜头聚焦差异）、缺少覆盖常见机器人平台的高速机动场景（M3ED 因大场景深度光流与 DSEC 相近，VECtor/TUM-VIE 多为手持室内摇晃、UZH-FPV 只有无人机）、1280×720 事件数随分辨率超线性增长导致数据率超出现有算法实时处理能力。
+- **方法详解**：作者给出高速机动的明确判据：①一般 6-DoF 运动（线速度与角速度都大到能在帧图像上产生明显运动模糊）②适当运动视差（observer 靠近场景），并以归一化光流分布的 AUC（AUC of OF）而非绝对速度衡量机动敏捷性。传感器套件：2× Inivation DVXplorer（640×480、10 cm baseline、110 dB 动态范围）加 Intel RealSense D435（2×640×480 灰度、5 cm baseline，1×640×480 RGB、30 Hz），多数序列不加 IR 滤光片以利用 MoCap 红外信号；内置 6 轴 IMU（Table V 标注 800 Hz，Introduction 一处写 400 Hz，原文两处数值不一致）。时间同步用 30 Hz 脉冲发生器硬件触发（事件流插入 marker、D435 触发曝光）；标定用 Kalibr（事件流经 Simple Image Reconstruction 转帧）、AprilTag 网格激励做 vision-IMU 外参、PnP 加双四元数 hand-eye；并提出对闪烁棋盘/旋转线图案显示屏调焦至左右事件率最大且匹配的聚焦法。GT 由 LUSTER FZMotion（120 Hz，无人机）与 NOKOV Mars26H（60 Hz，其余）MoCap 融合 hand-eye 得到亚毫米级 6-DoF 位姿；事件灵敏度默认 level 2、HDR/低光升到 level 3。评测除 ATE/RPE 外提出加权相对速度误差精度曲线：RVE=AVE/‖v_gt‖，S(ξ)=Σw_i·1(RVE_i<ξ)，权重 w_i 正比于 ‖v_gt,i‖ 使高速估计占更大权重，以 AUC 排名。
+- **实验与结果**：19 条序列（Table VI）：drone_circle_fast 最大线速 8.64 m/s、drone_rot_fast 最大角速 3.28 rad/s 且 AUC of OF 0.721 为最高，slider_fast 2.27 m/s、arm_hdr 角速 3.61 rad/s 等；分两批采集，第二批加大角速并引入 HDR/低光。第一批 7 序列 11 方法（Table VII）平均 ATE/AUC：SuperEvent 0.064 m/0.896、DEIO 0.066/0.864、FETAP 0.117/0.898、DPVO 0.127/0.838、VINS 0.188/0.861、OKVIS2 0.210/0.810、SDEVO 0.271/0.876、DEVO 0.461/0.869、EVIV 1.513/0.840；arm_norm（光流最高档）上事件法 AUC 优势最明显，SuperEvent 两种特征配置结果相同（0.033 m）。第二批 11 序列 4 方法（Table VIII）平均：ESVIO 0.512/0.710、DPVO 0.603/0.676、SDEVO 0.921/0.663、VINS 1.103/0.593；ESVIO 在全部序列上 ATE 与 AUC 优于 VINS-Fusion，而 drone_8_hdr 上 DPVO（0.352 m）明显优于 SDEVO（1.935 m），显示 HDR 加高速下事件质量退化。Table IV：同场景 5 s 事件数 346×260 为 1.202M、640×480 为 12.526M、1280×720 为 130.791M（超线性增长）。Table IX runtime（ms）：SDEVO VGA pre/front/back 22.14/17.14/1.23、HD 168.90/26.33/1.25；EVIV VGA 91.80/107.14/6.29、HD 703.19/126.22/6.19；FETAP VGA 3.02/151.05/25.20。
+- **创新点与贡献**：给出高速机动面向移动机器人的清晰可操作定义（6-DoF 大幅值加适当运动视差），并以归一化光流 AUC 量化序列难度。用理论与实验指出立体事件数据时空不一致现象（左右事件数差约 10%–86%）并提出简单的透镜聚焦法。论证 VGA（640×480）是当前算法实时能力下最适用的事件 SLAM 分辨率（深度误差 <15% 判据加数据率与 runtime 分析）。提出速度估计专用的加权 RVE 精度曲线（AUC）指标，区分高速与低速段性能。四平台加全程 MoCap GT 加事件/灰度/RGB 硬件同步的室内高速基准。
+- **局限与风险**：序列全部为室内场景（无人机在大飞行场、其余在小场地），室外高速机动未覆盖。多数序列未加 IR 滤光片、依赖 MoCap 红外环境，泛化到自然光/室外受限。两批评测方法集不同（部分方法无开源），跨批比较受限；runtime 为粗粒度分解，未计线程实现差异与事件表征传输开销。HDR 加高速下事件质量退化（噪声淹没、信号事件离散化）的机理未深入建模。VGA 最适的结论是基于当前算法实时能力的阶段性判断。
+- **与文献库的关系**：属于 event-SLAM 数据集与基准路线，直接受 UZH-FPV（以光流分布而非绝对速度度量难度）启发，但扩展为立体 VGA、四平台与全程 MoCap GT，与 MVSEC/DSEC/TUM-VIE/M3ED/VECtor 等形成互补（后者偏驾驶、手持或大场景深度）。同时以综述覆盖 model-based 与 learning-based 方法谱系，为 EVIV 等连续时间速度估计提供标准化评测。
+- **可复现性**：数据集公开：https://nail-hnu.github.io/EvSLAM_Dataset，视频 https://youtu.be/VW6gsWlqOaM；采集需 DVXplorer×2 加 D435 加 MoCap（LUSTER FZMotion/NOKOV Mars26H），标定用 Kalibr；runtime 测试平台为 Intel Core i7-14700K 加 RTX 3090/4080。
+- **行动建议**：对事件相机状态估计从业者：用归一化光流 AUC（而非绝对速度）定义高速测试序列难度，在 VGA 立体事件加 IMU 配置下以加权 RVE-AUC 报告高速段速度精度；部署端避免盲目上 HD 分辨率，先确认事件吞吐在算力预算内。
+
+### 第 5 章 · PIDiffSign：基于扩散的运动学动力学模型的三维手语产生（2607.14836，3.67 A，FULL）
+
+- **赛道 / 场合**：化身与人体 / arXiv preprint（cs.CV，2026-07，arXiv:2607.14836v2；期刊 Image and Vision Computing）
+- **公告类型**：replace（旧稿 replace 再公告（首次入馆）：2607=2026-07-16 投稿，v2 于 2026-11-04 更新）
+- **一句话结论**：PIDiffSign 用 forward-kinematics 输出头把 gloss-to-pose 生成从关节坐标回归改为骨方向加骨长参数化，受控协议下 back-translation WER 降低约 5 个点（PHOENIX14T 93.47→87.83–88.70，CSL-Daily 87.31→82.68），而几何惩罚无可测收益；Newton–Euler 动力学先验在 PHOENIX14T 上再降约 1 点（87.77±0.33，最佳配置 FK+ℓ1+ℒ_NE 为 86.49±0.70），在 CSL-Daily 上无效。
+- **要解决的问题**：现有 SLP（含扩散模型）把每帧每关节 3D 坐标当作非结构化向量回归，骨架无约束，骨长逐帧漂移、关节可达不可能构型、运动抖动。物理知识此前只以几何 loss（骨长/方向惩罚）进入 SLP，且其对可懂度的收益从未被验证；没有 SLP 方法建模 signing body 的动力学（质量、惯量、力）；也缺少物理合理性评测（back-translation 与位姿距离不反映运动能量与运动控制定律符合度）。此外公开结果受 back-translator、位姿表征、模型选择划分与单次训练运行影响，彼此不可直接比较。
+- **方法详解**：骨干为标准条件扩散：2 层 gloss Transformer 编码器加 2 层 Transformer 解码器（帧内 self-attention、gloss cross-attention、AdaLN-Zero 条件），1000 步 squared-cosine 噪声调度、DDIM 50 步采样，J=50 关节、K=49 骨。FK 头替换最终线性层且参数持平：每帧预测根位置 r_τ、每骨单位方向 u_kτ（对训练集平均方向的学习残差归一化）与骨长 ℓ_k=ℓ̄_k(1+ρ·tanh a_k)（ρ=0.5），经 x̂_jτ=r_τ+Σ_{k∈A(j)} ℓ_k u_kτ（固定祖先矩阵一次相乘）组成解剖精确骨架；骨长分 dataset-level/per-sequence/per-frame 三种变体，per-frame 作 control。上半身按 de Leva (1996) 人体测量表建模为刚性段（上臂 0.027、前臂 0.016、手 0.006 体质量比，回转半径 κ_kℓ_k），导出动能 E_τ=½Σm_k(‖ṡ_k‖²+κ_k²‖ḃ_k‖²) 与含重力的 Newton–Euler 关节力矩 τ_j。微分前用 Savitzky–Golay 滤波（三次多项式、9 帧窗、25 fps 下约 6 Hz 截止）。两个动力学先验 ℒ_inert（误差运动的动能、惯性度量）与 ℒ_NE（生成/真实关节力矩相对误差）各配同阶 Euclidean control（ℒ_vel、ℒ_acc，质量取 1、只用端点），以 λ=2×10⁻³ 加入扩散损失。
+- **实验与结果**：数据集：PHOENIX14T（德语，7096/519/642 句）与 CSL-Daily（汉语，18399/1077/1176 句）；back-translation 用冻结 SignJoey（CSL-Daily 自训同架构模型），ceiling WER 71.97/47.80，floor（静态平均姿势）约 100；每配置训练 3 次（Sign-IDD 5 次），dev WER 选 checkpoint，Welch 检验。Table 3：PHOENIX14T 上 FK 头使 WER 从 93.47±0.21 降至 87.83±0.71（per-sequence）/88.70±0.76（dataset-level），per-frame control 88.01±0.81（p=0.79，与 per-sequence 无显著差异），而骨长/方向损失 94.06±0.26（p=0.28，无效且 bone CV 升至 0.202）；CSL-Daily 87.31±0.47→82.68±0.39。Table 4：Sign-IDD 重训 81.87±2.39（5 次运行，published 76.66），插入 FK 头 81.94±1.78（WER 不变、bone CV 0.172→0）；+ℒ_acc 81.17±0.21、+ℒ_NE 81.51±0.86。Table 5 物理合理性：动能比 0.39–0.67、body 速度比 0.62–0.79、关节力矩比 0.83–0.96；SNR_v 20–21 dB（GT 20.3）、β 0.27–0.29（GT 0.287）。干预实验：把真实手势能量阻尼到 0.61× 仅损失 2.3 WER，把生成运动放大到 2.25× 能量 WER 变化 <0.2；把真实手指换到生成手腕上 WER 86.49→84.27。Table 7：ℒ_vel 89.51±1.49 无效，ℒ_inert 87.69±0.32、ℒ_NE 87.77±0.33，9 组配对中物理先验 WER 全部更低；配 ℓ1 损失的最佳配置 86.49±0.70、BLEU-4 9.35；CSL-Daily 上 ℒ_NE 83.93±0.45 不优于 FK 82.68±0.39。
+- **创新点与贡献**：首个把刚体动力学与人类运动控制定律引入 SLP 的方法，物理知识同时进入输出表征（FK 硬约束）、训练目标（两个带对照的动力学先验）与评测（物理合理性 suite）。FK 头以线性层持平的成本换取解剖精确骨架，输出可直接驱动 rigged avatar、免去 retargeting。预先定义的 per-frame control 把增益归因于运动学链表征而非骨长守恒，归因干净。受控协议（固定 back-translator/位姿表征/划分、多次训练、报告 ceiling 与 floor）为 SLP 提供可比评测范式。suite 含 bone CV、动能、关节力矩、lognormality SNR_v 与 two-thirds power law β，首次用于生成手势评估。
+- **局限与风险**：back-translator 只是可懂度代理，未做 deaf signer 感知研究；PHOENIX14T 真值由 2D lifting 得到（帧尺度逐帧变化、21% 手部深度平坦），限制手部分析。动力学增益仅约 1 个 WER 点且依赖数据（CSL-Daily 与 Sign-IDD 内无效），作者自认是 modest、dataset-dependent 的修正。每配置仅 3 次训练运行（Sign-IDD 5 次），单次运行的改进不可轻信，另有两个 Sign-IDD 训练崩溃案例被报告。刚体模型用群体平均人体测量、无躯干、无接触牛顿-欧拉矩，不是经验证的肌肉骨骼模型。
+- **与文献库的关系**：属于 physics-informed 运动生成路线向 SLP 的迁移，与 PhysDiff 等仿真式/损失式两条路线并列，但针对无地面接触的上半身签名特点做惯性与力矩加权。对 Sign-IDD、Wu et al. 2025 的软几何约束路线构成硬约束改进与对照实验（证明软惩罚无可测收益）。FK 头与物理 suite 不依赖 gloss-to-pose 设定，可外推到 text-to-pose 与 avatar 渲染阶段。
+- **可复现性**：作者称代码、配置与物理合理性 suite 将发布，全文未给出具体链接。训练用 AdamW（lr 10⁻⁴、1000 步 warm-up、plateau 衰减 patience 7 factor 0.7）、batch 64、梯度裁剪 1.0；Table 3 模型训 1413–1514 epochs、带先验模型 800 epochs；计算在 ISCRA LEONARDO 超算完成，具体 GPU 型号全文未述及。
+- **行动建议**：对 SLP/手语 avatar 从业者：把 FK 输出头作为生成器最后一层的即插即用替换（参数持平、骨长天然精确、可直接驱动 rigged avatar），若要进一步压缩物理不自然感再加 Newton–Euler 先验，但应预期约 1 WER 点的收益并先在目标语料上验证。
+
+### 第 6 章 · AuroraWorld：面向机器人操作中外部到第一人称视频生成的结构化 4D 世界建模（2611.00177，3.56 B，FULL）
+
+- **赛道 / 场合**：世界模型与仿真 / arXiv preprint（cs.AI，2026-10，arXiv:2611.00177v2）
+- **公告类型**：replace-cross（旧稿 replace-cross 再公告（首次入馆）：2611=2026-10-30 投稿，v2 于 2026-11-04 更新）
+- **一句话结论**：AuroraWorld 从稀疏 exocentric 观测推断结构化 4D 世界表征（运动轨迹+时间锚点+空间几何）并指导 ego 视频生成，DROID 上 PSNR 17.87/FVD 60.17 全面优于 6 个基线（BWM 15.77/70.07、WristWorld 13.68/141.98），RLBench 策略成功率 RVT-2 64.00%、π0.5 40.15% 居合成视角之首，真机 ARX X5 平均 70.7%（Real Ego 78.0%）。
+- **要解决的问题**：Egocentric（腕部相机）观测含夹爪-物体接触与物体状态变化等策略学习关键线索，但需额外硬件与平台部署成本、难以规模化采集；从大规模 exocentric 操作视频合成 ego 观测是 scalable 替代。然而帧级 view synthesis 不建模时序演化与交互动力学，视频生成与 world model 又缺乏显式世界状态，在大视角变换、严重遮挡、复杂物体交互与稀疏 exocentric 观测下难以生成物理一致且 policy-relevant 的 ego 视频，且常依赖首帧 ego 图像等额外条件。
+- **方法详解**：AuroraWorld 把 exo-to-ego 合成为对隐藏 4D 世界表征 W^{4D}={W^{tp},W^{sp},W^{mo}} 的结构化推断。运动分量：改编 GR00T-Dreams inverse dynamics model 从 exo 观测回归 8-D 末端状态 s_t=[p_t∈R³, q_t∈R⁴, g_t]（位置+单位四元数+夹爪）作 motion anchor。时间分量：transition score η_t（Δ 区间内平移距离加测地旋转距离）与 stabilization score ρ_t（未来窗口内平滑运动的平稳度）相乘并鲁棒归一化得 F_t，选 top-k 内部锚点加首尾帧（k=3），再由 state-conditioned camera head H_cam 预测目标 ego 相机位姿、经改编 LagerNVS 合成 ego keyframe。空间分量：LagerNVS 的 camera tokens 产出 latent 3D scene tokens，免显式重建。生成基于 1.3B PAI/Wan2.1-Fun-InP latent diffusion：ego keyframe 按原时序位置构成稀疏条件视频，与 binary anchor mask 通道拼接输入；另以 spatial-motion query（网格位置特征拼接运动特征）对场景 token 做 cross-attention，投影到 VAE latent 通道得 ε̄^sm，构造结构化终局潜变量 z_1^mix=√(1−λ²)·ε+λ·ε̄^sm（λ=0.5）替代纯高斯初始化；flow matching 训练速度场，损失为 ‖v_θ(z_τ,y,ℰ,p_text,τ)−(z_1^mix−z_0)‖²。关键参数：N_t=8、Δ=3、k=3、λ=0.5、λ_q=0.1。
+- **实验与结果**：三数据集：DROID（17k 成功 episodes 训练、200 测试）、RLBench（PerAct 8 任务子集）、自采 ARX X5（6 个桌面任务 600 episodes，双 Intel RealSense D435i，640×480@15 Hz，leader-follower 遥操作）。基线：VGGT、LagerNVS、SVD、BWM（5B action-conditioned，额外获得 GT 首 ego 帧与 IDM 密集轨迹）、Exo2Ego-V、WristWorld。Table 1 DROID：AuroraWorld PSNR 17.87/SSIM 0.5800/LPIPS 0.2648/FID 15.437/FVD 60.171，五项全优（次优 BWM 15.77/0.5012/0.3309/25.632/70.073）。Table 2 RLBench 策略（相同 IDM 动作监督）：RVT-2 成功率 WW 55.60/BWM 61.10/Ours 64.00，π0.5 36.85/37.70/40.15。Table 3 ARX X5 生成：20.01/0.681/0.375/16.91/149.93 最佳。Table 4 真机策略五设置：w/o Ego 16.0%、WW 32.0%、BWM 40.0%、Ours 44.7%、Real Ego 58.7%；数据增强版（Table 18）为 55.3%/58.0%/65.3%/70.7%/78.0%。消融：W^{tp} 单独贡献最大（PSNR 12.96→16.69，FVD 192.93→76.12），W^{mo} 全面改善，W^{sp} 主要降 FID/FVD，三者齐用时 FVD 60.17 最优；3 个内部锚点最优，8 个或全部帧仅边际改善帧级指标却退化分布/时序指标；motion-stabilized 选择优于均匀采样（FVD 69.634→60.171）。WorldArena EWMScore_ego 64.6 第一（BWM 63.3、WristWorld 62.4）；改用 GT 轨迹后 PSNR 升至 19.17、FVD 降至 52.11。
+- **创新点与贡献**：把 exo-to-ego 合成重新表述为稀疏观测下对 4D 具身世界状态的结构化推断，时间/空间/运动三分量互补。提出 motion-stabilized 时间锚点选择（view transition 乘 post-transition stabilization），事件对齐锚点优于均匀采样。用 spatial-motion cross-attention 构造结构化扩散初始化，替代无环境信息的纯高斯噪声。在生成质量之外系统验证 generation→policy 全链路（RLBench 模拟加 ARX X5 真机），并做轨迹源、锚点数、组件消融。
+- **局限与风险**：严重依赖上游预测：IDM 轨迹误差会传播到锚点选择、目标相机预测与先验构造（换 GT 轨迹可再涨 1.30 PSNR、降 8.06 FVD）。严重遮挡、快速接触、精细空间对齐任务（如 Stack Cups，合成 0/25 对 Real Ego 12/25）下稀疏 exo 观测不足。合成 ego 训练的策略仍系统性不及真实 ego（真机 70.7% 对 78.0%）。anchor 渲染误差会把错误几何或时序相位注入生成器；密集锚点导致过约束、生成退化为外观重建。
+- **与文献库的关系**：属于 robotic world model 与 exo-to-ego 生成路线：相对 WristWorld（4D 世界模型但缺显式时序状态与运动建模）与 EgoExo-Gen 等（重外观生成）是显式结构化 4D 先验的改进。与 BWM 的受控对比（同 IDM 轨迹、BWM 还多得 GT 首帧）说明结构化世界建模优于单纯扩大 backbone。补上 VGGT/LagerNVS 帧级方法与视频生成方法之间的物理一致性空白。
+- **可复现性**：全文未给出代码或数据集开源链接。实现基于 PAI/Wan2.1-Fun-InP 1.3B；训练硬件 IDM 与 LagerNVS 各 8×L40、生成器 8×A800；batch 64、clip 81 帧、180×320、scene tokens 512、CFG 5.0、10 epochs、AdamW lr 10⁻⁴。真机复现需 ARX X5 单臂机器人加双 D435i，每任务 25 次物理试验。
+- **行动建议**：对机器人数据引擎方向从业者：采用 IDM 轨迹→motion-stabilized 锚点（k=3）→spatial-motion latent 初始化的级联设计合成 ego 数据训练策略，测试时仍用在线真实 ego 观测，并对接触密集任务预留真实腕部相机数据。
+
+## 四、当日全量 7 维度对比表（参考）
+
+见 [`papers/daily/backfill-1106/7dim-table.md`](../papers/daily/backfill-1106/7dim-table.md)。
+
+## 五、覆盖率校验与筛选过程说明
+
+- 门①（同质去重）：全池合并复核最大 Jaccard 0.167 < 0.62，通过，无同质重复。
+- 门②（赛道覆盖）：覆盖 6 赛道（感知与认知×2 / 化身与人体×2 / 评估与数据集×1 / 世界模型与仿真×1），6 篇低量批次实际上限。
+- 门③（价值天花板）：对 backfill 不适用；本批 6 篇均未达 S 线（最高 4.10），按实数定级，未拔高。
+- OUTDATED/SUPERSEDED 0 篇。
+
+
+## 六、附录：证据等级分布与抓取记录
+
+- 本表 6 篇：FULL 6 篇；PARTIAL 0 篇；ABSTRACT_ONLY 0 篇。
+- 抓取降级：无。18 篇候选（主批 12 + backfill 6）全部 L0/FULL（21,776–178,380 字符），人工复核正文中段均含实质章节（排除 ar5iv 摘要页误判），串行 3s/篇，无限流、无 L5、无 OCR、无伪造。

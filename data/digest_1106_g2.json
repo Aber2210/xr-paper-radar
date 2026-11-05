@@ -1,0 +1,162 @@
+[
+ {
+  "id": "2611.06258",
+  "slug": "crosspressor",
+  "venue": "arXiv preprint（Graz University of Technology、Ghent University，cs.CV，2026-11，arXiv:2611.06258v1）",
+  "tags": [
+   "前馈3DGS",
+   "交叉视图融合",
+   "token reduction",
+   "长上下文扩展",
+   "训练无关加速",
+   "新视图合成"
+  ],
+  "conclusion": "CrossPressor 针对 ZPressor 式 anchor 融合的 representation–fusion mismatch，提出 training-free 的 coverage-cycled evidence routing：在 MVSplat–ZPressor 上 256 视图时 cross-view fusion 从 125.28 ms 降至 4.80 ms（26.12×）、端到端 1.43×，QK 交互仅保留 1.85%，渲染质量几乎不变（PSNR 23.1203 vs Exact 23.1204，p5 ΔPSNR 仅 -0.0063 dB），fusion 峰值内存降 73.8%。",
+  "problem": "前馈 3DGS 扩展到长多视图序列时，表示规模与跨视图计算都难以 scale。ZPressor 用固定数量 anchor 特征图限制 decoder-facing 表示，但 anchor 固定后每个 anchor 需聚合越来越多的 support views，support 侧 K/V projection 与 cross-attention 随视图数持续增长——即 representation–fusion mismatch：限制了解码端表示规模，却限制不了构造它所消耗的 support evidence。Learned token reduction 需任务特定训练或微调、破坏与已发布 checkpoint 的兼容性；Spark3R 式非对称削减中 anchor queries 已被结构性限制，剩余挑战是控制增长的 support 侧 K/V 序列，同时保留所有 support 视图的证据。",
+  "method": "CrossPressor 只改 ZPressor 的 support-to-anchor 融合阶段，无任何可学参数、无需重训。（1）View-normalized support length：路由目标 N_KV^max = β_KV·T（默认 β_KV=1.5，T=HW 为单视图 token 数），按 cluster 从 {1,2,4,8,16,32,64} 选空间 stride s_c，取满足 m_c·⌈H/s_c⌉·⌈W/s_c⌉ ≤ N_KV^max 的最小 stride；支持视图增多则 stride 自动变粗，每视图保留更少空间位置。（2）Coverage-cycled evidence routing：采样 offset p_{c,v}^ℓ = (r_c(v) + κ·ℓ) mod s_c²（L=6 融合层，κ=5），跨 support 视图递进 1、跨融合层递进 κ，使不同视图与层采样不同空间位置；每个 support 视图仍保留 T/s_c² 个 token，缩减是空间式而非视图式。（3）Pre-projection routing：routing 作用于 K/V normalization/projection 之前的原始 support 特征，被丢弃 token 完全省去归一化、投影与注意力计算。（4）Joint context packing：6 层的 routed context 一次性 Pack 成 [L, Ñ_c, C] 张量，再逐层做各自 K/V 投影与 cross-attention，投影结果不跨层共享。s_c=1 时逐 token 精确恢复 dense ZPressor 计算。",
+  "experiments": "在 ZPressor 官方发布的 MVSplat–ZPressor（256×256 输入、6 个 anchor clusters、393,216 个输出高斯）与 DepthSplat–ZPressor checkpoint 上直接推理、不重训；RE10K 1,034 场景 × 8 目标视图（共 8,272 renders），上下文 V∈{36,64,128,192,256} 嵌套协议；ACID 599 场景跨数据集。256 视图主对比（Table 1/6）：Exact/ZPressor PSNR 23.1204、SSIM 0.81310、LPIPS 0.18285、cross-view 125.28 ms、E2E 432.16 ms；+ToMe 保留 QK 1.56% 但 cross-view 317.50 ms（0.40×，反而更慢）；+Zero-TPrune QK 1.60%、6.91 ms（18.12×）但 p5 ΔPSNR -0.1666 dB、worst -1.5052 dB、536/418/334 个场景低于 -0.01/-0.03/-0.05 dB；+CrossPressor QK 1.85%、4.80 ms（26.12×）、E2E 303.18 ms（1.43×）、p5 ΔPSNR -0.0063 dB、worst -0.0478 dB、失败场景 21/2/0。Scaling：cross-view 加速从 36 视图 3.85× 增至 256 视图 26.12×，E2E 1.08×→1.43×；fusion 峰值内存 653.0→170.8 MiB（-73.8%），全模型峰值几乎不变。DepthSplat 迁移：各上下文 p5 ΔPSNR 不低于 -0.011 dB，cross-view 1.06×→2.95×（256 视图 dense fusion 占 MVSplat/DepthSplat E2E 的 29.0%/7.1%）。ACID：p5 -0.0079 dB、worst -0.0410 dB、125.15→5.02 ms（24.91×）、E2E 1.43×。β_KV 敏感度（200 场景子集）：0.5→QK 0.57%/p5 -0.0137；1.0→1.46%/-0.0072；1.5→1.86%/-0.0059；2.0→2.28%/-0.0049；3.0→3.85%/-0.0025。Routing 分解（256 视图，同 token 数同 QK）：Fixed p5 -0.0204/worst -0.1055/N<-.05=10；View-only -0.0064/-0.0640/1；Layer-only -0.0154/-0.1071/2；View+Layer -0.0063/-0.0478/0。36 视图下 optimized packing 与参考路由零差异。",
+  "innovation": [
+   "识别并命名 representation–fusion mismatch：decoder-facing anchor 表示有界，并不意味着构造它的 support-to-anchor 融合有界",
+   "提出 coverage-cycled evidence routing：offset 跨 support 视图与融合层双维循环，把保留的空间证据分布到所有视图与层，每个 support 相机不被丢弃",
+   "pre-projection routing + joint packing：routing 前置于 K/V 投影使被丢弃 token 零投影零注意力，6 层 context 一次性打包，实测 26.12× fusion 加速",
+   "完全 training-free、无新参数，s_c=1 时逐 token 精确恢复 dense 计算，可直接挂到已发布 ZPressor checkpoint 上"
+  ],
+  "limits": [
+   "加速集中在 cross-view fusion：E2E 仅 1.43×，encoder、几何估计与高斯预测占大头；DepthSplat 上 fusion 仅占 E2E 7.1%，系统级收益更小",
+   "β_KV 受 power-of-two stride 离散化影响，QK 保留呈阶跃变化，stride 网格可能欠利用预算",
+   "全模型峰值内存几乎不变（fusion 外组件主导）；路由元数据仍随 support 数增长，特征提取等 per-view 操作未改",
+   "评测限于 RE10K/ACID 前向场景与两个 ZPressor 宿主；κ=5 并非扫描中最优，仅作固定选择；更长序列与非 ViT 骨干未验证"
+  ],
+  "relation": "属前馈/通用 3DGS 效率线，直接承接 ZPressor（NeurIPS 2025）的 anchor 压缩，与 Spark3R 的训练无关非对称 token 削减及 ToMe/Zero-TPrune 互为基线；与库内 pixelSplat/MVSplat/DepthSplat 主干和 3DGS 压缩/加速工作互补——它不动表示与预测管线，只治 support 侧融合的长上下文可扩展性。",
+  "repro": "project page 为 https://yuhsihu.github.io/CrossPressor （全文未明确代码与权重发布承诺）；实验用单张 NVIDIA RTX 4090（24G）、batch 1，5 个进程 × 20 次交替循环取中位数计时；MVSplat 特征图 64×64、C=128、T=4096，DepthSplat 32×32、C=128、T=1024，均 6 anchor、6 融合层。",
+  "action": "部署长序列 feed-forward 3DGS 的团队应把评估口径从 QK 交互数改为实测 wall-clock 与 lower-tail ΔPSNR，并直接以 β_KV≈1.5 的 View+Layer routing 挂到现有 ZPressor checkpoint 验证；若 fusion 非系统瓶颈（如 DepthSplat 占比 7.1%），收益预期需相应下调。"
+ },
+ {
+  "id": "2611.06273",
+  "slug": "occsplat",
+  "venue": "arXiv preprint（Ho Chi Minh City University of Technology（AITech Lab.）、Vietnam National University Ho Chi Minh City，cs.CV，2026-11，arXiv:2611.06273v1）",
+  "tags": [
+   "前馈3DGS",
+   "驾驶场景重建",
+   "遮挡感知",
+   "高斯致密化",
+   "去遮挡",
+   "新视图合成"
+  ],
+  "conclusion": "OccSplat 把前馈驾驶重建的单帧 disocclusion 问题重构为 Occlusion-Aware Gaussian Densification：nuScenes 验证集 PSNR 23.50 dB、SSIM 0.767、LPIPS 0.182，较 DrivingForward +1.74 dB；遮挡区域单独评测中 SSIM 0.763、LPIPS 0.465 均为最佳（DrivingForward 在遮挡区 PSNR 仅 11.498 dB）；代价是 1.01 FPS、992.9 ms/场景、+0.14 GB 显存、+1.28M 参数。",
+  "problem": "feed-forward 环视驾驶重建（DrivingForward 的 single-frame 设定）中，模型只观测当前帧 t 的环视图像却要合成未来帧 t+1；自车前进使 t 时被树木、电线杆、栅栏、建筑边缘遮挡的区域在 t+1 暴露（disocclusion）。pixel-aligned 方法只从已观测像素 lift 高斯，t 时无支撑的表面完全没有 primitive，t+1 暴露时渲染器无内容可画，产生空洞与 rubber-sheet 拉伸伪影。该 disocclusion gap 是前向行驶单帧合成的固有难题；既有 occlusion-aware/structure-aware 3DGS 与 inpainting 方法依赖逐场景优化，无法前馈运行，且图像空间 inpainting 只补像素不补几何。",
+  "method": "在 DrivingForward 骨干（encoder + Volumetric Fusion Network 跨视图融合估计深度 + 轻量 Gaussian head 预测 α/s/q/sh，得像素对齐高斯集 S0）之上增加两个模块。（1）Gaussian Occlusion Mapping：将 S0 分别以黑 [0,0,0] 与白 [1,1,1] 背景光栅化到目标视角 π_{t+1}，累积 opacity 充足的像素两次渲染几乎一致，缺乏高斯支撑的像素受背景支配，据此构造遮挡 mask M_occ = 1[I_bright>ε] ∧ 1[I_dark<1-ε]（ε=0.7），无额外可学参数。（2）Gaussian Occlusion Completion：先用轻量 U-Net Pixel Refiner 对带洞的未来视角渲染做残差修正 Ĩ = clamp(Î + R_φ(Î), 0, 1)；再把 geometry 与 appearance 解耦为两个 linear attention 分支——Depth Attention A_d 以精炼图 Ĩ 为 query、源深度 D^t 为 key/value 估计未来深度 D̂^{t+1}，Feature Attention A_f 估计未来特征 F̂^{t+1}，各分支先跨源视图 self-attention 聚合上下文再 cross-attention 迁移到未来视角 query，复杂度 O(n²)→O(n)；遮挡区像素用 D̂^{t+1} 反投影初始化高斯中心 μ_occ = Unproject(D̂^{t+1})，并复用预训练 Gaussian head G_θ 从 [F̂^{t+1}, D̂^{t+1}] 预测属性；最终 S1 = S0 ∪ {G_occ} 渲染未来帧。训练两阶段：Stage I 优化基础网络与 Pixel Refiner（DrivingForward 损失 + λ_ref·L_refine，λ_ref=0.05，L_refine = λ_MSE·MSE + λ_LPIPS·LPIPS，λ_MSE=1.0、λ_LPIPS=0.05）；Stage II 冻结 Stage I，只训 A_d/A_f（λ_nd=1.0、λ_nf=0.5，深度监督用 Depth Anything V2 伪深度，特征监督用 detach 的 GT 图 encoder 特征）。",
+  "experiments": "nuScenes 1,000 场景（6 个环视相机、相邻视图重叠约 10%），官方 split 700 训练/150 验证，分辨率 114×228，指标 PSNR/SSIM/LPIPS。Table 1：SelfOcc 18.22/0.464/–、UniPad 16.45/0.375/–、EmerNeRF 20.95/0.585/–、DistillNeRF 20.78/0.590/–、MVSplat 20.23/0.479/0.366、DrivingForward 21.76/0.767/0.194、OccSplat 23.50/0.767/0.182（PSNR +1.74 dB，LPIPS 0.194→0.182）。消融（Table 2）：(a) 基础 21.76/0.767/0.194；(b) 全图 densification 19.92/0.747/0.182（PSNR 反降）；(c) +Pixel Refiner 20.71/0.753/0.175（LPIPS 最佳）；(d) +Occ. Mapping 22.27/0.765/0.187；(e) 全组件 23.50/0.767/0.182。遮挡阈值 ε（Table 3）：0.99→22.91/0.764/0.187、0.8→23.41/0.767/0.183、0.7→23.50/0.767/0.182、0.6→23.30/0.757/0.192、0.5→22.55/0.741/0.204。仅遮挡区域评测（Table 4）：DrivingForward 11.498/0.759/1.178、MVSplat 18.606/0.509/0.620、OccSplat 18.602/0.763/0.465（PSNR 与 MVSplat 持平，SSIM/LPIPS 显著更优）。算力（Table 5）：3DGS 逐场景优化约 9 min；DrivingForward 1.74 FPS/574.7 ms/2.96 GB/61.88M；OccSplat 1.01 FPS/992.9 ms/3.10 GB/63.16M。训练两阶段各 10 epoch，单卡 RTX 4090，lr 1×10⁻⁴，batch 1，深度范围 [1.5, 80.0] m。",
+  "innovation": [
+   "首次把前馈驾驶重建的遮挡处理从图像空间 inpainting 转向 3D 表示空间，提出 Occlusion-Aware Gaussian Densification：直接为无支撑区域预测新的高斯 primitive 而非补像素",
+   "Gaussian Occlusion Mapping 用黑/白双背景光栅化响应检测缺乏高斯支撑的区域，无需分割网络与额外可学参数",
+   "geometry/appearance 解耦的 Depth/Feature Attention 双分支（linear attention）加复用预训练 Gaussian head，使 completion 分支只需恢复缺失几何与外观",
+   "两阶段训练与全组件消融、阈值扫描、遮挡区隔离评测互相印证，量化了各模块的互补作用"
+  ],
+  "limits": [
+   "Pixel Refiner 在图像空间工作，无法显式强制跨视角 3D 几何一致性，严重遮挡或大 ego-motion 下可能纹理过平滑",
+   "前向推理成本约为 DrivingForward 的 1.7 倍（574.7→992.9 ms），FPS 由 1.74 降至 1.01，实时性受限",
+   "无定位时全图 densification 反而把 PSNR 从 21.76 降到 19.92 dB，说明方法对遮挡 mask 质量与阈值敏感",
+   "仅在 nuScenes 单数据集、单帧设定验证；动态物体与连续帧时间信息的利用被作者列为未来工作"
+  ],
+  "relation": "属 feed-forward driving scene reconstruction 一线，直接构建于 DrivingForward（AAAI 2025），与 MVSplat/DepthSplat 等前馈 3DGS 及 SelfOcc/EmerNeRF/DistillNeRF 等驾驶重建基线对比；相对 OccluGaussian、SplatFill 等需逐场景优化的遮挡/补全方法，它把遮挡补全带入前馈范式，与库内前馈 3DGS 与遮挡感知建图线互补。",
+  "repro": "全文未提代码、数据或项目页开源信息；硬件为单张 NVIDIA RTX 4090，两阶段各 10 epoch、lr 1×10⁻⁴、batch 1；依赖 Depth Anything V2 提供伪深度监督，数据为公开 nuScenes。",
+  "action": "做前馈驾驶重建的研究者应在评测中单独统计遮挡/新暴露区域指标（本文总体 PSNR 仅 +1.74 dB，但遮挡区 DrivingForward 只有 11.498 dB），并把双背景 occlusion mapping 作为即插即用定位手段先做阈值扫描（本文最优 ε=0.7）再上致密化分支。"
+ },
+ {
+  "id": "2611.06308",
+  "slug": "scale-anchor-slam",
+  "venue": "arXiv preprint（Anyverse Dynamics，cs.RO，2026-11，arXiv:2611.06308v1）",
+  "tags": [
+   "VGGT",
+   "SLAM",
+   "尺度锚定",
+   "回环检测",
+   "单目重建",
+   "因子图优化"
+  ],
+  "conclusion": "在 VGGT-SLAM 2.0 上加入 SALAD 引导的 fixed-root scale anchoring 与 short-sequence 验证的 direct Sim(3) loop factor：17 序列对比中 9 条 TUM 序列平均 Sim(3) ATE 从 0.1018 降至 0.0451 m（-55.6%，8/9 条改善），LaMAR HGE 从 18.6461 降至 1.4041 m（-92.5%）；anchoring 在全部 7 条无回环模块消融序列上降低 ATE；固定回环对比中 direct 连接在 Clio 三场景全面优于 auxiliary-submap 连接；代价为约 13.9%/13.7% 处理时间增加。",
+  "problem": "feed-forward 几何基础模型（VGGT）上下文有界，长序列须切成独立重建的 submap；VGGT-SLAM 2.0 用 factor graph 连接 submap，但相邻 overlap 测量会累积 scale drift，且独立重建的回环测量可能与既有地图的尺度或局部几何不一致——即使真实重访也可能给出不兼容的相对尺度，这不只是 place recognition 问题。核心追问是：在可靠几何回环可用之前，能否从 learned reconstruction 获得有用的非局部尺度信息？此外回环验证本身还会误拒视觉上确凿的重访候选。",
+  "method": "按 50 像素视差选关键帧，普通 submap 含 16 个新关键帧 + 1 个共享帧（17 图一次 VGGT 推理），保留原 SL(4) overlap 链并叠加标量 GTSAM scale 图（S_0=1 固定规范）。（1）SALAD-Guided Fixed-Root Scale Anchor：从 submap i=6 起，每个新 submap 用 SALAD 在固定根 submap S0 与 Si 间选描述子距离最小的图像对（无阈值、不回退历史），一次两图 VGGT 联合推理，在同有效像素上比较原 submap 与联合推理的 camera-frame 点范数，得尺度测量 ŝ^a_{0i} = A0·ai/(a0·Ai)，残差 r^a_{0i} = S_i − ŝ^a_{0i}·S_0，Huber 鲁棒化，权重 w_o=1、w_a=0.1 全数据集固定，只约束相对 submap 尺度、不断言重访或全位姿。（2）Short-Sequence Loop Verification：检索对需 SALAD 距离 <0.95 且排除最近 3 个 submap；取中心对加两帧半径内两个相邻对共 3 个时序对，各自两图 VGGT 推理，用 9×7 线性最小二乘（SVD）联合估计公共平移 t、尺度 s 与三个 gauge γ，要求秩 7、ŝ>0、γ̂_k>0、归一化位置误差 e_p≤0.20、旋转 RMSE≤10° 且通过 0.95 图像匹配测试。（3）Sequence-Verified Direct Sim(3) Loop Factor：仅中心对成为一条 GTSAM BetweenFactorSimilarity3（std 0.05、Huber 1.345），因子测量尺度置 1 但 7 维残差仍可改变节点尺度，无辅助 loop submap、相邻对不成边。（4）Staged Graph Optimization：先 iSAM2 优化标量 scale 图，再对尺度校正后的位姿建 Sim(3) 批处理 correction 图（相邻位姿因子 + 每条被接受回环一条直接因子，Levenberg–Marquardt ≤100 迭代，首位姿 1e-6 先验）。",
+  "experiments": "17 条序列：9 条 TUM Freiburg1、OpenLORIS Cafe 1-1/1-2 与 Corridor 1-1、Clio Apartment/Cubicle/Office、LaMAR HGE iPhone、ADVIO 02；单目 RGB 无标定/深度/IMU，指标为一次全局 Sim(3) 对齐后 ATE RMSE，单卡 NVIDIA L20，每序列一次运行。Experiment 1A（vs VGGT-SLAM 2.0 baseline，16 关键帧协议）：TUM 平均 0.1018→0.0451 m（-55.6%，9 条中 8 条改善，desk 0.183→0.034、floor 0.243→0.055、room 0.209→0.052，TUM 360 0.068→0.093 变差）；Cafe 平均 0.4545→0.3857 m；Clio 平均 0.7639→0.5530 m；Corridor 1-1 12.848→6.468（-49.7%）；ADVIO 02 9.882→6.791（-31.3%）；LaMAR 18.6461→1.4041 m（-92.5%）。Experiment 1B 模块消融（7 序列）：anchoring 降低全部 7 条 ATE（TUM room 0.0876→0.0850、LaMAR 7.9485→1.6221、Corridor 12.848→6.468），Full 在 TUM room、LaMAR、Clio Apartment/Cubicle 优于任一单模块（LaMAR 1.6221→1.4041）。Experiment 2 锚设计（无回环）：Fixed-root+SALAD 在 Corridor 6.468、ADVIO 6.791、LaMAR 1.622 最佳，Any history+SALAD 在 TUM room 0.080 最佳；锚权重 0.25 改善 Corridor 但恶化 Indoor/LaMAR，故统一用 0.1。Experiment 3：Clio 固定 15 候选上单对图像测试拒 9、短序列检查在余下 6 个中再留 4；固定 4 条回环对比 auxiliary-submap→direct：Apartment 0.505→0.118、Cubicle 0.175→0.033、Office 3.370→1.508 m；端到端 Cubicle B2 0.2125→0.0419 m（-80.3%）。Runtime：TUM room 9.138±0.097→8.026±0.095 kf/s（20.356±0.216→23.177±0.274 s），Clio Apartment 9.240±0.093→8.123±0.069 kf/s，+13.9%/+13.7%；峰值显存 7468→7470 MiB、7472→7739±230 MiB。",
+  "innovation": [
+   "提出 fixed-root scale anchoring：SALAD 选图 + 联合 VGGT 推理提供 scale-only 观测，在无回环时即约束远处 submap 尺度，且保持原 overlap 链、不插入跨视角位姿",
+   "把回环的证据与连接分离：3 个相邻时序对仅用于一致性与平移尺度校验，每个被接受中心对只向已有位姿加一条 direct Sim(3) 因子，不用辅助 loop submap",
+   "把验证质量与轨迹精度解耦评测：固定候选审计揭示短序列检查会误拒视觉重叠的合理重访",
+   "参考策略/权重/模块的系统消融加固定回环连接对比，区分了尺度锚定收益与回环连接选择的贡献"
+  ],
+  "limits": [
+   "keyframe 驱动：静止或慢速时位移不足 50 px 会挂起未完成 submap，缺少 submap 间逐帧连续定位；端到端在线时延未 benchmark",
+   "户外当选视图被天空或远景弱纹理主导时，VGGT 相对尺度推断不可靠",
+   "短序列检查会误拒合理重访（一个 Office 候选 e_p=0.468 被判拒），候选标注未经独立裁定，只报告接受数不报告 precision/recall",
+   "LaMAR 与 Corridor 曾用于方法开发、Clio 参考为 COLMAP 重建而非动捕真值，17 序列非严格 held-out；TUM 360、Cafe 1-1、Clio Office 上 Full 反而变差"
+  ],
+  "relation": "属 feed-forward dense SLAM（DUSt3R/VGGT 谱系）与单目尺度漂移修正线，直接扩展 VGGT-SLAM 2.0，与 VGGT-Align（场景几何不变量）、VGGT-Long（重叠 chunk）、VGGT-SLAM++（DEM+DINOv2）互补；其 scale-only anchor 区别于 Sim(3) 回环约束，回环验证上承 ORB-SLAM3/SeqSLAM/switchable constraints/DCS 传统。",
+  "repro": "代码：github.com/ziyijin81-afk/scale-anchor-slam（摘要给出）；硬件单卡 NVIDIA L20，数据为公开 TUM/OpenLORIS/Clio/LaMAR/ADVIO；超参（w_o=1、w_a=0.1、阈值 0.95/0.20/10°、submap 16+1、锚从 i=6 起）全文固定未逐序列调优。",
+  "action": "做单目/无标定 SLAM 的团队可在 VGGT-SLAM 2.0 上先只加 fixed-root scale anchor（零回环依赖、每 submap 一次两图 VGGT 推理）验证尺度收益，再评估 direct Sim(3) 连接替换 auxiliary-submap 连接；部署前需针对机器人停顿场景补连续定位并实测在线时延。"
+ },
+ {
+  "id": "2611.06593",
+  "slug": "budgetsplat",
+  "venue": "arXiv preprint（Graz University of Technology，cs.CV，2026-11，arXiv:2611.06593v1）",
+  "tags": [
+   "前馈3DGS",
+   "预算可控",
+   "高斯压缩",
+   "重要性学习",
+   "覆盖率感知选择",
+   "新视图合成"
+  ],
+  "conclusion": "BudgetSplat 以单个训练模型按用户指定 preservation ratio ρ∈(0,1] 前馈产出可控规模高斯表示：ScanNet 3 视图 25% 预算 PSNR 26.35 dB/SSIM 0.841、仅 147k 高斯（较 FreeSplat 的 423k 少 61.5%+，PSNR 差 0.38 dB）；10 视图 25% 时 163k 高斯较 FreeSplat 少约 45% 且 PSNR/SSIM 接近（24.91/0.793 vs 25.03/0.800）；5% 极限预算仅 33k 高斯、PSNR 较 100% 仅降 0.22 dB；Replica 零样本 100%→25% 移除约 74% 高斯而画质几乎不变。",
+  "problem": "pixel-aligned 前馈 3DGS 每像素解码高斯，表示规模随图像分辨率与输入视图数快速增长，重叠观测还产生大量跨视图冗余。固定容量方法（global scene tokens 类）把输出绑死在 token 容量上，更大更复杂的场景需重训高容量模型；post-hoc 压缩（如 LightGaussian）引入额外逐场景处理；EcoSplat 按 opacity 排序选择但不显式推理空间覆盖与跨视图冗余；对常规训练的 pixel-aligned 模型直接套 budget-unaware Top-K 会把高斯过度分配到显著/高 opacity 区域，弱纹理区域覆盖不足。",
+  "method": "整体为预算可控映射 f_θ: ({(I^i,P^i)}, ρ) → {(μ_j, α_j, Σ_j, c_j)}，目标预算 K=⌊ρNHW⌋（几何去冗余后 M≤K，K 为上界，也可经 ρ=K_abs/(NHW) 指定绝对上限）。（1）骨干沿用 FreeSplat 的特征提取、cost-volume 深度估计与高斯预测，去掉其原生 geometric fusion，候选为 NHW 个 pixel-aligned 高斯。（2）Budget-Conditioned Feature Modulation：ρ 空间广播后经轻量卷积嵌入为 budget feature E_i，加到 base feature F_i 上再进 MLP 预测 {α̃, Σ̃, c̃}，使预测 opacity 与属性随预算自适应，而非对固定预测做不同幅度截断。（3）Intra-Cross Mask Supervision：帧内按梯度幅值 g_i 与 (1−ρ_h) 分位数（ρ_h=γρ，γ=0.6）选高频结构像素，剩余像素均匀稀疏采样得低频覆盖，构成 pseudo mask Ω_intra=Ω_high+Ω_low；跨帧把正样本反投影 3D，先帧内粗体素取代表、再跨视图细体素分组，高频代表共享权重 1/|V_i(p)|、低频得固定弱权重 λ_low，以加权 BCE 监督激活 opacity。（4）Coverage-Aware Budget Selection：先 patch-wise 预选过采样高 opacity 候选，再在单视图候选池上做 view-wise global opacity ranking，最后跨视图 3D NMS 去几何冗余。（5）训练两阶段共 600K 迭代：先 300K dense 重建（MSE+LPIPS），再 300K 预算分支（ρ 随机采样并逐步向低比例偏移、top-K 渲染），总损失 L_render + λ_mask·L_mask + λ_alpha·L_alpha，L_alpha 惩罚目标视图渲染 alpha 缺失 |1−A_tgt|。",
+  "experiments": "ScanNet（100 训练/8 测试）+ Replica 8 场景零样本；单卡 RTX 4090、Adam lr 1e-4、batch 1、384×512（10 视图评测因部分基线 OOM 改 256×256），300K dense + 300K budget。Table 1（2/3 视图）：BudgetSplat 100% 28.11/0.839/0.228/382k、25% 27.84/0.840/0.250/98k（2 视图），100% 27.13/0.825/0.245/565k、25% 27.07/0.828/0.264/147k（3 视图）；同预算 EcoSplat 25% 仅 19.97/0.672/0.426/98k 与 20.35/0.703/0.420/147k；较 FreeSplat（28.08/278k、27.45/382k）少 60%+ 高斯、PSNR 仅差 0.24/0.38 dB。Table 2（10 视图，256×256）：BudgetSplat 100% 插值 24.90/0.790/0.254、外推 23.70/0.771/0.280、653k GS/147.0 MiB；25% 24.91/0.793/0.295、23.66/0.775/0.318、163k/36.7 MiB（较 FreeSplat 294k 少约 45%，PSNR/SSIM 接近其 25.03/0.800）；5% 24.68/0.789/0.368、23.35/0.771/0.391、33k/7.4 MiB（PSNR 较 100% 降 0.22/0.35 dB），同为 33k 时高于 GlobalSplat 23.13/0.761/0.338。Table 3（Replica 零样本）：3 视图 100% 26.38/0.841/0.211/580k、25% 26.35/0.841/0.235/147k；10 视图 100% 21.08/0.744/0.297/631k、25% 21.14/0.747/0.313/163k（移除约 74% 高斯、退化有限）。Table 4 消融（3 视图、147k）：plain view-wise Top-K baseline 13.02/0.386/0.561；+I 24.80/0.743/0.336；+I+A 26.14/0.810/0.311；+I+C+A 26.38/0.813/0.310；+I+A+S 26.75/0.821/0.279；Full 26.77/0.823/0.275。",
+  "innovation": [
+   "把预算可控前馈 3DGS 形式化为重要性估计、空间覆盖与跨视图冗余的联合问题，单模型支持任意 ρ∈(0,1] 与任意视图数，无逐预算重训、无逐场景压缩",
+   "ICMS：帧内高频结构+低频稀疏覆盖 pseudo mask 与跨视图细体素冗余加权联合监督 opacity，使排序依据从裸 opacity 变为预算感知的重要性",
+   "BCFM：把 ρ 注入高斯预测分支本身而非只做输出截断，使预测的 opacity 与属性随预算自适应",
+   "CABS：patch-wise 预选 + view-wise global opacity ranking + 3D NMS 三步选择，输出紧凑且空间分布均匀的高斯集"
+  ],
+  "limits": [
+   "pseudo 监督依赖图像梯度与估计几何，图像质量退化或深度误差在极紧凑预算下会影响选择",
+   "仍保留 dense pixel-aligned 预测骨干，前向计算量未减，只减最终表示与渲染成本",
+   "BudgetSplat 100% 的高斯数反而多于 FreeSplat（去掉了原生 geometric fusion），跨方法比较需注意候选集定义差异",
+   "仅室内 ScanNet/Replica 评测；绝对跨数据集性能仍受底层架构强烈影响（VolSplat/GlobalSplat 在不同设定更强）"
+  ],
+  "relation": "属前馈 3DGS 紧凑表示一线，与 FreeSplat/FreeSplat++（骨干与作者重叠）、ZPressor/GlobalSplat/VolSplat（固定容量路线）、EcoSplat（预算化 compaction 直接对照）、LightGaussian（post-hoc）构成谱系；与库内大量 3DGS 压缩/加速论文互补——它把可控性前移到测试时预算，而非训练容量或事后压缩。",
+  "repro": "全文未提代码或项目页开源；训练细节完整（Adam 1e-4、batch 1、600K 两阶段、λ_MSE=1.0/λ_LPIPS=0.05/λ_mask=0.1/λ_alpha=1.0、γ=0.6），硬件单卡 RTX 4090，数据为公开 ScanNet 与 Replica，基线多用官方 checkpoint（FreeSplat++ 仅引其 2/3 视图已发表数值）。",
+  "action": "做 3DGS 资产部署或流式分发的从业者可把 ρ 当作显式的质量-体积旋钮（25% 预算画质近损、5% 仍有 24.68 dB），落地时须在目标数据上验证梯度 pseudo mask 对低质量图像的鲁棒性，并核算 dense 骨干前向成本是否被压缩收益抵消。"
+ },
+ {
+  "id": "2611.06689",
+  "slug": "rov-haptic-cognition",
+  "venue": "arXiv preprint（Imperial College London、King's College London、York University，cs.RO，2026-11，arXiv:2611.06689v1，CC BY 4.0）",
+  "tags": [
+   "触觉反馈",
+   "ROV遥操作",
+   "认知负荷",
+   "NASA-TLX",
+   "人机交互",
+   "水下机器人"
+  ],
+  "conclusion": "8 名新手在室内泳池遥操 BlueROV2-Heavy 穿越可控横流：横流显著升高 NASA-TLX 总分（32.07 vs 控制 24.83，p=0.01487），软度+振动触觉反馈使物理/时间需求与自评表现改善（TLX 31.31），但 mental demand（28±24.5）与 frustration（37±29.6）为三条件最高；触觉条件下平均航速 0.388 m/s 显著高于纯横流 0.291 m/s（p=0.01619），显示更高自信；结合前作定位精度 +28.3%、有经验者路径偏差 -29.5% 的结论，触觉通道提升了风险意识与自信，但增加信息解释负担。",
+  "problem": "水下 ROV 遥操作中，动态三维障碍与不可见水流威胁昂贵硬件，且水下能见度差（光照不稳、高浊度、视觉畸变），恢复往往不可能。触觉反馈被提出用于向远程机器人操作员传递更密集的空间信息，但这类额外信息对认知负荷与操作员自信的影响缺乏系统研究——它可能降低负荷，也可能增加心智负担与挫败感。已有工作只报告定位精度、路径效率等定量 KPI，未剖析心理与行为维度。",
+  "method": "受试 in-water 实验：BlueRobotics BlueROV2-Heavy 沿直线前进 4 m 至可见红色浮标，路径中段由固定推进器制造左右横流；平面触觉触控板提供两种线索——particle jamming 实现的软度变化表示与目标浮标的距离，非对称振动表示横流的存在与方向；触控板内置力敏底座，左右载荷细胞记录手指左右位置用于转向、按压力度用于控速（按得越重走得越快）。8 名新手（5 男，20–70 岁，5 人常玩电子游戏、1 人常遥操 RC 载具，York University 伦理批准 e2022-266）。三条件各 5 次试验：控制=静水无触觉、横流=有流无触觉、触觉=有流有触觉；5 试验一块随机顺序，再做一轮 3×5 熟悉期区块。认知负荷用 NASA-TLX 问卷，平均速度作为自信的间接指标；Jarque-Bera 正态性检验后用双尾配对 t 检验，Matlab R2025b 统计工具箱，1.5×IQR 离群剔除。",
+  "experiments": "8 名新手、每条件 5+5 次试验（含熟悉期）。NASA-TLX 总分：横流 32.07（熟悉期 38.73/经验期 25.40）显著高于控制 24.83（26.40/23.27），p=0.01487；触觉 31.31（29.27/33.00）仅略降。六分量（均值±标准差，Table I 注明 performance 分量量表已反向、数值越高代表自评表现越好）：mental demand 21±14.3/26.5±19.6/28±24.5；physical demand 10.5±10.1/23±19.7/14.5±13.6；temporal demand 15.5±10.7/27.5±23.7/18±15.3；effort 31±16.5/42±17.7/39.5±20.6；performance 16±13.1/30.5±22.8/24±19.4；frustration 31±24.7/27.5±20.2/37±29.6；正文称横流恶化自评表现、触觉使其改善但未回到控制水平。速度：触觉 0.388 m/s 显著快于横流 0.291 m/s（p=0.01619），控制为 0.362 m/s。前作定量结论（Brown et al., J. Field Robotics 2025）：新手定位精度 +28.3%、有经验操作员路径偏差 -29.5%。",
+  "innovation": [
+   "在真实水体中分离触觉反馈对六维 NASA-TLX 分量与自信（速度代理）的影响，而非只报总体 KPI",
+   "发现反直觉的双面性：触觉降低 physical/temporal demand 与 effort，却同时抬高 mental demand 与 frustration——信息更难懂但更可行动",
+   "用平均航速作为自信的行为代理（0.388 vs 0.291 m/s，p=0.01619），把心理状态转化为可测行为量",
+   "纳入 familiarisation/experienced 两阶段分析：横流无助组经验后反而更谨慎（速度略降），触觉组舒适度与最高速度显著提升"
+  ],
+  "limits": [
+   "样本极小（8 名新手），且仅室内泳池加固定推进器产生的可预测横流，真实水域的动态三维危害未测",
+   "NASA-TLX 为事后问卷，无法实时监测认知负荷与触觉线索的关联；熟悉期后分量样本进一步变小",
+   "仅 novice 操作员，作者指出真实任务多由经验丰富操作员执行，基线差异可能改变结论",
+   "未覆盖高浊度等视觉退化场景（作者认为此时触觉冗余价值更高，但需验证）；速度作为自信代理是间接指标，未测实际风险行为或碰撞率"
+  ],
+  "relation": "属 haptic feedback for robot teleoperation 一线（上承力反馈方向警示、共享控制、keep-out 区域、卫星时延缓解等），是作者前作 Journal of Field Robotics 2025（定量 KPI）的心理-行为维度扩展；与库内触觉交互/遥操作及 XR 触觉渲染线互补——它给出触觉信息密度增加时认知代价的证据。",
+  "repro": "全文未提代码或数据开源；装置细节充分（BlueROV2-Heavy、粒子 jamming 软触控板+非对称振动、载荷细胞底座、池内铝框与 fiducial 视觉里程计），统计方法明确（Jarque-Bera + 双尾配对 t 检验、Matlab R2025b、1.5×IQR 离群），第三方可按协议重采；受试规模与室内泳池场地是主要复现门槛。",
+  "action": "设计水下/危险环境遥操作触觉界面的团队应把 mental demand 与 frustration 纳入验收指标而非只看任务精度，并为新手提供熟悉期训练与线索说明以化解触觉信息的解释成本；后续实验应换经验操作员与动态三维危害验证。"
+ }
+]
