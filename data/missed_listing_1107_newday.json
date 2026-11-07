@@ -1,0 +1,1548 @@
+{
+ "2026-11-06": {
+  "2611.08486": {
+   "title": "Do You Miss the Nights We Spent Crafting Figures? Rethinking Teaser and Framework Figures in the Age of Generative AI",
+   "cat": "cs.CV"
+  },
+  "2611.08485": {
+   "title": "Where and Why is Grounded Reasoning Useful?",
+   "cat": "cs.CV"
+  },
+  "2611.08477": {
+   "title": "EgoGeneralist: Unifying Egocentric Action-Video Tasks through Video-Native Modeling",
+   "cat": "cs.CV"
+  },
+  "2611.08441": {
+   "title": "Edge-Assisted Crowdsensing for Explainable Cyclist Safety Perception",
+   "cat": "cs.CV"
+  },
+  "2611.08436": {
+   "title": "SM4RT: Cascaded Feed-forward Model for 4D Reconstruction",
+   "cat": "cs.CV"
+  },
+  "2611.08393": {
+   "title": "Adaptive Low-Light Enhancement for Road Anomaly Detection: A Multi-Architecture Benchmark and Edge Deployment Study",
+   "cat": "cs.CV"
+  },
+  "2611.08360": {
+   "title": "OraRefer: Segmentation-Guided Multi-Photograph Fusion for Oral Cancer Screening with Guaranteed Patient-Level Sensitivity",
+   "cat": "cs.CV"
+  },
+  "2611.08352": {
+   "title": "USB Gym: A Gymnasium Testbed for Closed-Loop Ultrasound View Matching",
+   "cat": "cs.CV"
+  },
+  "2611.08342": {
+   "title": "4D Point Splatting for mmWave Radar Micro-Doppler Differentiable Rendering",
+   "cat": "cs.CV"
+  },
+  "2611.08330": {
+   "title": "InstantHand: Feed-Forward 3D Gaussian Splatting for Animatable Hand Avatar Reconstruction from a Single Image",
+   "cat": "cs.CV"
+  },
+  "2611.08294": {
+   "title": "ManimCode: Learning Visual Self-Correction for Educational Animation",
+   "cat": "cs.CV"
+  },
+  "2611.08288": {
+   "title": "Hierarchical Incremental Beta Splatting for Online Reconstruction",
+   "cat": "cs.CV"
+  },
+  "2611.08286": {
+   "title": "Interactive Visual Gym: Evaluating Visual Interaction Models with Simulated Users in Interactive Worlds",
+   "cat": "cs.CV"
+  },
+  "2611.08271": {
+   "title": "DART: Domain-Agnostic Residual Transfer for Generalist Anomaly Detection",
+   "cat": "cs.CV"
+  },
+  "2611.08264": {
+   "title": "SplatAnything: Gaussian Spacing Normalization for Feed-forward 3DGS across Arbitrary Scenes",
+   "cat": "cs.CV"
+  },
+  "2611.08216": {
+   "title": "ProQuant: Progressive Quantization-aware Training for Edge MLLMs",
+   "cat": "cs.CV"
+  },
+  "2611.08185": {
+   "title": "Multimodal Hierarchical Mixture-of-Experts for 3D Medical Vision-Language Modeling",
+   "cat": "cs.CV"
+  },
+  "2611.08157": {
+   "title": "Improving Context-Shift Robustness of Convolutional Networks via Context-Regularized Cross-Entropy",
+   "cat": "cs.CV"
+  },
+  "2611.08147": {
+   "title": "MCUFlowNet: Hardware-Aware Neural Architecture Search for Optical Flow on Microcontrollers",
+   "cat": "cs.CV"
+  },
+  "2611.08140": {
+   "title": "Fault-Guided Cross-Layer Prediction for Unsupervised Anomaly Detection",
+   "cat": "cs.CV"
+  },
+  "2611.08138": {
+   "title": "Describe Your Facial Expressions by Linking Image Encoders and Large Language Models",
+   "cat": "cs.CV"
+  },
+  "2611.08128": {
+   "title": "FreeOcc: Decoupling Ego-Motion for Efficient 4D Occupancy Forecasting via Continuous Flow Matching",
+   "cat": "cs.CV"
+  },
+  "2611.08125": {
+   "title": "ProtoGestalt: Interpretable Prototypes for Facial Phenotyping and Diagnosis of Rare Genetic Disorders",
+   "cat": "cs.CV"
+  },
+  "2611.08099": {
+   "title": "Towards Practical 20 kbps Generative Video Compression via Adaptive Tokenization and Entropy Modeling",
+   "cat": "cs.CV"
+  },
+  "2611.08095": {
+   "title": "National-scale mapping of tree species composition in Switzerland from high-resolution aerial imagery and multimodal data",
+   "cat": "cs.CV"
+  },
+  "2611.08091": {
+   "title": "ATHAAR: A Medieval Scientific Arabic Manuscript Dataset for Handwritten Text Recognition",
+   "cat": "cs.CV"
+  },
+  "2611.08081": {
+   "title": "TerraMesh-Masks: Open-Vocabulary Segmentation for Earth Observation",
+   "cat": "cs.CV"
+  },
+  "2611.08080": {
+   "title": "Spatiotemporal Dynamics-Aware Industrial Anomaly Detection and Reasoning",
+   "cat": "cs.CV"
+  },
+  "2611.08054": {
+   "title": "NutriVisRAG: Multimodal Exemplar Grounding for Nutrient Estimation with Vision-Language Models",
+   "cat": "cs.CV"
+  },
+  "2611.08005": {
+   "title": "Deformable Contact-Aware 3D Object Placement",
+   "cat": "cs.CV"
+  },
+  "2611.08003": {
+   "title": "When GeoFMs Meet VHR: Benchmarking Foundation Models on Very High Resolution Earth Observation Imagery",
+   "cat": "cs.CV"
+  },
+  "2611.07994": {
+   "title": "Reviving the Discarded High-Resolution Feature for Transformer-Based Tiny Object Detection",
+   "cat": "cs.CV"
+  },
+  "2611.07961": {
+   "title": "Bri3D: Bridging the Object-Scene Gap in Single-Image 3D Generation via Scene-Anchor",
+   "cat": "cs.CV"
+  },
+  "2611.07955": {
+   "title": "Rotation Is Token-Blind: A Structural Criterion for Post-Training Quantization of Feed-Forward Geometry Transformers",
+   "cat": "cs.CV"
+  },
+  "2611.07941": {
+   "title": "IDPrior: Decoupling Identity Generation from Facial Image Synthesis",
+   "cat": "cs.CV"
+  },
+  "2611.07939": {
+   "title": "WAM-Sim0.1: World Anchored Memory Meets Online RL for Consistent and Realistic Driving Simulation",
+   "cat": "cs.CV"
+  },
+  "2611.07935": {
+   "title": "Towards Scalable Diagnostic-Driven Whole-Slide Image Retrieval for Pathology Archives",
+   "cat": "cs.CV"
+  },
+  "2611.07922": {
+   "title": "StitchEdit: Stitching Depth Priors into Image Editors via Per-Layer Gradient Probing",
+   "cat": "cs.CV"
+  },
+  "2611.07902": {
+   "title": "XM4D: 4D Reconstruction through Certifiable Geometric Optimization",
+   "cat": "cs.CV"
+  },
+  "2611.07900": {
+   "title": "Structure from Collision via Hypothesis-Space Reasoning",
+   "cat": "cs.CV"
+  },
+  "2611.07883": {
+   "title": "InnerLogic-Surg: An Open Surgical Foundation Model via Continual Pretraining",
+   "cat": "cs.CV"
+  },
+  "2611.07873": {
+   "title": "PVDepth: Panoramic Video Depth Estimation via Geometry-Aware Spatiotemporal Adaptation",
+   "cat": "cs.CV"
+  },
+  "2611.07867": {
+   "title": "PlayGen2: Learning Real-Time Playable Worlds with Explicit 3D State",
+   "cat": "cs.CV"
+  },
+  "2611.07865": {
+   "title": "OcTreeMamba: Topology-Aware Mamba for 3D Medical Segmentation via Octree Sparsification",
+   "cat": "cs.CV"
+  },
+  "2611.07843": {
+   "title": "Enhanced MRI brain tumor detection using deep learning in conjunction with explainable AI SHAP based diverse and multi feature analysis",
+   "cat": "cs.CV"
+  },
+  "2611.07836": {
+   "title": "THG-Omni: Traceable Human-Centric Graph Supervision for Video Reasoning",
+   "cat": "cs.CV"
+  },
+  "2611.07828": {
+   "title": "STAG-Net: Structure-Aware Attention over Landmark Groups for Lightweight Head Pose Estimation",
+   "cat": "cs.CV"
+  },
+  "2611.07814": {
+   "title": "CMDiff: Left Atrial Scar Segmentation from 3D LGE MRI Using Conditional Mask Diffusion Model: A Feasibility Study",
+   "cat": "cs.CV"
+  },
+  "2611.07811": {
+   "title": "MV-Sign: Multi-View 3D Motion Integration and Enhanced Text-to-Motion Conditioning for Sign Language Production",
+   "cat": "cs.CV"
+  },
+  "2611.07810": {
+   "title": "Self-Supervised Diffusion Models for Handwritten Signature Verification via Ruin Reconstruction",
+   "cat": "cs.CV"
+  },
+  "2611.07793": {
+   "title": "Rain Beyond Streaks: Cascaded Realistic Rain and Wet Surface Synthesis via Scene Priors",
+   "cat": "cs.CV"
+  },
+  "2611.07765": {
+   "title": "BiGrounder: Bidirectional Training Unlocks the Potential of GUI Grounding",
+   "cat": "cs.CV"
+  },
+  "2611.07718": {
+   "title": "Multimodal Information Interactions Bottleneck for Multimodal Self-Supervised Learning",
+   "cat": "cs.CV"
+  },
+  "2611.07713": {
+   "title": "Selective Event Evidence and Persistent Temporal Priors for Event-Based Point Tracking",
+   "cat": "cs.CV"
+  },
+  "2611.07711": {
+   "title": "Fast and Accurate Hand Estimation in Pixels, Interaction and World Space",
+   "cat": "cs.CV"
+  },
+  "2611.07709": {
+   "title": "AffineGS: Unlocking Accurate Geometry in 3DGS via Spatially Varying Affine Rectification",
+   "cat": "cs.CV"
+  },
+  "2611.07705": {
+   "title": "FlyingDrones: A Dataset and Benchmark for Optical Flow Estimation from UAV motion",
+   "cat": "cs.CV"
+  },
+  "2611.07702": {
+   "title": "InfMasking: A Unified Variational Framework for Synergistic Multimodal Learning",
+   "cat": "cs.CV"
+  },
+  "2611.07683": {
+   "title": "ReferClaw: Disambiguating User Intent for Egocentric Assistance",
+   "cat": "cs.CV"
+  },
+  "2611.07682": {
+   "title": "DEQ-Det: Dual Evidence Queries for Few-Shot Analog IC Device Detection",
+   "cat": "cs.CV"
+  },
+  "2611.07677": {
+   "title": "GEKey: Learning Geodesic Eccentric 3D Keypoints via Self-Supervision",
+   "cat": "cs.CV"
+  },
+  "2611.07673": {
+   "title": "Egocentric Action Recognition with Objects and Vision-Language Affordances",
+   "cat": "cs.CV"
+  },
+  "2611.07665": {
+   "title": "CoGenRec: A Unified Generative Framework for Complementary Vision Reconstruction",
+   "cat": "cs.CV"
+  },
+  "2611.07662": {
+   "title": "Which Objects Stay? Learning Hierarchical Persistence Beliefs for Lifelong Open-Vocabulary Object Maps",
+   "cat": "cs.CV"
+  },
+  "2611.07658": {
+   "title": "ArtCrafter: Feed-Forward Generation of Articulated 3D Object with Analytic Joint Derivation",
+   "cat": "cs.CV"
+  },
+  "2611.07648": {
+   "title": "Generator-Aligned Reward Modeling with Target-Aware Bounded Optimization for Visual Generation",
+   "cat": "cs.CV"
+  },
+  "2611.07647": {
+   "title": "UniGADD: Universal Generator-Agnostic Deepfake Detector",
+   "cat": "cs.CV"
+  },
+  "2611.07644": {
+   "title": "Neural Image Compression with Internal-External Prior Fusion and Alignment",
+   "cat": "cs.CV"
+  },
+  "2611.07632": {
+   "title": "TRACEMARK: Editor-Aware Watermarking for User Attribution in Text-Guided Image Editing",
+   "cat": "cs.CV"
+  },
+  "2611.07613": {
+   "title": "Towards Real-Time Full-Waveform LiDAR Transformers via Intensity-Guided Token Reduction and Physics-Aware Augmentation",
+   "cat": "cs.CV"
+  },
+  "2611.07604": {
+   "title": "FisherDistill: Diffusion Distribution Distillation via Closed-Form Fisher Critics",
+   "cat": "cs.CV"
+  },
+  "2611.07593": {
+   "title": "TACT-KV: Tri-Axis Cosine Transform for Compressing Volumetric KV Caches in Medical VLMs",
+   "cat": "cs.CV"
+  },
+  "2611.07580": {
+   "title": "Subspace Learning with Outlier Exposure for Out-of-Distribution Detection",
+   "cat": "cs.CV"
+  },
+  "2611.07575": {
+   "title": "Georeferenced Cross-View 3D Reconstruction from Ground and Satellite Images",
+   "cat": "cs.CV"
+  },
+  "2611.07573": {
+   "title": "Integrating Learned Priors through Prior-Space Reparameterization for Physically Based Inverse Rendering",
+   "cat": "cs.CV"
+  },
+  "2611.07566": {
+   "title": "Guidance Is a Field, Not a Scalar: Interval-Integrated Classifier-Free Guidance for One-Step Video Generation",
+   "cat": "cs.CV"
+  },
+  "2611.07555": {
+   "title": "MetricTrail: Revisiting the Power of Metric Depth and Local Optimization for Long-Sequence Streaming 3D Reconstruction",
+   "cat": "cs.CV"
+  },
+  "2611.07553": {
+   "title": "Improving Long-Tail Detection via Layout-Instruction Conditioned Diffusion Synthesis",
+   "cat": "cs.CV"
+  },
+  "2611.07551": {
+   "title": "Training-Free Predictive Spatio-Temporal Token Pruning for Few-Step Autoregressive Video Diffusion",
+   "cat": "cs.CV"
+  },
+  "2611.07543": {
+   "title": "OptIMerge: Optimization-Based Merging of Diffusion Models",
+   "cat": "cs.CV"
+  },
+  "2611.07540": {
+   "title": "Action-Conditioned VLM Monitoring for Autonomous Vehicle Semantic Anomalies",
+   "cat": "cs.CV"
+  },
+  "2611.07513": {
+   "title": "Concertina: Embodying Manipulation and Cognition in One Diffusion Vision-Language Model",
+   "cat": "cs.CV"
+  },
+  "2611.07502": {
+   "title": "Coverage Hides Churn: Auditing and Preserving Conformal Decisions as VLM Label Registries Grow",
+   "cat": "cs.CV"
+  },
+  "2611.07498": {
+   "title": "Degree-Equalized View-Graph Selection under Tight Pair Budgets",
+   "cat": "cs.CV"
+  },
+  "2611.07481": {
+   "title": "Compact Motion Embeddings for Feed-forward Unified Human Animation",
+   "cat": "cs.CV"
+  },
+  "2611.07443": {
+   "title": "VIPA: View-Invariant Projector-Based Adversarial Attack",
+   "cat": "cs.CV"
+  },
+  "2611.07431": {
+   "title": "TRiST: Topology-Reinforced Swin Transformer for Medical Image Analysis",
+   "cat": "cs.CV"
+  },
+  "2611.07408": {
+   "title": "PSGAgent: Enhancing MLLMs&#39; Dynamic Visual Perception for Panoptic Scene Graph Generation via Agentic Reasoning",
+   "cat": "cs.CV"
+  },
+  "2611.07398": {
+   "title": "FreePath: Neural Mean Free Path for Image Dehazing",
+   "cat": "cs.CV"
+  },
+  "2611.07397": {
+   "title": "Vis2State: Visual Reasoning through Executable State Abstractions",
+   "cat": "cs.CV"
+  },
+  "2611.07392": {
+   "title": "WeLM-Image: A Unified Image Generation Model towards Visual Intelligence",
+   "cat": "cs.CV"
+  },
+  "2611.07354": {
+   "title": "MIKU: Material Invariance and Knowledge Unification for PBR Generation",
+   "cat": "cs.CV"
+  },
+  "2611.07329": {
+   "title": "Where Do Reported Long-Video QA Gains Come From? A Controlled Audit of Frame Selection, Evidence Injection, and Expert Routing",
+   "cat": "cs.CV"
+  },
+  "2611.07301": {
+   "title": "ArtiVidRM: Verifiable Artifact-as-Rubric Reward Modeling for Explicit Quality Articulation in Video Generation",
+   "cat": "cs.CV"
+  },
+  "2611.07294": {
+   "title": "Householder Motion Embedding: Noise Modulation for Motion-Controllable Video Generation",
+   "cat": "cs.CV"
+  },
+  "2611.07188": {
+   "title": "MammoSeek: A Mammography Agent with selective zooming for grounded reports",
+   "cat": "cs.CV"
+  },
+  "2611.07176": {
+   "title": "VINO: Revisiting 3D Representation Learning with Volume Transformers",
+   "cat": "cs.CV"
+  },
+  "2611.07148": {
+   "title": "Perceptual Distortion for Overfitted Video Coding: Sliced Matching in Space, Error Alignment in Time",
+   "cat": "cs.CV"
+  },
+  "2611.07132": {
+   "title": "A Proxy-Based Method for Measuring Racial Disparities in~Text-to-Image~Generators",
+   "cat": "cs.CV"
+  },
+  "2611.07081": {
+   "title": "Wide View Synthesis from Overlapping Perspective Cameras in Autonomous Driving",
+   "cat": "cs.CV"
+  },
+  "2611.07063": {
+   "title": "SD-LoRA: Training-Time Structural Distillation into LoRA for Few-Shot Vision-Language Adaptation",
+   "cat": "cs.CV"
+  },
+  "2611.07061": {
+   "title": "Segment What It Can Draw: Querying a Text-to-Image Generator with Its Own Images for Skin Lesion Segmentation",
+   "cat": "cs.CV"
+  },
+  "2611.07055": {
+   "title": "Expanding the Quality-Coverage Frontier with Competitive Flow Matching",
+   "cat": "cs.CV"
+  },
+  "2611.07049": {
+   "title": "Gaussians Can Subtract: Neural Dissolve Fields for Hybrid Scene Rendering",
+   "cat": "cs.CV"
+  },
+  "2611.07009": {
+   "title": "TraCE: Trajectory-Aware Concepts for Explainable Video Understanding",
+   "cat": "cs.CV"
+  },
+  "2611.06993": {
+   "title": "Batch-Conditioned Semantic Anchors for Robust Transductive Adaptation of Vision--Language Models",
+   "cat": "cs.CV"
+  },
+  "2611.06974": {
+   "title": "T$^2$-Splat: Adaptive Topology Mesh Splatting with Texture Residuals",
+   "cat": "cs.CV"
+  },
+  "2611.08449": {
+   "title": "VFlash: Fast, Accurate Visual Planning via Flash Primitive Decoding",
+   "cat": "cs.CV"
+  },
+  "2611.08413": {
+   "title": "T3R: Training-Free Two-Stage Token Refinement Towards Efficient and Robust VLA Models",
+   "cat": "cs.CV"
+  },
+  "2611.08407": {
+   "title": "Social Humanoid: Socially Responsive Human-Humanoid Interaction",
+   "cat": "cs.CV"
+  },
+  "2611.08372": {
+   "title": "MOMASPLAT: Dynamic Novel-View Demonstration Augmentation for Mobile Manipulation",
+   "cat": "cs.CV"
+  },
+  "2611.08368": {
+   "title": "VisionSIM: Beyond Idealized Sensors - A Multi-Modal Simulator for Robot Perception",
+   "cat": "cs.CV"
+  },
+  "2611.08359": {
+   "title": "A Theoretical Analysis of a Bilevel Optimization Formulation for Combined Local-Global Optical Flow Models",
+   "cat": "cs.CV"
+  },
+  "2611.08275": {
+   "title": "Aligning Policy Encoders with a Shape Teacher",
+   "cat": "cs.CV"
+  },
+  "2611.08262": {
+   "title": "The Geometry of Simulated Perspectives: Dissociating Representation and Behaviour in a Multimodal Language Model",
+   "cat": "cs.CV"
+  },
+  "2611.08240": {
+   "title": "FewStepRL: Fine-tuning Few-step Diffusion Models with Reinforcement Learning",
+   "cat": "cs.CV"
+  },
+  "2611.08236": {
+   "title": "Beyond Quadratic Attention: Separable Gaussian Operators for ODE Vision Transformers",
+   "cat": "cs.CV"
+  },
+  "2611.08156": {
+   "title": "La-JEPA: Compact Robot Policies with Latent World Modeling",
+   "cat": "cs.CV"
+  },
+  "2611.08154": {
+   "title": "Interpretable Multimodal MRI-Clinical Fusion for Functional Outcome Prediction After Acute Ischemic Stroke",
+   "cat": "cs.CV"
+  },
+  "2611.08148": {
+   "title": "Detecting Weather Fronts from Satellite Observations: What Does Reanalysis Add?",
+   "cat": "cs.CV"
+  },
+  "2611.08136": {
+   "title": "How Far Can Untrained Neural Networks Go in Anomaly Detection? From Tables to Pixels",
+   "cat": "cs.CV"
+  },
+  "2611.08111": {
+   "title": "Reinforcing End-to-End Autonomous Driving Safety via Negative-Aware Planning in a Unified World-Action Model",
+   "cat": "cs.CV"
+  },
+  "2611.07950": {
+   "title": "Leakage- and Label-Aware Benchmarking of Class-Imbalance Strategies for Multimodal Chest X-Ray and EHR Classification",
+   "cat": "cs.CV"
+  },
+  "2611.07929": {
+   "title": "Flux as a Codec: Zero-Shot Lossy Compression with Flux",
+   "cat": "cs.CV"
+  },
+  "2611.07909": {
+   "title": "EDGAR: Efficient Diffusion-Driven Gaussian Avatar Refinement via Synthetic Failure",
+   "cat": "cs.CV"
+  },
+  "2611.07850": {
+   "title": "Learning Robotic World Models with Semantic and Visual Feedback",
+   "cat": "cs.CV"
+  },
+  "2611.07775": {
+   "title": "Adapters as Data: The Latent Space of LoRAs",
+   "cat": "cs.CV"
+  },
+  "2611.07741": {
+   "title": "Comparing Classification and Feature Learning by Analyzing Their Loss Functions in Normalized Spaces with Different Scale Factors",
+   "cat": "cs.CV"
+  },
+  "2611.07730": {
+   "title": "Seeing Beyond the Next Step: World-Model-Guided Human-Like Navigation in Multi-Agent Scenes",
+   "cat": "cs.CV"
+  },
+  "2611.07512": {
+   "title": "RLGPA: A Reinforcement Learning-Guided Granularity Planning Attack for Decision-Based Sparse Adversarial Examples",
+   "cat": "cs.CV"
+  },
+  "2611.07463": {
+   "title": "FREE-LIVO: Physically Decoupled Yet Tightly Coupled LiDAR-Inertial-Visual Odometry",
+   "cat": "cs.CV"
+  },
+  "2611.07437": {
+   "title": "IMUDINO: Self-distilled Foundation Model for Inertial Sensing",
+   "cat": "cs.CV"
+  },
+  "2611.07417": {
+   "title": "MessyNav: Zero-Shot Navigation via Manipulation in Messy Environments",
+   "cat": "cs.CV"
+  },
+  "2611.07411": {
+   "title": "Kinematic Hypothesis Context: Embodiment-Conditioned Learned Video Coding for Bandwidth-Limited Robot Policy Uplinks",
+   "cat": "cs.CV"
+  },
+  "2611.07384": {
+   "title": "FFMT: Frequency-Factorized Multi-Rate Tokenization for Music-to-Dance Generation",
+   "cat": "cs.CV"
+  },
+  "2611.06935": {
+   "title": "An Evolutionary Hypothesis for White&#39;s Illusion: Constant Percentage Correction and Modern Individual Variation",
+   "cat": "cs.CV"
+  },
+  "2611.06930": {
+   "title": "Category differences in similarity between fixation density maps and psychological potential fields for sketches",
+   "cat": "cs.CV"
+  },
+  "2611.06255": {
+   "title": "Learning Noise Optimization for Reward Alignment in Few-Step Generative Models",
+   "cat": "cs.CV"
+  },
+  "2611.08301": {
+   "title": "REACT: Towards Real-Time Completion of Skeletal Motion Signals",
+   "cat": "cs.GR"
+  },
+  "2611.07979": {
+   "title": "Perception Over Geometry: Rethinking Gaussian Allocation in Mesh-based Splatting",
+   "cat": "cs.GR"
+  },
+  "2611.07328": {
+   "title": "DC-SQEM: Medial Mesh Extraction by Dual Contouring with Spherical Quadric Error Metric",
+   "cat": "cs.GR"
+  },
+  "2611.07289": {
+   "title": "Patch-Based Generalized Neural Texture Upscaling",
+   "cat": "cs.GR"
+  },
+  "2611.06954": {
+   "title": "Certified folding-free deformable image registration: A whole-cell Jacobian certificate and a sequential variational solver",
+   "cat": "cs.GR"
+  },
+  "2611.08443": {
+   "title": "Souffleur: A Glanceable Display for Mobile Voice Conversations",
+   "cat": "cs.HC"
+  },
+  "2611.08321": {
+   "title": "ControlAnything: Generative UI and On-Demand Device Integration for Mixed-Reality Hand Interaction by a Coding Agent",
+   "cat": "cs.HC"
+  },
+  "2611.08214": {
+   "title": "IntentWeaver: Sustaining Coherence across Evolving Intents in Human-AI Co-Writing",
+   "cat": "cs.HC"
+  },
+  "2611.08167": {
+   "title": "Reflective Nature Experiences in Virtual Reality",
+   "cat": "cs.HC"
+  },
+  "2611.07851": {
+   "title": "Tasteply: Externalizing Stable and Situational Preference as Manipulable Spatial Objects",
+   "cat": "cs.HC"
+  },
+  "2611.07798": {
+   "title": "VocabulARy 2.0: A Generative AR System Enabling Personalised 3D Mnemonics for Vocabulary Learning in Context",
+   "cat": "cs.HC"
+  },
+  "2611.07792": {
+   "title": "Thinking Is Not Writing: Designing AI Chatbots to Connect Reasoning and Revision",
+   "cat": "cs.HC"
+  },
+  "2611.07386": {
+   "title": "Breaking the Modality Barrier: Multimodal Fusion With Missing Modalities for Cybersickness Prediction",
+   "cat": "cs.HC"
+  },
+  "2611.07345": {
+   "title": "Slide to Report: Continuous Reporting Symptom-Specific Cybersickness in VR",
+   "cat": "cs.HC"
+  },
+  "2611.08398": {
+   "title": "A Multimodal Haptic Interface for Simultaneous Softness and Thermal Modulation",
+   "cat": "cs.HC"
+  },
+  "2611.08295": {
+   "title": "Transformer-Based Trajectory Prescription for sEMG-Optimizing Robot-Mediated Rehabilitation",
+   "cat": "cs.HC"
+  },
+  "2611.08226": {
+   "title": "&#34;Blind Compliance&#34;: Coercive Control in AI Jailbreaking",
+   "cat": "cs.HC"
+  },
+  "2611.08006": {
+   "title": "Automatic keyphrase extraction and annotation: modern theoretical approaches and practical solutions for text and speech",
+   "cat": "cs.HC"
+  },
+  "2611.07984": {
+   "title": "Technohybridism: Recursive Semantic Normalization in AI-Mediated Societies",
+   "cat": "cs.HC"
+  },
+  "2611.07874": {
+   "title": "Responsible GenAI Use During Active Armed Conflict: Evidence from Sudan&#39;s Emergency Response Rooms",
+   "cat": "cs.HC"
+  },
+  "2611.07576": {
+   "title": "Digital Security Under Compound Threats: Surveillance, Threat Reasoning, and Habituation Among North Korean Defectors in China",
+   "cat": "cs.HC"
+  },
+  "2611.07489": {
+   "title": "ReviewMap: Mapping Evaluative Acts and Automation Boundaries in Peer-Review Comments",
+   "cat": "cs.HC"
+  },
+  "2611.07272": {
+   "title": "VREgo: Consumer VR Headsets for Learning Robot Manipulation from Egocentric Demonstrations",
+   "cat": "cs.HC"
+  },
+  "2611.07072": {
+   "title": "Automated Feedback to Peer Tutors Increases Their Talk Moves and Learner Reasoning but Not the Balance of Talk",
+   "cat": "cs.HC"
+  },
+  "2611.06995": {
+   "title": "Autonomous AI Agents Systematically Diverge From Human Preferences in Proof Formalization",
+   "cat": "cs.HC"
+  },
+  "2611.06970": {
+   "title": "DiaHeads: Jointly Generating Coordinated 3D Dialogue Heads with Non-verbal Cues from Dual Audio",
+   "cat": "cs.MM"
+  },
+  "2611.08462": {
+   "title": "OopsieRecover: Learning Transferable VLA Corrections from Semantic Interventions",
+   "cat": "cs.RO"
+  },
+  "2611.08458": {
+   "title": "Latent RL Priors for Data-Efficient Dexterous Manipulation",
+   "cat": "cs.RO"
+  },
+  "2611.08425": {
+   "title": "Failure Prediction and Classification in Vision-Language-Action Models Via Calibrated Latent Probing",
+   "cat": "cs.RO"
+  },
+  "2611.08390": {
+   "title": "SCALE: Real-Time Latent Communication for Cyber-Physical Agents",
+   "cat": "cs.RO"
+  },
+  "2611.08373": {
+   "title": "SLA: Scaling Spatial-Language-Action Model via Continual Pre-training",
+   "cat": "cs.RO"
+  },
+  "2611.08364": {
+   "title": "SHORE: Stability-Hybrid On-Policy Reinforcement Learning for Online Bin Packing",
+   "cat": "cs.RO"
+  },
+  "2611.08361": {
+   "title": "Radio-to-Pose Information for Gauge-Drift Correction in Cooperative Localization",
+   "cat": "cs.RO"
+  },
+  "2611.08338": {
+   "title": "GPWM: Modeling the World as 3D Particle Motion",
+   "cat": "cs.RO"
+  },
+  "2611.08259": {
+   "title": "Fault-Geometry-Aware Control Allocation for Emergency Quadrotor Landing under Single-Motor Loss of Effectiveness",
+   "cat": "cs.RO"
+  },
+  "2611.08209": {
+   "title": "RoboARCade: Benchmarking Agentic Robot Control",
+   "cat": "cs.RO"
+  },
+  "2611.08144": {
+   "title": "Detecting Silent Faults at the Environment-Trainer Boundary in Reinforcement Learning",
+   "cat": "cs.RO"
+  },
+  "2611.08142": {
+   "title": "Educational robotics beyond ROS: a custom library for direct transfer of Webots controllers in the Turtlebot3",
+   "cat": "cs.RO"
+  },
+  "2611.08139": {
+   "title": "H-TRIP: Exact Many-to-Many Distance Index for Multi-Robot Exploration",
+   "cat": "cs.RO"
+  },
+  "2611.08119": {
+   "title": "H-BRICK: Hierarchical Boundary Reachability Index with Compressed Kleene Closure for Directed Grid Graphs",
+   "cat": "cs.RO"
+  },
+  "2611.08100": {
+   "title": "An Integrated Open-Source Stack for Vision-Based Autonomous Navigation of Wheeled Rovers",
+   "cat": "cs.RO"
+  },
+  "2611.08097": {
+   "title": "STEP: Spatiotemporal Training with Explicit Prediction for Perceptive Humanoid Locomotion",
+   "cat": "cs.RO"
+  },
+  "2611.08075": {
+   "title": "Leave It Better Than Found: Value-Guided Cooperation in Sequential Tasks",
+   "cat": "cs.RO"
+  },
+  "2611.08056": {
+   "title": "Terrain-Indexed Motion Priors and Geometric Support for Extreme Humanoid Parkour",
+   "cat": "cs.RO"
+  },
+  "2611.08039": {
+   "title": "HITCH: Teaching a Vision-Language Model to Operate a Humanoid through a Whole-Body Harness",
+   "cat": "cs.RO"
+  },
+  "2611.08013": {
+   "title": "Development of Anthropomorphic Arm for collaborative and Home Service Robot CHARMIE",
+   "cat": "cs.RO"
+  },
+  "2611.08012": {
+   "title": "Symmetry-Aware Surrogate-Assisted Testing of UAVs",
+   "cat": "cs.RO"
+  },
+  "2611.08009": {
+   "title": "A Unified Fractal Impedance Control Framework",
+   "cat": "cs.RO"
+  },
+  "2611.07964": {
+   "title": "Time-Indexed Skill Success Models for Latency-Aware Skill Selection and Timing in Dynamic Manipulation",
+   "cat": "cs.RO"
+  },
+  "2611.07896": {
+   "title": "AffordJEV: Affordance Grounding by Confirming Candidate Regions",
+   "cat": "cs.RO"
+  },
+  "2611.07881": {
+   "title": "TactileLab: Sim-to-Real Dexterous Robot Manipulation with Efficient Shear-Sensitive Tactile Simulation",
+   "cat": "cs.RO"
+  },
+  "2611.07808": {
+   "title": "A Sequential Framework for Urban Drone Delivery: Network Design, Vehicle Sizing, and Energy and Cost Assessment",
+   "cat": "cs.RO"
+  },
+  "2611.07779": {
+   "title": "Flexible Piezoelectric Tactile Sensing System for Intelligent Object Recognition",
+   "cat": "cs.RO"
+  },
+  "2611.07748": {
+   "title": "Wedge-Jamming Mechanism for String Configuration",
+   "cat": "cs.RO"
+  },
+  "2611.07726": {
+   "title": "Dual-Arm Tabletop Rearrangement with Movable Stacking and Gap-Aware Push Transfers",
+   "cat": "cs.RO"
+  },
+  "2611.07712": {
+   "title": "AffectiveVLA: Safe and Intent-Aware VLA Control for Human-Humanoid Social Interaction",
+   "cat": "cs.RO"
+  },
+  "2611.07687": {
+   "title": "Not Losing Your Way: Mitigating Visual-Inertial Odometry Drift through On-Demand Visual Feature Creation",
+   "cat": "cs.RO"
+  },
+  "2611.07679": {
+   "title": "PhySA: Decoupling Aesthetic and Physical Rewards for Humanoid Locomotion",
+   "cat": "cs.RO"
+  },
+  "2611.07663": {
+   "title": "Energy-Aware Open-Vocabulary Detection Scheduling for Low-Power Robotic Autonomy",
+   "cat": "cs.RO"
+  },
+  "2611.07651": {
+   "title": "GraspBench: Execution-Aware Cross-Robot Evaluation of 6-DoF Grasp Generation in MuJoCo",
+   "cat": "cs.RO"
+  },
+  "2611.07630": {
+   "title": "Real-Time Event-Based LED Tracking and Pose Estimation with PWM-Encoded Markers",
+   "cat": "cs.RO"
+  },
+  "2611.07621": {
+   "title": "Data-Driven Configuration of Protective Separation Zones in Collaborative Robot Cells from Operator Occupancy",
+   "cat": "cs.RO"
+  },
+  "2611.07560": {
+   "title": "Whole-Body Elasto-Geometrical Calibration of Wheeled Humanoid Robots Using a Shared-Waist Dual-Chain Model",
+   "cat": "cs.RO"
+  },
+  "2611.07537": {
+   "title": "Unified Overview of Safety Certificate Functions: Techniques from Hamilton--Jacobi Reachability and Control Barrier Functions",
+   "cat": "cs.RO"
+  },
+  "2611.07532": {
+   "title": "Semantics-to-Contact: A Stagewise Framework for Robust Contact-Rich Manipulation",
+   "cat": "cs.RO"
+  },
+  "2611.07517": {
+   "title": "Embodied RAG++: Retrieval-Augmented Generation From What Exists to What Works in Embodied Scenes",
+   "cat": "cs.RO"
+  },
+  "2611.07516": {
+   "title": "Training-Independent Validation of a Learning-Based Controller for Stunt Maneuvers",
+   "cat": "cs.RO"
+  },
+  "2611.07515": {
+   "title": "LMGN: A Unified Policy Learning Model for Last-Mile Grasp-Navigation",
+   "cat": "cs.RO"
+  },
+  "2611.07493": {
+   "title": "Fast and Reliable Open-Vocabulary Object Search with Absence Detection from Robot Memory",
+   "cat": "cs.RO"
+  },
+  "2611.07470": {
+   "title": "Kinematic analysis of a double-closed-loop four-bar chain-based leg for a multimodal quadruped-pentarotor robot",
+   "cat": "cs.RO"
+  },
+  "2611.07441": {
+   "title": "Closed-Loop Physics-Based Manipulation Evaluation at a Commodity Price: What 4.4 L4 GPU hours at $3.50 Buys You",
+   "cat": "cs.RO"
+  },
+  "2611.07403": {
+   "title": "Dynamic Watermarking and Action-Conditioned Latent Dynamics for Secure Vision-Based Controllers",
+   "cat": "cs.RO"
+  },
+  "2611.07293": {
+   "title": "An Ordering Optimization for Fruit-Vegetable in High-Density Environment based on Genetic Algorithm",
+   "cat": "cs.RO"
+  },
+  "2611.07275": {
+   "title": "Efficient Diffusion Policy Fine Tuning with Latent Noise Representation Bridging",
+   "cat": "cs.RO"
+  },
+  "2611.07268": {
+   "title": "CRISP: Constraint-Resolved Interactions between Subsystems for Predictive Whole-Body Cooperation",
+   "cat": "cs.RO"
+  },
+  "2611.07261": {
+   "title": "An Empirical Study of Reinforcement Learning for Keypoint Positioning of Deformable Linear Objects",
+   "cat": "cs.RO"
+  },
+  "2611.07235": {
+   "title": "Adaptive Hybrid Force-Vision Control with EMG-Derived References for Deformable Bottle Manipulation",
+   "cat": "cs.RO"
+  },
+  "2611.07229": {
+   "title": "Spatial-UMI-Dream: Scaling World Action Models with Metric Geometry for UMI Manipulation",
+   "cat": "cs.RO"
+  },
+  "2611.07091": {
+   "title": "Curvature by Design: A Support Structure for Continuum Robots",
+   "cat": "cs.RO"
+  },
+  "2611.08318": {
+   "title": "Learning the Task or Learning the Verifier? Rethinking Criteria Exposure in Embodied Self-Improvement",
+   "cat": "cs.RO"
+  },
+  "2611.07965": {
+   "title": "Reversible Dynamics, Asymmetric Actions: Parking as a Trajectory-Level Affordance",
+   "cat": "cs.RO"
+  },
+  "2611.07912": {
+   "title": "GuidedWAM: Training-Free Energy Guidance for World Action Models in Autonomous Driving",
+   "cat": "cs.RO"
+  },
+  "2611.07825": {
+   "title": "Generate-then-Rank: Learning Symbolic Goal Interpretation for Embodied Agents",
+   "cat": "cs.RO"
+  },
+  "2611.07163": {
+   "title": "Distributed Geometric Optimization and Control of Rigid Differential-Drive Formations from Relative-Position Measurements",
+   "cat": "cs.RO"
+  },
+  "2610.41970": {
+   "title": "When Does Test-Time Search Help World Action Models? An Empirical Audit of Candidate Selection and Simulator Integrity",
+   "cat": "cs.RO"
+  },
+  "2611.08483": {
+   "title": "SwarmEvolve: Latent Agent Swarms for Evolutionary Discovery and Optimization",
+   "cat": "cs.AI"
+  },
+  "2611.08478": {
+   "title": "Scientist World: Grow a Research World for AI-Scientists",
+   "cat": "cs.AI"
+  },
+  "2611.08452": {
+   "title": "ReproBridge: Building Reproducibility into ML Research Artifacts",
+   "cat": "cs.AI"
+  },
+  "2611.08428": {
+   "title": "The Power of Meta Access in the Software of the Future --- Demonstrated on LLM Chat UIs and Chat AI",
+   "cat": "cs.AI"
+  },
+  "2611.08417": {
+   "title": "Benchmarks as Software: Terminal-Bench and the Case for Continuous Benchmarks",
+   "cat": "cs.AI"
+  },
+  "2611.08412": {
+   "title": "The Gold Rush in AI4Math, II: What are signatures of AI-assisted Proofs?",
+   "cat": "cs.AI"
+  },
+  "2611.08403": {
+   "title": "StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning",
+   "cat": "cs.AI"
+  },
+  "2611.08392": {
+   "title": "Learning a patient world model for health system simulation in intensive care",
+   "cat": "cs.AI"
+  },
+  "2611.08369": {
+   "title": "NPCBench: A Clinical Apprenticeship Benchmark for Multimodal Care-Pathway Reasoning in Nasopharyngeal Carcinoma",
+   "cat": "cs.AI"
+  },
+  "2611.08341": {
+   "title": "Enhancing Local and Global Structure in Compressed AI Agent Memory",
+   "cat": "cs.AI"
+  },
+  "2611.08315": {
+   "title": "Benchmarking Large Language Models on Heterogeneous Cognitive and Biomedical Knowledge Graphs: The Role of Graph Grounding in Multi-Hop Reasoning and Hallucination Mitigation",
+   "cat": "cs.AI"
+  },
+  "2611.08308": {
+   "title": "RM-VLM: From Natural-Language Task Descriptions to Vision-Grounded Reward Machines",
+   "cat": "cs.AI"
+  },
+  "2611.08303": {
+   "title": "First-Token Attraction in Mamba Dynamics",
+   "cat": "cs.AI"
+  },
+  "2611.08284": {
+   "title": "A Generative Model of Contextual Integrity: Appropriate vs. Inappropriate Information Sharing",
+   "cat": "cs.AI"
+  },
+  "2611.08277": {
+   "title": "LeanContext: Disentangling Mathematical Resources from Local Formal Context in Lean Whole-Proof Generation",
+   "cat": "cs.AI"
+  },
+  "2611.08245": {
+   "title": "Value-oriented policy distillation for interpretable wind farm power control",
+   "cat": "cs.AI"
+  },
+  "2611.08232": {
+   "title": "Signals, Evidence, and Context: User Scrutiny in Real-World LLM Conversations",
+   "cat": "cs.AI"
+  },
+  "2611.08196": {
+   "title": "SMART: State-based Multi Agent Reasoning Traces for Verification-oriented Problem-Solving",
+   "cat": "cs.AI"
+  },
+  "2611.08177": {
+   "title": "BabyTheorist: A Benchmark for Learning to Theorize the World from Observation Alone",
+   "cat": "cs.AI"
+  },
+  "2611.08175": {
+   "title": "PCBRouteAgent: How Close Are LLM Agents to Becoming PCB Routing Engineers?",
+   "cat": "cs.AI"
+  },
+  "2611.08153": {
+   "title": "A Generative Foundation Model for Multimodal Tokamak Tasks",
+   "cat": "cs.AI"
+  },
+  "2611.08116": {
+   "title": "Create Your Own Work Stack: Deploying Self-hosted AI and Tooling in a Tech Startup",
+   "cat": "cs.AI"
+  },
+  "2611.08086": {
+   "title": "MUSS: A Multi-scale and Sequence-based Model for Single-cell Gene Regulation",
+   "cat": "cs.AI"
+  },
+  "2611.08082": {
+   "title": "DictLLM: Post-training Compression of Large Language Model with Dictionary Kernels",
+   "cat": "cs.AI"
+  },
+  "2611.08053": {
+   "title": "When Imperfect Automated Fact-Checking Backfires: Social Learning in the Presence of Misinformation",
+   "cat": "cs.AI"
+  },
+  "2611.08042": {
+   "title": "Secure Formal Raising: Protecting the Development of AI through Executable Properties",
+   "cat": "cs.AI"
+  },
+  "2611.07962": {
+   "title": "TCSExam: Evaluating Frontier LLMs on the Full Range of TCS Research",
+   "cat": "cs.AI"
+  },
+  "2611.07953": {
+   "title": "A Behavioural Framework for Predicting and Understanding Loss of Control in Frontier Artificial Intelligence Systems",
+   "cat": "cs.AI"
+  },
+  "2611.07948": {
+   "title": "Circe: Training-Free LLM Self-Evaluation via Component Interaction Consistency",
+   "cat": "cs.AI"
+  },
+  "2611.07947": {
+   "title": "ChemE-as-Code: An Open-Source Platform for Agentic AI in Chemical Engineering",
+   "cat": "cs.AI"
+  },
+  "2611.07920": {
+   "title": "How Finite Brains Generalize Without Bound: Spatial Memory as a Universal Computer",
+   "cat": "cs.AI"
+  },
+  "2611.07918": {
+   "title": "Adaptive Semantic Branching: Disagreement-Localized Cross-Trajectory Regeneration for Reasoning Candidate Expansion",
+   "cat": "cs.AI"
+  },
+  "2611.07899": {
+   "title": "Persistent Retrieval for Conversational Agents: A Study of Retrieval Efficiency",
+   "cat": "cs.AI"
+  },
+  "2611.07891": {
+   "title": "When Bigger Becomes Brittle: Why Compression Hurts More as Language Models Scale",
+   "cat": "cs.AI"
+  },
+  "2611.07870": {
+   "title": "FARR: Forecast-Aware Residual Refinement with Matched Endpoint Evidence for Long-Horizon Time-Series Forecasting",
+   "cat": "cs.AI"
+  },
+  "2611.07778": {
+   "title": "The Intrusion Pathway: How Non-Evidential Context Degrades Language Model Performance",
+   "cat": "cs.AI"
+  },
+  "2611.07757": {
+   "title": "RIVER: Evidence-guided multi-agent retrieval for enzyme--reaction discovery",
+   "cat": "cs.AI"
+  },
+  "2611.07717": {
+   "title": "Pediatric ECG foundation model via adult-to-pediatric fine-tuning: downstream tasks and clinical evaluation",
+   "cat": "cs.AI"
+  },
+  "2611.07706": {
+   "title": "Towards Generalist Graph-Level Anomaly Detection",
+   "cat": "cs.AI"
+  },
+  "2611.07689": {
+   "title": "MCPHallu: Benchmarking Reasoning, Execution, and Memory Hallucinations in MCP Agents",
+   "cat": "cs.AI"
+  },
+  "2611.07667": {
+   "title": "Who Should Know What? Empirical Information Design for Multi-Agent LLM Economies",
+   "cat": "cs.AI"
+  },
+  "2611.07653": {
+   "title": "PharmAgents2: Towards Autonomous End-to-End Drug Discovery",
+   "cat": "cs.AI"
+  },
+  "2611.07652": {
+   "title": "Don&#39;t Prompt Your Agents. Equip Them: Skillware as a Modular Standard for Sovereign, Auditable, and Deterministic Capability Execution for Logical Systems",
+   "cat": "cs.AI"
+  },
+  "2611.07633": {
+   "title": "Redacting Personal Data: A Speed and Accuracy Comparison of Regex, Presidio and Hybrid Designs",
+   "cat": "cs.AI"
+  },
+  "2611.07624": {
+   "title": "Beneath the Surface: What We Overlook When We Talk About Agent Evolution",
+   "cat": "cs.AI"
+  },
+  "2611.07610": {
+   "title": "Embedding-Space Fingerprinting of LoRA Fine-Tunes: Recovering the Training-Data Domain from the Model Artifact Alone",
+   "cat": "cs.AI"
+  },
+  "2611.07598": {
+   "title": "Align Before Aggregation: Basis-Consistent Federated LoRA under Heterogeneous Ranks",
+   "cat": "cs.AI"
+  },
+  "2611.07542": {
+   "title": "FlashOffloading: Low-Latency KV Cache Offloading for Long-Context LLM Serving",
+   "cat": "cs.AI"
+  },
+  "2611.07541": {
+   "title": "CST-Bench: Benchmarking Counterfactual Spatial Transition Reasoning with Causal Transition On-Policy Self-Distillation",
+   "cat": "cs.AI"
+  },
+  "2611.07528": {
+   "title": "Goal-Branching LaCAM: Temporary Goals as Search Branches in Dense Multi-Agent Pathfinding",
+   "cat": "cs.AI"
+  },
+  "2611.07520": {
+   "title": "Graph learning-assisted logic-based Benders decomposition for distributionally robust in-station train rescheduling under disruptions",
+   "cat": "cs.AI"
+  },
+  "2611.07508": {
+   "title": "DelegateEval: Evaluating Platforms for Personal External Service Agents",
+   "cat": "cs.AI"
+  },
+  "2611.07482": {
+   "title": "SAVeR$^2$: Reasoning-based Safety Alignment for Large Reasoning Models via Verifiable Rewards",
+   "cat": "cs.AI"
+  },
+  "2611.07464": {
+   "title": "FINCOSMOS: An Open-World Evaluation Paradigm for Agents in Finance",
+   "cat": "cs.AI"
+  },
+  "2611.07372": {
+   "title": "EnvOpt: Automated Optimization for Agent Environments",
+   "cat": "cs.AI"
+  },
+  "2611.07296": {
+   "title": "Robust Ranking of Port Impacts from Impending Tropical Cyclones: A Two-Stage Recommendation System",
+   "cat": "cs.AI"
+  },
+  "2611.07247": {
+   "title": "Goal Revelation as a Bridge Between Information-Theoretic Empowerment and Capability-Based Human Power",
+   "cat": "cs.AI"
+  },
+  "2611.07123": {
+   "title": "PromptOps: Iterative Prompt Optimization for LLM-as-a-Judge Systems",
+   "cat": "cs.AI"
+  },
+  "2611.07088": {
+   "title": "Synthesizing symbolic models of human and machine reasoning at scale",
+   "cat": "cs.AI"
+  },
+  "2611.07073": {
+   "title": "When Verification Is Not Agreement: Cross-Agent LLM-to-Dafny Formalization",
+   "cat": "cs.AI"
+  },
+  "2611.07066": {
+   "title": "Cooperative Multi-Agent Reinforcement Learning via Epigraph-Form Guided Exploration",
+   "cat": "cs.AI"
+  },
+  "2611.07051": {
+   "title": "Closed-Loop Agent Evaluation: Layered Measurement and Self-Calibration",
+   "cat": "cs.AI"
+  },
+  "2611.07048": {
+   "title": "Adapting the Process of Adaptation: Darwinian, Lamarckian, and Agent-Directed Evolution in AI",
+   "cat": "cs.AI"
+  },
+  "2611.06996": {
+   "title": "Trust Responsive Runtime Authorization for Agentic AI with Empirical Characterization of Policy Behavior and Parameter Sensitivity",
+   "cat": "cs.AI"
+  },
+  "2611.06989": {
+   "title": "The Two-Ledger Model: Transaction-Grain Cost Accounting for Multi-Agent AI Systems Across Clouds, Models, and Systems of Record",
+   "cat": "cs.AI"
+  },
+  "2611.06984": {
+   "title": "Resource-Efficient Reinforcement Learning Post-Training through Elastic Expert Parallelism",
+   "cat": "cs.AI"
+  },
+  "2611.06977": {
+   "title": "BlockLock: Reproducible LLM Inference with Fixed Batch Geometry",
+   "cat": "cs.AI"
+  },
+  "2611.06972": {
+   "title": "KDASO: Knowledge-Data Dual-Driven Automated Skill Optimization for Liability Adjudication Tasks",
+   "cat": "cs.AI"
+  },
+  "2611.06962": {
+   "title": "Formalizing inverse problems in the age of AI: possibilities, pitfalls, and an invitation",
+   "cat": "cs.AI"
+  },
+  "2611.08472": {
+   "title": "XStack: A Benchmark for ML Repo Migration",
+   "cat": "cs.AI"
+  },
+  "2611.08469": {
+   "title": "Same Behavior, Different Mechanism: What Finite Experiments Can Certify About Integrated Information",
+   "cat": "cs.AI"
+  },
+  "2611.08465": {
+   "title": "Towards interpreting any residual stream direction by scaling activation inversion",
+   "cat": "cs.AI"
+  },
+  "2611.08439": {
+   "title": "Label-Wording Augmentation in a Typed-Decision Encoder: Gains on Unfamiliar Words, Not on Abbreviations or Codes",
+   "cat": "cs.AI"
+  },
+  "2611.08438": {
+   "title": "Understanding AI from the Inside: The State of Mechanistic Interpretability for AI Safety",
+   "cat": "cs.AI"
+  },
+  "2611.08433": {
+   "title": "MedGraph: Maintaining Patient State with Graph Memory for Long-Term Medical Dialogue",
+   "cat": "cs.AI"
+  },
+  "2611.08386": {
+   "title": "Hybrid Machine Learning for Imbalanced Landing-Phase Safety Event Prediction from Flight Data",
+   "cat": "cs.AI"
+  },
+  "2611.08383": {
+   "title": "FedReason: Large Language Models as Weight-Space Meta-Aggregators for Heterogeneous Federated Learning",
+   "cat": "cs.AI"
+  },
+  "2611.08307": {
+   "title": "Measured Coupling for Parallel Decoding in Diffusion Language Models",
+   "cat": "cs.AI"
+  },
+  "2611.08290": {
+   "title": "AutoCompress: Automated Hardware-Guided Model Compression",
+   "cat": "cs.AI"
+  },
+  "2611.08273": {
+   "title": "Accelerating Safe Reinforcement Learning with Massive Parallelism",
+   "cat": "cs.AI"
+  },
+  "2611.08269": {
+   "title": "Accepted but Wrong: Silent Failures of LLM Code Repairs after API Migrations",
+   "cat": "cs.AI"
+  },
+  "2611.08263": {
+   "title": "Scaling Neural Motor Decoding via Decoupled Behavioral Pretraining",
+   "cat": "cs.AI"
+  },
+  "2611.08179": {
+   "title": "Knowing When to Teach: Learning from Teachable Prefixes in Multilingual Reasoning Distillation",
+   "cat": "cs.AI"
+  },
+  "2611.08134": {
+   "title": "Who Can Evaluate AI Independently? A Framework for Analysing Evaluation Infrastructure",
+   "cat": "cs.AI"
+  },
+  "2611.08093": {
+   "title": "Gradient Boosting for Efficient Rank Discovery in Tensor Network Kernel Machines",
+   "cat": "cs.AI"
+  },
+  "2611.08088": {
+   "title": "Value or Attention: Investigating Layer-wise Relevance Propagation for Graph Attention Networks",
+   "cat": "cs.AI"
+  },
+  "2611.08070": {
+   "title": "Can an LLM Actually Reason and Program about Neural Network&#39;s Weights or is it just memorization on steroids? Exploring &#34;Weight-Space Programming&#34;",
+   "cat": "cs.AI"
+  },
+  "2611.07945": {
+   "title": "tok: a textual concrete syntax of BPMN and DMN for humans and AI agents",
+   "cat": "cs.AI"
+  },
+  "2611.07940": {
+   "title": "CardioLM: A multilingual suite of small language models for the cardiology domain",
+   "cat": "cs.AI"
+  },
+  "2611.07932": {
+   "title": "AttnSR: Attention Step Reward for Long-Horizon Agentic RL",
+   "cat": "cs.AI"
+  },
+  "2611.07928": {
+   "title": "ZeroRAG: Adaptive Semantic Peer Routing for Decentralized Retrieval-Augmented Generation",
+   "cat": "cs.AI"
+  },
+  "2611.07892": {
+   "title": "DISCERN: Distributional Synthetic Replay for Retain-Free Incremental Machine Unlearning",
+   "cat": "cs.AI"
+  },
+  "2611.07886": {
+   "title": "When, Where, How: Active In-Context Learning for Tabular Foundation Models",
+   "cat": "cs.AI"
+  },
+  "2611.07879": {
+   "title": "Network Effect Decomposition for Causal Effect Estimation under Network Interference",
+   "cat": "cs.AI"
+  },
+  "2611.07859": {
+   "title": "CORE: Coarse-to-Fine Search with Context Management for Deep Research",
+   "cat": "cs.AI"
+  },
+  "2611.07847": {
+   "title": "Computation, not weight access: large language models as auditors of clinical prediction networks",
+   "cat": "cs.AI"
+  },
+  "2611.07845": {
+   "title": "Masked diffusion as random sequential adsorption: an exactly solvable model for parallel decoding",
+   "cat": "cs.AI"
+  },
+  "2611.07827": {
+   "title": "Instantiating the Knowledge Plane",
+   "cat": "cs.AI"
+  },
+  "2611.07820": {
+   "title": "Axis-LoRA: Probing and Adapting Embedding Models for Personal-Memory Retrieval",
+   "cat": "cs.AI"
+  },
+  "2611.07780": {
+   "title": "Bridging Structure and Semantics: Knowledge Graph Verification via Triple-to-Text Alignment",
+   "cat": "cs.AI"
+  },
+  "2611.07756": {
+   "title": "Scaling Laws for SAE Training Data",
+   "cat": "cs.AI"
+  },
+  "2611.07736": {
+   "title": "Extending Reasoning in Typed Decision Models via Looping",
+   "cat": "cs.AI"
+  },
+  "2611.07735": {
+   "title": "Evaluating Token Probabilities as Confidence Estimators in Human Behavior Simulations: A Case Study in Luxembourgish Next Like Prediction",
+   "cat": "cs.AI"
+  },
+  "2611.07731": {
+   "title": "O$^2$PD: Overlap-Gated On-Policy Distillation on Reliable Prefix",
+   "cat": "cs.AI"
+  },
+  "2611.07721": {
+   "title": "Continued Training of Continuous Language Flows with Token Identity Squared Supervision",
+   "cat": "cs.AI"
+  },
+  "2611.07720": {
+   "title": "Evaluating Language Model Features for Zero-Shot Time-Series Anomaly Detection Under Isolation Assumption",
+   "cat": "cs.AI"
+  },
+  "2611.07707": {
+   "title": "CAMP: Context-Aware Mapping and Placement for LLMs on 3D-IMC Arrays",
+   "cat": "cs.AI"
+  },
+  "2611.07695": {
+   "title": "Equivariant Deep Learning in Direct-Product Space for Electronic-Structure Hamiltonian Prediction",
+   "cat": "cs.AI"
+  },
+  "2611.07675": {
+   "title": "Randomized Parallel Complexity of Weakly Convex Optimization",
+   "cat": "cs.AI"
+  },
+  "2611.07650": {
+   "title": "What the Middleman Delivers: Answer Behavior, Tool Permissions, and Billed Usage in LLM API Relays",
+   "cat": "cs.AI"
+  },
+  "2611.07646": {
+   "title": "WaSP: Wasserstein Data Synthesis Pipeline for Solver-Free Operator Learning",
+   "cat": "cs.AI"
+  },
+  "2611.07640": {
+   "title": "Beyond Instruction Override: Benchmarking Indirect Prompt Injection with Task-Tampering Attacks",
+   "cat": "cs.AI"
+  },
+  "2611.07639": {
+   "title": "Measuring the Marginal Value of Verifier-Based RL Beyond Supervised Fine-Tuning",
+   "cat": "cs.AI"
+  },
+  "2611.07614": {
+   "title": "The Popular Get More Popular: Auditing Brand Bias in Generative Search",
+   "cat": "cs.AI"
+  },
+  "2611.07595": {
+   "title": "Evolver: Turning Agent Exploration into Evolving Capabilities",
+   "cat": "cs.AI"
+  },
+  "2611.07589": {
+   "title": "Learning and Steering in Incomplete-Information Games",
+   "cat": "cs.AI"
+  },
+  "2611.07586": {
+   "title": "Stress Testing Chain-of-Thought Monitoring Against Covert Misalignment",
+   "cat": "cs.AI"
+  },
+  "2611.07558": {
+   "title": "SKIM: Pruning Large Language Model Agents via Selective Knowledge Informed Masking",
+   "cat": "cs.AI"
+  },
+  "2611.07554": {
+   "title": "The Memory Trap: Language Agents Overgeneralize from Benign Interactions",
+   "cat": "cs.AI"
+  },
+  "2611.07529": {
+   "title": "Adaptive Experimentation Can Hide Model Error:Detection Limits and Falsification Budget",
+   "cat": "cs.AI"
+  },
+  "2611.07483": {
+   "title": "Signed but Not Safe: Requirement Integrity in Multi-Agent LLM Handoffs",
+   "cat": "cs.AI"
+  },
+  "2611.07478": {
+   "title": "Localization Does Not Imply Steerability: A Mechanistic Study of Sign Errors in LLM Mathematics",
+   "cat": "cs.AI"
+  },
+  "2611.07477": {
+   "title": "KOSMOS: Self-scheduling Persistent Kernels for Communication-Compute Overlap",
+   "cat": "cs.AI"
+  },
+  "2611.07474": {
+   "title": "Adversarial Robustness of Kernel Machines: A Comprehensive Analysis",
+   "cat": "cs.AI"
+  },
+  "2611.07473": {
+   "title": "Echoes of Error: Residual-Directional Local Rollout Consistency for Timeseries Forecasting",
+   "cat": "cs.AI"
+  },
+  "2611.07461": {
+   "title": "The Last Mile to the Real World: Agent-Native Primitives as Reusable Building Blocks for Solving Real-World Tasks",
+   "cat": "cs.AI"
+  },
+  "2611.07432": {
+   "title": "Typed Knowledge over Constructive Institutions",
+   "cat": "cs.AI"
+  },
+  "2611.07367": {
+   "title": "Test-Time Self-Play: Scaling without a Verifier",
+   "cat": "cs.AI"
+  },
+  "2611.07342": {
+   "title": "Selective Retrieval Routing for Multi-Violation Knowledge Graph Repair",
+   "cat": "cs.AI"
+  },
+  "2611.07327": {
+   "title": "Permanent and Transient Representations for Continual Reinforcement Learning",
+   "cat": "cs.AI"
+  },
+  "2611.07286": {
+   "title": "How Should Agents See Code? Rethinking Code Representations for Agentic Software Engineering",
+   "cat": "cs.AI"
+  },
+  "2611.07283": {
+   "title": "Encoding and Propagation of Grammatical Number in Large Language Models",
+   "cat": "cs.AI"
+  },
+  "2611.07270": {
+   "title": "Satisficing as competitive Bayesian weighting: a minimal model of goal-directed choice under an unattained target",
+   "cat": "cs.AI"
+  },
+  "2611.07265": {
+   "title": "How Deep is the Signal? Time-Context up to 30 Years for Colorectal Cancer Prediction in a Primary-Care EHR Model",
+   "cat": "cs.AI"
+  },
+  "2611.07257": {
+   "title": "Evolutionary Adaptive Neighborhood Learning: A Genetic Algorithm for Instance-Dependent k Optimization in Nearest Neighbor Classification",
+   "cat": "cs.AI"
+  },
+  "2611.07256": {
+   "title": "TriAttention: Unified Sparse Mixed-Precision Attention for Long-Context LLM Inference",
+   "cat": "cs.AI"
+  },
+  "2611.07246": {
+   "title": "KG-Neighbor: Knowledge-Guided Neighborhood Construction for Embedding Visualization",
+   "cat": "cs.AI"
+  },
+  "2611.07245": {
+   "title": "MAC-v2: Long-horizon model-based value expansion from pixels",
+   "cat": "cs.AI"
+  },
+  "2611.07234": {
+   "title": "Archetypal contexts in the neurons of language models: an architecture for intelligence?",
+   "cat": "cs.AI"
+  },
+  "2611.07222": {
+   "title": "SPILLWAY: Separating Target Admission from Sanitization to Defend Tool-Using Agents against Prompt Injection",
+   "cat": "cs.AI"
+  },
+  "2611.07217": {
+   "title": "TileQuant: Tile as the Precision-Allocation Unit for LLM Mixed-Precision Post-Training Quantization",
+   "cat": "cs.AI"
+  },
+  "2611.07216": {
+   "title": "Compositional Unalignment: Auditing Safety in Large Vision-Language Models",
+   "cat": "cs.AI"
+  },
+  "2611.07194": {
+   "title": "SeVerus: Context-Aware, Gamified Benchmarking for Rust Verification",
+   "cat": "cs.AI"
+  },
+  "2611.07166": {
+   "title": "Multi-step SWE: Can Coding Agents Keep Building on Their Own Code Over Long Horizons?",
+   "cat": "cs.AI"
+  },
+  "2611.07155": {
+   "title": "Depth or Description? When a One-Step Latent Score Replaces Lookahead in Proactive Information Acquisition",
+   "cat": "cs.AI"
+  },
+  "2611.07140": {
+   "title": "More Agents, More Reliable? System-Level Reliability of Multi-Agent LLMs under Operational-Profile Uncertainty",
+   "cat": "cs.AI"
+  },
+  "2611.07126": {
+   "title": "Adapting LLM Judges to Observed Human Annotation Policy through Soft Prompt Tuning",
+   "cat": "cs.AI"
+  },
+  "2611.07103": {
+   "title": "A Night at the LLM Zoo: Data Conditioned Flow Matching for Generating Pretrained LLM Weights",
+   "cat": "cs.AI"
+  },
+  "2611.07089": {
+   "title": "Polynomial-Time Computation of Extensive-Form Proper Equilibria in Two-Player Zero-Sum Games",
+   "cat": "cs.AI"
+  },
+  "2611.07071": {
+   "title": "Shaping &amp; Monitoring Models through their Internal Representations",
+   "cat": "cs.AI"
+  },
+  "2611.07069": {
+   "title": "Finite-Time Convergence and Regret Guarantees for Neural Reinforcement Learning in POMDPs",
+   "cat": "cs.AI"
+  },
+  "2611.07054": {
+   "title": "Reclassification Is All You Missed: Surfacing Variant Reinterpretation Need in Online Health Communities at Population Scale",
+   "cat": "cs.AI"
+  },
+  "2611.06988": {
+   "title": "Big Models, Small Gains: Frozen Forecasters as Classifiers on MONSTER",
+   "cat": "cs.AI"
+  },
+  "2611.06969": {
+   "title": "Interactive Backdoor Attacks in LLM-Based Proactive Dialogue Systems",
+   "cat": "cs.AI"
+  },
+  "2611.06950": {
+   "title": "KG-AST for Cheaper CI/CD: Budgeted Test Selection and AI Bug Review",
+   "cat": "cs.AI"
+  },
+  "2611.06936": {
+   "title": "From Maps to Metabolism: Historical Precedents and a Unified Critique of Computationalism",
+   "cat": "cs.AI"
+  },
+  "2611.06934": {
+   "title": "BrainPFN: Amortized Brain-Behaviour Prediction via Prior-Data Fitted Networks",
+   "cat": "cs.AI"
+  },
+  "2611.06932": {
+   "title": "Oscillatory Phase Coding Emerges in Adaptive RNNs for Flexible Working Memory",
+   "cat": "cs.AI"
+  },
+  "2611.06929": {
+   "title": "ApproxBrain: Certified Sufficiency Frontiers in Connectome-Constrained Neural Systems",
+   "cat": "cs.AI"
+  },
+  "2611.06928": {
+   "title": "A minimal dynamical model of human-AI cognitive coevolution",
+   "cat": "cs.AI"
+  },
+  "2611.07135": {
+   "title": "Finite Element Elastographic Analysis of Kidney MRI for Computational Assessment of Chronic Kidney Disease",
+   "cat": "eess.IV"
+  },
+  "2611.06992": {
+   "title": "Task-Aware Bitrate Thresholds for Codec-Robust Ultrasound Segmentation",
+   "cat": "eess.IV"
+  },
+  "2611.07690": {
+   "title": "Simulation of Refraction Through Voxel Volumes",
+   "cat": "eess.IV"
+  }
+ }
+}

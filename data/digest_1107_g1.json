@@ -1,0 +1,175 @@
+[
+  {
+    "id": "2611.06974",
+    "slug": "t2-splat",
+    "venue": "arXiv preprint（华中科技大学、东华大学，cs.CV，2026-11，arXiv:2611.06974v1；含 NeurIPS 论文清单，License CC BY 4.0）",
+    "tags": [
+      "网格 splatting",
+      "新视图合成",
+      "表面重建",
+      "3D Gaussian Splatting（3D 高斯泼溅）",
+      "可微渲染",
+      "拓扑优化",
+      "Mip-texture 纹理",
+      "图形管线兼容"
+    ],
+    "conclusion": "T²-Splat 将拓扑自适应（Safe RDT + DTE 边折叠/点分裂）与残差 per-face Mip-texture 外观精化解耦：Mip-NeRF 360 PSNR 25.49 dB（较 MeshSplatting +0.71 dB）、2M 顶点；Garden 2.7M 面达 25.68 dB，压缩至 10% 面数仍 23.93 dB；OpenGL 236 FPS/62 MB（较 MeshSplatting 1.87×、存储省 59%）。",
+    "problem": "3DGS 非结构化点基表示难以融入标准图形管线（深度缓冲、硬件遮挡剔除等），网格 splatting 虽兼容却存在结构性耦合缺陷：三角形基元同时承担几何支撑与外观存储双重职责——平滑区三角形冗余、削减面预算又丢失高频外观，使拓扑简化与外观保真度相互制约。现有 MeshSplatting/RDT 方法拓扑一旦建立即冻结，无法随场景空间复杂度自适应再分配三角形。",
+    "method": "两阶段框架。几何阶段：Safe RDT 在 RDT 候选面上按归一化距离 d_f、法向一致 a_f、三角形质量 q_f 过滤并沿边前沿贪心生长一致定向流形；Dynamic Topology Evolution（DTE）每 1000 迭代执行 QEM 边折叠（代价含归一化 QEM 误差+基础色差+不透明度差）与梯度驱动点分裂（透视补偿分数 g_i^c=||∇_v L||·d_i 跨视图平均），并以 Optimizer State Stitching 按入射面积加权迁移 Adam 一/二阶矩保持优化连续。外观阶段冻结网格与顶点，每面附零初始化 R×R×3 残差纹理，镜面映射将三角形域嵌入方形纹理，AvgPool 构建 Mip-texture 金字塔、按屏幕空间导数估计 LOD λ 做三线性采样；几何期损失 L=L_3DGS+β_o L_o+β_z L_z+β_n L_n+β_d L_d，外观期 L_texture=λ_l1 L_1+λ_ssim L_SSIM+λ_tv L_TV+λ_l2 L_2。",
+    "experiments": "数据集 Mip-NeRF 360、Tanks & Temples、DTU；基线含 3DGS、2DGS、GOF、RaDe-GS、MiLo、Gaussian Wrapping、Triangle Splatting、MeshSplatting。Mip-NeRF360：PSNR 25.49/LPIPS 0.234/SSIM 0.779/2M 顶点（MeshSplatting 24.78/0.310/0.728/3M）；T&T 21.12/0.213/0.795/1M（LPIPS、SSIM 为网格类最佳，PSNR 次于 GOF 21.69、MiLo 21.46）；DTU Chamfer 均值 0.68（与 RaDe-GS、MiLo 并列第二，Gaussian Wrapping 0.49 更低），14/15 场景优于 MeshSplatting，scan 63/83/105 最低。Garden 面数扫描：100% 2.7M 面 25.68 dB；50% 1.4M 面 25.38 dB；10% 0.3M 面 23.93 dB/0.697 SSIM。OpenGL（MacBook Air M3，1920×1080）236 FPS/62 MB，GOF/RaDe-GS OOM。消融：Safe RDT 面数 5.3M→3.0M（−43%），DTE +0.31 dB 且面数→2.5M，8×8 较 4×4 纹理 +0.06 dB；完整配置较基线 +0.83 dB、面数 −53%、训练 54→83 min（RTX 6000 Ada）。",
+    "innovation": [
+      "提出拓扑适应与外观精化解耦的两阶段网格 splatting 框架，打破三角形密度与外观保真度的绑定",
+      "Safe RDT 约束性面选择 + DTE（QEM 边折叠与梯度驱动点分裂）将渐进网格操作融入可微渲染管线，实现拓扑动态演化",
+      "零初始化残差 per-face Mip-texture 实现 Stage I→II 无损过渡，LOD 三线性采样抑制跨尺度 aliasing",
+      "Optimizer State Stitching 保持拓扑编辑前后 Adam 优化历史连续，支持拓扑编辑期间持续训练"
+    ],
+    "limits": "附录 A.7 自述：局部表面起伏与法向不连续仍在，薄结构/稀疏观测区恢复依赖初始几何支撑；局部连接检查无法防自交与折叠，离散编辑的 CPU-GPU 迁移有开销；统一纹理分辨率未按投影面积与外观复杂度分配；独立面纹理在共享边颜色不一致、掠射角各向异性足迹的 mip 过滤不足；镜面高光、透明/折射超出 SH+残差表达能力；导出烘焙丢失方向变化。NeurIPS 清单承认对几何褶皱与透明物体仍困难。",
+    "relation": "库内已有大量 3DGS 与网格提取重建论文（SuGaR、2DGS、GOF、MiLo、MeshSplatting）。本文定位为 MeshSplatting 的直接改进（+0.71 dB、面数 −53%），与 MiLo/GOF/RaDe-GS 的“先优化再提取”路线竞争，增量在于拓扑-外观解耦、可调面预算（10%–100%）与标准 OpenGL 管线部署。",
+    "repro": "项目页 https://t2-splat.github.io/ ；代码尚未开源（NeurIPS 清单：We will release the code after acceptance）；License CC BY 4.0。",
+    "action": "重点追踪：代码发布后复现 25.49 dB/2M 顶点结果；其残差 Mip-texture 与 DTE 拓扑演化机制可迁移至其他网格 splatting 管线做纹理与拓扑增强。"
+  },
+  {
+    "id": "2611.07049",
+    "slug": "gaussians-can-subtract",
+    "venue": "arXiv preprint（东京大学、福州大学，cs.CV，2026-11，arXiv:2611.07049v1；License CC BY 4.0）",
+    "tags": [
+      "混合网格-高斯渲染",
+      "新视图合成",
+      "3D Gaussian Splatting（3D 高斯泼溅）",
+      "Neural Dissolve Field",
+      "透射率融合",
+      "场景重建",
+      "实时渲染"
+    ],
+    "conclusion": "Gaussolve 将混合 Mesh-Gaussian 冲突重构为多视图不一致问题：标量球谐高斯组成的 Neural Dissolve Field 选择性溶解不一致网格，连续透射率融合让残差高斯回填；ML-Hypersim-AI 最高 PSNR 36.89 dB（3DGS-MCMC 变体），Deep Blending 平均 PSNR 30.31、LPIPS 0.232，高斯数较 MeshGS 少 59.5%，渲染 241 FPS（Reduced 3DGS 变体）。",
+    "problem": "现有混合网格-高斯渲染采用加性范式：网格承载规则结构、高斯补偿 mesh 残差。但 Mesh-Gaussian 冲突并非都源于内容缺失——残差几何误差、遮挡错配、纹理投影伪影与视图相关外观会使同一网格内容在一个视图一致、另一视图不一致。既有方法以硬可见性或硬分配消解冲突：不透明网格会完全压制其后高斯并阻断其修正梯度，且微小深度变化即引发表面可见性跳变，无法刻画随视角变化的不一致。",
+    "method": "三分支表示：RealityCapture 重建 + 训练图像直接投影的纹理网格（默认 decimate 至 100k 面）、残差 RGB 高斯、Neural Dissolve Field。NDF 由溶解高斯构成（复用标准高斯几何与不透明度参数，预测标量溶解值 c_d,i(v)=σ(SH_d,i(v))∈[0,1]），按高斯光栅化 alpha 合成 D(u)=Σ_i T_d,i α̂_d,i c_d,i(v)，有效网格不透明度 α_m^eff(u)=1−D(u)。连续透射率融合：C_hybrid=α_m^eff(C_f+T_f C_m)+(1−α_m^eff)C_g 的无除法形式，α_m^eff=1 保留网格、=0 退回纯高斯；栅格化网格深度仅用于前后高斯划分且固定不变。训练课程：先纯 3DGS 预热；再引入 mesh+NDF 与 loss-driven dual densification（按误差比例采样高误差像素、以网格深度反投影为 3D 锚点，同时新增溶解与残差候选）；densification 结束后解冻网格纹理联合微调。",
+    "experiments": "ML-Hypersim-AI（结构化）与 Deep Blending（半结构化）；基线含 3DGS、Reduced 3DGS、3DGS-MCMC、SuGaR、PGSR、MeshSplatting、3D-GES 及同网格先验的 Hard-Z Proxy。ML-Hypersim-AI：Ours(3DGS-MCMC) 36.89/0.961/0.110（3DGS 基线 34.39/0.155），Ours(3DGS) 35.35/0.962/0.108，Reduced 3DGS 变体 35.29 且 ΔGS 67%；Deep Blending：Ours(3DGS-MCMC) 28.93/0.880/0.227 最优。对 MeshGS/Hybrid Mesh-Gaussian（Deep Blending 两场景）：平均 PSNR 30.31、LPIPS 0.232、ΔGS 59.5%（MeshGS ~30%、HMG 36%）。深度一致性 AbsRel 0.0680、RMSE 0.0785、δ1 0.9751、Boundary F1 0.6814 均最佳。效率：3DGS 骨干 174 FPS/0.336G（GS 基线 99 FPS/0.655G），Reduced 3DGS 骨干 241 FPS/0.219G。消融（ML-Hypersim-001）：Full 35.21 dB/0.106 LPIPS；Hard-Z 33.51；Mesh+NDF 29.76；去标量 SH 34.64；去双 densification 34.80；去渐进初始化 35.02。训练 RTX 5000 Ada、30k 迭代。",
+    "innovation": [
+      "将混合渲染冲突重构为多视图不一致问题，提出 subtract-and-refill（先选择性溶解不一致网格、再由残差高斯回填）新范式，突破纯加性混合",
+      "视图相关的 Neural Dissolve Field：标量球谐高斯学习“在哪些位置、从哪些视角溶解网格内容”，一致视角保留网格证据",
+      "连续透射率融合规则（无除法形式）避免硬可见性不连续，保留残差高斯的重建梯度并逐步暴露其后内容",
+      "渐进优化课程 + loss-driven dual densification，提高混合优化稳定性"
+    ],
+    "limits": "面向“大面积规则结构可由轻量网格替代”的场景：植被、细枝等几何强不规则场景中网格先验不可靠，网格与残差分支竞争同一图像证据，高斯压缩收益受限（S5）。Mip-NeRF 360 不规则场景压力测试中 Flowers/Bicycle 的 PSNR 略低于纯 3DGS（22.34 vs 22.48；26.21 vs 26.24）。训练开销增加（3DGS-MCMC 变体 53.1 min/6.95G vs 基线 36.0 min/4.11G）。",
+    "relation": "库内已有大量 3DGS 与 mesh-Gaussian 混合论文（MeshGS、Hybrid Mesh-Gaussian、3D-GES、CityGaussian 等）。本文是首个“减法”混合范式，与 MeshGS/HMG 直接竞争（ΔGS 59.5% vs ~30%/36%），且兼容 3DGS/Reduced 3DGS/3DGS-MCMC 多种骨干，可作为插件式融合模块复用。",
+    "repro": "项目页 https://ooosn.github.io/gaussians-can-subtract/ ；正文称补充代码含精确命令与配置文件；License CC BY 4.0。",
+    "action": "建议作为混合渲染基线追踪；若代码开放，可将其连续融合规则与 NDF 移植到自有 mesh-Gaussian 管线，在城市场景验证压缩收益与乱序/弱纹理鲁棒性。"
+  },
+  {
+    "id": "2611.07709",
+    "slug": "affinegs",
+    "venue": "arXiv preprint（dConstruct Robotics、新加坡国立大学，cs.CV，2026-11，arXiv:2611.07709v1；License CC BY-NC-SA 4.0）",
+    "tags": [
+      "3D Gaussian Splatting（3D 高斯泼溅）",
+      "几何精度",
+      "单目深度先验",
+      "新视图合成",
+      "稀疏视图重建",
+      "表面重建",
+      "网格提取",
+      "深度正则化"
+    ],
+    "conclusion": "AffineGS 实证单目深度先验存在区域相关分段线性视差畸变（全局对齐 K=1 仅 58.9% inlier，K=5 达 92.7%），提出空间变化仿射矫正+法线感知梯度正则+度量深度重对齐；MuSHRoom Abs Rel 0.0551（DN-Splatter Monodepth 0.3542 崩溃）、网格 F-score 0.7097 vs 0.2765，NeRF-LLFF 5 视图 PSNR 23.32（+2.54 dB over DRGS），逼近 Oracle 23.93。",
+    "problem": "3DGS 几何精度落后于其渲染质量。深度引导方法用单目深度先验正则化，普遍假设预测视差可经全局 scale-and-shift 对齐到度量深度。本文统计证明该假设失效：现代基础深度模型（Depth-Anything-V2、MoGe、Metric3D-V2）输出在视差空间呈区域相关、分段线性畸变，场景沿物体边界与深度不连续处断裂为多个空间连贯的仿射 regime；单一全局变换必然平均各 cluster 误差或过拟合主导区域而严重扭曲其余几何，稀疏视图下尤甚。",
+    "method": "①空间变化仿射矫正：1/d(u,v)=α(u,v)𝒟(u,v)+β(u,v)；局部尺度由有限差分梯度幅值比估计 α=||∇d||/(d²||∇𝒟||+ε)，β=1/d−α𝒟；α 截断至 5–95 百分位后用以单目视差 d 为引导图的边缘感知 Guided Filter（半径 550–650 px）平滑得 α_smooth/β_smooth 并再截断。②法线感知梯度正则：目标视差梯度 ∇d̂=−α_smooth d²∇𝒟，ℒ_grad=(||∇d̂||−||∇d||)²+(1−cos(∇d̂,∇d))；由针孔相机正交约束解析导出法线深度梯度 ∂𝒟_norm/∂u=−n_x𝒟/f_x/(n_z+n_x(u−c_x)/f_x+n_y(v−c_y)/f_y)（∂v 对称），代入仿射模型得 ∇d̂_norm 与同式 ℒ_normal。③度量深度重对齐：𝒟̂=(1−β_smooth d)/(α_smooth d)，全局最小二乘求 a,b 使 a𝒟̂+b≈𝒟，ℒ_depth=|(a𝒟̂+b)−𝒟|。总损失 L_total=L_photo+0.1L_grad+0.08L_normal+0.4L_depth；所有仿射场每迭代重估，不改 3DGS 表示与 densification 逻辑。",
+    "experiments": "NeRF-LLFF 稀疏视图（2–5 视图、10 个随机种子）：平均 PSNR 18.79/20.95/22.37/23.32，较最佳基线 +1.48/+2.20/+2.31/+2.54 dB，Oracle 19.88/21.76/22.83/23.93；DepthSplat 零样本落后 4.3–5.0 dB。MuSHRoom：PSNR 24.49/22.07、Abs Rel 0.0551/0.0490（DN-Splatter 传感器版 24.58/21.89、0.0228/0.0354；Monodepth 版 19.26/17.24、0.3542/0.3669 崩溃）。网格（MuSHRoom，TSDF）：Accuracy 0.0535、Chamfer 0.0486、Normal Cons. 0.8662、F 0.7097（DN-Splatter 传感器版 F 0.9243，Monodepth 版 0.2765，SuGaR 0.6378、2DGS 0.6039）。ScanNet++：F 0.3207、Normal Cons. 0.8308（sensor-free 最高），SuGaR/2DGS F 更高（0.4367/0.4196）。消融（coffee_room）：All PSNR 24.947/Abs Rel 0.040/F 0.855（Splatfacto 25.293/0.059/0.728）；无过滤 F 0.6804、Guided 0.8551；MSE-only 0.7815 vs MSE+Cosine 0.8551；深度先验平均 F：DA-V2 0.710、MoGe 0.723、Metric3D-V2 0.549。单 RTX 3090，每场景约 1.5h。",
+    "innovation": [
+      "实证揭示基础深度模型的分段线性视差碎裂现象（跨 3 个模型、2 个数据集、3 个残差阈值验证），从数学上论证全局对齐不适定",
+      "空间变化仿射矫正模型：梯度比估计局部尺度 + 边缘感知引导滤波，完全无传感器深度",
+      "由投影相机几何导出的法线感知梯度正则，将矫正视差梯度与 3DGS 深度/法线（一阶几何）耦合",
+      "度量深度重对齐（全局最小二乘锚定）与梯度域约束互补，sensor-free 逼近 sensor-supervised 几何精度且不改 3DGS 结构"
+    ],
+    "limits": "附录 H：①依赖基础模型可靠性——透明表面、镜面强反射、先验训练域外场景下先验失效则无法恢复几何；②无绝对物理尺度，网格锚定到任意 SfM 坐标系，ScanNet++ b20a261fdf 渲染深度短约 5%（2–4m 处即 10–20cm），F-score 仅 0.18（另一场景 0.46）；③正则强度敏感，kokko/sauna 上默认权重产生 floaters，需分别缩至 0.5/0.25。另网格指标受 meshing 算法影响大（Poisson 与 TSDF 不可直接横比）。",
+    "relation": "库内已有大量 3DGS 几何/重建论文（SuGaR、2DGS、DN-Splatter、DRGS、MonoSDF）。本文是对 depth-guided 3DGS“全局对齐”假设的批判性改进，与 DN-Splatter (Monodepth) 直接竞争（同先验下 Abs Rel 0.0551 vs 0.3542），定位为 sensor-free 几何监督新基线与先验畸变诊断工具。",
+    "repro": "项目页 https://eldentse.github.io/AffineGS/ ；代码承诺随终稿发布（We will provide code and instructions for the final paper），当前未开源；License CC BY-NC-SA 4.0。",
+    "action": "高优先级追踪：其“先验畸变分析+空间仿射矫正”可直接用于任何用单目深度监督 3DGS 的项目；代码发布后建议在自有数据上验证 Metric3D-V2 类宽高比失配导致的边界伪影。"
+  },
+  {
+    "id": "2611.07979",
+    "slug": "p-mgs",
+    "venue": "arXiv preprint（合肥工业大学、安徽大学、北京大学深圳研究生院、鹏城实验室，cs.GR，2026-11，arXiv:2611.07979v1；License CC BY 4.0）",
+    "tags": [
+      "网格-高斯混合渲染",
+      "3D Gaussian Splatting（3D 高斯泼溅）",
+      "新视图合成",
+      "网格编辑",
+      "高斯分配",
+      "后验绑定",
+      "局部仿射变形",
+      "可编辑场景"
+    ],
+    "conclusion": "P-MGS 按多视图感知复杂度（可见覆盖率²×梯度能量）分配高斯，配合无约束优化+事后网格绑定与局部仿射变形传递：NeRF-Synthetic 平均 PSNR 34.00 dB、仅 545K 高斯（较 Mani-GS +0.75 dB、高斯数少 79.7%），DTU 32.36 dB/191K 高斯，网格驱动编辑下浮空伪影显著减少。",
+    "problem": "GaMeS 类 mesh-Gaussian 方法将高斯绑到网格面上、每面固定 K 个，隐含假设网格细分密度反映外观复杂度；实际密铺但视觉简单的区域过分配、纹理丰富但粗分区域欠采样（Lego 上 GaMeS 用 10176K 高斯仍比 3DGS 低 2.58 dB）。且高斯-网格对应在优化前建立，紧耦合限制 vanilla 3DGS 自适应精化；网格驱动编辑时位置/形状变形不一致，非刚性变换下产生高斯-网格错位与浮空伪影。",
+    "method": "①感知复杂度分配：面-视图对定义 h_fv=χ_fv·a_v（相机射线首交×前景 alpha）、局部外观变化 ρ_v=1/3Σ_c||∇I_{v,c}||²+ε，可见覆盖率 A_fv=Σ_p h_fv、平均梯度能量 ρ̄_fv，需求分数 Q_f=(1/V)Σ_v A_fv²ρ̄_fv；在共享预算 B、面级上下界与每视图工作负载 W_v 约束下最小化 Σ Q_f/n_f，用拉格朗日工作量定价 S_f(k)=Q_f/[k(k+1)]−Σ_v λ_v T_fv/W_v 排序边际收益求解（边际阈值二分+L-BFGS-B≤80 迭代，最多 4 轮实测 tile 数校正）。②无约束优化：按分配数在面上采样中心并以局部几何初始化尺度/朝向，随后标准 3DGS 管线自由优化（含自适应 densification）。③事后绑定：KD-tree 取 32 个候选面按最近点距离指派，中心存为重心坐标+法向偏移 μ^0=Σ_k w_ik v^0_{f_i,k}+d_i n^0_{f_i}。④局部仿射变形传递：E_f^a=[v^a_{f,2}−v^a_{f,1}, v^a_{f,3}−v^a_{f,1}, n^a_f]，J_f^t=E_f^t(E_f^0)^{-1}；μ^t_i=Σw v^t+d n^t、Σ^t_i=JΣ^0(J)^⊤；视图相关外观以 J 的极分解旋转局部旋转 SH 方向传输，免重训练。",
+    "experiments": "NeRF-Synthetic（NeuS 提取参考网格）：Ours 平均 34.00 dB/545K 高斯（Mani-GS 33.25/2687K，GaMeS△ 33.49/1159K，GaMeS mesh-init 30.25/4377K，SuGaR 32.03/4377K，3DGS 33.48/631K，MeshSplatting 29.36）；较 Mani-GS +0.75 dB 且少 79.7% 高斯。DTU：32.36/0.9416/0.0943/191K（GaMeS△ 30.91/0.8732/0.0995/603K，Mani-GS 30.79/0.9067/0.1295/316K）。消融：均匀 K=3 早绑定 30.10 → 感知早绑定 31.36 → 均匀 K=3 后绑定 33.29 → 感知+后绑定 34.00 dB/SSIM 0.971/LPIPS 0.0279；同预算（2626K）感知较均匀 K=3 +1.26 dB，较均匀 K=5（4377K）少 40% 高斯仍 +1.11 dB。绑定恒等性：PSNR 差 ~7.7e-8 dB、中心重建误差 ~1e-17。训练 30k 迭代、单卡 RTX 4090、每场景数分钟至 1 小时内。编辑渲染为定性对比（无变形态 GT）。",
+    "innovation": [
+      "提出 Perception Over Geometry 原则：以多视图感知复杂度（覆盖率²×梯度能量）而非网格细分指导高斯初始化分配",
+      "解耦“重建-操作”：无约束 3DGS 优化 + 事后高斯-网格绑定（数值精度无损），兼顾自适应精化与可编辑性",
+      "局部仿射变形传递统一更新高斯中心与协方差，保证非刚性/铰接编辑下高斯-网格对齐，减少浮空伪影",
+      "局部 SH 旋转传输视图相关外观，编辑无需重训练"
+    ],
+    "limits": "全文无独立 Limitations 节。由实验与未来工作可见：网格驱动编辑仅定性评估（无变形态 GT，PSNR 无法直接计算）；依赖 NeuS 提取的参考网格；实验限于物体级场景（NeRF-Synthetic、DTU），未验证大规模/无界场景；分配策略只作用于初始化，densification 后容量分布不再受控。未来工作为扩展到单图 3D 资产生成。",
+    "relation": "库内已有大量 mesh-Gaussian 论文（GaMeS、SuGaR、Mani-GS、GaussianMesh、UniMGS、MeshSplatting）。本文是对 GaMeS 固定每面分配的批判性改进，与 Mani-GS/GaMeS 直接竞争（+0.75 dB、−79.7% 高斯），差异点在感知分配+解耦优化+后验绑定与统一仿射变形传递。",
+    "repro": "正文称“更多可视化结果与源代码见项目页”，但全文未给出具体 URL；License CC BY 4.0。",
+    "action": "作为可编辑 Gaussian 资产管线的分配策略参考；建议等代码/项目页公开后复现 DTU 191K 高斯 32.36 dB 的紧凑性结果，并验证分配策略在 densification 后的保持性。"
+  },
+  {
+    "id": "2611.08288",
+    "slug": "hibs",
+    "venue": "arXiv preprint（维尔茨堡大学，cs.CV，2026-11，arXiv:2611.08288v1；License CC BY 4.0）",
+    "tags": [
+      "在线重建",
+      "3D Gaussian Splatting（3D 高斯泼溅）",
+      "beta kernel",
+      "无位姿视频",
+      "置信度感知",
+      "LOD 层次",
+      "实时渲染",
+      "大规模场景"
+    ],
+    "conclusion": "HIBS 将有界 beta kernel 形状参数用作几何置信度 Dial：深度可观测性+MVS/单目一致性初始化固/软原型，误差驱动重定位回收濒死原型，闭式矩匹配实现形状保持 LOD 合并；MipNeRF360(otf) PSNR 27.47（较 i3DGS +0.81 dB）、优化时间最多省 40%，CityWalk 25.81 dB（+4.1 dB over OtF NVS），可扩展至 2000 帧。",
+    "problem": "在线 3DGS 每关键帧只 spawn 一次原型并仅优化几十次迭代，无法依靠 clone/split densification、opacity reset 或长优化修复劣化初始化——spawn 出来什么基本就是最终模型，关键决策必须在初始化时基于可测证据做出。高斯原型仅中心全不透明、其余半透，实心表面需大量重叠与长优化；naive 直接 spawn 固实 kernel 又有害（错误深度的近不透明基元挡住透射、抑制其后梯度），且低光度误差不保证几何正确（小三角化基线下多深度解释性等价）。",
+    "method": "①Beta kernel：α=o·B(x;b), B=(1−x)^{β(b)}, β(b)=4e^b, x=r²/9, r≤3；b=0(β=4) 近高斯，低 β 平顶近 surfel，高 β 松软；球-beta 颜色基 C(v)=c_0+Σ_k a_k max(0,d_k·v)^{4e^{b_k}}，波瓣零初始化+随机朝向。②Observability-aware spawning：三角化角 c_z=clamp((B/z)/2°,0,1)，MVS 与对齐单目先验的反深度一致 c_mvs=clamp(1−|i_mvs−i_mono|/r_mvs,0,1)，c=(c_mvs·c_z)^4；o_spawn=0.1+0.2c，β_spawn=5−4c（β∈[1,5]），无 MVS 支持时 o_floor=0.02；尺度按半高足迹 u_1/2(β)=1−2^{−1/β} 补偿。③固化控制器每关键帧以 EMA(η=0.3) 统计主导像素误差均值/方差，按 b±0.4 硬化（老≥10 帧、o>0.7、>20 像素且≥3 视图、ē<0.03）或软化（视图不一致高误差）。④误差驱动重定位：濒死原型（o<0.10）传送至 top-10% 误差归因活原型，渲染保持堆叠+小抖动+优化器重置。⑤30 迭代 burst+FasterGS 式 fused rasterizer（Garden burst 287→170ms，总运行时 −16%）；β 专用 tile culling 界 x_cut=max(0,1−(255o)^{−1/β})。⑥LOD：4 个 <0.5px 原型按矩匹配合并——收缩因子 ξ(β)=4.5/(β+2.5)、Mardia 峰度 κ(β)=15(β+2.5)/(β+3.5)，β*=15/(15−κ̂)−3.5，质量/协差/不透明度闭式守恒。",
+    "experiments": "基准：MipNeRF360(otf) 3 场景、TUM 3 场景、StaticHikes 3 场景、3DGS benchmark、SmallCity/CityWalk；对比 MonoGS、S3PO-GS、LongSplat、OtF NVS、i3DGS、BetaSplatting(7K)、FasterGS(7K/30K)、H3DGS、Octree-GS。在线协议：TUM 25.94/0.868/0.175/1:44（i3DGS 25.36/0.858/0.188/1:24；LongSplat 26.51 但 ~1.5h）；MipNeRF360(otf) 27.47/0.852/0.204/1:18（i3DGS 26.66/2:09）；StaticHikes 22.49/0.710/0.259/2:02（i3DGS 22.17/2:53）。3DGS benchmark：MipNeRF360 25.19/0.731/0.264/1:17（i3DGS 24.75/1:59）、T&T 23.00/0.803/0.200/1:18、Deep Blending 26.49（i3DGS 27.16 更优）。大规模：SmallCity 24.45/0.808/0.285/3:47（Octree-GS 24.18 但 ~1h）、CityWalk 25.81/0.857/0.239/42:43（i3DGS 22.03、OtF NVS 21.71）。消融（9 个 otf 场景）：Full 25.30 dB/101s；w/o relocation 25.09；w/o regularizers 24.98；w/o fused rasterizer 120s；CityWalk w/o moment merge 仅 23.54（−2.27 dB）；kernel 消融 Full 25.30 vs Gaussian 25.09、β frozen 25.06。峰值显存 8.6–10.3GB（RTX 5090 32GB）。",
+    "innovation": [
+      "指出 Gaussian 原型在 spawn-once/optimize-briefly 在线范式下次优，引入 beta kernel 形状参数作为软-固连续的几何置信度轴",
+      "置信度感知 spawning：深度可观测性与 MVS/单目深度一致性两个独立几何线索联合初始化不透明度与形状，几何可验证处生实、歧义处留软",
+      "误差驱动重定位：替代离线 densification 的在线容量再分配机制，把濒死原型回收到光度误差热点",
+      "闭式形状保持的 beta 矩匹配合并支撑 LOD 层次；β 专用 tile culling 界兼正确性修复与加速"
+    ],
+    "limits": "正文自述：3DGS benchmark 上与充分优化的离线方法仍有质量差距（在线位姿精化为正交方向）；矩匹配对 out-of-band 组与渲染贡献仅为近似；乱序输入会掉质（Bonsai −2.50 dB）并增加运行间方差（σ=0.74 vs 0.16 dB）与约 1.5× 运行时；Deep Blending 上不如 i3DGS（换 SH 可回升 ~0.3 dB）。",
+    "relation": "库内有大量 3DGS/在线重建论文（SplaTAM、MonoGS、OtF NVS、i3DGS、LongSplat）。本文属 i3DGS 作者生态（Würzburg/Drettakis 组）的后续，将 Deformable Beta Splatting 的 kernel 从离线紧凑性用途改造为在线置信度机制，与 OtF NVS/i3DGS 直接竞争（+0.8 dB、−40% 优化时间）。",
+    "repro": "项目页与源码：https://linus-franke.com/hibs ；License CC BY 4.0。",
+    "action": "高优先级追踪：在线/流式重建方向直接竞品且源码开放，可立即复现；置信度场与 beta kernel 设计对 VR 实时捕获与直播式重建有明确复用价值。"
+  },
+  {
+    "id": "2611.07902",
+    "slug": "xm4d",
+    "venue": "arXiv preprint（哈佛大学、UC Berkeley（Harvard Computational Robotics Group），cs.CV，2026-11，arXiv:2611.07902v1；前身 XM 发表于 RSS 2025；License CC BY 4.0）",
+    "tags": [
+      "4D 重建",
+      "动态场景",
+      "非刚性结构运动",
+      "半定规划松弛",
+      "可证全局优化",
+      "Bundle Adjustment",
+      "嵌入式变形图（EDG）",
+      "动态 Gaussian Splatting"
+    ],
+    "conclusion": "XM4D 将相机运动与非刚性变形分离，均建模为（缩放）旋转 QCQP 并经 SDP 松弛+GPU Burer–Monteiro 黎曼阶梯求解获可证全局最优（静态解 η<1e-3）：Replica/TUM 相机精度第一，可扩展至 2000 帧（55 min），DyCheck/NVIDIA/Syn4D 新视图渲染全面第一（DyCheck mPSNR 19.51 vs MoSca 18.91；Syn4D +2 dB），多数基线使用 GT 位姿仍落后。",
+    "problem": "4D 重建需联合估计相机运动、场景几何与非刚性变形，目标高度非凸：局部优化对初始化敏感、易陷局部极小（EDG 运动局部解的节点旋转错误）。长序列还带来轨迹碎片化、单目深度噪声与逐帧尺度漂移、动态观测不完整等困难。渲染类方法依赖精确位姿与重优化；几何类方法（MoSca、Shape of Motion）将变形与相机估计耦合，误差相互传播（MoSca 在动态基准 ATE-T 差 3–10×）。",
+    "method": "静态阶段：2D 轨迹经 Depth Anything 3 度量深度抬升为 3D 观测，带每帧尺度 s_t 的 scaled bundle adjustment 联合估计相机位姿、深度尺度与静态 landmark；解析消去平移与 landmark 得 scaled-rotation-only 问题；均匀球约束 Σ_t s_t²=T 固定全局尺度（替代 XM 的首帧锚定 s_1=1，另有 top-⌈ρT⌉ 帧受约束的 partial sphere 变体容忍离群帧）；经 sO(3) QCQP→Shor SDP 松弛，用 BM 分解+黎曼 trust-region（Rtr-tCG）在球面×Stiefel 流形优化，Riemannian staircase 以对偶证书 Z(y_r)⪰0 认证全局最优，次优间隙 η<1e-3；XM² 离群过滤+Ceres 重投影精化。动态阶段：EDG 节点 SE(3) 经 LBS 变形动态点，tracking+ARAP+temporal 目标相对固定 rest frame 为二次，消去节点平移得旋转-only QCQP（DYN-RO），辅助旋转齐次化（DYN-H）后由同一 SDP-BM 框架认证求解；长序列按重叠窗口分段认证求解+位置平均/旋转同步融合+局部补全。最后以认证几何初始化动态 Gaussian Splatting（gsplat + EDG wrapper，LBS warp，残差位姿与光度损失联合训练）。",
+    "experiments": "7 基准：IMC、Replica、TUM、Sintel（仅相机）+ Syn4D、NVIDIA、DyCheck（全 4D）；对比 COLMAP、VGGT、MegaSAM、MoSca、Shape of Motion 及 T-NeRF/NSFF/HyperNeRF 等渲染类方法。相机精度：Replica ATE-T 0.002（COLMAP 0.009、VGGT 0.014、MoSca 0.060）、TUM 0.006、Sintel 平移 0.018（MoSca 0.067）、IMC 仅次于 COLMAP；Syn4D/NVIDIA/DyCheck 接近 MegaSAM。运行时：Replica 总 115.1s/求解 14.6s（MoSca 1054.4/165.9）；N=2000 帧 55 min（VGGT N=200 OOM、MoSca N=500 失败、COLMAP N=800 >1h）；全动态 DyCheck 34.6 min、NVIDIA 21.9、Syn4D 16.9（MoSca 40.5/33.6/44.5，SoM 512.4/48.8/71.0）。新视图：DyCheck 19.51/0.725/0.163、NVIDIA 27.01/0.063、Syn4D 21.73/0.148，三项全面第一（多数基线带 GT 位姿，Gaussian Marbles 还带 GT 深度）。硬件：Threadripper PRO 7985WX+256GB+2×RTX 6000 Ada，单卡运行。",
+    "innovation": [
+      "将可证全局最优几何优化（QCQP-SDP-BM+黎曼阶梯+对偶证书）从静态 XM 扩展到 4D：相机运动与 EDG 非刚性变形两阶段均获全局最优认证",
+      "均匀球约束替代首帧锚定、无偏好地固定深度尺度；partial sphere 约束容忍离群帧",
+      "EDG 的 tracking/ARAP/temporal 目标统一为旋转-only QCQP，与静态阶段共享同一认证求解器",
+      "认证几何初始化动态 Gaussian Splatting，并直接输出零件级 SE(3) 运动（铰链轴、开门角位移），面向仿真就绪数字孪生"
+    ],
+    "limits": "证书只覆盖优化不覆盖输入：单目深度与轨迹误差（过滤后仍存）会偏置认证解；数据矩阵稠密存储，显存随帧数平方增长（利用稀疏性是未来方向）；EDG 结构与蒙皮权重在求解前固定，与运动联合估计留作未来工作。IMC 无序集合上不及 COLMAP；Syn4D/NVIDIA/DyCheck 上略逊 MegaSAM。",
+    "relation": "库内已有大量 3DGS/4D 重建论文（MoSca、Shape of Motion、4DGS、DynNeRF 等）。本文是 XM（RSS 2025，Building Rome with Convex Optimization）到动态场景的延伸，与 MoSca/SoM 同属“几何脚手架+泼溅”路线但以可证最优求解器差异化，同时为 4DGS 提供高质量几何初始化。",
+    "repro": "项目页 https://computationalrobotics.seas.harvard.edu/XM4D/ （含可视化与代码）；License CC BY 4.0。",
+    "action": "作为 4D 重建几何基线追踪；其认证求解器与 EDG-4DGS 初始化管线可复用于机器人操作/数字孪生场景；关注 2000 帧可扩展性与显存平方增长瓶颈的后续改进。"
+  }
+]

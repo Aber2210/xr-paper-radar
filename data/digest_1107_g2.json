@@ -1,0 +1,124 @@
+[
+  {
+    "id": "2611.07463",
+    "slug": "free-livo",
+    "venue": "arXiv preprint（丰桥技术科学大学 Active Intelligent Systems Lab + 日本产业技术综合研究所 AIST，cs.RO，2026-11，arXiv:2611.07463v1）",
+    "tags": ["LIVO里程计", "紧耦合估计", "LiDAR-相机重投影因子", "无外参标定", "跨模态匹配", "生成式强度图上采样", "因子图优化"],
+    "conclusion": "FREE-LIVO 用 Conditional Rectified Flow 上采样 LiDAR 强度图并与 RGB 图经预训练匹配器建立 2D-3D 对应，构建 LiDAR–camera reprojection factor，在单一因子图中与 LIO/VIO/IMU 紧耦合联合优化；无需固定 rig 与时间同步，M3DGR 六序列平均 ATE RMSE 0.45m（GLIM 为 0.71m），0.5s 同步误差下几乎不退化，可联合估计分置两机器人上的传感器轨迹。",
+    "problem": "现有 LIVO 方法普遍假设 LiDAR、相机、IMU 刚性共架、外参已知且时间同步；即便小的标定或同步误差也会使 LiDAR 测量与图像像素错位，削弱跨模态约束。随着机器人系统走向模块化与异构化，传感器可能安装在独立运动的执行器或移动感知单元上，甚至分布在不同机器人上，此时 LiDAR–相机相对位姿时变且难以硬件同步，传统紧耦合 LIVO 的前提失效。已有跨模态 LiDAR-视觉匹配多用于全局定位或位置识别（比较全局特征、检索地点），无法基于点/像素级对应连续连接独立运动的传感器轨迹以实现里程计。",
+    "method": "管线含 LiDAR-IMU 预处理、camera-IMU 预处理、image-to-point-cloud matching 与因子图优化四部分。LIO 部分采用 GLIM 的里程计模块：IMU 预积分因子、bias 随机游走因子与 VGICP 点云配准因子（Eq.2）。VIO 部分遵循 VINS-Mono/Kimera-VIO 设计：KLT 光流加 forward-backward check、IMU 旋转预测辅助跟踪、smart visual projection factors。跨模态关联：单帧 LiDAR 扫描投影为稀疏强度图，用 Conditional Rectified Flow（以稀疏强度图为条件，速度场网络 V_θ 经 Euler 积分生成稠密图，Eq.1）上采样；该网络用 GSV-Cities/Places365/MIT Indoor67 共 2.4M 图像做掩码修复预训练，再用 80 对 Livox AVIA 点云微调；稠密图与相机图用 SuperPoint+LightGlue（MINIMA 权重）匹配，仅保留 5 像素内有 LiDAR 深度的匹配。核心为 LiDAR–camera reprojection factor（Eq.3）：r_ijk=π((T_Cj^W)^{-1} T_Li^W p_ik^L)-z_jk，直接约束不同时刻的 LiDAR 与相机位姿，同一帧对的所有对应分组为一个因子，逐点 Huber loss 加因子级 Dynamic Covariance Scaling 鲁棒化。总目标（Eq.4）融合 E_pc^LIO、E_vis^VIO、E_LC、IMU/bias 项与先验，用 GTSAM 的 iSAM2 增量求解，5 秒固定滞后窗口边缘化旧状态。实现上 Conditional Rectified Flow 与匹配器均以 TensorRT FP16 加速，LightGlue 置信度低于 0.01 的匹配剔除，有效 2D-3D 对应少于 50 不加因子。",
+    "experiments": "在 M3DGR 六个序列（Outdoor01/04 室外，Dynamic01-04 室内）评测 ATE RMSE：FREE-LIVO 平均 0.45m，优于 GLIM（0.71m）、LVI-SAM、R3LIVE，与提供外参的 FAST-LIVO2 相当；FAST-LIVO2 在 Dynamic01/02 上失败（7018.72m 与 1746.95m）。时间同步实验（相机加 0.1/0.3/0.5s 延迟）：FREE-LIVO 在 Outdoor01+04 上 ATE 稳定在 0.24-0.29m，而 LVI-SAM 从 10.34m 恶化到 28.18m；FAST-LIVO2 数据集彩色点云在 0.3s 延迟下仍保持颜色与几何对齐。消融：FREE-LIVO 0.45m vs Loose 耦合版 2.10m vs 最近邻插值版 0.52m。另做手持分置（双手各持一传感器）与双机器人（rover+足式机器人）实验，实时联合估计两条独立轨迹。",
+    "innovation": [
+      "提出无需固定 LiDAR–相机 rig 与时间同步的紧耦合 LIVO 框架，外参与时偏不再作为状态量",
+      "设计 LiDAR–camera reprojection factor，用跨模态 2D-3D 对应直接约束不同采集时刻的两传感器位姿",
+      "将生成模型上采样的稠密 LiDAR 强度图与预训练图像特征匹配器结合，免大规模 LiDAR 配对数据训练即可完成跨模态数据关联",
+      "实验验证方法对最高 0.5s 时间同步误差的鲁棒性及分置双机器人上的可行性"
+    ],
+    "limits": "强度图上采样网络仅在 80 对室内外点云上微调，大规模泛化未验证；FAST-LIVO2 数据集与自采数据无 ground truth，只能定性评估；正文未报告运行帧率、单帧耗时等定量实时性指标，仅称笔记本实时；未讨论动态物体对跨模态匹配的影响；论文未提供代码或项目页链接。",
+    "relation": "库内已有大量 SLAM/VIO/LIVO 论文，LVI-SAM、R3LIVE、FAST-LIVO2 等均为常见基线。本文的增量在于问题设定：把跨模态匹配从定位/回环推进到里程计级的连续约束，面向松耦合硬件装配实现紧耦合估计，与库内 LIO/VIO 工作构成竞争与互补；其实验协议（去外参、加同步误差）也为评估库内 LIVO 系统提供了新维度。",
+    "repro": "未提及（全文未给出代码、数据或项目页链接；其前作 Tabata et al., IROS 2026 亦未附链接）",
+    "action": "适合多传感器松装、无标定平台团队跟进；复现重点是 M3DGR 六序列与 0.1-0.5s 延迟实验，关注 Huber+DCS 双鲁棒核与 50 对应点的触发阈值设计。"
+  },
+  {
+    "id": "2611.07687",
+    "slug": "odfc-vio-drift-mitigation",
+    "venue": "arXiv preprint（那不勒斯费德里科二世大学 PRISMA Lab + 荷兰 KRUSH Labs B.V.，cs.RO，2026-11，arXiv:2611.07687v1）",
+    "tags": ["VIO漂移缓解", "主动环境改造", "UAV巡检", "按需特征创建", "退化检测指标", "EKF信息矩阵", "GNSS拒止"],
+    "conclusion": "提出 ODFC 框架：UAV 仅凭相机+IMU，由 EKF 信息矩阵位置块特征值驱动的退化指标（双阈值+滞回+时间确认）触发地面投放鹅卵石或海绵接触墙壁涂画，按需创造视觉特征。900 次因子仿真显示低速+主动标记显著降低发散率（最低 4% vs 基线最高 76%）；走廊实测位置 RMSE 从基线 1.52m 降至 0.99m（约 35%），特征部署前后平均误差 1.07m→0.56m（47.6%）。",
+    "problem": "GNSS 拒止环境下的空中巡检常需穿越隧道、竖井、弱纹理室内等视觉特征稀缺或高度重复的区域，VIO 会退化为纯惯性推演并漂移失效。现有路线均有短板：加装 LiDAR 受小 UAV 载荷/成本/功耗限制，且隧道几何退化与 airborne dust 会同时影响相机与 LiDAR；多模态融合与深度特征提取无法在无信息处创造信息；主动感知规划依赖沿途存在信息丰富的视角；预布人工路标需要基础设施。本文针对“可见度与照明仍允许新特征被观测”的场景，研究不增硬件、不用先验地图的 VIO 漂移缓解。",
+    "method": "以 OpenVINS（EKF/MSCKF，关闭回环）为估计核心，前视+后视双相机由单实例处理。退化指标：对 EKF 线性化后的信息矩阵 J=HᵀΣ⁻¹H+P⁻¹ 取位置块 J_pp 的 3 个特征值 λ_j，配合下阈值 K_j,1=350、上阈值 K_j,2=750、确认窗口 Δt 与滞回构成 NOM→SUSP→DEGR→REC→NOM 四态机（退化用 OR 逻辑、恢复用 AND 逻辑），另设 stagnation flag 捕捉特征值长时间不变。主动策略两种：ground deposition 由底部 PWM 控制释放盒定时开合投放鹅卵石作人工路标；wall drawing 由两根末端带海绵的刚性杆执行，策略选择器依据邻近墙面可达性、地面可达性与退化特征值方向在两种策略间选择或组合，接近阶段用仅基于 IMU 与控制输入的加速度外力估计器 f̂_ext（Eq.）检测海绵与墙接触。建图侧将 OpenVINS 稀疏路标经 MonoSpheres 改造（ROS 2/C++17，Mahalanobis gating 更新、2D Delaunay 三角化自由空间多面体、OVDE 虚拟深度、DBOF 滤波、wall-densifier 增密平面）转为 OctoMap 供 H-CoRE 导航框架采样目标。Gazebo 中用彩色斑块模拟人工特征以受控评估。",
+    "experiments": "三仿真场景：sewer 竖井（内径 1.30m、深 6m）仅能墙画，0.5m/s 预期触发 RMSE 0.701→0.397m（约 -43%），3m/s 基线 2.040m/最大误差 10.953m 降至 0.476m/0.569m；20×10m 开放空间仅能地面投放，0.5m/s RMSE 0.890→0.106m（约 -88%），3m/s 基线 17.719m→0.173m；33×5m 走廊两策略组合，预期触发 RMSE 0.064/0.106/0.218m（0.5/1/3m/s），3m/s 最大误差 0.417m vs 反应式组合 11.199m。3×2×2 因子实验（速度×墙画×地投，每条件 75 次共 900 runs）：总发散率 33.89%（305/900，RMSE>1.5m 为发散），logistic 回归三主效应均显著（速度 χ²₂=33.05、墙画 χ²₁=7.31 p=0.0068、地投 χ²₁=10.05 p=0.0015；墙画 OR=0.37、地投 OR=0.46，交互项 p>0.13）；595 次收敛 run 的 ART 分析显示速度×墙与三阶交互显著。实物实验（同轴八旋翼、Pixhawk 6C、2×Intel RealSense T265、LattePanda 3 Delta，OptiTrack 控飞而 VIO 标记决策在线运行）每配置 5 次：RMSE 1.52→0.99m，最大误差 2.79→1.79m。",
+    "innovation": [
+      "将“物理创造视觉特征”（投放路标、接触式涂墙）作为 VIO 退化的主动补救手段，纳入感知-行动闭环",
+      "用 EKF 信息矩阵位置块特征值加双阈值、滞回、时间确认与停滞标志构建在线退化指标与四态机",
+      "地面投放与墙壁涂画两种互补策略及依据表面可达性的在线选择器",
+      "900 次因子实验区分“发散概率”与“收敛 run 的条件精度”，给出配置选择的统计依据"
+    ],
+    "limits": "实物走廊仅每配置 5 次且用 OptiTrack 稳飞，非 VIO 闭环控飞，与仿真增益幅度差异的来源未隔离（作者归因于 sim-to-real 差距与未精调 VIO）；触发阈值 K=350/750 为手工设定，未做灵敏度系统分析；消耗品（鹅卵石、海绵）容量与更换未讨论；仅验证新特征可被观测的照明/可见度条件，粉尘夜间场景未覆盖；策略选择未计入干预的时间与材料成本。",
+    "relation": "库内 VIO/SLAM 鲁棒性论文多从算法或传感器配置入手，本文则改造环境本身，与库内被动式方法形成互补；相对主动感知（perception-aware planning）文献，差异在于物理干预而非视角/路径选择。其为“退化环境巡检”提供了新的问题设定与可引用的统计分析协议，对库内 UAV 定位方向有增量价值。",
+    "repro": "Github repo: Code released upon paper acceptance（正文脚注称接收后发布代码，暂未给出链接）",
+    "action": "可待代码发布后复现；做退化环境 SLAM 的团队建议借鉴其退化指标做“何时干预”触发逻辑；实物复现需注意 OptiTrack 稳飞设置与 VIO 在线决策的分离。"
+  },
+  {
+    "id": "2611.08436",
+    "slug": "sm4rt",
+    "venue": "arXiv preprint（作者机构未在正文中标明，作者行仅有上标 1/2 而无机构定义；致谢提及台湾 NSTC（115-2634-F-002 项目）与 AMD University Program 资助，cs.CV，2026-11，arXiv:2611.08436v1）",
+    "tags": ["4D重建", "动态场景", "DUSt3R", "object flow", "前馈模型", "弱监督Chamfer损失", "场景流"],
+    "conclusion": "SM4RT 是基于 DUSt3R 的级联前馈模型：先重建 3D 几何，再以预测结构引导运动估计，用各相机系下的 object flow 解耦相机与物体运动，并以体素化弱监督 Chamfer 损失、EMA 静态蒸馏与 shrink-and-perturb 适配稀疏运动标签。Waymo object flow EPE 0.014（较次优 DPM 0.020 降约 33%），Kubric-F 与 Point Odyssey 多数指标 SOTA，五个数据集双视图深度保持竞争力。",
+    "problem": "从 RGB 视频同时恢复精细几何与运动是动态场景重建的核心难点：运动估计依赖各时刻可靠的 3D 点位置，而几何重建依赖 3D-2D 一致对应，动态运动破坏静态假设使两任务强耦合。现有前馈方法把两帧的点图预测在单一相机坐标系，模型必须同时表征全局相机运动与局部物体运动，存在歧义且未来/过去点图独立预测导致时空不一致；同时真实数据（Waymo 等）的 3D 运动标签稀疏，仅用全监督回归会使同一物体内的 object flow 估计不一致。",
+    "method": "几何分支：DUSt3R backbone（ViT 编码+交叉注意力）对有序帧对 (I1,I2) 预测点图 P1(t1,π1)、P2(t2,π1)。运动分支：更新后的 token G1/G2 送入 transformer decoder 做交叉注意力，将每个 token 对应 patch 内预测 3D 坐标的平均值经 rotary positional embeddings（RoPE）编码相对 3D 位置注入注意力层，再经 DPT head 输出 object flow F1(t1,t2)=P1(t2,π1)-P1(t1,π1)（静态点天然为 0）；反向 flow 通过交换输入顺序再前向一次获得。训练损失：confidence-weighted 全监督回归 L_conf（DUSt3R 式，含逐像素置信度）；弱监督 Chamfer 损失 L_CD 将一帧点按预测 flow 变换后约束其靠近另一时刻已标注点，用每轴 1000 分辨率（N=1000³）体素化近似最近邻并借占据交集过滤遮挡无效匹配，权重 λ 以 sigmoid 调度从 0 增至 4；EMA teacher 仅在静态像素上做几何自蒸馏 L_SD；flow head 由预训练 depth head 初始化并按 shrink-and-perturb 周期性注入可塑性。点图与 flow 用同一尺度因子 g 归一化。微调自 MASt3R checkpoint，encoder 冻结；训练 200 epochs、初始 lr 5e-5、4×NVIDIA ADA 6000 共 40 小时，帧对间隔 K∈[1,15]，分辨率 512×288/336/384/512 随机。",
+    "experiments": "运动估计（各 1000 帧对）：Kubric-F 上 SM4RT object flow EPE 0.018/0.017、相对位姿 rot 0.193/trans 0.085（DynaDUSt3R 为 3.507/0.357）；Waymo 上 EPE 0.013/0.015（DPM 0.020），位姿 0.193/0.168（MonST3R 0.787/1.048）；Point Odyssey 上 EPE 0.072/0.074。几何重建（双视图深度，Sintel/Point Odyssey/Bonn/Kubric-F/KITTI）：Kubric-F Abs Rel 0.044 为全部方法最优，Sintel 0.367 与 KITTI 0.089 逊于 MonST3R/DPM，总体 competitive。消融（Waymo）：去掉 Chamfer 损失 L_rel 从 0.075 升至 0.151、EPE 0.006/0.007 升至 0.038/0.037；把 3D 位置换成 2D 像素坐标（去 3D RoPE）L_rel 0.147/0.146、EPE 0.039/0.038。附录另证 object flow 训练优于 scene flow（EPE 0.088 vs 0.106，Point Odyssey）。",
+    "innovation": [
+      "以各相机系 object flow 表示运动，从表示层面解耦相机运动与物体运动，静态点零运动简化相机运动估计",
+      "“先几何后运动”的级联前馈结构，用预测 3D 位置（RoPE 注入）引导运动解码器",
+      "体素化弱监督 Chamfer 损失，在无逐点对应的稀疏标签下正则化未标注点运动",
+      "EMA 静态几何蒸馏 + flow head shrink-and-perturb，在适配动态任务同时不遗忘静态重建能力",
+      "级联模块与 backbone 解耦，可作为即插即用动态模块挂接到 VGGT、DA3 等多帧模型"
+    ],
+    "limits": "仅处理两帧输入，长时程视频建模未解决（作者列为未来工作）；依赖 DUSt3R backbone，动态物体运动下几何重建本身会退化；深度指标在 Sintel 与 KITTI 上不及 MonST3R/DPM；训练成本高（4×ADA 6000、40 小时）；论文未提供代码或项目页链接。",
+    "relation": "与 MonST3R、DynaDUSt3R、DPM 等 DUSt3R 系动态重建工作直接竞争，并对其“单一坐标系预测”做出实证改进；相对库内基于 3D Gaussian Splatting 的 4D 重建走免优化前馈点图路线。其关于运动表示选择（object/scene flow）影响可学性的附录实证，对库内场景流类研究有直接参考价值。",
+    "repro": "未提及（论文未给出代码或项目页；正文脚注链接为 DynaDUSt3R 的 https://stereo4d.github.io/）",
+    "action": "库内若关注 4D/动态重建可重点标注；建议追踪其多帧扩展及与 VGGT/DA3 结合的后续；复现需 4×ADA 6000 级算力。"
+  },
+  {
+    "id": "2611.07873",
+    "slug": "pvdepth",
+    "venue": "arXiv preprint（北京大学 + 鹏城实验室，cs.CV，2026-11，arXiv:2611.07873v1）",
+    "tags": ["全景视频深度估计", "ERP", "视频扩散", "PanoCARLA数据集", "球面噪声初始化", "Cube时间建模", "时空一致性"],
+    "conclusion": "构建大规模合成全景 RGB-D 视频数据集 PanoCARLA（CARLA，117 clips/126.7K 帧/50.61km），并提出 PVDepth：在 DepthCrafter 上做两种 ERP 几何感知适配——渐进球面噪声初始化 PSNI 与 Cube 校正时间建模 CRTM。跨场景测试（Town02/10）三档帧率下 AbsRel 0.211/0.205/0.181、δ1 0.789/0.787/0.818，平均 AbsRel 0.199 优于 DepthCrafter FT 0.232，无需测试时优化，延迟 0.482s/帧。",
+    "problem": "全景视频深度估计受两大瓶颈制约。数据方面：现有全景 RGB-D 数据集（Structured3D、Matterport3D 等）均为静态图像，缺少大规模视频数据，端到端全景视频深度模型无从训练。几何方面：ERP 在空间上对极区过度采样、信息密度严重不均，透视图预训练模型的均匀采样先验被破坏；时间上 ERP 畸变使极区平滑物体运动呈非线性像素轨迹，而标准视频深度 backbone 只沿时间维 T 做 1D 注意力，隐含局部运动近似线性的假设，难以捕捉此类动态。此外单帧全景深度方法直接用于视频会产生严重闪烁，后处理对齐方法计算昂贵且受静态视角假设限制。",
+    "method": "PVDepth 以 DepthCrafter（SVD 视频扩散：VAE 编码、clean video latent 与噪声深度 latent 通道拼接、CLIP 语义 cross-attention、5 步去噪滑窗推理、相对深度归一化到 [0,1]）为基线，新增两个无/轻参数模块。PSNI：在 3D 球面采样高斯噪声经 P_S→E 投影为 ERP 噪声，与平面高斯按方差保持混合 ε=w_s·ε_s+w_n·ε_n（w_s=√(1-w_n²)），平面权重 w_n 在训练早期从 1 线性退火到 w_final=0.1，课程式引导模型从平面先验过渡到非均匀球面几何，不引入可学参数。CRTM：在 temporal layer 处增设辅助 Cubemap 分支，ERP 特征经 P_E→C 投影到 6 个 cubemap 面（batch 扩为 6 倍），时间层 𝒯 与主分支权重共享、context 取自对应 cubemap 图像以保证语义对齐，输出经 P_C→E 投回 ERP 后由 zero-initialized projection 𝒵 融合：z_out=𝒯(z_erp,c_erp)+𝒵(z_rec)。训练两阶段共 40K 步：Stage I 用 PSNI 微调空间层 20K 步，Stage II 冻结空间层仅训新增投影层 20K 步；AdamW lr 5×10⁻⁶、batch 8、帧率 [1,20] 随机采样，训练 640×320、评测 1024×512。PanoCARLA 采用两阶段解耦采集：Stage I 稀疏 waypoint+CARLA Autopilot 录制 6-DoF 20FPS 轨迹并人工在环修正；Stage II 用“ghost rig”六相机回放轨迹（无人机视角 2-20m 高度随机漂移+六视图碰撞检测剔除穿模帧），RGB 以 120°FoV 羽化混合拼接，Z-depth 逐像素转欧氏距离后直拼，产出 1200×2400 全景帧。",
+    "experiments": "严格跨场景协议：Town 01/03-07 训练（约 113K 帧），Town 02/10 测试（197 clips，2/10/20fps 三档共 17/66/114 clips），affine-invariant 全局对齐评测。PVDepth 全面优于三类基线：图像式（DA-2、UniK3D、PanoDA、DepthAnywhere FT，灰色单帧值不参与视频对比）、后处理对齐式（Matrix-3D、ViPE）、透视视频式（VideoDepthAnything、DepthAnyVideo、DepthCrafter ZS/FT 及其 Cube-based 变体），如 20fps 档 AbsRel 0.181/δ1 0.818 vs DepthCrafter FT 0.216/0.781。消融（三档平均）：完整模型 0.199/0.798 > 仅 CRTM 0.208/0.779 > 仅 PSNI 0.228/0.782 > 基线 0.248/0.757；基线延长到 40K 步反而过拟合（0.232）；噪声消融显示退火+保留残差正态噪声最优；CRTM 以 Cube 语义作 KV 源（0.208）优于 Equi 自引导（0.214）与朴素加/平均融合；两阶段 Frozen（0.199）优于 Unfrozen（0.215）与 One-Stage Joint（0.221）。效率：0.482s/帧、30.7GB/clip、2.553 PFLOPs，显存与 DepthCrafter 相当但 FLOPs/延迟更高，比 ViPE（0.5-3s）快且稳、比 UniK3D（0.05s）慢。",
+    "innovation": [
+      "发布首个大规模全景 RGB-D 视频数据集 PanoCARLA（含无人机视角与动态交通，126.7K 帧）",
+      "PSNI：将扩散噪声初始化从平面分布渐进迁移到球面投影分布，免参数适配 ERP 非均匀信息密度",
+      "CRTM：辅助 cubemap 分支在无畸变表示中做线性化时间建模，校正 ERP 主分支的非线性极区动态",
+      "两阶段冻结训练协议，解耦几何适配与时间建模的优化干扰"
+    ],
+    "limits": "ERP↔Cube 双向投影使 FLOPs（2.553 vs 1.986 PFLOPs）与延迟（0.482 vs 0.355s/帧）高于 DepthCrafter；PanoCARLA 仅含户外场景，室内泛化只做定性展示；强镜面反射（如水面）场景失效；指标依赖整段视频的全局 scale-shift 对齐；真实世界仅以重投影几何一致性间接验证。",
+    "relation": "库内深度估计与 4D 重建论文多聚焦透视图域，本文把视频扩散深度（DepthCrafter 一脉）迁移到 ERP 域，属跨域适配加数据构建型工作，与库内全景感知论文互补；PanoCARLA 填补全景视频 RGB-D 数据空白，对 VR/世界模型方向有基础设施价值，与库内合成数据训练深度模型的思路（Marigold/Depth Any Video）一脉相承。",
+    "repro": "项目页 https://chuanxinsong.github.io/pvdepth-project-page/ ；代码 https://github.com/ChuanxinSong/PVDepth ；数据集 https://huggingface.co/datasets/Soon122/PanoCARLA",
+    "action": "全景/VR 方向优先跟进，数据集可直接取用；复现需 DepthCrafter 权重与两阶段训练，建议先采用其跨场景测试协议 benchmark 自有方法。"
+  },
+  {
+    "id": "2611.07673",
+    "slug": "ego-action-vlm-affordance",
+    "venue": "arXiv preprint（阿利坎特大学计算机技术系 + 奥尔堡大学视觉分析与感知实验室，cs.CV，2026-11，arXiv:2611.07673v1）",
+    "tags": ["第一视角动作识别", "物体专家", "affordance", "视觉语言模型", "late fusion", "MECCANO", "评测协议"],
+    "conclusion": "在 MECCANO 上把 frozen SlowFast 视频专家与注意力物体专家 late fusion，物体 token 融合 ViT 裁剪、DistilBERT 类名/位置与 VLM zero-shot affordance，并用同一 VLM 的 interaction affordance 在测试时滤除未被手操控的检测框。检测框设置下 Top-1 从视频专家 44.9% 升至 49.9%（Top-5 82.5%、macro-F1 24.1），超 SlowFast 与 G3Ego/HOCL+OSL；分析表明标注框到检测框的落差中 48% 来自非活动检测。",
+    "problem": "第一视角动作很大程度上由所操控的物体定义（徒手 vs 用螺丝刀拧螺丝手势相似），但主流方法仅学整段 RGB/深度特征，不显式建模物体。已有少数物体方法把物体当额外监督或与 gaze 结合，不建模物体“能做什么”（affordance）。评测层面更被忽视：MECCANO 等数据集只标注参与动作的活动物体，用标注框测试等于告知模型哪些物体相关；而真实检测器会引入在场但不参与动作的物体，精度下降，现有工作很少量化这一落差及其成因，导致物体方法的实用性存疑。",
+    "method": "双专家结构：视频专家为冻结的 SlowFast R50 (8×8)（32 帧+3 个 256×256 空间 crop）。物体专家每段选 K=4 个“物体类别集合相对前一候选帧变化最大”的帧；每个物体 token x_i=[v_i;c_i;b_i;φ(a_i)]∈R^3072，由 ViT-B/16 [CLS] 裁剪特征、DistilBERT 编码的类名/归一化位置/affordance 文本四部分拼接（φ 为 768→768 的 Linear+LN+ReLU 投影），经 512 维投影、4 头 MHA 自注意力、平均池化与 MLP（512/256）出 logits，N=0 时用可学习 token；仅这些轻量模块与编码器可训练。VLM（Gemini 3.1 Flash-Lite，temperature 0）零样本承担两类查询：object affordance（输入类名+红框全图+裁剪，输出限定于数据集动词-物体词表的逗号分隔列表）与 interaction affordance（先描述手的位置，再回答 yes/no/unsure 是否被手持/触碰/操控）；过滤规则 D'_t={r(d)≠no}∪{argmax 检测分数}，unsure 保留，每帧至少保留最高分检测。最终预测为对数概率 late fusion：ŷ=argmax_k[α log p_v(k)+(1-α) log p_o(k)]，α 在验证集按 0.05 步长选取。训练全程只用标注框（检测器在训练视频上 AP 94.3 近饱和，无法教模型处理检测误差），测试才启用检测器与过滤器。",
+    "experiments": "MECCANO（20 段组装玩具摩托车的 egocentric 视频，61 类=12 动词×20 物体，11/2/7 划分，5057/977/2820 段）。检测设置下 Video+objects+VLM 达 49.87±0.47 Top-1、82.54 Top-5、24.06 macro-F1：比 MECCANO 官方 SlowFast RGB 基线（45.16）高 4.7 点、比自研视频专家（44.93）高 4.9 点且 macro-F1 相对提升约 24%，优于 HOCL+OSL（44.81）与需 gaze 的 G3Ego（46.48）；UCF Swin3D-B Top-1 更高（50.8）但属不同骨干。标注框上界为 68.38。落差分解：非活动检测致 -9.2 点（占 48%）、漏检 -7.3 点（38%），理想过滤器可达 58.3。消融：affordance +0.50、interaction filter +0.50、合用 +0.84（95% CI 排除 0），affordance 输入以 text+frame+crop 最优（text-only 亦 +0.35）；测试集过滤器移除 12.1% 非活动与 3.7% 活动检测。融合策略对比中 late fusion（49.04）优于全部 learned fusion（最佳 48.31）；检测设置下各帧选择策略差异 <1.2 点。测试集共 53,748 次 VLM 查询（每段约 19 次、每次 2300-2400 token）。",
+    "innovation": [
+      "冻结视频专家 + 注意力物体专家的 late fusion 架构，物体 token 显式包含外观、类名、位置与 affordance",
+      "VLM 零样本生成 object affordance 文本作为物体表示，免训练注入语言知识",
+      "interaction affordance：同一 VLM 判定手是否操控该检测框，测试时过滤非活动检测",
+      "定量分解标注框→检测框的 Top-1 落差（48% 源于非活动检测），推动以检测框评测物体方法"
+    ],
+    "limits": "增益幅度有限（合用仅 +0.84 点）；interaction filter 召回低（仅移除 12.1% 非活动检测），模糊帧会误删活动物体，最常见失败模式是对手边物体一律答 yes；仅验证 MECCANO 单数据集；依赖 Gemini VLM 离线批量查询（非在线部署），且检测器仅在含活动物体的候选帧上运行，与全视频部署有差距。",
+    "relation": "库内第一视角动作识别论文多走端到端视频-语言预训练或多模态融合路线，本文提供“冻结专家+物体 token+语言 affordance”的轻量替代，与其互补竞争；其“用检测框替代标注框评测并分解落差”的协议对库内所有物体条件化识别/检测方法具有方法论意义，可直接迁移到评测环节。",
+    "repro": "Code will be released upon acceptance（接收后发布，暂无链接）",
+    "action": "做 egocentric 识别或物体条件化评测的团队建议采纳其 detections 评测协议与落差分解；affordance 文本注入思路可迁移至机器人操作；等代码发布后复现。"
+  },
+  {
+    "id": "2611.08477",
+    "slug": "egogeneralist",
+    "venue": "arXiv preprint（莫纳什大学 + 蚂蚁集团 Ant Digital Technologies + 中科院自动化所，cs.CV，2026-11，arXiv:2611.08477v1）",
+    "tags": ["第一视角视频生成", "统一建模", "3D姿态估计", "Wan2.2", "LoRA适配", "动作-视频联合生成", "世界模型"],
+    "conclusion": "EgoGeneralist 把预训练视频生成器 Wan2.2-A14B 适配为统一第一视角动作-视频模型：role-adaptive 渲染（ego-view action map+3D anchor cage 作条件、多视 Posegrid 作目标与读出）+ 跨流耦合（共享 VAE 双 latent 流、自注意力共享 KV、target-gated LoRA），以单一 flow-matching 目标覆盖五任务六推理模式。仅在 EgoDex 实验室数据上适配即泛化到野外：EgoDex 上 PSNR 30.35/FVD 114.16、手部 Abs-MPJPE 27.73mm、HOT3D 目标到达 Reach@5cm 77.8%。",
+    "problem": "现代视频生成器具备强外观/运动/交互先验，却不原生表示 metric 3D 人体动作。动作条件生成、从视频恢复动作、动作-视频联合生成是同一动作-视频关系的不同方向，现有统一系统要么只覆盖手部动作，要么依赖独立参数化的动作编码器/去噪器/条件网络，对齐表示需要大规模联合训练，损害生成先验复用。相机运动控制也是难点：身体/手部投影无法静态参照以分离相机运动，基于场景重建的条件又要额外几何维护。",
+    "method": "三个预测方向统一为视频去噪问题（Eq.1-3，各含完整生成与初始状态续推两种模式）。Role-adaptive rendering 按动作角色选两种视频化表示：作条件时用 ego-view action map（动作按同一相机内参投影到图像平面、语义颜色区分部位，另加固定 3D anchor cage——深度 0.25m 与 0.70m 两矩形平面角点相连，固定于初始相机系 C_s 并逐帧重投影，其投影变化显式编码相机平移旋转，Eq.4）；作生成目标/读出时用 multiview Posegrid（2×2 画布拼接 front/side/top 正交投影与 ego view，相机视锥记录相对 C_s 位姿，深度感知渲染解决遮挡），Posegrid 经 frozen VAE 编码后由独立训练的 action decoder D 恢复关节与相机平移及 6D 旋转（Eq.5）。跨流耦合：z_v=ℰ(V) 与 z_a=ℰ(A_r) 两路 latent 沿 batch 维 pack 进同一 DiT，自注意力中每流保留自身 query 与位置编码但共享双方 KV（Eq.6）；每模态在 q/k/v/o 投影上挂独立 attention LoRA，target-gated 门控使该流仅作为生成目标时激活（Eq.7）；统一条件 flow-matching 损失（Eq.8-9），Posegrid 目标中覆盖上肢/手/相机几何的 latent 位置平方误差加权翻倍。训练用 Wan2.2-A14B I2V/T2V 初始化，仅在 EgoDex 训练一个 epoch（每 episode 采 41 帧 clip，832×464 分辨率，动作渲染在线生成，仅用约 0.65% 训练 episodes）。",
+    "experiments": "五评测设置。I2V（EgoDex 111 clips / Xperience-10M 50 clips OOD）：PSNR 30.35/19.67、SSIM 0.9302/0.7273、FVD 114.16/453.03、PCK@20 86.52/62.24、Failure 21.69/40.66，全面超 EgoSim、LOME、Zhang et al.、RynnWorld-Teleop、Cosmos3 Nano、OSCAR 等基线；去掉 anchor cage 推理使 Xperience PSNR 从 19.67 跌至 15.78。T2V（每数据集 100 个动作-提示实例）：PCK@20 67.91 显著高于 Fun-Control（35.41）与 VACE-Fun（37.09），失败率最低。Egocentric 3D 姿态估计（EgoDex）：手 Abs/PA/W/WA-MPJPE 27.73/7.47/22.65/13.08mm、RPE-T 0.67mm、Fail 0%，全面优于 HaMeR、HaWoR、MINT、ReViV、EgoForce；上肢 4/6 关节 Abs 33.25/32.64mm。World-action policy（HOT3D 99 个到达任务）：MinDist 3.81cm（中位 1.07）、Reach@2/5cm 58.59%/77.78%、Progress 77.42%，大幅超 VITRA（6.32/31.31/52.53/61.96）与 Being-H0。消融：Posegrid 读出误差低于 ego-view 渲染；cross-stream 耦合优于 latent 通道拼接与 action embedding；仅 0.65% episodes 即接近全训练效果。",
+    "innovation": [
+      "将动作条件生成、metric 动作恢复、动作-视频联合生成统一为单一视频去噪问题，五个任务共享一个框架",
+      "role-adaptive 双渲染表示：ego-view action map+anchor cage 负责可控条件，multiview Posegrid 保几何可读出",
+      "跨流耦合：双 latent 流共享 KV 的跨流自注意力 + target-gated 模态 LoRA，无需额外输入通道或条件编码器",
+      "anchor cage 以静态 3D 参照显式分离相机运动与身体运动",
+      "text-only 联合生成可产出配对的 metric 动作与视频，作为动作-视频数据生成手段"
+    ],
+    "limits": "EgoDex 多相机融合导致 3D 标注与图像存在投影失配，会传导到生成序列中；训练域仅限实验室录制，缺站立/行走/户外等多样动作；Xperience-10M 上相机 RPE-R 0.610° 明显差于 EgoDex 的 0.138°，跨域相机恢复退化；未报告推理耗时等效率指标；论文仅给项目页，未提代码发布计划。",
+    "relation": "与库内第一视角生成/世界模型/姿态估计论文既竞争又互补：相对库内动作条件 ego 视频生成（embedding 注入或输入通道拼接），其免额外编码器的 latent 空间跨流耦合是新变体；相对专用姿态估计器，以统一生成式框架在 EgoDex 取得全面更低的 MPJPE。其 video-native 动作表示与库内 VGGT/DUSt3R 式前馈几何模型思路呼应，适合作为库内世界模型方向的对照基线。",
+    "repro": "项目页 peaceneil.github.io/egogeneralist_page （正文仅提供项目页，代码/权重发布情况未提及）",
+    "action": "embodied AI/世界模型方向重点跟进；Posegrid+target-gated LoRA 适配方案可迁移到其他视频生成器；建议等代码发布后复现 text-only 联合生成做数据增广。"
+  }
+]
