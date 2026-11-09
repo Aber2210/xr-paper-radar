@@ -305,7 +305,7 @@ HEADER = (
     '- **路线观察**：① 逐眼立体一致性首次被当作可注入的中间量处理（Stereo CI），直指 AR/VR passthrough 的撕裂/重影痛点，并与库内立体原生前馈 3DGS（10-29 StereoSplat）形成「几何一致性」新主线；② 手-物交互先验同时向「可查询流形」（HaNDF）与「大规模真机数据」（ToolDex 10,853 条 ego-exo）两端推进；③ 智能眼镜系统侧出现完整闭环（EventHOI：事件触发 + 编码 + BLE 链路 + 功耗实测），硬件类渲染缺口（波导/可变焦/Maxwellian/光场）仍待补；④ 感知科学侧两篇（VR 视听错位 N=13 阈值研究、VR 头显生理信号隐性影响 LLM 说服 N=24）共同提示「沉浸式内容的跨模态一致性」是可量化的设计约束。'
 )
 
-report(MAIN, f'reports/XR-Daily-Report-{DATE}.md', f'XR 每日论文解读报告 · {DATE}（11-09 公告批次）', HEADER, 10,
+report(TOP10, f'reports/XR-Daily-Report-{DATE}.md', f'XR 每日论文解读报告 · {DATE}（11-09 公告批次）', HEADER, 10,
        ['- 门①（同质去重）：最大 Jaccard **0.054** < 0.62（2611.09129 TouchAnnotator vs 库内 2609.38615 Exo2EgoHOI），通过，无同质重复。库侧 token 取 title+title_zh（registry 无摘要字段），口径偏保守。',
         '- 门②（赛道覆盖）：定稿 Top10 覆盖 **7 赛道**（重建与SLAM×2 / 化身与人体×2 / 触觉与多模态×2 / 内容生成×1 / 系统与平台×1 / 评估与数据集×1 / 感知与认知×1）≥5，**未触发重筛**；全批亦 7 赛道。同分位（3.50）按「IMP/NOV 降序 → 赛道多样性优先 → id 升序」定序：InstantHMR（化身与人体，已双占）让位 VR 视听错位（感知与认知），仍入馆写 B 级笔记。',
         '- 门③（价值天花板）：当日最高 **4.37** < 库内近 30 天 Top10 均分 **4.399**（现算，窗口 2026-10-11~11-10、397 条入窗；Top10 = SMoRe/视频扩散化身/Open-HumanScale 4.57 · ACD-GS 4.37 · XM4D 4.36 · RacerGS 4.35 · EgoExplorer/dGS-dBS/CognitiveReality/RESPLE2 4.30）→ **非重磅日，无 S 级**；4 篇达 S 线（4.37/4.34/4.23/4.23）按校准关记 A（同 10-24 EgoHand/10-27 WFM/11-07 XM4D 先例）。',
