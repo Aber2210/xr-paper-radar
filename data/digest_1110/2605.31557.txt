@@ -1,0 +1,581 @@
+【摘要】
+
+【引言】
+ To operate successfully in the physical world, an autonomous agent must store and recall episodic events across both short and long temporal horizons  Tulving and others (1972) ; Tulving (2002) ; Clayton et al. (2001) . For visual embodied AI systems, streaming egocentric video offers a natural testbed for studying continuous memory, as it captures first-person experience as it unfolds over time  Grauman et al. (2022) ; Bärmann and Waibel (2022) , unlike detached exocentric media such as movies or surveillance footage. This makes the egocentric domain ideal for real-world memory tasks, including wearable assistants and embodied agents that must provide context-aware support  Grauman et al. (2022) ; Plizzari et al. (2024) ; Yang et al. (2025a) ; Mangalam et al. (2023) ; Perrett et al. (2025) . In this setting, egocentric assistants must answer questions about past events (e.g., whether the user locked the door or where an object was placed),
+processing observations incrementally and maintaining a compact memory under bounded resources. This makes memory in egocentric vision particularly challenging: relevant evidence may appear long before it is queried, requiring the model to decide what to retain during streaming perception.
+Despite recent progress in egocentric Video Question Answering (VideoQA), existing offline benchmarks still provide only a limited view of episodic memory  Grauman et al. (2022) ; Mangalam et al. (2023) ; Di and Xie (2024) ; Chen et al. (2025a) ; Plizzari et al. (2025) ; Perrett et al. (2025) .
+While they have substantially advanced long-form understanding and reasoning,
+they do not isolate memory as a measurable variable. The temporal distance between the supporting evidence and the query is rarely controlled, and evaluation does not distinguish what information must be remembered, how long it must be retained, or when a previously correct answer becomes invalid in a changing environment.
+Recent online and streaming benchmarks move closer to this setting  Lin et al. (2024) ; Niu et al. (2025) ; Xiong et al. (2025) ; Wang et al. (2025a) , but
+primarily measure online responsiveness or aggregate accuracy rather than providing a diagnostic a
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from
+our major funders ,
+member institutions , ,
+and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status (opens in new tab)
+Major funding support from tells you where to merge: adaptive KV cache merging for LLMs on long-context tasks .
+External Links: Link
+Cited by: §2 .
+[44]
+G. Xiao, Y. Tian, B. Chen, S. Han, and M. Lewis (2024)
+Efficient streaming language models with attention sinks .
+In The Twelfth International Conference on Learning Representations ,
+External Links: Link
+Cited by: §2 ,
+§4.1 ,
+§4.1 ,
+§5.1 .
+[45]
+H. Xiong, Z. Yang, J. Yu, Y. Zhuge, L. Zhang, J. Zhu, and H. Lu (2025)
+Streaming video understanding and multi-round interaction with memory-enhanced knowledge .
+arXiv preprint arXiv:2501.13468 .
+Cited by: §1 .
+[46]
+R. Xu, G. Xiao, Y. Chen, L. He, K. Peng, Y. Lu, and S. Han (2025)
+StreamingVLM: real-time understanding for infinite video streams .
+arXiv preprint arXiv:2510.09608 .
+Cited by: §1 ,
+§2 ,
+§4.1 ,
+§4 ,
+§5.1 ,
+§5.1 ,
+§5.2 ,
+Table 4 .
+[47]
+J. Yang, S. Liu, H. Guo, Y. Dong, X. Zhang, S. Zhang, P. Wang, Z. Zhou, B. Xie, Z. Wang, B. Ouyang, Z. Lin, M. Cominelli, Z. Cai, Y. Zhang, P. Zhang, F. Hong, J. Widmer, F. Gringoli, L. Yang, B. Li, and Z. Liu (2025)
+EgoLife: towards egocentric life assistant .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,
+Cited by: §A.1 ,
+§A.2 ,
+§A.2 ,
+§A.5 ,
+§1 ,
+§1 ,
+Table 1 ,
+§2 ,
+§3.1 ,
+§3.2 .
+[48]
+Y. Yang, Z. Zhao, S. N. Shukla, A. Singh, S. K. Mishra, L. Zhang, and M. Ren (2025)
+StreamMem: query-agnostic kv cache memory for streaming video understanding .
+External Links: 2508.15717 ,
+Link
+Cited by: §1 ,
+§2 ,
+§4.1 ,
+§4.1 ,
+§4 ,
+§5.2 ,
+Table 4 .
+[49]
+H. Ye, H. Zhang, E. Daxberger, L. Chen, Z. Lin, Y. Li, B. Zhang, H. You, D. Xu, Z. Gan, J. Lu, and Y. Yang (2025)
+MMEgo: towards building egocentric multimodal LLMs for video QA .
+In The Thirteenth International Conference on Learning Representations ,
+External Links: Link
+Cited by: Table 1 ,
+§2 .
+[50]
+H. Zhang, Y. Wang, Y. Tang, Y. Liu, J. Feng, and X. Jin (2025)
+Flash-vstream: efficient real-time understanding for long video streams .
+In Proceedings of the IEEE/CVF International Conference on Computer Vision ,
+Cited by: §2 .
+[51]
+H. Zhang, S. Yang, J. Fu, S. Ng, and X. Qiu (2026)
+HERMES: kv cache as hierarchical memory for efficient streaming video understanding .
+arXiv preprint arXiv:2601.14724 .
+Cited by: §2 .
+[52]
+Y. Zhang, Y. Du, G. Luo, Y. Zhong, Z. Zhang, S. Liu, and R. Ji (2024)
+CaM: cache merging for memory-efficient LLMs inference .
+In Forty-first International Conference on Machine Learning ,
+External Links: Link
+Cited by: §2 ,
+§5.2 ,
+Table 4 ,
+Table 4 .
+[53]
+Z. Zhang, Y. Sheng, T. Zhou, T. Chen, L. Zheng, R. Cai, Z. Song, Y. Tian, C. Re, C. Barrett, Z. Wang, and B. Chen (2023)
+H2O: heavy-hitter oracle for efficient generative inference of large language models .
+In Thirty-seventh Conference on Neural Information Processing Systems ,
+External Links: Link
+Cited by: §1 ,
+§2 ,
+§4.1 .
+[54]
+S. Zhou, J. Xiao, Q. Li, Y. Li, X. Yang, D. Guo, M. Wang, T. Chua, and A. Yao (2025)
+EgoTextVQA: towards egocentric scene-text aware video question answering .
+In Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR) ,
+pp. 3363–3373 .
+Cited by: Table 1 ,
+§2 .
+Appendix A The EgoStream Benchmark
+This appendix reports additional details for the EgoStream Benchmark construction process.
+A.1 Hard Negative Gen
+
+【实验】
+and Results
+5.1 Controlled Diagnostic Evaluation
+5.2 State-of-the-Art Streaming Models
+5.3 Semantic Profiles and Temporal Decay
+5.4 Memory Budget within a unified Qwen3-VL backbone reveal that comparable aggregate accuracies mask starkly different memory profiles. For instance, token pruning preserves fine-grained details and temporal structure significantly better than token merging, while quantized offloading rescues ultra-long-term recall. Ultimately, all mechanisms operate well below real-time (>1s per frame), and top performing methods ceil at about 45% accuracy, exposing critical gaps in current architectures. EgoStream provides the diagnostic testbed needed to close these gaps.
+Project website, news and updates at: https://saroo25.github.io/Egostream/ and Results
+We evaluate the capabilities of current streaming architectures on EgoStream via a controlled diagnostic evaluation using our unified framework, an analysis of semantic profiles and temporal decay, and a comparison of state-of-the-art models. Configuration and hardware detailed in Appendix  C.1 .
+Table 4 : Evaluation of memory-management strategies. Accuracy is reported across semantic categories and temporal recall regimes, alongside macro-averages and per-frame processing time. Configurations are mapped to their closest equivalent in literature wrt isolated memory strategies.
+Semantic Categories
+Temporal Recall Regimes
+Proc.
+Strategy
+Configuration
+Avg
+SPAT
+TEMP
+DETL
+EVNT
+SOC
+CAUS
+PROS
+Avg
+Inst
+Short
+S-Mid
+Mid
+ML
+Long
+Ultra
+(s)
+Sliding-window baselines
+1
+FIFO
+Sliding Window
+29.53
+30.50
+33.53
+30.62
+30.02
+26.85
+25.94
+29.28
+28.33
+31.83
+31.09
+28.71
+27.80
+28.42
+28.12
+22.37
+1.05
+2
+FIFO
+SINK
+StreamVLM  Xu et al. (2025)
+44.74
+57.95
+51.22
+54.90
+46.36
+28.87
+38.68
+35.20
+39.05
+55.06
+55.10
+49.18
+40.00
+29.34
+24.93
+19.74
+1.07
+Similarity-based merge FIFO SINK HAT +
+3
+MERGE
+INTRA-PA
+CaM-like  Zhang et al. (2024)
+41.87
+54.25
+48.20
+51.49
+42.48
+28.27
+37.48
+30.92
+37.73
+52.47
+51.98
+44.00
+37.20
+28.65
+23.48
+26.32
+2.87
+4
+MERGE
+INTRA-COS
+CaM-like  Zhang et al. (2024)
+43.42
+57.30
+49.83
+53.28
+45.87
+27.52
+38.53
+31.58
+38.10
+54.44
+53.20
+48.18
+39.40
+27.50
+22.90
+21.05
+2.33
+Similarity-based hybrid merge + prune FIFO SINK HAT +
+5
+MERGE INTRA-PA PRUNE INTER-PA
+43.44
+56.66
+52.62
+53.89
+45.33
+26.10
+38.23
+31.25
+38.01
+54.61
+52.87
+47.35
+39.87
+28.88
+21.45
+21.05
+5.32
+Similarity-based prune FIFO SINK HAT +
+6
+PRUNE
+INTRA-CS
+StreamMem  Yang et al. (2025b)
+42.39
+52.25
+51.80
+52.10
+43.85
+27.23
+37.93
+31.58
+38.88
+52.12
+50.64
+45.82
+39.07
+28.42
+25.80
+30.26
+4.91
+7
+PRUNE
+INTRA-VN
+InfiniPot-V (VaN)  Kim et al. (2025)
+43.79
+55.54
+53.67
+52.49
+45.98
+29.02
+38.23
+31.58
+39.17
+54.30
+51.87
+46.88
+41.93
+29.00
+25.22
+25.00
+4.23
+8
+PRUNE
+INTER-COS
+InfiniPot-V (TaR)  Kim et al. (2025)
+45.23
+57.87
+53.78
+55.60
+45.76
+28.05
+39.73
+35.86
+40.16
+54.75
+52.76
+48.82
+43.87
+30.84
+26.38
+23.68
+4.99
+9
+PRUNE
+INTRA-VN INTER-COS
+InfiniPot-V  Kim et al. (2025)
+44.52
+58.91
+56.23
+55.51
+46.36
+26.10
+39.58
+28.95
+40.22
+54.44
+53.93
+50.12
+42.27
+30.38
+21.45
+28.95
+4.42
+10
+PRUNE
+INTRA-PA INTER-COS
+StreamTOM  Chen et al. (2025b) *
+45.19
+57.87
+57.28
+56.68
+46.58
+28.35
+37.78
+31.79
+40.43
+55.42
+54.37
+50.88
+41.73
+31.07
+25.88
+23.68
+5.51
+11
+PRUNE
+INTRA-COS
+–
+45.63
+60.51
+52.39
+56.61
+46.64
+28.50
+39.88
+34.87
+39.34
+55.60
+54.99
+52.18
+41.27
+30.61
+24.93
+15.79
+2.28
+12
+PRUNE
+INTRA-PA
+–
+45.12
+59.47
+53.08
+56.52
+45.87
+28.72
+39.28
+32.89
+41.50
+56.04
+54.71
+50.18
+40.60
+30.84
+22.61
+35.53
+2.82
+13
+PRUNE
+INTER-PA
+–
+45.42
+59.87
+55.53
+56.17
+45.65
+27.30
+38.53
+34.87
+40.30
+55.42
+54.32
+49.35
+42.80
+30.84
+24.35
+25.00
+4.82
+14
+PRUNE
+INTRA-PA INTER-PA
+–
+44.71
+58.51
+55.30
+56.52
+45.54
+28.57
+39.58
+28.95
+40.03
+55.55
+53.87
+50.29
+42.00
+29.46
+26.67
+22.37
+5.66
+15
+PRUNE
+INTRA-VN INTER-PA
+–
+44.42
+57.62
+56.46
+56.21
+46.75
+26.85
+39.43
+27.63
+39.91
+55.10
+54.04
+50.06
+42.13
+30.15
+22.90
+25.00
+4.67
+16
+PRUNE
+INTRA-CS INTER-PA
+–
+44.39
+56.74
+52.50
+55.56
+45.22
+28.95
+39.88
+31.91
+39.60
+55.24
+54.43
+48.12
+40.60
+30.03
+23.77
+25.00
+4.87
+Similarity-based prune FIFO SINK +
+17
+PRUNE
+INTRA-PA INTER-COS
+StreamTOM  Chen et al. (2025b) *
+44.38
+58.75
+54.25
+56.39
+46.04
+24.98
+38.98
+31.25
+40.23
+55.28
+53.09
+48.76
+42.27
+31.19
+19.42
+31.58
+4.76
+Offloading-based memory management FIFO SINK HAT
+18
+OFFLOAD
+ReKV  Di et al. (2025)
+40.99
+51.69
+49
+
+【结论/局限】
+and Limitations
+References
+A The EgoStream Benchmark
+A.1 Hard Negative Generation Protocol
+A.2 Evidence Moment Annotation
+A.3 Human Validation
+A.4 Question Categorization Protocol and Labeling Guidelines
+A.4.1 Iterative Human-in-the-Loop (HITL) Workflow
+A.4.2 Primary Labeling: The Priority Cascade
+A.4.3 Secondary Labeling
+A.5 Answer Validity Window and Recall Regimes
+A.6 Recall Regimes
+A.7 Inference Prompts
+A.8 Text Baseline
+B Implementation Details
+B.1 KV-Cache Layout and Streaming Update
+B.2 Memory Budgets and Region Sizes
+B.3 Intra-Frame Reducers
+Adjacent cosine redundancy ( INTRA-COS ).
+Pseudo-attention salience ( INTRA-PA ).
+Value-norm ranking ( INTRA-VN ).
+Sink-guided cross-attention ( INTRA-CS ).
+B.4 Inter-Frame Reducers
+Cross-frame cosine redundancy ( INTER-COS ).
+Cross-frame pseudo-attention salience ( INTER-PA ).
+B.5 Offloading and Quantized Storage
+B.6 Inference Protocol and Reproducibility
+C Experimental Settings
+C.1 Hardware and Configuration
+License: CC BY 4.0
+arXiv:2605.31557v2 [cs.CV] 01 Jun 2026
+EgoStream : A Diagnostic Benchmark for
+Streaming Episodic Memory in Egocentric Vision
+Rosario Forte
+Giuseppe Lando
+Antonino Furnari
+Affiliation:  Department of Mathematics and Computer Science
+Affiliation:  University of Catania
+Email:  rosario.forte@phd.unict.it
+Email:  giuseppe.lando@studium.unict.it
+Email:  antonino.furnari@unict.it and Limitations
+EgoStream establishes a diagnostic benchmark and unified framework for evaluating streaming episodic memory in egocentric vision. By introducing the Answer Validity Window (AVW) to decouple genuine forgetting from natural scene changes, our evaluations reveal that comparable aggregate accuracies often mask distinct memory vulnerabilities. Moving beyond simple performance metrics, EgoStream provides a precise tool t

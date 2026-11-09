@@ -1,0 +1,79 @@
+【摘要】
+
+【引言】
+ Figure 1 : eSharp produces sharp, accurate depth maps under challenging conditions. Under imaging constraints such as (a) high dynamic range, (b) sensor saturation, and (c) low light, conventional frame cameras cannot provide visual signals for reliable depth estimation. Event cameras are better suited for these challenging imaging conditions, and this work proposes eSharp, a dense metric depth estimator conditioned on monocular event cameras.
+Recent advances in 3D imaging and multimodal fusion have enabled many complex tasks, such as autonomous navigation  [ 30 , 3 ] , augmented/mixed reality  [ 29 , 40 ] and medical imaging applications  [ 45 , 13 ] .
+Many applications, such as drone navigation, are further constrained by utility, form factor, and hardware complexity. In such settings, monocular (single-camera) depth estimation (MDE) is particularly attractive because it requires minimal sensing hardware, leading to rapid progress in this area  [ 41 , 49 , 20 ] .
+Current MDE methods, while powerful, rely on conventional frame cameras, which suffer in applications involving fast motion or high-dynamic-range scenes.
+These cameras integrate intensity over finite exposure windows and require a minimum readout time per frame.
+This acquisition process limits temporal resolution and the dynamic range of the cameras.
+Rapid motion and extreme changes in illumination can thus cause loss of edges, texture, and contrast, leading to inaccurate or incomplete depth predictions.
+In autonomous driving, for example, a rapid transition from a tunnel into daylight ( Fig.   1 a) or strong back-lighting ( Fig.   1 b) can saturate bright regions, whereas objects in low-light scenes may be severely underexposed and visually indistinguishable ( Fig.   1 c).
+In contrast, event cameras   [ 6 ] are neuromorphic differential sensors well-suited to these scenarios.
+They asynchronously detect per-pixel changes in log intensity rather than capturing complete image frames.
+Their differential sensing mechanism and sparse readout allow high temporal resolution and wide dynamic range (60–80 dB more than frame cameras), making them apt for depth estimation under rapid motion and challenging illu
+
+【方法】
+4.1 Dense Metric Pseudo-Depth Supervision.
+4.2 Event-Conditioned Latent Diffusion
+4.3 Two-Stage Event-to-Depth Adaptation Event-only MDE is typically trained using events accumulated over a temporal window together with a corresponding depth map for supervision. In real-world datasets such as DSEC  [ 9 ] and MVSEC  [ 51 ] , LiDAR depth measurements are spatially and temporally aligned with the event stream and commonly serve as ground-truth depth.
+These datasets additionally provide temporally aligned frame images for reference. In MVSEC, the frames are directly from the event cameras while for DSEC, they are from a separate camera.
+We train eSharp exclusively on real-world event data because existing simulators  [ 4 ] do not fully capture the event-generation process and sensor nonidealities of physical event cameras. As a practical example, event cameras operate in near-continuous time, whereas simulated events are derived from upsampled discrete frames, limiting their actual temporal precision. An overview of eSharp is shown in Fig.   2 ; its components are detailed in the following subsections.
+4.1 Dense Metric Pseudo-Depth Supervision.
+As LiDAR sensors provide ground-truth depth measurements only at sparsely sampled points, getting dense supervision for real data is challenging. Similar to recent works [ 1 , 24 ] , we address this gap using cross-modal distillation: during training, we use temporally aligned frame images and co-register them to the event-camera image plane to generate pseudo-depth labels.
+We distill depth priors from a frame-to-depth model to train an event-to-depth model.
+For each temporal window of the event stream, we obtain the corresponding frame image 𝐱 frame \mathbf{x}_{\mathrm{frame}} from the neighboring frame camera in the dataset. We first geometrically register this image to the event-camera image plane (for DSEC).
+We use Depth Anything V2  [ 49 ] to predict dense relative depth and the frame-camera intrinsics to back-project it into a relative 3D point cloud 𝐱 3 ​ D − rel \mathbf{x}_{\mathrm{3D-rel}} .
+We then use the frame-aligned LiDAR depth map to recover metric scale, yielding 𝐱 3 ​ D \mathbf{x}_{\mathrm{3D}} .
+Using the inter-camera extrinsics, we transform these 3D points into the event-camera coordinate system and project them onto the event-camera image plane, yielding the registered frame 𝐱 frame e \mathbf{x}^{\mathrm{e}}_{\mathrm{frame}} .
+In contrast to approximate frame-event registration used in prior work  [ 7 , 1 ] , this accurate depth-aware registration accounts for scene geometry.
+Next, we run the same MDE teacher model, Depth Anything V2  [ 49 ] on 𝐱 frame e \mathbf{x}^{\mathrm{e}}_{\mathrm{frame}} to obtain a normalized dense relative-depth map 𝐝 ~ rel ∈ [ 0 , 1 ] H × W \tilde{\mathbf{d}}_{\mathrm{rel}}\in[0,1]^{H\times W} .
+We then convert 𝐝 ~ rel \tilde{\mathbf{d}}_{\mathrm{rel}} to metric depth 𝐝 ~ \tilde{\mathbf{d}} by least-squares fitting over pixels with valid ground-truth LiDAR measurements 𝐝 ∗ \mathbf{d}^{\ast} ( i.e. , sparse ground-truth depth).
+For datasets with low-resolution grayscale frames, the frame-to-depth teacher becomes less reliable, so we apply quantile matching instead of least-squares fitting to improve pseudo-label robustness; details are provided in Supplementary Sec.   8 .
+The resulting pseudo-labels combine dense RGB frame-derived scene structure with metric LiDAR measurements and are used only during training, requiring neither RGB frames nor LiDAR at inference.
+4.2 Event-Conditioned Latent Diffusion
+Figure 3 : VAE preserves binned event semantics. We feed binned event image 𝐞 \mathbf{e} through a frozen VAE (without denoising). The overall event semantics are well-preserved.
+To condition the pretrained image diffusion model on asynchronous events, we adopt a simple uniform-binning representation.
+Unlike prior approaches that use linearly weighted accumulation within uniform bins  [ 15 , 1 ] or nonuniform temporal intervals  [ 32 ] , we find that equal-duration binning is sufficient for effective conditioning.
+Specifically, we uniformly partition the event window [ T 0 , T 1 ] [T_{0},T_{1}] into three temporal bins and accumulate the signe
+
+【实验】
+ show that eSharp outperforms prior event-to-depth baselines in both metric depth accuracy and spatial fidelity, establishing diffusion models as a promising foundation for event-driven 3D perception
+1 1
+1
+Source code available at https://github.com/rice-computational-imaging/eSharp .
+† † footnotetext: Accepted to the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) 2027. Table 1 :
+Quantitative comparison on DSEC and MVSEC.
+We compare eSharp against open-sourced event-to-depth baselines. marked with ∗ are evaluated after per-image scale-and-shift alignment to the ground-truth LiDAR depth, whereas unmarked results are evaluated directly using metric depth outputs.
+Without test-time LiDAR calibration, eSharp achieves the best across all DSEC metrics and leads in logarithmic errors
+and threshold accuracies on MVSEC.
+Best and second-best results are shown in bold and
+underline , respectively, based on unrounded values.
+Error Metrics ↓ \downarrow
+Accuracy Metrics ↑ \uparrow
+Dataset
+
+【结论/局限】
+References
+8 Pseudo-Label Generation Details
+Dense accurate depth map generation.
+Metric alignment for pseudo labels.
+Pseudo-Label Alignment on MVSEC.
+9 Additional Model Details
+Trainable Parameters.
+eSharp Training Details.
+eSharp-fast Training Details.
+eSharp-fast Training Strategy Ablation.
+Smooth L1 Affine Regression.
+Inference Efficiency.
+10 Metric Depth Calibration
+Calibration-Loss Weighting.
+11 Dataset We introduced a diffusion model for sharp monocular metric depth estimation from event streams by adapting pretrained diffusion models with dense pseudo-label supervision. Our framework includes two models for different speed requirements: (a) eSharp, a multi-step diffusion model that produces high-fidelity depth maps with fine spatial detail, and (b) eSharp-fast, a one-step diffusion model that is approximately 6 × 6\times faster with a small reduction in fine-detail quality.
+Our method substantially improves both quantitative accuracy and prediction quality over prior monocular event-based approaches, while directly estimating metric depth. On the higher-resolution DSEC dataset, it also outperforms the scale-relative depth predictions of state-of-the-art methods, which are scale-aligned using LiDAR maps. More broadly, our results demonstrate that pretrained diffusion models can be effectively adapted to event-based depth prediction even with limited high-quality training data.
+Acknowledgments
+This work is supported by the National Institutes of Health (NIH) under award number R01DE032051 (DeepDOF).
+We thank Kushal Vyas for his helpful discussions and suggestions throughout this work.
+References
+[1]
+Luca Bartolomei, Enrico Mannocci, Fabio Tosi, Matteo Poggi, and Stefano Mattoccia.
+Depth anyevent: A cross-modal distillation paradigm for event-based monocular depth 

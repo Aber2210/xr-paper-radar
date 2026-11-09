@@ -1,0 +1,113 @@
+【摘要】
+
+【引言】
+ LLM-based conversational agents are increasingly capable of changing peoples’ minds: they match human writers on policy arguments  [ 1 , 37 ] , outperform humans in live debates when given basic information about their opponent  [ 42 ] , and can reduce conspiracy beliefs through short dialogues  [ 7 ] .
+Personalization may extend beyond personal information, such as demographic characteristics, preferences, to real-time physiological data.
+Headsets, watches, and earbuds can stream heart rate, pupil diameter, and related measures while a conversation unfolds.
+An LLM could use these signals as additional context when adapting its arguments, without relying on what the user explicitly communicates.
+Prior work shows that physiological adaptation can benefit users, for example by enabling coaching systems to respond to stress or fatigue  [ 44 , 21 , 47 , 9 ] . The same capability, however, raises concerns about manipulation when used covertly to increase persuasive influence  [ 8 , 32 , 41 ] . Disclosure offers one safeguard, but it may affect how people evaluate a persuader without changing whether their attitudes shift  [ 29 , 3 ] .
+We therefore examine perceived persuasiveness and attitude movement separately, both before and after participants learn that the system can access physiological signals.
+Studying these effects requires varying the model’s access to physiological signals without visibly changing the sensing setup. We used sensors integrated into a VR headset that participants wore throughout the study. The physical setup remained unchanged whether or not heart-rate and pupil features were passed to the model.
+Twenty-four participants each held four conversations with a GPT-4 Turbo chatbot arguing against a self-selected opinion. The 2 × 2 2\times 2 design crossed sensing (on or off) with awareness (before or after disclosure); in the post-disclosure sensing-off cell, participants believed they were being sensed although no signals were assigned to the model. We ask:
+•
+RQ1: When physiological sensing is hidden, does access to the signals change perceived persuasiveness and the direction of immediate attitude movement?
+•
+RQ2: How do these outcomes differ
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+【实验】
+5.1 Perceived persuasiveness
+5.2 Direction of attitude movement
+5.3 Conversational style and structure
+5.4 Affect
+5.5 Reading disclosure together with session order
+5.6 How participants described the interaction All 96 conversations yielded complete rating and affect data; directional analyses used 93 after excluding three neutral starts.
+Figure 3 : Perceived persuasiveness, signed attitude movement toward the chatbot, and negative affect by cell. The clearest interaction is in perceived persuasiveness: sensing produced a large advantage while hidden and a smaller difference after disclosure. Error bars are 95% confidence intervals.
+5.1 Perceived persuasiveness
+Before disclosure, sensing raised perceived persuasiveness by 1.42 points, 95% CI [0.66, 2.17], from M = 2.33 M=2.33 ( S ​ D = 1.43 SD=1.43 ) to M = 3.75 M=3.75 ( S ​ D = 1.89 SD=1.89 ), t ⁡ ( 23 ) = 3.87 t(23)=3.87 , Holm-adjusted p = .003 p=.003 , d z = .79 d_{z}=.79 . The order-adjusted crossover estimate was similar: 1.34 points, 95% CI [0.49, 2.18], p = .004 p=.004 , with no within-block drift ( p = .64 p=.64 ; Table  1 ).
+Across all four cells, ratings were higher with sensing on, F ⁡ ( 1 , 23 ) = 14.76 F(1,23)=14.76 , adjusted p = .002 p=.002 , η p 2 = .39 \eta_{p}^{2}=.39 , and lower in the post-disclosure block, F ⁡ ( 1 , 23 ) = 12.55 F(1,23)=12.55 , adjusted p = .003 p=.003 , η p 2 = .35 \eta_{p}^{2}=.35 . Their interaction was also significant, F ⁡ ( 1 , 23 ) = 7.73 F(1,23)=7.73 , adjusted p = .011 p=.011 , η p 2 = .25 \eta_{p}^{2}=.25 (Fig.  3 , left). After disclosure, the sensing difference narrowed to 0.33 points, 95% CI [ − 0.11 -0.11 , 0.78], adjusted p = .40 p=.40 . Hidden sensing produced the standout evaluation; the later block is interpreted separately below.
+Table 1: Robustness of the focal persuasiveness and directional-attitude results. Point estimates are scale points except where marked OR. The first p p value is Holm-adjusted within the simple-effect family; sensitivity-model values are unadjusted.
+Analysis
+Estimate
+95% CI
+p p
+Hidden paired persuasiveness
++1.42
+[0.66, 2.17]
+.003
+Hidden order-adjusted crossover
++1.34
+[0.49, 2.18]
+.004
+Signed attitude, clustered GEE
++0.57
+[0.06, 1.07]
+.029
+Signed attitude + strength and position
++0.54
+[0.07, 1.01]
+.026
+Any movement toward chatbot
+3.20 OR
+[1.50, 6.80]
+.003
+5.2 Direction of attitude movement
+Figure 4 : Direction of immediate attitude movement in each cell. Counts are printed within segments. Three conversations started from the neutral midpoint and have no defined opposing direction.
+The signed-movement interaction was not supported ( p = .20 p=.20 ). In the main-effects GEE, sensing was associated with 0.57 additional scale points toward the chatbot, 95% CI [0.06, 1.07], p = .029 p=.029 ; the post-disclosure block was not, p = .99 p=.99 . Adding starting-attitude strength and conversation position produced nearly the same estimate (0.54 points, p = .026 p=.026 ).
+The categorical result was consistent. Across 93 conversations, 37 moved toward the chatbot, 12 moved away, and 44 did not change. Movement occurred in 25 of 47 sensing-on conversations (53.2%) versus 12 of 46 sensing-off conversations (26.1%); hardening occurred six times in each condition (Fig.  4 ). The interaction was not supported ( p = .27 p=.27 ); the reduced model estimated O ​ R = 3.20 OR=3.20 , 95% CI [1.50, 6.80], p = .003 p=.003 (Table  1 ).
+5.3 Conversational style and structure
+We examined whether sensing changed the chatbot’s response style or the structure of the conversation.
+Reply length did not differ reliably between conditions (mean sensing-on difference: 9.0 non-space characters, p = .28 p=.28 ).
+However, an average of 67.9% of sensing-on replies per conversation contained a question mark, compared with 91.9% of sensing-off replies (difference: 24.0 percentage points, p = .001 p=.001 ). Sensing-on conversations also averaged 0.77 fewer turns ( p = .010 p=.010 ).
+Together, these differences suggest that sensing shifted the interaction toward a more declarative style, with less frequent questioning potentially contributing to shorter exchanges. Whether this shift contributed to the higher persuasiveness ratings re
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2611.09394v1 [cs.HC] 06 Nov 2026
+Sensed but Not Told: Hidden Physiological Adaptation Shapes LLM Persuasion
+Xiaoyan Wei
+† † thanks: xiaoyan.wei@adelaide.edu.au
+Affiliation:  School of Computer Science and Information Technology, Adelaide University, Australia
+Yutong Qu
+Affiliation:  School of Computer Science and Information Technology, Adelaide University, Australia
+Yutong Li
+† † thanks: a1948101@adelaide.edu.au
+Affiliation:  School of Computer Science and Information Technology, Adelaide University, Australia
+Haiyi Li
+† † thanks: a1949007@adelaide.edu.au
+Affiliation:  School of Computer Science and Information Technology, Adelaide University, Australia
+Wei Emma Zhang
+† † thanks: wei.e.zhang@adelaide.edu.au
+Affiliation:  School of Computer Science and Information Technology, Adelaide University, Australia
+Hsiang-Ting Chen
+Affiliation:  School of Computer Science and Information Technology, Adelaide University, Australia This paper examined whether physiological signals from a VR headset change the persuasiveness of an LLM-based chatbot, both before and after sensing was disclosed.
+Before disclosure, participants rated the chatbot as more persuasive when sensing was on. Across the study, sensing was also associated with greater immediate movement toward the chatbot’s position.
+Dialogue logs showed a more declarative style when sensing was on, with fewer replies containing question marks and fewer conversational turns.
+Persuasiveness ratings were lower after disclosure, although this difference cannot be separated from session order.
+These findings motivate making biosignal-driven adaptation inspectable and providing a genuine non-sensed mode.
+References
+[1]
+H. Bai, J. G. Voelkel, S. Muldowney, J. C. Eichstaedt, and R. Willer (2025)
+LL

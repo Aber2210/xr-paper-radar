@@ -1,0 +1,83 @@
+【摘要】
+
+【引言】
+ Generating 3D human poses from natural language is a fundamental problem spanning vision, graphics, and embodied AI. Recent progress in text-conditioned generative modeling has advanced text-to-motion synthesis through diffusion and flow-based approaches  [ 37 , 16 , 36 ] . In contrast, text-to-pose generation  [ 8 , 15 , 23 ] remains comparatively underexplored despite posing a distinct challenge: unlike motion generation, which benefits from strong temporal continuity priors, single-frame pose generation must model a highly multimodal distribution over articulated 3D configurations from language alone. This challenge becomes harder when extending from coarse body posture to whole-body articulation with expressive hand poses.
+Current text-to-pose methods exhibit two limitations. First, most approaches model joint rotations in Euclidean parameterizations such as axis-angle or continuous 6D rotations  [ 53 ] , and optimize Euclidean regression objectives. However, articulated pose lies on a product manifold of rotation groups rather than a flat vector space. As a result, linear interpolation and Euclidean velocity regression produce optimization targets that are not aligned with the geodesic structure of rotations, particularly for large joint rotations and high-dimensional whole-body configurations. Recent work on geometry-aware articulated modeling  [ 18 , 30 ] suggests that respecting manifold structure can improve generative learning, but these ideas have not yet been explored in text-conditioned single-frame pose generation.
+Second, existing text-to-pose systems largely ignore detailed hand articulation. Most prior methods operate on body-only skeletons with 22 joints, even when datasets are stored in richer SMPL-H or SMPL-X formats  [ 27 , 34 , 32 , 8 , 9 ] . Recent LLM-based generators  [ 15 , 23 ] similarly omit finger degrees of freedom. Yet hand articulation carries a substantial fraction of pose semantics in natural language descriptions, including gestures such as pointing, grasping, waving, or open-palm interactions. Modeling full SMPL-H articulation therefore requires learning coherent dependencies across 52 coupled rotations spanning body posture 
+
+【方法】
+3.1 Pose Representation on SO ​ ( 3 ) 52 \mathrm{SO}(3)^{52}
+3.2 Riemannian Flow Matching
+Velocity Target.
+Loss.
+3.3 Network Architecture
+Part Tokenization.
+Text Conditioning.
+Diffusion Transformer Blocks. We formulate text-to-pose generation as Riemannian flow matching on the product manifold of SMPL-H joint rotations. Our approach combines two key components: (i) a geometry-aware flow-matching objective defined directly on SO ​ ( 3 ) 52 \mathrm{SO}(3)^{52} , which learns intrinsic tangent-space vector fields along geodesic paths, and (ii) a part-tokenized Diffusion Transformer that efficiently models whole-body articulation, including detailed hand articulation, through anatomical structure-aware tokenization.
+3.1 Pose Representation on SO ​ ( 3 ) 52 \mathrm{SO}(3)^{52}
+A SMPL-H pose is parameterised by 52 joint rotations: one global orientation, 21 body joint rotations, and 2 × 15 2\times 15 finger rotations. We represent each joint rotation as an element of the special orthogonal group SO ⁡ ( 3 ) \mathrm{SO}(3) , and the full pose as an element of the product manifold ℳ = SO ​ ( 3 ) 52 \mathcal{M}=\mathrm{SO}(3)^{52} . Articulated rotations naturally admit a Lie-group structure with well-defined geodesics and tangent spaces, making them suitable for intrinsic flow matching. For each joint, the Riemannian exponential and logarithm are
+Exp R ​ ( v ) \displaystyle\mathrm{Exp}_{R}(v)
+= R ​ exp ⁡ ( [ v ] × ) , \displaystyle=R\,\exp([v]_{\times}),
+(1)
+Log R ​ ( R ′ ) \displaystyle\mathrm{Log}_{R}(R^{\prime})
+= [ log ⁡ ( R ⊤ ​ R ′ ) ] ∨ , \displaystyle=[\log(R^{\top}R^{\prime})]_{\vee},
+(2)
+where [ ⋅ ] × : ℝ 3 → 𝔰 ​ 𝔬 ​ ( 3 ) [\cdot]_{\times}:\mathbb{R}^{3}\to\mathfrak{so}(3) is the skew-symmetric mapping and [ ⋅ ] ∨ [\cdot]_{\vee} its inverse. The geodesic distance is d g ​ ( R , R ′ ) = ‖ Log R ​ ( R ′ ) ‖ 2 d_{g}(R,R^{\prime})=\|\mathrm{Log}_{R}(R^{\prime})\|_{2} , and we extend these definitions to the product manifold by acting independently on each of the 52 joints. Importantly, the product-manifold formulation defines local rotational geometry but does not assume statistical independence between joints. Dependencies are modeled by the transformer vector field.
+3.2 Riemannian Flow Matching
+ℳ ⊂ ℝ n \mathcal{M}\subset\mathbb{R}^{n} (valid rotations) T x t ​ ℳ T_{x_{t}}\mathcal{M} Log x t ​ ( x 1 ) 1 − t \dfrac{\mathrm{Log}_{x_{t}}(x_{1})}{1-t} x 0 ∼ p 0 x_{0}\sim p_{0} x 1 ∼ p 1 x_{1}\sim p_{1} x t x_{t} geodesic on ℳ \mathcal{M} Euclidean chord tangent velocity
+Figure 1 : Riemannian flow matching on the product manifold of joint rotations (schematic). Valid poses lie on a manifold ℳ ⊂ ℝ n \mathcal{M}\subset\mathbb{R}^{n} embedded in the ambient representation space. Noise x 0 ∼ p 0 x_{0}\sim p_{0} is transported to data x 1 ∼ p 1 x_{1}\sim p_{1} along the on-manifold geodesic (Eq.  3 ), whereas the Euclidean baseline follows the straight chord and leaves the manifold. At x t x_{t} the network regresses the tangent velocity (Eq.  4 ), and integration stays on ℳ \mathcal{M} .
+INPUTS MODEL OUTPUT
+Noisy Pose R t R_{t}
+52 joints, 6D
+Text Prompt
+Timestep t t
+Part Projectors torso head l-arm r-hand ⋮ \vdots 8 part tokens ⊕ \oplus   part-type embedding DiT Block × N \times N AdaLN ( t ) (t) Self-Attention Cross-Attention (text K , V K,V ) SwiGLU FFN
+Flan-T5 Encoder
+frozen, all L L tokens
+Time Emb.
+sinusoidal ( t ) (t) +MLP
+K , V K,V t t torso head l-arm r-hand ⋮ \vdots denoised tokens Part Decoders
+Velocity v ^ θ \hat{v}_{\theta}
+3D tangent/joint
+Figure 2 : PoseRieFlow architecture. Part-specific input projectors (linear for body parts, MLPs for the hands) map the noisy pose R t R_{t} (52 joints, 6D-encoded) to eight anatomical part tokens with part-type embeddings. Each DiT block applies self-attention over the part tokens, cross-attention to frozen Flan-T5-Base text features, and a SwiGLU FFN, modulated by AdaLN conditioned on the timestep with zero-initialised gates. Mirrored decoders map each token back to its joints, yielding the per-joint tangent velocity v ^ θ \hat{v}_{\theta} (Sec.  3.3 ).
+Flow matching trains a time-dependent vector field v θ v_{\theta} to transport samples from a tractable prior p 0 p_{0} to the data d
+
+【实验】
+4.1 Experimental Setup
+Data.
+Metrics.
+Baselines.
+4.2 Body-Only Pose Generation
+4.3 Whole-Body Pose Generation with Hands
+4.4 Ablations
+4.4.1 Riemannian vs. Euclidean Flow
+4.4.2 Classifier-Free Guidance Reference
+Ours (Riem.)
+Ours (Eucl.)
+PoseScript
+ChatPose
+PoseLLaVA
+UniPose
+Figure 3 : Qualitative whole-body generation. “The right hand is reaching up, the right elbow is in l-shape and the left arm is beneath the right arm and the left elbow is bent a bit. The right knee is located in front of the left knee, rather bent and the torso is upright with the left hand located behind the right hand.” PoseRieFlow and the PoseScript VAE produce articulated SMPL-H hands. The body-only LLM baselines emit flat, fingerless hands. Headings aligned as in Sec.  4.1 .
+We evaluate PoseRieFlow along two complementary axes. We first report results on the standard body-only benchmark used by prior text-to-pose work, where all baselines are applicable (Section  4.2 ). We then evaluate full SMPL-H whole-body generation including articulated hands (Section  4.3 ), the primary target setting of PoseRieFlow. In both regimes we isolate the effect of the proposed manifold formulation through matched-compute comparisons between Riemannian and Euclidean flow matching, and we further analyze inference efficiency, guidance, tokenization, conditioning, and training data in Section  4.4 .
+4.1 Experimental Setup
+Data.
+We train and evaluate on PoseScript-A2H2, the union of the PoseScript automatic (A2) and human-written (H2) caption splits, which pairs SMPL-H poses from AMASS with natural-language descriptions. Our default models are trained on PoseScript-A2H2 alone, matching the data available to the PoseScript VAE. A training-data ablation (Section  4.4 ) additionally trains on a 300k-pose subset of Motion-X++  [ 51 ] , a whole-body motion dataset whose frame-level captions provide detailed hand articulation that PoseScript does not emphasise. Baseline results use the authors’ publicly released pretrained models. All methods are evaluated identically on the test split ( N = 19990 N=19990 ).
+Metrics.
+All generated and reference poses are first rotated about the vertical axis to a common heading. We measure text-pose alignment with the PoseScript retrieval model [ 8 ] and report R@1 in a 32-candidate gallery, the correct item plus 31 seeded distractors, with identical galleries for all methods, a chance level of 3.125 % 3.125\,\% , and exact ties counted as misses, in both the text-to-pose (T2P) and pose-to-text (P2T) directions, together with Fréchet Inception Distance (FID) in the retrieval model’s pose-embedding space as a measure of distributional realism. We report FID in the whole-body setting (Section  4.3 ), where it is computed on complete 52-joint poses. In the body-only projection, zeroing the hand joints degenerates the retrieval feature covariance and renders the FID estimate unstable, so we omit it there. We additionally report per-joint kinematic error against the reference pose: Procrustes-aligned mean per-joint position error (PA-MPJPE) in millimetres and mean geodesic rotation error (Geo) in degrees, where Geo ∖ 0 \mathrm{Geo}_{\setminus 0} denotes the same error with the global orientation excluded. In the whole-body setting we further report Geo restricted to the 30 finger joints and fingertip PA-MPJPE summed over the ten fingertips (TipPA). Stochastic methods are sampled with ten seeds per caption and reported as mean ± \pm std, and their diversity (Div) is the mean pairwise PA-MPJPE between multiple samples, averaged over the test set.
+Baselines.
+We compare against the PoseScript conditional VAE [ 8 ] , the recent LLM-based generators ChatPose  [ 15 ] , PoseLLaVA  [ 14 ] , and UniPose  [ 23 ] . PoseRieFlow is reported in two variants that share architecture, parameter count, and training budget and differ only in the flow formulation: Ours (Riem.) , the Riemannian model with geodesic interpolation and tangent-space targets, and Ours (Eucl.) , the Euclidean ablation that interpolates and regresses in 6 6 D. This pairing isolates the contribution of the manifold geometry at matched compute. Recent text-to-pose systems increasingly build u
+
+【结论/局限】
+ We presented PoseRieFlow , a Riemannian flow matching model for text-conditioned whole-body pose generation. By formulating the flow on the product manifold SO ​ ( 3 ) 52 \mathrm{SO}(3)^{52} with constant-velocity geodesic targets, training a compact Diffusion Transformer with AdaLN time conditioning and cross-attention to Flan-T5-Base features, we outperform far larger LLM-based baselines on kinematic fidelity while modelling the full SMPL-H articulation. Ablations show that the Riemannian formulation consistently improves rotational and joint-position fidelity over Euclidean flow matching at matched compute across inference budgets and guidance weights, that token-level cross-attention rather than encoder capacity drives text alignment, and that part tokenization improves kinematic fidelity while cutting attention cost relative to per-joint tokenization. and future work.
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.09692v1 [cs.CV] 06 Nov 2026
+PoseRieFlow: Riemannian Flow Matching for Whole-Body Text-to-Pose Generation
+Jan Spindler
+Bardia Ardakanian
+Patrick Stotko
+Reinhard Klein
+Affiliation:  University of Bonn
+Affiliation:  jspindle@cs.uni-bonn.de  ardakanian@uni-bonn.de  {stotko,rk}@cs.uni-bonn.de and future work.
+Our captions and evaluation depend on PoseScript-style descriptions and Motion-X++’s automatically generated whole-body pose descriptions. Even PoseScript’s human-written captions are detailed, body-part-relative descriptions written to discriminate the pose from distractors, so performance on free-form colloquial requests is not characterised, and dataset biases in AMASS and Motion-X++ may propagate to generated poses. We do not explore learned or adaptive groupings, nor granularities between eight parts and per-joint tokenizat

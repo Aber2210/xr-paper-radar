@@ -1,0 +1,104 @@
+【摘要】
+
+【引言】
+ Forecasting 3D hand motion plays a pivotal role in intelligent systems, enabling them to perceive human intent and understand how humans interact with the physical world [ 54 , 85 , 42 , 26 , 23 , 43 ] .
+This predictive ability is critical for real-time applications  [ 76 , 25 , 40 , 41 ] , allowing systems to move beyond simple reaction to engage in proactive, fluid interaction.
+It is particularly valuable for embodied manipulation  [ 24 , 47 , 82 , 5 ] and AR applications  [ 61 , 59 , 36 , 30 ] , enabling knowledge transfer from human motion to downstream control or interaction tasks for more natural and responsive behavior.
+Recent advances in diffusion [ 21 ] and transformer-based [ 2 ] architectures have pushed the accuracy of 3D hand forecasting. However, as illustrated in Fig.   1 (a), these methods are constrained by two fundamental limitations. First, they are offline by design, requiring the accumulation of multiple observation frames before making a prediction. This precludes their use in any real-time, low-latency setting  [ 9 , 46 , 14 , 27 ] . Second, they are unimodal, relying solely on visual inputs and unable to incorporate natural language instructions. These limitations highlight a critical gap: existing models lack the streaming capability and multimodal understanding necessary for real-time, instruction-aware forecasting  [ 53 , 77 , 58 ] .
+To address these challenges, we propose SFHand in this paper, a streaming 3D hand forecasting framework that enables real-time and instruction-aware hand motion prediction.
+As shown in Fig.   1 (c), SFHand autoregressively forecasts future 3D hand states (pose, trajectory, type) while continuously processing streaming video inputs. This online architecture eliminates the need for accumulated sequences, making it directly suitable for real-time applications.
+To enable effective temporal reasoning over multiple frames, we introduce a novel ROI-enhanced memory layer. This mechanism efficiently retains and updates salient information from hand-centric regions, providing the model with a memory crucial for context-aware forecasting and downstream manipulation tasks.
+A key barrier to developing such instruction
+
+【方法】
+3.1 Autoregressive 3D hand forecasting
+3.2 ROI-enhanced memory
+3.3 Training
+4 EgoHaFL dataset We address the task of autoregressive 3D hand forecasting in a streaming, multimodal setting. The goal is to autoregressively predict the 3D hand state for the next frame, given a stream of visual observations and a static textual instruction. At each time step t t , our model receives:
+•
+a textual description 𝐥 \mathbf{l} of the ongoing action.
+•
+a streaming video frame 𝐯 t \mathbf{v}^{t} (one frame per inference step).
+•
+the current hand state 𝐡 t \mathbf{h}^{t} (which, during inference, is the model’s own prediction from step t − 1 t-1 ).
+The model then outputs the predicted hand state 𝐡 t + 1 \mathbf{h}^{t+1} for the next frame. Each hand state 𝐡 \mathbf{h} is a comprehensive representation containing the hand type (left or right), a 2D hand bounding box, the 3D hand pose represented by MANO parameters [ 67 ] , and the 3D hand trajectory capturing the global hand position in space.
+3.1 Autoregressive 3D hand forecasting
+Our framework, SFHand, is an autoregressive architecture designed to solve this streaming task. Fig.   2 illustrates the overall workflow of the model.
+At each time step t t , SFHand receives the textual instruction 𝐥 \mathbf{l} , the current video frame 𝐯 t \mathbf{v}^{t} , and the corresponding hand state 𝐡 t \mathbf{h}^{t} .
+These inputs are processed by three independent encoders and result in textual, visual, and hand embeddings 𝐟 l \mathbf{f}_{\text{l}} , 𝐟 v \mathbf{f}_{\text{v}} , and 𝐟 h \mathbf{f}_{\text{h}} .
+The model’s data flow is designed for streaming. The current visual and hand embeddings ( 𝐟 v \mathbf{f}_{\text{v}} , 𝐟 h \mathbf{f}_{\text{h}} ) are first processed by the ROI-enhanced memory layer ℳ \mathcal{M} . This layer, which is detailed in Sec.   3.2 , maintains a key–value (KV) queue that stores past embeddings and uses this queue to refine the current visual and hand embeddings by aggregating contextual information from past entries. We then concatenate it with 𝐟 l \mathbf{f}_{\text{l}} ,
+producing memory-augmented embeddings 𝐟 me \mathbf{f}_{\text{me}} that capture temporal dependencies essential for motion planning
+The memory-augmented embeddings 𝐟 me \mathbf{f}_{\text{me}} are then fed into a DETR style [ 6 ] transformer decoder 𝒟 \mathcal{D} . The decoder uses a set of learnable detection queries 𝐪 det \mathbf{q}_{\text{det}} to interact with the contextualized tokens and predict the next-frame hand states.
+Formally, the structure can be described as:
+𝐟 me t = [ 𝐟 l ; ℳ ⁡ ( 𝐟 v t , 𝐟 h t ) ] , 𝐡 t + 1 = 𝒟 ⁡ ( 𝐪 det , 𝐟 me t ) , \begin{split}\mathbf{f}_{\text{me}}^{t}&=[\mathbf{f}_{\text{l}};\;\mathcal{M}(\mathbf{f}_{\text{v}}^{t},\mathbf{f}_{\text{h}}^{t})],\\
+\mathbf{h}^{t+1}&=\mathcal{D}(\mathbf{q}_{\text{det}},\mathbf{f}_{\text{me}}^{t}),\end{split}
+(1)
+where [ … ; … ] [\ldots;\;\ldots] denotes concatenation.
+3.2 ROI-enhanced memory
+To enable effective temporal reasoning under streaming input, we design an ROI-enhanced memory layer ℳ \mathcal{M} .
+The memory is implemented as a fixed-size FIFO queue that stores the N N most recent historical embeddings, where N N is a hyperparameter controlling the temporal horizon. At each time step t t , the newly encoded visual and hand embeddings are concatenated into a single vector, 𝐞 t = [ 𝐟 v t ; 𝐟 h t ] \mathbf{e}^{t}=[\mathbf{f}_{\text{v}}^{t};\mathbf{f}_{\text{h}}^{t}] , which is then enqueued into the queue. This same vector 𝐞 t \mathbf{e}^{t} also serves as the query ( Q Q ) for the attention mechanism. The set of historical embeddings currently in the queue, H = [ 𝐞 t − 1 ; 𝐞 t − 2 ; … ; 𝐞 t − N ] H=[\mathbf{e}^{t-1};\mathbf{e}^{t-2};\ldots;\mathbf{e}^{t-N}] , serves as both the keys ( K K ) and values ( V V ).
+The core of our enhancement is an additive bias applied to the attention scores, using an ROI mask derived from the current 2D hand bounding box (an element of the hand state 𝐡 t \mathbf{h}^{t} ). First, we generate a binary ROI mask M M . The i − t ​ h i-th element is assigned as M i = 1 M_{i}=1 if the i − t ​ h i-th visual token has corresponding image patch spatially overlaps with the 2D hand bounding box. Otherwise, M i 
+
+【实验】
+5.1 Experimental setup Figure 3 : Illustrations of various tasks in the Franka Kitchen [ 18 ] and Adroit [ 65 ] simulated environments.
+5.1 Experimental setup
+We evaluate our pre-trained model on two categories of tasks. First, we assess its primary performance on 3D hand forecasting , evaluating its forecasting accuracy on the test split of EgoHaFL. Second, we evaluate the generalization of its learned representations on downstream robotic manipulation tasks. For this, we use two standard benchmarks: the Franka Kitchen environment [ 18 ] for complex, gripper-based manipulation, and the Adroit environment [ 65 ] for dexterous hand control ( Fig.   3 ).
+We pre-train all SFHand models on our EgoHaFL dataset. We use the AdamW optimizer with an initial learning rate of 2e-4, and train on 8 GPUs with a batch size of 256 per GPU. For the manipulation experiments, we follow the established practice  [ 52 , 32 , 64 ] . We freeze the pre-trained encoders and attach a lightweight, task-specific prediction head on top of the extracted representations. This head is then trained to map the encoded features to the corresponding robotic control signals. .
+As shown in Tab.   2 , our full model, SFHand, substantially outperforms all prior approaches across all metrics. Notably, non-streaming methods like USST and EgoH4 exhibit both lower accuracy and very low FPS, as they require accumulating full video sequences. This confirms their unsuitability for real-time tasks. Compared to the strong HaMeR baseline, SFHand still achieves significant and consistent accuracy gains, demonstrating the clear benefits of integrating multimodal inputs and temporal reasoning. In terms of runtime, while HaMeR is fast (over 100 FPS) due to its visual-only encoder, our SFHand model runs at 33.4 FPS. This speed, which accounts for our multimodal encoders and autoregressive inference, remains sufficient for real-time applications. The oracle variant, SFHand*, achieves 58.8 FPS. These results confirm that SFHand sets a new state-of-the-art in forecasting accuracy while being efficient for real-time use.
+Table 2 : Evaluation on 3D hand forecasting. “St.” indicates whether the method is streaming, and “In.” indicates whether it accepts language instructions. SFHand ∗ * denotes the oracle variant that feeds the ground-truth hand state for autoregression. . The results reveal clear trends across modalities. Removing the hand input causes a substantial performance drop in trajectory (ADE/FDE) metrics, confirming the importance of previous hand information for accurate 3D motion forecasting.
+Excluding language input also degrades performance in trajectory, showing that text provides valuable high-level intent and future guidance, helping the model anticipate actions beyond immediate motion patterns.
+As can be observed, the video modality contributes the most to 3D forecasting accuracy, as visual cues capture scene dynamics, object interactions, and hand–object relationships that are crucial for predicting realistic future motions.
+Video also plays the most important role for 2D bounding box prediction, yielding the lowest Recall@0.5 IoU when removed, since it preserves rich spatial context and visual detail necessary for precise localization.
+Table 4 : Ablation study on the ROI-enhanced memory layer.
+Memory
+ROI
+Trajectory
+Hand Pose
+Recall.5
+ADE
+FDE
+JPE
+PA-JPE
+✗
+✗
+15.56
+18.38
+3.29
+0.92
+0.72
+✓
+✗
+18.34
+22.23
+3.36
+0.92
+0.71
+✓
+✓
+12.65
+13.08
+3.38
+0.92
+0.70
+Figure 4 : Function of memory layer. All hands are forecasted from previous video frames and hand states.
+Figure 5 : Qualitative comparison between our method and HaMeR. “HaMeR + In.” indicates HaMeR incorporating language instructions for forecasting. Red rectangles highlight incorrect hand positions or hand poses. All hands are forecasted from previous video frames and hand states.
+5.3.2 Ablation on ROI-enhanced memory . As illustrated in Fig.   5 , HaMeR often produces inaccurate hand positions and poses, highlighted by red rectangles. These errors typically occur when the model loses temporal coherence across frames, causing unnatural hand drift, misalignment with manipulated objects, or implausible inter-hand interact
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2511.18127v2 [cs.CV] 15 May 2026
+SFHand: Learning Embodied Manipulation by Streaming
+Egocentric 3D Hand Forecasting
+Ruicong Liu   Yifei Huang   Liangyang Ouyang   Caixin Kang   Yoichi Sato
+† † thanks: Corresponding Author.
+Affiliation:  The University of Tokyo, Tokyo, Japan
+Affiliation:  {lruicong, hyf, oyly, cxkang, ysato}@iis.u-tokyo.ac.jp In this work, we introduced SFHand, a streaming 3D hand forecasting framework that integrates visual, linguistic, and 3D hand modalities. Our model is equipped with an ROI-enhanced memory layer that enables temporal reasoning, and an autoregressive architecture that brings instruction-following capability to hand motion prediction.
+To support this task, we constructed EgoHaFL, the first large-scale dataset providing synchronized egocentric videos, fine-grained language descriptions, and accurate 3D hand annotations.
+Through extensive experiments, we demonstrated that SFHand achieves state-of-the-art accuracy in 3D hand forecasting. Further, we show that the representations learned from forecasting human hand motion can be directly transferred to improve robotic manipulation policies.
+Overall, this work presents a step toward unifying future motion forecasting and embodied manipulation, offering a foundation for more generalizable and instruction-aware human–robot interaction systems.
+Limitation. While SFHand demonstrates strong performance across forecasting and robotic manipulation benchmarks, its current implementation relies on MANO-based hand representations, which may limit generalization to hands with extreme articulations or occlusions.
+References
+[1]
+S. Azad, V. Vineet, and Y. S. Rawat (2025)
+Hierarq: task-aware hierarchical q-former for enhanced video under

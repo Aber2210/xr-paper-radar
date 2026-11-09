@@ -1,0 +1,191 @@
+【摘要】
+
+【引言】
+ Human hands are among the most versatile articulated systems, practicing rich and diverse interactions with objects. Modeling plausible hand–object configurations is therefore fundamental to applications in robotics, AR/VR, and 3D perception. Yet, recovering or generating such interactions from often partial observations remains challenging: the space of valid configurations is highly constrained, object-dependent, and non-Euclidean, where even small pose perturbations can lead to physically implausible grasps with interpenetration or loss of contact. A central requirement is thus a strong, queryable prior that encodes which hand poses are plausible given an object.
+Existing approaches fall short of this goal. Generative models based on VAEs  Rempe et al. (2021) or diffusion  Shafir et al. (2023) ; Christen et al. (2024) learn distributions over poses or interactions, but operate in Euclidean latent spaces where distances lack geometric meaning, limiting their expressivity. Neural distance field  Chibane et al. (2020) (NDF) variants such as PoseNDF  Tiwari et al. (2022) or NRDF  He et al. (2024) offer an alternative by modeling the manifold of plausible articulations directly and enabling projection via gradient descent. However, current NDF-based priors are human-body specific, unconditional, capture hand articulation independent of the object, and thus fail to encode interaction-specific constraints. Conversely, object-conditioned methods  Kulkarni et al. (2024) ; Weng et al. (2023) typically treat articulation in Euclidean space or rely on task-specific pipelines, sacrificing geometric consistency. As a result, no existing approach provides a unified prior that is (i) geometry-aware, (ii) conditioned on object shape, and (iii) equipped with a meaningful distance for optimization.
+HaNDF addresses this gap proposing a generative, object conditioned prior of hand poses. Our key insight is to model hand articulation on its intrinsic Riemannian manifold while treating the object as a conditioning signal that modulates the manifold of plausible configurations. Concretely, we learn a conditional distance field that predicts the geodesic distance to the nearest vali
+
+【方法】
+Δ q ↓ \Delta_{q}\downarrow
+dNN ↓ \downarrow
+APD ↑ \uparrow
+FID ↓ \downarrow
+Δ q ↓ \Delta_{q}\downarrow
+dNN ↓ \downarrow
+APD ↑ \uparrow
+FID ↓ \downarrow
+HMP Duran et al. (2024)
+24.37 ∘
+18.77 ∘
+36.86 ∘
+0.7407
+16.60 ∘
+14.45 ∘
+26.79 ∘
+0.9448
+H-PoseNDF
+20.80 ∘
+16.40 ∘
+32.57 ∘
+1.0318
+12.87 ∘
+8.83 ∘
+20.03 ∘
+0.7267
+H-NRDF
+16.60 ∘
+8.01 ∘
+24.48 ∘
+0.1558
+8.47 ∘
+4.52 ∘
+12.17 ∘
+0.0453
+HaNDF
+12.57 ∘
+5.44 ∘
+20.79 ∘
+0.0596
+6.60 ∘
+3.57 ∘
+12.23 ∘
+0.0106
+As reported in Tab.   1 , HaNDF  achieves the
+best Δ q \Delta_{q} , dNN , and FID on both completion
+tasks, cutting Δ q \Delta_{q} by ∼ \sim 25% and FID by
+3–4 × \times over the strongest baseline (H-NRDF), with even larger
+gaps against H-PoseNDF and HMP. The unconditional baselines follow a
+consistent ranking H-NRDF > > H-PoseNDF > > HMP. Notably, H-NRDF’s gap to HaNDF  widens on Missing Fingers ( dNN 8.01 ∘ vs. 5.44 ∘ ) compared to Missing Finger Parts (4.52 ∘ vs. 3.57 ∘ ), highlighting that HaNDF’s object conditioning compensates when more joints anchor the pose.
+Table 2 : In-the-wild hand recovery on HOI4D, OakInk, and DexYCB. For hand-focused, fair comparisons, the object ground truth is provided during inference. Lower is better.
+HOI4D  Liu et al. (2022)
+OakInk  Yang et al. (2022)
+DexYCB  Chao et al. (2021) MPVPE ↓ \downarrow
+MPJPE ↓ \downarrow
+I.V. ↓ \downarrow
+MPVPE ↓ \downarrow
+MPJPE ↓ \downarrow
+I.V. ↓ \downarrow
+MPVPE ↓ \downarrow
+MPJPE ↓ \downarrow
+I.V. ↓ \downarrow
+IHoI  Ye et al. (2022)
+19.42
+20.12
+41.44
+14.75
+15.17
+1.66
+29.85
+30.73
+1.26
+EasyHOI  Liu et al. (2025)
+16.64
+17.06
+13.28
+13.17
+13.48
+0.93
+29.64
+30.08
+2.61
+EasyHOI + HaNDF
+13.98
+14.33
+11.40
+12.85
+13.12
+0.89
+28.31
+28.78
+2.43
+AlignSDF  Chen et al. (2022b)
+10.40
+10.60
+5.39
+10.34
+10.50
+0.82
+16.82
+17.19
+0.99
+AlignSDF + HaNDF
+10.22
+10.43
+4.39
+9.98
+10.17
+0.87
+16.59
+16.97
+0.98
+Hand-object reconstruction
+Single-image hand–object reconstruction remains a challenging task due to severe mutual occlusion, and serves as a natural downstream application of our prior. Since existing methods adopt heterogeneous object reconstruction pipelines (e.g. EasyHOI  Liu et al. (2025) relies on LISA + InstantMesh, while AlignSDF  Chen et al. (2022b) uses a trained implicit SDF), we provide the ground truth object geometry to all methods for a fair comparison and focus the evaluation on hand reconstruction quality. We reserve optimizing for the object (shape recovery) to Sec.   5.2 . We retrain and evaluate all methods on HOI4D, DexYCB, and OakInk under this unified protocol. To validate the effectiveness of our prior, we plug HaNDF into two representative baselines, EasyHOI and AlignSDF, as an object-conditioned hand prior that refines their hand results.
+As shown quantitatively in Tab.   2 and qualitatively in Fig.   8 , integrating HaNDF consistently improves two baselines across all three datasets. In particular, HaNDF (AlignSDF-based) achieves the best MPVPE, MPJPE, and intersection volume on most benchmarks, demonstrating that our prior provides a strong and generalizable regularization for hand reconstruction under occlusion. We provide more in-the-wild hand recovery results in  Sec.   D.3 .
+Figure 8 : Qualitative results for in-the-wild hand recovery on HOI4D. Our HaNDF consistently improves the reconstruction quality of both EasyHOI and AlignSDF, alleviating common failure modes such as lacking contact, hand-object penetration, and implausible hand rotation.
+Tab.   3 compares hand-object recovery on the HOI4D test
+set, using AlignSDF  Chen et al. (2022b) as the baseline. Starting from
+AlignSDF’s predictions, applying HaNDF as a denoiser substantially improves
+hand reconstruction quality, reducing Δ ​ q \Delta q from 14.77 to 9.60, MPJPE
+from 12.08 to 11.74, and MPVPE from 11.90 to 11.52. This confirms that the
+learned hand prior, conditioned on the predicted object, effectively
+refines noisy hand outputs. We further refine the object mesh by retrieving
+the nearest neighbor in the DeepSDF latent space (with PCA), which not
+only improves object reconstruction (obj-F@2% from 0.1187 to 0.1568) but also further boosts hand quality (MPJPE: 11.74 → \rightarrow
+11.50, MPVPE: 11.52 → \rightarrow 11.30). With additional object recovery (as shown in
+
+【实验】
+statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer: [No]
+Justification: The paper reports quantitative comparisons across datasets and tasks on large test sets with fixed evaluation protocols, and reports standard deviation for certain experiments. Yet, to keep the computation budget at a reasonable level, for a large set of experiments, the current manuscript does not include error bars, confidence intervals, standard deviations, or statistical significance tests.
+Guidelines:
+•
+The answer [N/A] means that the paper does not include experiments.
+•
+The authors should answer [Yes] if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+•
+The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+•
+The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+•
+The assumptions made should be given (e.g., Normally distributed errors).
+•
+It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+•
+It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis of Normality of errors is not verified.
+•
+For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+•
+If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text. Datasets
+Baselines
+Metrics To evaluate the effectiveness of the proposed HaNDF, we conduct experiments on generation, denoising, in-the-wild hand recovery, and hand–object recovery, using task-specific evaluation metrics. We evaluate our method on several datasets, including HOI4D  Liu et al. (2022) , OakInk  Yang et al. (2022) , and DexYCB  Chao et al. (2021) . We also provide detailed ablation studies on the network architecture, object encoding, and field geometry, along with further analyses of runtime, robustness, and generalization.
+Datasets
+We evaluate our method on three large-scale hand–object interaction datasets. HOI4D Liu et al. (2022) provides egocentric RGB-D sequences with dense MANO annotations, object poses, and masks. We follow an object-level split across six rigid categories, using 219 objects (63K poses) to train and 30 unseen objects (7.5K poses) to test. We retain only contact frames. DexYCB Chao et al. (2021) contains 1,000 third-person grasp sequences over 21 YCB objects with full MANO and object pose annotations, from which we use the standard s0 split (582K frames). OakInk Yang et al. (2022) complements these with diverse hand–object interactions in multi-view RGB sequences. We use sequences from 7 object categories to build our training and test sets, with 53 objects for training and 14 unseen objects for testing. More details in appendix   F .
+Baselines
+We compare against three groups of baselines. First, we adapt pose distance-field priors to the hand domain by re-implementing PoseNDF  Tiwari et al. (2022) and NRDF  He et al. (2024) on the 15-joint MANO manifold, denoted H-PoseNDF (Euclidean updates with quaternion normalization) and H-NRDF (Riemannian formulation on ( 𝕊 3 ) 15 (\mathbb{S}^{3})^{15} ), both of which are unconditional and serve as direct ablations of our object conditioning. Second, we compare to recent hand and hand–object generative priors, including HMP  Duran et al. (2024) and object-conditioned models such as G-HOP  Ye et al. (2024) , LatentHOI  Li et al. (2025) , and Text2HOI  Cha et al. (2024) . Third, for single-image hand recovery, we evaluate against EasyHOI  Liu et al. (2025) , Align
+
+【结论/局限】
+ We presented HaNDF, an object-conditioned neural distance field for hand articulation on Riemannian manifolds. Coupled with manifold-aware optimization, the learned geometric prior supports denoising, completion, generation, and reconstruction. It can consistently improve robustness and physical plausibility across challenging benchmarks. More broadly, our results suggest that HaNDF provide a promising direction for learning structured interaction priors beyond Euclidean latent representations. and future work
+References
+A Riemannian Geometry
+B The Rotation Group SO ⁡ ( 3 ) \mathrm{SO}(3)
+C Implementation Details
+C.1 Model Architecture
+C.2 Training Algorithm
+C.3 Object Recovery
+D Additional Results
+D.1 Quantitative hand pose generation results
+D.2 More results on hand denoising
+Quantitative evaluation
+More qualitative results
+Robustness under controlled object-geometry perturbations
+D.3 More results on in-the-wild hand recovery
+D.4 Comparison of object representations
+D.5 Transformer architecture Ablation
+Depth
+Object-token granularity and future work
+Our method relies on reasonably accurate object geometry and is not a true grasp prior as we do not model a hand-object joint NDF. Such an extension must account for the different geometries
+of hand rotations and object latents, along with their
+different noise scales and optimization step sizes, and may also need to incorporate hand–object contact dynamics. We will also extend our hand prior to bimanual interactions, as well as investigating more efficient training strategies. Finally, our model can be extended to the dynamic setting in a similar vein to NRMF  Yu et al. (2026) . More future work analysis are shown in  appendix   H .
+Acknowledgments and Disclosure of Funding
+T. Birdal was supported by a UKRI Future Leader

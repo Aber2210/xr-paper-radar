@@ -1,0 +1,370 @@
+【摘要】
+
+【引言】
+ Estimating the 6 degree-of-freedom (DoF) pose of a sensor with respect to a reference frame is a prerequisite for many applications, including (autonomous) navigation, surveying, robotics, and augmented reality (AR). Typically, GNSS sensors are used in combination with IMUs for this task. Since this procedure heavily relies on good GNSS reception, it is applicable only outdoors. Even there, occlusions and multi-path effects significantly limit the applicability of GNSS in complex urban environments. Visual localization, which estimates the 6-DoF pose of an image with respect to a previously mapped scene, provides a complementary positioning modality: objects that occlude GNSS signals typically exhibit a high density of salient visual features.
+Over the last two decades, many visual localization methods have been proposed, which can be divided into 2D image-based and 3D geometry-based approaches. 2D image-based methods represent the scene as a database of oriented images, from which image retrieval selects the reference images most similar to the query ( Sivic and Zisserman, 2003 ) . 3D geometry-based methods, in contrast, store the scene geometry in a globally consistent manner. This allows them to establish 2D–3D correspondences and to estimate the query pose with a Perspective-n-Point (PnP) solver ( Haralick et al., 1994 ) within a RANSAC framework ( Fischler and Bolles, 1981 ) . Because no 3D geometry has to be computed or stored, 2D image-based approaches are more scalable and flexible, whereas 3D geometry-based approaches benefit from more extensive geometric reasoning and generally achieve higher accuracy ( Panek et al., 2026 ) . In both cases, the performance further depends on how much the query conditions differ from those during reference mapping ( Sattler et al., 2018 ) . Yet scalability and accuracy are both needed in practice: to complement GNSS effectively and bridge GNSS-denied areas, visual localization must scale to entire cities or regions without sacrificing accuracy.
+Visual localization methods in outdoor scenarios are generally considered accurate if they achieve translation errors less than 25 cm and rotation errors less than 2 ∘ 2^{\circ}
+
+【方法】
+Image
+Med. pose error
+0.01m
+0.025m
+0.05m
+0.1m
+0.2m
+0.5m
+1m
+res
+ϵ t \epsilon_{t} [m]
+ϵ R \epsilon_{R} [ ∘ ]
+0.1 ∘
+0.25 ∘
+0.5 ∘
+1 ∘
+2 ∘
+5 ∘
+10 ∘
+SIFT
+1024
+0.114
+0.213
+7.3 7.3
+20.3 20.3
+33.6 33.6
+47.4
+58.1
+64.8
+66.7
+2048
+0.124 0.124
+0.215 0.215
+13.0 13.0
+26.9
+37.4
+46.8 46.8
+55.0 55.0
+60.1 60.1
+61.6 61.6
+4096
+0.873 0.873
+1.849 1.849
+14.1
+24.7 24.7
+32.2 32.2
+38.6 38.6
+44.1 44.1
+48.7 48.7
+50.3 50.3
+full
+- a
+- a
+13.6 13.6
+22.5 22.5
+28.8 28.8
+34.8 34.8
+40.4 40.4
+45.2 45.2
+46.8 46.8
+SuperPoint
+1024
+0.022 0.022
+0.051 0.051
+17.4 17.4
+56.4 56.4
+79.4 79.4
+91.5 91.5
+96.5 96.5
+98.4 98.4
+98.7 98.7
+2048
+0.013 0.013
+0.031
+35.9 35.9
+78.1 78.1
+92.2 92.2
+97.2 97.2
+98.5
+98.9
+99.0
+4096
+0.011
+0.027
+45.9 45.9
+82.2 82.2
+93.7 93.7
+97.5
+98.2 98.2
+98.6 98.6
+98.7 98.7
+full
+0.011
+0.026
+47.1
+82.8
+94.0
+97.5
+98.3 98.3
+98.6 98.6
+98.7 98.7
+DISK
+1024
+0.021 0.021
+0.047
+24.4 24.4
+55.5 55.5
+76.0 76.0
+89.0 89.0
+94.3 94.3
+97.0
+97.6
+2048
+0.012
+0.033
+41.1
+72.3
+85.6
+92.2
+94.8
+96.1 96.1
+96.6 96.6
+4096
+0.015 0.015
+0.034 0.034
+38.3 38.3
+62.9 62.9
+75.5 75.5
+81.9 81.9
+84.8 84.8
+86.5 86.5
+86.9 86.9
+full
+0.018 0.018
+0.035 0.035
+32.9 32.9
+58.5 58.5
+71.0 71.0
+77.4 77.4
+79.4 79.4
+80.6 80.6
+81.0 81.0
+ALIKED
+1024
+0.019 0.019
+0.049 0.049
+21.1 21.1
+61.8 61.8
+81.4 81.4
+92.5 92.5
+96.7 96.7
+98.3 98.3
+98.7 98.7
+2048
+0.012 0.012
+0.034 0.034
+41.4 41.4
+80.0 80.0
+92.8 92.8
+97.0
+98.3
+98.9
+99.0
+4096
+0.011
+0.030 0.030
+46.3
+81.6
+93.2
+96.8 96.8
+97.8 97.8
+98.2 98.2
+98.3 98.3
+full
+0.012 0.012
+0.029
+41.7 41.7
+78.2 78.2
+91.7 91.7
+95.7 95.7
+97.2 97.2
+97.7 97.7
+97.7 97.7
+XFeat
+1024
+0.045 0.045
+0.080 0.080
+5.4 5.4
+26.8 26.8
+53.7 53.7
+76.4 76.4
+89.2 89.2
+95.8 95.8
+97.4 97.4
+2048
+0.026 0.026
+0.046 0.046
+14.1 14.1
+48.7 48.7
+74.3 74.3
+88.6 88.6
+94.2
+96.9
+97.5
+4096
+0.019 0.019
+0.036 0.036
+23.1 23.1
+61.7 61.7
+82.6
+90.1
+93.2 93.2
+94.6 94.6
+95.1 95.1
+full
+0.018
+0.035
+28.9
+61.9
+79.0 79.0
+86.6 86.6
+89.9 89.9
+91.2 91.2
+91.6 91.6
+RDD
+1024
+0.012
+0.047
+39.0
+76.1
+89.2
+95.0
+97.5
+98.8
+98.9
+2048
+0.009
+0.032 0.032
+53.4
+85.9
+94.8
+97.5
+98.7
+99.0
+99.1
+4096
+0.010
+0.030 0.030
+48.5
+83.3
+94.2
+97.6
+98.5
+99.0
+99.0
+full
+0.010
+0.029
+48.4
+84.7
+95.2
+98.2
+98.9
+99.1
+99.2
+a Undefined, as fewer than 50 % of the images were successfully localized.
+In general, higher image resolutions yield more accurate image observations. In our visual localization pipeline, the image observations affect the accuracy of the estimated pose of the query image in two ways, directly through the keypoints extracted from the query image and indirectly through the accuracy of the reconstructed 3D point coordinates.
+To evaluate the impact of image resolution on the final image poses, we tested the six local feature representations at the four image resolution levels, using the high-resolution images of the 2025 monocular front camera as queries and the images of the three 2023 stereo systems as reference (Table 9 ). We excluded the panorama camera, as its substantially lower spatial resolution (Table 2 ) would introduce heterogeneous keypoint localization accuracies within an otherwise uniformly high-resolution setting. As the strict ± \pm 15 m / ± 90 ∘ \pm 90^{\circ} pre-filtering makes the choice of IR method nearly irrelevant (Section 4.3 ), we used the compact 512-dimensional EigenPlaces descriptor.
+Figure 5: Percentage of poses with translation error ϵ t \epsilon_{t} and rotation error ϵ R \epsilon_{R} below the value on the logarithmic x-axis (0.0005–1 m and 0.005–10 ∘ ), for six local features (SIFT, SuperPoint, DISK, ALIKED, XFeat and RDD) at four image resolution levels ( 1024 , 2048 , 4096 and full ).
+Since both query and reference images were recorded by MMS whose trajectories are constrained by lanes, strong viewpoint changes were largely avoided. This matters because many local feature representations are neither scale- nor rotation-invariant, with the lack of rotation invariance having the considerably stronger adverse effect ( Tyszkiewicz et al., 2020 ; Zhao et al., 2023 ) . For the same reason, we applied the resolution level to both query and reference imagery, which avoids a scale difference between them. The reported results therefore reflect the resolution of the scene representation together with that of the query imagery. The setup thus i
+
+【实验】
+Reference imagery
+Query imagery
+IR method
+Pre-filtering
+Local features
+Resolution
+(i) Sec. 4.3
+2023, all cameras
+2025 panorama, front head
+six methods
+five strategies
+SuperPoint
+2048
+(ii) Sec. 4.4
+2023 stereo
+2025 mono front
+EigenPlaces (512)
+± \pm 15 m / ± \pm 90 ∘
+six features
+1024–full
+(iii) Sec. 4.5
+2023 / 2025 / both
+consumer cameras
+MegaLoc
+± \pm 100 m a / –
+five features
+2048
+(iv) Sec. 4.6
+2025
+consumer cameras
+MegaLoc
+± \pm 100 m a / –
+ALIKED
+1024
+a Centered on one manually selected map coordinate per scene, identical for all query images of that scene.  We perform four experiments, each addressing one of the sub-questions (i)–(iv) stated in Section 1 . Table 9 summarizes the configuration of each experiment.
+Table 9: Configurations of the experiments: query and reference imagery, image retrieval (IR) method, position and heading pre-filtering, local features, and image resolution levels. protocol and metrics protocol and metrics
+For all experiments, we evaluate the performance of visual localization by the pose errors. Following common practice, we report the percentage of query images that are localized within specific error thresholds ( Sattler et al., 2018 ) . We compute the translation ϵ t \epsilon_{t} and rotation error ϵ R \epsilon_{R} according to Equations ( 1 ) and ( 2 ) and apply seven error thresholds: [0.01, 0.025, 0.05, 0.1, 0.2, 0.5, 1] meters for translation and [0.1, 0.25, 0.5, 1, 2, 5, 10] degrees for rotation. In addition, we use three error categories: accurate (0.05 m, 0.5 ∘ ), moderate (0.1 m, 1 ∘ ), and low (0.2 m, 2 ∘ ) for concise reporting. Following Jin et al. (2021) , we set ϵ t \epsilon_{t} and ϵ R \epsilon_{R} to infinity for images for which localization failed. Where appropriate, we also report the median translation and rotation errors.
+ϵ t = ‖ t e ​ s ​ t − t g ​ t ‖ 2 \epsilon_{t}=\|t_{est}-t_{gt}\|_{2}
+(1)
+ϵ R = arccos ⁡ ( t ​ r ​ a ​ c ​ e ​ ( R g ​ t − 1 ​ R e ​ s ​ t ) − 1 2 ) \epsilon_{R}=\arccos\left(\frac{trace(R_{gt}^{-1}R_{est})-1}{2}\right)
+(2)
+All pose errors reported in this work are computed with respect to the ground-truth poses and therefore describe the accuracy relative to the reference imagery. The absolute accuracy additionally depends on the georeferencing of the reference imagery (Section 5.1 ) and has to be considered if absolute pose errors are of interest. The strictest translation threshold of 0.01 m is of the same order as the uncertainty of the ground truth: the two mobile mapping campaigns, whose images serve as queries in Sections 4.3 and 4.4 , are co-registered with a 3D RMSE of 5 mm at independent tie points (Section 3.1.2 ), and the positions of the consumer queries have an uncertainty of 6–9 mm (Section 3.1.4 ). At this threshold, part of the measured error stems from the ground truth itself, so the reported percentages are a conservative estimate. The rotation thresholds are not affected, as the orientation uncertainty of the ground truth is well below 0.1 ∘ .
+Images acquired in a sequence are not independent samples, as they share the static scene content and differ mainly in dynamic elements such as moving vehicles. The five scenes were moreover selected deliberately rather than drawn at random. We therefore report the results per scene and camera and base our conclusions on differences that appear consistently across the conditions varied in each experiment, such as scenes, cameras, image resolutions or retrieval methods. For each difference, we report in how many of these combinations it is observed. of Visual Place Recognition Methods for Image Pair Retrieval in 3D Vision and Robotics .
+ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences XI-2-2026 , pp. 647–656 .
+External Links: ISSN 2194-9050 ,
+Document
+Cited by: §4.3 .
+Haralick et al. (1994)
+B. M. Haralick, C. Lee, K. Ottenberg, and M. Nölle
+Review and analysis of solutions of the three point perspective pose estimation problem .
+International Journal of Computer Vision 13 ( 3 ), pp. 331–356 ( en ).
+External Links: ISSN 0920-5691, 1573-1405 ,
+Document
+Cited by: §1 .
+Huang et al. (2024)
+H. Huang, C. Liu, Y. Zhu, H. Cheng, T. Braud, and S. Yeung
+360Loc: A Datas
+
+【结论/局限】
+Acknowledgements
+Funding
+Conflicts of interest/Competing interests
+Availability of data and material
+Code availability
+Authors’ contributions
+A Memory requirements and runtime
+A.1 Memory consumption
+A.2 Runtime
+References
+License: CC BY-NC-SA 4.0
+arXiv:2607.24409v2 [cs.CV] 06 Nov 2026
+∎
+Accuracy potential of visual localization exploiting high-end street-level imagery
+Jonas Meyer
+Stephan Nebiker
+Pascal Theiler
+Norbert Haala
+Affiliation: J. Meyer
+E-mail: stephan.nebiker@fhnw.ch
+Affiliation: J. Meyer
+Affiliation: Institute of Geomatics, FHNW University of Applied Sciences and Arts Northwestern Switzerland, 4132 Muttenz, Switzerland
+J. Meyer (corresponding author):
+S. Nebiker:
+E-mail: jonas.meyer@fhnw.ch
+Affiliation: Institute for Photogrammetry and Geoinformatics, University of Stuttgart, 70174 Stuttgart, Germany
+N. Haala:
+E-mail: norbert.haala@ifp.uni-stuttgart.de
+Affiliation: iNovitas AG, 5400 Baden, Switzerland
+P. Theiler:
+E-mail: pascal.theiler@inovitas.ch In this paper, we investigated the accuracy potential of sparse feature-based visual localization using high-end street-level imagery. Due to the lack of a suitable dataset for this purpose, we introduced the FHNW Muttenz dataset, which is publicly available to foster future research. It comprises high-resolution imagery from two mobile mapping campaigns of a 10 km street network and query sequences acquired with four different cameras in five scenes. All images are co-registered to the reference imagery, and the ground-truth poses of the query images have an uncertainty of 6–9 mm in position and well below 0.1 ∘ in orientation. To evaluate the accuracy potential on this dataset, we used a modular visual localization pipeline built from established components. It relies on the simple scene representation of georefer

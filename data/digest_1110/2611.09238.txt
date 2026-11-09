@@ -1,0 +1,82 @@
+【摘要】
+
+【引言】
+ One of the fundamental aspects that contributes to the sense of presence in Virtual Reality (VR) is the spatialization of sensory stimuli [ 12 , 2 , 18 ] . In the visual domain, 360 ∘ rendering ensures that the virtual environment surrounds the user, mimicking real-world experiences. Similarly, spatialized audio positions sound sources in three-dimensional space, enhancing realism and presence. Additionally, proprioceptive feedback, our sense of body position and movement, further reinforces the feeling of being physically present. Correct integration of these multimodal sensory cues contributes to the final sense of immersion, creating a coherent and engaging experience [ 4 ] .
+In the real world, perceptual integration of information from audiovisual sensory inputs facilitates accurate spatial understanding of our surroundings.
+However, achieving such multimodal integration has been identified as a core challenge in VR.
+This is due mainly to hardware limitations, such as latency, the lack of focus/accommodation cues from binocular (instead of true 3D) displays, or stereo (instead of spatial) sound.
+As a consequence, audiovisual content in VR applications may result in an erroneous understanding of an object’s position.
+While the exact underlying cognitive mechanism remains an open scientific question, such perceptual disruptions do decrease immersion and degrade the user experience [ 14 ] .
+Although proper integration of information from different sensory systems enhances immersion, perceptual coherence between modalities is not always ensured.
+This can occur due to actual misalignments in sensory inputs, which may arise due to hardware limitations, parallax errors in 360 ∘ recordings, tracking delays, or inaccuracies in spatial audio rendering [ 27 , 21 ] .
+However, even when sensory inputs are perfectly aligned, perceptual aspects can still lead to integration errors. For example, sudden sounds can interfere with the detection of brief visual stimuli [ 17 ] , and head movements relative to an audiovisual stimulus can cause the auditory cue to be perceived as spatially offset from the visual cue [ 3 ] .
+Regardless of the cause, such perceptual disruptions can
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+【实验】
+3.2 Influence of Task Demand 4 Impact on Perceptual Audiovisual Disparities
+4.1 Environmental Cues
+4.1.1 Experimental Procedure 4.2 Implications of self-movement
+4.2.1 Experimental Procedure  To fit the psychometric curve, we pooled the responses of all participants for the different offsets of the auditory cue, independently of the position of the ball, as we did not observe a significant effect of the visual cue position in the results (see supplementary material). The psychometric curve, PSE, and DTs values are shown in Figure 3 and Table 1 . The PSE is almost perfectly centered at 0 ∘ 0^{\circ} (PSE = − 0.40 ∘ -0.40^{\circ} ), indicating that participants correctly perceive auditory and visual cues as aligned when they are indeed aligned. The DTs, where the auditory cue is perceived to the left (DT 25 % = − 4.61 ∘ {}_{25\%}=-4.61^{\circ} ) or right (DT 75 % = 3.82 ∘ {}_{75\%}=3.82^{\circ} ), are lower than 5 ∘ 5^{\circ} , matching the measured horizontal spatial resolution of the HRTF used to render the audio. The same trends can be observed in the individual psychometric fits for each participant, which are included in the supplementary material. This suggests that participants exhibit almost perfect accuracy in detecting true audiovisual disparities under ideal conditions, making slight misalignments highly noticeable.
+These DTs are more restrictive than those reported by Kyto et al. [ 15 ] for AR and Kim and Lee [ 14 ] for VR, where misalignments between the cues of 15 ∘ 15^{\circ} or less were often perceived as a unified audiovisual stimulus. The difference may result from methodological variations such as stimulus duration. We presented stimuli for two seconds while Kim and Lee [ 14 ] used only 100 milliseconds. Hardware differences may also play a role, as depth perception in AR is typically less accurate than in VR, potentially affecting spatial judgment.
+Our results show that participants reliably detect small misalignments when they have at least two seconds to make a judgment and can align themselves with the audiovisual stimulus. This highlights a critical concern for VR content: even slight audiovisual misalignments can be noticeable and may impact the user experience.
+3.2 Influence of Task Demand
+In this experiment, we assess whether the sensitivity to slight true disparities observed in the baseline experiment persists in a richer VR environment, more representative of real applications. While participants could easily detect auditory misalignments, the impact on VR experiences where users are engaged in different tasks remains unknown. To explore this, we measured detection thresholds for audiovisual true disparities in more complex VR scenes (a forest and a house) while introducing an additional task, a visual search. Participants are tasked with identifying spatial misalignments
+between auditory and visual cues while searching for hidden figurines within rich audiovisual environments. These environments always presented two clear audiovisual stimuli that produced sound during the whole trial. Before the experiment, participants were informed that figurines would appear randomly and that auditory and visual cues might have spatial offsets. At the end of each trial, once they could no longer search for figurines, they answered the same 2AFC question as in the baseline experiment, indicating whether the auditory cue was to the right or to the left of the visual cue.
+Technical Details: Each 15-second trial involved searching for figurines that appeared consecutively while audiovisual stimuli, with misaligned auditory cues, were present in the scene. At the end of each trial, participants answered the 2AFC question . Two of five possible audiovisual stimuli for each scene are randomly selected and remain visible with their sounds playing, while the rest stay hidden and muted (see Figure 2 ). No sound sources other than the audiovisual stimuli were included in the scenes. In each trial, both auditory cues are shifted by an offset between − 30 ∘ -30^{\circ} to + 30 ∘ +30^{\circ} in 5 ∘ 5^{\circ} increments. All offset values are tested across two scenes, totaling 26 trials per participant. The trial order is
+
+【结论/局限】
+and Limitations
+6 Conclusions
+Acknowledgements
+References
+License: CC BY 4.0
+arXiv:2611.09238v1 [cs.GR] 06 Nov 2026
+\onlineid
+1306
+\vgtccategory Research
+\vgtcinsertpkg \teaser
+A unified and coherent perception of audiovisual stimuli is crucial for spatial localization in immersive VR experiences.
+However, such coherence between visual and auditory cues may break down under certain conditions.
+We study two types of spatial audiovisual disparities that can negatively affect the user experience. Left: True disparity arises from an actual misalignment between auditory (purple honk) and visual (blue car) cues. While users are highly sensitive to perceiving slight misalignments (orange), we found that their ability to detect them decreases significantly when focused on engaging tasks inside realistic VR scenes .
+Right: Perceptual disparity occurs when users perceive a spatial mismatch despite the cues being co-located. We show that while additional environmental cues help mitigate this effect, it persists unless users avoid rotational movements during audiovisual localization.
+Audiovisual Disparities in VR: Impact on Spatial Perception
+Edurne Bernal-Berdun †
+University of Zaragoza
+† † thanks: e-mail: edurnebernal@unizar.es
+I3A
+Mateo Vallejo
+University of Zaragoza
+† † thanks: Equal contribution.
+I3A
+Qi Sun
+New York University
+Ana Serrano
+University of Zaragoza
+I3A
+Diego Gutierrez
+University of Zaragoza
+I3A and Limitations
+We have first examined the effects of audiovisual true disparity , defined as a genuine misalignment between the spatial position of the auditory and visual cues of an audiovisual stimulus.
+Our findings indicate that when participants concentrated exclusively on detecting mismatches between auditory and visual cues, they demonstrated high precision in identi

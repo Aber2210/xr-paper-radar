@@ -1,0 +1,275 @@
+【摘要】
+.
+
+【引言】
+2 Background and Related Work
+3 Motivation and Preliminary Study
+3.1 HOI Logging Pipeline and Constraints
+3.2 Study 1: On-device Power Breakdown
+3.3 Study 2: Frame Rate and Uplink Bandwidth
+4 System Design
+4.1 Low-Power Event Frame Capture
+4.2 Challenges and End-to-End Overview
+4.3 Egomotion Cancellation
+4.3.1 Egomotion Estimation.
+4.3.2 Egomotion Cancellation.
+4.4 HOI Motion Detector & HOI-Aware Encoder
+5 System Implementation
+6 Large-Scale Dataset Benchmark Evaluation
+6.1 Benchmark Evaluation Setup Figure 1. EventHOI uses low-power event sensing to (1) detect and selectively trigger the high-power RGB camera and (2) compress RGB uplink for HOI understanding.
+Hand–Object Interaction (HOI) is an atomic unit of everyday activities.
+Logging HOIs provides time-stamped evidence of daily actions, i.e., what
+objects the hands interacted with, what actions occurred, and when, enabling
+immediate assistance in daily life.
+This capability is important because everyday memory slips are both
+common and consequential: diary-based studies show that over 60%
+of reported memory failures involve forgetting intended
+actions  ( Mogle et al., 2023 ) .
+As a result, HOI logging can naturally support reminders
+(e.g., “Did I lock the door?”), verification (e.g., “Did
+I take my medication?”), and rapid retrieval (e.g., “Where
+did I leave the charger?”), which correspond to frequent types
+of day-to-day lapses.
+Beyond memory augmentation, HOI logs can also strengthen health-routine
+summarization : the World Health Organization (WHO) reported
+that adherence to long-term therapies for chronic diseases averages
+only ∼ \sim 50% in developed countries, motivating systems that can
+passively verify routine actions without relying on self-report  ( Rassool, 2004 ) .
+Recent camera-equipped smartglasses have increased interest in
+egocentric HOI logging by providing a wearable, always-available
+viewpoint that naturally captures the wearer’s hands and the objects
+they manipulate.
+This trend is reflected in the rapid growth of large-scale
+egocentric HOI datasets and advances in computer vision (CV) algorithms
+( Ma and others, 2025 ; Grauman and others, 2022 ; Perrett and others, 2025 ) .
+Despite this 
+
+【方法】
+to (1) estimate egomotion and (2) cancel the events
+induced by egomotion from the event frame.
+4.3.1. Egomotion Estimation.
+Accurate egomotion estimation is challenging on resource-constrained,
+battery-powered devices.
+A head-mounted IMU available on most smartglasses offers a low-power
+option (< 10 10  mW) and has been widely used for human motion estimation  ( Santaera et al., 2015 ; Forster et al., 2017 ) .
+In principle, linear displacement and angular rotation can be obtained
+by integrating linear acceleration and angular velocity, respectively.
+However, integration error is the key challenge: displacement estimation requires double integration of acceleration, which amplifies sensor noise and bias and accumulates into large position drift over time  ( Wang et al., 2015 ; Norrdine et al., 2016 ) .
+Existing systems typically address this issue either by fusing camera and IMU
+signals, as in VIO and SLAM  ( Forster et al., 2017 ; Campos et al., 2021 ) , or by
+using periodic zero-velocity references (ZUPT)  ( Wang et al., 2015 ; Norrdine et al., 2016 ) .
+However, camera fusion requires pixel-level matching on high-FPS video (e.g., 20–30 FPS)  ( Campos et al., 2021 ; Project Aria, 2026 ) , adding sensing and compute overhead that conflicts with EventHOI ’s low-power goals.
+On the other hand, ZUPT works well for foot-mounted IMUs with stance phases, but is unreliable for head-mounted IMUs that rarely become stationary  ( Wang et al., 2015 ; Norrdine et al., 2016 ) .
+Our key idea is to leverage prior knowledge about when informative HOIs
+are most likely to occur to guide egomotion estimation.
+We observe that meaningful HOIs are rarely associated with large translational
+motion of the user, which often reflects whole-body movement rather than
+interaction-relevant behavior.
+For example, activities such as walking can generate substantial global motion
+but seldom correspond to informative HOIs.
+By contrast, HOIs typically occur when the body is relatively stable, as
+successful object interaction requires coordinated eye, head, and hand
+movements  ( Li et al., 2013 ) .
+Based on this observation, we decompose egomotion into two categories:
+(1) translational body motion , such as walking, which is often accompanied
+by few HOIs, and (2) rotational head motion , such as small head turns
+while standing or sitting, which commonly co-occurs with HOIs.
+Step 1: Translational Body Motion Detector.
+We first identify periods of large translational body motion, during which
+informative HOIs are unlikely  ( Li et al., 2013 ) .
+Based on our empirical study, we define such motion as linear velocity above
+0.5 0.5  m/s, since head motion alone rarely exceeds this threshold.
+Rather than directly integrating IMU signals, we train a lightweight 2-layer
+LSTM binary detector that takes 6-axis IMU data sampled at 50 50  Hz over a
+0.5-second window as input.
+We train the model using the large-scale egocentric Nymeria dataset, collected
+with Meta Aria smartglasses  ( Ma and others, 2025 ; Project Aria, 2026 ) .
+Ground-truth labels are derived from SLAM-estimated egomotion velocities, with
+windows above 0.5 0.5  m/s labeled positive.
+To maintain class balance, we use a 5-hour indoor subset for training.
+The detector runs with a default duty cycle of 0.5.
+When large translation is detected, EventHOI directly disables RGB recording.
+We adopt binary detection rather than precise velocity estimation because exact
+translation is unnecessary for HOI triggering and too costly for on-device processing.
+Our model contains only 37k parameters (~37 KB of int8 weights) and
+requires ~1.8 MFLOPs per 0.5-second window, making it practical for low-power MCU deployment.
+Despite this, our model shows a high prediction accuracy of 95.7% and a recall of 0.96 for no-translation-period recognition, which minimizes the likelihood of skipping HOIs.
+Step 2: Rotational Head Motion Estimation using Gyroscope.
+After gating out large translational body motion, the remaining egomotion
+is primarily head-rotation-dominated  ( Li et al., 2013 ) .
+We estimate this component directly from gyroscope measurements.
+Specifically, we integrate the 3-axis angular velocity between two consecutive
+
+【实验】
+.
+The simulation-to-real experiments reveal a median absolute angular error of 10–11 degrees with examples in Fig.  19 (a) and (b).
+These errors likely arise from (1) stereo calibration and rectification inaccuracy, (2) v2e simulation mismatch, and (3) event sensor noise that cannot be fully removed by simple filtering.
+Despite these error sources, the perturbed flows introduce negligible degradation to EventHOI : the selected frames maintain a high temporal overlap of 0.95 IoU, system consumption increases only slightly by +2.5% effective frame rate and +5.1% uplink bandwidth, and HOI recognition accuracy changes by only − 0.2 % -0.2\% .
+Overall, these results close the simulation-to-real gap and support the correctness of our large-scale simulation benchmark.
+Appendix B Real-World Testbed Evaluation
+This appendix details the setup of the real-world testbed in § 7 .
+Testbed Setup. We perform testbed data collection in 2 homes, 1 office, and 2 open workspaces. Each home is in the standard apartment style including kitchen, living room, dining room, and bedrooms etc. The home settings allow user to perform any of the six scenarios, while the office and open workspaces are dominated by working, leisure, and recreation activities. Each participant is instructed to perform their daily routine normally rather than following pre-defined scripts. This allows us to collect and evaluate HOIs at a more natural density across the daily life. We show the distribution across participants, scenarios, and locations in Tab.  3 . We show the distribution of activities on time horizon in Fig.  20 and example actions and objects in Fig.  21 .
+Table 3. Recording hours and participants (P1–10) of the real-world testbed per location and scenario.
+Location
+Leisure
+Working
+Eating
+Cooking
+Housework
+Recreation
+Total
+Home1
+2.5
+(P1, P2, P6)
+2.6
+(P1, P2)
+0.8
+(P1, P2, P6)
+1.6
+(P1, P6)
+1.6
+(P1, P2, P6)
+2.2
+(P1, P2, P6)
+11.3
+Home2
+–
+3.4
+(P4)
+0.3
+(P4)
+0.8
+(P4)
+–
+–
+4.5
+Workspace1
+0.3
+(P5)
+0.5
+(P3)
+0.5
+(P1)
+–
+–
+–
+1.3
+Workspace2
+0.3
+(P9)
+0.7
+(P3, P10)
+–
+–
+–
+0.8
+(P8, P9)
+1.7
+Office
+0.4
+(P7)
+0.7
+(P10)
+–
+–
+–
+–
+1.1
+Total
+3.5
+7.8
+1.6
+2.4
+1.6
+2.9
+19.8
+Figure 20. Recording hours of the real-world testbed across the time of day.
+Figure 21. Examples of HOIs in the real-world testbed.
+References
+[1]
+J. Mogle, J. R. Turner, L. A. Rabin, M. J. Sliwinski, R. Zhaoyang, and N. L. Hill (2023)
+Measuring memory lapses and their impact on daily life: results from two daily diary studies .
+Assessment 30 ( 5 ), pp. 1454–1466 .
+External Links: Document
+Cited by: §1 .
+[2]
+G. H. Rassool (2004)
+Failure to take prescribed medicine for chronic diseases is a massive world-wide problem. .
+Journal of Advanced Nursing 45 ( 4 ), pp. 447 .
+Cited by: §1 .
+[3]
+L. Ma et al. (2025)
+Nymeria: a massive collection of multimodal egocentric daily motion in the wild .
+In Computer Vision – ECCV 2024 ,
+Cham , pp. 445–465 .
+External Links: ISBN 978-3-031-72691-0
+Cited by: §1 ,
+§1 ,
+§3.3 ,
+§4.3.1 ,
+Figure 12 ,
+Figure 9 ,
+§6.1.1 ,
+§6.2.7 ,
+§6 ,
+§7.2.1 .
+[4]
+K. Grauman et al. (2022)
+Ego4D: around the world in 3,000 hours of egocentric video .
+In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+pp. 18995–19012 .
+Cited by: §1 .
+[5]
+T. Perrett et al. (2025)
+HD-epic: a highly-detailed egocentric video dataset .
+In 2025 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,
+Vol. , pp. 23901–23913 .
+External Links: Document
+Cited by: §1 ,
+§2 .
+[6]
+Meta (2026)
+How to change video settings on ai glasses .
+Note: https://www.meta.com/help/ai-glasses/1373257549211327 . Accessed: 2026-10-31.
+Cited by: §1 .
+[7]
+Project Aria (2026)
+Project aria hardware specifications .
+Note: https://facebookresearch.github.io/projectaria_tools/docs/tech_spec/hardware_spec . Accessed: 2026-10-31.
+Cited by: §1 ,
+§3.1 ,
+§4.3.1 ,
+§4.3.1 .
+[8]
+A. Paruchuri et al. (2025)
+EgoTrigger: toward audio-driven image capture for human memory enhancement in all-day energy-efficient smart glasses .
+IEEE Transactions on Visualization and Computer Graphics 31 ( 11 ), pp. 9720–9729 .
+External Links: Document
+Cited by: §1 ,
+Figure 2 ,
+§2 .
+[9]
+S. Shahi, F. Shahabi, R. Naboulsi, G. Fernandes, A. K. 
+
+【结论/局限】
+A Simulation-to-Real Evaluation
+B Real-World Testbed Evaluation
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.09089v1 [cs.DC] 06 Nov 2026
+EventHOI : Event-Driven Resource-Efficient Hand-Object Interaction Logging on Smartglasses
+Le Zhang 1 , Kailai Cui 1 , Hao Chen 2 , Vlad Roznyatovskiy 2 , Jianzhong Zhang 2 , Anhong Guo 1 , Kang G. Shin 1 , Ke Sun 1
+Affiliation:  1 University of Michigan   2 Samsung Research America
+email: zle@umich.edu
+© none We presented EventHOI , an event-driven system for resource-efficient egocentric HOI logging on smartglasses.
+It uses low-power event sensing and IMU-assisted egomotion cancellation to selectively capture HOI-relevant RGB content without continuous RGB recording or heavyweight on-device computation.
+More broadly, EventHOI points to a promising design paradigm for resource-constrained systems: using low-power sensors to guide and sparsify the operation of high-power sensors to enable resource-efficient embedded sensing systems.
+Appendix
+Appendix A Simulation-to-Real Evaluation
+Figure 19. Optical flows (red arrows) from (a) v2e-simulated and (b) real event frames while the user holds a water bottle.
+This appendix details the setup of the simulation-to-real validation summarized in § 6.2.9 .
+Data Collection.
+We evaluate the 2,000 synchronized RGB and event frame segments from our real-world benchmark recording (§ 7 ). The RGB and event camera hardware setup is discussed in § 5 (1) Data Collection Prototype.
+We use the RGB frames to simulate events via v2e  ( Hu et al., 2021 ) , following the same simulation procedure as the benchmark in § 6.1 .
+Flow Error Measurement.
+For both real and simulated event frames, we compute optical flow at 10 FPS and 320 × \times 320 resolution using the LK method (§ 4.3 ), a

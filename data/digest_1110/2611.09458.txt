@@ -1,0 +1,185 @@
+【摘要】
+
+【引言】
+ A growing number of vision systems need geometrically consistent disparity for both cameras of a stereo rig, not just for a reference view.
+Per-eye passthrough rendering on AR/VR headsets reprojects and composites each eye with its own depth  [ 8 ] , so any left-right disagreement introduces noticeable artifacts  [ 12 ] .
+Stereoscopic content must also keep disparity within a viewing-comfort zone  [ 23 ] . Novel view synthesis from a stereo pair renders new viewpoints from the two input views  [ 66 ] , so where the two disparity maps disagree the composite tears and ghosts at occlusion boundaries. Two-view depth fusion likewise yields doubled geometry wherever the two estimates disagree. These examples demonstrate the need not just for two accurate depth maps, but also consistent ones.
+Figure 1 : Sample predictions with and without our proposed cross-injection (CI) extension. CI can be added to any iterative stereo matcher (here FoundationStereo  [ 56 ] ) and substantially improves left-right consistency between two otherwise independent inference passes (left example); it also reduces per-view failure modes (right example).
+Here, we show two examples from the Booster dataset  [ 39 ] where inconsistent predictions arise mainly on reflective and transparent surfaces. Additional visualizations are shown in Figs.  4 , 5 and 6 .
+State-of-the-art stereo matchers, however, typically predict only the left (reference) disparity, a convention encouraged by benchmarks that score only the left view  [ 40 , 14 , 35 , 42 ] .
+In practice, the standard way to obtain the right disparity from such a network is to horizontally flip and swap the input pair, re-posing the right view as a left-view problem, and run the same weights a second time. The two passes are coupled only implicitly through the image content; nothing enforces that their outputs agree. As a result, they often diverge in textureless regions, at occlusion boundaries, and on transparent or reflective surfaces, where each pass locks onto a different plausible depth (Fig.  1 , left example, middle row).
+This is the gap we address in this paper: making the left and right predictions agree without sacrificing single-
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab) 3.1 Stereo Refinement via Cross-Injection
+Consistency estimation.
+Cross-injection.
+3.2 Left-Right Consistency Loss
+Base consistency term.
+Bidirectional gradient routing.
+Full objective. Our main contribution is a lightweight cross-injection refiner (Sec.  3.1 ) that couples the left and right disparity predictions during iterative refinement; we train it with a left-right consistency loss (Sec.  3.2 ) that supervises the same coupling at the output, using bidirectional gradient routing. The two are complementary: the refiner consumes the per-pixel left-right inconsistency as an input cue, while the loss penalizes its magnitude during training, so the same geometric quantity is addressed by
+both the architecture and the objective.
+3.1 Stereo Refinement via Cross-Injection
+Our extension applies to any iterative (refinement-based) stereo matcher trained to predict left disparities only  [ 28 , 36 , 56 ] . The right disparity is obtained as in Sec.  1 by flipping and swapping the input pair and flipping the prediction back. Each pass refines its disparity with a RAFT-style  [ 45 , 28 ] convolutional GRU that gathers correlation features at the current estimate and emits an increment; the passes share weights but not state and interact only through the correlation volume, so agreement would be encouraged only indirectly by the disparity loss (Eq.  8 ). Cross-injection instead tells each pass, at every step and pixel, where and by how much it disagrees with the other view, so it can act on the disagreement during refinement.
+Writing 𝐩 = ( x , y ) \mathbf{p}=(x,y) for a pixel of the H × W H\!\times\!W grid, each network pass starts from an initial disparity D ( 0 ) ∈ ℝ H × W D^{(0)}\in\mathbb{R}^{H\times W} and refines it over K K steps into D ( k ) D^{(k)} , k = 1 , … , K k=1,\dots,K , giving D L ( k ) D_{L}^{(k)} and D R ( k ) D_{R}^{(k)} for the two passes (iteration index dropped where unambiguous). Disparities are non-negative; a left pixel ( x , y ) (x,y) corresponds to the right pixel ( x − D L , y ) (x-D_{L},\,y) and a
+right pixel ( x , y ) (x,y) to the left pixel ( x + D R , y ) (x+D_{R},\,y) .
+Consistency estimation.
+We compare the two views in disparity space with a horizontal bilinear sampler that warps a source map S S along a shift field δ \delta with sign s ∈ { + 1 , − 1 } s\in\{+1,-1\} ,
+[ 𝒮 s ​ ( S , δ ) ] ​ ( x , y ) = S ⁡ ( x + s ​ δ ​ ( x , y ) , y ) , \big[\mathcal{S}_{s}(S,\delta)\big](x,y)\;=\;S\big(x+s\,\delta(x,y),\;y\big),
+(1)
+with out-of-grid samples set to zero. Sampling the other view’s disparity in the current view’s frame and subtracting gives the per-pixel left-right inconsistency
+c L = D L − 𝒮 − ​ ( D R , D L ) , \displaystyle c_{L}\;=\;D_{L}-\mathcal{S}_{-}(D_{R},\,D_{L}),
+(2)
+c R = D R − 𝒮 + ​ ( D L , D R ) , \displaystyle c_{R}\;=\;D_{R}-\mathcal{S}_{+}(D_{L},\,D_{R}),
+which is zero where the views agree. It is only meaningful at co-visible pixels, so we restrict it with a mask of non-occluded pixels that have an in-bound match,
+m L ( 𝐩 ) = [  0 ≤ x − D L ( 𝐩 ) < W ] V L ( 𝐩 ) , m_{L}(\mathbf{p})=\mathbf{1}\!\big[\,0\leq x-D_{L}(\mathbf{p})<W\,\big]\;V_{L}(\mathbf{p}),
+(3)
+and symmetrically for m R m_{R} . Here V L ∈ { 0 , 1 } V_{L}\in\{0,1\} flags non-occluded pixels, obtained from D L D_{L} by a s
+
+【实验】
+Metrics.
+4.1 Ablation Study
+4.2 Generalization to Other Base Models
+4.3 Qualitative Results Table 1 : Ablation experiment for component validation. All runs are fine-tuning runs based on FoundationStereo. Checkmarks indicate which components each run uses: LR-consistency loss (LR), cross-injection (CI) refiner, and bidirectional stop-gradient routing (SG). All metrics are reported as mean ± \pm std of six checkpoints created during the last 10k steps of training.
+Findings : LR consistency improves with the loss alone (b), only slightly with CI alone (c), and substantially when both are combined (d). However, CI with a symmetric consistency loss leads to (slight) oversmoothing on edges and degradation of occluded predictions. SG largely recovers this regression at the cost of slightly lower LR consistency.
+Annotation : Per column, bold = best; red / green mark the most salient degradation/improvement trends in the metric category compared to the baseline.
+Ablation
+Disparity Error
+Left-Right Consistency
+Edge/Occlusion Error
+LR
+CI
+SG
+Middleb.-H
+BP-2
+ETH3D
+BP-1
+KITTI-15
+D1
+Middleb.-H
+LR-BP-1
+ETH3D
+LR-BP-1
+KITTI-15
+LR-BP-1
+Booster-H
+LR-BP-1
+Middleb.-H
+Edg. BP-0.5
+Middleb.-H
+Occ. BP-0.5
+Booster-H
+Occ. BP-0.5
+(a)
+2.78 ± \pm 0.09
+0.72 ± \pm 0.07
+2.81 ± \pm 0.02
+9.98 ± \pm 0.19
+5.12 ± \pm 0.10
+10.31 ± \pm 0.19
+7.76 ± \pm 0.15
+32.25 ± \pm 0.03
+33.39 ± \pm 0.51
+51.12 ± \pm 0.50
+(b)
+✓
+2.66 ± \pm 0.04
+0.69 ± \pm 0.05
+2.75 ± \pm 0.02
+9.20 ± \pm 0.07
+4.63 ± \pm 0.04
+5.63 ± \pm 0.04
+6.26 ± \pm 0.17
+33.11 ± \pm 0.09
+33.68 ± \pm 0.30
+51.28 ± \pm 0.39
+(c)
+✓
+2.72 ± \pm 0.04
+0.68 ± \pm 0.02
+2.81 ± \pm 0.02
+9.63 ± \pm 0.09
+4.81 ± \pm 0.30
+9.67 ± \pm 0.19
+6.78 ± \pm 0.11
+32.34 ± \pm 0.05
+33.66 ± \pm 0.65
+51.26 ± \pm 0.43
+(d)
+✓
+✓
+2.69 ± \pm 0.03
+0.65 ± \pm 0.01
+2.74 ± \pm 0.03
+8.83 ± \pm 0.02
+2.92 ± \pm 0.03
+4.33 ± \pm 0.06
+3.23 ± \pm 0.06
+33.30 ± \pm 0.17
+34.60 ± \pm 0.25
+52.35 ± \pm 0.28
+(e)
+✓
+✓
+✓
+2.68 ± \pm 0.03
+0.58 ± \pm 0.01
+2.71 ± \pm 0.02
+9.06 ± \pm 0.02
+3.24 ± \pm 0.02
+5.44 ± \pm 0.07
+3.64 ± \pm 0.07
+32.29 ± \pm 0.05
+33.58 ± \pm 0.32
+51.37 ± \pm 0.39
+Table 2 : Cross-injection improvements generalize to different base models. For each base model we report three rows: the public checkpoint, a matched fine-tune under the identical recipe but without cross-injection (“+ FT (no CI)”), and our cross-injection fine-tune. The middle row is the control: it isolates what CI contributes from what simply training longer on our data mixture contributes. Findings: against the matched control, CI improves left-right consistency on every benchmark for all three base models, with the largest relative effect on Booster, which is built around transparent and specular surfaces (for S 2 M 2 -XL, KITTI-12 is marginally larger). Disparity error (both views where GT is available) also improves against the control on all but one of the fifteen accuracy cells (S 2 M 2 -L Booster-H). Bold: best per base model.
+Middlebury-H
+ETH3D
+KITTI-12
+KITTI-15
+Booster-H
+
+【结论/局限】
+Why does coupling both views improve single-view accuracy? Why does coupling both views improve single-view accuracy?
+Beyond test-time agreement, the coupling appears to aid training in three ways:
+First, it extends supervision : many stereo datasets label only the left view, so the right pass is otherwise trained only indirectly; coupling the two views turns single-view labels into a learning signal for both.
+Second, it acts as a geometric regularizer : requiring the two per-view disparities to agree constrains otherwise under-determined predictions.
+Appendix  F shows the constraint acting where it should: the change concentrates where the two views disagree and vanishes where they already agree, offset by a mild regression at occluded pixels, where the constraint does not apply.
+Third, the coupling is soft : the signed inconsistency is provided as an input cue rather than a hard constraint, allowing the model to rely on it where it is trustworthy and ignore it where it is not. More broadly, this suggests that supervising only the left view may be the wrong default even when only left-view disparity is sought: future stereo models may benefit from supervising both views in one form or another, whether through coupled per-view passes (such as cross-injection) or a fully symmetric design. .
+Outlook.
+References
+A Training Details
+Update order.
+Matched fine-tune controls.
+Training data.
+Reporting point.
+B Inference Time Breakdown
+Inference time breakdown.
+Latency-accuracy trade-off.
+Cost-volume symmetry.
+C Additional Cue Ablations
+Relation to LRCR’s own ablation.
+D Consistency Loss Coefficient Ablation
+E Training from Scratch
+F Where the Single-View Change Comes From
+Cross-injection redistributes error rather than reducing it uniformly.
+Does cross-injection correct or entr

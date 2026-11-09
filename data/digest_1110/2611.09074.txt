@@ -1,0 +1,129 @@
+【摘要】
+
+【引言】
+ Figure 1: We present an universal model that generates lip-synchronized video on stylistic humans and characters corresponding to driving audio sequences. Our method ensures computational efficiency without sacrificing high visual fidelity.
+Lip synchronization, the task of generating realistic lip movements synchronized with given audio signals, has emerged as a fundamental problem in computer vision and multimedia applications. This technology serves as a cornerstone for various downstream applications, including film dubbing, virtual avatars, video conferencing, and digital content creation. Despite its practical importance and growing demand, achieving high-quality lip-synced video generation remains a challenging problem due to the inherent complexity of modeling the intricate mapping between audio signals and corresponding facial movements.
+Recent advances in generative models have led to significant progress in lip synchronization. GAN-based approaches [ Prajwal et al.(2020)Prajwal, Mukhopadhyay, Namboodiri, and
+Jawahar , Zhang et al.(2023c)Zhang, Hu, Deng, Fan, Lv, and
+Ding , Zhong et al.(2023)Zhong, Fang, Cai, Wei, Zhao, Lin, and
+Li , Guan et al.(2024)Guan, Xu, Zhou, Wang, He, Zhang, Liang, Feng, Ding,
+Liu, et al. ] have demonstrated the ability to generate lip-synced videos with reasonable efficiency, yet they often struggle to achieve high visual fidelity, particularly in preserving fine-grained facial details and temporal consistency. On the other hand, diffusion-based methods [ Zhong et al.(2024)Zhong, Li, Cai, Li, Gao, Lin, and
+Li , Yu et al.(2024)Yu, He, Zhang, Wang, Guo, Tan, Liu, Chen, and
+Bian , Liu et al.(2024b)Liu, Du, Fan, Chen, and
+Yu , Li et al.(2024)Li, Zhang, Xu, Lin, Xie, Feng, Peng, Chen, and
+Xing , Ma et al.(2025)Ma, Wang, Yang, Hu, Liang, Lin, Li, Meng,
+et al. , Mukhopadhyay et al.(2024)Mukhopadhyay, Suri, Gadde, and
+Shrivastava , Peng et al.(2025)Peng, Liu, Zhang, Liu, Tang, Wan, Zhang, Liu, and
+He ] have shown remarkable capability in producing high-fidelity results by leveraging the powerful generative capacity of large-scale diffusion models. However, these approaches typically entail substantial computational costs, making them 
+
+【方法】
+3.1 System Overview
+3.2 Audio-Visual Alignment to Implicit Motion Space Real-time
+Universal
+Expressive
+Wav2Lip [ Prajwal et al.(2020)Prajwal, Mukhopadhyay, Namboodiri, and
+Jawahar ]
+✔
+✗
+✗
+Diff2Lip [ Mukhopadhyay et al.(2024)Mukhopadhyay, Suri, Gadde, and
+Shrivastava ]
+✗
+✗
+✗
+MuseTalk [ Zhang et al.(2024)Zhang, Liu, Chen, Wu, He, Zhan, and
+Zhou ]
+✔
+✗
+✗
+LatentSync [ Li et al.(2024)Li, Zhang, Xu, Lin, Xie, Feng, Peng, Chen, and
+Xing ]
+✗
+✗
+✗
+OmniSync [ Peng et al.(2025)Peng, Liu, Zhang, Liu, Tang, Wan, Zhang, Liu, and
+He ]
+✗
+✔
+✗
+Ours
+✔
+✔
+✔
+Table 1: Functional comparison across methods. Our approach supports both real-time inference and universal lip synchronization for diverse stylistic characters. Furthermore, our method enables explicit user control over expressions, thereby enriching the contents.
+Figure 2: Comparison of lip-sync accuracy (LMD) versus computational time (FPS) against existing methods with model size. Our approach ensures lip-sync generation without compromising between visual high-fidelity and computational efficiency.
+2.1 Audio-driven Talking Head Generation
+Audio-driven talking head generation has undergone several paradigm shifts.
+Early methods  [ Karras et al.(2017)Karras, Aila, Laine, Herva, and
+Lehtinen , Jamaludin et al.(2019)Jamaludin, Chung, and
+Zisserman , Wiles et al.(2018)Wiles, Koepke, and Zisserman , Zhou et al.(2020)Zhou, Han, Shechtman, Echevarria, Kalogerakis, and
+Li ] learned person-specific audio-to-face mappings via CNNs and RNNs.
+Adversarial training  [ Zhou et al.(2019)Zhou, Liu, Liu, Luo, and Wang , Chen et al.(2019)Chen, Maddox, Duan, and Xu , Vougioukas et al.(2020)Vougioukas, Petridis, and
+Pantic , Zhou et al.(2021)Zhou, Sun, Wu, Loy, Wang, and Liu , Lu et al.(2021)Lu, Chai, and Cao ] then enabled one-shot synthesis for unseen identities.
+Several approaches introduced explicit 3D priors  [ Thies et al.(2020)Thies, Elgharib, Tewari, Theobalt, and
+Nießner , Zhang et al.(2021a)Zhang, Zhao, Huang, Zeng, Ni,
+Budagavi, and Guo , Peng et al.(2024)Peng, Hu, Shi, Zhu, Zhang, Zhao, He, Liu, and
+Fan , Ye et al.(2024)Ye, Zhong, Ren, Yang, Li, Huang, Jiang, He, Huang, Liu,
+et al. , Wei et al.(2024)Wei, Yang, and Wang , Zhang et al.(2023b)Zhang, Cun, Wang, Zhang, Shen, Guo,
+Shan, and Wang , Tang et al.(2025)Tang, Wang, Zhou, Chen, He, Hu, Liu, Liu, Zeng, and
+Wang , Sun et al.(2025)Sun, Zhang, Zhu, Zhang, Zhang, Ji, Zhou, Gao, Bo, and
+Cao ] or implicit 3D representations  [ Guo et al.(2021)Guo, Chen, Liang, Liu, Bao, and Zhang , Shen et al.(2022)Shen, Li, Zhu, Duan, Zhou, and Lu , Cho et al.(2024)Cho, Lee, Yoon, Hong, Ko, Ahn, and
+Kim ] with free-viewpoint rendering, while Transformers and 3DMM pipelines improved temporal coherence, and NeRF and 3DGS-based representation increased photorealism  [ Moon et al.(2025)Moon, Lew, Lee, Kang, and Park , Lee et al.(2026b)Lee, Moon, Lew, Kang, and
+Park , Lee et al.(2026a)Lee, Moon, Lew, Kang, and
+Park ] .
+Recent works such as [ Shen et al.(2023)Shen, Zhao, Meng, Li, Zhu, Zhou, and
+Lu , Ma et al.(2023)Ma, Zhang, Wang, Wang, Zhang, and
+Deng , Tian et al.(2024)Tian, Wang, Zhang, and Bo , Xu et al.(2024b)Xu, Chen, Guo, Yang, Li, Zang, Zhang,
+Tong, and Guo , Xu et al.(2024a)Xu, Li, Su, Shang, Zhang, Liu, Wang, Yao,
+and Zhu , Wang et al.(2024)Wang, Tian, Zhang, Guan, Luo, Shen, Jiang, Gu, Han,
+and Yang , Liu et al.(2024a)Liu, Chen, Fan, Du, Chen, Chen, and
+Yu , Cui et al.(2025a)Cui, Li, Yao, Zhu, Shang, Cheng, Zhou,
+Zhu, and Wang , Gao et al.(2025)Gao, Hu, Hu, Huang, Ji, Meng, Qi, Qiao, Shen, Song,
+et al. , Jiang et al.(2025)Jiang, Liang, Yang, Lin, Zhong, and
+Zheng , Cui et al.(2025b)Cui, Li, Zhan, Shang, Cheng, Ma, Mu,
+Zhou, Wang, and Zhu , Chen et al.(2025b)Chen, Cao, Chen, Li, and
+Ma , Wang et al.(2025)Wang, Wang, Jiang, Fan, Zhang, Qi, Zhao, and
+Xu , Tian et al.(2025)Tian, Hu, Wang, Zhang, and Bo , Chen et al.(2025a)Chen, Liang, Zhou, Huang, Ma, Tang,
+Lin, Zhou, and Lu , Gan et al.(2025)Gan, Yang, Zhu, Xue, and Hoi , Wei et al.(2025)Wei, Sun, Ma, Hou, Juefei-Xu, He, Dai, Zhang, Li, Hou,
+et al. , Lin et al.(2025)Lin, Jiang, Yang, Zheng, Liang, Zhang, and
+Liu ] utilize diffusion-based architectures to synthesize realistic talking head videos from a single refe
+
+【实验】
+4.1 Experimental Setup
+Dataset.
+Metrics. 4.1 Experimental Setup
+Dataset.
+We evaluate on two standard benchmarks: HDTF  [ Zhang et al.(2021b)Zhang, Li, Ding, and
+Fan ] , comprising 720p+ talking-face videos, and VoxCeleb2  [ Chung et al.(2018)Chung, Nagrani, and Zisserman ] , comprising in-the-wild celebrity utterances. We randomly select 50 subjects in total, 20 from HDTF and 30 from VoxCeleb2, ensuring diversity in identity, pose, and audio characteristics. We further introduce UniVox-Bench , since prior benchmarks  [ Zhang et al.(2021b)Zhang, Li, Ding, and
+Fan , Chung et al.(2018)Chung, Nagrani, and Zisserman , Peng et al.(2025)Peng, Liu, Zhang, Liu, Tang, Wan, Zhang, Liu, and
+He ] are restricted to predominantly English speech and/or real human subjects. It comprises 34 subjects, 46% real humans and 54% non-human stylistic characters including cartoon, anime and animals, paired with speech spanning seven languages: English, Chinese, French, Italian, Japanese, Korean, and Spanish. It is collected via web crawling and AI content generator with ElevenLabs  [ ElevenLabs(2024) ] and Gemini  [ Gemini Team, Google(2024) ] .
+Metrics.
+We evaluate visual fidelity, identity preservation, and lip synchronization. For visual fidelity, we report PSNR and LPIPS for per-frame reconstruction, FID  [ Heusel et al.(2017)Heusel, Ramsauer, Unterthiner, Nessler, and
+Hochreiter ] for distributional similarity to real frames, FVD  [ Unterthiner et al.(2018)Unterthiner, Van Steenkiste, Kurach, Marinier,
+Michalski, and Gelly ] for temporal coherence, and HyperIQA  [ Su et al.(2020)Su, Yan, Zhu, Zhang, Ge, Sun, and Zhang ] , a no-reference metric that scores perceptual quality without ground truth. Identity preservation is measured by CSIM, the cosine similarity between identity embeddings of the source and generated videos. For lip synchronization, we use LMD, the landmark distance capturing geometric alignment of lip movements, and AVS  [ Yaman et al.(2024b)Yaman, Eyiokur, Bärmann, Ekenel,
+and Waibel , Yaman et al.(2024a)Yaman, Eyiokur, Bärmann, Akti,
+Ekenel, and Waibel ] , a reference-free score computing the cosine similarity between audio and visual features of a pretrained AV model  [ Shi et al.(2022)Shi, Hsu, Lakhotia, and Mohamed ] . We exclude the SyncNet-based metric LSE-C  [ Prajwal et al.(2020)Prajwal, Mukhopadhyay, Namboodiri, and
+Jawahar ] on HDTF and VoxCeleb2 since several baselines train with SyncNet loss, which biases the score in their favor on these datasets.
+
+【结论/局限】
+References
+License: CC BY-NC-SA 4.0
+arXiv:2611.09074v1 [cs.CV] 06 Nov 2026
+Emo-LiveSync
+Emo-LiveSync: Real-Time Universal Lip Synchronization with Explicit Emotion Control
+Sangjoon Yu ∗
+Seungeun Lee ∗
+JoonHyeok Shin
+Ji-Su Kang In this paper, we propose an efficient universal lip-synced video generation method that achieves high-quality lip synchronization without compromising visual fidelity. Leveraging LivePortrait with pre-trained implicit keypoints, we introduce a training strategy that distills knowledge from a pre-trained video-to-motion model into audio-to-implicit-motion mapping, optimized with complementary Charbonnier, velocity, and Wing losses for stable cross-modal alignment. The consistent deformation provided by the warping module enables both high-fidelity results and real-time inference, while naturally generalizing to stylistic non-human characters beyond humans. We further propose a training-free, model-agnostic expressive control gate that explicitly manipulates emotions through parametric activation envelopes, enriching contents without additional supervision. Extensive experiments demonstrate that our approach is both robust and effective for lip synchronization, offering a compelling alternative to computationally expensive diffusion-based methods.
+Figure 15: Qualitative comparison with previous lip-sync video methods on human subjects.
+Figure 16: Qualitative comparison with previous lip-sync video methods on characters.
+References
+[Averbuch-Elor et al.(2017)Averbuch-Elor, Cohen-Or, Kopf, and
+Cohen]
+Hadar Averbuch-Elor, Daniel Cohen-Or, Johannes Kopf, and Michael F. Cohen.
+Bringing portraits to life.
+In ACM TOG , 2017.
+[Baevski et al.(2020)Baevski, Zhou, Mohamed, and
+Auli]
+Alexei Baevski, Yuhao Zhou, Abdelrahman Mohamed, and Michael Auli.
+wav2vec 2.

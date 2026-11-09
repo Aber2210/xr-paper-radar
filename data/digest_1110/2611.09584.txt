@@ -1,0 +1,204 @@
+【摘要】
+
+【引言】
+ Agile autonomous flying robots, such as quadrotors, are used in time-critical missions including search and rescue, aerial delivery, and reconnaissance [ 4 ] . Accurate state estimation is essential for enabling this autonomy. Inertial odometry (IO) is a promising state-estimation approach in resource-constrained systems because of its low computational and storage requirements. Moreover, IO is not affected by common visual-odometry failure modes such as motion blur, low-texture environments, and high-dynamic-range scenes. These conditions are common during agile flight maneuvers, where dedicated visual processing is often required  [ 5 ] . Although 6-DoF poses can be estimated by integrating inertial measurements, commodity IMUs suffer from bias drift, noise, scale-factor errors, misalignment, and vibration-induced inaccuracies, which cause long-term estimation drift [ 6 ] . If reliable pose estimation can be achieved using only inertial sensing, robots can be made smaller and lighter, improving agility and operating range.
+Recently, deep learning has enabled progress in inertial odometry for state estimation. For example, [ 7 ] show that motion priors for pedestrians can be learned from IMU measurements, with accuracy comparable to recent visual-inertial odometry (VIO) methods.
+Unlike pedestrian motion, quadrotor motion lacks a consistent prior that can be learned directly from IMU measurements. However, the quadrotor dynamics model can serve as a motion prior, which can then be corrected using onboard measurements (e.g., IMU data) and control outputs.
+Cioffi  et al.   [ 3 ] introduced a method that incorporates a quadrotor dynamics model and collective thrust to learn quadrotor translational motion for a given trajectory. The resulting relative position displacements are used to update an EKF propagated from IMU measurements. The method is accurate on known trajectories in the drone-racing context; however, its generalization to unseen trajectories remains unclear.
+Our work adopts the general framework of Cioffi  et al.   [ 3 ] . We introduce two main modifications to improve its performance:
+•
+We introduce body-frame torque dynamics into the learned inertia
+
+【方法】
+IMO  [ 3 ]
+Our
+Trajectory
+A ​ T ​ E T ATE_{T}
+R ​ E T RE_{T}
+A ​ T ​ E T ATE_{T}
+R ​ E T RE_{T}
+Seen trajectories
+Clover
+0.381
+0.681
+0.902
+2.014
+Egg
+1.153
+0.828
+1.007
+1.398
+HalfMoon
+0.761
+0.240
+1.496
+1.008
+Star
+2.130
+3.066
+2.713
+3.796
+Winter
+0.219
+0.206
+0.801
+0.991
+Avg.
+0.929
+1.004
+1.384
+1.841
+Unseen trajectories
+Ampersand
+17.664
+10.039
+9.517
+6.887
+Sid
+9.967
+6.992
+7.693
+5.009
+Oval
+5.670
+2.863
+5.012
+2.397
+Sphinx
+5.629
+5.395
+4.891
+4.598
+BentDice
+6.143
+4.519
+5.301
+3.913
+Avg.
+9.015
+5.962
+6.483
+4.561
+TABLE II : DIDO dataset evaluation. ATE and RE values in meters. In bold is the best value. IMO  [ 3 ]
+Our
+Trajectory
+A ​ T ​ E T ATE_{T}
+R ​ E T RE_{T}
+A ​ T ​ E T ATE_{T}
+R ​ E T RE_{T}
+Seen trajectories
+Circle
+5.451
+2.720
+4.045
+1.325
+Eight
+4.916
+3.816
+3.511
+2.023
+Updown Circle
+5.069
+3.131
+2.735
+1.110
+Avg.
+5.145
+3.222
+3.430
+1.486
+Unseen trajectories
+Updown Eight
+6.2312
+4.990
+3.677
+2.337
+Random
+12.1707
+3.944
+7.901
+1.173
+Avg.
+9.201
+4.467
+5.789
+1.755
+TABLE III : Factorial ablation on Blackbird unseen trajectories using the four-way protocol of global/body-frame prediction with and without torque inputs. Values are A ​ T ​ E T ATE_{T} in meters. In bold is the best value.
+Seq.
+Global
+Global + torques
+Body
+Body + torques
+Ampersand
+17.664
+14.487
+9.245
+9.517
+Sid
+9.967
+8.984
+7.678
+7.693
+Oval
+5.670
+5.571
+5.078
+5.012
+Sphinx
+5.629
+5.784
+5.266
+4.891
+BentDice
+6.143
+6.626
+5.784
+5.301
+Avg.
+9.015
+8.290
+6.610
+6.483
+Table  III reports a factorial ablation on the Blackbird unseen split with four variants: the original global-frame formulation, global-frame prediction augmented with torques, body-frame prediction without torques, and the full body-frame-plus-torques model. This protocol isolates the effect of each design choice and clarifies how they interact.
+The ablation shows that the body-frame reformulation is the dominant source of improvement. Averaged over the unseen Blackbird trajectories, switching from the global frame to the body frame reduces A ​ T ​ E T ATE_{T} from 9.015 to 6.610 m even without torque inputs, whereas adding torques in the global frame yields a smaller reduction from 9.015 to 8.290 m. Adding torques on top of the body-frame model further improves the average A ​ T ​ E T ATE_{T} from 6.610 to 6.483 m, and gives the best result on four of the five sequences. The only exception is Ampersand , where the body-frame-only variant is slightly better than the full model. Overall, the results indicate that the two modifications are complementary rather than redundant: the body-frame representation provides most of the gain, while the torque terms provide an additional refinement once the prediction target is expressed in the body frame.
+The DIDO results are shown in Table  II . DIDO is more representative of real agile quadrotor flight because it includes longer sequences and behaviors such as takeoff, hovering, and landing. As shown in Table  II , our method performs significantly better in both seen and unseen cases. In unseen sequences, our method improves A ​ T ​ E T ATE_{T} by 37% and R ​ E T RE_{T} by 61%. For example, on the Random trajectory sequence, IMO performance deteriorates substantially due to multiple hover maneuvers.
+More detailed error and variance trends are shown in Figures  3 and 4 . Together with the factorial ablation in Table  III , these results show that the largest improvement comes from expressing the learning target in the body frame, while the torque dynamics provide a smaller but still consistent gain in the stronger body-frame formulation. This is particularly evident on novel trajectories not present in the training set.
+IV-D Evaluation on Public Quadrotor Datasets
+To test whether these findings carry over to other platforms, we repeated the comparison with the released implementation on four further public quadrotor datasets, under a stricter protocol: several seeds, model selection on validation data only, and whole trajectory shapes held out of training.
+Datasets. AI-IO   [ 2 ] (34 min, rotor speeds) contains manual flights and patterned flights ( circle , eight , updown circle , updown eight , random , at two speeds) that are never used in training. NanoBench   [ 19 ] (57 min) was recorded wi
+
+【实验】
+IV-A Error metrics
+IV-B Datasets
+IV-C Results
+IV-D Evaluation on Public Quadrotor Datasets
+V DISCUSSION
+VI CONCLUSION
+References
+License: CC BY 4.0
+arXiv:2611.09584v1 [cs.RO] 06 Nov 2026
+Extended Model-Based Learned Inertial Odometry
+Sasanka Kuruppu Arachchige
+Affiliation:  Authors are with the Computing Sciences department at Tampere University, Finland sasa.kuruppuarachchi@gmail.com joni.kamarainen@tuni.fi
+Joni-Kristian Kämäräinen
+† † thanks: *This work was supported by the European Commission’s
+Marie Skłodowska-Curie Action (MSCA) Project RAICAM
+(GA101072634) 2025.
+Affiliation:  Authors are with the Computing Sciences department at Tampere University, Finland sasa.kuruppuarachchi@gmail.com joni.kamarainen@tuni.fi IV-A Error metrics
+Our model is evaluated against the original learning-based Inertial Model Odometry (IMO) in  [ 3 ] . We report the two commonly used estimation error metrics, the absolute trajectory error (ATE) and the relative error (RE), calculated between a ground truth trajectory 𝐗 g ​ t \mathbf{X}_{gt} and the aligned estimated trajectory 𝐗 ^ ′ \hat{\mathbf{X}}^{\prime} . The alignment of the estimated trajectory, 𝐗 ^ ′ = align ​ ( 𝐗 ^ , 𝐗 g ​ t ) \hat{\mathbf{X}}^{\prime}=\hbox{align}(\hat{\mathbf{X}},\mathbf{X}_{gt}) , is computed as a similarity transformation  [ 18 ] . For alignment and calculation of error metrics, we used the Python toolbox provided by the authors of  [ 18 ] . For all experiments, we report the absolute and relative translation errors A ​ T ​ E T ATE_{T} and R ​ E T RE_{T} . The relative error is less sensitive to failures in single trajectory segments and can therefore provide more detailed information about accuracy. The segment length parameter affects the relative error computation, and we rely on the default values of the provided evaluation code. To simplify the analysis, we do not report the orientation errors since we found them to accumulate into the translation error.
+IV-B Datasets
+The Blackbird dataset provides rotor speed measurements, IMU data, and synthetic images for aggressive quadrotor flights. We compute mass-normalized collective thrust using rotor speeds and evaluate on the five dataset trajectories: Clover , Egg , Half Moon , Star , and Winter , with peak speeds of 4–8 m/s. The dataset contains precise drone trajectories obtained by a Vicon motion capture system, and the sequences are trimmed to contain only agile flying.
+The DIDO dataset provides IMU measurements and ground-truth poses for dynamic quadrotor trajectories. We evaluate five trajectory types: Circle , Eight , Updown Circle , Updown Eight , and Random , with peak speeds ranging from 0.7 to 4.0 m/s. This dataset is more representative of real quadrotor flight than Blackbird because it contains longer human-piloted sequences with takeoff, hover, and landing.
+The datasets are split into 70% for training, 15% for validation, and 15% for testing.
+Both datasets also include additional sequences that are excluded from training and used only for evaluation as “unseen” trajectories to assess generalization.
+Fig. 3 : Blackbird dataset evaluation for the unseen cases. Relative translation errors achieved by IMO, and our extended IMO (Ex-IMO). The quantity on the x-axis is the percentage traveled corresponding to 5, 10, 15, and 20% of the total distance traveled.
+Fig. 4 : DIDO dataset evaluation for the unseen cases. Relative translation errors achieved by IMO and our extended IMO (Ex-IMO). The quantity on the x-axis is the percentage traveled, corresponding to 5, 10, 15, and 20% of the total distance traveled.
+IV-C Results
+The Blackbird results are shown in Table  I . The “seen” results are computed on test trajectories that were included during training, whereas “unseen” results are computed on hold-out trajectories not used in training. Figure  3 shows that our method performs consistently better on unseen trajectories. On average, our method improves A ​ T ​ E T ATE_{T} by 28% in the unseen setting. Although the original IMO performs better on seen trajectories, our method generalizes better to unseen data, thanks to the proposed extended dynamics model.
+TABLE I : Blackbird dataset evaluation. ATE and RE 
+
+【结论/局限】
+: Despite these improvements, the proposed approach still depends on learned priors and may degrade in scenarios that deviate significantly from the training distribution. On small training sets, such as the six flights per fold of TII-RATM, neither model generalizes across tracks, and the lower velocity error of Ex-IMO does not always translate into a lower position error. The rotor-derived torque requires rotor signals and a per-platform fit, and the public datasets were recorded indoors: in wind, airspeed and ground speed differ, which may weaken the velocity information it carries. Explicitly incorporating torque dynamics also introduces sensitivity to inaccuracies in the inertial parameters of the quadrotor, which we reduce by using only the inertia ratios. Finally, the body-frame update makes the heading appear observable through the current-estimate Jacobian, which can make the filter over-confident in yaw.
+Future work: To further enhance generalization, future work will focus on training the model to estimate velocities by encoding drone rotational dynamics and leveraging neural system identification, on modeling the aerodynamic origin of the rotor-torque information explicitly, and on consistent (first-estimate) Jacobians for the body-frame update.
+VI CONCLUSION
+This work presented Ex-IMO, a learned inertial odometry framework for quadrotors that improves trajectory generalization by combining a body-frame representation with an extended dynamics model incorporating body-frame torque dynamics. The system integrates a Temporal Convolutional Network predicting short-horizon relative displacements with an EKF that propagates IMU measurements. Experimental results, including a factorial ablation, show that the body-frame formulation accounts for most of the improve

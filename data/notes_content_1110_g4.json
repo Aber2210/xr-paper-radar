@@ -1,0 +1,194 @@
+[
+  {
+    "id": "2611.09584",
+    "slug": "extended-model-based-learned-inertial-odometry",
+    "venue": "arXiv preprint",
+    "tags": [
+      "inertial odometry",
+      "quadrotor",
+      "EKF",
+      "body-frame",
+      "torque dynamics"
+    ],
+    "conclusion": "把学习目标改到机体系并加入机体力矩动力学后，纯 IMU 四旋翼里程计在未见轨迹上 Blackbird ATE 从 9.015 m 降到 6.483 m（-28%），DIDO 未见序列 ATE 降 37%、RE 降 61%。",
+    "problem": "四旋翼高速机动下视觉里程计易受运动模糊、弱纹理、高动态范围影响，而纯 IMU 积分受零偏漂移、噪声、尺度因子与振动误差限制，长期必然发散。已有的学习式惯性里程计 IMO 依赖机体推力与 IMU，在训练过的赛道上精度不错，但换到未见轨迹时泛化能力不明，且其全局系预测把姿态误差直接耦合进位移目标。",
+    "method": "沿用 IMO 的「动力学先验 + 学习残差 + EKF 融合」框架但做两处改动。第一，把 TCN 的输入与回归目标都放到 canonical body frame：输入为 mass-normalized collective thrust 与 gyroscope 序列，输出为 0.5 s 窗口内起点的机体系相对位移 Δp，从而消除对绝对航向的依赖。第二，把机体力矩动力学写进模型，力矩项只经由转动惯量比值 c=[(Jz-Jy)/Jx, …] 进入，避免整定惯量参数；力矩可由陀螺微分得到，也可由各桨推力线性分配 τ=Af+d 得到（A、d 用最小二乘对齐陀螺力矩拟合，相当于学习机架布局）。TCN 预测的相对位移作为 EKF 中两个历史状态之间的相对位置量测，EKF 用 IMU 运动学模型传播，100 Hz 采样、20 Hz 更新，Jetson TX2 上 10 状态历史约 180 Hz。",
+    "experiments": "在 Blackbird（5 条 4–8 m/s 高速轨迹）与 DIDO（5 类含起飞/悬停/降落的长序列）上按 70/15/15 划分，并留出整条轨迹作 unseen 测试。Blackbird seen 上 IMO 反而更好（0.929 vs 1.384 m ATE），但 unseen 上 Ex-IMO 平均 ATE 由 9.015 降至 6.483 m（-28%），RE 由 5.962 降至 4.561 m。DIDO unseen 上 ATE 改善 37%、RE 改善 61%，Random 序列因多次悬停使 IMO 显著退化（12.17→7.90 m）。四因子消融显示机体系改写是主要增益来源（9.015→6.610 m），力矩项再补到 6.483 m。另在 AI-IO、NanoBench、NeuroBEM、TII-RATM 四个公开集上按轨迹形状整类留出、3 个随机种子、105 组滤波器参数仅在验证集选择，全部 8 个 held-out 集速度 RMSE 均更低。",
+    "innovation": "- 把相对位移的回归目标从全局系改到机体系，使航向不再进入学习目标，显著改善跨轨迹泛化。\n- 在平移学习管线中显式引入机体力矩动力学，并只用惯量比值以降低对惯量辨识误差的敏感性。\n- 区分陀螺推导力矩与桨转速推导力矩：实验证明只有后者携带真实速度信息（可解释 71%–94% 的纵向/横向位移方差）。",
+    "limits": "- 仍依赖学习先验，训练分布外的机动仍会退化；TII-RATM 每折仅 6 段飞行时两个模型都无法跨赛道泛化。\n- 桨转速推导力矩需要转速信号与逐平台拟合，公开数据集均为室内采集，有风时空速与地速不一致会削弱该信息。\n- 机体系更新使航向通过 current-estimate Jacobian 显得可观测，滤波器可能在 yaw 上过度自信。\n- 绝对精度仍受 IMU 与推力标定影响，未做闭环飞行控制验证。",
+    "relation": "属于 IMO/DIDO 一脉的 model-based learned inertial odometry，与 IONet、A2DIO、NILoc 等行人惯性里程计同族但针对 UAV 动力学；相对 TTT/VIO 方案走的是「更小更轻的纯惯性」路线。",
+    "repro": "作者声明代码、数据处理管线与训练模型均公开，数据集为 Blackbird、DIDO、AI-IO、NanoBench 等公开集，复现门槛较低。",
+    "action": "若做无人机/AR 头显的纯惯性兜底定位，可直接把 body-frame 目标与力矩输入作为两个即插即用改动移植到现有 TCN+EKF 管线，并优先核验转速信号可得性。",
+    "track": "重建与SLAM",
+    "scores": {
+      "IMP": 3,
+      "NOV": 2,
+      "TEC": 4,
+      "EXP": 5,
+      "PER": 3,
+      "TRL": 3,
+      "REP": 4
+    },
+    "scores_why": "实验维度最强（两主集 + 四公开集 + 8 个整形状留出 + 多种子），但方法为对 IMO 的两点增量改进、增益约 28%–37%，创新与性能增益属中等。"
+  },
+  {
+    "id": "2611.09524",
+    "slug": "radardino-distill-visual-foundation-radar-mesh",
+    "venue": "arXiv preprint",
+    "tags": [
+      "mmWave radar",
+      "human mesh reconstruction",
+      "cross-modal distillation",
+      "DINOv3",
+      "SMPL-X"
+    ],
+    "conclusion": "RadarDINO 用 DINOv3 视觉语义蒸馏把原始毫米波雷达张量变成部位可分的表示，在 M4Human 三个划分上 MVE 分别降低 31.3%/11.2%/22.0%，模型仅 2.70M 参数、1.98 GFLOPs。",
+    "problem": "毫米波雷达做人体网格重建可规避光照与隐私问题，但基于稀疏点云的方法被 CFAR 滤掉大量有用回波并产生漏检；直接用原始雷达张量（RT）的方法（如 RT-Mesh）又缺乏细粒度语义，难以区分身体部位，也没有体素级/部位级的语义对应建模。此外仅用 SMPL-X 参数监督并不直接约束重建出的顶点与关节，复杂动作下几何误差偏大。",
+    "method": "两阶段框架。第一阶段做 Radar-Visual Teacher 构建与蒸馏：用冻结的 DINOv3 ViT-S/16 提取 RGB 特征，Mask R-CNN 取人体掩膜（patch 内 ≥40% 像素属人即判前景），再通过标定的雷达-相机外参把雷达体素投影到图像平面，每个前景 patch 保留最多 3 个最强正体素、每帧上限 3000 个，形成稀疏体素-DINO 描述子对。雷达编码器对每个体素构造 [多尺度 CNN 特征; 多帧雷达值; 局部/全局归一化坐标]，经 cross-attention 与 MLP 头输出 ℓ2 归一化描述子与人体支持度 logit，用余弦距离 L_voxel 监督（按 patch 内体素数归一化权重），并用投影网格加权得到 7 个身体部位的 DINO 教师做 L_part 部位级蒸馏。第二阶段把蒸馏后的编码器与 mesh decoder 联合微调，用支持度概率抑制非人体体素，预测 SMPL-X 参数，同时加显式 vertex loss 与 joint loss（L_geo）直接约束顶点与关节几何。",
+    "experiments": "在 M4Human（当前最大毫米波雷达 HMR 基准）上按官方 ALL 协议与 S1 Random / S2 Cross-Subject / S3 Cross-Action 三个划分评测，指标为 MVE、MJE、MRE、TE。相对 RT-Mesh，MVE 在 S1/S2/S3 分别降 31.3%、11.2%、22.0%（如 S1 由 90.9 降至 62.5 mm，S3 由 143.1 降至 111.6 mm），MJE 由 135.1/120.2/122.0 降至 120.0/108.2/94.6 mm。效率上 2.70M 参数、1.98 GFLOPs，是 RT-only 方法中最小最快（RT-Mesh 为 63.25M/2.60 GFLOPs）。与 RGB+RT 融合的 RT-Mesh 相比，纯雷达版本仍有竞争力（S1 MVE 62.5 vs 80.1 mm），但 S3 上不如（111.6 vs 108.7 mm）。消融：随机初始化 MVE 120.65 → 蒸馏冻结 114.95 → 蒸馏微调 111.58，而直接用 RGB DINO 教师特征为 87.03。",
+    "innovation": "- 首次把视觉基础模型（DINOv3）的语义通过标定几何蒸馏进原始雷达张量表示，绕开点云的信息损失。\n- 提出体素级与 7 部位级的双层语义监督，使雷达特征具备身体部位可分性，直接服务局部几何。\n- 在 SMPL-X 参数监督之外补 vertex/joint 显式几何损失，压缩复杂动作下的网格误差。",
+    "limits": "- 只在 M4Human 单一数据集、单一雷达设备上验证，跨环境、跨雷达型号的泛化未测。\n- 教师-学生差距明显：同条件下 RGB DINO 特征 MVE 87.03 mm，蒸馏后雷达表示 111.58 mm，语义迁移仍有损。\n- 训练阶段仍需同步 RGB 与相机标定，部署时虽只用雷达但数据采集成本与隐私假设被削弱。\n- 雷达空间分辨率限制导致颈等细小部位语义丢失，S3 跨动作划分上甚至略逊于 RGB+RT 融合。",
+    "relation": "承接 M4Human / RT-Mesh 的 raw-radar HMR 路线，方法上属于 DINO 蒸馏（DinoComplete 等）向雷达模态的跨模态扩展，与 mmMesh、P4Transformer、RT-Pose、RETR 等点云/张量方法构成对照。",
+    "repro": "论文未提供代码或模型链接，数据集 M4Human 公开；两阶段训练细节（25 + 20 epoch、AdamW 4e-4/2e-4）描述较完整，但复现需自行实现标定投影与教师构建。",
+    "action": "做隐私敏感场景（车载舱内、康养监护）的人体建模时值得跟进；优先验证自采雷达数据上部位级蒸馏是否仍成立，再考虑替换点云前端。",
+    "track": "化身与人体",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 3,
+      "PER": 4,
+      "TRL": 2,
+      "REP": 2
+    },
+    "scores_why": "MVE 最好划分降 31.3% 且模型极小，性能增益突出；但仅单数据集三划分、无代码，实验与可复现性偏弱。"
+  },
+  {
+    "id": "2511.18127",
+    "slug": "sfhand-streaming-egocentric-hand-forecasting",
+    "venue": "arXiv preprint",
+    "tags": [
+      "3D hand forecasting",
+      "streaming",
+      "egocentric",
+      "language instruction",
+      "embodied manipulation"
+    ],
+    "conclusion": "SFHand 以自回归流式架构 + ROI 增强记忆实现语言引导的实时 3D 手部预测，ADE 由 HaMeR+In. 的 18.03 降到 12.65（-30%），33.4 FPS，下游 Franka Kitchen 成功率 79.9%。",
+    "problem": "现有 3D 手部动作预测方法本质是离线的：必须先累积多帧观测再一次性预测，无法用于低延迟实时交互；同时它们是单模态的，只吃视觉输入，无法接受自然语言指令来表达任务意图。这使 AR 辅助、具身操作等需要「提前半拍」的场景缺少可用模型，且缺少带同步语言标注的大规模训练数据。",
+    "method": "把任务定义为流式自回归：每步输入文本指令 l、当前视频帧 v_t 与当前手状态 h_t（推理时用上一步自身预测），输出下一帧手状态 h_{t+1}，其中 h 含左右手类型、2D 检测框、MANO 参数化 3D 姿态与全局 3D 轨迹。三个独立编码器分别得到 f_l、f_v、f_h；视觉与手部嵌入拼接后进入 ROI-enhanced memory 层 M：以固定长度 FIFO 队列保存最近 N 个历史嵌入 [f_v; f_h]，当前嵌入作 query、队列作 key/value 做注意力，并在注意力分数上加一个由当前 2D 手框生成的二值 ROI mask 偏置，使历史检索聚焦手部区域。记忆增强后的嵌入与 f_l 拼接送入 DETR 风格 transformer decoder，用一组可学习 detection queries 一次回归出下一帧的手状态（框 + MANO + 轨迹）。训练在 8 卡、batch 256/卡、AdamW 2e-4 下完成，下游操作任务冻结编码器只训轻量预测头。",
+    "experiments": "自建 EgoHaFL：247K 视频片段（约 90 帧/段，242K 训练 / 5K 测试）、3.95M 帧 3D 手部标注并配细粒度语言描述，是首个同步视频-语言-3D 手的数据集。在 EgoHaFL 测试集上：SFHand ADE 12.65 / FDE 13.08，对比 HaMeR+In. 18.03/17.13（约 -30%/-24%）、EgoH4 22.56/22.87、USST 49.15/55.20，JPE 3.38 也最低；FPS 33.4（HaMeR 105.1 但无记忆与语言），oracle 变体 SFHand* 达 58.8 FPS、ADE 10.39。记忆消融：无记忆 15.56/18.38，加记忆无 ROI 反而退化到 18.34/22.23，记忆 + ROI 12.65/13.08，说明 ROI 偏置是必要项。模态消融显示去掉视频对轨迹影响最大，去掉语言在轨迹指标上退化，去掉手输入在 ADE/FDE 上退化最明显。下游 Franka Kitchen 平均成功率 79.9%，Adroit 上同样领先，任务成功率最高提升 13.4%。",
+    "innovation": "- 首个流式、语言可引导的 3D 手部预测框架，把「先攒帧再预测」的离线范式改为逐帧自回归。\n- ROI-enhanced memory：用当前手部 2D 框生成注意力偏置，把固定长度 KV 队列的检索聚焦到手部区域，消融显示缺它反而比无记忆更差。\n- 构建 EgoHaFL（247K 片段 / 3.95M 帧）并验证预测式手部表示可迁移到机械臂与灵巧手策略学习。",
+    "limits": "- 依赖 MANO 参数化表示，极端关节角与严重遮挡下泛化受限。\n- 33.4 FPS 虽满足实时，但明显低于纯视觉 HaMeR 的 105 FPS，多模态编码器带来延迟成本。\n- 自回归推理存在误差累积，长期预测（多帧外推）稳定性未系统评估。\n- 语言条件是静态整段指令，不支持对话式、逐步变更的意图输入。",
+    "relation": "位于手部动作预测（HaMeR、EgoH4、USST）与流式时序记忆（StreamVLM、RoMem 一类 KV 记忆）两条线的交叉点；与 EgoVid/EgoHOD 等第一视角数据集工作互补，并衔接 VibBot、R3M 等具身表示学习。",
+    "repro": "提供数据集页面（ut-vision/EgoHaFL）与项目页（ut-vision/SFHand），训练超参与数据规模描述详细，代码开放情况正文未明确承诺。",
+    "action": "做 AR 手势预判或遥操作意图推断可直接复用其流式接口与 ROI 记忆设计；若追求更低延迟，应优先压缩文本/手部分支而非牺牲记忆。",
+    "track": "交互与输入",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "首个流式语言引导手部预测 + 新数据集，ADE 相对最强基线降约 30%，创新与增益双高；实时性与 MANO 依赖限制了落地成熟度。"
+  },
+  {
+    "id": "2605.16981",
+    "slug": "adaptive-frame-gating-streaming-reconstruction",
+    "venue": "arXiv preprint",
+    "tags": [
+      "streaming 3D reconstruction",
+      "state update",
+      "keyframe selection",
+      "constant memory",
+      "long sequence"
+    ],
+    "conclusion": "诊断出 TTT3R 类 per-token 门控的记忆视界仅约 3 帧，提出免训练、免参数的帧级门 α_t，长 TUM-RGBD 序列 ATE 降 51%，Bonn 深度 AbsRel 降 13.0%。",
+    "problem": "DUSt3R/VGGT 一类离线批量方法需要同时载入全部帧并做全局注意力，代价随序列二次增长；CUT3R 用固定大小递归状态实现常数内存，但长期序列上状态漂移严重。TTT3R/TTSA3R/MeMix 等推理时方法只在 per-token 的帧内轴上调制更新，把每一帧都当作同等信息量写入，缺少「这一帧该写多强」的帧级判断。",
+    "method": "先做结构性诊断：在 5 个基准、39 条序列、18.15M 个 (t,n) 采样点上统计 TTT3R 的 per-token 门 β_t，发现其被 L×H×K≈110K 个 cross-attention logit 的平均+sigmoid 压成窄带（中位数 0.31，99% 小于 0.44，最大 0.558，逐序列均值仅在 [0.27,0.34]），且帧间均值标准差 0.024 远小于帧内 0.055。把更新写成凸组合即 EMA 后，等效记忆视界 ≈ 1/β ≈ 3 帧，早期观测在百帧内衰减到 1e-16，这是长序列漂移的结构性根因。修复方式是把更新因式分解为 S_t = S_{t-1} + α_t·β_t⊙ΔS_t：α_t∈(0,1] 是标量帧级门，由基础模型已有特征的帧间变化闭式给出，AFG-Img 用编码器 patch token 的空间均值 g_t 的 L2 差分，AFG-Pose 用 decoder 的 pose token 差分，形式为 σ(κ(‖Δf‖₂-τ))，再乘到 β_t 上。两个门作用在正交轴（token 空间选择 / frame 时间写入强度），不丢帧、不加参数、不做额外前向、不需训练，因而保持常数内存。",
+    "experiments": "覆盖 6 个基准、序列长 50–4661 帧：TUM-RGBD / ScanNet / KITTI 做相机位姿，Bonn 做视频深度，7-Scenes / NRGBD 做 3D 重建。基线含推理时门控（TTT3R、TTSA3R、MeMix）、前馈骨干（CUT3R、StreamVGGT、FastVGGT、InfiniteVGGT）与长序列专用方法（LongStream、Keyframe-VO）。长 TUM-RGBD（L≥600）上相对 TTT3R ATE 降 51%；Bonn 深度 AbsRel 降 13.0%；KITTI 上平均 ATE 同时优于 LongStream 与 RL 训练的 Keyframe-VO，三条超 4000 帧序列分别改善 50.8%/38.9%/43.7%，但短序列 04（271 帧）反而恶化 43.9%。ScanNet 1000 帧处 pose ATE：AFG-Pose 0.054 m vs TTT3R 0.109 m（约 -50%），AFG-Img 0.084 m。附录含冗余注入探针，验证门在内容冗余时把更新压低一个数量级。",
+    "innovation": "- 给出 per-token 门控的结构性诊断（有界、近似帧不变、记忆视界≈3 帧），把长序列漂移从经验现象变成可解释机制。\n- 把经典 SLAM 关键帧选择的思想改造成「渐进写入权重」而非二值取舍，用闭式标量门补上时间轴自适应性。\n- 完全免训练、免参数、零额外前向即可插到 CUT3R/TTT3R 类骨干，且严格保持常数内存。",
+    "limits": "- 无回环检测，门只能保护本会被覆写的信息，短轨迹或已积累信息很少时几乎无收益（KITTI 04 恶化 43.9%，05/07 也退化）。\n- 改善与序列长度只是趋势而非规律，超参 τ、κ 与两个门的组合需逐任务调。\n- 依赖基础骨干已产出的特征质量，骨干换架构后门的设计需重新实例化。\n- 评测以 ATE/AbsRel 等几何指标为主，缺少下游 SLAM 或建图任务的端到端验证。",
+    "relation": "属于 CUT3R → TTT3R → TTSA3R/MeMix 这条「常数内存递归重建 + 推理时门控」脉络，并与 LongStream（重训）、Keyframe-VO（RL 选帧）两条长序列路线正面比较，本质是把 SLAM 关键帧选择以连续权重形式复活。",
+    "repro": "方法零训练零参数、代码改动仅在状态更新一行，复现门槛低；论文未给出代码仓库链接，但基线均为开源模型。",
+    "action": "任何基于 CUT3R/TTT3R 的在线重建系统都可先加这一行 α_t 乘法做低成本试水，重点看长序列；短片段场景不必启用。",
+    "track": "重建与SLAM",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 5,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "机制诊断清晰且方法极简（一行乘性门），6 基准长序列 ATE 降 51% 同时超过专用长序列方法，实验与创新俱强；受限于无回环与短序列退化。"
+  },
+  {
+    "id": "2605.31557",
+    "slug": "egostream-streaming-episodic-memory-benchmark",
+    "venue": "arXiv preprint",
+    "tags": [
+      "egocentric video",
+      "streaming memory",
+      "VideoQA benchmark",
+      "KV cache",
+      "episodic memory"
+    ],
+    "conclusion": "EgoStream 用 2,250 道题 + Answer Validity Window 扩展成 8,528 次评测，在统一 Qwen3-VL 框架下发现最强流式记忆机制准确率仅约 45%，且全部慢于实时（>1 s/帧）。",
+    "problem": "现有第一视角 VideoQA 基准是离线的，证据与提问的时间距离不受控，评测也不区分「该记什么、要记多久、答案何时失效」，导致记忆质量差异被平均准确率抹平。已有的在线/流式基准多只测响应速度或聚合精度，无法诊断不同记忆管理策略在语义维度与保持时长上的取舍。",
+    "method": "基准构建：从 5 个第一视角数据集（Multi-Hop EgoQA 578、Ego4D 498、EgoLife 433、EgoTempo 425、HD-EPIC 316）出发，经 LLM 生成干扰项 + 两轮 human-in-the-loop 标注（人工修正 847 题、Gemini 2.5 Pro 自动打标后再人工核验）得到 2,250 道四选一题，丢弃 85 题。题目按 7 个认知维度组织：detail、spatial、temporal、event、social、causal、prospective。核心概念是 Answer Validity Window（AVW）：标注答案在被后续事件推翻前仍然成立的时间跨度，把同一题在 instant / short / S-Mid / Mid / ML / long / ultra 等 recall regime 下重复评测，得到 8,528 次条件化推理，从而把「真遗忘」与「世界状态已变」解耦。评测侧实现统一流式 MLLM 框架：固定 Qwen3-VL 骨干与统一 prompt，把 KV-cache 记忆管理拆成帧内 reducer（INTRA-COS 余弦冗余、INTRA-PA 伪注意力显著性、INTRA-VN value-norm、INTRA-CS sink 引导）与帧间 reducer（INTER-COS、INTER-PA），组合出 sliding window、attention sink、merge、prune、offload 五类共 18+ 种配置，并记录每帧处理时间。",
+    "experiments": "主结果为 18 种以上记忆配置在 7 个语义类别 × 7 个 recall regime 上的准确率矩阵。FIFO 滑窗最弱（Avg 29.53%）；StreamVLM（FIFO+SINK）Avg 44.74%；CaM 式 merge 41.87–43.42%；StreamMem prune 42.39%；InfiniPot-V 44.52%；纯 INTRA-COS prune 达 45.63%（最高）；StreamTOM 45.19%。整体天花板约 45%，接近随机 25% 与纯文本基线 25.42% 之间的水平，说明视觉记忆利用极不充分。处理时延：最快的 INTRA-COS prune 2.28 s/帧，滑窗 1.05 s/帧，merge 类 2.3–2.9 s/帧，混合 prune+merge 达 5.3–5.7 s/帧，全部远超实时（>1 s/帧）。诊断结论：token pruning 在细粒度细节与时间结构上明显优于 token merging；量化 offload（ReKV）能救回 ultra-long 召回但整体 Avg 仅 40.99%；长时程（ML/long/ultra）普遍比 short 掉 20–30 个点。",
+    "innovation": "- 提出 Answer Validity Window，把「模型遗忘」与「场景状态演化导致答案失效」分开度量，使 recall horizon 成为可控变量。\n- 按 7 个认知维度切分 episodic memory，并给出可复用的两轮人机协同标注与干扰项生成流程。\n- 提供统一骨干、统一 prompt 的流式记忆管理对照框架，首次系统比较 merge/prune/offload/sink 在语义与时间两个轴上的差异化退化。",
+    "limits": "- 基准题目由既有数据集改写与 LLM 生成干扰项而来，仍受源数据域（室内日常）与 LLM 偏差影响。\n- 只固定 Qwen3-VL 一个骨干，结论对其他 MLLM 的可迁移性未验证。\n- AVW 部分区间（尤其 HD-EPIC）依赖 Gemini 3.1 自动推导后人工复核，标注一致性存在残余噪声。\n- 仅四选一准确率一种主指标，未评估答案置信度、拒答或时序定位质量。",
+    "relation": "与 Ego4D、EgoLife、EgoTempo、HD-EPIC、Multi-Hop EgoQA 等第一视角 VideoQA 数据形成互补，方法侧对标 StreamVLM、StreamMem、InfiniPot-V、ReKV、CaM、StreamTOM 等 KV-cache 记忆管理族；定位是「诊断工具」而非新模型。",
+    "repro": "提供匿名 GitHub 仓库与项目页（saroo25.github.io/Egostream），标注、代码与评测脚本声明共享，硬件与配置在附录 C.1，可复现性较好。",
+    "action": "做可穿戴助手或长时程第一视角记忆时，应把 EgoStream 当回归测试集，优先选 token pruning 而非 merging，并正视 >1 s/帧 的实时性缺口。",
+    "track": "评估与数据集",
+    "scores": {
+      "IMP": 4,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 1,
+      "TRL": 2,
+      "REP": 4
+    },
+    "scores_why": "作为诊断基准其问题定义（AVW + 七维记忆）有实质价值、实验矩阵广，但本身不提出方法、无性能增益（PER=1），落地仍受 45% 天花板与秒级延迟制约。"
+  },
+  {
+    "id": "2607.24409",
+    "slug": "street-level-imagery-visual-localization-accuracy",
+    "venue": "arXiv preprint（期刊投稿格式，ISPRS 相关）",
+    "tags": [
+      "visual localization",
+      "street-level imagery",
+      "dataset",
+      "SfM",
+      "survey-grade accuracy"
+    ],
+    "conclusion": "用高分辨率街景影像与自建 FHNW Muttenz 数据集（10 km 路网、真值 6–9 mm / <0.1°），稀疏特征视觉定位在日间可达中位 1–5 cm、0.03–0.1°，接近测绘级 GNSS。",
+    "problem": "视觉定位被视作 GNSS 的补充，但其精度潜力从未相对「测绘级」要求被系统检验：既有户外基准的真值精度不足（厘米级以下无法分辨），阈值也粗（25 cm / 2°），无法回答高分辨率影像能把误差压到多低、哪一环是瓶颈。同时缺少同时具备高分辨率参考影像、跨 1.5 年两期采集、多相机查询且真值不确定度经过量化的公开数据集。",
+    "method": "先建数据：FHNW Muttenz 覆盖连续 10 km 街区，两次移动测绘采集（间隔约 1.5 年）提供高分辨率参考影像，查询为 5 个场景 4 种相机（含全景、双目、单目与消费级）。两期参考通过独立连接点以 3D RMSE 5 mm 配准，查询影像相对参考配准后真值位置不确定度 6–9 mm、姿态远优于 0.1°，整体地理参考精度约 2.5 cm。定位管线完全由成熟组件拼装：以地理参考的高分辨率影像直接作场景表示，先用图像检索（EigenPlaces、MegaLoc）选候选，再用位置/航向先验（±15 m / ±90° 或 ±100 m）预筛，然后对查询-参考做局部特征提取与匹配（SIFT、SuperPoint、DISK、ALIKED、XFeat、RDD），在线重建局部 SfM 模型，最后 PnP + RANSAC 求 6-DoF 位姿。实验按四个子问题组织：检索与预筛策略、分辨率与局部特征、查询相机与参考时段、2D 图像式 vs 3D 几何式。",
+    "experiments": "指标为 7 档平移阈值（0.01–1 m）与 7 档旋转阈值（0.1–10°）下的定位成功率，并聚合为 accurate（0.05 m/0.5°）、moderate（0.1 m/1°）、low（0.2 m/2°）。分辨率实验（2025 单目前视查询 vs 2023 双目参考）显示分辨率越高越好：RDD@2048 中位误差 0.009 m / 0.032°，在 0.2 m/2° 下达 99.1%；SuperPoint@2048 为 0.013 m / 0.031°；SIFT 明显落后（@1024 中位 0.114 m / 0.213°，4096 全分辨率反而因匹配退化到 0.873 m），说明手工特征在高分辨率下失配。RDD@full 中位 0.010 m / 0.029°、0.05 m/0.5° 内 84.7%。严格的 ±15 m/±90° 预筛使图像检索方法的选择几乎不影响最终精度。2D 图像式相对 3D 几何式会损失精度，但差距在厘米级；消费级查询相机与参考时段差异会显著拉低成功率。附录给出内存占用与运行时间分析。",
+    "innovation": "- 发布 FHNW Muttenz：10 km 连续街区、两期高分辨率参考、4 相机 5 场景查询，且真值不确定度（6–9 mm / <0.1°）低于待测误差一个量级，公开可用。\n- 首次把视觉定位精度对标测绘级 GNSS，在 1 cm / 0.1° 级别阈值上分辨出局部特征之间的差异（粗阈值基准无法区分）。\n- 给出分辨率-特征-检索-几何方式的四因子系统消融，指出高分辨率下 SIFT 类手工特征反而退化、学习型特征（RDD/ALIKED/SuperPoint）在 2048 已接近饱和。",
+    "limits": "- 结论限于日间、预标定相机、车道约束轨迹的有利条件，强视角变化、夜间、雨雪未覆盖。\n- 查询与参考均由移动测绘车沿车道采集，缺少行人视角、手持剧烈运动等真实 AR 场景。\n- 绝对精度受场景表示的地理参考精度（约 2.5 cm）上限约束，方法本身不解决地理参考问题。\n- 只评估稀疏特征 + 局部 SfM 这一族，未与学习型端到端定位或神经渲染方法对比。",
+    "relation": "属于 3D 几何式视觉定位（图像检索 + 局部特征 + PnP/RANSAC）的经典范式，数据集层面补充 Aachen、RobotCar、KITTI 等在真值精度上的不足，并可与 HLoc、MegaLoc、EigenPlaces 等检索/匹配组件直接组合。",
+    "repro": "数据集公开（fhnw-muttenz-vl-dataset.github.io），管线由开源组件构成并附内存/运行时间附录，论文设 Code availability 章节，可复现性高。",
+    "action": "若系统需要 GNSS 拒止下的厘米级定位（测绘、AR 锚定、自动驾驶先验），可把该数据集当作精度上限标尺，并按结论直接用学习型特征 + 2048 分辨率 + 位姿先验预筛的配置。",
+    "track": "重建与SLAM",
+    "scores": {
+      "IMP": 3,
+      "NOV": 2,
+      "TEC": 3,
+      "EXP": 5,
+      "PER": 2,
+      "TRL": 4,
+      "REP": 5
+    },
+    "scores_why": "实验极扎实（4 组因子实验、6 种特征 × 4 档分辨率）且数据集与真值质量罕见、完全公开，但方法本身是成熟组件拼装、无新算法增益，故 NOV/PER 偏低。"
+  }
+]

@@ -1,0 +1,143 @@
+【摘要】
+
+【引言】
+ Tool use is a fundamental human capability and a key step toward general-purpose embodied intelligence  ( Goodall, 1964 , Hunt, 1996 , Shumaker et al., 2024 , Fitzgerald et al., 2021 ) . In everyday environments, humans do not rely solely on a fixed set of predefined tools; they also flexibly repurpose available objects based on their physical properties and functional affordances. For example, when a knife is unavailable, a person may use a spoon, chopsticks, or another nearby object to divide a cake. This form of creative tool use requires more than recognizing object categories. It demands physical reasoning about contact, geometry and task constraints. As such, physical tool use provides a natural testbed for evaluating whether embodied agents can generalize beyond memorized object-action associations and adapt to novel physical scenarios.
+Despite recent progress in robotic manipulation ( Black et al., 2024 , Black et al., 2025 , Kim et al., 2026 ) , learning generalizable tool-use behavior remains difficult ( Shi et al., 2023 , Wang et al., 2024 ) . Task and motion planning methods can solve structured tool-use problems when
+symbolic task descriptions are carefully specified, but often struggle in open-ended real-world settings  ( Garrett et al., 2021 ) . Recent large language models and vision-language models have shown promising reasoning ability for selecting or describing tools, yet they remain limited in grounding such reasoning into physically executable manipulation  ( Fang et al., 2024 , Xu et al., 2023 , Lin et al., 2025 , Gao et al., 2026 ) . This gap is especially pronounced in tasks involving deformable target objects (such as sand or cake), non-rigid contacts,
+and long-horizon interactions,
+where success depends on fine-grained hand-object-tool dynamics rather than high-level semantic reasoning alone.
+A major obstacle is the lack of datasets and benchmarks that capture human physical tool-use capabilities at sufficient scale, fidelity, and diversity .
+Existing robot tool-use benchmarks are often simulation-based or focus on simplified object interactions, making it difficult to evaluate the complexity of real-world manipulation  ( Xu et al., 2
+
+【方法】
+evaluation.
+Reconstruction results.
+5.2 Benchmarking VLMs’ Physical Tool-use Capabilities
+Tool selection and spatial grounding results.
+Behavioral planning results.
+Qualitative results.
+5.3 Robot Physical Tool-Use from Human Demonstrations .
+Findings (Static, 3DGS).
+Findings (Dynamic, 4DGS).
+Expanded observed-view evaluation (Dynamic, 4DGS).
+A.2 VLM Benchmarking Details
+Prompt Used
+VLM-source
+A.3 Additional VLM outputs
+A.4 Gemini Robotics Evaluation and Result Details
+Trajectory Representation
+Ground-Truth Trajectory Construction
+Qualitative Results
+A.5 Policy Learning Pipeline Details
+A.5.1 Retargeting
+ManipTrans + Inspire.
+Dex-X.
+A.5.2 Evaluation Protocol
+A.5.3 Training Configuration
+A.6 Limitations and future directions.
+License: CC BY 4.0
+arXiv:2611.09036v1 [cs.RO] 06 Nov 2026
+ToolDex : An Ego-Exo Human Demonstration Dataset for Creative Physical Tool Use
+Mohamed Elmoghany
+Affiliation:  Stanford University
+Kehan Li
+Affiliation:  Stanford University
+Ruoqu Chen
+Affiliation:  Stanford University
+Tarun Chiruvolu
+Affiliation:  Stanford University
+Shutong Zhang
+Affiliation:  Stanford University
+Ryan Wang
+Affiliation:  Carnegie Mellon University
+Stephen Tian
+Affiliation:  Stanford University
+Yaru Niu
+Affiliation:  Carnegie Mellon University
+Michelle Guo
+Affiliation:  Stanford University
+Ding Zhao
+Affiliation:  Carnegie Mellon University
+Weiyu Liu
+Affiliation:  Stanford University
+Mengdi Xu
+Affiliation:  Stanford University
+Li Fei-Fei
+Affiliation:  Stanford University
+Jiajun Wu
+Affiliation:  Stanford University evaluation.
+We also evaluate two-stage recipes:
+IS + Difix3D for 3DGS and IS-4D+Difix3D+GSFix3D for 4DGS. Stage 1 (reconstruction): a MASt3R  ( Leroy et al., 2024 ) cross-view dense-point prior seeds the joint pose-and-Gaussian optimizer of InstantSplat, trained for 1k iterations under a clean photometric loss with no depth/distortion/normal regularizers. For 4DGS, Stage 1 is run independently per timestep. Stage 2 (rendered-view repair): a single-step Difix3D  ( Wu et al., 2025 ) pass, with GSFix3D  ( Yin et al., 2026 ) chained after Difix3D in the 4DGS variant (More benchmarks in Appendix A.1 ).
+Reconstruction results.
+Table 2 summarizes both regimes. PSNR (in dB; higher = closer pixel-by-pixel to the held-out cam 6 ground truth) measures photometric fidelity, while MUSIQ (on a 0–100 scale; higher = better learned-perceptual appeal) judges visual quality without any reference. Static: IS + Difix3D reaches 20.45  PSNR / 55.11 MUSIQ, beating InstantSplat alone by + 0.5 +0.5  dB and SplatFormer  ( Chen et al., 2025 ) by ∼ 7 {\sim}7  dB. Dynamic: IS-4D + Difix3D + GSFix3D reaches 69.92  MUSIQ ( + 18.92 +18.92 over IS-4D) while lowering PSNR by 3.6 dB – the photometric-vs-perceptual trade-off  ( Wu et al., 2025 ) is now measurable on held-out 4D. Both findings are made quantifiable only by our dataset’s calibrated 8-camera capture , which uniquely supports a held-out
+camera view test on tool-use scenes that competing tabletop datasets cannot reproduce. Without it, neither the static held-out gap nor the 4D photometric-vs-perceptual dissociation can be measured.
+Figure 4: 3DGS and 4DGS prediction for camera view withheld during training and prediction of novel views using InstantSplat + Difix3D. Additional visualizations are available on our website.
+Table 2: Novel-view synthesis results for data captured by 8 sparse cameras, for both
+static (3DGS) and dynamic (4DGS) settings. PSNR is computed against a held-out camera
+view (cam 6 ); MUSIQ scores are computed after training with all 8 cameras (no ground
+truth required). Methods: SplatFormer  ( Chen et al., 2025 ) , InstantSplat
+(IS)  ( Fan et al., 2024 ) , Difix3D  ( Wu et al., 2025 ) ,
+GSFix3D  ( Yin et al., 2026 ) ; MUSIQ  ( Ke et al., 2021 ) .
+Static (3DGS)
+Dynamic (4DGS)
+SplatFormer
+IS
+IS+Difix3D
+IS-4D
+IS-4D+Difix3D+GSFix3D
+PSNR ↑ \uparrow
+13.09
+19.97
+20.45
+19.60
+15.97
+MUSIQ ↑ \uparrow
+33.11
+50.66
+55.11
+51.00
+69.92
+5.2 Benchmarking VLMs’ Physical Tool-use Capabilities .
+We propose a two-stage sparse-view recipe specifically engineered for the failure modes of unposed tabletop tool-use reconstruction, taking the seven (or eight) training views of our calibrated capture a
+
+【实验】
+setup. Setup. setup.
+We benchmark sparse-view novel-view synthesis on 8-camera calibrated capture in two regimes: (i) static 3DGS using InstantSplat  ( Fan et al., 2024 ) (IS) as a backbone (ii) dynamic 4DGS training InstantSplat on T T -frame sequences applied per-timestep, denoted IS-4D. Each scene is reconstructed twice (once with 8 cameras and once with cam 6 dropped for ground truth comparison). We add a second stage single-step diffusion to the pipeline utilizing GSFix3D  ( Yin et al., 2026 ) and Difix3D  ( Wu et al., 2025 ) to enhance reconstruction and decrease noise. setup. We evaluate three levels of reasoning capabilities. For Tool Selection , models are asked to identify all tools that could plausibly complete the task, and a prediction is counted as correct if any predicted tool matches the demonstrated ground-truth tool. For Spatial Grounding , models localize the selected tool using bounding boxes, evaluated using IoU only on semantically matched tool predictions.
+For Behavioral Planning , models are provided with a natural-language instruction, e.g., “stir the coffee.” and must generate a high-level manipulation trajectory based on the first frame from a top-view camera.
+The evaluation subset contains 180 manually verified trajectories spanning 32 task variants.
+We evaluate a tool-center projection ground-truth trajectory and a correspondence-aware transported-point trajectory, using trajectory distance metrics including Mean L2 and Chamfer-L2. Details are in Appendix  A.2 .
+Tool selection and spatial grounding results.
+As shown in Table 3 , modern VLMs demonstrate strong capability in selecting plausible tools. Claude-Sonnet-4.6, Claude-Opus-4.7 and GPT-6-Astra achieve the highest tool-selection performance of 80%, while GPT-6-Astra substantially outperforms all other models on spatial grounding with a bounding box IoU of 0.891. Notably, Gemini and Qwen models frequently correctly identify plausible tools but struggle to obtain correct bounding boxes, suggesting that these VLMs possess substantially stronger semantic reasoning than fine-grained spatial understanding.
+Table 3: Benchmark results on tool selection accuracy and bounding box IoU.
+Models: GPT-5-mini   ( OpenAI, 2025 ) , GPT-6-Astra  ( OpenAI, 2026 ) ,
+Claude-Sonnet-4.6  ( Anthropic, 2026 ) ,Claude-Opus-4.7  ( Anthropic, 2026 )
+Gemini-3.1-Pro  ( Google DeepMind, 2026 ) ,
+Qwen-3.6-27B  ( Qwen Team, 2026 ) Setup.
+We benchmark sparse-view novel-view synthesis in two regimes that share a single calibrated capture: static 3DGS on a per-scene image, and dynamic 4DGS on a per-scene T T sequence. In both cases we use the same 8 calibrated RealSense cameras and the same held-out cam 6 Protocol B – each scene is reconstructed twice: an 8-cam run that uses all eight cameras for training and a cam 6 -dropped run that uses cam 0 , … , 5 , 7 {}_{0},\dots,5,7 for training and reserves cam 6 for held-out evaluation. From the cam 6 -dropped run we score the predicted cam 6 image (or render across time at cam 6 ’s pose, in 4D) against the captured ground truth with full-reference PSNR, SSIM  ( Wang et al., 2004 ) , and LPIPS  ( Zhang et al., 2018 ) . From the 8-cam run we score the rendered novel-view tour without a reference using the appeal-composite metrics MUSIQ  ( Ke et al., 2021 ) , MANIQA  ( Yang et al., 2022b ) , TOPIQ  ( Chen et al., 2024 ) , BRISQUE  ( Mittal et al., 2012 ) , NIQE  ( Mittal et al., 2013 ) , and PIQE  ( N et al., 2015 ) . Baselines use their native initialization: SparseGS reads the COLMAP  ( Schönberger et al., 2016 , Schönberger & Frahm, 2016 ) sparse reconstruction, while Sparfels, SplatFormer (applied to our InstantSplat model), and InstantSplat are seeded from MASt3R  ( Leroy et al., 2024 ) . We use InstantSplat  ( Fan et al., 2024 ) as our main backbone; in the dynamic regime we apply InstantSplat across the T T timesteps , which we refer to as InstantSplat-4D.
+Figure 6: Training of 3DGS using 8 cameras and reconstruction of a known camera view
+Figure 7: Training of 3DGS using 8 cameras and reconstruction of a novel camera view .
+Findings. .
+Table 5 summarizes the task success rates. Direct motion transfer performs poorly under phys
+
+【结论/局限】
+References
+A Appendix
+A.1 Novel-View Gaussian Splatting for Sparse-View Tooluse: Static and Dynamic We introduced ToolDex , a large-scale ego-exo human demonstration dataset and benchmark for creative physical tool use.
+ToolDex  explicitly captures the full hand–tool–target interaction in real-world manipulation scenarios, including challenging deformable target objects.
+With multi-view observations, the dataset provides rich annotations for studying embodied physical tool-use.
+Beyond the dataset itself, we establish a unified benchmark spanning physical tool-use reasoning, 3D and 4D reconstruction, and robot policy learning.
+Meanwhile, the dataset may raise concerns related to the misuse of human behavior data or unsafe downstream robotic deployment. To mitigate these, all data are collected with consent and released for research purposes under a non-commercial license.
+We hope ToolDex  will serve as a foundation for future research on developing robots capable of adaptive tool use in open-world environments. Limitations are discussed in Appendix A.6
+AI use statement
+Large language models were used throughout this work under author direction: for literature collection, experimental statistics, code development, and manuscript drafting, with additional assistance in
+experimental design. All core ideas, the experimental program, and the conclusions originate from
+the authors. The authors verified the paper’s numerical claims against the underlying configurations,
+logs, evaluation records, and analysis artifacts, reviewed all AI-assisted text, code, and figures, and
+take full responsibility for the paper’s content.
+References
+Anthropic (2026)
+Anthropic.
+Introducing claude sonnet 4.6, 2026.
+URL https://www.anthropic.com/news/claude-sonnet-4-6 .
+Bakhtin et al. (2019)
+Anton 

@@ -1,0 +1,268 @@
+【摘要】
+
+【引言】
+ Streaming 3D reconstruction processes an RGB video incrementally and produces camera poses and pixel-aligned geometry on the fly, under strict memory and latency constraints that grow with the input length  [ 22 , 31 ] . Offline batch methods such as DUSt3R  [ 23 ] , MASt3R  [ 11 ] , VGGT  [ 21 ] , and Fast3R  [ 27 ] produce strong reconstructions through global attention over all frames, but their quadratic cost and the requirement that all frames be loaded simultaneously preclude online use on long sequences. Among streaming approaches, CUT3R  [ 22 ] achieves a strictly constant memory footprint by compressing the full sequence history into a fixed-size recurrent state of N N tokens, S ∈ ℝ N × d S\in\mathbb{R}^{N\times d} , that each incoming frame reads from and writes back into. KV-cache variants  [ 31 , 24 ] retain richer history but grow with sequence length, while sliding-window attention  [ 12 ] keeps memory constant only by discarding early frames, making CUT3R the unique combination of constant memory and full-history retention. Under a strict constant-memory budget, the central question becomes how this state should be updated as the stream evolves (Fig.  1 ).
+Recent inference-time methods all modulate this update along the same axis: a per-token gate β t ∈ [ 0 , 1 ] N \beta_{t}\in[0,1]^{N} that decides which state slots absorb the current frame’s residual. TTT3R  [ 3 ] derives β t \beta_{t} from cross-attention logits as a constrained test-time gradient step; TTSA3R  [ 30 ] reshapes it via attention-style gating; the concurrent MeMix  [ 8 ] adds a hard token mask. Through systematic profiling on long sequences across five benchmarks, we discover a striking regularity: β t \beta_{t} is structurally bounded (median 0.31 0.31 ; no value exceeds 0.6 0.6 ), nearly invariant across datasets, and—most importantly—its variation across frames is less than half of its variation within a frame. Under an EMA reading of the update, this corresponds to an effective memory horizon of only ∼ \sim 3 frames, structurally explaining the long-sequence drift these methods continue to exhibit. Yet a more fundamental observation lies beneath this bound: all of these desig
+
+【方法】
+Sequence Length L L
+50
+100
+200
+300
+400
+500
+600
+700
+800
+1000
+TTT3R  [ 3 ]
+0.014
+0.020
+0.041
+0.045
+0.051
+0.067
+0.074
+0.085
+0.091
+0.109
+TTSA3R  [ 30 ]
+0.013
+0.017
+0.030
+0.038
+0.043
+0.056
+0.062
+0.070
+0.076
+0.093
+MeMix  [ 8 ]
+0.014
+0.020
+0.033
+0.042
+0.047
+0.060
+0.068
+0.074
+0.085
+0.101
+AFG-Img (Ours)
+0.012
+0.017
+0.027
+0.033
+0.037
+0.044
+0.051
+0.058
+0.066
+0.084
+AFG-Pose (Ours)
+0.013
+0.017
+0.023
+0.028
+0.032
+0.033
+0.036
+0.040
+0.045
+0.054
+Table 12: Detailed pose ATE on ScanNet across sequence lengths. ATE ↓ \downarrow (m) under Sim(3) Umeyama alignment. Best in bold . Sequence Length L L
+50
+100
+200
+300
+400
+500
+600
+700
+800
+1000
+TTT3R  [ 3 ]
+0.033
+0.072
+0.144
+0.192
+0.236
+0.278
+0.315
+0.345
+0.371
+0.405
+TTSA3R  [ 30 ]
+0.032
+0.063
+0.122
+0.169
+0.213
+0.259
+0.298
+0.329
+0.356
+0.388
+MeMix  [ 8 ]
+0.036
+0.075
+0.147
+0.194
+0.231
+0.261
+0.288
+0.308
+0.330
+0.367
+AFG-Img (Ours)
+0.033
+0.071
+0.135
+0.165
+0.194
+0.212
+0.231
+0.249
+0.265
+0.282
+AFG-Pose (Ours)
+0.038
+0.084
+0.173
+0.206
+0.240
+0.250
+0.257
+0.267
+0.277
+0.281
+Appendix A9 Per-Sequence Gains on KITTI
+Table  13 re-orders the KITTI results of Table  1 by sequence length and reports the relative change of AFG-Pose over TTT3R. The largest improvements occur on the longest sequences (all three sequences above 4000 4000 frames improve by 39 39 – 51 % 51\% ), and the shortest sequence ( 04 ) gets worse. The relation is a trend rather than a rule: 05 and 07 degrade despite their length. AFG has no loop-closure component, and loop structure does not separate the outcomes (Sec.  5.2 ). The gate can only protect information that would otherwise have been overwritten, and on a short trajectory little has been; we list this as a limitation.
+Table 13: KITTI ATE (m) ordered by sequence length. Change is relative to TTT3R; negative is better.
+Seq.
+Frames
+TTT3R
+AFG-Pose
+Change
+AFG-Img
+Change
+02
+4661
+242.05
+118.98
+− 50.8 % -50.8\%
+229.25
+− 5.3 % -5.3\%
+00
+4541
+118.20
+72.22
+− 38.9 % -38.9\%
+89.03
+− 24.7 % -24.7\%
+08
+4071
+81.52
+45.92
+− 43.7 % -43.7\%
+49.61
+− 39.1 % -39.1\%
+05
+2761
+31.62
+35.16
++ 11.2 % +11.2\%
+32.21
++ 1.9 % +1.9\%
+09
+1591
+79.10
+28.56
+− 63.9 % -63.9\%
+47.21
+− 40.3 % -40.3\%
+10
+1201
+29.82
+31.09
++ 4.3 % +4.3\%
+27.44
+− 8.0 % -8.0\%
+01
+1101
+102.98
+85.49
+− 17.0 % -17.0\%
+79.40
+− 22.9 % -22.9\%
+06
+1101
+37.77
+30.15
+− 20.2 % -20.2\%
+31.29
+− 17.2 % -17.2\%
+07
+1101
+12.00
+17.44
++ 45.3 % +45.3\%
+14.01
++ 16.8 % +16.8\%
+03
+801
+14.38
+12.07
+− 16.1 % -16.1\%
+14.68
++ 2.1 % +2.1\%
+04
+271
+4.51
+6.49
++ 43.9 % +43.9\%
+8.47
++ 87.8 % +87.8\%
+Appendix A10 KITTI Trajectory Visualizations
+Fig.  6 visualizes the recovered camera trajectories on all 11 11 KITTI Odometry sequences ( 00 – 10 ) for ground truth, TTT3R  [ 3 ] , and our AFG-Pose variant (labeled “Ours”), corresponding to the per-sequence ATE numbers in Table  1 . Each estimated trajectory is aligned to ground truth by Sim(3) Umeyama; panel titles report the official KITTI path length. On most long sequences ( 00 , 01 , 02 , 06 , 08 , 09 ; ≥ \geq 1200 m), TTT3R drifts visibly while Ours tracks the ground-truth route more closely, directly visualizing the long-sequence drift suppression; on 05 the two are comparable (ATE 35.16 35.16 vs. 31.62 31.62 ). On short sequences ( 03 , 04 , 07 , 10 ; ≤ \leq 920 m), both methods track ground truth closely, consistent with the observation that the gating advantage emerges as accumulated drift grows.
+Figure 6: Camera trajectory visualizations on KITTI Odometry. Top-down ( x x – z z ) views of the recovered trajectories on all 11 sequences ( 00 – 10 ). Each estimated trajectory is aligned to ground truth via Sim(3) Umeyama; panel titles list the official KITTI path length in meters. On most long sequences ( ≥ \geq 1200 m), TTT3R  [ 3 ] drifts substantially while Ours (AFG-Pose) tracks the ground-truth route more closely. On short sequences ( ≤ \leq 920 m), both methods track ground truth accurately, consistent with our finding that the gating advantage strengthens as accumulated drift grows.
+Appendix A11 Detailed Bonn Depth Numbers
+We provide the per-length numerical values plotted in Fig.  4 of Sec.  5.3 under metric alignment (Sec.  A11.1 ), and additionally report results under scale-and-shift alignment (Sec.  A11.2 ) as a robustness che
+
+【实验】
+Tasks and benchmarks.
+Baselines. Tasks and benchmarks.
+We evaluate on three streaming 3D reconstruction tasks: camera pose estimation on TUM-RGBD  [ 18 ] , ScanNet  [ 6 ] , and KITTI  [ 9 ] ; video depth estimation on Bonn  [ 15 ] ; and 3D reconstruction on 7-Scenes  [ 17 ] and NRGBD  [ 1 ] . Sequence lengths span 50 50 to 4661 4661 frames. We adopt standard alignment conventions throughout: Sim(3) Umeyama alignment for camera pose, and metric alignment for depth (scale-and-shift depth results are additionally reported in Appendix  A11.2 as a robustness check). Per-task evaluation details are given in each subsection.
+Baselines.
+We compare against three families: inference-time gating methods (TTT3R  [ 3 ] , TTSA3R  [ 30 ] , MeMix  [ 8 ] ); feedforward backbones (CUT3R  [ 22 ] , StreamVGGT  [ 31 ] , FastVGGT  [ 16 ] , InfiniteVGGT  [ 28 ] ); and long-sequence-specialized methods (LongStream  [ 5 ] , Keyframe-VO  [ 7 ] ).
+
+【结论/局限】
+ In this paper, we rethought why constant-memory recurrent 3D reconstructors drift on long sequences, and traced the failure to a structural blind spot in the per-token gate: averaged across thousands of cross-attention interactions, every gate collapses into nearly the same magnitude, leaving no way to distinguish a novel frame from a redundant one. To restore the missing axis, i.e., frame-level adaptivity, we introduced Adaptive Frame Gating, a parameter-free scalar gate computed at inference time from features the model already produces, with no retraining, no architectural change, and no extra forward pass. Across pose, depth, and reconstruction tasks, AFG outperforms inference-time gating baselines on long sequences, and on long outdoor trajectories surpasses methods purpose-built for long sequences. and future work.
+References
+A1 Redundancy-Injection Probe: Mechanism Verification
+Setup.
+β \beta is content-blind, even in the worst case.
+AFG suppresses redundant updates by an order of magnitude.
+Geometric drift is reduced by an order of magnitude.
+Numerical closure with the main-text horizon prediction.
+A2 Gate Constants and Sensitivity
+A2.1 Threshold τ \tau
+A2.2 Sharpness κ \kappa
+A3 Capping the Frame Gate at 1
+A4 Comparison with Keyframe-Style Gating
+A5 Is the Gain Only from Writing Less?
+Write schedule on full-rate input.
+Subsampled input.
+A6 Coupling Between the Pose Gate and the Recurrent State
+A7 Combining the Two Gates
+A8 Detailed Per-Length Pose Numbers
+A9 Per-Sequence Gains on KITTI
+A10 KITTI Trajectory Visualizations
+A11 Detailed Bonn Depth Numbers
+A11.1 Metric Alignment
+A11.2 Scale-and-Shift Alignment
+A12 Detailed 3D Reconstruction Numbers
+A13 Qualitative 3D Reconstruction Comparison
+License: arXiv.org perpetual non-exclusive license
+arXiv:2605.16981v2 [c

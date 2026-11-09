@@ -1,0 +1,103 @@
+【摘要】
+
+【引言】
+ Understanding manipulation requires knowing where the hands make contact and how that contact changes over time. Egocentric datasets capture diverse everyday activities and detailed hand–object motion  ( Damen et al., 2018 ; Grauman et al., 2022 ; Liu et al., 2022 ) , but these visual records do not directly measure touch. A video may show a hand closing around a bottle while leaving the contact regions hidden behind the object. Annotating existing videos with contact and relative-pressure maps could add a useful source of supervision for understanding human interaction and learning from demonstrations, extending the value of recordings collected without tactile sensors.
+Vision-based tactile prediction offers a route toward this goal. PressureVision and EgoPressure infer pressure from visual observations of hand–surface interaction  ( Grady et al., 2022 ; Zhao et al., 2025 ) ; OpenTouch and EgoTactile extend tactile data collection to everyday object manipulation  ( Song et al., 2025 ; Zeng et al., 2026 ) ; and EgoTac combines measured intensity with geometry-derived contact across human datasets  ( Zhang et al., 2026c ) . These sources provide complementary supervision but differ in sensor layout, spatial support, scale, embodiment, and whether they measure pressure, contact, or deformation. Moreover, an egocentric camera can miss the hand–object interface precisely when contact occurs, even when synchronized wrist views are available during data collection  ( Zhou et al., 2026 ) . This raises a broader question: how can heterogeneous tactile sources and privileged training views be combined to train a single annotator that requires only egocentric input at deployment?
+Related advances in egocentric learning motivate treating auxiliary observations as privileged training information. Ego-Exo4D provides synchronized first- and third-person views of skilled activities  ( Grauman et al., 2024 ) , while Ego-Exo transfers representations learned from third-person videos to egocentric recognition  ( Li et al., 2021 ) . Multimodal distillation similarly transfers complementary training signals into an RGB-only action recognizer  ( Radevski et al., 2023 ) . These appr
+
+【方法】
+3.1 Problem formulation
+3.2 Unifying heterogeneous tactile supervision
+3.3 Hand-local tactile queries and dual prediction heads
+3.4 Multi-view distillation
+3.5 Past-only causal clip memory
+3.6 Training objective Figure 1 : Training and deployment of TouchAnnotator. Human and robot supervision supplies tactile targets, and a multi-view EMA teacher guides the ego-only student during training. Compressed memory provides past-clip context for the student at deployment.
+3.1 Problem formulation
+Index clips by t t . Each contains T T egocentric frames 𝐗 t e ∈ ℝ T × 3 × H × W \mathbf{X}^{e}_{t}\in\mathbb{R}^{T\times 3\times H\times W} and bimanual pose 𝐏 t ∈ ℝ T × 42 × 3 \mathbf{P}_{t}\in\mathbb{R}^{T\times 42\times 3} . Training samples may also provide synchronized wrist clips 𝐗 t w l , 𝐗 t w r \mathbf{X}^{w_{l}}_{t},\mathbf{X}^{w_{r}}_{t} . For each clip, the model predicts bimanual pressure and contact maps on a hand-aligned grid:
+𝐘 ^ t p , 𝐘 ^ t c ∈ [ 0 , 1 ] T × 2 × G × G , G = 21 , \hat{\mathbf{Y}}^{p}_{t},\hat{\mathbf{Y}}^{c}_{t}\in[0,1]^{T\times 2\times G\times G},\qquad G=21,
+(1)
+where p p is relative pressure and c c is contact probability. A finite-cell mask 𝐌 \mathbf{M} and sample-level availability flags a p , a c ∈ { 0 , 1 } a^{p},a^{c}\in\{0,1\} define task masks 𝐌 p = a p ​ 𝐌 \mathbf{M}^{p}=a^{p}\mathbf{M} and 𝐌 c = a c ​ 𝐌 \mathbf{M}^{c}=a^{c}\mathbf{M} . Deployment uses
+f θ : ( 𝐗 t − K : t e , 𝐏 t − K : t ) ↦ ( 𝐘 ^ t p , 𝐘 ^ t c ) , f_{\theta}:\big(\mathbf{X}^{e}_{t-K:t},\mathbf{P}_{t-K:t}\big)\mapsto\big(\hat{\mathbf{Y}}^{p}_{t},\hat{\mathbf{Y}}^{c}_{t}\big),
+(2)
+with pose estimated from ego RGB using WiLoR in the reported evaluations. Ego-only deployment thus estimates pose without tactile measurements or wrist images.
+3.2 Unifying heterogeneous tactile supervision
+Our configured training corpus spans six datasets and three embodiment types , totaling 27,005 video segments and 35.0M synchronized source frames (195.3 hours; Table  1 ). It combines measured glove responses, geometry-derived human contact, and robot fingertip deformation. Only EgoTouch and HumanTouch supervise relative pressure; all six sources provide contact supervision.
+All sources share a bilateral 21 × 21 21\times 21 anatomical layout. EgoTouch remaps each 16 × 16 16\times 16 glove array; HumanTouch projects 360 taxels onto the same 217-cell support and uses one dataset-level monotone map, fixed across clips, to match EgoTouch’s active-taxel distribution. This statistical alignment does not establish common physical pressure units. Geometry-derived contact thresholds MANO vertex-object distances at 5 mm before interpolation to the grid; proximity remains a noisy contact proxy. T-Rex deformation is pooled into corresponding fingertip regions, leaving unobserved cells invalid. Hand mirroring follows a shared anatomical convention. The mixed loader uses fixed source proportions (Table  C.1 ), avoiding repetition where possible.
+3.3 Hand-local tactile queries and dual prediction heads
+Each available stream yields local tokens 𝐅 v ∈ ℝ T × N × D \mathbf{F}^{v}\in\mathbb{R}^{T\times N\times D} through a shared Qwen3.5 video tower. A pose encoder supplies hand-specific tokens. Each hand has 64 learned tactile queries on an 8 × 8 8\times 8 latent grid, attending to ego and its corresponding wrist stream; both use ego only at deployment.
+A pose-conditioned soft ROI weights visual tokens at within-clip frame τ \tau :
+r τ , n h , v = σ ⁡ ( ⟨ W q ​ 𝐩 ¯ τ h , W k ​ 𝐅 τ , n v ⟩ D ) , r^{h,v}_{\tau,n}=\sigma\!\left(\frac{\langle W_{q}\bar{\mathbf{p}}^{h}_{\tau},W_{k}\mathbf{F}^{v}_{\tau,n}\rangle}{\sqrt{D}}\right),
+(3)
+where 𝐩 ¯ τ h \bar{\mathbf{p}}^{h}_{\tau} averages hand h h ’s pose tokens. Two cross-attention blocks fuse ROI-weighted features, pose, and tactile queries into 𝐐 t ∈ ℝ T × 2 × 64 × D \mathbf{Q}_{t}\in\mathbb{R}^{T\times 2\times 64\times D} . After memory augmentation (Section  3.5 ), a Qwen3.5 reasoner produces 𝐙 t \mathbf{Z}_{t} using shared forward and reversed-time passes. Independent output projections predict pressure and contact, separating their logits while retaining a shared representation.
+3.4 Multi-view distillation
+Multi-view di
+
+【实验】
+4.1 Experimental setup
+4.2 Main results on EgoTouch
+4.3 Transfer to bare-hand contact on FPHA
+4.4 Validation on collected tactile recordings
+Diverse contact mechanisms.
+Bimanual coordination and temporal structure. Table 2 : Tactile prediction on EgoTouch. Local TouchAnnotator results use 184 seen and 76 unseen manifest-A episodes; all-view input adds both wrist cameras. TouchAnything rows are published references whose split equivalence to the local evaluations is unverified.
+Seen objects
+Unseen objects protocol.
+4.5 Cross-embodiment examples protocol.
+The annotator receives ego RGB and hand pose estimated from that stream. Evaluation uses common measured hand regions and trajectory-relative sensor responses. Contact IoU assesses spatial contact, Volumetric IoU and MAE assess relative intensity, and temporal accuracy and F1 assess frame-level contact presence. Alignment, normalization, and metric definitions appear in Appendix  D . Table  4 reports a cached raw 860-episode cohort; it does not cover all 897 retained sequences in the collection.
+Figure 2 : Collected recordings and measured tactile examples. An ego camera and Wuji gloves record synchronized bimanual interactions; the panels compare example predictions with measured maps. The collection contains 897 retained sequences across 30 tasks (about five hours).
+Table 4 : Sensor-grounded tactile prediction by expected tactile value. Each cell compares TouchAnything / TouchAnnotator on a cached cohort of 860 episodes from 21 tasks using measured-support 217-cell split-pressure targets. Lower to High are preliminary labels based on task descriptions; the operation-complexity breakdown appears in Table  D.2 .
+Metric (TA / Ours)
+Overall (21/860)
+Lower (3/110)
+Moderate (11/430)
+High (7/320)
+T.Acc. ↑ \uparrow
+63.29/ 68.67
+65.12/ 72.41
+71.59/ 75.31
+48.20/ 55.66
+T.F1 ↑ \uparrow
+76.87/ 81.08
+78.86/ 83.99
+82.61/ 85.47
+65.02/ 71.46
+C.IoU ↑ \uparrow
+6.89/ 10.73
+7.11/ 10.11
+8.04/ 11.76
+5.21/ 9.38
+V.IoU ↑ \uparrow
+9.10/ 14.12
+9.23/ 13.97
+10.37/ 14.99
+7.30/ 12.83
+MAE ↓ \downarrow
+0.083013 /0.087488
+0.095079 /0.106340
+0.073978 /0.081586
+0.093117/ 0.089496
+Table  4 shows that TouchAnnotator agrees more closely with measured tactile signals than TouchAnything. Overall, it improves temporal accuracy and F1 by 5.38 and 4.21 percentage points, respectively, while raising Contact IoU from 6.89 to 10.73 and Volumetric IoU from 9.10 to 14.12. The gains are consistent across tactile-value strata: TouchAnnotator improves both overlap metrics in every group and delivers the largest temporal gains in the high-value group, where temporal accuracy and F1 increase by 7.46 and 6.44 points. Although its overall MAE is slightly higher, it reduces MAE in the high-value group (0.0931 to 0.0895), indicating a clear advantage on interactions for which tactile information is most important. Additional breakdowns and evaluation details are provided in the appendix.
+This combination of overlap gains and overall MAE regression reflects the different emphasis of the metrics. Contact and Volumetric IoU focus on recovering active support and its magnitude, whereas MAE averages errors over all valid cells, including the many inactive or weakly active locations. Reporting them together prevents a sparse near-zero prediction from appearing uniformly preferable. The tactile-value strata are descriptive task groupings rather than sensor-derived classes, so they reveal where the aggregate differences occur without defining a new supervised label.
+4.5 Cross-embodiment examples
+Figure  3 compares matched manipulation tasks performed by dexterous robot hands, bare hands, and gloved hands. For the same operation, TouchAnnotator predicts localized tactile responses across all three embodiments despite substantial differences in hand appearance and sensor layout. These examples qualitatively show that the learned representation can recover task-relevant touch across embodiments. Because the robot and glove responses have different sensor semantics and scales, the figure demonstrates cross-embodiment prediction rather than numerical alignment.
+The canonical field makes these outputs visually comparable by anatomical region, 
+
+【结论/局限】
+References
+A Implementation details
+A.1 Repository-derived configuration
+A.2 Gating for multi-view distillation
+A.3 Pressure and contact losses
+B Data conversion details
+Geometry-derived contact.
+HumanTouch.
+T-Rex.
+C Evaluation audit and additional experiments
+C.1 Experimental setup
+Datasets.
+Baselines.
+Cross-dataset protocol scope. TouchAnnotator combines masked human/robot supervision, multi-view distillation, and past-only clip memory for bimanual tactile annotation from egocentric video. EgoTouch results show improved contact overlap when the same student receives wrist views. The cached sensor-grounded cohort shows higher contact overlap than TouchAnything, and FPHA shows stronger contact transfer under shared annotated-pose input. Together, these evaluations support dense tactile annotation from ordinary ego video while distinguishing deployment results from diagnostic settings with additional inputs.
+The predictions remain relative sensor responses rather than calibrated forces. Geometry-derived contact depends on hand/object reconstruction and distance thresholds, and ego-only inference remains sensitive to pose failure, blur, truncation, and prolonged occlusion. Causality is enforced across clips, but the complete current clip is processed bidirectionally, so the system is intended for offline annotation rather than frame-online feedback. Evaluating whether the resulting tactile annotations improve downstream policy or representation learning is an important next step.
+Reproducibility statement
+Appendix  A records configuration, conversion, and evaluation details. Current audits cannot verify the published EgoTouch split or every historical initialization.
+Ethics statement
+The collected recordings contain egocentric human interaction and therefore may include p

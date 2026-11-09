@@ -1,0 +1,234 @@
+【摘要】
+
+【引言】
+2 Methodology
+2.1 Radar-Visual Teacher Construction
+2.2 DINO Distillation into Radar Features
+2.3 Mesh Prediction 3D human mesh reconstruction is crucial for human-centric applications. While recent vision-based methods  [ 3 , 5 ] achieve remarkable fidelity, optical cameras are sensitive to lighting variations and raise privacy concerns. In contrast, millimeter-wave (mmWave) radar provides a promising privacy-preserving, illumination-robust alternative for future Integrated Sensing and Communication (ISAC) systems.
+Despite these advantages, high-fidelity radar HMR remains challenging. Early human pose estimation (HPE)  [ 2 , 13 , 18 , 15 ] and human mesh reconstruction (HMR)  [ 16 , 4 , 17 ] methods rely mainly on sparse radar point clouds (RPCs), where CFAR filtering discards informative radar responses and can introduce missed detections. Several works  [ 11 , 9 , 19 , 10 ] instead exploit raw radar tensors (RTs) to preserve richer information, but remain focused on skeletal landmarks.
+Recently, the M4Human  [ 7 ] benchmark introduced RT-Mesh, a raw-RT HMR baseline using 3D convolutions and self-attention. However, several limitations remain. First, raw RTs lack fine-grained semantics needed to distinguish body parts. Second, RT-Mesh does not explicitly model voxel- and part-level semantic correspondences, limiting localized body representation. Third, SMPL-X  [ 12 ] parametric supervision does not directly constrain reconstructed vertices and joints, which may lead to geometric errors under complex motions.
+To address these challenges, we propose RadarDINO, a raw-radar HMR framework that combines cross-modal visual semantic distillation with explicit geometric supervision. Specifically, we transfer DINOv3  [ 14 ] visual descriptors from synchronized RGB images to 3D radar voxels through calibrated radar-camera geometry, providing voxel- and body-part-level semantic supervision. The resulting part-aware radar representation is used for mesh reconstruction, while explicit vertex- and joint-level losses complement SMPL-X parameter supervision to directly constrain the reconstructed geometry. Extensive experiments on the M4Human dataset  [ 7 ] demonstrate that o
+
+【方法】
+Efficiency
+S1 (Random)
+S2 (Cross-Subject)
+S3 (Cross-Action)
+Param. (M)
+GFLOPs
+MVE
+MJE
+MRE
+TE
+MVE
+MJE
+MRE
+TE
+MVE
+MJE
+MRE
+TE
+RPC
+mmMesh  [ 16 ]
+41.45
+2.87
+132.7
+112.1
+11.8
+70.4
+170.1
+147.9
+16.0
+100.0
+173.8
+146.9
+16.4
+91.8
+P4Trans.  [ 6 ]
+129.01
+11.76
+89.5
+76.6
+9.2
+48.6
+140.8
+125.2
+15.0
+86.4
+147.8
+126.4
+16.1
+78.4
+RT
+RT-Pose  [ 9 ]
+6.05
+50.67
+100.7
+87.0
+9.9
+56.7
+148.1
+131.2
+15.3
+93.9
+152.8
+131.0
+16.0
+84.6
+RETR  [ 19 ]
+52.42
+3.01
+97.1
+81.8
+9.1
+50.4
+169.7
+148.6
+16.3
+100.1
+163.1
+138.3
+16.6
+85.4
+RT-Mesh  [ 7 ]
+63.25
+2.60
+90.9
+77.2
+9.6
+47.6
+135.1
+120.2
+14.9
+86.1
+143.1
+122.0
+15.6
+76.0
+Ours
+2.70
+1.98
+62.5
+52.6
+9.0
+33.3
+120.0
+108.2
+14.2
+82.2
+111.6
+94.6
+14.9
+61.9
+RGB + RT
+RT-Mesh  [ 7 ]
+–
+–
+80.1
+71.4
+8.9
+51.6
+112.5
+103.2
+11.6
+80.5
+108.7
+98.4
+11.5
+75.7
+Table 1: Comparison of radar-based HMR methods on M4Human  [ 7 ] under the ALL protocol.
+We report MVE, MJE, MRE, and TE under three data splits, together with model parameters and computational cost. Lower is better for all metrics. listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+【实验】
+3.1 Experimental Setup
+3.2 Experimental Results
+3.3 Ablation Study 3.1 Experimental Setup
+We conduct experiments on the M4Human dataset  [ 7 ] , the current largest multimodal benchmark for mmWave radar-based HMR. We adhere to the official experimental protocols and dataset splits. We train the radar student for 25 25 epochs and jointly fine-tune it with the mesh decoder for 20 20 epochs, using AdamW with learning rates of 4 × 10 − 4 4\times 10^{-4} and 2 × 10 − 4 2\times 10^{-4} , respectively, and cosine decay. Model performance is evaluated using standard metrics: Mean Vertex Error (MVE, mm) across all SMPL-X vertices, Mean Joint Error (MJE, mm) on 22 22 body joints, Mean Rotation Error (MRE, ∘ ) evaluating joint rotations on S ​ O ​ ( 3 ) SO(3) , and Translation Error (TE, mm) measuring global root localization. The baseline results are taken from  [ 7 ] .
+3.2 Experimental Results
+Figure 2: Visualization of distilled radar DINO features.
+Figure 3: Visualization of RT HMR under non-in-place actions.
+Quantitative Evaluation.
+Table   1 compares our method with reported radar-based baselines on the three M4Human splits. Our method achieves the lowest MVE across all splits, reducing RT-Mesh’s  [ 7 ] MVE by 31.3%, 11.2%, and 22.0% on S1–S3, respectively, while also improving joint, rotation, and translation errors. Compared with RGB+RT fusion, our radar-only model remains competitive while requiring no RGB input at inference. In terms of efficiency, our model uses only 2.70M parameters while requiring 1.98 GFLOPs, achieving both the smallest model size and the lowest computational cost among RT only methods.
+Qualitative Evaluation.
+Figure   2 compares the human DINO patch descriptors with their corresponding predicted radar representations. The radar-predicted descriptors largely preserve the body-part structure of the DINO teacher. Some local details are lost, likely due to the limited spatial resolution of the radar input, such as around the neck in the second example. Overall, the predicted descriptors remain visually similar to the teacher features across major body regions.
+Figure   3 compares reconstructed meshes in challenging non-in-place sequences, with earlier poses shown at reduced opacity for temporal context. Compared with RT-Mesh  [ 7 ] , our method produces more consistent limb configurations during fast curved walking and boxing, better captures raised-arm poses in sports sequences, and more closely matches the ground-truth body orientation.
+Radar Encoder Weights
+MVE
+MJE
+MRE
+TE
+Random initialization
+120.65
+102.27
+15.38
+63.31
+DINO-distilled, frozen
+114.95
+98.30
+15.04
+62.75
+DINO-distilled, fine-tuned
+111.58
+94.62
+14.90
+61.87
+RGB DINO teacher
+87.03
+71.71
+13.16
+36.23
+Table 2: Ablation study on radar encoder initialization and fine-tuning strategies under the most challenging S3 split.
+3.3 Ablation Study
+Table   2 evaluates DINO-guided radar pretraining on the most challenging S3 split. Compared with random initialization, DINO-guided initialization consistently improves mesh reconstruction. The gain is largely retained with a frozen encoder and further improves with joint fine-tuning, indicating that the distilled representation itself provides useful information for downstream mesh prediction. However, directly using the RGB DINO teacher features achieves a much lower MVE than using the distilled radar representation on S3, revealing a remaining teacher-student gap.
+
+【结论/局限】
+5 Acknowledgements
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.09524v1 [cs.CV] 06 Nov 2026
+RadarDINO: Distilling a Visual Foundation Model into mmWave Radar for Human Mesh Reconstruction
+Furkan Mert Algan
+Zhifan Ni
+Eckehard Steinbach We present RadarDINO, a two-stage framework for radar-based human mesh reconstruction via visual feature distillation. A fine-tuned visual foundation model supervises the radar encoder at voxel and body-part levels, and the distilled representation is used by a mesh decoder to predict SMPL-X geometry from radar alone. Experiments on M4Human show consistent improvements over existing radar-based baselines. Future work will explore more effective cross-modal distillation and stronger generalization across environments and radar devices.
+5 Acknowledgements
+This work has been supported by the German Federal Ministry of Research, Technology and Space (BMFTR) under the Robotics Institute Germany (RIG) and the Bavarian Ministry of Economic Affairs, Regional Development and Energy as part of the project “6G Future Lab Bavaria”.
+OpenAI ChatGPT and Codex were used for language editing and to assist with code development and visualization.
+References
+[1]
+F. M. Algan and E. Steinbach (2026)
+DinoComplete: 3d shape completion with distilled semantic priors and state space models .
+arXiv preprint arXiv:2605.26949 .
+External Links: 1706.03762
+Cited by: §2.1 .
+[2]
+S. An, Y. Li, and U. Ogras (2022)
+MRI: multi-modal 3d human pose estimation dataset using mmwave, rgb-d, and inertial sensors .
+In NeurIPS ,
+Cited by: §1 .
+[3]
+Z. Cai et al. (2023)
+SMPLer-x: scaling up expressive human pose and shape estimation .
+In NeurIPS ,
+Cited by: §1 .
+[4]
+A. Chen et al. (2022)
+MmBody benchmark: 3d body reconstruction dataset and analysis for mill
