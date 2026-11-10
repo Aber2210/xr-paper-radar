@@ -1,0 +1,300 @@
+### 真新候选 49 篇（11-10 公告组）
+
+[1] 2611.10013 | cs.CV | 2026-11-10
+T: From Video to Digital Twin: An Exploratory Study of World Models and Gaussian Splatting on In-the-Wild Video
+A: arXiv:2611.10013v1 Announce Type: cross Abstract: Generative world models and 3D Gaussian Splatting promise to turn ordinary video into explorable 3D scenes, but little is reported on how they behave on uncurated, in-the-wild footage. We study what these models recover when the only input is a publicly available news walkthrough of a food bank warehouse, with presenters walking through every shot and no drawings, scans or site visit, and we use the result as the geometry of a digital twin. A commercial world model 
+
+[2] 2611.10699 | cs.CV | 2026-11-10
+T: PLS-GS: Probabilistic Lidar Scaffolds for Compact, Surface-Aligned Gaussian Splatting
+A: arXiv:2611.10699v1 Announce Type: cross Abstract: While 3D Gaussian Splatting (3DGS) is typically optimized from images only, many robotics and mapping applications provide both camera and high-definition LiDAR data, combining rich visual appearance with accurate geometric structure. We introduce PLS-GS, a probabilistic LiDAR scaffold for Gaussian Splatting that exploits this complementary sensing setting to construct a compact 3DGS representation aligned to the measured surface. PLS-GS fits a Hierarchical Gaussian
+
+[3] 2611.11640 | cs.HC | 2026-11-10
+T: Feel My Focus: Gaze-Triggered Digital Twin Creation for Remote Collaboration
+A: arXiv:2611.11640v1 Announce Type: cross Abstract: We present Feel My Focus, a gaze-triggered mixed reality (MR) demonstration that enables rapid creation and sharing of lightweight 3D digital twins during remote collaboration. Unlike systems that use gaze primarily as a referential pointer, Feel My Focus treats sustained visual attention as a generative action: a fixation on a physical object initiates single-image capture, attention-guided segmentation, and one-shot 3D reconstruction, allowing a remote partner to 
+
+[4] 2611.12319 | cs.DC | 2026-11-10
+T: Mitigating SM-Level Load Imbalance in 3D Gaussian Splatting on GPUs
+A: arXiv:2611.12319v1 Announce Type: cross Abstract: 3D Gaussian Splatting (3DGS) enables photorealistic, real-time rendering on commodity GPUs and is increasingly adopted in generative world models and autonomous driving simulators. However, existing optimizations rely on algorithmic changes that often require retraining, or on specialized accelerators that lack flexibility across evolving 3DGS variants. In this paper, we identify a fundamental inefficiency in GPU-based 3DGS rendering: severe SM-level load imbalance 
+
+[5] 2611.12716 | cs.CV | 2026-11-10
+T: Spaghetti Splatting: Differentiating Curvilinear Dirac Masses via Convolution
+A: arXiv:2611.12716v1 Announce Type: cross Abstract: In production systems, 3D geometry is represented by primitives such as points, lines, and triangles, as rendering hardware is optimized to generate images from them very efficiently. Learning such primitives from images by volume rendering is challenging, as they are Dirac masses defined at infinitesimal locations in space. EWA splatting, Poisson reconstruction, and 3D Gaussian Splatting overcome this by convolving Dirac masses with a low-frequency kernel, a recipe
+
+[6] 2611.10578 | cs.HC | 2026-11-10
+T: EgoVeil: Personalized Privacy Reasoning for Egocentric Video
+A: arXiv:2611.10578v1 Announce Type: new Abstract: Recent advances in vision-language models (VLMs) enable AI systems to interpret egocentric video. Yet continuous visual capture raises privacy concerns because sensitive content is pervasive and varies across users and contexts. We present EgoVeil, a personalized privacy reasoning system that determines which visual content to obscure based on individual preferences while retaining context useful for downstream assistance. It converts localized visual regions into str
+
+[7] 2611.11636 | cs.HC | 2026-11-10
+T: Trail Making Tests in Extended Reality: A Critical Review with Implications for Cognitive Ageing
+A: arXiv:2611.11636v1 Announce Type: new Abstract: Extended reality (XR) versions of the Trail Making Test and Color Trails Test are promising for assessing and training cognition in older adults. However, each XR adaptation is a new instrument, whose display, interaction technique, timing rules and layouts may change what it measures. This critical narrative review maps these implementations by software lineage and appraises their evidence for assessment and training against common criteria. The Trail Making Test in 
+
+[8] 2611.11653 | cs.HC | 2026-11-10
+T: Exploring Mixed-Reality for Enhancing Driver Warning Systems: A Preliminary Study on Attention-Shifting Methods and Hazard Perception
+A: arXiv:2611.11653v1 Announce Type: new Abstract: Modern vehicles are equipped with advanced sensors and capabilities, yet engaging human drivers effectively in hazard perception remains a challenging research area. This paper investigates the potential of mixed reality (MR) to enhance driver warning systems. The study examines the impact of attention-shifting methods, including visual cues, audio cues, and a combination of both, on drivers' hazard perception. A preliminary study involving six participants was conduc
+
+[9] 2611.11830 | cs.HC | 2026-11-10
+T: ROS2MR: Connecting ROS 2 Motion Planning to Mixed-Reality Trajectory Visualization
+A: arXiv:2611.11830v1 Announce Type: new Abstract: Mixed reality (MR) allows users to inspect planned robot motion within their physical surroundings, but displaying trajectories from robotics software requires converting their joint configurations and timing into a format the MR application can play back. This paper presents ROS2MR, an extension of the MR-Robotics LAB platform that converts YAML-serialized ROS 2 joint trajectories, including MoveIt motion plans, into the platform's existing JSON playback format. The 
+
+[10] 2611.12529 | cs.HC | 2026-11-10
+T: Perceived Agency During Agent-Avatar Control Transitions in Virtual Reality
+A: arXiv:2611.12529v1 Announce Type: new Abstract: Prior beliefs about whether a virtual human (VH) is controlled by a human or a computer can shape how users interpret and respond to its behaviour. As emerging hybrid VH systems allow control to transfer between human operators and computer programs during an ongoing interaction, it remains unclear whether perceived agency updates with the actual controller or continues to reflect users' prior beliefs and first impressions. We investigated this question in a within-su
+
+[11] 2611.09926 | cs.NI | 2026-11-10
+T: Why Today's Internet Cannot Support Tomorrow's Immersive Experiences: Insights from the NSF Workshop
+A: arXiv:2611.09926v1 Announce Type: cross Abstract: Immersive computing is poised to become a major paradigm for future human-computer interaction (HCI), enabling spatial and embodied experiences across applications such as education, healthcare, manufacturing, emergency response, and scientific discovery. However, today's Internet and computing infrastructure were not designed for real-time, multi-user, sensor-rich, and privacy-sensitive immersive applications. They require coordination across sensing, representatio
+
+[12] 2611.09959 | cs.CV | 2026-11-10
+T: A four-view smartphone video dataset of a robot-held flexible strip, with camera poses and a 3D LaGSplat baseline
+A: arXiv:2611.09959v1 Announce Type: new Abstract: This note describes a multi-view video dataset of a deformable object driven by a measured input, with the measured pose of every camera, and a first 3D result obtained on it with LaGSplat. LaGSplat learns from video a low-dimensional latent state that is both the generalized coordinate of a learned dissipative Lagrangian and the conditioning variable of a Gaussian Splatting decoder; fitting the decoder in 3D calls for synchronized multi-view footage, which the origin
+
+[13] 2611.10062 | cs.CV | 2026-11-10
+T: REFORM-3D: A Representation-Centric Evaluation Framework for 3D Medical Vision Foundation Models
+A: arXiv:2611.10062v1 Announce Type: new Abstract: Evaluation of 3D medical foundation models is typically dominated by downstream task scores, which entangle representation quality with adaptation choices. This is especially critical in volumetric imaging, where spacing and anisotropy can substantially alter image statistics while the anatomy itself remains unchanged. We therefore introduce \textbf{REFORM-3D}, a \textbf{R}epresentation-centric \textbf{E}valuation \textbf{F}ramew\textbf{OR}k for benchmarking frozen 3D
+
+[14] 2611.10199 | cs.CV | 2026-11-10
+T: RigidGS: Geometry-Aware Object Decoupling for Rigid-Body Interaction in 3D Gaussian Splatting
+A: arXiv:2611.10199v1 Announce Type: new Abstract: Interactive VR/MR applications demand photorealistic 3D representations that support real-time rendering and object-level manipulation. While 3D Gaussian Splatting (3DGS) achieves high rendering quality, it represents scenes as unstructured, monolithic primitives. Existing object-aware 3DGS methods jointly optimize geometry and semantic states but suffer from two key failure modes: noisy foundation-model masks on complex geometry, and label-geometry coupling, in which
+
+[15] 2611.10236 | cs.CV | 2026-11-10
+T: Anatomy-Preserving Unpaired Medical Image Translation via Shared Latent Anchoring
+A: arXiv:2611.10236v1 Announce Type: new Abstract: Unpaired medical image-to-image translation requires synthesizing target-modality images from source-modality images without aligned supervision. Existing methods learn a direct source-to-target mapping that entangles structure preservation and appearance generation within a single model, often distorting clinically meaningful anatomy in the translated output. We argue that these two objectives should be decoupled entirely: anatomical structure should be captured inde
+
+[16] 2611.10370 | cs.CV | 2026-11-10
+T: ClearForm: Shared-Surface Gaussian Splatting for Transparent and Opaque Scenes
+A: arXiv:2611.10370v1 Announce Type: new Abstract: Transparent-interface reconstruction must recover glass surfaces even when most observed color comes from the scene behind them. We present ClearForm, a shared-planar-Gaussian method for jointly reconstructing transparent interfaces and the appearance seen through them. We identify and analyze the Geometry-Appearance Compositing Dilemma (GACD): when the same transparency-dependent alpha controls both color and geometry, revealing the background can weaken a transparen
+
+[17] 2611.10379 | cs.CV | 2026-11-10
+T: RefineSplat: Reconstruction-Guided Object-Centric Gaussian Splatting for Open-Vocabulary Querying
+A: arXiv:2611.10379v1 Announce Type: new Abstract: Open-vocabulary 3D scene understanding aims to segment and retrieve arbitrary objects in 3D scenes using natural language queries. Most existing methods typically follow a splat-then-segment paradigm, where 3D Gaussian Splatting is first reconstructed and then augmented with labels or language features for subsequent segmentation. However, this pipeline often suffers from view inconsistency, ambiguous object boundaries, and weak object-level correspondence, especially
+
+[18] 2611.10509 | cs.CV | 2026-11-10
+T: Scaling Optimization-Oriented Hypernetworks for Implicit Neural Representations
+A: arXiv:2611.10509v1 Announce Type: new Abstract: We present a hypernetwork that generates the parameters of an implicit neural representation (INR) for a given signal in a single forward pass, without test-time optimization. Existing hypernetworks for this problem either ignore the chain-rule structure of the test-time optimization that produces an INR or, when they preserve it, instantiate the structure with MLPs whose parameter count grows quartically in target-network width. Our central contribution is to show th
+
+[19] 2611.10562 | cs.CV | 2026-11-10
+T: ZARA: Zero-shot Animatable and Relightable 3D Avatar reconstruction from a single image
+A: arXiv:2611.10562v1 Announce Type: new Abstract: Recent large human reconstruction models create remarkable animatable 3D avatars from a single image, but their appearance remains entangled with the illumination and cannot be relighted. In contrast, existing 3D relightable-avatar reconstruction methods typically require person-specific optimization. We present ZARA, a zero-shot feed-forward framework that reconstructs an animatable 3D Gaussian avatar together with its intrinsic attributes from a single image. ZARA c
+
+[20] 2611.10637 | cs.CV | 2026-11-10
+T: VAComp: View-Aware Full Projector Compensation
+A: arXiv:2611.10637v1 Announce Type: new Abstract: Full projector compensation adjusts a projector's input image to compensate for both geometric and photometric distortions introduced by the projection surface. Existing methods generally treat the viewing condition as a static camera viewpoint. When applied to a moving viewer, existing methods face two key challenges: (1) view-dependent methods require model retraining or recalibration to compensate for novel viewpoints; and (2) NeRF/GS-based view-agnostic methods us
+
+[21] 2611.10652 | cs.CV | 2026-11-10
+T: SHIN: Scalable Hierarchy for INcremental 3D Gaussian Splatting
+A: arXiv:2611.10652v1 Announce Type: new Abstract: 3D Gaussian Splatting (3DGS) provides high-quality real-time novel-view synthesis, but deployment budgets vary across devices and network conditions. Most compact methods target one operating point, so another budget requires a separate representation. SHIN is a scalable 3DGS hierarchy with a reusable Base and additive enhancement layers, so each higher-quality operating point extends rather than replaces the decoded representation. Constructing this hierarchy require
+
+[22] 2611.10858 | cs.CV | 2026-11-10
+T: Beyond Bit Matching: Orthogonal Watermarks for Collusion-Resistant Image Fingerprinting
+A: arXiv:2611.10858v1 Announce Type: new Abstract: Image fingerprinting assigns each distributed copy a user-specific watermark for source tracing. Averaging collusion is a central threat: several recipients can average their differently marked copies to suppress each individual mark. Discrete bit-string watermarks are especially vulnerable because averaging drives bit evidence toward ambiguous decisions. We introduce \textbf{VectorMark}, which maps user keys to near-orthogonal high-dimensional unit vectors and identi
+
+[23] 2611.11169 | cs.CV | 2026-11-10
+T: Map2SLAM: From Streaming Map Prediction to Real-Time SLAM
+A: arXiv:2611.11169v1 Announce Type: new Abstract: Streaming 3D foundation models (3DFMs) estimate camera poses and dense geometry online, but they fall short of SLAM: their predictions are fixed once emitted, so loop closures cannot correct accumulated drift. With such models already providing strong geometric capability, a central question for SLAM becomes how to schedule their inference and how to keep its results as revisable state. We present Map2SLAM, which keeps LingBot-Map frozen, trains only a lightweight ret
+
+[24] 2611.11452 | cs.CV | 2026-11-10
+T: Semantically Aligned KV Cache Compression for Efficient Agentic Autoregressive Video Generation
+A: arXiv:2611.11452v1 Announce Type: new Abstract: Agentic autoregressive video generation combines semantic planning, sequential generation, and visual verification for controllable synthesis. Growing visual histories enlarge the key-value (KV) cache, increasing memory use and attention costs across candidate rollouts. Existing compression methods primarily optimize individual generators without the planner's semantic constraints, risking low priority for states supporting requested attributes or actions. We introduc
+
+[25] 2611.11586 | cs.CV | 2026-11-10
+T: FastGRT: Accelerating Training of 3D Gaussian Ray Tracing
+A: arXiv:2611.11586v1 Announce Type: new Abstract: Ray Tracing enables rendering capabilities that are difficult to achieve with rasterization-based approaches such as 3D Gaussian Splatting (3DGS). However, the training cost of Gaussian-based ray tracing (GRT) is much higher than that of 3DGS. In this paper, we study how ray tracing using Gaussians executes on GPUs and show that a considerable fraction of the training cost arises from how the computation is organized. We develop FastGRT, which decouples ray traversal 
+
+[26] 2611.11697 | cs.CV | 2026-11-10
+T: SurgTAP-3D: A Large-Scale Cross-Surgery Video Dataset with Contact-Aware 3D Motion Tracking
+A: arXiv:2611.11697v1 Announce Type: new Abstract: Understanding 3D scene dynamics in minimally invasive surgery (MIS) is a fundamental step toward physically intelligent and autonomous surgical systems. However, existing public datasets offer limited scalability and diversity in real-world clinical scenarios. Moreover, annotations typically focus on either tissue or instruments alone, overlooking tool-tissue interactions. This gap limits applications such as augmented reality guidance and autonomous surgery driven by
+
+[27] 2611.11951 | cs.CV | 2026-11-10
+T: UltraVoxelGS: Voxel-First Feed-Forward Gaussian Splatting for 3D Ultrasound Reconstruction
+A: arXiv:2611.11951v1 Announce Type: new Abstract: We present UltraVoxelGS, a 3D ultrasound reconstruction method that achieves both fast reconstruction and physically faithful rendering for the first time, bringing live spatial feedback during 2D ultrasound scanning within reach. This is made possible by a feed-forward design that predicts a complete Gaussian scene representation from posed ultrasound images directly, entirely bypassing the per-scene optimization bottleneck that has confined prior methods to offline 
+
+[28] 2611.11964 | cs.CV | 2026-11-10
+T: 3R-Adapter: Retrieval, Rewiring, and Refinement for Efficient Adaptation of 3D Reconstruction Model
+A: arXiv:2611.11964v1 Announce Type: new Abstract: Feed-forward 3D reconstruction models have demonstrated strong generalization under large-scale pre-training, yet they struggle in long-tail scenarios such as low-light reconstruction, joint human-scene reconstruction, and test-time adaptation. We observe relational attention structure collapse, manifested as the failure of cross-view correspondences, as a primary cause of these limitations. While adaptation offers a practical way to bridge this gap, existing paramete
+
+[29] 2611.12149 | cs.CV | 2026-11-10
+T: EgoLabel: Zero-Shot Egocentric Auto-Labeling with Cross-Modal Consistency
+A: arXiv:2611.12149v1 Announce Type: new Abstract: Egocentric auto-labeling requires depth, camera pose, object, and human-pose estimates to agree across independently developed models. Differences in units, coordinate conventions, and scale can make individually plausible predictions geometrically inconsistent. We present \textbf{EgoLabel}, a zero-shot pipeline that combines off-the-shelf models without target-domain labeled training and provides explicit cross-modal registration and consistency diagnostics. The pipe
+
+[30] 2611.12259 | cs.CV | 2026-11-10
+T: A forensic evaluation framework for egocentric foundation models: an EFM3D case study for crime scene reconstruction
+A: arXiv:2611.12259v1 Announce Type: new Abstract: Foundation models increasingly combine geometry, semantics, and spatial context for three-dimensional scene understanding, but their suitability for forensic crime scene reconstruction remains unclear. This study presents a structured forensic evaluation framework for egocentric foundation models and demonstrates it using the Egocentric Foundation Model for 3D (EFM3D). Four simulated indoor crime scenes were recorded with Meta Project Aria Gen~1 at Robert Gordon Unive
+
+[31] 2611.12739 | cs.CV | 2026-11-10
+T: Plant Orbiter: 3D Plant Reconstruction and Generation with Video Diffusion Orbit Cameras and 3D Gaussian Splatting
+A: arXiv:2611.12739v1 Announce Type: new Abstract: Modern digital phenotyping pipelines require the precise measurement of a range of 3D morphological plant traits. The accurate, high throughput acquisition of these traits helps breeders and researchers accelerate the development of new varieties, techniques and products. Recent advances in 3D technologies have enabled a rapid transition from 2D to 3D pipelines, but high throughput acquisition of digital 3D twins of plants remains a significant challenge due to comple
+
+[32] 2611.12870 | cs.CV | 2026-11-10
+T: SWAM: Scaling World Action Models with Cross-Modal Alignment
+A: arXiv:2611.12870v1 Announce Type: new Abstract: World action models jointly predict video and actions conditioned on language. Existing studies focus primarily on architectures and training mechanisms, typically treating language-video alignment acquired through video pretraining as an established foundation. However, introducing action learning may impair this alignment. Principled guidance on data and supervision design for maintaining language-video alignment during action learning remains limited. To investigat
+
+[33] 2611.10349 | cs.AI | 2026-11-10
+T: SituRecBench: Evaluating Frontier Models as Situated Recommendation Assistants in 3D Environments
+A: arXiv:2611.10349v1 Announce Type: cross Abstract: Recommender systems are transitioning from static retrieval engines into interactive assistants grounded in physical environments. However, current studies largely neglect the combined complexities of spatial navigation, visual grounding, and multi-turn social interaction. To bridge this gap, we introduce SituRecBench, an interactive benchmark for evaluating frontier vision-language models (VLMs) as situated recommendation assistants within high-fidelity 3D environm
+
+[34] 2611.11809 | cs.RO | 2026-11-10
+T: Budget-aware Correspondence-driven View Selection for Real-time 3D Perception of Mobile Robots
+A: arXiv:2611.11809v1 Announce Type: cross Abstract: 3D visual perception and scene reconstruction are critical for autonomous robots and intelligent transportation, yet real-world deployments often generate long, redundant image sequences that hinder downstream processing. This report investigates BCVS (budget-aware correspondence-driven view sampling), a pose-free view selection algorithm that offers 22+ FPS on a CPU, enabling online filtering for efficient 3D perception by mobile robots. Unlike existing approaches 
+
+[35] 2611.12038 | cs.RO | 2026-11-10
+T: DPGS-SLAM: Diffusion-Prior and Provenance-Aware Monocular Gaussian Splatting SLAM for Dynamic Visual Sensing
+A: arXiv:2611.12038v1 Announce Type: cross Abstract: This paper presents DPGS-SLAM (Diffusion-Prior and Provenance-Aware Monocular Gaussian Splatting SLAM) for dense mapping in environments containing dynamic objects. Dynamic observations can contaminate camera tracking and scene reconstruction in visual SLAM (simultaneous localization and mapping). Although 3DGS (3D Gaussian splatting) enables efficient dense mapping, existing 3DGS-SLAM systems may exhibit instability when dynamic objects violate their underlying sta
+
+[36] 2611.12452 | cs.RO | 2026-11-10
+T: V3DSAM: Semantic-Geometric Loop Verification and Geometry-Anchored Persistent Instance Mapping for Feed-Forward Dense SLAM
+A: arXiv:2611.12452v1 Announce Type: cross Abstract: To address unreliable cross-view association in long-sequence feed-forward dense SLAM, this letter presents V3DSAM, an open-vocabulary semantic dense SLAM system that establishes physical correspondences at both the scene and object levels. The system combines feed-forward geometric estimates from VGGT-SLAM 2.0 with open-vocabulary semantic observations from SAM3. We introduce semantic-geometric dual-scale loop verification, which identifies false loop closures usin
+
+[37] 2611.10137 | cs.RO | 2026-11-10
+T: A Unified Inertial Encoder for Human and Humanoid Motion
+A: arXiv:2611.10137v1 Announce Type: new Abstract: Learning humanoid state estimation and language-grounded motion understanding from robot recordings ties training coverage to the robot's motion repertoire. Human motion datasets offer broader coverage, yet transferring this knowledge requires overcoming differences in body geometry, sensing, and physical disturbances. To enable this transfer, we propose a unified inertial encoder whose shared inertial interface uses kinematic IMU synthesis to represent human and huma
+
+[38] 2611.10239 | cs.RO | 2026-11-10
+T: DASH-SLAM: Calibration-Free Metric Monocular SLAM via Depth Scale Propagation
+A: arXiv:2611.10239v1 Announce Type: new Abstract: Geometric foundation models estimate dense geometry and camera parameters from monocular images, but reliable SLAM also requires consistent scale and accurate data association across successive reconstructions. We present DASH-SLAM, a monocular SLAM system that integrates metric depth predictions from pretrained Depth Anything 3 into a shared-keyframe pose graph without task-specific fine-tuning. DASH-SLAM derives scale corrections from depth ratios at shared anchor i
+
+[39] 2611.10451 | cs.RO | 2026-11-10
+T: Grip, Trace, Write: Force-Aware Imitation and Reinforcement Learning for High-DoF Robotic Handwriting
+A: arXiv:2611.10451v1 Announce Type: new Abstract: Most robotic handwriting rigidly mounts the pen and reduces writing to trajectory tracking. A freely held pen instead couples grasp stability, tip motion, and contact force. We present Grip, Trace, Write, a force-aware simulation environment and learning framework for high-DoF handwriting. A two-branch actor separates pen retention from arm-wrist writing while preserving their closed-loop coupling. Training learns a grasp controller, initializes writing from inverse-k
+
+[40] 2611.10490 | cs.RO | 2026-11-10
+T: Tactile Sensors Are an Effective Substitute for Wrist Cameras in Contact-Rich or Occluded Manipulation
+A: arXiv:2611.10490v1 Announce Type: new Abstract: Learned manipulation policies often rely on wrist-mounted cameras for close-range visual feedback that complements external views of the workspace. However, contact-rich manipulation requires establishing and maintaining contacts that can remain hidden even from wrist cameras. Tactile sensors mounted on fingers can reliably and directly measure contact, without needing visual access. In this work, we show that this feedback enables policies to recover the performance 
+
+[41] 2611.10877 | cs.RO | 2026-11-10
+T: Sampling-based Model Predictive Control as Sequential Monte Carlo Inference
+A: arXiv:2611.10877v1 Announce Type: new Abstract: Sampling-based model predictive control (MPC) is treated as a family of distinct algorithms: predictive sampling, MPPI, the cross-entropy method, and their biased, colored-noise, and annealed variants all sample control sequences and reweight them by cost. We show a single Sequential Monte Carlo (SMC) inference algorithm implements them all, specified by three independent axes: the proposal, the update rule that reduces cost-weighted particles to a nominal plan, and t
+
+[42] 2611.10994 | cs.RO | 2026-11-10
+T: RoboMoCap: A Large-Scale Whole-Body Motion Capture Dataset with Egocentric Vision for Robot Learning
+A: arXiv:2611.10994v1 Announce Type: new Abstract: Humanoid robots must coordinate locomotion and manipulation to navigate complex environments and perform everyday tasks. Learning such behaviours from human demonstrations requires accurate whole-body motion paired with egocentric vision, particularly for lower-body movements and foot placements that are frequently invisible from a first-person perspective. However, existing egocentric datasets often lack high-fidelity optical motion capture or systematic coverage of 
+
+[43] 2611.12017 | cs.RO | 2026-11-10
+T: Grasp-Taxonomy Conditioning as a Mode Switch for Dexterous Grasping of Climbing Holds
+A: arXiv:2611.12017v1 Announce Type: new Abstract: Dexterous grasping in robotics relies on distinct hand configurations depending on object geometry. We introduce BetaGrasp, a 3D diffusion policy that conditions a DP3-style point-cloud policy on a four-class grasp label (crimp, sloper, pinch, and jug), running on a Franka arm with a 16-DoF LEAP hand. We also introduce a climbing-hold benchmark: a spring testbed whose ratchet gives a slip-force reading in newtons. In our analysis the policy's point-cloud encoder did n
+
+[44] 2611.12130 | cs.RO | 2026-11-10
+T: Compact and Wide-Force-Range Magnetorheological Hand Exoskeleton for Kinesthetic Feedback in Teleoperation
+A: arXiv:2611.12130v1 Announce Type: new Abstract: Hand kinesthetic feedback is crucial for restoring and enhancing human perception of force and displacement in robotic hand teleoperation. Wide perception range of force feedback is vital in rendering objects of different stiffness, especially for high-stiffness rendering. However, existing approaches struggle to achieve wide range of force feedback while maintaining compact and wearable design. This paper presents a hand exoskeleton system employing magnetorheologica
+
+[45] 2611.12261 | cs.RO | 2026-11-10
+T: Hierarchical Multi-Channel Tip-Over Prediction via Isolated Temporal Models for Planetary Rover Safety
+A: arXiv:2611.12261v1 Announce Type: new Abstract: Reliable tip-over prevention is critical for planetary rovers operating in unstructured environments where communication delays prevent real-time human intervention. Existing learning-based approaches typically optimize a single prediction objective, limiting their ability to capture both gradual instability evolution and abrupt terrain disturbances. This work presents a hierarchical multi-channel tip-over prediction framework based on isolated temporal learning. A mu
+
+[46] 2611.12526 | cs.RO | 2026-11-10
+T: Galilean Robots, Aristotelian Sensors: Joint Spatiotemporal Trajectory Estimation and Extrinsic Calibration
+A: arXiv:2611.12526v1 Announce Type: new Abstract: Multi-sensor state estimation requires accurate spatial and temporal calibration between heterogeneous sensors. Existing spatiotemporal calibration methods typically represent sensor extrinsic parameters as a rigid-body transformation together with a scalar temporal offset, causing the spatial and temporal parameters to enter the estimation problem through separate mechanisms. While the spatial transformation composes directly with the robot pose, accounting for the t
+
+[47] 2611.11098 | cs.AR | 2026-11-10
+T: Efficient VLA Inference via Retrieval-Based Speculation and Hardware Acceleration
+A: arXiv:2611.11098v1 Announce Type: cross Abstract: Vision-language-action (VLA) models enable robots to understand and execute complex instructions, but their autoregressive (AR) action generation introduces significant latency on resource-constrained robotic platforms. Speculative decoding can accelerate AR-based inference by parallelizing action generation and verification; however, existing approaches rely on costly draft models, which are inefficient on edge platforms. In this paper, we propose Zora, a hardware-
+
+[48] 2611.11555 | eess.SY | 2026-11-10
+T: Concurrent Learning-Based Inertial Parameter Estimation and Control of Quadrotors
+A: arXiv:2611.11555v1 Announce Type: cross Abstract: In this letter, we consider trajectory tracking control and inertial parameter estimation of a quadrotor UAV whose center of mass (CoM) does not coincide with its geometric center. Onboard payloads like an IMU, a camera, or a battery are not necessarily placed at its geometric center. Moreover, during the flight these sensors might move because of external disturbances and cause a CoM offset. Thus, these events and equipment introduce an offset and cause the inertia
+
+[49] 2611.11825 | cs.AI | 2026-11-10
+T: ACROSSVAM3.0: Resource-Bounded 4D Scene Construction and Adaptive Surface Association
+A: arXiv:2611.11825v1 Announce Type: new Abstract: Combining video generation, dynamic reconstruction and monocular SLAM requires consistent coordinates, explicit handling of missing outputs and predictable memory use. We present AcrossVAM3.0, an offline system that converts text, images or monocular RGB video into a versioned point representation. Frozen components run sequentially on one GPU; map corrections update cameras, points and trajectories together. The coordination layer adds no neural parameters. Three fre
+
+
+### 旧稿 replace/cross 25 篇（backfill 候选）
+
+[1] 2609.11894 | cs.CV | 2026-11-10
+T: 3D Point Splatting for mmWave Radar Novel View Synthesis
+A: arXiv:2609.11894v2 Announce Type: replace-cross Abstract: Solving novel view synthesis (NVS) for millimeter-wave (mmWave) radar requires a renderer that is physically faithful, complex-valued, and multi-viewpoint-tractable. No prior method achieves these three properties simultaneously. Differentiable Monte Carlo (MC) ray tracers implement the radar forward model directly with explicit material modeling and complex o
+
+[2] 2503.00747 | cs.CV | 2026-11-10
+T: LFX: Fusion-Form-Flexible Light Field Modeling for Dense Semantic Segmentation and Salient Object Detection
+A: arXiv:2503.00747v3 Announce Type: replace Abstract: Two distinct light field (LF) observation forms, namely sub-aperture images (S.Aperture images) and focal stack (FS), correspond to two fusion settings: the central image with S.Aperture images (CS) and the central image with FS (CF). Existing LF perception methods are typically form-specific, while a modeling design that can be separately instantiated under either 
+
+[3] 2603.10801 | cs.CV | 2026-11-10
+T: PolGS++: Physically-Guided Polarimetric Gaussian Splatting for Fast Reflective Surface Reconstruction
+A: arXiv:2603.10801v2 Announce Type: replace Abstract: Accurate reconstruction of reflective surfaces remains a fundamental challenge in computer vision, with broad applications in real-time virtual reality and digital content creation. Although 3D Gaussian Splatting (3DGS) enables efficient novel-view rendering with explicit representations, its performance on reflective surfaces still lags behind implicit neural metho
+
+[4] 2605.11594 | cs.CV | 2026-11-10
+T: PointForward: Feedforward Driving Reconstruction through Point-Aligned Representations
+A: arXiv:2605.11594v2 Announce Type: replace Abstract: High-fidelity reconstruction of driving scenes is crucial for autonomous driving. While recent feedforward 3D Gaussian Splatting (3DGS) methods enable fast reconstruction, their per-pixel Gaussian prediction paradigm often suffers from multi-view inconsistency and layering artifacts. Moreover, existing methods often model dynamic instances via dense flow prediction,
+
+[5] 2605.12297 | cs.CV | 2026-11-10
+T: EgoEV-HandPose: Egocentric 3D Hand Pose Estimation and Gesture Recognition with Stereo Event Cameras
+A: arXiv:2605.12297v2 Announce Type: replace Abstract: Egocentric 3D hand pose estimation and gesture recognition are fundamental to understanding hand interactions from first-person observations. Robust perception remains challenging: frame-based cameras suffer from motion blur and limited dynamic range, while event-based approaches face ego-motion interference, monocular depth ambiguity, and limited real-world dataset
+
+[6] 2605.30519 | cs.CV | 2026-11-10
+T: OmniMem: Scalable and Adaptive Memory Retrieval for Long Video Generation
+A: arXiv:2605.30519v2 Announce Type: replace Abstract: Autoregressive (AR) video generation extends videos by producing latent chunks sequentially, but scaling to long videos requires repeated access to a growing historical KV cache. Existing methods reduce this cost by truncating the KV cache or compressing it into implicit memory, but both lose explicit access to query-relevant historical details. We propose OmniMem, 
+
+[7] 2606.26092 | cs.CV | 2026-11-10
+T: TryOnCrafter: Unleashing Camera Trajectories for Realistic Video Virtual Try-on via a Renderable 4D Try-on Proxy
+A: arXiv:2606.26092v3 Announce Type: replace Abstract: While Video Virtual Try-on (VVT) has achieved remarkable progress in synthesizing realistic garment overlays on dynamic subjects, existing paradigms remains fundamentally constrained by a passive dependency on source camera trajectories, failing to accommodate the requisite interactive freedom for omnidirectional viewpoint exploration. To address this limitation, we
+
+[8] 2606.27978 | cs.CV | 2026-11-10
+T: Parallel Rollout Approximation for Pixel-Space Autoregressive Image Generation
+A: arXiv:2606.27978v2 Announce Type: replace Abstract: Pixel-space continuous-token autoregressive (AR) generation directly models images as sequences of raw pixel patches, avoiding discrete tokenization or a separately pretrained tokenizer. However, it faces coupled challenges: high-dimensional patch generation causes large single-step errors, and teacher-forced training creates a train--inference gap that makes these 
+
+[9] 2609.00775 | cs.CV | 2026-11-10
+T: VOIM: Training-Free Open-Vocabulary 3D Instance Mapping for RGB-D and Monocular SLAM
+A: arXiv:2609.00775v2 Announce Type: replace Abstract: Robots that act on everyday language requests need maps that record what each object is and where it is. Existing open-vocabulary 3D mapping systems usually require a depth sensor and commit to each object the first time they see it, when the evidence is weakest. We present VOIM, a training-free system that builds open-vocabulary 3D instance maps from RGB-D or from 
+
+[10] 2610.29098 | cs.CV | 2026-11-10
+T: UNIVERS: Learning UNIversal Voxel-wise Embedding via Randomized Synthesis for generalizable one-shot landmark localization
+A: arXiv:2610.29098v2 Announce Type: replace Abstract: One-shot landmark localization in volume scans with varying fields of view (FOVs) is challenging. While existing self-supervised learning methods have shown promising performance, they rely on contrastive learning built upon augmented views of the same image, which inherently limits their generalization in cross-modality scenarios. This motivates research on cross-m
+
+[11] 2510.10648 | eess.IV | 2026-11-10
+T: JND-Guided Light-Weight Neural Pre-Filter for Perceptual Image Coding
+A: arXiv:2510.10648v3 Announce Type: replace-cross Abstract: Just Noticeable Distortion (JND)-guided pre-filter is a promising technique for improving the perceptual compression efficiency of image coding. However, existing methods are often computationally expensive, and the field lacks standardized benchmarks for fair comparison. To address these challenges, this paper introduces a twofold contribution. First, we deve
+
+[12] 2407.16151 | cs.RO | 2026-11-10
+T: FUSE-PnPL: Flexible, Unified, Statistically Consistent, and Asymptotically Efficient Camera Pose Estimation from Points and Lines
+A: arXiv:2407.16151v2 Announce Type: replace Abstract: Camera pose estimation from 3D-2D correspondences is fundamental to robotics. Three practical considerations motivate this work. First, point and line features provide complementary geometric information, motivating a unified estimator. Second, the number and composition of available features vary across scenarios, requiring support for minimal and arbitrary non-min
+
+[13] 2412.01753 | cs.RO | 2026-11-10
+T: Human-Machine Interfaces for Subsea Telerobotics: From Soda-straw to Natural Language Interactions
+A: arXiv:2412.01753v3 Announce Type: replace Abstract: This review explores the evolution of human-machine interfaces (HMIs) in subsea telerobotics, charting the progression from traditional first-person "soda-straw" consoles-- characterized by narrow field-of-view camera feeds-- to contemporary interfaces leveraging gesture recognition, virtual reality, and natural language processing. The review makes three key contri
+
+[14] 2512.00727 | cs.RO | 2026-11-10
+T: Beyond Topology: A Morphological Symmetry Graph Representation for Locomotion Policy Learning
+A: arXiv:2512.00727v3 Announce Type: replace Abstract: Reinforcement learning has enabled impressive locomotion skills on articulated robots, but common policy representations remain only weakly aligned with robot physics. Generic networks ignore kinematic structure, while graph-based policies encode connectivity without specifying how physical quantities transform across symmetric body parts. We introduce a morphologic
+
+[15] 2601.09920 | cs.RO | 2026-11-10
+T: SyncTwin: Fast Digital Twin Construction and Synchronization for Safe Robotic Manipulation
+A: arXiv:2601.09920v3 Announce Type: replace Abstract: Accurate and safe robotic manipulation under dynamic and visually occluded conditions remains a core challenge in real-world deployment. We introduce SyncTwin, a novel digital twin framework that unifies fast 3D scene reconstruction and real-to-sim synchronization for robust and safety-aware robotic manipulation in such environments. In the offline stage, we employ 
+
+[16] 2602.21723 | cs.RO | 2026-11-10
+T: LessMimic: Versatile Humanoid-Object Interaction with Unified Distance Field Representations
+A: arXiv:2602.21723v2 Announce Type: replace Abstract: Humanoid robots capable of versatile whole-body interaction with everyday objects represent a central goal of embodied intelligence. Existing approaches often rely on motion-reference inputs or task-specific rewards, coupling policies to particular motion scripts, object geometries, and contact timings. This limits geometric generalization and flexible interaction c
+
+[17] 2606.04853 | cs.RO | 2026-11-10
+T: Teaching Robots to Say 'I Don't Know' : SENTINEL for Uncertainty-Aware SLAM
+A: arXiv:2606.04853v2 Announce Type: replace Abstract: Low-cost 2D LiDARs lack the intensity channel that higher-end sensors use to diagnose measurement failures, yet they are widely used on educational and budget robotics platforms. We present SENTINEL, a training - free, label - free reliability estimation framework that gives range - only LiDAR an effective diagnostic signal. SENTINEL combines geometry-based scan sta
+
+[18] 2607.14698 | cs.RO | 2026-11-10
+T: Lights, Camera, Malfunction: When Illumination Robustness Leaves VLA Models Blind to Color
+A: arXiv:2607.14698v2 Announce Type: replace Abstract: Vision-Language-Action (VLA) models have emerged as a powerful paradigm for general-purpose robot manipulation; however, their transition to real-world environments reveals vulnerabilities to minor environmental perturbations. We propose FLARE, an optimization framework that exploits these vulnerabilities via targeted illuminations, causing critical disruption of ba
+
+[19] 2608.30368 | cs.RO | 2026-11-10
+T: SpectraTac: A Compact Camera-Free Optical Tactile Sensor with Distributed Color Sensing
+A: arXiv:2608.30368v2 Announce Type: replace Abstract: Tactile sensing is essential for physical interaction in robotics and human--machine systems. However, combining rich tactile information with compact hardware, low cost, and low computational overhead remains challenging. This work presents SpectraTac, a compact, camera-free optical tactile sensor that combines active red--green--blue (RGB) illumination with spatia
+
+[20] 2610.07891 | cs.RO | 2026-11-10
+T: Beyond Retargeting: Low-Latency and Robust Humanoid Whole-Body Teleoperation with Learned Atomic Motion Primitives
+A: arXiv:2610.07891v2 Announce Type: replace Abstract: Humanoid whole-body teleoperation translates human motion into stable robot behavior in real time. Existing systems typically rely on online motion retargeting to bridge human--robot morphological differences, but this process adds latency and can produce physically infeasible targets. Meanwhile, diverse, noisy, and partial human-motion observations often fall outsi
+
+[21] 2610.41336 | cs.RO | 2026-11-10
+T: HandMimicX: Learning Human-Like Dexterous Manipulation via an Object-Centric Policy from Egocentric Videos
+A: arXiv:2610.41336v2 Announce Type: replace Abstract: Learning dexterous manipulation from human videos remains an open challenge, particularly in the context of transferring a single demonstration into a spatially generalizable robotic skill and maintaining physically plausible human-like interactions. Unlike prior works that emphasize hand-motion imitation, we introduce an object-centric framework for acquiring dexte
+
+[22] 2607.29549 | cs.AI | 2026-11-10
+T: AMTFV: Agentic Mathematical Tool-Flow Verification for LLM Self-Correction
+A: arXiv:2607.29549v2 Announce Type: replace Abstract: Large language models have demonstrated strong mathematical problem-solving capabilities, yet reliably verifying their candidate answers remains challenging. Existing representative methods mainly revise outputs through natural-language reflection or assist verification by directly generating verification programs; the former may not reliably support exact computati
+
+[23] 2609.20981 | cs.AI | 2026-11-10
+T: CaLR: Causal Latent Revision for Robust Diffusion Reasoning
+A: arXiv:2609.20981v2 Announce Type: replace Abstract: Autoregressive (AR) models suffer from local greediness, while diffusion language models (DLMs) often lack the strict causal structure required for reasoning. To combine the advantages and overcome the drawbacks of the dual, we propose Causal Latent Revision (CaLR), a framework that reformulates reasoning as constrained latent optimization. By adopting a causal topo
+
+[24] 2512.14329 | cs.CE | 2026-11-10
+T: Wearable-informed generative digital avatars predict task-conditioned post-stroke locomotion
+A: arXiv:2512.14329v3 Announce Type: replace-cross Abstract: Dynamic prediction of locomotor capacity after stroke could enable more individualized rehabilitation, yet current assessments largely provide static impairment scores and do not indicate whether patients can perform specific tasks such as slope walking or stair climbing. Here, we present a wearable-informed data-physics hybrid generative framework that recons
+
+[25] 2603.12554 | cs.LG | 2026-11-10
+T: Reinforcement Learning for Diffusion LLMs with Entropy-Guided Step Selection and Stepwise Advantages
+A: arXiv:2603.12554v3 Announce Type: replace-cross Abstract: Reinforcement learning (RL) has been effective for post-training autoregressive (AR) language models, but extending these methods to diffusion language models (DLMs) is challenging due to intractable sequence-level likelihoods. Existing approaches therefore rely on surrogate likelihoods or heuristic approximations, which can introduce bias and obscure the sequ
