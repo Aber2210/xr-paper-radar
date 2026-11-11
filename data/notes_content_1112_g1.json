@@ -1,0 +1,254 @@
+[
+  {
+    "id": "2611.12912",
+    "slug": "large-area-spatial-anchor-alignment",
+    "venue": "arXiv preprint（cs.MM）",
+    "tags": [
+      "XR 共定位 co-location",
+      "空间锚点 spatial anchors",
+      "点云配准 point cloud registration",
+      "漂移校正 drift correction",
+      "外部跟踪 outside-in tracking"
+    ],
+    "conclusion": "在 Meta Quest 3 的 16.5×25 m 与 16×12 m 两个真实场地上，用按用户-锚点距离加权（w_i=1/d_i²）的逐帧点云配准把空间锚点对齐到外部无漂移跟踪，头显位姿相对 marker 外部跟踪的平均误差为 2.24–3.16 cm / 0.76–1.17°，把空间锚点约 3 m 的有效半径扩展到二十余米，且运行阶段可完全脱离外部相机独立运行。",
+    "problem": "大范围共定位 XR 有两条现成路线但都不合用：outside-in 外部相机/光塔精度高却昂贵、难以扩展到大面积；inside-out 头显自跟踪便携可扩展，却受漂移限制——McGill 等实测 Quest 在 6 m² 小场景内误差已达 ±0.4 m，面积越大漂移越不可接受，无法保证虚拟与物理元素对齐（碰撞风险、AR 内容错位）。空间锚点只在小范围（约 3 m）内有效，且各锚点独立校正、彼此无刚体关系，内容必须逐锚点摆放，制作困难。Microsoft World Locking Tools 用 space pins 扩展到大范围（Teruggi 与 Fassi 在 40×85 m 约 15 cm），但需手工把引擎内 pin 的虚拟位姿对齐到物理 marker 布局。密集布 marker 加硬件传感器的方案不实用，marker 还必须全程可见。缺口是：既保留 standalone 的便携性，又把精度外推到数十米，且不绑定特定头显与特定外部跟踪方案。",
+    "method": "方法分准备阶段与运行阶段，核心是把「外参标定」与「锚点配准」解耦。准备阶段：把外部跟踪相机（RealSense D455，3D 打印支架）装到头显上，同时用头显内部 tracking 放置 INT 空间锚点、用外部无漂移 tracking 记录同一位姿的 EXT 锚点，形成 3D-3D 对应；重复至少 3 次直到覆盖场地。相机-头显外参标定有两条路径：(1) 控制器法，利用控制器相对头显的已知 3D 位置与其在外部相机图像的 2D 投影解 [x,y]=P_cam·cam2XR⁻¹·[X,Y,Z]_controller，其中 P_cam 为外部相机投影矩阵；(2) 锚点法，假设小范围内空间锚点无漂移，最小化 cost=mean({d})·var({d})（{d} 为对应锚点间距，相机与头显刚性固连故间距应恒定，故压制其方差），用 Levenberg-Marquardt 非线性优化求解，再由锚点对反解 cam2XR，并对多对结果取平均以抑制离群。外部跟踪有两种实现：16 cm 的 aruco_mip_36h12 marker 配合 Leica RTC360 激光扫描获得 marker 的精确三维位置，进而解相机位姿（天然零漂移，但受 marker 平整度、检测误差、光照与急促运动影响）；或 ORB-SLAM3 加少量 marker，用激光扫描作真值对 SLAM 地图做变形与优化以压漂移，marker 不可见时仍可跟踪，精度约 10 cm。位姿以 OSC 协议实时传入头显。运行阶段：拆除外部相机，只剩 INT 锚点云与已存档的 EXT 锚点云，每帧用 SVD 最小二乘（Arun 等）解 p_i'=R·p_i+T+N_i' 得 T（external→internal）。加权版把质心换成 w_i=1/d_i² 的加权质心，越近的锚点权重越大，实测在不同锚点间平滑插值；静态版只求全局最优，可在锚点位移超阈值时才重算以省算力。整套以 Unreal Engine 5.3 插件形式实现。",
+    "experiments": [
+      "硬件与场地口径：Meta Quest 3 + RealSense D455（640×480），Leica RTC360 激光扫描生成真值网格；App1 基础设施维护为 16.5 m×25 m，App2 艺术演出为 16 m×12 m。",
+      "App1（static, anchor）角度 1.17°±0.52、距离 3.90 cm±1.72；（weighted, anchor）1.17°±0.52、3.16 cm±1.98，加权把距离误差从 3.90 降到 3.16 cm。",
+      "App2（weighted, controller）0.76°±0.28、2.25 cm±1.26，优于 static 的 0.77°、3.05 cm；四组配置中加权版在距离指标上全面更优。",
+      "锚点稀疏化实验：App2 只用 2 个相距约 11 m 的 marker 时，（weighted, controller）退化到 1.24°、5.40 cm（原为 0.76°、2.25 cm），角度标准差由 0.28 升到 0.45。",
+      "两种外参标定对比：App1 上 anchor 法略优（1.17° vs 1.22°、3.16 vs 3.27 cm），App2 上 controller 法略优（0.76° vs 0.98°、2.25 vs 2.24 cm），作者结论是二者精度相当、anchor 法更省事灵活。",
+      "外部跟踪质量传导：marker 法（零漂移）的虚实贴合明显优于 ORB-SLAM3 版（约 10 cm），与「系统精度上界即外部方法精度」的论断一致；定量表只以 marker 法作真值，因结果最一致。",
+      "面积效应：两场地锚点数相近，但 App1 面积为 App2 的两倍，App1 误差整体更大（3.16–3.90 cm vs 2.24–3.22 cm），作者归因于 marker/锚点只能布在有 marker 处。"
+    ],
+    "innovation": [
+      "把「外参标定」与「锚点云配准」解耦为准备/运行两阶段，运行阶段彻底拆掉外部相机与背包 PC，实现大范围对齐下的 standalone 运行。",
+      "提出纯锚点外参标定：用 cost=mean({d})·var({d}) 的 Levenberg-Marquardt 优化替代繁琐的控制器标定，把标定动作与后续摆锚点合并为同一套操作。",
+      "逐帧加权点云配准（w_i=1/d_i² 的加权质心 + SVD），在用户附近精度更高且在不同锚点间平滑过渡，实测距离误差优于静态全局配准。",
+      "方案与硬件解耦：任何支持 spatial anchor 的头显（Meta/Pico/Vive/HoloLens，各自 SDK 均可）与任何无漂移外部跟踪方法都可替换，精度随外部方法升级而自动提升。"
+    ],
+    "limits": [
+      "（作者承认）未处理离群与摆错的锚点，未来才考虑用 RANSAC 自动检测；作者也指出若少数锚点被摆错，加权配准反而比静态配准更差。",
+      "（作者承认）锚点只能放在有 marker 的位置，marker 稀疏时精度明显下降（2 个相距 11 m 的 marker 场景退化到 5.4 cm）。",
+      "（作者承认）系统精度上界等于外部跟踪方法的精度，本方法不可能更准；ORB-SLAM3 路线约 10 cm，作者自己说这满足 VR 但 AR 需要更高精度。",
+      "（我在正文发现）定量评估只在一台 Quest 3、两个场地、四组配置上完成，且以 marker 外部跟踪为真值，属自洽性评估而非绝对精度；未与 WLT（约 15 cm/40×85 m）做同场地对照。",
+      "（我在正文发现）表中 σ 是逐帧误差标准差，正文未给多次重复实验或多用户的方差，统计效力有限；此外系统对各品牌头显的兼容性只有 SDK 列表，没有第二款头显的实测。"
+    ],
+    "relation": "直接延续 Michiels 等（2024，Virtual Reality）的大范围点云共定位系统，但去掉了常驻头显的外部相机与背包 PC，改为准备阶段一次性采集、运行阶段 standalone；与 Microsoft World Locking Tools 的 space pins + QR 方案目标相同、路径不同（WLT 靠手工对齐 pin 的虚拟位姿，本文靠自动点云配准且不强制人工标记物）；与 Meta/Pico 原生空间锚点是增强而非替代关系，把 3 m 有效半径外推到二十余米，且不引入锚点间的硬刚体约束；在 SLAM 侧与 ORB-SLAM3 的 loop closing、SplaTAM 与 Gaussian-SLAM 的漂移治理互补——本文不改正前端，只做「多套坐标系之间的对齐」，因此可与上述任一 SLAM 后端叠加使用。与 marker 密集布设方案（Podkosova 等的 ImmersiveDeck）相比，本文把 marker 需求压到布点所需的最少量。",
+    "repro": "代码开源 https://github.com/EDM-Research/UE-LASAA（UE5 插件）；数据集未发布，两个场地需自建；硬件为 Quest 3 + RealSense D455 + 3D 打印支架 + Leica RTC360 激光扫描仪（作者说明激光扫描并非必需，可用其他扫描方式替代）；许可证与 UE 版本（5.3）在正文有述，未见数据许可说明。",
+    "action": "先读 §4.1（两种外参标定与 mean×var 代价）与 §5（加权配准公式 3–5），再看 §6.4 与 Table 2。核三处风险：Table 2 的误差是「头显内部位姿 vs marker 外部位姿」，不是绝对真值；加权配准在锚点摆错时的鲁棒性作者已承认不足，落地需自行加 RANSAC 或 Huber 核；marker 尺寸（16 cm）与平整度、激光扫描对齐误差是主要误差源。若要做产品化，重点评估「锚点布设工作量 vs 精度」的边际曲线（2 marker 场景数据已给出）。",
+    "track": "空间计算与UI",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 3,
+      "PER": 3,
+      "TRL": 4,
+      "REP": 4
+    },
+    "scores_why": "IMP 3：大范围共定位是 co-located XR 的真问题，但受众集中在线下多人体验与工业运维，非通用刚需；NOV 3：相对 Michiels 等与 WLT 是明确的工程化推进（standalone + 解耦 + 加权配准），但无新理论，mean×var 代价与 SVD 配准都是成熟工具组合；TEC 4：两套外参标定、两种外部跟踪、逐帧配准、UE5 插件与两个真实应用都跑通，完整性高；EXP 3：只有一台 Quest 3、两个场地、四组配置，且以自建 marker 跟踪为真值，缺与 WLT 的同场地对照和重复实验，扣分明显；PER 3：2.24–3.16 cm / 0.76–1.17° 对 VR 足够、对高精度 AR 仍偏粗，且精度随 marker 数量急剧退化；TRL 4：已在艺术演出与基础设施运维两个真实场景部署并有开源插件，接近可试用；REP 4：代码公开、流程描述清晰，但数据与激光扫描真值不开放、硬件依赖 RTC360，复现成本偏高。"
+  },
+  {
+    "id": "2611.13280",
+    "slug": "retinexgs-lowlight-raw-3dgs",
+    "venue": "arXiv preprint（cs.CV）",
+    "tags": [
+      "3D 高斯泼溅 3D Gaussian Splatting",
+      "低照 RAW 重建 low-light RAW",
+      "Retinex 分解 Retinex decomposition",
+      "传感器噪声模型 noise model",
+      "新视角合成 novel view synthesis"
+    ],
+    "conclusion": "在 RawNeRF 三个测试场景加两个自采 iPhone 14 Pro Max（ISO 2000）低照 RAW 场景、统一 half-packed 输入的对照下，RetinexGS 用 15k 迭代取得 25.01 dB 平均 sRGB PSNR，比 LE3D（22.83 dB）高 2.18 dB、比 RawNeRF（22.31 dB）高 2.71 dB；线性 RAW 口径同样领先 2.25/2.47 dB，并保持 91–145 FPS @2016×1512 的实时渲染。",
+    "problem": "标准 3DGS 在严重欠曝下三重失效：SfM 在暗弱纹理区匹配稀疏甚至失败，初始化点云残缺导致几何空洞；传感器噪声淹没弱信号，颜色估计不稳、出现漂浮物；用 SH 直接拟合单像素颜色等于把噪声当信号学。RAW 保留 ISP 前的近线性高比特读数，DNG 容器还带 NoiseProfile 噪声元数据，是噪声感知重建的自然基底。已有路线各有缺口：RawNeRF 证明可在近全黑多视图 RAW 上优化，但非实时；LE3D 把 RAW 域带到 Gaussian 实时渲染，用紧凑颜色网络加 per-Gaussian 特征，却没有对「反射率/光照」做结构化分解，也没用传感器噪声先验；HDRSplat 依赖冻结的 PMRID 去噪器做预处理，引入域偏移且把噪声处理与重建割裂；From Chaos to Clarity 用学习式噪声提取器加传感器噪声先验，仍需额外网络；LL-Gaussian 虽在 Gaussian 上分解 reflectance/illumination，但面向 sRGB 低照增强而非线性 RAW。缺口是：如何在噪声监督下，用结构化外观先验加传感器噪声模型，直接在 RAW 域优化 Gaussian。",
+    "method": "三部分组成。(1) Retinex 式外观分解：每个 Gaussian 的线性 RAW 颜色 C_i=R_i⊙L_i(μ_i,d_i)；基色 R_i=exp(clamp_{(-∞,3]}(c_i))，c_i 为可训练 log-color，由 SfM 的 RAW 颜色映射初始化；调制 L_i=clamp_[0.05,10][softplus(φ_L(γ_x(μ_i),γ_d(d_i)))]，φ_L 是全场共享 MLP（9,379 参数），输入为高斯中心与单位视向的 sinusoidal 编码，输出偏置初始化为使 L≈1，使优化从 SfM 基色附近起步。乘积在每个 Gaussian 上先做再参与 alpha 合成：Proposition 1 证明 C_prim=Σw_i(R_i⊙L_i) 与 C_img=(Σw_iR_i)⊙(Σw_iL_i) 一般不等（w_i=T_iα_i），本文选 primitive-level，因为只需光栅化一个三通道属性。因子正则 L_reg=λ_anc L_anc+λ_R L^R_smooth+λ_L L^L_smooth+λ_chr L^chr_smooth：L_anc 把调制平均幅度锚在 1 附近，其余项约束 log 基色、log 调制幅值与调制色度在 3D 邻域内的局部一致性，用以消解 (tR, L/t) 的乘性尺度歧义并抑制噪声引起的局部抖动。(2) DNG 异方差监督：用 Poisson-Gaussian 高斯近似 y_c~N(μ_c, a_cμ_c+b_c)，(a_c,b_c) 取自 DNG NoiseProfile；三通道 packing 平均 2×2 块内两个绿点（独立同参数下 a_G=a_green/2、b_G=b_green/2）；再按曝光尺度 e 归一化，y'=y/e、a'=a/e、b'=b/e²；μ 未知，故用目标自身的 5×5 AvgPool(|y|) 作非负局部信号估计（取绝对值以容纳黑电平减法产生的负值），使权重不依赖当前预测：L_het=Σ_{u,c}(ŷ_c−y_c)²/(a_c·ȳ_c+b_c)；另加 log 域 L1（ε=1e-3）平衡动态范围上的梯度，λ_log 前 2,000 迭代 0.4、之后 0.8。为不在空间上重采样 RAW 目标（插值会改变噪声方差并引入邻域相关），把 OpenCV 镜头畸变模型直接放进光栅化器：对投影后的高斯中心施加畸变、用局部畸变 Jacobian 变换协方差足迹，使渲染预测与原始 packed RAW 网格对齐。(3) 深度引导初始化：对用于深度预测的图像做 CLAHE（RAW 监督目标保持不变），预测单目深度后用 robust scale-and-shift 拟合对齐到 SfM 稀疏深度，按 p(u)∝1/(Ī(u)+ε)·1[u∉M_SfM] 优先在暗且无 SfM 覆盖处采样，再用同一畸变模型反投影补点。",
+    "experiments": [
+      "RawNeRF 原生管线（pianotest/officetest/yuccatest 均值）：15k 迭代 PSNR 25.11 / SSIM 0.6061 / LPIPS 0.4701，对比 LE3D（30k）24.70 / 0.6076 / 0.5071，PSNR +0.41 dB、LPIPS −0.037，SSIM 与最佳基线仅差 0.004，且训练迭代只用一半。",
+      "自采场景：miningtunnel 23.47 dB，比最强基线 LE3D 21.27 高 2.20 dB；housecorner 26.27 dB，比 Raw3DGS 24.61 高 1.66 dB，三指标全部最优。",
+      "匹配输入对照（同一 half-packed 张量、同分辨率、五场景均值）：sRGB PSNR 25.01 vs LE3D 22.83（+2.18）、RawNeRF 22.31（+2.71）；线性 RAW PSNR 63.39 vs 61.14（+2.25）、60.92（+2.47），因线性口径不经 ISP 与仿射拟合，排序不依赖 sRGB 评估管线。",
+      "外观参数化消融：换回 SH 后 pianotest −6.64 dB、miningtunnel −3.94 dB；在同一训练框架内换成 LE3D 的外观参数化，RetinexGS 仍在五个场景上全胜，均值 +0.34 dB。",
+      "噪声监督消融：改用 RawNeRF 的 weighted-L2 后 PSNR/SSIM 相近但 LPIPS 更差，且低信号区出现可见紫色偏色；只用 log-L1 则 miningtunnel 掉 1.28 dB。",
+      "正则与初始化消融：因子正则增益有限；去掉深度引导初始化在 miningtunnel 掉 0.66 dB、LPIPS 升 0.078，符合其补暗区稀疏 SfM 覆盖的定位。",
+      "效率：primitive-level 与 image-space 合成质量几乎相同（sRGB 25.01 vs 24.96 dB、linear RAW 63.39 vs 63.20 dB），但训练时间约减半；单卡 RTX 4090 每场景训练 0.4–0.6 h，2016×1512 下渲染 91–145 FPS（同几何 SH 对照 148–215 FPS），模型 14–34 MB，调制网络仅约 37 KB（FP32）。"
+    ],
+    "innovation": [
+      "首次把 Retinex 乘性分解搬进 RAW 域 3DGS：per-Gaussian 基色 × 场景共享的 position/view 调制场，使两个因子能各自加不同先验，而共享场的参数开销只有 9,379 个。",
+      "用 Proposition 1 明确指出「乘法与 alpha 合成不可交换」，并给出 primitive-level 合成在质量几乎不变的前提下把训练时间减半的实证取舍。",
+      "用 DNG NoiseProfile 做通道级、信号相关的异方差加权，并把绿点半打包（a/2、b/2）与曝光归一化下的噪声参数变换（a/e、b/e²）完整推导，避免手工调噪。",
+      "把镜头畸变放进光栅化器，直接在原始有噪 packed RAW 网格上计算损失，规避预去畸变重采样对噪声统计与邻域相关性的破坏。"
+    ],
+    "limits": [
+      "（作者承认）只针对静态场景，且监督依赖 DNG 噪声元数据；极低信号、弱纹理区仍有残余漂浮物。",
+      "（作者承认）多传感器泛化、捕获自适应噪声估计、更强几何约束、把外观因子扩展到 relighting 与外观编辑，都留作未来工作。",
+      "（我在正文发现）原生管线对比中 LE3D、RawNeRF、RawGS、LDR-3DGS 等基线数值直接取自 LE3D 的统一比较表，只有 HDRSplat+PMRID 自行复现，跨表可比性依赖原作者设置；真正的同条件证据只在匹配输入协议（Table 3）。",
+      "（我在正文发现）自采数据仅 2 个场景、单机型（iPhone 14 Pro Max），housecorner 只有 3 个参考视角，泛化证据偏薄；且「实时」是相对而言——91–145 FPS 低于同几何 SH 对照的 148–215 FPS，掉速来自共享调制网络。",
+      "（我在正文发现）L_het 用对角逐像素噪声近似，忽略半打包/去马赛克造成的空间相关；噪声参数直接信任 DNG 元数据，若 NoiseProfile 与实际传感器不符会系统性传播，正文未做标定偏差敏感性实验。"
+    ],
+    "relation": "与 RawNeRF（Mildenhall 等，CVPR 2022）和 LE3D（Jin 等，NeurIPS 2024）构成本任务的直接对照，本文在同一 half-packed 输入下比 LE3D 高 2.18 dB sRGB、2.25 dB 线性 RAW；与 HDRSplat（依赖冻结 PMRID 去噪）、From Chaos to Clarity（学习噪声提取器加传感器噪声先验）形成「传感器先验直接加权 vs 先学去噪再重建」的路线分歧；与 LL-Gaussian（在 Gaussian 上分解 reflectance/illumination，但面向 sRGB 低照增强）、LITA-GS、Aleth-NeRF 属同族分解式外观建模，区别在于本文在 linear RAW 上做乘性分解并用 DNG 噪声加权；几何初始化与 DUSt3R/MASt3R/Fast3R 类稠密先验思路同源，但本文只借用单目深度做暗区补点，不替代 SfM，也不改相机位姿求解。",
+    "repro": "未见代码链接（摘要与全文均无 GitHub/项目页）；数据为公开 RawNeRF（3 测试场景 + 6 个无干净参考的户外场景）加 2 个自采场景（未声明发布）；训练 15k 迭代、Adam、densification 在 7k 停止、单卡 RTX 4090 0.4–0.6 h/场景；关键超参（λ 与 schedule、正则权重、rasterizer 畸变实现）在附录 C，调制网络结构在附录 A，可复现性中等偏弱（缺代码）。",
+    "action": "精读 §3.2（分解与 Proposition 1）、§3.3（a/e、b/e² 变换与 5×5 局部信号估计）、附录 C 与附录 K。重点核三处：Table 1 基线数值借自 LE3D 的可比性（真正公平证据只看 Table 3 匹配输入）；对角噪声近似在半打包与去马赛克后的偏差；无代码导致 9,379 参数调制网络的容量、初始化与 λ 权重难以复刻。若要迁移到自己数据，先确认相机能否导出 NoiseProfile，否则整条异方差加权的核心假设不成立。",
+    "track": "神经渲染",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 2,
+      "REP": 2
+    },
+    "scores_why": "IMP 3：低照 RAW 新视角合成是明确的实用问题（夜间/隧道巡检、暗光采集），但属细分场景；NOV 3：Retinex 乘性分解本身不新（LL-Gaussian 已在 sRGB 做过），新颖点在于搬进 linear RAW、因子分别正则、DNG 噪声加权与畸变内嵌光栅化，属扎实组合创新而非范式突破；TEC 4：分解、合成位置、噪声模型、畸变光栅化、深度初始化五件事都闭环，Proposition 1 与打包/曝光的噪声参数推导做得干净；EXP 4：5 个定量场景、两套协议（原生管线 + 匹配输入）、双域（sRGB 与 linear RAW）指标、逐组件消融加效率表，强度高，但扣在自采仅 2 场景与部分基线借表；PER 4：+2.18/+2.71 dB sRGB、+2.25/+2.47 dB linear RAW 且训练迭代减半，增益明确，但绝对 PSNR 25 dB 仍属低照可用而非清晰；TRL 2：无代码、无产品化路径、依赖 DNG 元数据；REP 2：无代码链接、无数据发布，仅靠附录可部分重建。"
+  },
+  {
+    "id": "2611.13296",
+    "slug": "xr-3d-cellular-automata-framework",
+    "venue": "arXiv preprint（cs.GR）",
+    "tags": [
+      "三维元胞自动机 3D cellular automata",
+      "XR 交互 XR interaction",
+      "体素管理 voxel management",
+      "并行仿真 parallel simulation",
+      "架构综述 architecture review"
+    ],
+    "conclusion": "该篇证据等级为 PARTIAL，摘要未给出任何量化结果：论文定位为「批判性综述 + 统一架构」的混合研究，提出五层架构（体素与规则管理、并行计算、互操作中间件、可视化、XR 交互）与一套覆盖六维的分析性评估框架，但摘要中无数据集、基线、指标、加速比或延迟数字可供引用。",
+    "problem": "把三维元胞自动机（3D CA）搬进 XR，需要在可变硬件约束下同时协调四件事：仿真推进、体数据（voxel）管理、渲染与用户交互。四者在桌面与移动 XR 上的预算差异极大——体素规模一大，仿真步与渲染帧就争抢同一份算力，移动端还要面对内存与功耗上限。已有工作多为单一平台、单一引擎的定制实现，缺少可移植的统一组织方式；也缺少能同时衡量性能、延迟、可扩展性、内存效率、仿真正确性与交互质量的评估口径，导致不同系统之间难以横向比较。（摘要仅述，未在正文核实）",
+    "method": "摘要层面可确认的内容：提出五层架构，分别为体素与规则管理、并行计算、互操作中间件、可视化、XR 交互；四条设计原则为 hardware-aware execution（硬件感知执行）、asynchronous simulation-rendering（仿真与渲染异步解耦）、adaptive fidelity（自适应保真度）、cross-engine interoperability（跨引擎互操作）。研究形态自述为 hybrid study：一边对现有方法做 critical review，一边给出统一架构；并定义一个分析性评估框架，覆盖 performance、latency、scalability、memory efficiency、simulation correctness、interaction quality 六个维度；目标是让桌面与移动 XR 平台上的 3D CA 系统可移植、可交互，并在不同硬件预算下保持可用。从摘要的措辞可看出分工意图：体素与规则管理层负责状态与转移规则，并行计算层承担推进，互操作中间件层负责跨引擎/跨平台对接，可视化层把体量数据转成可绘制形式，XR 交互层承接用户操作；但各层的内部模块、层间接口契约、并行后端（CPU/GPU/计算着色器）、体素数据结构与稀疏表示、调度与降级策略均未在可得文本中出现，此处不作推断。（摘要仅述，未在正文核实）",
+    "experiments": [
+      "数据集与场景：摘要未提及任何数据集、体素规模、网格尺寸或场景名，无可用数字（摘要仅述，未在正文核实）。",
+      "基线对比：摘要未提及任何被比较的方法或系统，只称做了 critical review（摘要仅述，未在正文核实）。",
+      "性能与延迟：摘要仅声明「定义了一个分析性评估框架」，未报告任何实测 FPS、仿真步耗时、端到端延迟或内存占用（摘要仅述，未在正文核实）。",
+      "消融与用户研究：摘要未提任何消融、对照或用户实验，也未声明是否搭建了可运行原型（摘要仅述，未在正文核实）。",
+      "平台覆盖：仅声明面向 desktop 与 mobile XR，未说明具体头显型号、引擎版本或硬件配置（摘要仅述，未在正文核实）。"
+    ],
+    "innovation": [
+      "提出面向 XR 的五层 3D CA 架构分层（体素与规则管理、并行计算、互操作中间件、可视化、XR 交互），把仿真侧与渲染/交互侧的组织方式显式分层（摘要仅述，未在正文核实）。",
+      "明确四条设计原则，其中 asynchronous simulation-rendering 与 adaptive fidelity 直指 XR 的帧预算约束，把「仿真正确」与「交互不掉帧」作为一对耦合目标处理（摘要仅述，未在正文核实）。",
+      "给出覆盖六维（性能、延迟、可扩展性、内存效率、仿真正确性、交互质量）的分析性评估框架，试图用同一把尺子衡量仿真类与交互类指标（摘要仅述，未在正文核实）。"
+    ],
+    "limits": [
+      "（我在正文发现）证据等级 PARTIAL：arXiv HTML 缺失，ar5iv 只回落到 arXiv 摘要页（文件仅 4.3k 字符），正文完全不可得，因此所有方法细节与实验结论都无法核实。",
+      "（我在正文发现）摘要自述为 hybrid study（综述 + 架构），未见原型实现、代码或用户研究的承诺；「provides a foundation」属倡议性表述而非验证性结论。",
+      "（我在正文发现）摘要无任何量化结果，无法判断其评估框架是「已执行」还是「仅提出」，也无法评估其相对已有 3D CA 系统的实际收益。",
+      "（我在正文发现）cross-engine interoperability 与 adaptive fidelity 在摘要中只有名词，没有代价模型、降级判据或接口定义，工程落地风险未知。",
+      "（我在正文发现）未提及与传统体素渲染管线（如 3D 纹理、稀疏体素八叉树）的关系与替代代价，难以判断其「统一架构」是否只是分层重述。"
+    ],
+    "relation": "与 XR 中的体素/体积渲染与实时仿真路线相关（GPU 并行 CA、引擎内体数据可视化、仿真与渲染异步解耦的运行时做法），也与体数据在头显上做光线步进/切片的可视化工作同族。但由于本文正文不可得，无法点名其具体对比对象、所综述的代表性系统，或与既有 3D CA / XR 框架的差异点；相对同日的渲染与 SLAM 类工作，本文属架构倡议与综述，而非性能竞赛，暂不可做定量对照。",
+    "repro": "未见代码链接（摘要无 GitHub 或项目页）；无数据集、无实验细节、无硬件配置；许可与开源承诺均未在摘要中说明。复现性当前无法评估。",
+    "action": "暂不投入精读——正文不可得，摘要信息量已饱和。待 arXiv PDF 或 HTML 恢复抓取后，优先核三件事：(1) 五层是否有可运行的参考实现或仅停留在框图；(2) 六维评估框架是「已执行并给数」还是「提出待用」；(3) adaptive fidelity 的降级判据与 asynchronous simulation-rendering 的帧预算实测。在此之前，不建议把本文作为技术选型依据。",
+    "track": "世界模型与仿真",
+    "scores": {
+      "IMP": 2,
+      "NOV": 2,
+      "TEC": 2,
+      "EXP": 1,
+      "PER": 1,
+      "TRL": 1,
+      "REP": 1
+    },
+    "scores_why": "本篇按 PARTIAL 证据从严打分，全部结论仅依据摘要。IMP 2：3D CA 在 XR 中的实时交互是真实但小众的问题，影响面有限；NOV 2：五层分层与四条原则（异步仿真-渲染、自适应保真、跨引擎互操作）都是工程界已有做法的归纳，摘要看不出新的机制设计；TEC 2：架构描述停留在层名与原则，缺接口、数据结构与并行后端，完整性无法确认；EXP 1：摘要无任何实验、数据集或数字，按「无实验证据」计最低；PER 1：无任何性能增益可报；TRL 1：无原型、无代码、无部署证据；REP 1：无代码无数据，且正文本身不可得，复现性为零。待正文可得后应整体复评，尤其是 TEC 与 EXP 两项。"
+  },
+  {
+    "id": "2611.13486",
+    "slug": "oasis-contact-transition-detection",
+    "venue": "arXiv preprint（cs.CV）",
+    "tags": [
+      "第一视角视频 egocentric video",
+      "手物交互 hand-object interaction",
+      "事件定位 event spotting",
+      "接触转换 contact transition",
+      "基准数据集 benchmark dataset"
+    ],
+    "conclusion": "在自建 ContactTransition（4,021 段第一视角视频、8,498 个 touch 与 8,077 个 release 标注）上，OASIS 无 NMS 时取 49.30 mAP、有 NMS 时 51.19 mAP，分别高出最强基线 5.37 与 1.91 mAP；相对 HiCE，release 的 AP@δ=0 由 23.59 升到 29.42（+5.83）。",
+    "problem": "手-物接触的两个边界（touch 起始、release 释放）界定了一次操作的完整区间，可支撑细粒度动作分割、抓握时长分析、技能评估与示范学习。但现有工作要么把接触当逐帧属性分类（100DOH、ContactHands、Hands23、BodyHands），要么只定位 touch（HiCE 已接近帧级精度），release 完全空缺；Yagi 等虽预测每帧二元接触状态，但只建模状态不定位转换。难点有三：证据只集中在少数几帧，需区分接触前后视觉高度相似的帧；第一视角还有快速运动、运动模糊、频繁遮挡与操作风格差异；更关键的是「把 touch 检测扩成两类」不成立——touch 有接近与抓握成形的手部运动线索，而 release 后手常停在物体附近、手姿变化微弱，判别证据转移到物体侧。此外 touch 与 release 同属一个 episode，可相邻甚至同帧（双手操作），标准 spot 的互斥 softmax 加类共享位移假设在此失效。已有的物体证据引入方案（AOE-Net、UGLF）依赖推理期外部检测器、需预定义物体词表，且在接触瞬间因手部遮挡最不可靠。",
+    "method": "以 HiCE 的 hand-enhanced 特征图 F_enhanced（全局帧特征经 hand-to-frame attention 由手部 patch 增强，保留空间布局）为起点，OASIS 加两支。(1) Object-of-interest 分支：轻量头预测 class-agnostic 热图 S=φ_object(F)∈R^{H×W}，监督信号是把物体/接触物体标注投影到以手为中心的网格得到的软覆盖目标 G∈[0,1]^{H×W}（HOI4D 用自带标注，TACO 用 HOI-DETR 生成的逐帧接触物体标注），损失为前景加权 BCE：L_heatmap=(1/HW)Σ_j w_j BCE(S_j,G_j)，w_j=1+(w_fg−1)G_j、w_fg=10，补偿前景占比极小；把预测概率在空间上归一化后对 F 做 coverage-weighted pooling（CWP）得 f_object，用归一化覆盖权重而非 softmax，以便覆盖物体整体空间延展并支持多候选；再用两层 MLP 从帧表示预测 object-presence 分数 q 做门控，f=f_global+γW_o(q·f_object)，γ 初始化为 0，避免早期噪声物体读出污染主干。(2) Transition-aware spotting：不再用互斥 softmax，而是各类相对共享背景算 margin m_l^c=z_l^c−z_l^bg、p̂_l^c=σ(m_l^c)，c∈{touch,release}，每类各自用 focal BCE（α=0.9、γ_f=2）对各自的软高斯目标回归；位移精化改为类专属，ŷ^d∈R^{L×K}，监督为到最近同类事件的带符号距离（半径 r=4 帧内），推理时按类各自精化，解决「共享 offset 会把一类推向正确、把另一类推离」。总损失 L=L_c+L_d+λ_g L_g+λ_obj(L_heatmap+λ_p L_presence)，其中 L_g 沿用 HiCE 的抓握伪标签正则，λ_g=0.2、λ_obj=0.15、λ_p=0.75、presence 阈值 τ=0.1，端到端联合优化手部增强特征、物体定位、时序推理与双转换预测。训练用 40 帧片段、50 epoch、AdamW、batch 6、每 epoch 5,000 clips、lr 4e-4、3 epoch warm-up 加 cosine 退火，骨干为 RegNet-Y 800MF（ImageNet 预训练），手部 patch 放大 1.2× 后 resize 到 224×224。推理不依赖任何外部物体或 HOI 检测器，但仍沿用 HiCE 的手框输入。",
+    "experiments": [
+      "数据集规模：ContactTransition 共 4,021 段视频 / 16,575 个事件（8,498 touch + 8,077 release）；train 3,234 段（6,837/6,488）、val 138 段（324/323）、test 649 段（1,337/1,266），视频源为 HOI4D 派生片段与 TACO 片段。",
+      "主结果（无 NMS）：OASIS 49.30 mAP，最强基线 V-JEPA+MS-TCN 43.93（+5.37），HiCE 43.67（+5.63）；有 NMS 时 51.19，高于 TSP+ASFormer 49.28（+1.91）与 HiCE 47.58（+3.61）。",
+      "Release 增益：无 NMS 下 AP@0 29.42 vs HiCE 23.59（+5.83）、AP@1 +6.93、AP@2 +6.13，各容差均为最佳；有 NMS 后 release AP@0 降到 17.97（HiCE 11.32），说明后处理对释放时刻伤害最大。",
+      "Touch 侧：AP@1 44.86、AP@2 61.69 为全场最佳，但帧级 AP@0 16.88 仍略低于两阶段的 V-JEPA+MS-TCN（17.86，无 NMS）。",
+      "消融（有 NMS mAP）：去 object 分支 51.19→40.89（−10.30，最大跌幅）；去 presence gate 50.11（−1.08，release AP@0 29.42→27.69）；softmax 池化替 CWP 50.37；共享位移替类专属 47.52（−3.67，touch AP@1 44.86→37.81）；HiCE 的 softmax 表述 47.58。",
+      "互补性验证：在 transition-aware 表述下把 object 分支去掉反而降到 37.43，低于 HiCE 的 43.67，说明「类独立打分」缺了物体证据会失去对歧义事件的抑制，两项必须共存。",
+      "下游应用：把预测的 touch/release 分数作为时间上下文喂给 Qwen2.5-VL 做 HanDyVQA，均分 58.01→58.49（+0.48），Parts +1.23、State +1.14、Location +0.82，Process −0.82。"
+    ],
+    "innovation": [
+      "提出并定义 hand-object contact transition detection 任务，把「逐帧接触属性」升级为有起止边界的 contact episode，并配套 4,021 段视频、16,575 个事件的帧级双边界基准（含 object-of-interest 监督）。",
+      "把物体证据从「推理期外部检测器」改成「手条件化的 class-agnostic 热图 + 覆盖度池化 + presence 门控」，物体标注只在训练期使用，推理期不依赖任何物体或 HOI 检测器。",
+      "针对 touch/release 的耦合且非互斥性重写事件定位表述：类独立 margin 对共享背景打分 + 类专属位移精化，替代互斥 softmax 与类共享 offset，避免双手同帧事件互相抢概率。",
+      "用消融给出「独立打分」与「物体证据」必须共存的证据（单独去掉任一项都不优于 HiCE），而非简单叠加式改进。"
+    ],
+    "limits": [
+      "（作者承认）release 标注本身歧义大，遮挡、模糊、证据不足的样本被直接排除，等于在难例上让评估偏乐观；短暂重抓握被并入同一 episode。",
+      "（作者承认）数据集未做 per-hand 归属，双手交互时无法区分事件来自哪只手，作者把 per-hand transition attribution 列为未来工作。",
+      "（作者承认）训练集只人工校验 35% 的 HOI4D 片段（优先含难 release 的视频），其余 release 依赖自动标注策略，标签噪声未量化；共标注 5,126 个 release、复核 1,668 个 touch。",
+      "（我在正文发现）帧级 touch（δ=0）仍不及两阶段 V-JEPA+MS-TCN（16.88 vs 17.86 无 NMS），「端到端统一」在帧精确度上并未全面胜出；且 NMS 后 release AP@0 从 29.42 掉到 17.97，部署对后处理极敏感。",
+      "（我在正文发现）下游收益很小（HanDyVQA 仅 +0.48，Process 还 −0.82），说明「接触边界」作为时间上下文的信息增量有限；数据只来自 HOI4D 与 TACO 两源，第一视角日常操作的域覆盖仍需外部验证。"
+    ],
+    "relation": "直接建立在 HiCE（hand-centric contact onset spotting）之上，把它从单类 touch 扩到 touch+release，并把 HiCE 当作最强端到端基线（无 NMS 时 +5.63 mAP、有 NMS 时 +3.61）；与 100DOH、ContactHands、Hands23、HOT、BodyHands 的「逐帧接触状态/接触区域」路线互补——本文把状态升级为有起止的边界，可与这些 per-frame 方法串联使用；与 Ego4D 的 point-of-no-return 关键帧（每段只给一个状态变化帧）相比，本文要求成对的起止边界；与 EPIC-KITCHENS、HOI4D、ARCTIC、HOT3D 等数据集是互补关系（本文在其视频源上新增 release 标注）；在 spot 方法族里与 E2E-Spot、T-DEED、ASTRM、AdaSpot、UGLF 直接对比，并用 TSP、V-JEPA 两阶段特征配 MS-TCN、ASFormer 做强基线；物体证据侧与 AOE-Net、UGLF 依赖推理期检测器、需预定义词表的做法形成对照；下游接 HanDyVQA 与 Qwen2.5-VL，属「用感知信号增强 VLM 时序推理」的一条支线。",
+    "repro": "代码 https://github.com/bbvisual/oasis 已公开；数据集 ContactTransition 在正文未见明确的发布/下载声明（仅说明沿用 HOI4D 与 TACO 的视频源及 HiCE 的标注协议），需向作者确认可得性；训练配置写得很细（40 帧、50 epoch、batch 6、lr 4e-4、RegNet-Y 800MF、focal α=0.9/γ=2、r=4），复现门槛中等。",
+    "action": "先读 §4.4（transition-aware 表述与类专属位移）与 §5.5 消融，这是本文真正的贡献点；再读 §3.1 的 release 标注规则以理解标签口径。核三处风险：数据划分是否与 HiCE 的 TouchMoment 划分对齐（否则 mAP 不可跨文比较）；release 排除歧义样本带来的乐观偏差；NMS 前后 release AP@0 差 11 个点的部署含义。若要复用，object 分支的 CWP 与 presence gate 是最值得照搬的两个模块，成本低、消融收益明确。",
+    "track": "感知与认知",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 2,
+      "REP": 4
+    },
+    "scores_why": "IMP 3：接触边界的帧级定位对示范学习、动作分割、技能评估有实用价值，但属第一视角理解的子任务，影响面中等；NOV 3：任务定义与数据集是实打实的新贡献，方法上是 HiCE 的合理扩展（物体热图 + 类独立打分），创新在表述层而非表征层；TEC 4：手部增强、物体热图、覆盖度池化、presence 门控、双类位移精化全部端到端打通，且推理不依赖外部检测器，工程完整度高；EXP 4：4,021 段视频基准、七类基线、双 NMS 协议、六项消融、外加下游 VQA 验证，实验密度足够，扣在单数据集与基线部分不可复现（ASTRA/COMEDIAN 等因特征不可得而放弃）；PER 4：mAP +5.37/+1.91，release AP@0 +5.83 是明确增益，但帧级 touch 仍输两阶段；TRL 2：模型本身可落地，但依赖手框输入、标注成本高、未见产品化路径；REP 4：代码公开、超参齐全，仅数据集发布状态不明。"
+  },
+  {
+    "id": "2611.13528",
+    "slug": "gemor-gs-liv-slam-relocalization",
+    "venue": "arXiv preprint（cs.RO）",
+    "tags": [
+      "3DGS SLAM",
+      "LiDAR-惯性-视觉 SLAM LIV SLAM",
+      "外参标定 extrinsic calibration",
+      "重定位 relocalization",
+      "机器人世界模型 robot world model"
+    ],
+    "conclusion": "在 1 条自采加 5 条公开序列、共 6,632 个配对关键帧上，离线全局重建 100% 胜过在线地图，逐帧 PSNR 领先 14.3–19.9 dB；同 bag 对比 Gaussian-LIC2 领先 5.4–12.3 dB（摘要概括约 9 dB）；留出视角重定位成功率 86–100%，CBD 仅 35%、Bright 为 0%。",
+    "problem": "LIV-SLAM 产出的 3DGS 地图要升级为「可查询、可信赖」的机器人世界模型，需同时满足几何准确、外观保真、可重新进入，而现状三处都缺。几何侧：LiDAR-相机外参与时间对齐残差会写进每个关键帧的 depth-color 绑定，进而污染 Gaussian 监督；在线滤波只给局部最优 Markov 估计，只吸收到可观性上限；更严重的是外参质量如何传导到重建与重定位从未被量化，只是被假设「够好」。外观侧：实时预算只允许 FoV 滑窗、无致密化、低阶 SH 的有限优化，在线地图本质是跟踪辅助而非最终重建。可重入侧：跟踪丢失（快速旋转、运动模糊、光照变化、动态遮挡）在实部署中不可避免，而多数 3DGS SLAM 止步于离线渲染指标，没有位姿恢复机制，地图一旦失去跟踪就成了孤儿资产。已有工作：GS-LIVO、Gaussian-LIC2、LiV-GS 均受实时约束；LIVE-GS 用 surfel 回环保全局一致但位姿精化只靠几何配准、无渲染反馈；Peng 等做离线联合精化但不把标定质量当变量；GSplatLoc 把重定位当孤立的位姿估计问题，未与地图标定质量挂钩。",
+    "method": "系统为双轨（在线/离线）加一个关键帧 schema 作为唯一接口（原子写 + 版本号）。传感器是刚性固连的 3D LiDAR、彩色相机与 IMU；LiDAR-相机外参 T_c^l 由 direct-method 无靶标标定离线估计一次——最小化 LiDAR 强度投影与图像梯度之间的 normalized information distance（NID，32 bin 离散化），两阶段 BFGS 从装配几何初值出发，估计后固定不更新；时间偏移 δt 手工测得固定为 28 ms。(1) 标定精化模块：在关键帧 schema 上交替优化 min Σ_k L_render(R(G,T_k),I_k)+λ_reg L_reg(G)，三阶段循环——固定位姿训 3DGS、固定地图用渲染梯度加跨帧点云一致性精化位姿、再用新位姿重训，迭代至收敛；位姿更新需过三重门控：(i) 渲染图有效像素 ≥ N_min，(ii) 当前 FoV 不透明度覆盖 > η_min，(iii) 步长不超过 (Δt_max, Δθ_max)；任一不满足的帧只归档、不参与优化，以免污染估计。(2) 在线建模：FAST-LIO2 式误差状态 IESKF（δx=[δp,δv,δq,δb_a,δb_g]），点-面残差对 ikd-Tree 地图，并沿用 GS-LIVO 加入在线 Gaussian 的光度残差；Gaussian 由 LiDAR 回波逐点直接插入、用配对图像着色、不做致密化，每帧只对 FoV 可见子集做固定 50 步 Adam 微优化，训练后冻结当前 FoV 快照 G_t^frozen，后续帧仅对冻结快照渲染（当前帧高斯不回溯监督已观测帧）；按平移/旋转阈值加最小时间间隔选关键帧，每帧存五通道（校正图像 I_k、LiDAR 投影稀疏深度 D_k、动态掩码 M_k、校正世界系点云 P_k、位姿 T_k）。(3) 全局重建：从精化后的 schema 重新初始化（位姿 {T_k*}、外参 T_cl*、点云 {P_k}），解除全部在线约束——全局自适应致密化、全局不透明度剪枝、SH 由 0 阶分阶段升到 3 阶；优化变量只有 G，位姿与外参固定，因此标定几何直接决定深度监督；光度项用与评估一致的 L1 加 SSIM 核，另加置信度加权鲁棒核的重投影深度项监督渲染深度对 D_k，深度权重按衰减 schedule 从早期几何先验让位给光度项；预算 100k。(4) 重定位：从最终 3DGS 地图与归档关键帧一次性建轻量库（不触碰 3DGS 训练）。查询图提 XFeat 64 维描述子，经归档深度反投影并用动态掩码 M_k 过滤，锚定到最近 Gaussian，描述子跨观测融合入库，低于最小观测次数的 landmark 丢弃；2D-3D 匹配加 RANSAC-PnP 得粗位姿 T_coarse 供滤波重置，再从 3DGS 地图渲染 RGB-D 帧做直接 RGB-D warp 对齐得 T_fine。",
+    "experiments": [
+      "序列与传感器：自采 90 s 室内展厅（RoboSense Airy 96 + DECXIN-3007V1 + 内置 IMU，837 关键帧）、CBD 1117、Retail 1286、Bright 596、hku_campus 1958（R3LIVE）、tuhh_day_04 838（MCD），共 6 条室内外序列。",
+      "标定注入-恢复：注入 +1.51° 后 Ours 恢复到 0.081°（94.6%）/ 4.3 mm，tuhh 0.025°/6.1 mm，CBD 0.078°/25.8 mm，hku 0.059°/10.4 mm，Retail 0.227°/39.9 mm（与发布值差约 2°，疑为未公开时间偏移），Bright 失败（4.626°/865.2 mm）；+5.0° 剂量下 Ours 0.099°（98.0%）、CBD 0.073°（98.5%）、tuhh 0.889°（82.2%）、hku 2.417°（51.7%）。",
+      "外参剂量响应（18 次运行）：+0.153° 低剂量时六序列均值 PSNR 31.42 vs 对照 31.40（在 −0.41~+0.28 dB 噪声带内）；+1.51° 高剂量降到 30.77（−0.6 dB），五条序列 −0.76~−2.02 dB（CBD −2.02、tuhh −1.17），唯一例外 Bright +1.84 dB；SSIM 同向（CBD 0.933 vs 0.949、tuhh 0.874 vs 0.900），作者据此把可检测阈值定在约 1.5°。",
+      "在线 vs 离线配对：6,632 个关键帧全部 6,632 帧离线胜出，逐帧 PSNR 差 14.3–19.9 dB；预算 42k 步（在线）vs 140–240k（离线），高斯数从 20k 增到最多 2.36M；并拆解为 FoV 滑窗遗忘（运行中期新观测帧 21.8–27.2 dB vs 冻结地图终审 13.2–17.9 dB，掉 6–14 dB）加缺全局重建两项。",
+      "vs Gaussian-LIC2：CBD +8.03、Retail +9.43、Bright +7.08、hku_campus +5.38、tuhh_day_04 +8.78、Ours +12.29 dB，作者概括为 5.4–12.3 dB（摘要写约 9 dB），并称与 LIC2 自报值相差 0.2 dB 以内。",
+      "位姿-地图分解消融（237 关键帧、等预算）：交替全量 30.06 dB，仅训地图 27.01（−3.05），仅精化位姿崩到 6.64（−23.42）。",
+      "留出重定位（每序列 100 查询）：Ours A 100%（117/117，inlier 0.647，RMSE 2.30 px）、Ours B 100%（0.592/2.36）、tuhh 100%（0.517/2.37）、hku 95%（0.285/2.61）、Retail 86%（0.210/2.27）、CBD 35%（0.216/2.63）、Bright 0%；外参 A/B（0.153° vs 1.51°）inlier 72.3%→68.0%（|t|≈9.3、Wilcoxon z≈8.7、p<0.001），渲染 PSNR 30.09→29.15 dB（−0.94），86% 帧同向退化。"
+    ],
+    "innovation": [
+      "把 LiDAR-相机外参当「重建质量的自变量」来量化：注入-恢复协议加 18 次运行的剂量响应，给出约 1.5° 的损伤起始阈值，而不是假设标定足够好。",
+      "提出「在线只做跟踪参考、离线解除全部约束重建」的双轨结构，以五通道关键帧 schema 为唯一接口，并把在线-离线差距显式拆成 FoV 滑窗遗忘与缺全局重建两项。",
+      "在 SLAM 生命周期里补上可重入性：XFeat 库 + RANSAC-PnP + Gaussian RGB-D warp 的三段式重定位，并把成功率与地图外参质量显式绑定（A/B 外参实验给出 inlier 与 PSNR 的连带退化）。",
+      "带三重门控的位姿-地图交替精化：有效像素、不透明度覆盖、步长上限同时把关，失败帧只归档不参与优化，避免污染位姿估计。"
+    ],
+    "limits": [
+      "（作者承认）弱纹理极端场景失败：Bright 的 +5.0° 注入恢复失败、留出重定位 0%，作者归因为弱几何与多盆地代价面，建议用几何驱动重定位或主动照明补足。",
+      "（作者承认）重定位目前只输出位姿，未把恢复位姿喂回在线滤波以续建图；Gaussian 到 mesh/碰撞几何的转换、语义与物体级结构集成都留作未来工作。",
+      "（我在正文发现）Table 8 与 Gaussian-LIC2 的分辨率不匹配（Ours 多为 1280×1024，LIC2 为 640×512 JPEG），只有 Retail、tuhh_day_04 与 Ours 三条同分辨率，因此 5.4–12.3 dB 的幅度不能全部归因于方法。",
+      "（我在正文发现）自采序列没有独立硬件外参真值，标定评估靠「注入-恢复 + 与参考运行一致性」；公开序列又以数据集发布的外参为参考，而作者自己说发布外参未必是 NID 最优，故标定精度是自洽性而非绝对精度。",
+      "（我在正文发现）重定位每序列仅 100 次查询，Ours 用 117 次（stride-2 建图，口径与其他序列不同），文中「Ours B」的配置差异未说明；CBD 35% 与 Bright 0% 说明弱纹理下的可用边界未真正解决；门控阈值 N_min、η_min、Δt_max、Δθ_max 只给符号不给数值，复现有缺口。"
+    ],
+    "relation": "以 GS-LIVO 为直接系统基座（IESKF 加在线 Gaussian 光度残差），与 Gaussian-LIC2 做同 bag 对照（+5.4~12.3 dB）、与 LiV-GS 同属「LiDAR 与可微 Gaussian 地图对齐」路线；离线精化侧与 LIVE-GS（surfel 级回环加刚体更新，但无渲染反馈）、Peng 等（联合优化内参/位姿/高斯，但不把标定当变量）形成对照；重定位侧直接参考 GSplatLoc（XFeat 入 3DGS 加光度 warp），并以 ORB-SLAM3 的 BoW+PnP、ACE 的场景坐标回归为背景；标定侧沿用无靶标的 direct-method NID 对齐。相对 FAST-LIO2/FAST-LIVO2/R3LIVE/LVI-SAM，本文不改前端，只改「地图这一侧」；相对 SplaTAM、Gaussian Splatting SLAM、Photo-SLAM 的纯视觉路线，本文靠 LiDAR 提供度量几何，因此在地图尺度一致性上不依赖单目深度先验。",
+    "repro": "代码 https://github.com/Vector-4D/gemor-gs 已公开；自采序列称发表后公开；公开数据来自 FAST-LIVO2、R3LIVE、MCD 原始发布；硬件为 RoboSense Airy 96 + DECXIN-3007V1 + 内置 IMU（自采），Livox Avia + MV-CA013-21UC 等（公开序列）；算力 8× RTX 4090 / CUDA 12.8，在线 50 步/帧、离线 100k 预算；但三重门控阈值与部分训练细节只给符号，复现存在缺口。",
+    "action": "先读 §3.2（三重门控与三阶段交替）与 §4.2 的剂量响应表，这是「标定即重建质量变量」的核心证据；再核三处风险：Table 8 分辨率不匹配、自采序列外参无独立真值（注入-恢复只是自洽性检验）、门控阈值缺失导致离线精化难以复刻。若做机器人落地，重点看 §4.4 的 inlier/RMSE 与 CBD、Bright 的失败边界——弱纹理环境的可用性仍是硬约束。另外值得借鉴的是「把在线地图定位为跟踪参考而非重建」这一判断，它解释了 14–20 dB 的巨大差距。",
+    "track": "重建与SLAM",
+    "scores": {
+      "IMP": 4,
+      "NOV": 3,
+      "TEC": 5,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 4
+    },
+    "scores_why": "IMP 4：把 3DGS 地图从离线渲染资产升级为可重入的机器人世界模型，是具身与机器人落地的关键缺口，问题定位准；NOV 3：各模块（NID 标定、交替位姿-地图精化、全局重建、XFeat 重定位）都是已有技术的扎实组合，真正的新意是「量化标定质量如何传导」这一实验设计与双轨结构；TEC 5：标定、在线、离线、重定位四模块全通，含三重门控、五通道 schema、SH 升阶与深度衰减 schedule，系统完整度在同类中偏高；EXP 4：6 条序列、18 次剂量运行、6,632 对配对、237 帧消融、100 次查询重定位，外加 A/B 外参对照，覆盖广，扣在 Table 8 分辨率不匹配与部分序列口径不一；PER 4：+14.3~19.9 dB（vs 在线）、+5.4~12.3 dB（vs LIC2）、86–100% 重定位，增益显著，但弱纹理场景 0–35% 暴露边界；TRL 3：有开源与自采数据承诺，但需 8×4090、依赖 LiDAR-相机-IMU 刚性标定流程，离产品化尚有距离；REP 4：代码与流程公开，仅门控阈值等细节缺失。"
+  }
+]
