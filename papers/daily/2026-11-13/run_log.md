@@ -41,7 +41,8 @@
 - registry **907 条**（S18/A428/B352/C109）：本日无新增入馆；**另执行 1 处数据修补** —— 2611.08578 的 `title` 字段曾被误写为裸 ID（`2611.08578`），经 arXiv API 核验真实标题为 `HaNDF: Object-Conditioned Geometric Neural Hand Distance Fields`，已按 `registry.jsonl.bak-20261113` 备份后修正 registry 与对应原子笔记 frontmatter（title_zh/评分不变）。
 - 原子笔记 **564 篇**（无新增）；daily 目录 **59 个**（新增 2026-11-13）。
 - 产物：本 run_log + `papers/daily/2026-11-13/7dim-table.md`（19 篇前沿参考）+ `reports/XR-Daily-Report-2026-11-13.md` + MOC 总索引维护。
-- 前端：BATCH_LABELS 补 11-13 标签 → 重建 hub → DATA 计数核验 → node --check 双 script 块 → CDP 冒烟 → 双渠道发布（详见报告 §5.5）。
+- 前端：BATCH_LABELS 补 11-13 标签 → 重建 hub → DATA **907/564/59** 与磁盘一致（`verify_hub_1113.py` PASS，11-13 卡片 count=0 + refPapers=19 == registry batch(2026-11-12 + backfill-1112)）→ `node --check` 双 script 块 PASS → CDP 冒烟（端口 9411，新增 has1113ref 断言）**SMOKE: PASS** 零异常。
+- 发布：渠道② ✅ commit **ee848f7** → 增量推送 23 文件 → main **8b5ed215**，deploy run **43282313909** success，Pages 200 / 4,008,332 bytes，Range 分块重组后 md5 与本地一致（`32812c24…`），线上 DATA 907/564/59 核验一致；渠道① ⚠️ 连续第 **24** 次不可用且 URL 403，挂账 24 批（10-21~11-13）。
 
 ## 5. 异常与教训
 

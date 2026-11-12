@@ -138,8 +138,9 @@
 
 ### 5.5 发布记录
 
-- 渠道① WorkBuddy 托管（workbuddy_sites_deploy）：见收尾汇报（自 10-21 起连续不可用，URL 已 403）。
-- 渠道② GitHub Pages：见收尾汇报（commit + `push_to_github.py --incremental` + deploy run + Pages 200 核验）。
+- **渠道① WorkBuddy 托管（workbuddy_sites_deploy）**：本会话工具仍不可用（自 2026-10-21 起连续第 **24** 次），且托管地址 `https://xr-paper-hub.app.workbuddy.host/` 与 `/xr-paper-hub.html` 实测均返回 **403（链接不完整）**，需人工在托管侧重建分享链接后补部署 → **挂账 24 批（10-21~11-13）**。
+- **渠道② GitHub Pages（已完成实推）**：本地 commit **ee848f7** → `push_to_github.py --incremental` 变更 23 文件 → 远端 main **8b5ed215**；push 事件自动触发 `deploy-pages.yml` run **43282313909**（conclusion=success）；Pages 200，**Content-Length 4,008,332 bytes**，`curl -r` 4×1MB 分块重组后与本地规范化 md5 **完全一致**（`32812c24…`，730 处 CRLF→LF 属 git autocrlf 归一化非内容差）；线上 DATA **907/564/59**、11-13 卡片 count=0 + refPapers=19、11-12 卡片 count=15 max=4.08、2611.08578 标题修补已同步（`check_pages_1113.py` PASS）。
+- **前端自检**：`verify_hub_1113.py` PASS（DATA 与磁盘逐项一致、refPapers == registry batch(2026-11-12 + backfill-1112) 19 篇）；`node --check` 双 script 块通过；CDP 冒烟（Edge headless，端口 9411）`SMOKE: PASS`，PAGE_ERRORS: none，新增 `has1113ref` 断言通过。
 
 ---
 
