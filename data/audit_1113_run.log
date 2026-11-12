@@ -1,0 +1,18 @@
+registry: 907
+[cs.CV] newest=2026-11-11 prev dec=149 got=149 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+[cs.GR] newest=2026-11-11 prev dec=6 got=6 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+[cs.HC] newest=2026-11-11 prev dec=34 got=34 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+[cs.MM] newest=2026-11-11 prev dec=14 got=14 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+[cs.RO] newest=2026-11-11 prev dec=69 got=69 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+[cs.AI] newest=2026-11-11 prev dec=248 got=248 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+[eess.IV] newest=2026-11-11 prev dec=12 got=12 [OK] new dec=None got=0 [CHECK] unreg_new=0 []
+=== summary ===
+  cs.CV: newest=2026-11-11 prev_got=149/149 new_got=0/None
+  cs.GR: newest=2026-11-11 prev_got=6/6 new_got=0/None
+  cs.HC: newest=2026-11-11 prev_got=34/34 new_got=0/None
+  cs.MM: newest=2026-11-11 prev_got=14/14 new_got=0/None
+  cs.RO: newest=2026-11-11 prev_got=69/69 new_got=0/None
+  cs.AI: newest=2026-11-11 prev_got=248/248 new_got=0/None
+  eess.IV: newest=2026-11-11 prev_got=12/12 new_got=0/None
+unregistered in prev group: 421
+new group unique: 0 unregistered: 0

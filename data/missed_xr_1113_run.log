@@ -1,0 +1,27 @@
+pool: 421 篇（2026-11-11 组未入馆），registry 已有 0 篇
+  batch0: want=50 got=50 cum=50
+  batch1: want=50 got=50 cum=100
+  batch2: want=50 got=50 cum=150
+  batch3: want=50 got=50 cum=200
+  batch4: want=50 got=50 cum=250
+  batch5: want=50 got=50 cum=300
+  batch6: want=50 got=50 cum=350
+  batch7: want=50 got=50 cum=400
+  batch8: want=21 got=21 cum=421
+meta fetched: 421/421 覆盖率=1.0000 缺失=0
+
+## 2026-11-11：摘要级 XR 命中 13 篇
+  2611.12932 [cs.CV] abs=True reg=False pub=2026-11-06 URL-Sim: Unified and Regulated LiDAR Simulation for High-Fidelity Reconstruction of Dy
+  2611.12949 [cs.RO] abs=True reg=False pub=2026-11-06 Maze Runner: Autonomous Maze Navigation with Line-Based Localization and Control Barri
+  2611.12976 [cs.CV] abs=True reg=False pub=2026-11-08 Partition, Refine, and Detect: Preserving Novel Category Capacity in Open-Vocabulary O
+  2611.13030 [cs.AI] abs=True reg=False pub=2026-11-09 APS-VLA: Action-Guided and Future-Aware Token Pruning for Efficient Vision-Language-Ac
+  2611.13057 [cs.AI] abs=True reg=False pub=2026-11-09 Continuous-Time Set-Transformers for Asynchronous WiFi-IMU Indoor Localization
+  2611.13062 [cs.AI] abs=True reg=False pub=2026-11-09 Elicitation of the parameters of a multi-criteria sorting model
+  2611.13307 [cs.HC] abs=True reg=False pub=2026-11-09 Does Haptic Connection to a Healthy Partner Improve Motor Learning in Chronic Stroke? 
+  2611.13610 [cs.RO] abs=True reg=False pub=2026-11-10 From Egocentric Human Video to Robot Manipulation in the Era of Embodied Intelligence
+  2611.13685 [cs.CV] abs=True reg=False pub=2026-11-10 Ego Guidance: Enhancing Robot Policy Learning with Action-Free Human Egocentric Videos
+  2611.13784 [cs.CV] abs=True reg=False pub=2026-11-10 Marrying Capacity and Precision for Efficient 2D Gaussian Image Representation
+  2611.14033 [cs.CV] abs=True reg=False pub=2026-11-10 Few-Step Streaming Video Generation via Condition Shifting
+  2611.14093 [cs.HC] abs=True reg=False pub=2026-11-10 BODYinTRANSIT-Lab: A Multimodal Dataset for Investigating Sensory-Driven Transformatio
+  2611.14373 [cs.RO] abs=True reg=False pub=2026-11-10 Gaussian Process-Augmented Model Predictive Contouring Control for 6-DoF Trajectory Tr
+saved data/missed_xr_abstract_1113.json

@@ -110,6 +110,7 @@ async function main() {
         has1030ref: d ? (d.batches.some(b => b.key === '2026-10-30' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
         has1101ref: d ? (d.batches.some(b => b.key === '2026-11-01' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
         has1102ref: d ? (d.batches.some(b => b.key === '2026-11-02' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
+        has1113ref: d ? (d.batches.some(b => b.key === '2026-11-13' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 19)) : false,
         bodyLen: document.body ? document.body.innerHTML.length : -1,
         optTexts: optTexts.slice(-4)
       });
@@ -120,7 +121,7 @@ async function main() {
   console.log('PROBE:', JSON.stringify(info, null, 1));
   console.log('PAGE_ERRORS:', errors.length ? errors.join('\\n') : 'none');
   const ok = info.hasData && info.papers === 907 && info.notes === 564 &&
-             info.has1021 && info.hasBF1021 && info.has1022 && info.has1023 && info.hasBF1023 && info.has1024 && info.hasBF1024 && info.has1025ref && info.has1026ref && info.has1027 && info.hasBF1027 && info.has1028 && info.hasBF1028 && info.has1029 && info.hasBF1029 && info.has1031 && info.hasBF1031 && info.has1103 && info.hasBF1103 && info.has1104 && info.hasBF1104 && info.has1105 && info.hasBF1105 && info.has1106 && info.hasBF1106 && info.has1107 && info.has1110 && info.hasBF1110 && info.has1111 && info.hasBF1111 && info.has1112 && info.hasBF1112 && info.has1030ref && info.has1101ref && info.has1102ref && info.has1108ref && info.has1109ref &&
+             info.has1021 && info.hasBF1021 && info.has1022 && info.has1023 && info.hasBF1023 && info.has1024 && info.hasBF1024 && info.has1025ref && info.has1026ref && info.has1027 && info.hasBF1027 && info.has1028 && info.hasBF1028 && info.has1029 && info.hasBF1029 && info.has1031 && info.hasBF1031 && info.has1103 && info.hasBF1103 && info.has1104 && info.hasBF1104 && info.has1105 && info.hasBF1105 && info.has1106 && info.hasBF1106 && info.has1107 && info.has1110 && info.hasBF1110 && info.has1111 && info.hasBF1111 && info.has1112 && info.hasBF1112 && info.has1030ref && info.has1101ref && info.has1102ref && info.has1108ref && info.has1109ref && info.has1113ref &&
              info.bodyLen > 10000 && errors.length === 0;
   console.log(ok ? 'SMOKE: PASS' : 'SMOKE: FAIL');
   sock.close();
