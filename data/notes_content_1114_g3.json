@@ -1,0 +1,372 @@
+[
+ {
+  "id": "2611.17331",
+  "slug": "test-time-baking-view-synthesis",
+  "title_zh": "TTB：面向 decoder-only 视角合成模型的测试时烘焙加速渲染",
+  "venue": "arXiv preprint（cs.CV）；NVIDIA 与阳明交通大学合作，正文未注明会议",
+  "track": "神经渲染",
+  "tags": [
+   "测试时训练 TTT",
+   "视角合成 view synthesis",
+   "KV-cache",
+   "快速权重 MLP fast-weight",
+   "渲染加速 rendering speedup"
+  ],
+  "conclusion": "TTB 把 TTT 快速权重的内循环目标由「复现值 token」改为「拟合 cross-view attention 输出」，在 DL3DV 64 视角 960p 下以 30.20 dB PSNR、23 FPS 渲染，对照 DVSM 的 31.11 dB 但仅 1 FPS（60 s），实现最高 23× 加速；启用 local-duplicate 后达 31.33 dB，与 DVSM 持平。",
+  "problem": "Decoder-only 大型视角合成模型（LVSM/DVSM）用 KV-cache 作全局场景状态，质量最好，但每个 novel-view token 都要对 KV 做线性注意力，视角一多渲染即不可用：DL3DV 64 视角下 DVSM 仅 1 FPS。LaCT 用 TTT 层替换 cross-view attention，渲染降到 O(1)，代价是质量明显下降，即使从 DVSM 权重微调差距仍在。作者指出现有解释只把 TTT 当作线性注意力近似，未分析质量损失来源，也未意识到 context prefilling（图像加位姿）与 novel-view rendering（仅位姿）的模态错配，使烘焙出的 fast-weight MLP 需在两种分布间泛化。缺口：如何在保持 O(1) 渲染的同时，把 cross-view attention 的全局场景信息尽量无损写进固定容量 MLP。",
+  "method": "沿用 DVSM 的 L 个重复块（IntraAttn、FFN、CrossAttn、FFN，式3），context 视图在每层 CrossAttn 预填 KV-cache，novel view 查询该 cache。输入用 Plücker ray 嵌入，context token 含位姿与 RGB，novel token 仅位姿（式4）。核心是把 TTT 的内循环目标换掉：TTT 为 θ←θ−η∇L(f_θ(W_k X), W_v X)（式6a），TTB 为 θ←θ−η∇L(f_θ(W_k X), g(X*))（式6b），取 g=CrossAttn，让 MLP 拟合注意力输出、与注意力协作而非取代。为消除模态错配，把每个 context 视图拆成 X⁰(ctx-gt)=LN(PE_ray+PE_rgb) 作映射目标、X⁰(ctx-rend)=LN(PE_ray) 作 TTB 输入（式7）；烘焙后的 MLP 共享给两路并回馈 ctx-gt。层内用单头 SwiGLU-MLP（隐维 3072）、per-token 学习率 0.01、Muon 加 weight normalization，T=3 步，损失为残差 MSE：θ_{t+1}=θ_t−Muon(∇‖f_θ(W_k X^{ctx-rend})−W_v(CrossAttn(X^{ctx-gt})−X^{ctx-rend})‖₂)（式8）。容量饱和用推理期 local-duplicate：按位姿 k-means 分 K=V/B 组（B=16），每组独立烘焙，novel view 路由到最近质心，渲染仍 O(1)。",
+  "experiments": [
+   "DL3DV-10K（140 个 held-out 测试场景，960p）：16/32/64 视角下 Ours 为 27.00/28.92/30.20 dB，对应 DVSM 26.86/29.13/31.11 dB、LaCT 24.70/26.90/28.30 dB；渲染恒为 23 FPS，DVSM 为 4/2/1 FPS。",
+   "Re10K 两视角 512×512：Ours 31.28/0.926/0.127（PSNR/SSIM/LPIPS），DVSM 31.17/0.924/0.129，Decoder-only LVSM 29.53/0.904/0.141，Efficient-LVSM 29.86/0.905/0.147。",
+   "In-the-wild 64 视角 960p：MipNeRF360/Free/Hike 上 Ours(duplicate) 为 25.05/26.82/25.37 dB，DVSM 为 24.76/25.57/23.10 dB，均为 65 s 重建、23 FPS 对 1 FPS；对 LagerNVS 质量大幅领先且渲染快 3.1–9.5×。",
+   "结构消融（表 4，DL3DV，V=32）：纯 TTT 替换 23.12 dB → 加 context pairing 23.78 → 加 MSE 与 T=3 为 24.22 → 目标换成 cross-view attention 24.84 dB；重建时间 0.439→1.998 s，渲染维持约 50 FPS。",
+   "内循环消融（表 5）：TTT 的 dot-product 损失 23.12 → TTB– 改 MSE 提升 +0.44 dB（TTT 只 +0.27）；T 从 1 增到 5 单调但递减，取 T=3 为折中。",
+   "层设计消融（表 6）：feedback 与 residual 各自贡献约 +0.43/+0.44 dB，合并 +0.52 dB（24.32→24.84）。",
+   "训练配置：768 通道、12 个 decoder block、patch 8，从 DVSM checkpoint 初始化，DL3DV-10K 上 64 张 A100，340p 训 100K iter 后依次在 480p/720p/960p 各微调 10K iter，感知损失权重 λ=0.2。"
+  ],
+  "innovation": [
+   "把 TTT 的 fast-weight 内循环目标从 value token 改为 cross-view attention 输出，使 MLP 与注意力协作而非替换，渲染复杂度仍为 O(1)。",
+   "发现并显式解决 context prefilling 与 novel-view rendering 的模态错配，用 ctx-gt 与 ctx-rend 成对 token 让映射两端同分布。",
+   "将烘焙内循环解释为潜空间光场优化，由此推出多步 MSE 加残差学习的收敛式配方。",
+   "推理期 local-duplicate（k-means 分组加最近质心路由）在保持 O(1) 渲染的同时缓解固定容量饱和。"
+  ],
+  "limits": [
+   "（作者承认）fast-weight MLP 容量固定，V 增大后质量饱和；local-duplicate 路由是启发式，训练期学习留作未来工作。",
+   "（作者承认）内循环中的 cross-view attention 使重建复杂度随 V 二次增长，单次或少次重建场景不划算。",
+   "（作者承认）方法基于重建而非生成，只在 context 视角之间插值，不能外推到未观测视角。",
+   "（我在正文发现）表 1 中 32/64 视角 PSNR 仍低于 DVSM（28.92 对 29.13；30.20 对 31.11），「持平」主要靠 16 视角与 duplicate 变体；且 64 视角重建耗时 65 s 反高于 DVSM 的 60 s。",
+   "（我在正文发现）23 FPS 与消融中约 50 FPS 出自不同设置（patch 8 与 patch 16），正文未在同一表内统一硬件与分辨率口径。"
+  ],
+  "relation": "论文把自身放在 geometry-free 前馈视角合成线上：起点是 LVSM（ICLR'25）的 decoder-only 变体（效率低），DVSM 用 KV-cache 预填一次成为质量与效率上限，但 KV 随 token 线性增长；LaCT（ICLR'26）用 TTT 层替换 cross-view attention 把渲染做到常数复杂度，代价是质量，而 TTT 的 KV-binding 变体已被指出等价于线性注意力，这正是本文要突破的解释框架——TTB 把内循环目标改成注意力输出，因此不再是线性注意力特例。相关工作还包括 LongLRM 与 LongLRM++（输出规模随视角增长）、tttLRM、Efficient-LVSM，以及 TTT3R、ZipMap、ViT³ 等把 TTT 用于 3D 的尝试；作者还把内循环对应到经典光场与隐式辐射场重建。",
+  "repro": "项目页 https://test-time-baking.github.io 提供结果与可视化；正文未给出代码仓库或许可证声明。模型从 DVSM checkpoint 初始化，需依赖 DVSM 作者权重；训练在 DL3DV-10K 上用 64 张 A100，完整复现门槛高。评测集 DL3DV-10K、Re10K、MipNeRF360、Free、Hike 均公开。",
+  "action": "先读 §3.3.2 与式(8)，这是理解 context pair 与残差目标的核心；再核表 1 的时间与 FPS 两列（重建 65 s 对 DVSM 60 s、渲染 23 对 1 FPS）和表 4 的逐步增量。重点验证：32/64 视角 PSNR 是否真追平 DVSM（未追平，需 duplicate 变体）；表 4 约 50 FPS 与主表 23 FPS 的口径差异；local-duplicate 在 B=16、V=64 只分 4 组。风险：无代码、依赖 DVSM 权重与 64 卡训练。",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP 4：LVSM 渲染是实际部署瓶颈，23× 加速可落地。NOV 4：把 TTT 内循环目标改写为注意力输出并指出模态错配，是对 LaCT 路线的实质修正，骨架仍是 DVSM 加 TTT。TEC 4：式(8) 的残差目标、Muon、per-token 学习率与 local-duplicate 设计完整。EXP 4：DL3DV、Re10K、in-the-wild 三基准与五组消融。PER 4：23× 加速，duplicate 在 64 视角 31.33 dB 反超 DVSM 31.11。TRL 4：NVIDIA 出品，可直接替换 DVSM 渲染路径。REP 3：仅项目页，无仓库。"
+ },
+ {
+  "id": "2611.15143",
+  "slug": "v-jepa-multi-view-reconstruction",
+  "title_zh": "基于 V-JEPA 特征的多视图三维重建",
+  "venue": "arXiv preprint（cs.CV）；两位作者，正文未注明会议",
+  "track": "重建与SLAM",
+  "tags": [
+   "V-JEPA 2.1",
+   "多视图重建 multi-view reconstruction",
+   "相机位姿估计 camera pose",
+   "pointmap 回归",
+   "负结果 negative result"
+  ],
+  "conclusion": "在 168 个 CO3D 五视图窗口上，spatial-camera 比 global-camera 的 ATE 低 29.33%（6.6586 对 9.4225），但仍比 identity 位姿高 10.03%；TUM 上 ATE 比 identity 低 17.08%，深度 AbsRel 0.4279 却比常数中值深度 0.2516 差 70.07%。作者据此认为视频预训练特征可用于相机估计，但不能证明深度与表面几何同步改善。",
+  "problem": "JEPA 系列（I-JEPA、V-JEPA、V-JEPA 2/2.1）通过预测潜表征学到的稠密特征被广泛认为可迁移到 3D 任务，但「表征好」不等于「度量深度准、相机位姿对、跨视一致」。作者指出两个被忽视的评估陷阱：一是对预测点图先拟合一个由参考几何导出的相似变换再算 Chamfer，低误差可能与首视图坐标系下的原始几何误差并存；二是现有工作很少与 identity 相机、常数中值深度这类平凡先验对比，因此无法判断提升来自学习还是来自先验。此外概率 PnP 类工作把输入不确定性只用于提高精度，不确定性本身缺乏统计检验。缺口是：在统一协议下把「表征适配」「对齐后形状」「原始重建」三者分开度量，并检验 latent 相似度或置信度能否作为几何可信度的证据。",
+  "method": "输入 K 张 RGB，输出内参、位姿 T̂∈SE(3)、深度、法向、pointmap、置信度、support、64 维描述子，首视图定义坐标系（T̂₁=I₄）。主干为蒸馏版 V-JEPA 2.1 ViT-B/16：每图复制成两帧 clip，512×512 得 32×32 个 768 维 token；每视图池化成 1 个 token 加 4 个 scene token，2 层 8 头 transformer 跨视交互，相机初值经通道门调制特征图。相机两路：global 回归 6 维 twist，T̂⁰=Exp_SE(3)(ξ)（式2），焦距 softplus、主点仿射偏移；spatial 用 16×16×128 投影特征，软对应 a_uv=softmax_v(⟨f̄₁,f̄_k⟩/0.1)、ṽ(u)=Σa_uv v（式3）供相机头，零初始化 MLP 出残差 twist，T̂=T̂⁰Exp(Δξ)（式4，限幅 0.08/0.04）。几何端每像素取 24 个对数间隔深度候选做极线传输（T=0.15），解码 sigmoid 深度与有界残差 pointmap：x̂^c=D̂(p)Â⁻¹p+Δx̂(p)、x̂^w=R̂x̂^c+t̂（式5–6）。损失 L=Σ_q λ_q L_q（式7）含深度（Smooth-L1 加 log 方差）、法向、平滑、相机位姿与内参、pointmap、跨视一致、描述子对比与 support，并把深度派生高斯经 gsplat 渲染到第二视图。G-LVP 辅助头把源特征与 20 维相机条件映射到冻结 V-JEPA 的目标视图 embedding，梯度不回传相机。",
+  "experiments": [
+   "CO3D：168 个五视图窗口，三种配置（global / spatial / relative objectives），每配置单一种子；对照为 identity 相机、常数中值深度、常数中值内参。",
+   "CO3D 相机：ATE 9.4225→6.6586（−29.33%，168 个窗口全部改善），旋转 RPE 30.43°→22.67°；但 spatial 的 ATE 仍比 identity 高 10.03%，细化使 ATE 从 6.6350 升到 6.6586。",
+   "CO3D 深度与内参：AbsRel 0.2746→0.2900（+5.59%），内参 MAE 0.0540→0.1133（翻倍以上）；spatial 的 AbsRel 仅比常数深度低 0.10%，δ₁ 0.4760 更高但 δ₂ 0.9012 低于 global 的 0.9672。",
+   "CO3D 相对目标：内参 MAE −14.37%、旋转 RPE −9.91%，但 RMSE +10.60%、AbsRel +9.36%、ATE +2.86%；对齐 Chamfer 0.6447→0.5573、F@0.20 0.3943→0.4476，原始 Chamfer 3.5535→4.4374（+24.88%）。",
+   "TUM RGB-D：163 个五视图窗口，ATE 0.3063 m 对 identity 0.3694 m（−17.08%，144/163 窗口改善），但深度 RMSE 1.0159 对 0.8822（+15.16%）、AbsRel 0.4279 对 0.2516（+70.07%，每个窗口都更差）；细化使测试 ATE 从 0.2682 升到 0.3063 m（+14.18%）。",
+   "置信度与蒸馏：relative 模型在其「相对误差不超过 10%」事件上平均置信 0.6971、实际成功率 0.0610，10-bin ECE 0.6360，Brier 0.4587；训练期正确目标余弦 0.992164 反低于打乱目标 0.992270（20 个 epoch 中 17 个如此），检索 0.2148 对随机 0.20。",
+   "训练：20 epoch、512×512、2×Tesla T4 16GB、混合精度、有效 batch 4，预测模块 lr 1.5e−4、主干 2e−6；三阶段课程（前 5 epoch 冻结主干、中 10 epoch 解冻最后一块、末 5 epoch 冻结并加大对齐权重）。"
+  ],
+  "innovation": [
+   "给出一套把 V-JEPA 稠密特征接入显式相机、极线传输与残差 pointmap 的相机条件化 RGB-only 重建架构。",
+   "评估协议同时报告原始与相似对齐两种几何，并引入 identity、常数深度、常数内参三类平凡先验作为下限对照。",
+   "实证揭示「联合相对目标不会带来联合改善」：内参与旋转变好，而深度、ATE、原始表面变差。",
+   "诊断辅助目标的可信度：置信度严重过置信（ECE 0.636），潜空间余弦相似度对目标视图几乎无区分度。"
+  ],
+  "limits": [
+   "（作者承认）主实验单一训练种子，CO3D 仅 3 个测试序列、2 个类别，室内仅 1 个序列，窗口互相重叠，未把窗口当独立重复做显著性检验。",
+   "（作者承认）CO3D 配置是看到测试结果后逐步调整的，属自适应比较而非一次性评测；且没有替换编码器的隔离实验，也无与 SOTA 重建系统的同协议对比。",
+   "（作者承认）CO3D 的深度与位姿是估计标注、尺度依数据集；TUM 的注册内参固定，使内参任务退化为偏离常数约定。",
+   "（我在正文发现）TUM 上深度 AbsRel 在全部 163 个窗口都劣于常数中值深度，「深度分支无效」这一结论比摘要的 mixed 表述更强。",
+   "（我在正文发现）定性窗口显示预测相机中心间距 0.007–0.014 m，而参考为 0.174–0.232 m，说明 ATE 优于 identity 可能来自整体收缩而非真实轨迹恢复。"
+  ],
+  "relation": "工作直接建立在三条脉络上：一是 JEPA 系列（I-JEPA、V-JEPA、V-JEPA 2、V-JEPA 2.1），本文用 V-JEPA 2.1 的稠密多层特征作主干；二是 CrossJEPA 的投影条件预测思想，本文的 G-LVP 借用其「用观测视图特征预测目标视图特征」的结构，但目标视图本身在输入中，因此只是特征蒸馏而非预测被遮挡视图；三是前馈重建线，包括 DUSt3R（像素对齐 pointmap）、MASt3R（加稠密描述子）、VGGT（联合预测相机、深度、pointmap、轨迹）、Fast3R、MUSt3R、SLAM3R，以及质疑参考视图设定的 π³ 与联合预测深度与相机射线的 Depth Anything 3。作者明确表示不与这些系统做同协议定量比较，只做表征适配的实证刻画；渲染监督部分借用 FreeSplatter 式的像素对齐高斯与 3DGS/gsplat 可微渲染。",
+  "repro": "代码公开：https://github.com/Anwarshamim01/multi-view-3d-reconstruction-using-v-jepa-features；论文采用 CC BY-NC-SA 4.0。主干为外部 V-JEPA 2.1 ViT-B/16 蒸馏权重，CO3D 与 TUM RGB-D 均为公开数据集。训练仅需 2 张 16GB T4、20 epoch，复现门槛在本文七篇中最低。",
+  "action": "建议先读 §5.3（模型与阈值选择）与 §7.4（实验范围与局限），再看表 1–4：这两节说明「配置差异」与「选择准则变化」同时发生，29.33% 的 ATE 改善不能归因于单一模块。核对三组数字：ATE 6.6586 对 identity 6.0516（仍差 10.03%）、TUM AbsRel 0.4279 对 0.2516、ECE 0.6360。风险点：单种子、测试集参与配置选择、无编码器隔离消融；引用其结论时应把「优于另一学习配置」与「优于平凡先验」分开陈述。",
+  "scores": {
+   "IMP": 2,
+   "NOV": 2,
+   "TEC": 2,
+   "EXP": 3,
+   "PER": 1,
+   "TRL": 1,
+   "REP": 4
+  },
+  "scores_why": "IMP 2：给出的是负结果与方法框架，未推进 SOTA，但「对齐 Chamfer 掩盖原始几何误差」的提醒对社区有价值。NOV 2：架构是 V-JEPA 加 VGGT 式相机头与极线传输的组合，G-LVP 与 CrossJEPA 同构。TEC 2：无新推导，主要为工程整合。EXP 3：两个数据集、168 与 163 个配对窗口、三类平凡先验、置信度校准与检索分析较扎实，但单种子且无显著性检验。PER 1：多个核心指标劣于 identity 相机或常数深度（ATE +10.03%、AbsRel +70.07%）。TRL 1：原型级研究代码。REP 4：代码公开、2×T4 可训、数据公开。"
+ },
+ {
+  "id": "2611.15429",
+  "slug": "incremental-rgb-3d-scene-graph",
+  "title_zh": "IncR-3DSGG：基于有位姿 RGB 图像的增量三维场景图生成与特权深度监督",
+  "venue": "arXiv preprint（cs.CV）；Universität Augsburg，正文未注明会议",
+  "track": "重建与SLAM",
+  "tags": [
+   "三维场景图 3D scene graph",
+   "特权监督 privileged supervision",
+   "位姿图优化 PGO",
+   "单目 RGB monocular",
+   "具身智能 embodied AI"
+  ],
+  "conclusion": "在 3RScan/3DSSG（Sparse、l20、157 个测试扫描）上取得 39.5 物体 R@1、14.5 三元组 R@1、52.2 与 30.8 的平均物体与谓词召回，对照 MonoSSG 的 28.6/9.8/27.0/17.6，且推理不使用任何深度或重建几何；标注关系对上 Pred* 28.3 对 22.1，位置误差 1.242 m 对稀疏点图 1.286 m。",
+  "problem": "3D 场景图把物体实例与相互关系编码成图，是具身智能做任务规划、目标导航的紧凑表示。但现有方法几乎都把 3D 几何当作推理必需：3DSSG 在完整扫描的点云上跑 GNN；SceneGraphFusion、ConceptGraphs、Hydra、HOV-SG 在每帧用深度反投影维护体素或点云地图，靠点云重叠关联实例、靠几何规则算关系。这既限制部署到有深度传感器的平台，也把地图质量绑在深度噪声上。MonoSSG 去掉了深度传感器，但物体几何仍从 ORB-SLAM3 的稀疏关键点图读取，只有三角化点数足够多的物体才可表示。缺口是：能否把 3D 监督限制在训练阶段（privileged supervision），推理端只用有位姿 RGB 加全景分割，仍恢复度量可用的物体位置与关系，并保持增量式构建。",
+  "method": "流程两段。输入 RGB 与位姿 T_t∈SE(3)：冻结 EoMT（DINOv3 主干，3RScan 上以 NYU40 微调）一次前向给出语义、实例与掩码，掩码平均池化得 f_i 作局部图节点。PRP 建边：f_i 经两层 MLP 投到 E 维并加类别 embedding，K 个 object token 过无位置编码的 transformer 自注意力得 h'_i；再构成 p_ij=MLP([h'_i;h'_j;h'_i−h'_j;h'_i⊙h'_j;g'_ij])（式1），g_ij∈R^10 为纯 2D 线索（中心位移、面积比、IoU、相对尺度、掩码重叠等）。四头：几何头 10 维（质心距离、方位、俯仰进 PGO，另 7 个接触特征）；关系头在 8 个 3DSSG 支撑谓词加 none 上分类，逆频权重加 focal；置信度头给 PGO 约束权重；extent 头预测尺度，大物体降权。训练用 masked 多任务损失（CE、focal、Huber、BCE），3D 目标由深度反投影得到。增量：新检测用匈牙利匹配加软类别一致性关联到全局节点；PRP 的相机系质心距离、方位、俯仰经 T_t 转成世界系位移 δ̂_ab 作位姿图约束；PGO 解 P*=argmin Σ ρ_H(√w_ab r_ab(P)) + w_a‖p_{a0}−p⁰‖²（式4），r_ab=(p_b−p_a)−δ̂_ab，w_ab=γ_ab/(1+e_a+e_b)，Huber 核加首节点锚定消规范自由度，每帧用 trust-region 重解；边标签按置信度加权投票跨视融合，距离与角度由 PGO 位置重算。",
+  "experiments": [
+   "3RScan/3DSSG 的 Sparse、l20 设置，157 个测试扫描，官方 2,316 个物体与 20,904 个邻接对；基线 IMP、VGfM、3DSSG、SGFN、MonoSSG 均从 ORB-SLAM3 点图读取几何。",
+   "主结果：Ours 39.5 Obj / 88.6 Pred / 14.5 Trip / 28.3 Pred* / 23.1 Trip* / 52.2 mR.Obj / 30.8 mR.Pred；MonoSSG 为 28.6/89.8/9.8/8.4/6.9/27.0/17.6。",
+   "实例源与几何源（表 2）：换成稀疏点图几何后物体指标完全不变（39.5 与 52.2），Pred* 从 28.3 降到 22.1、Trip* 23.1→18.0，位置误差 1.242→1.286 m；换 GT 掩码时 Pred* 52.1 对稀疏图 36.0。",
+   "关联与定位（表 3，3RScan）：GTRec 0.500 对深度基线 0.590–0.710，NodePur 0.813 对 0.929–0.971，PosErr 1.242 m 对 0.719–0.764 m，但碎片率最低 1.155 对 1.717–1.736。",
+   "AI2-THOR：4 类房间各 30 个配置（20/5/5 划分，每场景约 150 帧），PosErr 0.692 m 对 0.591–0.646 m，NodePur 0.936 对 0.964–0.978，碎片率 1.116 最低；随机 yaw 下深度基线节点数从 35 涨到 929，本文仅 29→54。",
+   "运行时间：单张 RTX 3090 上 1024 ms/帧，其中全景分割 1008 ms，PRP 2.3 ms、关联 1.4 ms、PGO 12.5 ms，关系组件合计低于 2%。",
+   "补充：与 VGGT 点图比较（需按扫描用 GT 拟合尺度），即便做了尺度校正，PRP 仍在 155 个扫描中的 124 个更准；去掉 object self-attention 或简化 pair 构造只轻微掉点。"
+  ],
+  "innovation": [
+   "把 3D 几何监督限制在训练期（privileged depth supervision），推理端完全去掉深度与点云，同时保留度量可用的物体位置。",
+   "PRP 从 2D 视觉特征与 10 维 2D 几何线索直接回归成对 3D 度量（距离、方位、俯仰加接触特征），无需显式三角化。",
+   "把学习到的成对测量作为因子接入 PGO，跨视联合优化物体位置，使观测充分的 landmark 帮助少见物体定位。",
+   "在统一 Sparse 协议下用「实例源与几何源」双轴消融，明确区分物体召回增益（来自全景前端）与关系增益（来自 PRP）。"
+  ],
+  "limits": [
+   "（作者承认）只在静态室内场景评测，动态环境留待未来。",
+   "（作者承认）依赖准确相机位姿，且约 1 秒/关键帧；实例覆盖率仍是三元组召回的上限。",
+   "（作者承认）深度式关联在 3RScan 上定位更准（0.719–0.764 m 对 1.242 m），本文优势是「无深度的鲁棒关联」而非更准的位置。",
+   "（我在正文发现）评测中 ORB-SLAM3 位姿被刚性对齐到 GT 轨迹以共享坐标系，真实部署的位姿漂移对 PGO 的影响未评估。",
+   "（我在正文发现）1.242 m 的平均位置误差对抓取、操作类任务偏大，且 PRP 用可见表面质心训练、指标用全物体质心，二者本身存在系统性偏差。",
+   "（我在正文发现）主结果依赖 EoMT 全景分割（1008 ms/帧，占 98% 时间），换更弱的分割前端时对比结论是否成立未给出。"
+  ],
+  "relation": "论文定位在 3D 场景图生成与物体级 SLAM 的交叉处。上游是 3DSSG（在完整扫描点云上用 GNN 预测关系）与 IMP、VGfM、SGFN 系列；增量式一路是 SceneGraphFusion（体素物体图加类别门控近邻匹配）、ConceptGraphs（开放词表加几何重叠与 CLIP 相似度关联，位置取深度反投影质心）、Hydra（实时层次化度量-语义网格）与 HOV-SG（开放词表层次图），以及最接近的 MonoSSG（用 ORB-SLAM3 稀疏点图去掉深度传感器）。物体级 PGO 一路包括 QuadricSLAM（椭球）、EAO-SLAM、CubeSLAM（单目 cuboid 进 BA），它们的因子都来自框、深度或已知尺寸，本文改成学习到的成对测量。前端用 EoMT 加 DINOv3，位姿来自 ORB-SLAM3，并对比 VGGT 非度量点图（需按扫描拟合尺度）。",
+  "repro": "代码与模型 checkpoint 已发布：https://mrunmaivp.github.io/IncR-3DSGG/。3RScan 与 3DSSG 需按官方流程申请；EoMT、DINOv3、ORB-SLAM3 权重与实现公开。推理单卡 RTX 3090 即可（1024 ms/帧），训练规模正文未给出。",
+  "action": "先读 §4.2 的表 2：它把「物体增益来自全景前端」与「关系增益来自 PRP」拆开了，是全文最有信息量的一张表；再读表 3 判断定位精度是否满足你的任务。核对三组数字：Pred* 28.3 对 22.1（几何源消融）、PosErr 1.242 对 0.719–0.764 m（深度基线更强）、yaw 下节点数 29→54 对 35→929（鲁棒性主张的真正来源）。风险：位姿用 GT 对齐、1.24 m 位置误差、98% 时间花在分割前端。",
+  "scores": {
+   "IMP": 4,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 4
+  },
+  "scores_why": "IMP 4：无深度的增量 3D 场景图直接对应 AR 眼镜与移动机器人的部署约束。NOV 3：特权监督加 PRP 加 PGO 的组合有新意，但每个部件（privileged learning、成对关系、物体级 PGO）都有先例。TEC 3：式(1)(4) 与多头设计完整，创新偏组合。EXP 4：两个数据集、实例与几何双轴消融、视角鲁棒性扫描、VGGT 对比，证据链较完整。PER 4：物体召回 39.5 对 28.6、Pred* 28.3 对 8.4（对基线）显著，但位置精度不如深度法。TRL 3：单卡可跑的原型，1 s/帧限制实时性。REP 4：代码与 checkpoint 已公开。"
+ },
+ {
+  "id": "2611.15437",
+  "slug": "stein-pnp-pose-uncertainty",
+  "title_zh": "SteinPnP：PnP 问题中的非参数位姿不确定性量化",
+  "venue": "arXiv preprint（cs.CV）；DLR 与苏黎世大学等合作，正文未注明会议",
+  "track": "重建与SLAM",
+  "tags": [
+   "PnP",
+   "不确定性量化 UQ",
+   "Stein 变分推断 SVI",
+   "多模态后验 multimodal posterior",
+   "SLAM 位姿融合"
+  ],
+  "conclusion": "在 1800 组共面与 600 组非共面合成场景上，SteinPnP 的 MMD²ᵤ 为 −8.95e−5，与 Dynesty 参考的 −9.91e−4 同量级，而 EPnPU 0.116、DLSU 0.0652、MLPnP 1.36 高出 1–2 个数量级；TUM 真实序列 MMD²ᵤ 6.83e−4、耗时 1.93 s，对比 EMCEE 17.4 s，实现接近采样法精度而快一个数量级。",
+  "problem": "PnP 从 N 组 2D-3D 对应估计标定相机的 6-DoF 位姿，是视觉里程计、SLAM、物体位姿跟踪的核心。工程上更关心位姿不确定性：SLAM 后端要按协方差融合视觉与 IMU 或轮速，过自信的 PnP 会让系统过度信任噪声观测。现有概率 PnP 分两类——只建模 2D 特征噪声（CEPnP、MLPnP）与同时建模 2D 与 3D 噪声（EPnP(L)U）——几乎都用高斯或一阶线性化传播（MLPnP 输出协方差，Richter-Klug 用学习校正因子），因此无法表达共面标靶、对称物体、远距离特征造成的多峰后验。EPro-PnP 用 AMIS 能表达非高斯，但其概率层主要用于端到端训练的可微损失，且 AMIS 要更新全部历史粒子权重，代价随迭代二次增长。更关键的是，这些工作把输入不确定性当作提高精度的工具，不确定性本身缺乏统计评估协议，多以定性可视化收尾。",
+  "method": "把 PnP 写成贝叶斯推断：θ=[θ_{1:3} θ_{4:6}]，后验 p(θ|D)∝p(D|θ)p(θ)（式8），log 后验为各对应负马氏距离加 log det 项之和（式9），残差协方差 Σ_{r_m}=Σ_{u_m}+J_πRΣ_{X_m}R^TJ_π^T（式5）含 2D 与 3D 噪声。用 P 个粒子做 Stein 变分牛顿：θ_i^{ℓ+1}←θ_i^ℓ+εφ^{ℓN}(θ_i^ℓ)（式10）。三要素均闭式：score 拆残差 (R) 与协方差 (C) 两路，[s_p]_a=−Σ_m(∂_a r_m)^TΣ^{-1}r_m−½Σ_m tr[(Σ^{-1}−Σ^{-1}rr^TΣ^{-1})∂_aΣ]（式11）；Hessian 用 Fisher 信息矩阵作半正定代理（式12）；核为曲率缩放 RBF，k^ℓ(θ,θ')=exp(−(1/d)‖θ−θ'‖²_{Ḡ^ℓ})，度量取集合平均 Fisher Ḡ^ℓ（式13）。MAP 取粒子阻尼牛顿上升最高者。多峰有模式坍缩与质量错配。对策为随机化 P3P 初始化（抽 3 点子集加噪）、MST 模式检测（测地旋转距离为边权，按 Zahn 准则删 w_i>10w̃ 的桥边，中心测地线上后验下降少于 5 nats 则合并）、重要性采样修正（每模式用 q_c=N(m_c,Ḡ_c^{-1}) 估 Z_c=E_q[γ/q]（式14–15），按 P_c=⌊Pπ_c⌋ 重采样后跑少量 SVN）。多数迭代视 Σ 与位姿无关（等价 IRLS），末 10 次恢复协方差路径。作者还证明噪声尺度错配 α 时残差路径无偏、协方差路径有偏（式17–18）。",
+  "experiments": [
+   "合成：共面 1800 组、非共面 600 组，每组 100 次试验；扫深度 t_z∈{10,15,20,25,30} m、平面法向与平移夹角 0–90°、σ_max∈{1…11} px，各向异性高斯噪声。",
+   "参考后验：共面用 Dynesty 2000 采样，非共面用 emcee（32 walker、300 burn-in、2000 生产步），先验证采样器自身与留出样本的误差作为性能下界。",
+   "共面结果（中位数 IQR）：SteinPnP MMD²ᵤ −8.95e−5（0.0105）、二阶矩误差 0.0143、e_R 8.17°、耗时 0.982 s；DLSU 0.0652/0.3/8.43°/295 s，EPnPU 0.116/0.576/8.45°/568 s，MLPnP 1.36/386/134°/1.1e4 s，Dynesty 34.7 s。",
+   "非共面结果：SteinPnP e_R 0.294°、e_t 0.0134 m、MMD −2.21e−3、1.3 s；各 Gaussian 方法精度接近（0.294°），但 MMD 与二阶矩误差差 1–3 个数量级。",
+   "真实 TUM RGB-D：ORB 2000 特征/图、8 层金字塔 κ=1.2、3 帧窗口加后续查询帧、至多 50 组对应；SteinPnP e_R 0.282°、e_t 5.61e−3 m、MMD 6.83e−4、1.93 s，对比 EPnPU、DLSU、MLPnP 的 MMD 0.128–0.155，EMCEE 17.4 s。",
+   "AprilTag 俯仰扫描（2 m→5 m，0–600 帧）：DLSU 因单峰设计漏掉共面模糊，SteinPnP 逐帧给出双峰 pitch 分布。",
+   "消融：去掉模式质量修正 MMD 从 −8.95e−5 升到 0.0562（耗时 0.665 s 变快但分布失真）；去掉协方差路径细化 MMD 0.186；Vanilla SVGD（250 次全梯度、步长 0.02）MMD 0.216。粒子数 100，140 次 IRLS 式更新加 10 次 MAP 再加 10 次全梯度。"
+  ],
+  "innovation": [
+   "首次把 Stein 变分牛顿（SVN）用于 PnP 的 6-DoF 位姿后验，给出 score、Fisher 代理 Hessian 与曲率缩放核的完整闭式。",
+   "识别 SVN 在 PnP 上的两个特有失效模式（模式坍缩、质量错配），并给出随机 P3P 初始化、MST 聚类、重要性采样质量修正三件套。",
+   "建立面向 PnP 不确定性的统计评估协议：以 Dynesty 与 emcee 为参考，用无偏 MMD²ᵤ 与矩误差衡量分布而非仅点估计。",
+   "给出噪声模型尺度错配下的偏差分析，导出「残差路径无偏、协方差路径有偏」并据此设计分阶段更新。"
+  ],
+  "limits": [
+   "（作者承认）运行时间仍慢于高斯类求解器，未来考虑用参数化模型表达复杂分布。",
+   "（作者承认）方法假设 2D 与 3D 噪声为零均值高斯，未建模外点；真实数据中未做鲁棒核或 RANSAC 内点筛选后的后验修正。",
+   "（我在正文发现）共面场景 e_R 中位数 8.17° 但 IQR 达 64.1°，说明相当一部分试验的点估计仍失败，价值主要在分布形状而非精度。",
+   "（我在正文发现）真实数据只覆盖 TUM 的非共面序列与单条 AprilTag 序列，多峰后验在真实场景仅有一条定性曲线，缺定量多峰评测。",
+   "（我在正文发现）未接入 SLAM 后端或滤波框架，缺少「更准的协方差是否改善融合结果」的闭环证据。",
+   "（我在正文发现）MST 的 10w̃ 阈值与 5 nats 合并准则属经验设定，正文未给出对这两个超参的敏感性分析。"
+  ],
+  "relation": "接概率 PnP 与 Stein 变分推断两条线。概率 PnP 侧：CEPnP（各向异性高斯加无约束 Sampson 误差）、MLPnP（把 2D 不确定性投到 3D bearing 切空间并给一阶协方差）、Vakhitov 等的 EPnP(L)U（同时建模 2D 与 3D 点线不确定性，式(3)(5) 沿用其推导）、Richter-Klug 与 Frese（CNN 预测像素与不确定性再融合）、EPro-PnP（可微概率层加 AMIS）。前四者受限于单峰高斯，EPro-PnP 的 AMIS 代价随迭代二次增长。Stein 侧：SVGD（Liu 与 Wang）到 SVN（Detommaso 等），再到 Stein ICP 与 SVN-ICP；本文首次把 SVI 搬到 PnP。评估侧沿用「以 MCMC 或嵌套采样为参考」的传统（emcee、Dynesty）与 Stein ICP 做法。",
+  "repro": "正文未给出代码仓库或项目页（arXiv HTML 中未见链接）。方法依赖的组件均开源：OpenCV PnP-RANSAC 作初值、Dynesty 与 emcee 作参考采样器、trust-region 最小二乘可换 Eigen 或 Ceres。全部实验在 CPU 上运行（1–2 s/实例），合成协议（深度、角度、噪声扫描与 100 次试验）描述完整可复现；真实数据用公开 TUM RGB-D 与自采 AprilTag 序列。",
+  "action": "先读 §V-A 与 §V-B（随机 P3P 与模式质量修正）和 §V-D（偏差分析），后者解释了为什么 MAP 只用残差路径，是全文最反直觉的一节。核对三处：表 I 共面 MMD −8.95e−5 对 DLSU 0.0652、e_R 的 IQR 64.1°、表 II TUM 的 MMD 6.83e−4 与 1.93 s。风险：真实多峰只有一条 AprilTag 定性曲线；未接入 SLAM 后端，协方差改善能否传导到融合精度未知；无代码，需自行实现 Fisher 与 MST 聚类。",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP 3：位姿不确定性是 SLAM 融合痛点，但只作用于 PnP 前端一层。NOV 4：首次把 SVN 引入 PnP，并针对多峰给出三件套修正。TEC 4：式(11)(12)(13) 的 score、Fisher 与核闭式，以及式(17)(18) 的偏差分析是实打实推导。EXP 4：合成 2400 组场景、TUM、AprilTag，以 Dynesty 与 emcee 为参考并做三重消融。PER 4：MMD 比 Gaussian 基线低 1–2 个数量级，比 MCMC 快约 10×。TRL 2：CPU 上 1–2 s，未集成到 SLAM 系统。REP 2：无代码链接，仅靠正文公式复现。"
+ },
+ {
+  "id": "2611.16056",
+  "slug": "biscopenet-hand-role-subaction",
+  "title_zh": "BiScopeNet：文本引导的手别对齐用于第一视角子动作识别",
+  "venue": "arXiv preprint（cs.CV）；University of Surrey 与 Newcastle University，正文未注明会议",
+  "track": "感知与认知",
+  "tags": [
+   "第一视角 egocentric",
+   "手别识别 hand role",
+   "视频语言模型 Video-LLM",
+   "数据集 BiScopeCap-100K",
+   "视觉接地 grounding"
+  ],
+  "conclusion": "在 BiScopeCap-100K（92,868 训练、9,879 测试）上，接 NVILA 的 BiScopeNet 取得 ActRec 45.5%、右手 44.9%、左手 41.2%、物体 58.9%，高于同骨干监督基线 44.0/43.0/39.1/58.0 与 Qwen3.5 监督版 41.8/42.0/40.0/54.3；接 VideoChatGPT 时 ActRec 由 14.3% 升到 30.7%、ObjRec 由 30.1% 升到 47.9%，非结构化输出由 488 降到 7。",
+  "problem": "第一视角视频里，一个高层动作（「拿起锅」）通常由两只手分工完成（右手持锅、左手扶盖），但动作识别与视频描述基本停留在 clip 级动作标签，不区分左右手角色。这个能力对 AR/VR 教学、人机协作、技能培训都直接有用。数据侧，EPIC-KITCHENS/VISOR 与 Ego4D 有大规模动作标签但无手别监督；HOI-QA 只有选定帧的稀疏手-物标注；HD-Epic 有较丰富的描述但缺显式左右手角色与结构化元数据，也没有把高层动作与双手角色写进同一条视频级描述。模型侧，Video-LLM 的投影层多为线性或 MLP，对视觉 token 一视同仁；Q-Former 与 Flamingo 的 perceiver resampler 会先把视觉 token 压成固定查询，压缩掉手-物细粒度线索。缺口即：既缺任务定义与数据，也缺在不改骨干的前提下强化手别对齐的投影与损失设计。",
+  "method": "BiScopeNet 只干预视觉编码器与 LLM 间的投影阶段，视觉与语言骨干全部冻结，只训 FocusAlign。设视频编码器输出 V∈R^{B×N_v×d_v}、LLM token embedding T∈R^{B×N_t×d_t}：先做 Video Adapter，V̂=MLP(LN(V))∈R^{B×N_v×d_t}（式1），加可学习位置编码 V'=V̂+P_v（式2）。跨模态对齐用 text-to-video 注意力：A_{t→v}=softmax(Q_V K_T^T/√d_h + M_t)（式3），Q_V=W_q V'，K_T=W_k T；O_V=A_{t→v}V_T，V_T=W_v T（式4）。融合用门控残差 Ṽ=V'+tanh(g_v)·O_V（式5），g_v 为可学习标量门，训练早期抑制对文本的过度依赖，逐步把注意力转向动作视觉线索；再接 FFN 对齐到 LLM 的 token 统计，Z_V=Ṽ+FFN(LN(Ṽ))（式6），残差保证融合结果不被覆盖。监督端是 MetaLoss：每个 token 的二值掩码 m_i 在 meta 标签跨度内为 0（式7），避免在结构化标记上浪费容量；再从 BiScopeCap 取 top-K 物体名词映射到 tokenizer id 得集合 O，权重 w_i=λ_o（t_i∈O）否则 1（式8），λ_o=3；L_meta=Σ_i m_i w_i CE(y_i,t_i)/Σ_i m_i w_i（式10）。与 RHO-LOSS、RHO-1 不同，掩码由标注结构确定性给出，无需辅助评分模型；物体加权放大可接地 token 的梯度。",
+  "experiments": [
+   "BiScopeCap-100K：92,868 训练、9,879 测试，11,371 个动作类（verb-noun）、5,338 个活跃物体；由 EPIC-KITCHENS/VISOR、Ego4D、HD-Epic 统一改写，HOI-QA 的帧级手-物框聚成视频级描述，Gemini 2.0-Flash 仅用于结构化摘要。",
+   "标注质量：人工审计 200 个随机训练 clip，约 5% 有轻微描述错误、约 8% 与 10% 分别出现左手与右手幻觉；作者认为可接受。",
+   "主结果（表 4）：NVILA 零样本 14.1/17.2/28.7/39.7 → 监督 44.0/43.0/39.1/58.0 → BiScopeNet 45.5/44.9/41.2/58.9，非结构化输出 0；VideoChatGPT 监督 14.3/13.7/17.7/30.1（488 条非结构化）→ BiScopeNet 30.7/19.4/29.6/47.9（7 条）。",
+   "评测可靠性（表 2、表 3）：GPT-5 Mini 与人工在 200 条上差不到 1 个点（ActRec 44.5 对 42.0，RH 31.0 对 30.3，LH 36.0 对 35.6，ObjRec 47.0 对 51.0）；NVILA 配置三次独立推理加打分的标准差为 ±0.2/±0.5/±0.6/±0.07。",
+   "消融（表 6，NVILA）：MLP 加 CE 为 44.0/43.0/39.1/58.0 → 加 MetaLoss 44.0/44.1/39.1/58.7 → 加 FocusAlign 45.5/44.9/41.2/58.9，两模块合计约 +1.5 ActRec。",
+   "消融（表 7，VideoChatGPT 的 Epic 子集）：Linear 加 CE 12.8/10.4/5.9/27.3 → FocusAlign 加 MetaLoss 32.5/18.4/25.8/46.4（非结构化 374→5）；FocusAlign 单独用反而把 ObjRec 降到 18.8。",
+   "效率（表 5）：FocusAlign 比 MLP 投影多 0.14B 参数（7.30 对 7.06）、多 0.27 TFLOPs（45.71 对 45.45）、显存 15.17 对 14.71 GB、时延 3.12 s 不变；训练 3×A100，NVILA 3 epoch/8 帧，VideoChatGPT 12 epoch/100 帧。"
+  ],
+  "innovation": [
+   "提出 sub-action detection 任务：在同一条描述里显式给出高层动作、左手角色、右手角色与被操作物体。",
+   "FocusAlign 用文本引导的交叉注意力加 tanh 门控残差改造投影层，不压缩视觉 token、不改骨干。",
+   "MetaLoss 用标注结构确定掩码加物体 token 加权（λ_o=3），不需要辅助模型即可实现选择性监督。",
+   "构建 BiScopeCap-100K（含结构化空间元数据）并给出经 200 条人工校验的 LLM-as-a-judge 协议。"
+  ],
+  "limits": [
+   "（作者承认）固定帧采样，难以建模长时间跨度内手别角色的演化。",
+   "（作者承认）重复、低幅度手部运动（反复上下）会造成歧义；短 clip 加大相机运动显著降低描述质量。",
+   "（作者承认）任务止于 clip 级子动作识别，不做时序动作定位，默认双手角色在裁剪片段内并发。",
+   "（我在正文发现）标注由 Gemini 2.0-Flash 生成，人工审计自报 8% 与 10% 的左右手幻觉，标签噪声直接构成评测上限，而评测也依赖 LLM judge。",
+   "（我在正文发现）在 NVILA 上相对同骨干监督基线只提升 1.5/1.9/2.1/0.9 个点，主要增益来自数据集微调（ActRec 从 14.1 到 44.0）而非模块本身。",
+   "（我在正文发现）表 8 中 HD-Epic 子集上未训练的 BiScopeNet 版 ObjRec 24.0 反低于零样本 NVILA 的 34.5，跨子集结论并不一致。"
+  ],
+  "relation": "工作位于第一视角动作理解与 Video-LLM 对齐的交点。数据侧承接 EPIC-KITCHENS、EPIC-VISOR（厨房动作）、Ego4D、HD-Epic 与 HOI-QA（帧级手-物框），它们都不足以支撑「高层动作加双手角色」的监督。模型侧对照 VideoChatGPT、NVILA、Qwen2.5-VL/3.5、InternVL、SmolVLM，并把投影层与 BLIP-2 的 Q-Former、Flamingo 的 resampler、线性/MLP 投影对比，指出压缩式设计丢细粒度线索。损失侧与 RHO-LOSS、RHO-1 区分：那两者依赖辅助模型或自适应打分，本文用标注结构做确定性掩码。方法学上承接 EgoVideo、Exo2EgoDVC、M-ACM 等第一视角描述工作，用 LLM judge 替代 CIDEr、METEOR（呼应 VideoAutoArena、ARGUS）。",
+  "repro": "项目页 https://andrewjohngilbert.github.io/BiScopeNet/；作者称将发布派生标注与整理脚本，原始视频仍受 EPIC-KITCHENS、Ego4D、HD-Epic 各自许可约束，需自行申请。骨干 NVILA、VideoChatGPT、CLIP、DINOv3、SigLIP2 均公开；训练 3×A100。评测依赖 GPT-5 Mini，复现需相应 API 访问。",
+  "action": "先读 §4.4 的表 6 与表 7：表 7 里 FocusAlign 单独用会把 ObjRec 从 27.3 降到 18.8，说明两个模块强耦合，卖点是组合而非单点。再核表 4 的增益幅度（NVILA 上 +1.5 ActRec）与表 2 的 LLM judge 偏差（ObjRec 47.0 对人工 51.0，差 4 点）。风险：8–10% 手别标注幻觉、跨子集结论不一致（HD-Epic 上不如零样本 NVILA）、数据生成与评测都依赖闭源模型。",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 2,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP 3：手别理解对 AR/VR 教学与协作有价值，但属细分任务。NOV 3：任务定义与数据集是主要新意，FocusAlign 与 MetaLoss 均为已知组件组合。TEC 2：式(1)–(10) 是标准注意力、门控与加权交叉熵，无新推导，骨干全冻结。EXP 3：两个骨干、三个子集、多组消融、200 条人工校验较规范，但核心指标是 LLM judge，NVILA 增益仅 1.5 点。PER 3：VideoChatGPT 上 ActRec 从 14.3 升到 30.7，但 NVILA 接近饱和。TRL 2：原型，未做真机演示。REP 3：数据脚本承诺发布、代码未见链接、评测依赖闭源 API。"
+ },
+ {
+  "id": "2611.15526",
+  "slug": "scr-mamba-3d-pose",
+  "title_zh": "SCR-Mamba：骨架条件 Mamba 与跨尺度增量细化用于高效三维人体姿态估计",
+  "venue": "arXiv preprint（cs.CV）；采用 Elsevier 期刊模板排版，正文未注明具体期刊",
+  "track": "化身与人体",
+  "tags": [
+   "3D 人体姿态估计 3D HPE",
+   "Mamba 状态空间模型 SSM",
+   "骨架先验 skeleton prior",
+   "多尺度时序 multi-scale",
+   "计算效率 efficiency"
+  ],
+  "conclusion": "在 Human3.6M（SH 2D、243 帧）上 SCR-Mamba-L 达 36.8 mm P1 与 31.1 mm P2，参数量 7.72 M、MACs 15.10 G（62.17 M/帧），比同精度的 StructMamPose-L（36.7 mm、31.1 M、112.7 G）少约 3/4 参数与 6/7 计算；SCR-Mamba-X 达 36.6/30.9 mm。MPI-INF-3DHP 上 PCK 99.3%、AUC 88.1%、MPJPE 14.2 mm。",
+  "problem": "视频 3D 人体姿态估计主流是 2D-to-3D lifting，单目缺深度使其病态。Transformer 类（MixSTE、KTPFormer、STCFormer）时空注意力随长度二次增长，前两者每帧超 300 M MACs。Mamba 用选择性状态更新把复杂度降到线性，后续工作把结构塞进状态：SAMA 融合骨架拓扑与隐状态、按运动调 timescale；StructMamPose 用 identity anchoring 控制写入与读取。但它们只把结构用于特征融合或部分参数，步长 Δ、写入 B、读取 C 从未被同一份骨架上下文联合调节。另一侧是时序压缩：PoseMamba 与 SAMA 在全时序分辨率堆块、开销大；HoT 与 H²OT 剪冗余 token 再恢复，但全长输出主要来自保留 token；层级网络 skip connection 把粗尺度特征加回，重复叠加细尺度信息。",
+  "method": "输入 X∈R^{T×J×3}（2D 坐标+置信度），输出 Ŷ∈R^{T×J×3}。四阶段：F₀ 全分辨率提逐帧特征，两级内容自适应聚合 D₀、D₁ 把时序压到 T/3、T/9，F₁、F₂ 在短序列建模运动，F₃ 回全长输出，243 帧对应 243→81→27→243。每块做 SCSM：N_s=LN_s(V)、N_t=LN_t(V)，在 N_s 上沿骨骼连接与左右对称两邻域聚合结构消息，m_j=Σ_{ρ∈{b,s}} α_ρ Σ_{k∈N_ρ(j)}[φ_r(n_k−n_j)+φ_n(n_k)]（式2），k_j=φ_o(GELU(m_j))，α_ρ 为可学习系数，相对项刻画与相邻部位差异、邻居项补充其状态，得共享骨架上下文 K。关键是用 K 只调节选择性参数而不进扫描内容：(Δ_a,B_a,C_a)=Φ_a(N_a+K)，a∈{s,t}（式3），内容与门由 N_a 生成；两支写作 S=S(N_s; N_s+K)、M=T(N_t; N_t+K)（式4），空间支扫每帧关节序列、时间支扫跨帧轨迹，均为双向 SSM。融合为 V̄=V+SW_s^T+MW_t^T、V_out=V̄+MLP(LN_f(V̄))（式5）。CSIR：细尺度特征 Z、聚合 A=D_c Z、粗尺度输出 G，则 δ=G−D_c Z、Z⁺=Z+P_c δ（式6），只把粗尺度增量传回细尺度；聚合与传输共享同一内容上下文 c，使粗尺度构造与细尺度更新一致；P_c 另做一致传输：同组三帧共享权重 w，把残差 e=δ−D_c u 一致加上，使两级再聚合残差从 1e−3 降到 1e−8。",
+  "experiments": [
+   "Human3.6M：S1/S5/S6/S7/S8 训练、S9/S11 测试，243 帧、17 关节，SH 2D 输入；另报 GT 2D 的 P1^GT。MPI-INF-3DHP：81 帧 GT 2D，TS1–TS6，PCK 用前 14 关节、阈值 150 mm，AUC 取 0–150 mm 共 31 个阈值。",
+   "四个规模（表 1）：S 1.09 M/2.21 G、B 3.87 M/11.11 G、L 7.72 M/15.10 G、X 16.62 M/32.05 G；L 训 40 epoch、AdamW、batch 4、lr 5e−4、wd 0.01、EMA 0.9998。",
+   "主对比（表 2）：L 为 36.8/31.1 mm，对比 SAMA-L 36.9/31.3（17.3 M、53.2 G）、StructMamPose-L 36.7/31.1（31.1 M、112.7 G）、SCT 37.7/31.7、FreePose-L 37.8/32.2、PoseMamba-L 38.1/32.5；X 为 36.6/30.9。",
+   "统一计数（表 5）：相对 PoseMamba-X，L 参数 −76.8%、MACs −90.3% 且 P1 更低（36.8 对 37.1）；相对同规模 PoseMamba-S/B/L 分别减少 25.9%、18.4%、18.3% 参数。",
+   "速度（表 6，RTX 4090）：L 单条 12.2 ms（batch 1）与 5.3 ms（batch 32），比 PoseMamba-L 的 28.6/27.5 ms 快约 2.3× 与 5.2×，比 MotionBERT 的 17.3/15.7 ms 快 1.4× 与 3.0×。",
+   "消融（表 7）：A0 全长无模块 39.7 mm/37.86 G → A1 加 SCSM 37.4/39.98 → A2 加 CSIR 37.8/14.30 → A3 两者 36.8/15.10，即计算降 62.2% 同时 P1 再降 0.6 mm；额外聚合与插值参数仅 512 个。",
+   "其他消融：骨架上下文只给空间支 −0.6 mm、只给时间支 −0.1 mm、两支都给 −1.0 mm（超过两者之和，说明互补）；去掉对称关系 P1 升到 37.6；联合条件化 Δ/B/C 比把 K 直接加到特征低 0.5 mm；增量融合 Z+P_c(G−D_cZ) 比 P_cG 与 Z+P_cG 分别低 0.9/1.2 mm，MPJVE 由 1.70/1.68 降到 1.66。"
+  ],
+  "innovation": [
+   "用同一份骨架上下文（骨骼连接加左右对称）联合调节空间与时间两支的 Δ、B、C，而不仅调特征或隐状态。",
+   "CSIR 只传递粗尺度建模产生的增量，避免「从粗尺度恢复」与「整体叠加」两种做法的信息重复与细节丢失。",
+   "一致传输让内容自适应聚合与插值权重自洽，把两级再聚合残差压到 1e−8。",
+   "在 4 个规模上给出精度与算力的 Pareto，并用统一计数规则重算 PoseMamba 等方法的 MACs，避免跨论文口径不可比。"
+  ],
+  "limits": [
+   "（作者承认）性能仍依赖 2D 检测质量，未来要引入人体运动学先验提升对噪声与遮挡的鲁棒性。",
+   "（作者承认）代码与预训练模型「接收后公开」，当前不可得；未来扩展到在线与多人场景。",
+   "（我在正文发现）SOTA 主张主要靠 X 配置的 36.6 mm，相对 StructMamPose-L 的 36.7 mm 仅 0.1 mm，属噪声量级；L 配置 36.8 反而略高。",
+   "（我在正文发现）in-the-wild 只做定性 demo，没有 3DPW 等野外数据集的定量结果，泛化主张证据不足。",
+   "（我在正文发现）MPI-INF-3DHP 上 MPJPE 14.2 mm 略逊 StructMamPose 的 14.1 mm，AUC 88.1% 也低于 SAMA 的 88.3%，「全面 SOTA」只在 PCK 上成立。",
+   "（我在正文发现）训练仅用 Human3.6M 单数据集、40 epoch，未报多数据集联合训练或跨数据集迁移结果。"
+  ],
+  "relation": "论文位于「结构感知时空建模」与「状态空间模型」交汇点。前者有 PoseFormer（首个时空 Transformer）、MixSTE 与 STCFormer（交替/并行时空注意力）、MotionAGFormer（注意力加图卷积）、SemGCN 与 GraFormer（骨架拓扑）、KTPFormer（运动学与轨迹先验进注意力）。后者从 S4 到 Mamba、Vision Mamba 与 VMamba，再到 PoseMamba（双向扫描）、HGMamba，以及最接近的 SAMA（空间支融合拓扑与隐状态、时序支按运动调 timescale）与 StructMamPose（identity anchoring 控制写入读取）。时序压缩一支对照 HoT、H²OT、Strided Transformer、P-STMO，并以多重网格法（Brandt 1977）的粗网格校正作为 CSIR 的思想来源。",
+  "repro": "正文 Data availability 明确写「代码与预训练模型将在接收后公开」，目前无仓库链接。数据集 Human3.6M 与 MPI-INF-3DHP 需申请或公开可得；2D 检测用 Stacked Hourglass 与 CPN。推理在单张 RTX 4090 上 12.2 ms/序列，硬件门槛低；训练卡数与总时长正文未给出。",
+  "action": "先读 §3.4 的式(6) 与一致传输段落，这是与 HoT、H²OT 及 skip connection 拉开差距的地方；再读表 7 与表 10 验证「62.2% 算力下降」和「增量融合低 1.2 mm」是否同设置。核对三处：表 2 的 36.8 对 StructMamPose 36.7（差 0.1 mm）、表 5 的统一计数口径（作者自算，与原论文数字不同）、表 4 的 14.2 对 14.1 mm。风险：代码未公开、无 3DPW 定量、SOTA 主张依赖 X 配置。",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 2
+  },
+  "scores_why": "IMP 3：视频 3D HPE 的算力与精度权衡有实用价值（12.2 ms/序列），但任务成熟、非卡脖子。NOV 3：SCSM 的联合条件化与 CSIR 的增量传递都有对照实验支撑，属组合式增量。TEC 3：式(2)(3)(6) 干净，一致传输有巧思，但整体是现有 SSM 与多尺度框架的改造。EXP 4：H3.6M 与 3DHP、4 个规模、7 张消融表、统一 MACs 计数与速度实测，实验密度高。PER 3：精度提升仅 0.1–1.1 mm，真正优势在算力（降 62.2% 至 90.3%）。TRL 3：单卡实时推理，工程可用但未开源。REP 2：代码「接收后公开」，当前不可复现。"
+ },
+ {
+  "id": "2607.14203",
+  "slug": "instant-nurec-driving-3dgs",
+  "title_zh": "Instant NuRec：面向驾驶场景仿真的前馈三维高斯重建",
+  "venue": "arXiv preprint（cs.GR，cross-list cs.CV 与 cs.AI）；NVIDIA，v2 再公告",
+  "track": "世界模型与仿真",
+  "tags": [
+   "3D Gaussian Splatting",
+   "前馈重建 feed-forward",
+   "闭环仿真 closed-loop simulation",
+   "自动驾驶 autonomous driving",
+   "3DGUT"
+  ],
+  "conclusion": "Instant NuRec 单次前向把 10–20 s 多相机驾驶日志重建为分层 3DGS 世界，约 1.5 s 完成，而逐场景优化的 NuRec 约需 75 min（超过 3 个数量级加速）；Waymo 验证集全图 PSNR 28.26、SSIM 0.859，比最强基线 DGGT 的 26.25 高 2.01 dB，动态区 24.93 对 21.76；140 个场景闭环 rollout 中五种策略排序与 NuRec 完全一致。",
+  "problem": "闭环仿真是自动驾驶开发与验证的核心工具，要求同时成立三件事：照片级渲染、场景显式分解为静态背景与动态体、能自由重摆自车位姿并重定时序以评估反事实。3DGS 让渲染变便宜，OmniRe 一类逐场景优化已能忠实复现真实日志，但每段 clip 要数十分钟到数小时优化、需精调超参，还依赖 LiDAR、语义掩码、cuboid 轨迹等辅助输入，无法承载车队每天百万级 clip。驾驶世界模型（latent diffusion、video-GPT）能生成逼真视频，但只输出 2D 像素，planner 不能重摆位，也不给出可仿真状态。前馈重建（STORM、DrivingForward、DepthSplat、DGGT）解决速度，但输出是裸 RGB 高斯，不含静态/动态分层、语义与 ISP 校正，不能直接喂给仿真器。缺口即：能否一次前向产出与逐场景优化同格式、可被 NuRec/AlpaSim 消费的分层世界。",
+  "method": "输入 V×T 张 RGB（2–4 Hz）加每张 6-DoF 位姿 T_{v,t}∈SE(3)、内参 κ_{v,t}。输出四件：静态层 G^s（高斯属性加世界法向 n 与 road/non-road 语义）；动态层 G^d（位置改为 3 节点分段线性轨迹，不透明度按 exp(−x^10) 淡入淡出）；天空 cubemap I^sky；每相机 ISP 仿射 {A_v}。编码器用 Depth-Anything-3 的交替注意力 ViT，输出 latent F。解码挂轻量头：DPT 头出深度、法向、语义；3DGS 头从深度抬升 query 点 Q，与 F 交叉注意力后回归高斯参数；运动头复用 Q，以 AdaLN 按 t_tgt 条件化回归两个 3D 位移。query 分 Dense 与 Selective（步长 s、p×p 聚 token）：s=2、p=8 时单视图约 88 K 高斯，比 Dense 的 351 K 少 4×。长 clip 用重叠 chunk：按 α<1e−2 剪枝并转世界系后做视锥归属剪枝——高斯 g 在 chunk i 到最近光心距离 D_gi，仅当 D_gi ≤ min_j D_gj + δ（式1）保留。损失 L=L_context+L_motion+L_render（式2）：context 监督深度、法向、语义；motion 为前后向 3D flow；render 在留出视角算 L1+LPIPS。三阶段课程：Stage 1 复现 DA3 预训练；Stage 2 开天空、深度、运动头微调编码器；Stage 3 冻结编码器只训 ISP 与 GS 头。",
+  "experiments": [
+   "Waymo Open Dataset 验证集，沿用 STORM 协议：每样本 2 s 窗口、20 帧 @10 Hz，输入 4 帧 context（间隔 0.5 s），指标在 240×160 上计算；基线 DepthSplat、STORM、Depth-Anything-3、DGGT 均用发布 checkpoint 不再微调（DGGT 不取位姿，先做轨迹对齐）。",
+   "表 1 全图：Ours 28.26/0.859，DGGT 26.25/0.805，DepthSplat 22.48/0.645，STORM 21.88/0.752，DA3 20.30/0.557；深度 AbsRel 0.076、δ₁ 0.937（STORM 0.123/0.870，DGGT 0.135/0.841）。",
+   "表 1 动态区：Ours 24.93/0.793，DGGT 21.76/0.652，STORM 19.89/0.556，DepthSplat 18.59/0.391；动态区 AbsRel 0.085、δ₁ 0.922。",
+   "内部数据（约 40K clips，最多 5 相机、300–600 帧 @30 Hz）：Selective 把高斯预算从约 351 K/视图降到约 120 K（18 帧场景 6.3 M 降到 2.2 M，约 3×），图像与深度仅轻微下降；Dense 与 Selective 均约 1.5 s 重建，对比 NuRec 约 75 min。",
+   "闭环仿真：140 个场景、每场景 20 s、每 500 ms 重规划、6 次独立试验，5 种策略（VaVAM、Alpamayo R1、Alpamayo 1.5 的 1/2/4 相机版），指标取 Collision（前、侧、后）与 Offroad 的平均；Instant NuRec 下的策略排序与 NuRec 完全一致。",
+   "消融（表 2，内部验证集）：完整模型 29.93/0.793/0.069/0.950；单阶段训练 27.65/0.751/0.077/0.955；天空改用 MLP 26.73/0.692；去 LPIPS 26.81/0.705；去深度损失 28.92/0.782 但 AbsRel 0.103、δ₁ 0.862；去视锥归属合并 26.10/0.648/0.098/0.891。",
+   "训练：PyTorch 加 3DGUT 可微渲染，DDP 跨节点、每卡有效 batch 1–2 clip，V∈{1,3,5}、T∈{8,12,18}，余弦退火加线性 warmup 至 1e−4，三阶段共约 6 天、8 节点。"
+  ],
+  "innovation": [
+   "单次前向直接产出仿真可用的分层世界（静态、动态、天空、ISP），而不只是裸 RGB 高斯，格式与 NuRec、AlpaSim 对齐。",
+   "把高斯与像素解耦，用深度抬升的 query 点加 Selective 聚类把高斯预算降约 4×，质量基本保持。",
+   "运动头直接回归分段线性轨迹，重建时无需逐 actor 的 cuboid 轨迹输入。",
+   "视锥归属的 chunk 合并策略按「谁看得最近」决定高斯归属，显著抑制长序列的 floater。",
+   "几何监督与渲染监督解耦的三阶段课程，使 40K clip 规模训练稳定可行，并用闭环策略排序验证仿真可用性。"
+  ],
+  "limits": [
+   "（作者承认）高斯数量与质量存在固有张力：追平逐场景优化需要很多基元，预算小则细结构欠采样；测试时训练微调是可能的补法。",
+   "（作者承认）泛化受训练语料限制，低安装位或纯鱼眼等与训练差异大的 rig 需微调。",
+   "（作者承认）三段关键帧的分段线性轨迹无法表达亚秒级非刚性运动（如行人关节运动），需更密关键帧。",
+   "（我在正文发现）训练依赖 NVIDIA 内部约 40K clips 与内部 cuboid 自动标注器，外部无法复现训练；Waymo 评测仅 240×160、4 帧 context，分辨率与视角数偏低。",
+   "（我在正文发现）「策略排序完全一致」只说明相对排序，正文未给碰撞率与越界率的绝对数值及置信区间，无法判断差距是否在噪声内。",
+   "（我在正文发现）1.5 s 重建的硬件型号与批设置未在实验节标明（只说训练用 8 节点），跨平台速度不可直接比较。"
+  ],
+  "relation": "论文站在三条线交汇处。逐场景神经重建：NeRF 与 3DGS 的城市级扩展、Neural Scene Graphs 的「静态背景加刚性前景」分解、显式高斯化的 Street Gaussians 系列，以及 OmniRe（分解扩展到非刚性行人与骑行者）；渲染器侧是 3DGRT 与 3DGUT（原生支持畸变相机与 secondary rays），本文用 3DGUT。前馈重建：单物体 LRM 系列到场景级可泛化高斯，以及面向动态驾驶的 STORM 与 DrivingForward；还有把高斯与像素解耦的 TokenGS。生成式世界模型：latent diffusion 街景生成、长时程自回归与 video-GPT、跨具身世界基础模型，以及「重建器加生成器」联合方案。本文定位在重建侧，作为生成式修复与联合模型的快速 3D 主干；工业侧继承 NuRec 与 AlpaSim 的输出格式与仿真栈。",
+  "repro": "代码公开：https://github.com/nvidia/instant-nurec，文档 https://docs.nvidia.com/nurec/index.html；输出可导出 USDZ 并被 NuRec 与 AlpaSim 消费。训练语料为 NVIDIA 内部约 40K clips，不公开；依赖内部 cuboid 自动标注器与语义分割模型。Waymo Open Dataset 公开，可用其验证集复现表 1；3DGUT 渲染器公开。",
+  "action": "先读 §5.1 表 1 与 §5.2 的闭环实验，这两块决定方法能否接进你的仿真链；再读 §3.4 的式(1) 视锥归属剪枝，它是长序列质量的关键。核对：2.01 dB 的对比口径（240×160、4 帧 context、DGGT 做了轨迹对齐）、表 2 消融的 29.93 出自内部数据不可与 Waymo 的 28.26 直接比、1.5 s 的硬件未标明。风险：训练数据不可得、依赖 NVIDIA NuRec 与 AlpaSim 生态、动态轨迹只有 3 个关键帧。",
+  "scores": {
+   "IMP": 5,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP 5：把逐场景重建从小时级压到秒级，决定车队数据能否进仿真，是明确产业卡点。NOV 4：分层输出、query 解耦、视锥归属合并均有针对性设计，但多为已知技术重组。TEC 4：式(1)(2) 与三阶段课程设计完整，工程量大。EXP 4：公开基准、40K 内部语料、140 场景闭环、六组消融，缺绝对碰撞率与硬件口径。PER 5：PSNR 高 2.01 dB、动态区高 3.17 dB、重建快 10³–10⁴ 倍，闭环策略排序一致。TRL 4：已集成 NuRec 与 AlpaSim 并开源，接近可部署，但依赖内部数据与自家栈。REP 3：代码与文档公开，训练数据与标注器不公开，训练不可复现。"
+ }
+]

@@ -1,0 +1,50 @@
+{
+ "2605.21714": {
+  "ver": "2605.21714v2",
+  "pub": "2026-05-20",
+  "upd": "2026-11-11",
+  "t": "AVI-HT: Adaptive Vision-IMU Fusion for 3D Gloved Hand Tracking"
+ },
+ "2512.10095": {
+  "ver": "2512.10095v2",
+  "pub": "2025-12-10",
+  "upd": "2026-11-11",
+  "t": "ReflFlow: Learning Geometry-Guided Ray Tracing for Dynamic Specular Re"
+ },
+ "2508.16731": {
+  "ver": "2508.16731v3",
+  "pub": "2025-08-22",
+  "upd": "2026-11-11",
+  "t": "COSMO-Bench: A Benchmark for Collaborative SLAM Optimization"
+ },
+ "2510.03857": {
+  "ver": "2510.03857v2",
+  "pub": "2025-10-04",
+  "upd": "2026-11-11",
+  "t": "Optimized Minimal 4D Gaussian Splatting for Efficient Dynamic Scene Re"
+ },
+ "2607.05243": {
+  "ver": "2607.05243v2",
+  "pub": "2026-07-06",
+  "upd": "2026-11-11",
+  "t": "GUSH3R: Everyone Everywhere All at Once as Gaussians"
+ },
+ "2603.01178": {
+  "ver": "2603.01178v2",
+  "pub": "2026-03-01",
+  "upd": "2026-11-11",
+  "t": "riMESA: Consensus ADMM for Real-World Collaborative SLAM"
+ },
+ "2607.14203": {
+  "ver": "2607.14203v2",
+  "pub": "2026-07-15",
+  "upd": "2026-11-11",
+  "t": "Instant NuRec: Feed-Forward 3D Gaussian Reconstruction for Driving Sce"
+ },
+ "2603.09741": {
+  "ver": "2603.09741v3",
+  "pub": "2026-03-10",
+  "upd": "2026-11-12",
+  "t": "ENIGMA-360: An Ego-Exo Dataset for Human Behavior Understanding in Ind"
+ }
+}

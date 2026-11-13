@@ -1,0 +1,373 @@
+[
+  {
+    "id": "2611.14895",
+    "slug": "headio-body-frame-heading-decomposition",
+    "title_zh": "HeadIO：面向头戴设备的体坐标系航向分解神经惯性里程计",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "重建与SLAM",
+    "tags": [
+      "惯性里程计 Inertial Odometry",
+      "头部追踪 Head Tracking",
+      "航向等变性 Heading Equivariance",
+      "双向 Mamba Bidirectional Mamba",
+      "体坐标系 Body Frame"
+    ],
+    "conclusion": "在最大的头戴基准 Nymeria 上，HeadIO 把主指标 RTE-5s 由 EqNIO 的 0.260 m 降到 0.239 m（−8.1%）、ATE 由 3.577 m 降到 3.258 m（−8.9%），模型仅 0.97M 参数与 444 MFLOPs，比 EqNIO 少 7.8× 参数、2.8× 计算；纯 IMU 姿态下仍以 0.275 m 领先 7.4%，每 30 s 一次外部偏航修正可再提升 12.0%。",
+    "problem": "只用 IMU 的无相机头部追踪需在无视觉锚点时抑制积分漂移，现有做法有三处缺口。其一，主流神经 IO（RIDI、RoNIN、TLIO）把 IMU 旋转到重力对齐世界系，该约定源自手持手机的非刚性佩戴，但对刚性头戴 IMU 会丢弃隐含重力信号 R_t^T g，并使位移目标依赖航向。其二，yaw 增广（TLIO）只提升鲁棒性而不保证等变；EqNIO 用 Vector Neuron 学 O(2) 规范帧虽实现等变，却保留重力对齐前提，FLOPs 约为本文 3×。其三，原始体坐标系输入（AirIO）天然 yaw 不变，但头部俯仰/侧倾会把重力与运动信号重分配到设备三轴，同一动作在不同头姿下特征不同；人可朝任意方向看却向任意方向走，航向对头戴 IMU 是真正不可观测的 nuisance 变量，与无人机「倾斜与航向机械耦合」本质不同。",
+    "method": "（III-A）IMU 刚固于头戴设备：a_t^B = R_t^T v̇_t^W + R_t^T g + b_a + n_a、ω_t^B = ω_t^true + b_g + n_g（式 1–2），R_t∈SO(3) 由设备滤波器给出。分解三步：①取 e_g = R_t^T ĝ，得 a_g = a_t^B·e_g 与 a_h = a_t^B − a_g e_g，陀螺同理得 ω_g、ω_h（式 3）；②把前向轴 f_b（视线）投影到 e_g 垂面，e_h1 = normalize(f_b − (f_b·e_g)e_g)、e_h2 = e_g × e_h1（式 4）；③投影得 6 维 x_t = [a_g, a_h·e_h1, a_h·e_h2, ω_g, ω_h·e_h1, ω_h·e_h2]。因 e_g = R_tilt^T ĝ，基只依赖 tilt；六标量等价于世界系比力与角速度在重力轴与水平视线的投影，yaw 从不参与变换，故同一动作同一视线在任意头姿下特征相同。近垂直视线用 fallback 轴。\n\n（III-B/C）T=600（200 Hz、3 s）窗预测最后 1 s 位移；6 维标量经 kernel 7/stride 2 嵌入为 300 token×128 通道，接 3 个 pre-norm 残差双向 Mamba block（state 16、expansion 2，前向与时间反序相加），池化到 8 个时间位置后两 MLP 头输出位移均值与对角 log 标准差，共 0.97M 参数。推理用预计算基重建 d̂^B 再旋转 d̂^W = R_t d̂^B，基与姿态取窗口末样本——航向只在最后一步进入。训练前 10 epoch 用位移 MSE，其后改用对角高斯 NLL 联合训练不确定度头（Adam 1e-4、batch 256、50 epoch、单卡 A40）。",
+    "experiments": [
+      "四个头戴数据集：Nymeria（1200 序列、264 人、50 处场景、300+ 小时，tilt SD 14.54°，80/10/10 划分）、AEA（143 序列、7.3 小时，tilt SD 11.20°）、TLIO（约 60 小时、Bosch BMI055，tilt SD 12.93°）、LaMAria（10 条带伪真值 egocentric 序列，tilt SD 27.71°）；前三者原生提供 CPF 体坐标系语义。",
+      "Nymeria 主结果：RTE-5s 0.239 m（EqNIO 0.260、TLIO 0.278）、ATE 3.258 m（3.577/4.093）、RTE-1s 0.086 m（0.093/0.101）、Drift 1.79%（1.96/2.17），四指标全部最优。",
+      "跨数据集迁移（Nymeria 训练、不微调）：AEA 上 RTE-5s 0.213 vs 0.220（−3.2%）、RTE-1s 0.077 vs 0.081（−4.9%），但 ATE 0.819 落后 EqNIO 0.797（+2.7%）、Drift 5.81% 落后 5.14%；作者称 ATE 差距源自少数末端漂移大的序列，中位序列反低 3.3%（0.550 vs 0.569）。",
+      "LaMAria（最长 30 分钟城市序列）RTE-5s 0.761 vs 0.804、ATE† 3.810 vs 4.129、Drift 3.75% vs 4.73%；TLIO 数据集上 EqNIO 全指标最好（HeadIO RTE-5s 0.401 劣于 0.348），但相对 TLIO 自身 ATE 2.317 vs 2.499（−7.3%）、Drift 2.79% vs 3.12%（−10.6%）仍更优。",
+      "表示×骨干消融（Nymeria，n=110，3 s 窗）：Mamba+本文分解 ATE 3.258，较 raw body-frame（AirIO）3.923 降 17%、较 world-frame 5.159 降 37%；ResNet 上 3.448 优于 world-frame 4.093（−16%）与完整 EqNIO 3.577；同一 Mamba 在世界系下 ATE 5.159，反不如 ResNet 的 4.093。",
+      "计算成本：HeadIO 0.97M 参数/444 MFLOPs，TLIO 7.00M/220 MFLOPs，EqNIO 7.59M/1227 MFLOPs（3 s 窗下 TLIO 由 5.4M 涨至 7.0M、EqNIO 由 6.0M 涨至 7.6M），故参数少 7.2×/7.8×、比 EqNIO 少 2.8× 算力、比纯 ResNet 多 2× 算力。",
+      "姿态源与修正（n=110）：Mahony（tilt 0.35°/yaw 4.21°）、Madgwick（0.93/4.10）、VQF（0.99/4.10）、纯陀螺积分（5.52/4.17）四种 IMU-only 估计器 yaw 几乎相同而 tilt 差 15×；HeadIO 的 RTE-5s 随 tilt 由 0.275 升到 0.296–0.299 再到 0.436（1.6×），TLIO 退化 2.2×、EqNIO 3.3×（gyro 下 EqNIO ATE 3.577→57.389）；单系数校正使 yaw 4.21°→3.72°（−11.6%）、RTE-5s +2.5%，每 30 s 一次 yaw fix 使 0.275→0.242（+12.0%，与完美 yaw 的 0.242 持平）；窗长 3 s 比 1 s 提升 21%（0.304→0.239），5 s 无进一步收益（0.244）且算力 1.7×。"
+    ],
+    "innovation": [
+      "提出解析式体坐标系航向分解：只用姿态的 tilt 分量构造 {e_g, e_h1, e_h2} 基，把 6 轴 IMU 压成 6 个标量，同时获得 tilt 不变性与 heading 等变性，无需学习式等变层。",
+      "厘清「头戴 IMU 航向不可观测」与无人机体坐标系方法的适用边界：人眼视线与运动方向解耦，必须解析地把 heading 因子化出去，而非像 AirIO/DIDO 依赖 tilt–速度耦合。",
+      "证明该预处理可与任意骨干组合：在 ResNet 与双向 Mamba 上均带来一致增益，并首次系统报告「输入表示 × 骨干容量」的交互（Mamba 在世界系下反劣于 ResNet）。",
+      "给出方向误差的定量传播规律：定位精度只取决于 tilt 误差（可由重力信号界定），系统性 yaw 误差源自陀螺仪 scale-factor，可用单一系数拟合并以极稀疏外部修正接近完美 yaw。"
+    ],
+    "limits": [
+      "（作者承认）TLIO 数据集不定义原生体坐标系语义，前向轴需由重力与行走统计估计，故该数据集上 HeadIO 反劣于 EqNIO（RTE-5s 0.401 vs 0.348）。",
+      "（作者承认）方法假设 IMU 刚性固定，非刚性佩戴（如耳机）与间歇视觉惯性锚定仅列为未来工作，未做验证。",
+      "（我在正文发现）AEA 上 ATE 与 Drift 均落后 EqNIO（0.819 vs 0.797；5.81% vs 5.14%），说明「全指标最优」只在 Nymeria 成立。",
+      "（我在正文发现）实验使用真值或离线滤波器姿态，未在真实头戴设备上报告端到端延迟、功耗与在线漂移，实时性仅有 FLOPs 论证。",
+      "（我在正文发现）未做统计显著性检验，8.1% 与 3.2% 这类小幅差距的可靠性无从判断（n=110 序列仅报均值）。",
+      "（我在正文发现）正文未给代码或权重链接，且分解依赖每帧姿态输入，快速甩头导致 tilt 突变时的失效模式未分析。"
+    ],
+    "relation": "本文属神经惯性里程计的表示层改进而非新任务。它对标三类前作：RIDI（Yan 2018）、RoNIN（Herath 2020，HACF 与 yaw 增广）、TLIO（Liu 2020）的世界系路线；RIO（Cao 2022，旋转等变自监督）与 EqNIO（Jayanth 2025，Vector Neuron 学 O(2) 规范帧）的等变路线；DIDO（Zhang 2022）、Cioffi 2023、DIVE（Bajwa 2024）、AirIO（Qiu 2025，体坐标系使无人机 ATE 改善 66.7%）的体坐标系路线。相对 EqNIO 它用解析基替换学习式等变层，Nymeria 小幅超越（8.1%）但参数少 7.8×；相对 AirIO 它补上头戴场景 tilt 变异这一漏洞（Mamba 上 ATE 3.923→3.258）。骨干上把 Mamba（Gu & Dao 2024）引入 IO，与 CTIN、iMoT 并列。",
+    "repro": "正文未给出代码、权重或工程配置链接，也未声明开源计划；训练数据全为公开数据集（Nymeria、AEA、TLIO、LaMAria），指标沿用 TLIO 与 AirIO 的公开协议，硬件为单卡 A40。可复现性受限于：分解需每帧设备姿态（可用 Mahony/Madgwick/VQF 复现），TLIO 数据集前向轴需按文中经验方式重建；训练细节已给出但无随机种子与多次运行方差。许可与依赖未提及。",
+    "action": "先读 III-A（三步分解与不变性论证）与 V-B（表示×骨干消融），再核 VI-A 姿态源表，确认 0.436 m 与 1.6× 退化是否与你的滤波器 tilt 误差同量级。重点核 RTE-5s 0.239/0.260、ATE 3.258/3.577、参数 0.97M 对 7.59M、Mamba 世界系 5.159 这一反常结果。风险：AEA 上 ATE/Drift 反超、TLIO 数据集落后、无显著性检验。落地需自补非刚性佩戴分析与目标 SoC 实测功耗。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 3,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=4：无相机头追踪是 AR 眼镜/耳机刚需，航向不可观测是该场景公认难点，但非全领域唯一卡点。NOV=4：用解析基同时取得 tilt 不变与 heading 等变，替代 EqNIO 的学习式等变层；骨干与训练沿用 TLIO 协议。TEC=4：式 1–4 完整、有不变性论证、四表示×两骨干消融、四种姿态源误差传播。EXP=4：四数据集（含 300+ 小时 Nymeria）、两基线、n=110。PER=3：RTE-5s −8.1%、ATE −8.9%，AEA 上 ATE 与 Drift 反落后。TRL=3：0.97M/444 MFLOPs 具端侧可行性但无真机。REP=2：无代码、无顶会接收。"
+  },
+  {
+    "id": "2611.15561",
+    "slug": "particle-sight-restriction-collision-prevention",
+    "title_zh": "基于通用粒子系统的沉浸式视觉遮蔽碰撞预防",
+    "venue": "MUM '26（25th International Conference on Mobile and Ubiquitous Multimedia，Glasgow，2026-12-01/04，DOI 10.1145/3861188.3861241）",
+    "track": "交互与输入",
+    "tags": [
+      "碰撞预防系统 Collision Prevention System",
+      "粒子系统 Particle System",
+      "临场感 Presence",
+      "VR 安全 VR Safety",
+      "移动行为 Locomotion"
+    ],
+    "conclusion": "在 253 次接近边界的事件中，粒子边界出现后被试平均再走 0.15 m 即停，与 Meta Guardian 网格的 0.14 m 无显著差异（p=.520），安全性相当；但粒子边界可见时长占比 37.0%，约为网格 12.6% 的三倍（p=.001，r_rb=1.00），SUSQ 临场感中位数 3 vs 1，7/11 偏好粒子方案。",
+    "problem": "VR 碰撞预防系统须在「及时提示重定向」与「不破坏临场感」间取舍，现有两类做法各有硬伤。网格化边界（Meta Guardian、Valve Chaperone）概念上与虚拟环境割裂、刻意突出，一旦可见就提醒用户身处模拟之中，易致 presence break；且因依赖视觉显著性，出现距离必须压晚（默认 0.5 m）以限制暴露。物理障碍的虚拟对应物（Sra 2016 等情境化方案）能融入场景，但依赖真实行走，一用传送，物理环境并未随之改变，对应物无法自洽。已有工作只研究烟雾对行进速度的减速（Davis 2023），任务本身仍要求穿越；视野限制类方案（Wu & Rosenberg 2019）提出机制却无情境化设计。作者据此指出缺口：尚无工作研究情境化的视觉遮蔽式 CPS。",
+    "method": "设计依据与前研究（Sec. 3–4）。以气溶胶（雾/烟）为隐喻：不透明度与形态可随情境变化，不引入与场景冲突的刚性几何。前研究（N=10，Quest 2 + Air Link，2×5 m 房间，理论边界 3 m）比较 density/size/transparency 单参数、三者联合与 Meta GCPS 共五条件，按 0.25 m 步长调整出现距离。联合条件最早被察觉（Mdn=0.71 m，IQR 0.60–0.84）但最晚察觉仅 0.20 m；所有粒子条件下用户都把边界预期在理论边界之后，联合条件 Mdn=0.42 m。\n\n系统（Sec. 5）。Unity 2023.1.18f1 标准粒子系统，粒子为 2D 贴图，发射体 1×1×0.5 m，中心前置 0.42 m 使预期边界对齐真实边界。按 HMD 到最近边界距离 δ 分三区：中性（δ>0.8 m 不显示）、渐显（0.4–0.8 m 线性上升）、临界（δ<0.4 m 完全不透明并覆盖全 FOV）。可见度 f=0（δ≥d_on）；f=1−(δ−d_full)/(d_on−d_full)（d_full≤δ<d_on）；f=1−θ/180°（δ<d_full），θ 为视线与边界法线的 yaw 夹角，故正对最强、转身减弱，以降低强度奖励重定向；三属性按 v_a = f·v_a^max 调制。最近边切换时瞬时重定位并从 f=0.05 淡入。\n\n实验（Sec. 6）。被试内、4×5 m 物理空间、2×3 m 虚拟区，Quest 2 无线串流；收集 20 个球，球以步行速度漂移以强制真实行走；GCPS 用默认 0.5 m。量度含位置日志（约 134,000 样本、36 Hz）、碰撞、CAQ、SUSQ、两个 7 点安全题与 SEQ；日志用中位数 + Wilcoxon，问卷仅描述统计，安全性另用贝叶斯等价性检验。",
+    "experiments": [
+      "前研究 N=10（8 男 2 女，M=26.1，SD=1.91），五条件随机顺序各重复 5 次；联合条件首次察觉 Mdn=0.71 m（IQR 0.60–0.84），最晚 0.20 m；预期边界在理论边界之后 Mdn=0.42 m（IQR 0.23–0.45，SD=0.14），据此定 0.8 m 出现距离与 0.42 m 前置偏移。",
+      "主研究 N=11（10 男 1 女，26–48 岁，M=30.08，SD=5.78），被试内、顺序平衡、每 trial 约 6 分钟；共 253 个 approach episode（GCPS 85 个，Mdn=4；PCPS 168 个，Mdn=17）。",
+      "可见时间占比：PCPS 37.0%（SD=11.5）vs GCPS 12.6%（SD=8.4），V=0，p=.001，r_rb=1.00，即粒子边界可见时长约为网格三倍。",
+      "转向距离 PCPS 0.65 m（SD=0.07）vs GCPS 0.36 m（SD=0.08），p=.001；作者明确该差异主要反映 PCPS 更早出现（0.8 m vs 0.5 m）。对齐到各自 onset 的反应距离为 0.15 m（SD=0.07）vs 0.14 m（SD=0.08），V=25，p=.520，r_rb=0.24，95% CI [−0.48, 0.82]；接近速度亦无差异（15.6 vs 16.3 m/min，p=.278），两条件都无逐渐减速，说明用户对「出现」而非「强度」反应。",
+      "碰撞与安全：GCPS 平均 0.18 次（CI [−0.05,0.41]，SD=0.39）、PCPS 0.36 次（CI [−0.09,0.82]，SD=0.77），各仅 2 人越界，作者据此声明碰撞计数不足以支撑比较；主观安全 4.18（SD=2.27）vs 5.09（SD=2.07），贝叶斯等价性 BF∈∉=6.40（δ∈[−0.47,0.47]），后验中位 δ=0.24，95% CI [−0.30,0.79]，为等价的中等证据。",
+      "临场感与偏好：SUSQ PCPS Mdn=3（IQR 0.5–5）vs GCPS Mdn=1（IQR 0–3）；CAQ 总体 Mdn 2.71（IQR 2.0–3.0）vs 3.0（IQR 2.96–3.62）；7/11 明确偏好 PCPS，6 人表示网格更常让他们想起真实房间。",
+      "移动范围：两条件平均移动半径几乎相同（1.19 m vs 1.21 m），但 PCPS 下步行距离更短（Mdn 27.57 m vs 30.39 m）、传送略少（100 vs 117 次），部分被试报告主观空间被压缩。"
+    ],
+    "innovation": [
+      "首次把视觉遮蔽作为情境化碰撞预防机制系统化：用标准粒子系统的雾状云替代网格，只表达方向与紧迫度而不表达精确几何，从原理上回避「暴露真实空间」与「传送后对应物不自洽」两个痛点。",
+      "提出三段式邻近区（中性 0.8 m / 渐显 0.4–0.8 m / 临界 0.4 m）与视线相关可见度函数 f(δ,θ)，把强度与朝向解耦，使转身本身成为降低不适的手段。",
+      "用前研究定量发现「用户预期边界位于可视化之后 0.42 m」这一系统偏移，并据此前置粒子中心，把定位偏差转成可补偿的设计参数。",
+      "给出反直觉的设计结论：起效的是可视化的出现而非强度（云仅达约 40% 目标强度时用户已停下），故「更晚出现、更强刺激」不如「更早出现、更弱刺激」。"
+    ],
+    "limits": [
+      "（作者承认）样本小（N=11）且性别严重失衡（10 男 1 女），问卷与碰撞计数只能作描述统计。",
+      "（作者承认）只测矩形 play area、无内部障碍，外部效度受限；碰撞仅以 HMD 位置判定，未捕捉手柄越界。",
+      "（作者承认）无线串流偶发掉帧可能影响粒子可视化的主观流畅度；任务可完全靠 micro-teleportation 完成。",
+      "（我在正文发现）PCPS 碰撞次数是 GCPS 的两倍（0.36 vs 0.18），虽区间重叠且样本极小，但作者未做检验即归因「故意越界」，缺少行为学证据（如越界前注视或延迟）。",
+      "（我在正文发现）只比较一种粒子配置与一种网格实现，未做粒子参数（颜色、密度曲线、发射体尺寸）消融，也未与 passthrough 或触觉/听觉提示对照。",
+      "（我在正文发现）实验用 2×3 m 虚拟区与 0.8 m 出现距离，使 PCPS 有 37% 时间可见；对更小的家庭 play area（75% 约 2×1.5 m）是否变成持续遮挡，正文未评估。"
+    ],
+    "relation": "本文属 VR 碰撞预防系统的显式提示分支，替换的是视觉表征而非防碰撞机制。它直接对比 Meta Guardian（2024）式网格 CPS，并延续三条前作：Valentini 2020 证明情境化 CPS 比 Vive 网格带来更高 involvement/spatial presence，但受限于物理障碍的虚拟对应物只能用于真实行走；Sra 2016 的 rest-frame 对应物同样受传送限制；Wu & Rosenberg 2019 的视野限制 CPS 提出机制却无情境化设计。它同时回应两个前提：Davis 2023 发现烟雾密度提高会降低 VR 行进速度但任务仍要求穿越；Tseng 2024 发现用户会凭心理空间模型故意穿越边界——本文给出相反观察，多数人在雾刚出现时就停下。0.8/0.4 m 阈值与 Sousa 2019 的 warning/danger 区独立吻合。",
+    "repro": "开源：Unity 实现（参数化粒子系统、邻近与视线相关可见性模型、碰撞日志组件）发布于 https://github.com/annalisaDegenhard/ParticleBasedCollisionPrevention.git；MUM '26 正式发表（DOI 10.1145/3861188.3861241），论文 CC BY 4.0。硬件为 Meta Quest 2 无线串流至 PC，引擎 Unity 2023.1.18f1；量表为已发表的 CAQ（Ring 2024）、SUSQ（Usoh 2000；Slater 1994）、SEQ（Chung 2022）。原始位置日志与被试数据未公开。复现须对齐四个参数：play area 2×3 m、物理空间 4×5 m、GCPS onset 0.5 m、粒子中心前置 0.42 m。",
+    "action": "先读 Sec. 5.2–5.3（三区划分与 f(δ,θ)）与 6.4（反应距离 p=.520 与可见时长 p=.001 这对关键对比）。需核 253 个 episode 的 85/168 构成、0.15 vs 0.14 m、37.0% vs 12.6%、SUSQ 3 vs 1、碰撞 0.36 vs 0.18。风险：N=11 且 10 男，问卷均为描述性；「碰撞翻倍但属故意」缺证据；0.8 m 出现距离在小房间会长期可见。落地需补粒子参数消融与非矩形场景验证。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 3,
+      "EXP": 3,
+      "PER": 3,
+      "TRL": 4,
+      "REP": 4
+    },
+    "scores_why": "IMP=4：VR 碰撞预防是消费级头显的高频安全痛点，「安全 vs 临场感」是公认未解取舍。NOV=4：把视觉遮蔽/气溶胶隐喻引入 CPS 并给出邻近-视线可见度模型，是新设计范式，但底座只是 Unity 标准粒子系统。TEC=3：设计推导、分段函数与两阶段研究完整，但无粒子参数消融、无其它模态对照。EXP=3：N=10+N=11、253 episode、Wilcoxon 与贝叶斯检验齐备，但样本极小、单场景。PER=3：安全性持平（0.15 vs 0.14 m，p=.520）而临场感更高（SUSQ 3 vs 1）。TRL=4：Quest 2 可运行、Unity 开源。REP=4：开源实现 + MUM '26 正式发表。"
+  },
+  {
+    "id": "2611.17018",
+    "slug": "socially-acceptable-3d-feedback-xr",
+    "title_zh": "探索面向包容性小组对话的社会可接受 3D 反馈设计",
+    "venue": "PACMHCI（Proc. ACM on Human-Computer Interaction）Vol. 11, GROUP issue，DOI 10.1145/3859404",
+    "track": "交互与输入",
+    "tags": [
+      "小组对话 Small-Group Conversation",
+      "公共反馈 Public Feedback",
+      "社交尴尬 Embarrassment",
+      "隐喻与虚拟智能体 Metaphor & Agent",
+      "设计探针 Design Probe"
+    ],
+    "conclusion": "公开投递的直接文字反馈在三个场景中分别有 80%、60%、72% 的被试同意「会令人尴尬」，舒适度仅 26–32%；公开条件下 Text 的舒适度显著低于 Metaphor（场景 1 p<.05、场景 3 p<.001）、尴尬度显著高于 Metaphor（χ²=14.683，p=.001），而 Metaphor 与 Cat 之间无显著差异（p=1.000）。",
+    "problem": "小组对话中的动态反馈能改善对话质量，但「公开投递」与「指向个人」叠加会产生副作用，现有研究留下三处缺口。第一，公共与私有反馈存在结构权衡：公共反馈借社会比较（Festinger 1954）与社会影响（Argyle 1957）有效纠正问题行为，却带来尴尬与抵抗（Keltner & Buswell 1997）；私有反馈避免不适（Houtti 2025）却易被忽略（Ohtsuki 2015）。第二，已有系统（CoCo/Samrose 2018、MeetingCoach/Samrose 2021、SealMates/Armstrong 2024、Schiavo 2014）多默认公开投递，很少处理暴露本身的负面体验；XR 侧的 Lee 2024 与 Yang 2023 亦然，而 Slater 2000 已证明 VR 会议同样产生尴尬。第三，XR 的智能体与具身隐喻两类载体尚未被用于此设计空间。",
+    "method": "策略与探针（Sec. 2.3、3）。从社会科学与 HCI 文献归纳三条降低尴尬的策略：S1 融入幽默（Keltner & Buswell 1997；Press & Erel 2023）、S2 降低社会注意（Clegg 2012、Gilovich 2000 的 spotlight effect、Yantis 1993 的新异客体吸注）、S3 使用间接性（Pohl 2019、Schiavo 2014 的 subtle directives 与隐喻/委婉语理论）。据此在三个场景（有人主导、参与不足、负面情绪）各设三种探针：Text 基线（3D 面板直接文字）、Metaphor（前两场景跷跷板倾斜，第三场景向日葵绽放）、Cat（虚拟猫撞倒花瓶、转头回望、蹭头安抚）。探针与策略非一一对应：跷跷板体现 S1+S3，猫体现 S1+S2+S3，向日葵体现 S2+S3，情绪场景刻意不含幽默（Fig. 2 矩阵）。\n\n问卷（4–5）。Qualtrics 发放，经 Reddit 的 XR 社区招募。被试看场景视频后，对每设计在 public/private 下按 5 点 Likert 评 usefulness、fairness、comfort、embarrassment、distraction，并答三条策略归因题；场景顺序随机，public/private 用并排双视角截图（自己 vs 组员 Tom，private 下 Tom 视角桌面为空）。分析用 Friedman + Bonferroni 校正的 Wilcoxon，开放题用 Braun & Clarke 主题分析。\n\n访谈（6–7）。招 14 人，Zoom 40–60 分钟；三段：重访 public vs private、逐维度讨论三探针、征询额外建议；转写后人工校正，同样主题分析。",
+    "experiments": [
+      "问卷 N=50（19–44 岁，M=29.0，SD=6.3；29 男 21 女；Black 42%、White 32%、Asian 20%、Hispanic 4%、其他 2%），每人在 3 场景 × 3 设计 × 2 可见性共 18 个条件下评分并答开放题。",
+      "公开 vs 私有的系统差异：所有设计与场景下 public 的尴尬度更高、舒适度更低、分心度更高，直接支撑「公开投递引入社交不适」这一动机。",
+      "公开 Text 的代价：舒适度仅 26–32%、尴尬度 60–80%（三场景分别 80%、60%、72% 同意会尴尬），在每个场景都是最差项。",
+      "舒适度 Friedman：场景 1 χ²=6.561（p<.05），事后 Text 显著低于 Metaphor（p<.05）与 Cat（p<.05），Metaphor vs Cat 不显著（p=1.000）；场景 3 χ²=18.536（p<.001），Text 显著低于 Metaphor（p<.001），Text vs Cat（p=.113）与 Metaphor vs Cat（p=.184）不显著。",
+      "尴尬度 Friedman：场景 1 χ²=14.683（p=.001），Text 显著高于 Metaphor（p=.001）与 Cat（p<.005），Metaphor vs Cat 不显著（p=1.000）。",
+      "分心度：public 下 Metaphor 始终最低（三场景 48%/46%/40%），Text 为 60%/62%/56%、Cat 为 66%/60%/68%；场景 3 的 Friedman χ²=10.161（p<.05），Metaphor 显著低于 Cat（p<.05），Text vs Metaphor（p=.091）与 Text vs Cat（p=1.000）不显著。",
+      "有用性与访谈：场景 1、2 中 Text_private 正面评价最高（74%、62%），场景 3 中 Metaphor_private 最高（66%）；访谈 N=14（9 Asian、2 Black、2 White、1 Hispanic，11 人有 XR 经验）显示正向反馈宜公开、批评性反馈宜私下，因压力/缺乏自信导致的低参与宜私下，跑题等影响集体进度的行为宜公开。"
+    ],
+    "innovation": [
+      "把「如何让公开反馈在社会层面可接受」确立为 XR 小组对话的独立设计问题，并从社会科学与 HCI 文献提炼三条可操作策略（幽默、降低社会注意、间接性），而非停留在 public/private 二选一。",
+      "提出跨三场景的隐喻/智能体 3D 反馈探针（跷跷板、向日葵、虚拟猫），并显式给出「探针 × 策略」映射矩阵，说明并非每个探针都需叠加全部策略。",
+      "用同一批被试在两种可见性下对同一探针交叉评分，把可见性作为独立变量分离，量化了公开投递本身的代价（尴尬 60–80%、舒适 26–32%）。",
+      "访谈层面提出两条超出问卷的机制性发现：分心未必负面（可打断主导者或充当共同话题入口），智能体可充当「他人进入对话的借口」，间接促进 turn-taking。"
+    ],
+    "limits": [
+      "（作者承认）评估的是对探针的「感知」而非真实小组对话中的行为：被试看的是可视化草图加文字描述，未在实时交互中体验。",
+      "（作者承认）只考察反馈接收者视角，未考察其他组员如何看待「针对别人的反馈」。",
+      "（作者承认）仅三个场景、少量反馈样式，未覆盖所有情境；共处与分布式群体的社会临场感不同，反应可能不同。",
+      "（作者承认）未系统考察居住国/文化背景，种族与族裔多样性不能替代文化因素，跨文化泛化受限；问卷与访谈间隔约一个月，部分观点已变。",
+      "（我在正文发现）分心度在场景 1、2 均未报告 Friedman 结果，而幽默策略在情绪场景被刻意排除，三条策略的相对贡献无法分离；也无任何真实对话质量指标（如发言均衡度）。",
+      "（我在正文发现）三探针均未实现为可交互系统，public/private 仅以并排截图呈现，缺少多用户同步与视角一致性带来的技术性混杂因素评估。"
+    ],
+    "relation": "本文处在「用技术干预小组对话动态」这一 CSCW/HCI 脉络的 XR 分支，关注点从「如何有效提示」转向「如何在不伤害个体的前提下提示」。与 CoCo（Samrose 2018）、MeetingCoach（Samrose 2021）、SealMates（Armstrong 2024）的差异在于：后者解决参与度与轮流发言的可视化或智能体中介，但默认公开投递且不处理暴露后果。Schiavo 2014 比较 overt 文字指令与 subtle 图形指令并发现后者更被接受，是本文 S3 的实证依据；Lee 2024 与 Yang 2023 把注意引导与虚拟主持人引入 VR 群组对话，同样未触及公开暴露；Slater 2000 提供「VR 中尴尬依然存在」的前提。载体上它接续 Na 2022、Norouzi 2019、Wang 2018 三条智能体/隐喻路线，属新增方向。",
+    "repro": "正文未给出代码、Unity 工程、刺激材料（场景视频与双视角截图）或匿名数据的链接，也未声明开源；仅说明 Qualtrics 发放、Zoom 访谈与主题分析流程。量表来源可追溯（usefulness/fairness/comfort 取自 Samrose 2021、Do 2022、Kim 2020；embarrassment 取自 Do 2023；distraction 取自 Schiavo 2014；策略归因三题作者自拟）。论文为 PACMHCI 正式发表（DOI 10.1145/3859404），CC BY 4.0。复现的关键是刺激材料的视觉保真度与 public/private 双视角呈现方式，目前只能依 Fig. 1/3/4 重建。",
+    "action": "先读 Sec. 3.2 与 Fig. 2（探针×策略矩阵），再读 5.2.2–5.2.3 的 Friedman 与事后检验，核 χ²=6.561、18.536、14.683、10.161 及对应 p 值。风险：全部为感知评分而非真实对话行为；public/private 用截图而非真实多用户会话；幽默在情绪场景被排除致策略不可分离；场景 2 无显著结果。落地需补真实多人 XR 会话的行为指标（发言时长基尼系数、轮流间隔）与旁观者视角。",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 3,
+      "PER": 2,
+      "TRL": 2,
+      "REP": 3
+    },
+    "scores_why": "IMP=3：小组对话包容性是被 CSCW 关注的真问题，但「公开反馈的尴尬」是其子问题，非 XR 领域瓶颈。NOV=3：三策略来自既有社会科学文献，探针是对既有隐喻与智能体的组合式再设计。TEC=3：有文献驱动的设计推导与两阶段研究，但无系统实现、无真实交互、无策略消融。EXP=3：N=50 问卷 + N=14 访谈、18 个条件、Bonferroni 校正齐备，但全为主观评分。PER=2：无性能指标，仅感知差异。TRL=2：仅为设计探针与截图刺激。REP=3：PACMHCI 正式发表，但材料与数据未公开。"
+  },
+  {
+    "id": "2611.16171",
+    "slug": "mrxd-usage-pattern-framework",
+    "title_zh": "MRxD：混合现实跨设备交互的使用模式框架",
+    "venue": "arXiv preprint（cs.HC），正文仍为投稿模板（DOI 为 XXXXXXX.XXXXXXX 占位，会议信息为模板默认值）",
+    "track": "空间计算与UI",
+    "tags": [
+      "跨设备交互 Cross-Device Interaction",
+      "混合现实 Mixed Reality",
+      "使用模式 Usage Pattern",
+      "系统综述 Systematic Review",
+      "设计框架 Design Framework"
+    ],
+    "conclusion": "从 4,857 条记录经 PRISMA 流程筛出 238 篇论文、284 个 usage episode：63%（180/284）为 Focused 注意、97%（275/284）任务相关，其中 53%（145/275）认知对称；由此得六个模式，Clone（90）与 Proxy（84）最多、Standby（6）与 Partition（3）最少；三作者两两 Cohen's κ 均 > .70，工作坊（n=6）显示框架能暴露设计盲点。",
+    "problem": "MR 跨设备（头显 + 笔电/平板/手机）设计困难，核心是用户须在角色异构的设备间协调工作流，而现有知识组织方式不足。其一，主流框架以设备与组件配置为中心：Brudy 2019 给出六维分类学，Hubenschmid 2026 的 MR-HUI 综述再加 interaction dynamics 与 anchoring，但描述的都是系统如何被组装，无法解释同一套硬件为何需要不同设计——HMD+手机既可是普通手机（Zhu 2025）、空间控制器（Liang 2016），也可是文本输入设备（Chen 2019）。其二，已有使用模式研究只覆盖非沉浸式生态：Yuan 2022 提炼 integrating/cloning/expanding/partitioning/migrating 五模式，Li 2025 用于跨设备学习，均未涉及沉浸式组合。其三，系统导向框架虽点出注意切换与知觉同步，但背后的使用模式未被明确化，设计者缺少「从预期活动出发」的中间层。",
+    "method": "语料（Sec. 3）。检索 ACM DL、IEEE Xplore、Wiley、SpringerLink 得 4,857 条（2015–2025，检索日 2026-04-28），查询含 cross-device、hybrid user interfaces 与设备词、AR/VR/MR/XR。去 160 条重复与 1,206 篇短文余 3,491 条，摘要筛除 3,154 条、全文再排 99 篇，最终 238 篇。\n\n框架（3.3）。沿 Nickerson 2013 迭代分类学，meta-characteristic 为「用户在一个 usage episode 内如何协调两类设备」，分析单元是 usage episode。维度须是用户侧推论、可从报告流程编码且互不重叠；演绎抽候选、归纳由三人对 20% 子集开放编码后归并。最终三维度二值化：User Attention（Focused/Fragmented，仅外显视觉注意）、Task Relatedness（Related/Unrelated）、Cognitive Symmetry（Symmetric/Asymmetric，源自 Hutchins 1985 的 semantic distance）。编码前三人对 15% 子集校准，两两 κ > .70；策略用 Braun & Clarke 主题分析。\n\n结果与验证（4–5）。三维度交叉得六模式：Clone 90、Proxy 84、Extend 55、Complement 46、Standby 6、Partition 3；Cognitive Symmetry 对 Unrelated 不适用，故为 6 而非 8 种组合。每模式归纳策略（同步内容、扩展工作空间、输入重映射、互补表征协调）。形成性工作坊 n=6（23–29 岁，4 学术 + 2 工业），改编 design sprint：自选案例（VR 课堂 n=2、AR 家装 n=4），先自设计再引入 MRxD 重做，结尾访谈。",
+    "experiments": [
+      "语料流程：4,857 条 → 去 160 条重复与 1,206 篇短文 → 3,491 条摘要筛选（排除 3,154）→ 337 篇全文筛选（排除 99）→ 238 篇；检索日 2026-04-28，覆盖 2015-01 至 2025-12。",
+      "维度分布（284 个 episode）：Attention Focused 180（63%）/Fragmented 104（37%）；Task Relatedness Related 275（97%）/Unrelated 9（3%）；Cognitive Symmetry 仅在 275 个相关 episode 上定义，Symmetric 145（53%）/Asymmetric 130（47%）。",
+      "模式分布：Clone 90、Proxy 84、Extend 55、Complement 46、Standby 6、Partition 3，前两者合计约 61%，说明「聚焦注意 + 同任务」是主流形态。",
+      "编码信度：三名作者在随机 15% 子集独立编码，两两 Cohen's κ 均 > .70（substantial agreement）；维度开发阶段另用随机 20% 子集做开放编码。",
+      "工作坊 n=6（23–29 岁；两案例 n=2 与 n=4）：引入框架后被试补上初版缺失的多用户支持（P1、P2、P5、P6）与缺失的输入/输出组件（P1、P3、P4、P6）。",
+      "工作坊行为转变：被试从整机角色分配（电脑编辑、AR 显示、手机记笔记）转为按能力（输入、输出、感知、传输）拆解设备；P1/P3 转向在 VR 内复用键盘输入，P6 从「手机记笔记」转为「手机作放置家具的代理控制器」。",
+      "示例诊断：MaRginalia（Qiu 2025）的克隆平板界面属 Clone、笔到 MR 光标的重映射属 Proxy，据此指出其「笔按下激活按钮 vs 捏笔截屏」的映射不一致会带来局部摩擦（被试改用点击小圆点截取转录为旁证）。"
+    ],
+    "innovation": [
+      "把「使用模式」视角从非沉浸式生态（Yuan 2022；Li 2025）扩展到 MR 跨设备，并以 238 篇语料给出首个面向 HMD + 非沉浸式设备的模式框架。",
+      "提出第三维度 Cognitive Symmetry（源自 semantic distance），以「表征/动作-效果是否需重新解释」为独立设计轴，从而区分 Clone 与 Proxy、Extend 与 Complement——这是既有配置型分类学无法表达的差异。",
+      "以维度组合而非模式直接编码推导模式，避免按共享设备或应用做表面聚类，使判据在异构语料上可显式复用（κ>.70 佐证可操作性）。",
+      "为每个模式归纳可操作策略，并给出模式可迁移/可组合的分析（如把 Proxy 映射补进 Clone 主导的系统以支持快速检视），使框架兼具描述与生成功能。"
+    ],
+    "limits": [
+      "（作者承认）检索可能漏检跨设备特征未体现在元数据中的工作（如 Friedl-Knirsch 2024）；排除 ≤4 页短文、手持 MR、空间 AR 与专用设备，框架不覆盖全部系统。",
+      "（作者承认）维度开发含解释性判断，换团队或换 20% 初始样本可能得出不同但同样合理的维度，初始样本还可能使某些维度先验地更显著。",
+      "（作者承认）三维度均二值化，压缩了本可能连续或随时间变化的中间状态与对应策略。",
+      "（作者承认）只保留每篇论文「设计动机或贡献核心」的 episode，模式分布反映研究侧重而非真实行为流行度，次要模式与组合可能被低估。",
+      "（我在正文发现）唯一实践验证是 n=6 形成性工作坊，无对照条件、无编码信度、无延迟后测，无法判断框架相对「无框架」或相对 Brudy/MR-HUI 维度的增益。",
+      "（我在正文发现）Standby（6）与 Partition（3）样本过少，其策略归纳基本是单例外推；lift 共现分析虽用于纠偏，但正文未给具体 lift 数值，模式组合结论不可核验。"
+    ],
+    "relation": "本文属跨设备交互框架脉络中的使用中心分支，与配置中心分支互补。它以 Brudy 2019（六维分类学）与 Hubenschmid 2026（MR-HUI 综述，增加 interaction dynamics 与 anchoring）为对照，指出后者解释「系统如何组装」而不解释「同一配置下的不同用法」，并以 HMD+手机的四种角色（Zhu 2025、Saidi 2021、Liang 2016、Chen 2019）为例。模式层面继承 Yuan 2022 的五模式与 Li 2025 的注意视角：Clone/Extend/Partition 对应 cloning/expanding/partitioning，但新增 Proxy 与 Complement 两个认知不对称模式，并把 attention 提升为第一维。方法上沿用 Nickerson 2013 与 Braun & Clarke。故本文是既有两条线在 MR 语境的合并与扩展。",
+    "repro": "部分公开：238 篇语料清单发布于 https://mrxd-paper.pages.dev/ ，检索式见附录 A，编码规则在 3.3 有描述，元数据分布放在 Supplementary Material；但未公开逐 episode 的维度编码表、lift 共现矩阵数值与工作坊原始记录，也无代码。论文仍用投稿模板（DOI 与会议信息为占位符），未见正式接收信息。复现的主要障碍是维度判定依赖解释性判断（作者自认不完全可复现），即便拿到清单也难以复现 284 个 episode 的边界与编码。",
+    "action": "先读 4.1（三维度操作化，尤其 Cognitive Symmetry 的 representational 与 action–effect 判据）与 4.2 六模式，再读 3.3 的编码校准。需核 238 篇/284 episode、63%–37%、97%–3%、53%–47%、六模式 90/84/55/46/6/3。风险：分布反映研究侧重而非使用普遍性；Standby/Partition 仅 6/3 例；唯一验证为 n=6 无对照工作坊；论文尚未正式发表。落地需补编码一致性检验与行为数据验证。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 3,
+      "EXP": 3,
+      "PER": 2,
+      "TRL": 2,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：MR 头显 + 笔电/平板是空间计算落地的主要形态，缺少「从活动出发」的设计中间层是真实方法论缺口。NOV=4：新增 Cognitive Symmetry 维度并以维度组合推导六模式，首次把使用模式视角系统移植到 MR 跨设备；但三维度分别借自注意研究、Yuan 2022 与 Hutchins 1985。TEC=3：PRISMA、两阶段编码、κ>.70 校准齐备，但无对照验证。EXP=3：238 篇/284 episode 语料可观，唯一人类实验却是 n=6 工作坊。PER=2：无性能指标。TRL=2：纯分析框架。REP=3：语料清单公开、编码表未公开，论文仍为投稿模板。"
+  },
+  {
+    "id": "2611.15153",
+    "slug": "matrixsplat-matrix-parallel-3dgs",
+    "title_zh": "MatrixSplat：面向 GPU 的矩阵并行、特征可扩展 3D Gaussian Splatting（3D 高斯泼溅）渲染",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "渲染与显示",
+    "tags": [
+      "3D Gaussian Splatting",
+      "Tensor Core",
+      "顺序无关透明 Order-Independent Transparency",
+      "语义特征渲染 Feature Rendering",
+      "GPU 内核优化 Kernel Optimization"
+    ],
+    "conclusion": "Mip-NeRF 360 上端到端达 599.9 FPS（3DGS 156.0、3DGS+TC-GS 295.1），LERF 702.6 FPS、3D-OVS 510.9 FPS，最高为 3DGS 的 3.8×、TC-GS 的 2×；特征维 D=256 时渲染核时间降 36.7×；替换四个快速渲染器的混合核再获 1.69–2.84×，而 PSNR 30.35 dB 不低于 3DGS 的 30.12 dB。",
+    "problem": "3DGS 已成实时新视角合成与重建的主流表示，但其渲染流水线与现代 GPU 算力结构错配，在语义特征场景下被急剧放大。首先，深度排序的 alpha 合成引入强 per-pixel 串行依赖：透射率更新 T_{j+1}=T_j·(1−α_j) 形成 loop-carried 的 read-after-write 链，warp 内无法跨迭代重叠指令，wait stall 主导而 Tensor Core 完全闲置。其次，语义 3DGS 需在百万级 Gaussian 上累积高维特征，一旦维度超过 128，特征向量无法驻留 shared memory，只能回落 global memory，性能断崖下降。第三，已有加速各只覆盖流水线一段：FlashGS、Speedy-Splat 优化剔除/排序但每像素仍串行标量循环；Sort-Free、Duplex-GS 去掉排序却仍用标量 FMA；TC-GS、GEMM-GS 把 alpha 计算搬到矩阵单元但混合循环仍顺序相关。缺口是：尚无工作利用顺序无关把特征累积本身表达为矩阵乘法。",
+    "method": "瓶颈定位（4.1）。剖析 LangSplat：渲染占 77% 延迟，RenderCUDA 核占 51.3%（排序 14.3%、解码 19.2%）；停滞以 wait 为主、short scoreboard 仅 10.2%，说明受依赖限制而非纯带宽限制。\n\n顺序无关特征混合（OIEFB，4.2）。把 RGB、语义特征 f_i^l 与可选深度拼成统一嵌入 e_i^T = concat(c_i, f_i^l, [d_i])，维度 D = 3 + C [+1]（式 6）；不做深度序合成，而对每像素做归一化加权累积 E_p = (Σ w_{p,i} e_i + w_bg e_bg)/(Σ w_{p,i} + w_bg)（式 7）。权重用 LC-WSR 形式 w = α_i·max(0, 1 − d_i/σ)·v_i（式 2），σ、v_i、w_bg 可学并与高斯参数联合优化；附录 A 给出全梯度，论证端到端可微。加权累积可交换，故每个高斯贡献可独立求值——矩阵化的前提。\n\nwarp 级 MMA（4.3）。沿用 16×16 tile，再切 4×8 像素组、每组一个 warp（32 像素）。先算掩码 m = 1(α_{p,g} ≥ ε) 与 w̄ = m·w（式 9），32 像素上全零的高斯跳过；凑满 K_mma=16 个后构造 W ∈ R^{32×16} 与 E ∈ R^{16×D}，用 mma.m16n8k16（FP16）累加 Y = Σ_t W^(t) E^(t)（式 11）。同 warp 像素相邻、有效高斯集相似，零投票跳过率高；发射 MMA 时 warp 同时把后续高斯搬到寄存器，实现准备与执行重叠。\n\n高维可扩展（4.4）。特征维按 8 通道切块（C_mma=8，与 MMA 输出 tile 对齐），第 q 块计算 Y_{:,8q:8q+7} = Σ_t W^(t) E^(t)_{:,8q:8q+7}（式 12）。每次 flush 只加载 8 维切片、下一片预取，故 shared memory 占用与 warp 占用率不随 D 增长。",
+    "experiments": [
+      "数据集与指标：Mip-NeRF 360（配 GAGS 分割标签，PSNR/SSIM/LPIPS）、LERF 与 3D-OVS（mIoU 与 LocAcc）；主实验在 RTX 4090、沿用 3DGS 原设置，另在 RTX 6000 Ada 与 H100 复验；FPS 用端到端协议（预热 + 前后 GPU 同步多次计时），与加速方法比较时用 FlashGS 的 kernel-isolated 协议。",
+      "主结果：Mip-NeRF 360 上 599.9 FPS（3DGS 156.0、+TC-GS 295.1）、PSNR 30.35（30.12/30.14）、LPIPS 0.178（0.181/0.183）、mIoU 0.541（0.536）、LocAcc 0.730（0.698）；LERF 702.6 FPS（237.9/310.3）、mIoU 0.445（0.419）、LocAcc 0.679（0.632）；3D-OVS 510.9 FPS（162.0/294.8）、LocAcc 0.985（0.937）。",
+      "与顺序无关方法比较（kernel-isolated，D=8）：3D-OVS/LERF/Mip-NeRF 360 上 521.8/891.9/660.0 FPS，为 3DGS 的 2.48×/2.50×/2.37×，比 Sort-Free（240.3/256.1/215.7）快 2.2–3.5×，比 Duplex-GS（319.1/332.9/127.9）快 1.6–5.2×；Duplex-GS 的 PSNR 最高（3D-OVS 25.40）但 MLP 求值带来开销。",
+      "与快速渲染器组合：仅替换 FlashGS、GEMM-GS、Speedy-Splat、AdR-Gaussian 的混合核（保留其剔除/调度/排序）再获 1.69–2.84×，PSNR 变化不超过 0.24 dB；跨架构加速为 RTX 4090 2.37×、RTX 6000 Ada 2.36×、H100 2.33×。",
+      "组件消融（两数据集场景平均，低分辨率）：D=8 时 253.8→OIEFB 423.5→+MMA 741.1→+warp packing 830.5→+lazy fetching 830.8；D=256 时 2.3→2.1→38.0→35.7→72.1；D=512 时 1.1→1.2→17.4→22.4→41.1。OIEFB 单独在 D=8 给 1.67× 但随 D 衰减，MMA 是主增益，warp packing 在 D≤64 加 12–22%，lazy fetching 在 D≥64 加 1.6–2.0×；整体 D≤128 比 3DGS 快 2.1–3.3×、D≥256 快 31–37×。",
+      "特征维度可扩展性：混合核时间低维平均降约 3×、D=256 时降 36.7×；对照显示降精度不能解释——3DGS 改用 FP16 特征后速度变化不超过 17%，而本文核在相同场景仍快 2.2–4.8×（附录 D）。",
+      "质量与代价：保真度依场景而变，teatime 上 PSNR 降 0.23 dB（多重半透明重叠需精确顺序），counter 升 0.73 dB（避开视角相关排序误差）；停滞分析显示 wait stall 与 barrier stall 各降约 10%。"
+    ],
+    "innovation": [
+      "识别出「alpha 合成的顺序依赖」正是高维特征累积无法矩阵化的根因，并用顺序无关加权累积（式 7）把语义特征渲染改写为可交换求和，把计算原语从标量 FMA 换成稠密矩阵乘。",
+      "给出 warp 级、像素×高斯的打包式 MMA 映射：W ∈ R^{32×16} 与 E ∈ R^{16×D} 两次矩阵乘（mma.m16n8k16，FP16），配合 warp 内有效性零投票跳过，把可见性不规则转为打包效率问题。",
+      "提出 lazy channel-batched 特征取数（C_mma=8，与 MMA 输出 tile 对齐），只驻留当前 8 维切片并预取下一片，使 shared memory 占用与 warp 占用率不随 D 增长，这是 D=256/512 时 31–37× 增益的直接来源。",
+      "证明该优化与流水线级加速器正交：只替换混合核即可在四个既有渲染器上叠加 1.69–2.84×，为「改混合原语」与「减少工作量」两类优化提供可组合范式。"
+    ],
+    "limits": [
+      "（作者承认）顺序无关累积只是对深度序合成的近似，保真度依场景而变：极端多层半透明重叠会退化（teatime −0.23 dB），且为 alpha 合成调好的阈值需重新调参。",
+      "（作者承认）只加速前向渲染；训练也变快但幅度更小，因反向仍依赖 scatter 梯度更新与原子操作。",
+      "（作者承认）tile binning + radix sort、逐高斯预处理、warp 级打包扫描仍是非矩阵阶段，混合被加速后它们成为端到端加速的上界。",
+      "（作者承认）只针对 NVIDIA Tensor Core 的 warp 级 MMA，未评估 NPU 等其它矩阵单元。",
+      "（我在正文发现）正文仅承诺「will release our CUDA implementation and evaluation scripts」，抓取时无仓库链接，故 3.8×/36.7× 暂不可独立复现；Sort-Free 亦用第三方实现，基线的实现质量存在差异。",
+      "（我在正文发现）质量评估集中在 PSNR/SSIM/LPIPS/mIoU/LocAcc 均值，缺少对顺序无关近似在连续视角切换下是否引起闪烁/popping 的评估，而这正是该近似的典型风险。"
+    ],
+    "relation": "本文属 3DGS 渲染加速中「改计算原语」的一支，与「减少工作量」的流水线加速器互补。横向对照清晰：FlashGS（Feng 2024）、Speedy-Splat（Hahlbohm 2025）、AdR-Gaussian、HiGS 优化剔除/调度/排序但保留逐像素标量累积；TC-GS（Lee 2025）与 GEMM-GS 把 alpha 计算搬到 Tensor Core、ORANGE 搬到 NPU，但混合循环仍顺序相关；Sort-Free（LC-WSR）、StochasticSplats、Duplex-GS 去掉排序却仍以标量 FMA 累积——Table 1 把这三类与本文的「Accumulation (TC) / Order=None / Dim=Native」区分开。特征侧针对 LangSplat、LangSplatV2、Feature-3DGS 的「先压缩再渲染」路线，主张在原生维度直接渲染；本质是把 weighted-OIT（McGuire 2013）在语义 3DGS 上重新落地并硬件化。",
+    "repro": "尚未公开：正文写「We will release our CUDA implementation and evaluation scripts」，但抓取时无仓库地址、无权重与逐场景日志。依赖与要素已给全：RTX 4090（主）/RTX 6000 Ada/H100，3DGS 原始设置，mma.m16n8k16 + FP16 混合精度，C_mma=8、K_mma=16、warp=32 像素、16×16 tile 切 4×8，数据集 Mip-NeRF 360（GAGS 标签）、LERF、3D-OVS 均公开，基线 FlashGS/GEMM-GS/Speedy-Splat/AdR-Gaussian/Duplex-GS 官方代码可用。许可未提及。复现门槛在于需手写 WMMA 级 kernel 与 shared memory 布局，仅凭论文无法重建。",
+    "action": "先读 Sec. 4.2（式 6–7）与 4.3（式 9–11），再读 5.6 消融表，按 D=8/64/256 三列确认增益来源（MMA 主增益、lazy fetching 在高维不可或缺）。需核 599.9/702.6/510.9 FPS、3.8× 与 2×、36.7×、1.69–2.84×、2.37/2.36/2.33× 跨卡一致性、teatime −0.23 dB。风险：代码未发布；强半透明场景掉质量；反向未优化。落地需自补 kernel 重实现与时序闪烁评估。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 5,
+      "PER": 5,
+      "TRL": 4,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：特征富化 3DGS 的实时渲染是语义 AR、机器人与世界模型的共同瓶颈，维度超 128 即断崖。NOV=4：把顺序无关累积用于特征累积并映射到 warp 级打包 MMA，是计算原语层改动，但公式借自 LC-WSR、MMA 借自 TC-GS。TEC=4：式 6–12 完整、附录 A 全梯度、三组件消融、停滞剖析与跨 GPU 复验，缺近似误差界。EXP=5：三数据集、两主基线 + 两顺序无关基线 + 四渲染器集成、三张 GPU、七档特征维消融。PER=5：端到端 3.8×、对 TC-GS 2×、D=256 核时间 36.7×。TRL=4：可替换四个渲染器混合核并在三种 GPU 生效。REP=3：无正式发表。"
+  },
+  {
+    "id": "2611.16840",
+    "slug": "kosmo-gfm-geometry-foundation-model",
+    "title_zh": "Kosmo-GFM：面向生产的几何基础模型",
+    "venue": "arXiv preprint（cs.CV），Kosmo Research 工业技术报告",
+    "track": "重建与SLAM",
+    "tags": [
+      "几何基础模型 Geometry Foundation Model",
+      "位姿优化 Pose Optimization",
+      "3D/4D 重建 Reconstruction",
+      "数据引擎 Data Engine",
+      "SpatialBench"
+    ],
+    "conclusion": "SpatialBench Sparse 上 AbsRel 降至 0.063（VGGT-Ω 0.077、π³-X 0.084）、AUC@5 达 0.741（0.695）；在 34 个共同场景、11,336 张图像上位姿 AUC@1/3/5 为 78.45/91.28/94.26（GLUEMAP 69.13/86.18/90.66），累计耗时 14.07 h 仅为 GLUEMAP 69.67 h 的约 20%，PoseEngine Flash 为 2.62 h（约 4%）。",
+    "problem": "从图像/视频恢复场景几何与运动长期依赖「特征匹配 + 位姿估计 + 几何优化」，但传统 SfM 在无纹理区、重复结构、大基线与动态场景下缺少可靠对应，且视图增加时维持场景一致性的代价迅速膨胀。几何基础模型（DUSt3R/MASt3R/VGGT/π³/DA3）通过大规模预训练提供可迁移空间先验，直接预测相机、深度、跨视图对应与动态几何；然而预测并不天然满足整场景的跨视图与时间一致性，尤其在长序列、大环境与动态观测下。作者据此指出系统层缺口：如何把学到的几何先验与场景级几何优化接起来，既用前者做初始化与稠密预测，又用后者把预测整合为一致结构；以及如何持续提升先验——公开 3D 训练数据稀缺，数据/模型/算力三轴的扩展行为缺乏经验证据。已有端到端系统与位姿系统通常被分开评估，缺少「先验质量如何转化为整系统精度与效率」的端到端度量。",
+    "method": "三部分组成（Sec. 3）：GFM 给几何先验，PoseEngine 组织跨视图约束并精化相机，KosmoWorld 把真实场景重建转为训练监督。\n\nGFM（3.1）。编码器沿用 Depth Anything 3：ViT-Giant、14×14 patch，视图内注意捕捉结构、跨视图注意建立几何上下文，另有 camera token 与 4 个 register token；取第 19/27/33/39 层特征拼成 3,072 维供深度解码，共 1,655.29M 参数。相机解码器用 4 个 block 解出平移、四元数旋转与水平/垂直视场（9 维），迭代精化 4 次并 detach 上次估计；深度解码器为 DPT 式由粗到细（256 通道、逐级上采样 + 跳连 + ResNet block），像素经 P̂_local = ẑ K^{-1} x̄、P̂_world = R^T(P̂_local − t) 投到公共系；动态点解码器沿用 UniQuery4R 的 query q=(u,v,s,t)，输出 3D 点、scene flow、对应与可见性；匹配解码器用 MVLoMa 的 STAR 组织。\n\n损失（3.1.2）。相机项在第 k 次迭代上求平移与旋转 L1 均值并按下标加权：L_camera = Σ_k α_k [L_pose^(k) + λ_FoV⟨L_FoV,j^(k)⟩]（式 3–4）；深度项 L_depth = λ_geom⟨r/(|z|+ε)⟩ + λ_conf⟨c·r − β log c⟩（式 5），r = ‖P̂ − P‖₁、c = 1+exp(a)。\n\nPoseEngine（3.2）。以 STAR（1 中心 + 邻居共 26 视图）为单元：无序集用 SALAD 检索 + Doppelgangers++ 校验，有序序列由时间相邻帧加少量 SALAD 补充。每个 STAR 内用 MVLoMa 一次前向完成中心到邻居的匹配，故一次前向同时给出先验与对应；≤26 张时回退 LoMa Large。原则是「GFM 越强，PoseEngine 可越简单」。Flash 版组合 FP8/FP16 与简化 BA。\n\nKosmoWorld（3.3）。基于 HY-World 2.0 的 WorldNav：用 Recast 建导航网格按坡度/台阶/净空筛候选，探针位以 6 个立方体面覆盖视球，按 q_clarity = 0.4 s_n + 0.2 l_n + 0.2 a_n + 0.2 h_n（式 17）评估质量后规划轨迹并渲染。",
+    "experiments": [
+      "GFM 静态几何：SpatialBench Sparse 上 AbsRel 0.063（VGGT-Ω 0.077、π³-X 0.084、π³ 0.092）、RMSE 0.621、δ1.03 0.670、AUC@5 0.741、AUC@30 0.823、TAcc5 0.739；Medium 上 AbsRel 0.059、AUC@5 0.745、ATE 0.508、RPE_t 0.145、RPE_r 1.088，均为所列方法最优（参数 1,655.29M，为表中最大）。",
+      "相机条件化：在 Sparse 上对比 RGB-only 与 camera-conditioned GFM（含/不含逐帧尺度预测），作者报告条件化能有效利用输入位姿，逐帧尺度预测可缓解按相机位姿尺度直接归一化造成的深度退化；该组位姿指标因已知输入位姿不可与未标定估计直接比较。",
+      "PoseEngine 场景级重建：25 ETH3D + 9 MipNeRF360 + 6 Tanks & Temples + 4 SMERF 中 VidMap 在 10 个 ETH3D 场景因分辨率不一致失败，比较集为全部方法完成的 34 场景、11,336 张图像；AUC@1/3/5 = 78.45/91.28/94.26（GLUEMAP 69.13/86.18/90.66、COLMAP 75.73/86.33/89.28），R@1 98.74%、T@1 96.00%、Focal AbsRel 0.00158、ATE nRMSE 0.02640；累计 14.07 h 对 GLUEMAP 69.67 h、COLMAP 47.08 h、VidMap 20.32 h。",
+      "PoseEngine Flash：FP8/FP16 混合精度实测 2.62 h（约 GLUEMAP 的 4%），AUC@1/3/5 = 62.50/83.64/89.28，仍完成全部 11,336 张注册，ATE nRMSE 0.02823，优于 VidMap 的 0.33359 但低于 PoseEngine。",
+      "匹配模块：MVLoMa 与 LoMa Large 在 48 场景（44 个 ETH3D/MipNeRF360/T&T/SMERF + 4 条 Oxford Spires）与两种 STAR 策略下比较，MVLoMa 在每个数据集都提升严格阈值位姿精度并降低 Sim(3) 后平均轨迹误差，有序 STAR 下增益更大（如 ETH3D 无序 AUC@1 80.29 vs 78.00）。",
+      "3DGS 渲染（LiteGS，30,000 迭代，MipNeRF360 9 场景 + T&T 6 场景）：MipNeRF360 上参考位姿 28.19 dB/SSIM 0.8224、GLUEMAP 28.40/0.8306、PoseEngine 26.69/0.7714、Flash 26.34/0.7439；T&T 上 25.90/25.80/25.53/24.18，即 PoseEngine 初始化在渲染指标上低于参考位姿与 GLUEMAP。",
+      "扩展性（使用与发布模型分离的实验模型）：编码器对比中 LingBot-Vision-Base 优于 DINOv2/DINOv3-Base（Local AbsRel 0.1175 vs 0.1333/0.1218，AUC@5 0.4064 vs 0.3527/0.3883）；数据从 1,879 增至 187,880 条轨迹（26 个公开数据集、1%–100% 采样）时，0.2B 模型在 8/16/32 GPU 三个预算下 AbsRel 由 0.659/0.711 降至 0.304/0.278、AUC@5 由 0.0146 升至 0.1370；模型从 0.6B 增至 3.2B（2.5B/3.2B 用 recurrent-depth 复用 1.7B 权重）深度与位姿持续改善，但作者明确未建立可外推的幂律。"
+    ],
+    "innovation": [
+      "把几何基础模型、位姿优化引擎与「重建派生监督」组成闭环：GFM 输出相机/深度/对应/动态点，PoseEngine 用它组织 STAR 并减少 BA 轮次，KosmoWorld 反过来用真实场景重建成训练数据改善 GFM，形成「先验越强 → 优化越简单 → 系统越快」的正反馈论证。",
+      "用单一 GFM 前向同时提供几何先验与 STAR 内匹配（MVLoMa 解码器），使匹配与几何共享多视图特征，避免额外图像配对与独立匹配网络。",
+      "KosmoWorld 数据引擎给出可计算的场景筛选准则：几何可行性（Recast 高度场/导航网格）+ 观测置信度（六面立方体 + q_clarity 加权分数），把「哪些位置值得渲染」变成门槛。",
+      "在同一系统内统一静态（3DGS）与动态（4DGS/动态点）重建，并给出任务级联（精化相机 → 条件化稠密几何 → 初始化 3DGS/4DGS → 联合优化），使位姿精度可被下游渲染补偿。"
+    ],
+    "limits": [
+      "（作者承认）无纹理场景缺少可靠对应，相机恢复不可靠（Fig. 24a 楼梯间案例）；训练以横屏为主，竖屏输入覆盖不足、重建明显变弱（Fig. 24b）。",
+      "（作者承认）对非结构化网络照片集合（MegaDepth、MegaDepth-X、ArchWorld）鲁棒性差，因训练数据以漫游轨迹为主。",
+      "（作者承认）训练偏重动态序列、静态场景占比偏小，可能造成部分静态环境的深度与跨视图尺度误差；混合比需受控消融，作者称正在评估。",
+      "（作者承认）动态点解码器的「编码器级聚合已足够、解码时无需再看其它帧」只是设计假设，尚待消融；目标帧遮挡时 3D 轨迹存在时间抖动。",
+      "（我在正文发现）PoseEngine 初始化的 3DGS 渲染明显落后：MipNeRF360 26.69 dB vs GLUEMAP 28.40 dB、参考位姿 28.19 dB（差 1.50–1.71 dB），T&T 25.53 vs 25.80/25.90 dB，说明位姿最准未转化为渲染最好，端到端存在断点。",
+      "（我在正文发现）未公开代码、权重或 KosmoWorld 数据；扩展实验用与发布模型不同的实验模型且明确未建立幂律，故「production-ready」缺第三方可验证证据；VidMap 在 10 个场景失败也使 34 场景比较集带选择偏差。"
+    ],
+    "relation": "本文位于「端到端重建基础模型」与「场景级位姿系统」的交汇处，定位是系统整合。端到端一侧有 DUSt3R（Wang 2024b）、MASt3R（Leroy 2024）、Fast3R/MUSt3R、VGGT（Wang 2025a）、π³（Wang 2026b，置换等变）、Depth Anything 3（Lin 2026b，本文编码器直接沿用）；位姿侧有 COLMAP（Schönberger & Frahm 2016）、GLUEMAP（Pan 2026，用 π³ 先验 + STAR，是 PoseEngine 的直接蓝本）、VidMap（Pataki 2026）；动态与匹配侧有 UniQuery4R（Chen 2026c）、MVLoMa（Lu 2026b）。相对 GLUEMAP，差异是用自有 GFM 替换 π³ 并提供匹配、再加数据引擎反哺，属同一条线的强化。",
+    "repro": "未公开：正文未给代码、模型权重、GFM 训练数据配比或 KosmoWorld 数据的获取方式，「production-ready」是作者主张而非可验证事实；机构署名为 Kosmo Research，属 arXiv 技术报告。可复现要素包括：基准全为公开数据集（SpatialBench、ETH3D、MipNeRF360、Tanks & Temples、SMERF、Oxford Spires、Hypersim），指标定义见式 20–21，时序协议在 4.2.1 完整给出（COLMAP 用 SIFT + 穷举匹配、12 CPU 线程；GLUEMAP 用 π³ + SIMPLE_PINHOLE；VidMap 用 RoMa + DA3），3DGS 用 LiteGS 30k 迭代、每 8 帧留 1 帧、测试位姿 20 步图像条件化精化。门槛在 GFM 权重与数据引擎，缺失后只能复现评测协议而非系统。",
+    "action": "先读 3.2（STAR 构建与「GFM 越强、BA 越少」）与 4.2.1（表 10 的 34 场景/11,336 图像），再读 4.2.3 表 12，注意 PoseEngine 的 3DGS 渲染低于 GLUEMAP 约 1.5 dB 这一反向证据。需核 AbsRel 0.063 vs 0.077、AUC@5 0.741 vs 0.695、AUC@1 78.45 vs 69.13、14.07 h vs 69.67 h、2.62 h。风险：无代码；3DGS 端到端掉点；扩展实验用非发布模型；34 场景带偏差。",
+    "scores": {
+      "IMP": 5,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 5,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=5：从图像/视频恢复场景级相机与几何是 3D 视觉与 XR 内容管线的基础设施，位姿精度与耗时决定能否规模化。NOV=3：编码器沿用 DA3、动态点沿用 UniQuery4R、匹配沿用 MVLoMa、PoseEngine 仿 GLUEMAP、数据引擎借 WorldNav。TEC=4：三组件齐全、式 1–5 与 17–21 完整，但多项假设待消融。EXP=5：SpatialBench 两子集 + 34 场景 11,336 图像 + 48 场景匹配 + 1,879–187,880 轨迹扫描。PER=4：AbsRel 较 0.077 降约 18%、耗时降约 80%，但 3DGS 端到端反掉 1.5 dB。TRL=3：系统完整但无公开代码。REP=2：代码、权重、数据均未公开。"
+  },
+  {
+    "id": "2611.16472",
+    "slug": "rgbd-slam-raspberry-pi5-benchmark",
+    "title_zh": "边缘端 RGB-D SLAM：在 Raspberry Pi 5 上基准测试与剖析 RTAB-Map 与 ORB-SLAM3",
+    "venue": "arXiv preprint（cs.RO）",
+    "track": "评估与数据集",
+    "tags": [
+      "RGB-D SLAM",
+      "边缘计算 Edge Computing",
+      "性能剖析 Profiling",
+      "Raspberry Pi 5",
+      "可复现基准 Benchmark"
+    ],
+    "conclusion": "在两者都全程跟踪的序列上，RTAB-Map 前端 38–74 ms/帧、全流程 150–462 ms/帧，ORB-SLAM3 为 13–45 ms 与 26–62 ms；fr2_desk 上 RTAB-Map 峰值内存 2295 MB（D1）对 ORB-SLAM3 的 755 MB；计时可重复到 1–5%，但同配置重复运行的 ATE 变异达 27%，故两系统精度差异不成立；全程无热降频（峰值 51.2–58.4 °C）。",
+    "problem": "室内无 GPS 的微型无人机必须在 ARM 边缘板上跑 SLAM，而计算与载荷预算排除了桌面 GPU，因此「标准 RGB-D SLAM 在这种硬件上究竟怎样」是部署前的必要知识。然而公开数据极少：作者指出唯一经同行评议的 Raspberry Pi 5 评测只覆盖 ORB-SLAM3（Sud & Upadhyay），RTAB-Map 从未在该板被测，两系统也从未同协议比较；该文还因非正式测试认为 RTAB-Map 无法实时而将其排除，且不做阶段级剖析。已有嵌入式 SLAM 工作多为系统级比较（Delmerico 2018、Jetson、Navion ASIC），缺少配置级的逐阶段成本归因，而 RTAB-Map 的成本恰恰高度依赖配置。方法学上还有两个陷阱：跟踪丢失会让运行「更快且更准」，与正常运行平均会把失败配置排成最优；SLAM 的非确定性使单次精度差异不可解释。",
+    "method": "平台（Sec. 3）。Raspberry Pi 5（Model B rev. 1.1），BCM2712，4×Cortex-A76 @2.4 GHz，16 GB LPDDR4X，官方 Active Cooler；Ubuntu 24.04.4；RTAB-Map 0.23.13（ROS 2 Jazzy）链接 OpenCV 4.6.0、GTSAM 4.2、g2o，经独立工具 rtabmap-rgbd_dataset 单进程运行；四核均 2400 MHz；误差用 evo 1.38.1。ORB-SLAM3 取 commit 4452a3c（v1.0），GCC 13.3，以 RelWithDebInfo（-O2）编译，省去默认的 -O3 -march=native，时序为保守估计。\n\n配置（4）。RTAB-Map 三配置只差 Odom/ImageDecimation：D1/D2/D4 = 640×480、320×240、160×120。共享参数刻意设为最重：DetectionRate=0（每帧跑后端，默认 1 Hz）、每帧一节点、ProximityMaxGraphDepth=0、TimeThr/MemoryThr=0（工作内存无界），其余 531 参数默认。前端 F2M 用 1000 个 GFTT + ORB 与局部特征图匹配，PnP RANSAC（≥20 inlier）估运动并做 g2o 局部 BA。后端用 bag-of-words 回环与 GTSAM 位姿图优化。ORB-SLAM3 用 rgbd_tum、无 IMU、stock TUM 设置，并对 RGB 与深度抽稀 1/2/4。两系统均用 5000 counts/m 深度除数（stock 为 5208）。\n\n测量（4–6）。六序列 × 三分辨率 = 每系统 18 次运行，逐次记录覆盖率（≥95% 记 ok）、ATE、ms/帧、RSS、CPU、温度。阶段级时间取 RTAB-Map 统计日志，函数级占用另跑 Linux perf 归因。",
+    "experiments": [
+      "平台与规模：RPi 5（4×A76@2.4 GHz、16 GB、Active Cooler、Ubuntu 24.04.4），6 个 TUM RGB-D 序列 × 3 种分辨率 = 每系统 18 次运行；RTAB-Map 12/18 满足 95% 覆盖率，ORB-SLAM3 为 9/18，两者失败的序列不同。",
+      "跟踪连续性：D4（160×120）在 6 个序列中 4 个丢失（fr1_desk 146 次 reset、74% 覆盖；fr1_room 915 次、无轨迹；fr3_nstx 1068 次；fr3_stx 911 次、13%），仅 fr1_xyz（1 次）与最慢的 fr2_desk 全程跟踪；fr3_nstx 在 D1 749 次 reset、D2 单次 reset 即分裂地图。",
+      "处理时间：在两者都跟踪的 fr1_xyz 与 fr2_desk 上帧加权为 462 ms（D1）、318 ms（D2）、150 ms（D4），全分辨率到四分之一降 3.1×；D1 下单序列从 fr1_desk 198 ms 到 fr2_desk 501 ms，成本随地图节点数增长；无配置接近 33.3 ms 帧间隔，最快的成功运行为 fr1_desk 的 D2，108 ms。",
+      "ORB-SLAM3 对比：池化前端 44.7/29.4/13.1 ms 对 RTAB-Map 里程计 74.3/37.8/42.1 ms；端到端 61.9/42.2/26.1 ms 对 462.3/317.8/150.2 ms；逐序列比值 fr1_xyz 4.7–5.5×、fr2_desk 5.8–8.3×；即便假设里程计与后端并发，RTAB-Map 后端仍为 356.9/261.9/90.9 ms，即 5.8×/6.2×/3.5×。",
+      "阶段/函数剖析（D4 于 fr2_desk，2893 帧）：RTAB-Map 里程计 44.9 ms（33.1%）、图优化 38.6 ms（28.4%）、其他未计时 38.4 ms（28.3%）、内存更新 7.8 ms、似然/检索 5.2 ms、贝叶斯后验 0.7 ms，后端小计 90.7 ms（66.9%），合计 135.6 ms（墙钟 152.6 ms）；工作内存每帧加一节点至 2863 个，无节点转入长期内存。ORB-SLAM3 为 tracking 13.7 ms（49.8%）、local mapping 94.9 ms（49.1%）其中 local BA 84.4±61.8 ms/次（348 次执行、107 次中止）、loop closing 约 0.9 s；两主线程 busy 时间几乎相等（39.7 s vs 39.1 s）。",
+      "资源与热行为：RTAB-Map 系统级 CPU 占用 26–39%（四核板仅略多于一个核）；fr2_desk 上 RSS 峰值 2295/1615/468 MB（D1/D2/D4）；峰值温度 51.2–58.4 °C，所有采样频率恒为 2400 MHz，无热降频；仅 fr2_desk 的 D1 有 3/1144 采样报供电欠压，频率未降。",
+      "可重复性与精度：时间可重复到 1–5%（D4 于 fr2_desk 160.7±7.1 ms、D1 于 fr1_room 218.8±6.2 ms，CV 4.4%/2.8%）；ATE 不可重复——D1 于 fr1_room 三次为 0.050/0.055/0.081 m（CV 27%）、D4 于 fr2_desk 为 0.123/0.126/0.142 m（CV 8%），故单次差异需大于约 40% 才可视为真实；全程跟踪的 ATE 从 0.011 m（fr1_xyz）到 0.142 m（fr2_desk），序列效应主导，ORB-SLAM3 在 fr2_desk 为 0.092–0.281 m。"
+    ],
+    "innovation": [
+      "首次在同一协议下把 RTAB-Map 与 ORB-SLAM3 放到 Raspberry Pi 5 上对比，填补「RTAB-Map 未在该板被测、两系统未同协议比较」的空白，并公开软件版本、commit、编译选项等 provenance 细节。",
+      "同时给出阶段级（RTAB-Map 统计日志、ORB-SLAM3 内建计时）与函数级（perf 调用图、g2o 内部占比）双层剖析，量化了「RTAB-Map 主成本是优化不断增长的位姿图、ORB-SLAM3 的 local BA 与 tracking 等量但并行」这一结构性差异。",
+      "方法学贡献：明确指出并量化「跟踪丢失使运行既更快又更准」的度量陷阱，主张时间与精度必须与覆盖率一起报告，并给出 ATE 27% 重复性与「差异需 >40% 才有意义」的判据。",
+      "以 RTAB-Map 默认无界工作内存（2863 节点 vs ORB-SLAM3 约 215 关键帧）解释内存与后端成本的增长机制，为边缘部署给出可直接操作的配置杠杆（MemoryThr/TimeThr、DetectionRate、节点添加策略）。"
+    ],
+    "limits": [
+      "（作者承认）除两处重复实验外每序列每配置只跑一次，而 ATE 重复变异达 27%，故配置间/系统间精度差异只能视为指示性，需多次运行取中位数才能确立。",
+      "（作者承认）RTAB-Map 配置为每帧处理并保留且数据集工具串行执行，其后端成本与端到端时间是逐帧最坏情况，默认配置（后端 1 Hz、并发）未测。",
+      "（作者承认）ORB-SLAM3 使用 stock 金字塔与 RelWithDebInfo（-O2、无 -O3 -march=native）编译，时序不含并行 local mapping 线程的工作；两系统在抽稀方式、线程化与关键帧选择上不同。",
+      "（作者承认）两系统都把 freiburg2 深度除以 5000（stock 为 5208），实测 fr2_desk 上 D1 的 ATE 会从 0.019 m 变为 0.092 m；且均未做畸变校正，fr1/fr2 的绝对 ATE 不可与已校正文献直接比较。",
+      "（我在正文发现）只覆盖单一板卡（RPi 5）、单一 RTAB-Map 版本（0.23.13）与单一 ORB-SLAM3 版本（1.0），未测 bounded memory 模式，也未上 Jetson Orin Nano 或 GPU 加速流水线，结论不能外推到其它边缘平台。",
+      "（我在正文发现）未测实时性以外的部署要素：无相机在线输入（用数据集 PNG，ORB-SLAM3 有 25.3% 周期耗在 PNG 解码）、无功耗测量、无 IMU 融合、无真实飞行中的振动与运动模糊。"
+    ],
+    "relation": "本文属 SLAM 边缘部署评测脉络，不是新算法。直接对照是 Sud & Upadhyay 在 RPi 5 上的 ORB-SLAM3 评测：他们因非正式测试认为 RTAB-Map 无法实时而排除、且不做阶段剖析；本文补上 RTAB-Map 并做双层剖析，同时指出对方 RGB-D 精度结果与本文相差两个数量级而资源测量一致，这一矛盾构成对既有文献的校准。系统层面，ORB-SLAM3（Campos 2021，多地图 + 视觉惯性 + 并行三线程）与 RTAB-Map（Labbé & Michaud，三级内存 + 外观回环）代表两种设计哲学。作者引用的对照还包括 Labbé & Michaud 在单桌面核上 TUM 的 70 ms 对 54 ms 与 KITTI 上 82 ms 对 175 ms 的反转，以及 Abi Hana 在 Jetson Xavier 上 60 ms 对 86 ms。",
+    "repro": "高度可复现但无新增产物：两系统均开源（ORB-SLAM3 v1.0 commit 4452a3c；RTAB-Map 0.23.13 经 ROS 2 Jazzy 发行版），数据为公开 TUM RGB-D 六序列，工具为 evo 1.38.1；硬件与 OS 以及全部非默认参数（Table I，含 DetectionRate=0、LinearUpdate/AngularUpdate=0、ProximityMaxGraphDepth=0、STMSize=30、OdomF2M/MaxSize=1000、TimeThr/MemoryThr=0）与编译选项（RelWithDebInfo -O2）均已列出。正文未提供脚本、原始日志或测量数据的仓库链接，也未声明许可；复现需自行重建 rtabmap-rgbd_dataset 的调用方式与 perf 采样配置。",
+    "action": "先读 4（配置表 I/II）与 5.1（度量陷阱），否则易把 D4 的「43.6 ms 且 ATE 0.031 m」误读为最优；再读 6 的剖析表。需核 462/318/150 ms 与 61.9/42.2/26.1 ms、前端 44.9 vs 13.7 ms、图优化 38.6 ms、local BA 84.4 ms、RSS 2295 vs 755 MB、2863 节点 vs ~215 关键帧。风险：RTAB-Map 为最坏配置；ORB-SLAM3 未开 -O3；除数 5000 可能放大误差；单次运行无检验。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 2,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 2,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：无 GPS 微型无人机的机载 SLAM 是真实工程瓶颈，「标准 RGB-D SLAM 在 ARM 边缘板上的可部署边界」长期缺公开数据。NOV=2：明确不提新方法，贡献是首个同协议对比、双层剖析与度量陷阱提醒。TEC=4：provenance 完整（commit、编译选项、531 参数）、双层剖析、重复性量化，唯缺统计检验。EXP=4：6 序列 × 3 分辨率 × 2 系统 = 36 次运行、逐次记六类指标，但除两处外均单次。PER=2：无方法增益，唯一结论是 RTAB-Map 端到端慢 3.5–8.3×、内存高约 3×。TRL=3：结论可指导部署、两系统开源，但未产出可部署组件。REP=3：系统与数据全开源，但无脚本仓库、无正式发表。"
+  }
+]
