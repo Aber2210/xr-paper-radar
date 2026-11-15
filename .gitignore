@@ -1,6 +1,7 @@
 #  regenerable cache & local-only artifacts
 data/fulltext/
 data/tmp_check/
+data/_chk/
 __pycache__/
 *.pyc
 .workbuddy/
