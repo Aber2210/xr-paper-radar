@@ -1,0 +1,34 @@
+{
+ "2501.12764": {
+  "cat": "cs.RO",
+  "title": "Grid-based Submap Joining: An Efficient Algorithm for Simultaneously Optimizing Global Occupancy Map and Local Submap Frames",
+  "abstract": "Optimizing robot poses and the map simultaneously has been shown to provide more accurate SLAM results. However, for non-feature based SLAM approaches, directly optimizing all the robot poses and the whole map will greatly increase the computational cost, making SLAM problems difficult to solve in large-scale environments. To solve the 2D non-feature based SLAM problem in large-scale environments more accurately and efficiently, we propose the grid-based submap joining method. Specifically, we first formulate the 2D grid-based submap joining problem as a non-linear least squares (NLLS) form to optimize the global occupancy map and local submap frames simultaneously. We then prove that in solving the NLLS problem using Gauss-Newton (GN) method, the increments of the poses in each iteration are independent of the occupancy values of the global occupancy map. Based on this property, we propose a poseonly GN algorithm equivalent to full GN method to solve the NLLS problem. The proposed submap joining algorithm is very efficient due to the independent property and the pose-only solution. Evaluations using simulations and publicly available practical 2D laser datasets confirm the outperformance of our proposed method compared to the state-of-the-art methods in terms of efficiency and accuracy, as well as the ability to solve the grid-based SLAM problem in very large-scale environments.",
+  "announce": "replace",
+  "published_rss": "2026-11-16",
+  "in_registry": false
+ },
+ "2608.19372": {
+  "cat": "cs.RO",
+  "title": "The Missing Touch: Sensing and Displaying Localized Contact Geometry Brings Teleoperation Closer to Human Dexterity",
+  "abstract": "A fundamental challenge in robotic teleoperation is enabling an operator to control a remote robot as effortlessly and intuitively as their own hands. Despite the growing use of teleoperation to collect demonstrations for training autonomous robot policies, teleoperated performance still falls significantly short of human dexterity, even for basic tasks. Here, we present evidence that a key factor contributing to this performance gap is the absence of localized tactile feedback. We equip a two-degree-of-freedom (DoF) bilateral force-feedback telemanipulator with a vision-based tactile sensor and a 32-pixel tactile display, allowing us to capture spatial contact patterns on the robot finger and render them on the operator's fingertip. In teleoperated button-discrimination and peg-rolling tasks, we demonstrate that reproducing spatially distributed contact information brings teleoperated movements closer to natural human behavior through fewer unnecessary motions and task completion steps, significantly reducing task completion time and producing more consistent demonstrations across trials and operators. We further show that these improvements in human demonstrations can propagate to autonomous policies: policies trained on tactile-enhanced demonstrations exhibited similar reductions in both task completion time and deviation from natural human behavior. Together, these results establish spatially distributed tactile feedback as an important component of dexterous robotic teleoperation and demonstrate its potential to improve safety-critical teleoperation and enable more humanlike demonstrations for training autonomous robot policies.",
+  "announce": "replace",
+  "published_rss": "2026-11-16",
+  "in_registry": false
+ },
+ "2610.30969": {
+  "cat": "cs.RO",
+  "title": "IORA: Irregular Object Immobilization under Restricted Actuation",
+  "abstract": "Stable grasping under task-specific disturbances is important for robotic manipulation. However, most dexterous grasp synthesis methods are developed for highly actuated hands in free space, and low-DoF hands may not be able to realize the contact topologies required by these grasps. Meanwhile, support surfaces can provide useful contact forces, but are often treated only as geometric constraints. We present a support-aware grasp synthesis framework for object immobilization with low-DoF coupled hands. Given irregular object geometry, our method represents both hand and object local surface regions as graphs and searches for kinematically feasible matchings between them. We then refine the wrist pose and motor state for geometric contact feasibility and validates the refined grasps through physical rollouts. Starting from the validated grasp pose, an optional task-guided local search explores nearby grasp configurations by varying the wrist pose and motor state, and selects one according to the specified task condition. Experiments on diverse objects show that our method generates various grasp configurations that achieve high grasp success and strong disturbance resistance. Real-world experiments further demonstrate physically executable grasps which enable object immobilization in cooking scenario.",
+  "announce": "replace",
+  "published_rss": "2026-11-16",
+  "in_registry": false
+ },
+ "2611.17238": {
+  "cat": "cs.RO",
+  "title": "HEIR: Harness Egocentric Intent for Human-Robot Interactions",
+  "abstract": "For robots to assist, serve, and collaborate with humans, they must not only interpret human requests conveyed through language and multimodal intentional cues, but also execute long-horizon tasks that interleave navigation and manipulation. In this paper, we introduce HEIR, a resource for studying how to Harness Egocentric Intent for Human-Robot Interaction. HEIR pairs human speech, measured gaze, and egocentric video with robot observations and teleoperated navigation-manipulation trajectories, while each session preserves successive episodes, with each request fulfilled through multiple execution subtasks. The captured data, together with human-authored annotations, support the study of intent grounding, execution planning, and task completion within a unified interaction setting. To demonstrate the value of HEIR, we conduct extensive offline experiments to evaluate how models benefit from additional human-centric context across these tasks, together with real-robot experiments that assess execution task completion. HEIR thus provides a valuable resource for studying user-centric robot interaction in naturalistic household environments. Our demo and dataset are available online.",
+  "announce": "replace",
+  "published_rss": "2026-11-16",
+  "in_registry": false
+ }
+}

@@ -1,0 +1,43 @@
+【摘要】
+
+【引言】
+ Occupancy grid map (OGM) is a widely used map representation in 2D environments because it categorizes the cells in the map into occupied, free, and unknown according to the presence or absence of obstacles in the corresponding environment [ 1 , 2 , 3 , 4 , 5 ] , which is valuable for robot navigation and path planning.
+Early works using OGM in 2D laser simultaneous localization and mapping (SLAM) techniques are particle filter based. Such techniques, including FastSLAM [ 6 ] and GMapping [ 7 , 8 ] , have the advantage that the occupancy of each cell could be integrated into the state representation, it is made possible as each particle includes both a robot trajectory and an associated OGM. However, due to particle filters maintaining the representation of the full system state in each particle, it is inevitable that particle filter-based methods will take up a lot of memory consumption and computation cost when the robot’s trajectory becomes longer.
+Optimization-based 2D laser SLAM methods perform better in terms of accuracy and resource consumption. One challenge in such approaches is to avoid cumulative errors as the robot trajectory grows. Hector SLAM [ 9 ] avoids the accumulation of errors by taking the scan-to-map matching method at the front-end of SLAM framework. Karto-SLAM [ 10 ] further introduces loop closure detection and implements global optimization using sparse pose adjustment to reduce the long-term error accumulation. Cartographer [ 11 ] additionally introduces branch and bound strategy to speed up the loop closure detection. SLAM Toolbox [ 12 ] integrated in ROS 2 is developed based on Karto-SLAM, which uses Ceres [ 13 ] as the pose graph solver instead of sparse pose adjustment to provide faster and more flexible optimization settings. Moreover, SLAM Toolbox refactors scan matching method and introduces K-D tree search to speed up the computation.
+Typically, as in Cartographer, optimization-based methods solve the SLAM problem in two steps. First, the robot poses are optimized using a pose graph, and then the optimized poses are assumed to be the correct poses and used to build up the OGM. However, in these two-step approaches, the uncertainties of the robot poses obtained in the first step are not taken into account when building the map, resulting in suboptimal solutions as pointed in [ 14 , 15 , 16 , 17 ] .
+Our recent work, Occupancy-SLAM [ 14 ] , demonstrates a substantial improvement in accuracy compared to two-step approaches by simultaneously optimizing the robot poses and the occupancy map. Specifically, it performs a sampli
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2501.12764v2 [cs.RO] 13 Nov 2026
+Grid-based Submap Joining: An Efficient Algorithm for Simultaneously Optimizing Global Occupancy Map and Local Submap Frames
+Yingyu Wang
+Affiliation:  Yingyu Wang and Shoudong Huang are with the Robotics Institute, Faculty of Engineering and Information Technology, University of Technology Sydney, Australia (e-mail: Yingyu.Wang-1@student.uts.edu.au; Shoudong.Huang@uts.edu.au).
+Liang Zhao
+Affiliation:  Liang Zhao is with the School of Informatics, University of Edinburgh, Edinburgh, UK (e-mail: Liang.Zhao@uts.edu.au).
+Shoudong Huang
+Affiliation:  Yingyu Wang and Shoudong Huang are with the Robotics Institute, Faculty of Engineering and Information Technology, University of Technology Sydney, Australia (e-mail: Yingyu.Wang-1@student.uts.edu.au; Shoudong.Huang@uts.edu.au). This paper formulates the grid-based submap joining problem as a non-linear least squares problem to simultaneously optimize the global occupancy map and local submap frames, which is different from other submap joining approaches that only optimize poses by constructing a pose graph. More importantly, we show that for our formulation the existence of a special independent property helps solve this problem very efficiently by a pose-only Gauss-Newton algorithm. Our local submap joining approach is evaluated using datasets generated from two simulated environments and six practical datasets, demonstrating that it outperforms state-of-the-art algorithms in terms of speed and accuracy.
+This paper is the first to simultaneously optimize the global occupancy map and local map coordinate frames for the grid-based submap joining problem. In the experiments of this paper, we have used 3-10 local submaps depending on the scale of datasets. The best number of local maps for map joining (to achieve the best efficiency) and the best way to partition the whole laser dataset for building different high-quality loca

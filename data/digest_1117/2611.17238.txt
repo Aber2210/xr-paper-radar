@@ -1,0 +1,362 @@
+【引言】
+ The research community has witnessed revolutionary progress driven by data-centric approaches, enabling the rapid advancement of large language models (LLMs) [ 7 , 10 , 12 , 44 , 16 ] and vision-language models (VLMs) [ 43 , 2 , 29 ] . Tremendous efforts have been invested in reproducing this success in embodied AI, leading to rapid advances in vision-language-action models (VLAs) [ 6 , 22 , 54 , 5 , 4 ] and world-action models (WAMs) [ 65 , 30 , 66 ] . More recently, inspired by LLM agents that harness external tools, agentic robot systems  [ 1 , 17 ] have been developed to orchestrate multiple execution modules for long-horizon tasks.
+Much of this progress remains fundamentally task-centric, where robots execute given instructions while humans remain peripheral to the formulation. This paradigm is insufficient for robots intended to serve, assist, and collaborate with people in real-world scenarios, where humans are not merely obstacles to avoid, but active participants whose behaviors, intentions, and requests continuously shape the task. We therefore argue that embodied AI should increasingly embrace a user-centric perspective, placing situated human context at the core of robot decision-making and execution .
+Studying this new paradigm in the data-driven era requires datasets that capture not only robot sensory and action signals, but also how humans perceive, communicate, and interact with robots throughout task execution. Existing Human–Robot Interaction (HRI) datasets  [ 46 , 64 ] , however, are largely collected in controlled tabletop settings and focus on short-horizon interactions, providing limited coverage of situated human behaviors. Meanwhile, egocentric vision has been increasingly explored for robot learning  [ 60 , 13 ] , yet limited effort has studied how intentional cues from the human perspective can complement robot observations during HRI.
+To bridge this gap, we introduce HEIR, H arnessing E gocentric I ntent for Human– R obot Interactions, a dataset for studying user-centric human–robot interaction during long-horizon tasks in naturalistic household environments. As illustrated in Fig.  1 , HEIR pairs human egocentric video, measured gaze, and speech with robot observations and teleoperated navigation–manipulation trajectories. These recordings capture the human and robot context surrounding each request, including referents visible only from the human perspective, while each continuous session preserves both multi-stage execution and state changes across requests. Our dataset further provides annotations of task intent, target o
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab) Setting
+Acc ↑ \uparrow
+Macro-F1 ↑ \uparrow
+Next Type ↑ \uparrow
+Core ↑ \uparrow
+Completion F1 ↑ \uparrow
+Cosmos3-Nano
+Pre-trained
+33.07
+21.03
+0.00
+0.00
+0.00
+[ 37 ]
+Fine-tuned
+68.90
+70.81
+54.87
+44.25
+32.32
+Qwen3.5-4B
+Pre-trained
+46.85
+45.71
+49.56
+32.74
+26.61
+[ 41 ]
+Fine-tuned
+83.46
+84.33
+75.22
+61.06
+36.85
+Gemma-4-E4B-it
+Pre-trained
+38.58
+33.48
+23.01
+19.47
+11.30
+[ 52 ]
+Fine-tuned
+63.39
+65.63
+53.98
+38.05
+27.35
+Core and Completion F1 use a full fresh binary Codex review of all reference Switch decisions. Completion F1 measures one-to-one terminal-state fact matching. Incorrect decisions or next-subtask types score zero. See Appendix  E.2 .
+5.2 Subtask Planning
+We evaluate subtask progression offline using recorded robot observations, annotated intent, and annotated execution history, comparing each planner before and after fine-tuning on HEIR. As shown in Tab.  4 , pre-trained planners struggle to judge subtask progression from robot observations: Cosmos3-Nano predicts Continue for nearly every query and never switches to a correct next subtask. Fine-tuning on HEIR substantially improves all three models, raising decision accuracy by 25–37 points and next-subtask type accuracy by 25–55 points. The fine-tuned Qwen3.5-4B has the strongest overall planning result, reaching 61.06% Core and 36.85% Completion F1. The effect of the intent source on initial-subtask planning is analyzed in Appendix  E.3 .
+Table 5 : Offline VLN action prediction before and after fine-tuning with English subgoal instructions. All scores are percentages; ↑ \uparrow denotes higher is better. Bold denotes the better weight setting within each model block. Original denotes the released model without project LoRA; fine-tuned checkpoints are selected on validation. † \dagger denotes annotation-bounded STOP proxy scores.
+Action prediction
+Stopping Weights
+Accuracy ↑ \uparrow
+Macro-F1 ↑ \uparrow
+STOP Recall † ↑ \uparrow
+STOP F1 † ↑ \uparrow
+NaVid
+Original
+48.74
+45.38
+53.49
+30.95
+Fine-tuned
+86.59
+86.15
+80.72
+60.05
+StreamVLN
+Original
+46.84
+39.65
+19.39
+20.34
+Fine-tuned
+86.36
+86.20
+75.49
+67.02
+InternVLA-N1
+Original
+49.08
+45.41
+58.28
+31.48
+Fine-tuned
+90.69
+91.00
+84.53
+76.98
+5.3 Robot Navigation
+Although existing VLN models  [ 67 , 61 , 53 ] exhibit notable generalization ability, their original checkpoints still degrade substantially in our setting. Fine-tuning on HEIR markedly improves both action prediction and stopping performance across all models, demonstrating the value of adapting VLN policies to naturalistic long-horizon HRI scenarios.
+Table 6 : Offline VLA/WAM action prediction across model variants. All models are fine-tuned using ground-truth subgoal descriptions as instructions. Joint MSE is reported in rad 2 , end-effector position error in cm, and end-effector rotation error in degrees (lower is better).
+First output
+Action chunk Joint MSE ↓ \downarrow
+(rad 2 )
+EEF Pos. ↓ \downarrow
+(cm)
+EEF Rot. ↓ \downarrow
+( ∘ )
+Joint MSE ↓ \downarrow
+(rad 2 )
+EEF Pos. ↓ \downarrow
+(cm)
+EEF Rot. ↓ \downarrow
+( ∘ )
+DreamZero
+0.002809
+1.489
+3.455
+0.013215
+2.604
+5.244
+π 0 \pi_{0} -FAST
+0.001644
+0.808
+1.093
+0.009090
+1.466
+1.858
+π 0 \pi_{0}
+0.000588
+0.396
+0.653
+0.003688
+0.937
+1.499
+π 0.5 \pi_{0.5}
+0.000468
+0.373
+0.652
+0.003398
+0.911
+1.519
+FastWAM
+0.000374
+0.369
+0.673
+0.002921
+0.806
+1.327
+Lingbot-VLA2
+0.000316
+0.310
+0.539
+0.002633
+0.725
+1.194
+5.4 Robot Manipulation
+We report robot manipulation performance for several prevailing VLA/WAM models after fine-tuning on HEIR, including DreamZero  [ 65 ] , π 0 \pi_{0} -FAST  [ 40 ] , π 0 \pi_{0}   [ 5 ] , π 0.5 \pi_{0.5}   [ 18 ] , FastWAM  [ 66 ] , and Lingbot-VLA2  [ 63 ] . We found that existing open-source checkpoints exhibit limited zero-shot generalization to our naturalistic household scenarios, often leading to severe execution failures and making direct evaluation uninformative. We therefore focus on fine-tuned model performance. As shown in Tab.  6 , stronger recent models generally reduce both joint-space and end-effector prediction errors, with Lingbot-VLA2 achieving the best overall performance across first-step and action-chunk prediction metrics.
+In real-robot tests on 20 pick-and-place tasks with three trials each, Lingbot-VLA2, FastWAM, and π 0.5 \pi_{0.5} achieve success rates of 68.33%, 60.00%, and 36.67%, respectively, following the same ranking as offline action prediction. This suggests that our offline evaluation can serve as an efficient proxy for comparing manipulation models before costly real-robot deployment.
+5.5 Real-Robot Experiments
+We deploy the selected models from the four preceding tasks in a closed-loop system and evaluate their end-to-end performance on HEIR. We adopt Lingbot-VLA2 for manipulation based on the real-robot comparison above and its native torso control (Appendix  C.4 ). For navigation, InternVLA-N1 achieves a subtask-level success rate of 81.25 % across 32 evaluated navigation subtasks. Even so, when evaluated end-to-end at the episode level, combining the selected models across all components still yields a relatively low success rate of 18.52 % ove
+
+【实验】
+and Analysis
+5.1 Human Intent Understanding
+5.2 Subtask Planning
+5.3 Robot Navigation
+5.4 Robot Manipulation
+5.5 Real-Robot Experiments and Analysis
+In this section, we briefly summarize the key experimental insights and findings across the four long-horizon HRI tasks, while implementation details and complete experimental results are provided in Appendices  D and  E , respectively.
+5.1 Human Intent Understanding
+Here, we use Gemma-4-31B  [ 52 ] as the base model, with additional experiments on Qwen3.8-27B  [ 42 ] , Muse-Glimmer-30B  [ 33 ] , and InternVL3.5-38B  [ 59 ] reported in the Appendix  E . At a similar model scale, Gemma-4 slightly outperforms Qwen3.8 and substantially outperforms InternVL3.5 on human intent understanding; it outperforms Muse-Glimmer mainly in plan prediction. As these large pretrained models already achieve strong performance without task-specific training, we focus our analysis on the contributions of human-centric intentional cues and interaction history.
+Table 2 : Input ablations for Gemma-4-31B. ↑ \uparrow denotes higher is better. Bold indicates the best score across input conditions for each model. RV is N/A without robot views.
+Grounding
+Planning
+Visibility
+Input condition
+Slot F1 ↑ \uparrow
+Loc. Acc. ↑ \uparrow
+Plan EM ↑ \uparrow
+RV F1 ↑ \uparrow
+Textual Instruction only
+59.52
+20.47
+30.27
+N/A
+Robot View only
+71.22
+54.86
+63.51
+60.33
+Human + Robot
+74.85
+71.13
+72.43
+57.71
+Human + Robot + center prior
+74.91
+71.39
+75.14
+61.61
+Human + Robot + gaze (full)
+77.18
+77.69
+78.11
+64.09
+The role of Human-Centric Context . For efficiency, we omit interaction history from this evaluation. As shown in Tab.  2 , human-centric intentional context substantially benefits intent parsing. The instruction-only baseline achieves the lowest accuracy, indicating that intent parsing is non-trivial and cannot be directly solved from language priors alone. Adding the robot view significantly improves performance, and further adding the human egocentric view brings additional gains. And overlaying gaze on the egocentric frames provides further gains, particularly compared with using a center prior as a proxy for attention. Notably, combining all modalities yields the best overall performance.
+Table 3 : Intent understanding results for Gemma-4-31B under different history conditions. ↑ \uparrow denotes higher is better. Bold indicates the best score excluding ground-truth history. The no-history row is a separate run from the full-input row of Tab.  2 ; see Appendix  D.2 .
+Grounding
+Planning
+Visibility
+History
+Slot F1 ↑ \uparrow
+Loc. Acc. ↑ \uparrow
+Plan EM ↑ \uparrow
+RV F1 ↑ \uparrow
+Ground-truth history
+81.25
+80.31
+82.70
+64.88
+No history
+76.69
+77.17
+76.22
+63.13
+Predicted history
+77.89
+79.27
+81.08
+63.51
+The role of Intent History . We adopt the full-context setup to examine the role of intent history. Ground-truth history provides an upper bound on the benefit of perfect interaction memory, while using predictions from preceding episodes as history also yields notable gains. These results suggest strong dependencies across naturally evolving interactions and validate the importance of modeling long-horizon interaction history in HEIR.
+Table 4 : Planner results before and after fine-tuning on HEIR. All planners receive the annotated intent. All scores are percentages; ↑ \uparrow denotes higher is better. Bold indicates the better score within each model.
+Planning
+Completion episodes and participants . The 27 evaluated episodes cover pure navigation tasks, fetch-and-deliver tasks that combine navigation and manipulation, pure manipulation tasks, and human–robot collaborative tasks such as tidying a bed sheet together with the participant. They take place at different locations in the room, including the kitchen, sofa, bedside, and coffee table. The episodes are performed by two participants who also contributed to the HEIR recordings but wore different clothing from that in their data-collection sessions, so their appearance in the human and robot views differs from the training data.
+Appendix E Additional Experimental Results
+Table 11 : Input ablations for Qwen3.8-27B, Muse-Glimmer-30B, and InternVL3.5-38B. All scores are scaled by 100; ↑ \uparrow denotes higher is better. Bold indicates the best score across input conditions for each model. RV is N/A without robot views.
+Grounding
+Planning
+Visibility
+Input condition
+Slot F1 ↑ \uparrow
+Loc. Acc. ↑ \uparrow
+Plan EM ↑ \uparrow
+RV F1 ↑ \uparrow
+Qwen3.8-27B
+Textual Instruction only
+60.18
+22.05
+29.19
+N/A
+Robot View only
+71.83
+54.33
+54.05
+61.23
+Human + Robot
+74.24
+62.47
+64.86
+60.68
+Human + Robot + center prior
+75.21
+66.93
+68.11
+62.72
+Human + Robot + gaze (full)
+77.01
+73.49
+71.08
+63.38
+Muse-Glimmer-30B
+Textual Instruction only
+56.52
+18.64
+26.22
+N/A
+Robot View only
+67.80
+50.66
+44.86
+62.76
+Human + Robot
+72.87
+62.99
+43.24
+58.78
+Human + Robot + center prior
+72.57
+65.88
+44.86
+59.34
+Human + Robot + gaze (full)
+74.86
+75.07
+43.78
+60.29
+InternVL3.5-38B
+Textual Instruction only
+54.28
+30.45
+32.16
+N/A
+Robot View only
+61.34
+43.04
+25.68
+43.58
+Human + Robot
+67.34
+56.17
+29.73
+41.95
+Human + Robot + center prior
+66.00
+56.96
+27.03
+41.39
+Human + Robot + gaze (full)
+67.99
+58.79
+28.38
+41.08
+Tab.  11 and  12 extend the analysis to Qwen3.8-27B, Muse-Glimmer-30B, and InternVL3.5-38B. Input ablations show that language alone is insufficient for reliable intent understanding: adding robot and human visual context consistently improves grounding for all three models, and overlaying gaze yields the best Slot F1 and Location Accuracy for each of them, improving localization beyond the center prior. For Qwen3.8, these gains also carry over to plan prediction. Muse-Glimmer and InternVL3.5 show little change in Plan EM across visual inputs; they less reliably translate the supplied torso-posture evidence into the initial torso-adjustment phase, which bounds exact-sequence agreement.
+Table 12 : Intent understanding results for Qwen3.8-27B, Muse-Glimmer-30B, and InternVL3.5-38
+
+【结论/局限】
+References
+A Additional Related Work
+B HEIR Dataset Details
+B.1 Data Collection and Hardware Setup
+B.2 Hierarchical Annotation Protocol
+B.3 Quality Assurance and Review Procedures
+B.4 Example of Human Annotation and VLM-Assisted Enrichment
+B.5 3D Point Cloud and Trajectory Comparison In this paper, we introduce HEIR, a dataset and benchmark for studying user-centric human–robot interaction in long-horizon, naturalistic household environments. HEIR jointly captures human egocentric video, gaze, and instruction together with robot observations and execution trajectories, with structured annotations linking human intent to planning and execution. We formulate a hierarchical evaluation spanning human intent understanding, subtask planning, navigation, and manipulation, and benchmark representative models through both offline and real-robot experiments. Our results demonstrate the value of harnessing human-centric intentional cues for natural HRI, while also revealing substantial error accumulation when these components are integrated for long-horizon execution. We believe HEIR provides an important empirical foundation for developing embodied AI systems that place humans at the center of robot understanding, planning, and interaction.
+Acknowledgements
+We sincerely thank all data collection participants, each of whom dedicated at least ten hours to this effort. Their patience and commitment were invaluable to building HEIR. We are also deeply grateful to the annotators for collectively devoting hundreds of hours to careful data annotation. This work is supported by the Zhiyuan Scholar Program and by Tsinghua University–Keystone Electrical (Zhejiang) Co., Ltd. Joint Research Center for Embodied Multimodal Artificial Intelligence (JCEMAI).
+References
+[1]
+Michael Ahn, Anthony Brohan, Noah Brown, Yevgen Chebotar, Omar Cortes, Byron
+David, Chelsea Finn, Chuyuan Fu, Keerthana Gopalakrishnan, Karol Hausman,
+et al.
+Do as i can, not as i say: Grounding language in robotic afforda

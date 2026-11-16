@@ -1,0 +1,74 @@
+【摘要】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2608.19372v2 [cs.RO] 13 Nov 2026
+The Missing Touch: Sensing and Displaying Localized Contact Geometry Brings Teleoperation Closer to Human Dexterity
+Rohan Kota
+Gregory Reardon †
+J. Edward Colgate ∗ †
+Department of Mechanical Engineering
+Center for Robotics
+Biosystems
+Northwestern University
+Evanston
+IL
+USA
+Affiliation:  ∗ Corresponding author. Email: colgate@northwestern.edu
+Affiliation:  † These authors contributed equally to this work.
+
+【引言】
+When a person reaches for a cup, they produce a movement of striking regularity: their hand follows a smooth, bell-shaped velocity profile  [ 2 , 3 , 4 ] , settles onto the handle without overshoot, and grips with just enough force to prevent slip  [ 5 ] . Human manipulation is fast, efficient, and robust to external disturbances, avoiding large unnecessary movements and exhibiting low variability and failure rates. A key contributor to this performance is the spatially distributed nature of touch  [ 6 ] , which provides continuous information about contact location, pressure distribution, and incipient slip at the fingertips. When this cutaneous information is removed by anesthetizing the fingertips, however, manipulation degrades sharply: people grip objects much harder than necessary, drop them more frequently, and rely increasingly on vision to compensate  [ 7 , 8 , 9 , 10 , 11 ] .
+Robotic teleoperation  [ 12 , 13 , 14 , 15 ] has become a major pathway for transferring human manipulation skills to robots  [ 16 , 17 , 14 , 18 , 19 ] . Yet despite decades of work on force feedback during robotic teleoperation  [ 20 , 21 , 22 , 23 ] , without spatially resolved cutaneous cues at the fingertip, operators experience a sensory deficit similar to fingertip anesthesia: they feel interaction forces but not the local contact patterns that normally guide manipulation. As a result, they exhibit many of the same compensatory behaviors observed under cutaneous anesthesia  [ 10 , 11 ] , producing slower  [ 24 , 25 , 26 , 27 , 28 ] and less accurate  [ 29 ] demonstrations with more unnecessary movements than direct manipulation (Fig.  1 A). Autonomous policies trained on such demonstrations inherit these inefficiencies, executing tasks more slowly and less accurately, along trajectories that depart from the smooth and efficient motions characteristic of direct human manipulation. Improving the naturalness of teleoperated demonstrations can therefore improve the quality of the data from which autonomous policies learn.
+Rather than reproducing distributed contact patterns at the fingertip, many researchers have used the cutaneous channel to render low-dimensional force information through vibrotactile or electrotactile stimulation  [ 27 , 28 , 29 ] , skin-stretch displays  [ 30 , 31 ] , or uniformly tilting platforms mounted on the fingertip  [ 24 , 25 , 26 ] . Although rendering force information through the cutaneous channel has been shown to improve task speed, accuracy, and force regulation  [ 24 , 26 , 29 , 32 ] , these outcome measures provide limited insight in
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+【实验】
+Figure 2 : Button-discrimination task experimental results.
+Box plots show median (center line), interquartile range (box), 1.5 × \times interquartile range (whiskers), and outliers (circles). Unless otherwise noted, pairwise comparisons were performed between the 32D condition (orange) and the Off (blue), 1D (purple), and 2D (magenta) conditions (stars indicate statistical significance).
+( A ) Participants were asked to press one of two nearby buttons separated by 1 cm without visual feedback. Idealized trajectories illustrate characteristic movement patterns observed under each feedback condition.
+( B ) Trajectory of median distance from the participant’s baseline trajectory (red) for each feedback condition (target: Button 2; odd-numbered participants shown). When participants received no cutaneous feedback, they frequently overshot the button and reversed directions (“switchbacks”). Higher resolutions of cutaneous feedback produced trajectories with a smaller DTW distance to the participant’s baseline trajectory. Shaded region: button location.
+( C ) Box plots of participants’ mean overshoot distance for each condition.
+( D ) Box plots of participants’ mean DTW distance for each condition, normalized by their mean distance across all trials. Pairwise comparisons were performed between all six feedback-condition pairs.
+( E ) Box plots of within-participant standard deviation of DTW distance.
+( F ) Box plots of participants’ mean completion time for each condition, normalized by their mean completion time across all trials. Pairwise comparisons were performed between all six feedback-condition pairs.
+To evaluate the effects of high-resolution, spatially distributed tactile feedback on teleoperated manipulation, we conducted two experiments using a 2-DoF leader-follower telemanipulator. Spatially resolved contact patterns measured at the robot fingertip were reproduced via a 32-pixel tactile display at an update rate of 30 Hz (see Materials and Methods). We systematically varied the spatial fidelity of the tactile feedback across four conditions (Fig.  1 C):
+•
+Off : No cutaneous feedback
+•
+1D : All-in-phase cutaneous feedback
+•
+2D : Two regions of cutaneous feedback
+•
+32D : Fully localized cutaneous feedback
+In both experiments, participants completed 48 trials (12 per feedback condition), and performance was quantified using both general and task-specific metrics. Participants also received kinesthetic force feedback across all cutaneous feedback conditions. Before each experiment, participants completed the task multiple times with their bare finger while it was strapped to the end of the follower device, allowing us to characterize natural task performance within the robot’s kinematic workspace and compare the follower-device trajectories during teleoperation with the corresponding natural trajectories (see Supplementary Methods for specific details).
+Spatially resolved feedback produces more natural teleoperated movements
+Humans routinely complete fine-motor tasks without direct visual attention—adjusting the volume on a smartphone, or pressing buttons on a television remote—by leveraging spatially varying feedback from across the fingerpad  [ 59 ] . Reproducing this spatial structure in teleoperation should, in turn, allow operators to re-engage those same strategies and perform tasks as naturally as they would with their own hands. To evaluate this hypothesis, 12 participants were asked to push one of two adjacent buttons, spaced 1 cm apart, without vision—a task that demands high operator precision, since imprecise finger positioning can depress both buttons at once (Fig.  2 A). Across the 48 trials, a graphical user interface (GUI) instructed participants which of the two buttons to press, with the target button selected randomly on each trial. The participant was notified of trial completion only when the target button was pressed without accidentally pushing the adjacent button (see Supplementary Methods for more details).
+Fully localized cutaneous feedback brought teleoperated behavior markedly closer to natural human performance. During direct task execution, participants followed largely ballistic trajectories toward the target button (Fig.  2 B, red traces). Without cutaneous feedback, however, participants developed idiosyncratic strategies to complete the task, such as pressing randomly at various increments until the correct button was pushed (Fig.  2 A, blue line). Coarser feedback helped, but often forced operators to overshoot and then reverse direction to isolate the target button without depressing its neighbor (Fig.  2 A, purple and magenta lines). These detours resulted in teleoperated trajectories that exhibited larger overshoots (Fig.  2 C) and more frequent direction reversals (“switchbacks”), sometimes several per trial (Fig.  2 A, B). 32D feedback shifted both measures closer to the natural pattern, significantly reducing the average overshoot ( p < 0.001 p<0.001 ; Table  S1 ) and switchback count ( p ≤ 0.007 p\leq 0.007 ; Table  S2 ) relative to the Off , 1D , and 2D conditions.
+To compare the direct and teleoperated movements more comprehensively, we computed the dynamic time warping (DTW) distance between each teleoperated trajectory and its direct-manipulation counterpart, with smaller DTW distances indicating closer agreement with natural movement patterns. DTW distance was strongly modulated by feedback resolution ( p < 0.001 p<0.001 ; Fig.  2 D); every feedback level ( 1D , 2D , 32D ) produced significantly smaller DTW distances than the Off condition ( p < 0.001 p<0.001 ), but improving naturalness beyond the 1D level required the high spatial resolution of the 32D condition ( p = 0.014 p=0.014 ; Table  S3 ). We then computed the standard deviation of each participant’s DTW distances as a measure of within-participant variability. Notably, the variability of DTW distance in the 32D condition was significantly lower than in the 2D ( p = 0.013 p=0.013 
+
+【结论/局限】
+Reproducing the spatial structure of contact experienced by a remote manipulator is important for natural teleoperation and could improve performance across applications ranging from hazardous-environment manipulation to robot learning from demonstration. Across two manipulation tasks, we found that augmenting kinesthetic force feedback with spatially distributed cutaneous feedback substantially narrowed the gap between teleoperated movements and direct manipulation, improving not only task speed, but also the naturalness, consistency, and perceived cognitive demands of teleoperation. Beyond these immediate performance gains, our results suggest that spatially distributed cutaneous feedback may strengthen an operator’s proprioceptive awareness, helping them better estimate contact state and plan subsequent movements. More broadly, as teleoperation increasingly serves as a primary mechanism for collecting demonstration data to train autonomous manipulation systems  [ 16 , 17 , 14 , 19 ] , we show that the quality of tactile feedback influences not only the human operator’s performance but also the quality of policies learned from their demonstrations. By promoting more natural and consistent behavior, spatially resolved cutaneous feedback improves both human teleoperation and the autonomous systems that learn from it.
+MATERIALS AND METHODS
+Experimental hardware
+Experimentation was performed on a custom 2-DoF leader-follower teleoperation system capable of horizontal and vertical motion (Fig.  1 B). The horizontal and vertical DoFs are each actuated by a brushless DC motor (EC 45 Flat, Maxon Group, Sachseln, Switzerland) through cable transmissions with 33:1 and 30:1 reduction ratios, respectively, while link positions are measured by 14-bit capacitive encoders (AMT212B-V, Same Sky, Lake Oswego, OR, USA). Each DoF is controlled by a separate microcontroller (Teensy 4.1, SparkFun Electronics, Boulder, CO, USA) running field-oriented commutation through the SimpleFOC li

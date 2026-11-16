@@ -1,0 +1,114 @@
+{
+ "2611.18170": {
+  "title": "ALoMa: Affine Correspondences Beyond Patches",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.17828": {
+  "title": "Signal Scaffolding: Unlocking the Potential of Lightweight Models for Self-Supervised Monocular Depth Estimation",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18438": {
+  "title": "Toward On-Device Markerless 6DoF Tracking of a Physical Manipulative on a Mixed-Reality Headset: A Preliminary Study",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.17752": {
+  "title": "Stage-wise Lineage-aware Dropout for Sparse-View 3D Gaussian Splatting",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "11 pages, 9 figures, 7 tables, including supplementary material"
+ },
+ "2611.18099": {
+  "title": "EcoVGGT: Pinned-Key Inference for Efficient and Streamable Feed-Forward 3D Reconstruction from Long Videos",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2608.19372": {
+  "title": "The Missing Touch: Sensing and Displaying Localized Contact Geometry Brings Teleoperation Closer to Human Dexterity",
+  "published": "2026-08-19",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.17458": {
+  "title": "FOMOS: Feature-Oriented Meshing of SDFs",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "primary": "",
+  "comment": ""
+ },
+ "2501.12764": {
+  "title": "Grid-based Submap Joining: An Efficient Algorithm for Simultaneously Optimizing Global Occupancy Map and Local Submap Frames",
+  "published": "2025-01-22",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "Accepted by IROS 2024, the code is made available"
+ },
+ "2611.17903": {
+  "title": "Zoom In, Scale Out: Metric Depth Models Mistake Digital Zoom for Moving Closer",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "22 pages including supplementary material. Code: https://github.com/rabeyanoor/zoom-equivariance"
+ },
+ "2611.17755": {
+  "title": "VACO: Vertex-Aligned Decoding for Dense Hand Contact Estimation from a Single Image",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.17619": {
+  "title": "TouchTwin: Scaling Human Touch Data via Real-to-Sim-to-Real",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18256": {
+  "title": "Deep Bundle Adjustment",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "15 pages, 13 figures, 6 tables"
+ },
+ "2611.18243": {
+  "title": "D2ToF: One-Step Diffusion for Depth Super-Resolution from Lightweight Single-Photon LiDAR Waveforms",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.17957": {
+  "title": "MacroGS: Macro-Pixel Shared Gaussian Primitives for Arbitrary-Scale Light Field Super-Resolutio",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "11 pages, 5 figures"
+ },
+ "2611.18340": {
+  "title": "DIRT: Depth-completed Image-based Rendering using Two-band Blending for Live Novel-view Synthesis",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "8 pages main paper + 2 pages of references + 9 pages supplementary material"
+ },
+ "2611.17238": {
+  "title": "HEIR: Harness Egocentric Intent for Human-Robot Interactions",
+  "published": "2026-11-12",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ }
+}

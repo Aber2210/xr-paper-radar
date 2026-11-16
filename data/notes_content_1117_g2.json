@@ -1,0 +1,223 @@
+[
+  {
+    "id": "2611.17957",
+    "slug": "macro-gs-light-field-super-resolution",
+    "title_zh": "MacroGS：宏像素共享 Gaussian 基元的任意倍率光场超分",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "神经渲染",
+    "tags": [
+      "光场超分 light field SR",
+      "Gaussian Splatting",
+      "任意倍率 arbitrary-scale",
+      "宏像素 macro pixel",
+      "前馈解码器 feed-forward decoder"
+    ],
+    "conclusion": "在 EPFL/HCInew/HCIold/INRIA/STFgantry 五个基准上，MacroGS 作为即插即用解码器把 8 种编码器的 ×4 平均 PSNR 提升 0.34–0.70 dB（RASLF 32.69→33.04 dB），10 个编码器–倍率设置中 8 个取得最高 PSNR，相对逐视角 GSASR 解码提速 10–18×（0.30 s→0.03 s），解码器仅 0.37 M 参数（GSASR 2.57 M）。",
+    "problem": "任意倍率光场空间超分（LFSSR）要按任意倍率重建高分辨率子孔径图像，但现有两类解码器各有硬缺口：隐式坐标解码器（LIIF/LTE/DIIF/SEIIF）必须对每个视角的高分辨率网格逐点查询，延迟随倍率线性增长（×8 时 SEIIF 96.2 GFLOPs、0.16 s，CiaoSR 直接 OOM）；显式 2D Gaussian 解码器（GSASR）对每个 SAI 独立预测基元集，基元数为 UVKhw、随视角数增长，参数 2.57 M、×2 解码 0.30 s，且各视角基元不共享身份与几何参数，同一场景结构被重复参数化。固定倍率上采样器则只支持预定义倍率。",
+    "method": "把生成单元从单视角像素改为宏像素：同一低分辨率空间坐标在 U×V 个视角上的样本集合。每个宏像素只生成 K=9 个基元，所有视角共用，基元数为 Khw，与视角数无关。基元参数 g=(μ̄,Σ,d,o,γ)：μ̄∈R²、Σ∈R²ˣ² 为中心与协方差（LR 像素单位），d∈R² 为每单位角坐标的水平/垂直视差，o 为基础不透明度 logit，γ=(γ^c,γ^α) 为二阶 SH 系数。跨视角位置 μ=μ̄+d⊙q_a（q_a 为归一化角坐标，中心视角为 0），协方差跨视角共享；不同基元可各自运动，给深度不连续处自由度。推断为 R=3 轮迭代跨视角读取：状态 z 初始由可学习 query e 加模板偏移嵌入 t_k 对 UV 个宏像素特征做 MHA 得到，并注入尺度嵌入 φ(s)；每轮先预测视差 d=d_max·tanh(ψ(z))（ψ 为两层 MLP），在 x_n+d⊙q_a 处双线性读取各视角特征 G，再由 Blk_r 四个残差子层更新（aggregate views：对自身读数做带视角嵌入的 MHA；exchange states：宏像素内 K 个状态互相注意；mix neighbours：3×3 depthwise 卷积；transform：FFN）。末轮由四个 MLP 头输出几何(δ,σ,o)、形状(κ,ρ)、颜色 SH、透明度 SH；中心 μ̄=x_n+τ_k+δ，δ 限制在 LR 像素的一小部分内；协方差 Σ=σ²[[κ²,ρ],[ρ,κ⁻²]]。渲染按请求倍率 S=diag(s_x,s_y) 缩放中心与协方差，权重 w=exp(−½Δᵀ(SΣSᵀ)⁻¹Δ)，归一化 splatting 聚合（不做深度排序）；颜色取 LR 图在 x_n+d⊙q_a 的采样值，再在 logit 域加 SH 视角修正，不透明度由 SH 修正。残差分支 Ĥ_a=Î_a+R([F_a↑,Î_a]) 逐视角共享权重细化细节。损失为所有 UV 视角 Y 通道的 ℓ1；视差头、SH 头、形状头、尺度条件与残差分支零初始化，不透明度 bias 使 K=9 初始不透明度之和约 0.8，训练起点等价于 LR 输入的归一化 splat；每编码器训练一个模型，倍率 1.5–4（步长 0.5），C=64。",
+    "experiments": [
+      "评测遵循 BasicLFSR 协议：EPFL、HCInew、HCIold、INRIA、STFgantry 五个基准，取中心 5×5 视角、bicubic 降质，仅超分 Y 通道，PSNR 按视角→场景→数据集逐级平均。",
+      "8 个编码器（LF-InterNet、LF-DFnet、LF-IINet、LFT、DistgSSR、EPIT、LF-DET、RASLF）全部获得提升：×2 为 +0.10–0.54 dB，×4 为 +0.34–0.70 dB，且每个编码器在每个数据集上均提升。",
+      "×4 平均：LF-InterNet 31.61→32.31（+0.70）、LF-DFnet 31.92→32.57（+0.65）、EPIT 32.42→32.92（+0.50）、RASLF 32.69→33.04（+0.35）。",
+      "任意倍率对比（EPIT 编码器）：×2 39.58、×3 35.37、×4 32.92、×6 29.64、×8 27.77 dB，解码 0.03–0.05 s；SEIIF 为 39.60/35.25/32.76/29.61/27.68 dB，耗时 0.07–0.17 s；GSASR 为 39.31/35.30/32.56/29.49/27.64 dB，耗时 0.30–0.92 s、参数 2.57 M。",
+      "×8 时比 SEIIF 快约 3×，比逐视角 GSASR 快 10–18×；参数 0.37 M 对 2.57 M。所有计时在单张 Tesla V100、输入 5×5×32×32。",
+      "RASLF 消融：K=4→39.42、K=9→39.60、K=16→39.62 dB（×2），9 个已饱和；R=1 降为 39.47（×8 27.67），R=5 仅 39.64/27.88，取 R=3。",
+      "去掉残差分支：×2 由 39.60 降到 39.22 dB，×8 几乎不变（27.88 vs 27.85），而 ×8 的 FLOPs 从 132.2 G 降到 9.6 G。",
+      "视差消融（RASLF，Zero/Macro-pixel/Primitive 三变体）：×2 上逐步提升且 STFgantry 收益最大，×4 与 ×8 三者接近，作者归因于视差 D 个 HR 像素只对应 D/s 个 LR 像素。",
+      "学到的视差与几何强相关：×4 下 HCIold（真值视差）与 HCInew（SPO 估计）的 Pearson r 与 Spearman ρ 均 ≥0.85，跨 DistgSSR/EPIT/RASLF 三类编码器成立；×16 训练外倍率仍优于 GSASR/SEIIF。"
+    ],
+    "innovation": [
+      "以宏像素为生成单元、跨视角共享同一组 Gaussian 基元，把基元数从 UVKhw 降到 Khw，从根本上解除基元数与视角数的耦合。",
+      "每个基元独立预测视差，并让该视差同时驱动跨视角特征读取位置与跨视角渲染位移，形成「视差→采样→更新视差」的迭代闭环。",
+      "视角条件外观：颜色先在 LR 图上按视差采样，再在 logit 域用二阶 SH 修正，零修正即退化为采样值，保证训练初期稳定。",
+      "效率结构：基元推断与跨视角读取都在 LR 网格上完成，仅 splatting 与残差分支在 HR 网格，高倍率下可去掉残差分支而几乎不掉点。"
+    ],
+    "limits": [
+      "（作者承认）学到的视差只保证与场景几何强相关（r、ρ ≥0.85），并不度量准确，不能当深度使用。",
+      "（作者承认）内容自适应的基元分配留作未来工作，固定预算下几何边界与细结构表示仍受限。",
+      "（我在正文发现）残差分支在高倍率占据绝大部分算力（×8 时 132.2 G 中约 122 G），去掉后 PSNR 不掉，说明该分支在高倍率下性价比很低。",
+      "（我在正文发现）增益随编码器本身的角度聚合能力增强而衰减：RASLF ×2 仅 +0.10 dB，窄基线 Lytro 数据集 ×2 收益也普遍更小。",
+      "（我在正文发现）正文只报 PSNR(Y) 与视差相关性，没有 SSIM/LPIPS 或感知/用户实验，画质结论证据单一。",
+      "（我在正文发现）训练时长、优化器、学习率、显存均未报告；也未与 LFGaussian、CVGS 这类同样跨视角共享 Gaussian 的方法做同协议定量对比。"
+    ],
+    "relation": "直接继承并改造 GSASR（逐视角可移动 Gaussian 基元的任意倍率解码器，本文的主要对照与加速对象）与 SEIIF（任意倍率隐式解码，精度与时延基线）；隐式族 LIIF/LTE/DIIF/CiaoSR/SAEIIF 提供「连续坐标解码」的问题设定，本文用显式 splatting 替换逐点查询；编码器侧复用 DistgSSR、EPIT、RASLF、LF-InterNet、LF-DFnet、LFT、LF-DET 七个公开骨干以验证即插即用；LFGaussian 与 CVGS 同样做跨视角 Gaussian 共享，但前者面向角度超分、后者是逐场景拟合，本文是前馈的空间超分解码器；2D Gaussian 图像表示源自 GaussianImage，视差引导采样受 RAFT/Deformable DETR 的迭代估计范式启发。",
+    "repro": "正文明确给出代码在 GitHub 可用，数据全部是公开光场基准（BasicLFSR 划分 + 五个公开数据集），因此复现门槛主要在训练算力而非数据。关键超参齐全：K=9、R=3、C=64、训练倍率 1.5–4、ℓ1 仅作用于 Y 通道、各头零初始化与 0.8 不透明度初始化。未给优化器、学习率、batch、训练时长与显存，需要自行试探；推理时间可在单张 V100 上对齐。许可为 arXiv perpetual non-exclusive license，商用需自行确认代码许可。",
+    "action": "若在做光场相机/光场显示的 XR 管线，可把 MacroGS 当作与编码器解耦的上采样插件：0.37 M 参数、毫秒级、任意倍率，先在自己的编码器上做 ×2/×4 微调验证增益。复现时优先确认两点：对已强角度聚合的编码器（RASLF 类）增益是否仍 >0.3 dB；高倍率下直接关掉残差分支以省一个数量级 FLOPs。对外发表前建议补 SSIM/LPIPS 与真实采集光场的时延测量。",
+    "scores": {
+      "IMP": 3,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 3,
+      "TRL": 3,
+      "REP": 4
+    },
+    "scores_why": "IMP=3：光场空间超分是光场采集/显示链路的关键环节，但相对通用 NVS 属小众场景，本文解决的是解码效率与倍率泛化这一具体瓶颈。NOV=4：宏像素共享基元 + 每基元视差驱动迭代跨视角读取是显著的新表述与新组件，不是单纯换 backbone；但基元表示本身来自 GSASR/GaussianImage。TEC=4：公式体系完整（视差位移、迭代读取四子层、归一化 splatting、SH logit 修正），并有 K/R/残差/视差四组消融与视差-几何相关性分析，缺口在训练细节与感知指标。EXP=4：5 个数据集 × 8 个编码器 × 10 个任意倍率设置，消融充分，但全部为离线 benchmark，无真实光场采集或用户实验。PER=3：相对 SOTA 的 PSNR 提升 0.10–0.70 dB（<2%），属小幅；速度 10–18× 与参数 7× 的下降是主要优势，但评分锚点看质量提升。TRL=3：实验原型，代码开源、单卡毫秒级推理，仍未进入产品/真机采集流程。REP=4：有代码与全部公开数据，超参大体齐全，缺训练成本与优化器细节。"
+  },
+  {
+    "id": "2611.17752",
+    "slug": "lineage-aware-dropout-sparse-view-3dgs",
+    "title_zh": "面向稀疏视角 3D Gaussian Splatting 的分阶段谱系感知 Dropout",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "神经渲染",
+    "tags": [
+      "稀疏视角 sparse-view",
+      "3D Gaussian Splatting",
+      "Dropout 正则化",
+      "致密化 densification",
+      "新视角合成 NVS"
+    ],
+    "conclusion": "在 LLFF 3 视角下 SLD+LBD 取得 20.70 dB PSNR / 0.717 SSIM / 0.194 LPIPS，比 DropGaussian（20.33/0.709/0.201）高 0.37 dB（+1.8%）、比原始 3DGS（19.17）高 1.53 dB，但相对最强基线 DropAnSH-GS（20.68/0.724/0.194）仅 +0.02 dB，实为持平。",
+    "problem": "稀疏视角下 3DGS 缺少几何约束，极易过拟合，出现模糊区域、悬浮伪影与未见视角的结构畸变。现有 dropout 类方法（DropGaussian、DropoutGS、DropAnSH-GS、PairDropGS、DOC-GS）都以单个 Gaussian 或空间锚点/可靠性为掩码单位，忽略了致密化过程中形成的谱系关系：同一 founder 经 clone/split 产生的后代在空间上聚集、共同支撑同一局部表面，独立 dropout 只会关掉其中一部分，其余同族成员立刻补偿，导致正则被稀释（p=0.30 时整族被完全关闭的概率仅 4.09%，族级掩码则为 30.00%）。此外致密化配额按逐点梯度分配，少数家族会吞掉大部分增长预算，加剧表示集中。",
+    "method": "谱系划分：每个 Gaussian 记录 founder ID 与 generation 索引，初始基元为 gen-0；clone/split 产生的新基元继承父代 founder ID、generation 加一；同 founder ID 构成一个谱系家族 ℱ_k，d_k 为其后代数。SLD（Stage-wise Lineage-aware Dropout）把训练分为预热、结构正则、细节精修三段，丢弃率 p_t 分段定义：t≤t_w 时为 0；t_w<t<t_s 时线性升至 p_max；t≥t_s 固定为 p_3。结构正则段对以概率 p_t 选中的家族，把 generation>0 的后代放入丢弃集 D，gen-0 founder 受保护（前两阶段的剪枝与 split 也保留 founder）；细节段改为独立 Gaussian dropout，founder 也参与。前向光栅化时用掩码 m_i 调制不透明度并做 inverted-dropout 补偿：α̂_i=m_i·α_i/(1−p_t)（仅对可丢弃基元缩放，保护 founder 保持原不透明度），被丢基元不透明度置 0。实现取 t_w=3000、t_s=7000、p_max=0.3、p_3=0.2。LBD（Lineage-Balanced Densification）不改总量、只改分配：每个致密化步先用原梯度阈值 θ_g 与操作判据得到 clone/split 候选集，其大小作为固定预算 K_o=|P_t^o|；再用 θ_pool=γθ_g（γ=0.5）构造跨族扩展候选池 P^o，使更多家族进入候选。族 k 在操作 o 下的候选数 m_k^o、平均梯度 u_k^o=(1/m_k^o)Σ_{i∈P^o∩ℱ_k}s_i；族增长分 w_k^o(t)=u_k^o(t)/(d_k(t)+τ)^{β_t}，τ=1，β_t 从 0 逐渐升到 β_max=0.5 以惩罚过大族。配额 q_k^o=min(m_k^o, λ_o·w_k^o)，约束 Σ_k q_k^o=K_o，用 32 次二分求公共尺度 λ_o，再向下取整并按余数补位，最后在族内按梯度取 top-q_k^o 个父代执行 clone/split（配额计父代数而非最终基元数）。损失沿用 3DGS 的 L1 + D-SSIM，基于 DropGaussian 官方框架与训练设置，结果取 3 次运行均值。",
+    "experiments": [
+      "数据集为 LLFF（3/6/9 视角）、MipNeRF360（3/6/9 视角）、Blender（12/24 视角），指标 PSNR/SSIM/LPIPS，基线含 NeRF 类（Mip-NeRF、DietNeRF、RegNeRF、FreeNeRF、SparseNeRF）与 3DGS 类（3DGS、DNGaussian、FSGS、CoR-GS、DropoutGS、DropGaussian、DropAnSH-GS）。",
+      "LLFF 3-view：本方法 20.70/0.717/0.194；DropAnSH-GS 20.68/0.724/0.194；DropGaussian 20.33/0.709/0.201；CoR-GS 20.36/0.710/0.202；3DGS 19.17/0.646/0.268。",
+      "MipNeRF360 6-view：24.72/0.838/0.111（DropGaussian 24.58/0.830/0.125）；9-view：26.17/0.875/0.086，但 DropAnSH-GS 为 26.24/0.875/0.088（PSNR 略低）。",
+      "Blender：12-view 19.83/0.578/0.360（DropAnSH-GS 19.93/0.576/0.362，PSNR 低 0.10 dB）；24-view 24.15/0.768/0.211（DropAnSH-GS 未报告）。",
+      "模块消融（LLFF 3-view）：基线 19.17/0.646/0.268 → 仅 LBD 19.84/0.681/0.213 → 仅 SLD 20.50/0.715/0.197 → SLD+LBD 20.70/0.717/0.194，SLD 单独贡献 +1.33 dB，LBD 边际 +0.20 dB。",
+      "粒度与 founder 策略消融：individual droppable 20.38/0.703/0.205；individual preserved 20.22/0.708/0.205；family droppable 20.30/0.704/0.204；family preserved 20.50/0.715/0.197，支持默认的族共享+founder 保护。",
+      "阶段切换点 t_s∈{5000,7000,9000}：20.4284±0.1145 / 20.4329±0.0519 / 20.4509±0.0123 dB，最终取 7000（SSIM 0.7073、LPIPS 0.2018 最优）。",
+      "跨框架验证：把 SLD+LBD 加到 FSGS、CoR-GS、DNGaussian、Scaffold-GS 四个稀疏视角框架上，PSNR 与 SSIM 均升、LPIPS 均降，幅度依框架而异。",
+      "谱系统计：95% 家族 ≤23 个成员、99% ≤116 个；加入 LBD 后族规模 Gini 系数更低、最大族占比下降，极端上尾变轻。"
+    ],
+    "innovation": [
+      "首次把致密化过程中 clone/split 形成的谱系结构当作正则化单位：同 founder 的后代共享掩码，避免同族互相补偿。",
+      "分阶段调度：结构正则段做族级 dropout、细节精修段切回独立 dropout，兼顾结构约束与后期细节收敛。",
+      "founder 保护策略：gen-0 基元既不参与 dropout、前两阶段也不被剪枝/split，保证场景骨架稳定。",
+      "LBD 在不改变 clone/split 总预算的前提下，按族平均梯度与族规模重分配配额，抑制单族吞并增长预算。"
+    ],
+    "limits": [
+      "（作者承认）增益随数据集、指标与训练框架变化；在 MipNeRF360 9-view 与 Blender 12/24-view 上并非最优。",
+      "（作者承认）LBD 只改变族规模分布、不追求族大小均衡，大族本身未必有害。",
+      "（我在正文发现）相对最强基线 DropAnSH-GS 在 LLFF 只有 +0.02 dB、Blender 12-view 还低 0.10 dB，且 t_s 消融标准差达 0.11 dB，主要增益（+0.37 dB）只相对于 DropGaussian，属噪声量级。",
+      "（我在正文发现）总迭代数、优化器、GPU 型号与单场景耗时均未报告；正文还残留 LaTeX 模板文字与「Experimental support, please view the build logs」残句，稿件完成度不足。",
+      "（我在正文发现）只在静态稀疏视角验证，动态/大场景未测；LBD 每步要对每族做二分配额求解，额外训练开销未量化。",
+      "（我在正文发现）基线与复现结果混用（部分数字取自原论文、部分自行复现），比较公平性未完全统一。"
+    ],
+    "relation": "直接建立在 DropGaussian 之上（复用其官方框架、训练与评测设置，DropGaussian 的独立 dropout 是本文的出发点与主要对照）；与 DropoutGS 同属随机失活路线但粒度不同；DropAnSH-GS（锚点级 dropout + SH 约束）与 PairDropGS（成对 dropout + 低频一致）、DOC-GS（暗通道/深度可靠性）代表「结构化掩码」路线，本文的结构信号换成致密化谱系；跨框架验证覆盖 FSGS、CoR-GS、DNGaussian、Scaffold-GS；clone/split 与梯度阈值来自原始 3DGS，LBD 保留其配额总量只改分配。",
+    "repro": "实现基于 DropGaussian 官方代码与设置，超参在正文给全：t_w=3000、t_s=7000、p_max=0.3、p_3=0.2、γ=0.5、β_max=0.5、τ=1、λ_o 用 32 次二分求解，配额取整规则也在补充材料中写明。数据为 LLFF/MipNeRF360/Blender 全公开，复现的主要障碍是缺少总迭代数、优化器、硬件与单场景耗时，以及未声明代码开源。结果为 3 次运行均值，t_s 消融给出标准差，可作为方差参照。",
+    "action": "若要在自己的稀疏视角管线上试用，先只加 SLD（+1.33 dB 是主要收益，LBD 只再给 0.20 dB），并固定 3 个以上种子评估，因为对强基线已属噪声量级。定位应为「与 DropAnSH-GS 持平、LPIPS 略优的可插拔正则」，不宜作为 SOTA 卖点；论文本身完成度偏低（模板残句、缺训练细节），引用时需谨慎核对数字。",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 2,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=3：稀疏视角 3DGS 的过拟合是 XR 采集的核心痛点之一，但 dropout 这条线已相当拥挤，本文属有价值但非卡脖子。NOV=3：以谱系家族为掩码单位、分阶段切换粒度是新的结构化正则表述，但仍是 dropout + 致密化的组合式改进，无新表示或新范式。TEC=3：有完整公式（分段丢弃率、掩码不透明度补偿、族增长分与配额求解）和三组消融，但缺训练成本分析、基线与复现混用、正文残留模板文本，属有明显缺口。EXP=4：3 个数据集 × 5 种视角数 + 模块/粒度/t_s 消融 + 4 个框架迁移 + 3 次运行，实验面较宽。PER=2：相对最强基线 DropAnSH-GS 仅 +0.02 dB（LLFF）、−0.10 dB（Blender），相对 DropGaussian 的 +1.8% 也在方差量级，无实质提升。TRL=3：实验原型，纯离线训练与评测。REP=2：未声明代码或数据发布，关键训练细节缺失。"
+  },
+  {
+    "id": "2611.18340",
+    "slug": "dirt-depth-completed-ibr-two-band-blending",
+    "title_zh": "DIRT：面向实时新视角合成的深度补全图像化渲染与双频带混合",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "渲染与显示",
+    "tags": [
+      "实时新视角合成 live NVS",
+      "基于图像的渲染 IBR",
+      "深度补全 depth completion",
+      "双频带混合 two-band blending",
+      "多传感器融合 multi-sensor"
+    ],
+    "conclusion": "在 LiveNVS 手持 RGB-D 实时设定下取得 22.18 dB PSNR / 0.1959 LPIPS、69 ms capture-to-image，相比 On-the-fly NVS（18.86 dB / 0.3798 / 639 ms）PSNR 提升 17.6%、LPIPS 降低约 48%、时延降低约 9×，且全程无训练、无逐场景优化。",
+    "problem": "「边采集边看」的实时新视角合成有三类现有方案都不合身：逐场景优化的 NeRF/3DGS 需分钟到小时，无法在采集过程中给出反馈；通用化前馈网络（pixelSplat 类、Long-LRM、Depth Anything 3）依赖大规模多视图训练与对新数据集的泛化，且训练成本高；on-the-fly 预测加优化的 Gaussian（On-the-fly NVS）在实时约束下优化不收敛，画质与优化时长强耦合，小基线时尤其失败。纯学习型 IBR（Inovis、LiveNVS）还会用先验「美化」未观测区域，反而掩盖采集缺口，不适合作为覆盖引导。缺少一种无训练、确定性、能如实反映当前采集状态、并能直接吃 LiDAR/深度等多传感器数据的毫秒级方案。",
+    "method": "三步管线，全部为几何与图像处理，无神经网络、无逐场景优化。输入为带位姿图像 {I} 与多传感器累积的非结构化点云 P（累积时区分静态/动态分量）。(1) 目标视角对齐的深度代理：把 P 投影到目标视角得稀疏深度 S，用递归图像空间补全（Alg.1）逐层填补。每层先用零均值高通核 K 估计邻域深度 N=(K*S)/(K*M)（M 为有效掩码），据此做遮挡点剔除：若 S(x,y) > N(x,y)·τ^l 判为被遮挡并置 0，τ^l=1+5^l·0.02 控制剔除灵敏度；随后 2×2 邻域有效值平均下采样得 S^{l+1}，递归补全；回程对上层做双边滤波抑制阶梯、双线性上采样，再与该层高频细节融合 D^l=S^l·¬M+D^l·M。数学上按线性深度定义，实现用逆深度以保证插值正确。与学习式补全不同，该过程锚定真实测量、不幻觉几何，可跨传感器零适配迁移。(2) 投影与去遮挡：把 D 反投影为点集 P_T 并连成三角网格，从每个辅助视角渲染得近似深度 D_A；把 P_T 再次投影到辅助视角得深度 d_p，做深度测试 P̃_A={p∈P_T : d_p−D_A(x_p,y_p)<ε}，ε 为与深度、法线相关的容差；只对通过测试的点取色，未通过处留洞，因此去遮挡是保守的（允许 false negative），但避免前景内容投到背景几何上产生错位。(3) 混合：每张候选图的权重 W 只用遮挡掩码 O_T 的近似平滑欧氏距离变换 softEDT 得到——靠近遮挡边缘权重低、远离处权重高，既压 seam 又偏向可信区域。再做 two-band blending（源自全景拼接的 Burt–Adelson 思路）：低频 L=G_σ*I_war（σ=0.95），高频 H=I_war−L；输出 I⊗(x,y)=H_{W_max}(x,y)+Σ_i L_i(x,y)*W_i(x,y)，即低频在所有候选中加权融合、高频只取权重最大的单张视图，从而保住细节不重影。最后用 PushPull 对未覆盖区域按邻近数据插值填充。辅助视角数 k 默认 4（覆盖与性能的折中），并用 temporal AA 抑制运动下的权重闪烁。",
+    "experiments": [
+      "统一评测环境：Intel i9-12900 CPU + NVIDIA A5000 GPU（24 GB 显存）+ 64 GB RAM；指标 PSNR 与 LPIPS（AlexNet backbone），主指标为 capture-to-image（最后一个输入视角数据到达至测试视角合成完成）。",
+      "实时设定按时间窗喂数据：驾驶场景 5 s、手持 LiveNVS 15 s（该数据集约 1 fps 关键帧，每 16 帧取一帧测试）；仅评测前视相机，因为部分基线不支持多路视频流。",
+      "LiveNVS：本方法 22.18/0.1959/69 ms；On-the-fly NVS 18.86/0.3798/639 ms；Inovis 19.01/0.2736/157 ms；Long-LRM 19.93/0.2349/2686 ms；LiveNVS 方法本身 16.60/0.4495/49 ms；DrivingForward 不适用（需要深度以外的设定）。",
+      "nuScenes：23.47/0.2711/71 ms（On-the-fly 23.56/0.4622/439）；Waymo：24.79/0.2506/98 ms（On-the-fly 25.68/0.4270/693，PSNR 略低但 LPIPS 明显更好）；Argoverse 2：25.05/0.1802/135 ms（On-the-fly 18.19/0.5474/486）。",
+      "离线（MipNeRF360 取 7 个场景 1/4 分辨率、Tanks and Temples 取 4 个场景全分辨率，COLMAP 稠密重建）：MipNeRF360 25.20/0.1486（Faster-GS 27.31/0.1420，On-the-fly 24.22/0.2659）；Tanks and Temples 22.10/0.2365（Faster-GS 22.38/0.2449）；热成像 RGBT-Scenes 24.37/0.1371（Faster-GS 24.36/0.1422）。",
+      "深度来源消融（LiveNVS，LPIPS / 时间）：采集立体 0.1987 / 8.51 ms（预处理 0 ms）、单目估计 0.2725 / 8.51 ms、MVS-Former++ 0.1976 / 8.51 ms；目标深度融合改 nvblox TSDF 则 0.2438 / 74.39 ms，本方法在画质与速度上同时更优。",
+      "参数消融：k=4 为覆盖与性能折中；σ=0.95 在无人工噪声时最优；τ^l=1+5^l·0.02；补充材料另有输入视角数、点云密度、补全与混合的消融。",
+      "场景覆盖：夜间驾驶与 RGBT-Scenes 热成像仍可用（优化类基线在低光下常不收敛）；Argoverse 2 前视裁剪 2048×1550→1800×1550 去车盖。"
+    ],
+    "innovation": [
+      "训练-free、确定性、可解释的 live NVS 管线：既无网络权重也无逐场景优化，采集中即可给出毫秒级反馈。",
+      "测量锚定的分层深度补全：遮挡点剔除 + 由粗到细的高低频融合，不做生成式补全，避免幻觉几何。",
+      "用 softEDT（平滑欧氏距离变换）直接由遮挡掩码构造混合权重，把权重设计与遮挡边界显式绑定，抑制 seam。",
+      "把 two-band blending 从全景拼接迁移到多视图 IBR：低频加权混合、高频取最大权重单视图，兼顾无缝与细节。",
+      "多模态零适配：LiDAR、RGB-D、热成像共用同一条管线，跨传感器不需重训。"
+    ],
+    "limits": [
+      "（作者承认）遮挡边缘会产生 seam 状伪影，根源是补全深度与真值错位，需改进深度补全。",
+      "（作者承认）保守的去遮挡判定会漏判可见点（false negative），权重也可能在运动中引起时间不稳定，目前仅靠 temporal AA 缓解。",
+      "（作者承认）性能依赖传感器覆盖，覆盖不足时图像特征退化；大场景点云累积效率留作未来工作；动态物体只做静态/动态拆分，未真正处理。",
+      "（我在正文发现）PSNR 并非全面领先：Waymo 24.79 低于 On-the-fly 25.68，离线 MipNeRF360 25.20 低于 Faster-GS 27.31；作者以 LPIPS 更贴合人眼解释，但没有用户研究支撑。",
+      "（我在正文发现）方法完全不含学习组件，画质上限受补全与混合规则约束，复杂反射/透明/细结构场景无专门处理。",
+      "（我在正文发现）未给出代码或工程实现地址，softEDT 与高通核 K 的细节只在补充材料；时延强依赖 A5000 与时间窗设置，跨平台复现需重测。"
+    ],
+    "relation": "与 On-the-fly NVS（预测并在线优化 Gaussian）构成正面对照：本文彻底去掉优化与神经组件，用确定性几何代理换时延；与 LiveNVS（RGB-D 流 + 可泛化 CNN 混合、TSDF 代理）同为 IBR 路线，但改用测量锚定的分层补全与 softEDT 权重；Inovis 是 CNN 预测混合权重的点云 IBR 前作；DrivingForward、Long-LRM、Depth Anything 3 代表前馈/驾驶专用 Gaussian 与大模型重建，被用作效率与画质参照；Faster-GS 与 3DGS 是离线加速基线；混合策略直接借用 Burt & Adelson 的双频带混合与 PushPull 补洞，深度补全沿用经典图像空间递归补全而非学习式方法。",
+    "repro": "无训练、无权重，理论上最易复现，全部超参在正文给出（k=4、σ=0.95、τ^l=1+5^l·0.02、ε 与深度/法线相关），数据为公开数据集（nuScenes、Waymo、Argoverse 2、MipNeRF360、Tanks and Temples、RGBT-Scenes；LiveNVS 需向作者申请）。主要障碍是没有代码仓库，softEDT 与高通核 K 的实现细节在补充材料，逆深度插值、网格化去遮挡、temporal AA 都需自行工程化。时延数字绑定 A5000 与 5 s/15 s 时间窗，横向对比必须在同机同窗下重测。",
+    "action": "若目标是采集端实时预览或覆盖引导（手持扫描、车载采集、XR 现场重建），DIRT 是当前最工程友好的 baseline：无训练、69–135 ms、可直接吃 LiDAR/深度。建议先复现 softEDT 权重 + 分层补全这两个关键件，再在同一时延预算下与自研神经方法比 LPIPS 而非只比 PSNR。若要产品化，重点解决作者点出的遮挡边缘 seam 与时间稳定性，并补一份用户研究来支撑「LPIPS 更贴合感知」的论断。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 4,
+      "REP": 2
+    },
+    "scores_why": "IMP=4：采集中实时预览/覆盖引导是 XR 与自动驾驶数据采集的真实瓶颈，现有方案要么太慢要么会掩盖采集缺口。NOV=3：把深度补全、softEDT 权重、双频带混合组合成一条无训练的实时管线，是有价值的新组合与工程表述，但每个组件都有前作（经典补全、Burt–Adelson、IBR）。TEC=3：公式与算法（Alg.1、深度测试、双频带合成）清楚，但无学习组件、无误差分析，关键实现放在补充材料，理论深度有限。EXP=4：4 个实时数据集 + 3 个离线/热成像数据集、6 个以上基线、同机时延测量、深度来源与 TSDF 消融，覆盖面强，缺用户实验。PER=4：LPIPS 全面最优（0.1959 vs 0.3798，降 48%），PSNR 最高 +11%（手持）/ +6%（驾驶），时延降 9×；但 PSNR 在 Waymo 与离线 MipNeRF360 落后，故不给 5。TRL=4：真实车载/手持传感器数据上在线运行、毫秒级，接近采集端原型，但未产品化、未开源。REP=2：无代码与实现细节公开，复现需从补充材料重建工程。"
+  },
+  {
+    "id": "2611.17755",
+    "slug": "vaco-vertex-aligned-hand-contact",
+    "title_zh": "VACO：面向单图稠密手部接触估计的顶点对齐解码",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "化身与人体",
+    "tags": [
+      "手物接触 hand-object contact",
+      "MANO 参数化手",
+      "顶点对齐 vertex-aligned",
+      "单图估计 single image",
+      "数字人 / 化身 avatar"
+    ],
+    "conclusion": "单一 checkpoint 在五个基准上全面超过 HACO：Hi4D F1 0.860 vs 0.653（+20.7 pp，相对 +31.7%）、DexYCB 0.693 vs 0.657（+3.6 pp）、RICH 0.840 vs 0.781（+5.9 pp），未见过的 HOT3D/HOCap 也 +5.5/+2.7 pp，并把下游 AGILE 的右手 Chamfer 距离从 23.11 mm 降到 12.46 mm（−46%）。",
+    "problem": "稠密手部接触（MANO 逐顶点二值标签）是灵巧操作策略、抓取重定向与 AR/VR 交互的基础原语，但两条主流路线都有具体缺口。reconstruct-then-query（Grady 2021、DECO、FollowMyHold）先重建手与物体再由几何近邻推接触，物体重建误差会级联，杂乱场景下脆弱，FollowMyHold 需约 9 分钟/图。直接预测（Tse 2022、Hu 2024、HACO）绕过物体重建，但把整个顶点集当作扁平 1D 目标：所有顶点输出都由同一个 shared contact query 交叉注意图像特征、再由一个共享线性头解码，网络从不知道每个顶点投影到图像何处，形成结构性盲区，产生「几何渗漏」——接触从真正受力的顶点扩散到相邻手指、指节与掌面。",
+    "method": "骨干为 WiLoR 的 ViT-Huge 图像编码器（WHIM 预训练），联合优化重建与接触，输出特征金字塔 F_vit 与 MANO 网格 V；推理时 V 的投影即采样 scaffold，不需要额外重建器。逐顶点 token 构造：先把 F_vit 经轻量反卷积金字塔升到 S=3 个尺度（stride 1:8、1:4、1:2）；用同一 WiLoR 头预测的弱透视相机 π̂ 把顶点投影到像平面，双线性采样 f_v^s=Bilinear(F_vit^s, π(v;π̂))，拼接成 f_v=[f_v^1,…,f_v^S]。训练时在 GT 投影 π(V_gt) 上加 σ=0.02×crop 边长、截断 3σ 的高斯噪声再采样，以吸收姿态误差。token 化：t_v^(0)=MLP(f_v)+e_v，e_v 是按固定 MANO 顶点序索引的可学习嵌入，使 token 同时携带局部外观与「我是哪个顶点」的身份。解码：N=4 层 Transformer decoder（H=8 头，D=512），每层做两种互补读取——对 V 个顶点 token 的全局 self-attention（传播抓握结构：power grasp 全指相关，pinch 只涉指尖），以及对原 stride 特征图 F_vit 的 cross-attention（获取投影点之外的物体、对侧手、遮挡物上下文）。共享读出头逐 token 输出标量 logit ℓ̂=f_out(T)∈R^V，ĉ=σ(ℓ̂)。多粒度读出：标签由近邻启发式生成（多数数据集 10 mm）、逐顶点噪声大，直接监督 V 维输出不稳定，故用线性算子 R_r∈R^{n_r×V} 在四个分辨率聚合 ℓ̂_r=R_r·ℓ̂，r∈{V=778, V2=336, V3=84, J=21}（V2/V3 用 qslim 网格下采样矩阵，J 用 MANO 关节回归器，V 为恒等），顺带产出关节级与部件级接触。总损失 L_total=Σ_r L_VCB^r + λ_reg·L_reg + λ_smooth·L_smooth + λ_rec·L_rec，四路 VCB 等权、λ_reg=0.1、λ_smooth=1.0、λ_rec=1.0；VCB 按每个顶点的历史接触频率动态调制 BCE 惩罚，抑制全零坍缩；L_reg 为顶点均值先验，L_smooth 为网格邻接平滑，L_rec 为 WiLoR 重建目标以保住姿态。优化：AdamW（weight decay 1e-4，base lr 1e-5，encoder 用 0.5×），epoch 5 时两处学习率乘 0.9，共 10 epochs，8×RTX 4090、有效 batch 64、FP16，约 4 天（~768 GPU-hours）。推理阈值 τ_inf=0.52，左手镜像后重索引到左手拓扑。",
+    "experiments": [
+      "五个基准：DexYCB（手-物，域内）、Hi4D（手-人）、RICH（手-场景）、HOT3D*（手-物，域外）、HOCap*（双手手-物，域外）；指标为逐图 Precision/Recall/F1，按 HACO 的近邻协议（多数数据集 10 mm）。",
+      "VACO 的 P/R/F1：DexYCB 0.606/0.859/0.693；Hi4D 0.811/0.943/0.860；RICH 0.818/0.908/0.840；HOT3D* 0.579/0.723/0.615；HOCap* 0.367/0.842/0.488。",
+      "基线：HACO 0.657/0.653/0.781/0.560/0.461；DECO 0.199/0.343/0.126/0.205/0.075；FollowMyHold（每 split 100 样本）0.245/–/–/0.128/0.180，DexYCB 上落后本方法约 45 pp F1。",
+      "推理速度（单张 RTX 4090）：VACO 10 FPS（100 ms/图），HACO 19 FPS，DECO 21 FPS，FollowMyHold 约 9 min/图。",
+      "消融（五基准均值，完整模型 0.636/0.855/0.699）：去掉重建共训 0.685（−1.4 pp），再去投影噪声 0.684（−0.2 pp）；冻结 ViT encoder 仅 0.486（−21.3 pp）；测试时把采样特征换成随机特征 0.471（−22.8 pp，Hi4D recall 崩到 0.098）；单尺度 S=1 为 0.684（−1.6 pp）；decoder self-attn 换成 MLP 为 0.678（−2.1 pp）。",
+      "同 backbone 对照（HaMeR 256×256、10 epochs、不含重建共训与投影噪声）：HACO 0.622 → VACO 0.677 F1，证明增益来自顶点对齐解码而非特征提取器。",
+      "scaffold 鲁棒性（只改推理投影）：自预测 0.699 与 GT 投影 oracle 0.699 持平；GT 投影加噪 σ=0.02/0.05/0.10 分别降到 0.697/0.691/0.673。",
+      "手重建（表 5）：AUC-J 0.839→0.870，PA-MPJPE 8.05→6.52 mm，AUC-V 0.846→0.866，PA-MPVPE 7.72→6.70 mm，F@5 0.642→0.704；域内 PA-MPJPE 8.45→5.52 mm，域外 7.45→8.00 mm（略降）。",
+      "下游 HOI 重建（HO3D-v3 四个留出序列，右手）：AGILE 的 CD 23.11±22.77→12.46±8.65 mm，F@5 12.07→15.32，F@10 30.43→37.87；接触掩码作为冻结的 SDF 接触先验注入。"
+    ],
+    "innovation": [
+      "把每个 MANO 顶点变成独立 query token，在自身投影处采样多尺度图像证据，直接替换 HACO 的单一共享 query 瓶颈。",
+      "scaffold 自给：重建与接触共训，推理时用自己预测的网格投影，不需外部重建器；配合 GT 投影加噪训练吸收姿态残差。",
+      "顶点身份嵌入 + 共享读出头：token 保留 MANO 顶点序，跨视角/跨手可一致复用到左手镜像与多手推理。",
+      "多粒度读出（778/336/84/21）稳定了噪声近邻标签下的优化，并顺带输出关节级、部件级接触，便于下游操作任务使用。",
+      "两组控制实验把「顶点对齐」本身的贡献分离出来：同 backbone 对照（0.622→0.677）与 scaffold oracle 对照（0.699=0.699）。"
+    ],
+    "limits": [
+      "（作者承认）精度受预测 scaffold 约束：重遮挡或截断时姿态误差与接触误差耦合，且扰动扫描只覆盖已测区间。",
+      "（作者承认）grounding 只在像平面：掌心与手背等投影重合的顶点采到完全相同的特征，缺少深度/法线/可见性通道，强重叠表面仍歧义。",
+      "（作者承认）逐帧公式缺时序与跨网格推理；由近邻启发式生成的标签限制了监督质量。",
+      "（我在正文发现）HOCap 上 F1 仅 0.488、Recall 0.842 但 Precision 0.367，双手/域外场景假阳性仍高，「全面 SOTA」在这两个 split 上主要体现为高召回。",
+      "（我在正文发现）主表与消融均为单次运行点估计（作者在 5.3 节亦承认），没有方差；10 FPS 慢于 HACO 19 FPS 与 DECO 21 FPS。",
+      "（我在正文发现）~768 GPU-hours 的训练成本对复现门槛很高，且重建共训导致域外 PA-MPJPE 从 7.45 升到 8.00 mm，属隐性代价。"
+    ],
+    "relation": "与 HACO 是直接的「同数据、同损失、同阈值」对照：沿用其数据池、VCB 损失与 τ_inf=0.52，但把共享 query 换成逐顶点 token，并用同 backbone 对照把差异归因到解码方式；DECO（body-scale 人体-场景接触）被 retarget 到 MANO 作为跨尺度先验的反例；FollowMyHold 代表 reconstruct-then-query 路线，用其 9 min/图与低 Precision 说明级联误差；Grady et al. 2021 提供接触标签的近邻协议与仪器手套数据背景；WiLoR 提供 backbone 与重建目标；AGILE 是下游 HOI 重建宿主，接触先验以 SDF 损失注入；思想源头可追到 PIFu/ECON 的像素对齐查询与 DensePose 的 UV 对应。",
+    "repro": "数据完全基于 HACO 整理的统一数据池（DexYCB、HO3D、ARCTIC、Hi4D、RICH），WiLoR 有官方 checkpoint，因此数据与初始化可获取。超参完整：S=3 与 strides、N=4/H=8/D=512、λ_reg=0.1/λ_smooth=1.0/λ_rec=1.0、AdamW lr 1e-5（encoder 0.5×）、10 epochs、batch 64、噪声 0.02/3σ、τ_inf=0.52。主要门槛是 8×RTX 4090、约 768 GPU-hours 的训练成本，且论文未声明代码开源（仅 CC BY 4.0），decoder 与多粒度读出需按公式自行实现。",
+    "action": "若做灵巧操作、抓取重定向或化身交互，VACO 的接触图可直接作为重建/重定向的物理先验（作者已在 AGILE 上把 CD 减半），优先在遮挡重的手-人交互（Hi4D 类）上验证收益。复现路径建议先用 HACO 数据池 + WiLoR 权重复刻同 backbone 对照（0.622→0.677），确认解码器实现正确后再决定是否付 768 GPU-hours 做全量共训。产品化前需解决 10 FPS 时延与掌心/手背歧义（可加深度或可见性通道）。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=4：稠密手部接触是灵巧操作与 AR/VR 抓取重定向的基础原语，单图泛化是公认难点，属重要瓶颈但非全领域卡脖子。NOV=4：逐顶点 token + 投影处多尺度采样替换共享 query，是显著的新解码范式，并有「几何渗漏」这一清晰的问题表述；组件（DETR 式 query、PIFu 式对齐采样）均有思想来源。TEC=4：公式、损失、四粒度读出完整，且有同 backbone 对照、scaffold oracle 对照、6 组消融与下游验证，缺口是单次运行无方差、先验阈值敏感性未系统扫。EXP=4：5 个基准（3 域内 + 2 域外）+ 3 个范式基线 + 手重建 + HO3D-v3 下游 + 消融，缺大样本用户研究。PER=4：Hi4D +20.7 pp（相对 +31.7%）、RICH +5.9 pp、HOT3D +5.5 pp，属 10–30% 以上的相对提升区间；HOCap 仅 +2.7 pp 且 Precision 偏低。TRL=3：实验原型，只在离线 benchmark 与一次下游集成中验证，10 FPS 未达实时交互。REP=2：未声明代码发布，训练成本 768 GPU-hours，仅数据与 backbone 可得。"
+  }
+]

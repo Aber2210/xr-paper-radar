@@ -1,0 +1,159 @@
+【摘要】
+
+【引言】
+ Human demonstrations are the easiest dexterous manipulation data to collect at scale, and real-to-sim-to-real pipelines rebuild them in simulation, where one recording seeds many ( Wang et al., 2026 ; Mao et al., 2026 ; Choi et al., 2026 ; Dan et al., 2025 ; Allshire et al., 2025 ) . However, these pipelines rebuild the interaction from vision, which recovers only how the hand moves, how the object moves, or both. Contact force never enters the simulation, since video cannot observe it ( Zhou et al., 2026b ) . A hand pose shows where each finger stops, not how far it closes, which sets grip force, and contacts are often hidden. Video thus misses which fingers touch, when, and how hard, and its two standard uses fail in opposite directions. In our experiments, pose imitation grips with 0.31 × \times the recorded force, and replays built from vision with 1.55 × \times . Physics alone does not recover the human grip either. In our touch-grounded replays of the mug pick-up task, the recorded grip is 1.6–3.7 × \times the smallest force required to hold the mug. Touch measures this quantity ( Sundaram et al., 2019 ; Yang et al., 2022 ; Song et al., 2025 ) .
+Gloves and other wearables have been used to model hand-object dynamics ( Zhang et al., 2021 ) , map touch to and from video ( Zeng et al., 2026a ; Zhang et al., 2026b ; Zeng et al., 2026b ) , supervise robot policies ( Luo et al., 2026 ; Ni et al., 2026 ; Yu et al., 2024 ; Xu et al., 2025 ) and identify object dynamics ( Engelbracht et al., 2026 ) , but none rebuilds the hand-object interaction as a physics simulation driven by measured touch, which lets one recording be replayed under new conditions. Touch predicted from video ( Zhou et al., 2026b ; Zhang et al., 2026a ; Zhou et al., 2026a ) is trained to reproduce glove signals from the same pixels, and it cannot recover a force the pixels do not show or change the conditions of a recording. In contrast, TouchTwin rebuilds each selected TouchScale ( Li et al., 2026 ) recording in MuJoCo ( Todorov et al., 2012 ) , as shown in Figure 1 , enabling scalable human-touch data generation. Coding agents write objects as physically tested programs (Fig. 3 ), a hand model per subject is tracked from both cameras ( Potamias et al., 2024 ) (Fig. 2 ), and the recorded touch closes each finger past the visible pose to set where, when, and how hard it presses (Fig. 4 ). In summary, we make the following contributions:
+•
+We propose TouchTwin , a Real2Sim2Real pipeline that rebuilds recordings with physically tested hand-object interactions grounded by touch, and simula
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab)
+
+【实验】
+4 Downstream Applications Simulation makes generated video follow the physics. Conditioned on the simulated hand and object, as in code- and physics-driven video generation ( Lv et al., 2023 ; Liu et al., 2024 ; Code Video Model Team, 2026 ; Chen et al., 2026 ; Huang et al., 2026 ) , Wan2.2 ( Team Wan et al., 2025 ) generation comes closest to the real video (Table 1 ). Without the simulation, the generated mug takes its own path (Fig. 5 ).
+video generation
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+DINO ↑ \uparrow
+sim render only
+7.79
+0.309
+0.757
+0.537
+first frame + text (baseline)
+15.36
+0.663
+0.489
+0.854
+baseline + depth control
+18.55
+0.759
+0.276
+0.914
+baseline + sim control
+18.89
+0.766
+0.258
+0.928
+Table 1 : Generated vs. real video (same first frame, prompt and seed).
+Touch-grounding is essential for contact accuracy. A contact predictor trained on vision-based simulations misses 32% of the real contact frames on held-out recordings, whereas training on touch-grounded simulations reduces miss rate to 13% (Table 2 ).
+contact prediction,
+contact
+missed
+press dur.
+trained on
+F1 ↑ \uparrow
+contact ↓ \downarrow
+err. ↓ \downarrow
+vision-based replays
+0.778
+32.2%
+1.01 s
+touch-grounded replays (ours)
+0.890
+13.1%
+0.61 s
+Table 2 : Contact prediction on held-out human-ego recordings. Press dur. err.: | | predicted − - true | | press time per finger.
+Touch supplies information beyond surface-level hand positions. A hand policy (N 0 -VTLA ( NeoteAI Team and Fudan TEAI Team, 2026 ) ) trained on the observed finger pose grips held-out recordings with 0.31 × \times the true force (Table 3 ); the touch-grounded replays restore human-level grip (0.99 × \times , 20/20).
+hand policy,
+held-out
+grip vs.
+simulated
+trained on
+recordings ↑ \uparrow
+recording
+test ↑ \uparrow
+observed finger pose
+17/20
+0.31
+26/36
+vision-based replays
+15/20
+1.55
+33/36
+touch-grounded replays (ours)
+20/20
+0.99
+35/36
+Table 3 : Hand policy on held-out recordings and simulated tests ; success: slip ≤ \leq 5 mm, set down ≤ \leq 30 mm off.
+Figure 5 : Simulation-conditioned generation. From left: the touch-grounded replay rendered through the recorded head camera, the generated video conditioned on it (baseline + sim control), the real video, and generation from the first frame and text alone, all at the same moment. Same first frame, prompt and seed; lines trace the mug, green = real.
+4 Downstream Applications
+Each replay also seeds perturbed demonstrations with simulated contact and force labels, rendered as realistic video in new views and scenes.
+Figure 6 : Perturbed replays of one recording. (a) Other hand postures with the same grip effort; under each, the simulated touch of that frame on the glove’s pad layout. The recorded grasp, thumb-index pinch, top claw and side wrap carry the mug (drift 3.8, 2.1, 1.9 and 5.1 mm in the hand); with the rim-wall pinch the mug swings 73° in the hand and lands 36 mm off target. (b) Perturbations of motion, grip and object. A 12 × \times faster carry slips the mug 19 mm in the hand (the green outline is the mug in the recorded grip); the grip fades until the mug slips at 22% of the recorded grip and drops; with 300 g of water the mug needs 27.4 N to hold against 20.8 N empty (+31%); at 0.12 × \times friction it slips and drops; a 4 Hz shake makes the hand let go at ± \pm 60 mm (4.7 g).
+Physics turns one recording into labeled successes and failures. A perturbation changes one thing in a replay and re-runs the physics: the grasp (another hand posture at the same grip effort), the motion (a faster carry or an added shake), the grip (each finger’s force target scaled down) or the object (heavier, or more slippery). With nothing changed, it reproduces the replay exactly. Because physics resolves the outcome, the mug can slip, swing or drop, and every perturbed replay carries simulated per-taxel touch, contact and force in the glove’s format (Fig. 6 ). Sweeping one factor until the object drops measures how much margin the recorded grasp had (Fig. 7 ).
+(a) Grip fades
+(b) Hand gets slippery
+(c) Mug gets heavier
+(d) Shake builds up
+Figure 7 : Perturbed until the mug drops. During the carry, (a) every finger’s force target is turned down from 1 × \times to 0, (b) the hand-mug friction is turned down, (c) mass is added up to 7.5 kg (far more than water could add), and (d) a 4 Hz side-to-side shake grows in amplitude. Each sweep runs until the mug leaves the hand.
+One replay becomes realistic video in new views and scenes. Wan2.2 ( Team Wan et al., 2025 ) renders a replay or perturbed replay as realistic video, conditioned on the simulation along the recorded head-camera trajectory. Changing the camera, the hand posture or the scene gives the same simulated interaction from other viewpoints, with other grasps and in other places, and each generated video inherits the contact, touch and force labels of its replay (Fig. 8 ).
+Figure 8 : Generated videos decoded from touch-grounded replays (one frame each). From left: a generated video in the recording’s own view and scene; a wrist camera in the same scene; new viewpoints, hand postures and scenes.
+Simulation measures touch where the glove has no sensors. The glove does not cover the whole hand: the centre of the palm and parts of the finger bases have no sensors. The simulated hand has skin everywhere, so a replay records contact that the glove cannot. Figure 9 perturbs the mug replay so that the palm presses onto the mug: the glove-layout palm taxels stay at zero, while the simulator reports the normal force on palm skin without taxels.
+Figure 9 : Touch beyond the glove. Left: the recorded replay, where the palm does not touch the mug. Middle: a simulated palm press, with the wrist moved 8 mm along the palm normal past the first visible palm contact and the fingers kept on their spots; inset: the palm side, with the glove’s palm pads outlined. Cyan rings: contact on palm skin the glove does not cover. Right: during the press, the palm skin carries up
+
+【结论/局限】
+References
+License: CC BY 4.0
+arXiv:2611.17619v1 [cs.RO] 13 Nov 2026
+1]Stanford University
+2]Texas A&M University
+3]Yale University
+4]2077AI
+\contribution [*]Equal contribution
+\metadata [Keywords]Real-to-sim-to-real, Dexterous manipulation, Egocentric data
+\metadata [Project Page] https://touchtwin.github.io
+TouchTwin: Scaling Human Touch Data via Real-to-Sim-to-Real
+Huiwen Han
+Nuo Chen
+Ziyao Zeng
+Dayou Li
+Hao Wang
+Amir Hossein Rahmati
+Xiaoning Qian
+Bangya Liu
+Zhiwen Fan
+Affiliation: [
+Affiliation: [
+Affiliation: [
+Affiliation: [
+November 13, 2026 All policies act on simulated assets and are tested open-loop in simulation; transfer to robot hands, real-robot experiments and task diversification are still needed. The held-out sets are small, the policy and contact experiments use the mug task only, and the held-out clips start with the hand already in contact, so contact onset is not tested. Two-hand replays still slip 12–23 mm in the hand. Generated videos inherit the simulation’s errors, and the video model can still change details the simulation does not control.
+Acknowledgments
+This work used the VISION supercomputer provided by Texas A&M High Performance Research Computing (HPRC). We thank AMD for providing access to AMD Instinct MI300X GPUs through the AMD University Program and the AMD Developer Cloud.
+References
+Allshire et al. (2025)
+A. Allshire, H. Choi, J. Zhang, D. McAllister, et al.
+Visual imitation enables contextual humanoid control.
+In Conference on Robot Learning (CoRL) , 2025.
+Chen et al. (2026)
+Yiwen Chen, Guosheng Lin, and Chi Zhang.
+Code world model: Coding agent as world brain.
+arXiv preprint arXiv:2608.25927 , 2026.
+Choi et al. (2026)
+Byeonggyeol Choi, Woojin Oh, and Jongwoo Lim.
+Grasp-and-lift: Executable 3D hand-object interaction
+reconstruction via physics-in-the-loop optimization.
+arXiv preprint arXiv:2601.18121 , 2026.
+Code Video Model Team (2026)
+Code Video Model Team.
+Code Video Model: Conditioning video generation on code.
+Technical re

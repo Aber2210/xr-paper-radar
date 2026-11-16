@@ -1,0 +1,225 @@
+[
+  {
+    "id": "2611.18438",
+    "slug": "on-device-markerless-6dof-tracking",
+    "title_zh": "面向混合现实头显端侧物理教具的无标记六自由度（6DoF）跟踪：一项初步研究",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "交互与输入",
+    "tags": [
+      "6DoF 物体跟踪 6DoF Object Tracking",
+      "无标记跟踪 Markerless Tracking",
+      "混合现实 Mixed Reality",
+      "合成数据与域随机化 Synthetic Data & Domain Randomization",
+      "端侧推理 On-Device Inference"
+    ],
+    "conclusion": "在 Meta Quest 3 上用 128×128 动态裁剪 + YOLO26n-pose + PnP 做单目无标记 6DoF 跟踪，合成验证集检测率由 32.5% 升到 46.2%（+13.7 个百分点），关键点平均 F1 由 42.9% 升到 44.6%（相对 +4.0%），并以 2 Hz 跟踪频率维持约 72 FPS 应用帧率。",
+    "problem": "AR-Classroom 早期桌面版靠网络摄像头把虚拟叠加画在电脑屏幕上（Shaghaghian et al. 2024），迁到独立头显后，相机处理、物体跟踪与场景渲染要争抢同一套算力。已有的 6DoF 方案各有缺口：BB8（Rad & Lepetit 2017）与 Tekin et al. 2018 只解 PnP 几何而不解决端侧算力；DOPE（Tremblay et al. 2018）证明合成渲染+域随机化可行，但面向机器人抓取的任意物体，未约束输入分辨率；Miu & Fryazinov 2020 在手机 GPU 上用两个网络（整图定位 + 移动裁剪内跟踪），Vuforia Model Targets 则是商业黑盒。本文要回答的是：在 standalone 头显上，能否只用合成数据训练、以低算力达到可用的 6DoF 对齐。",
+    "method": "任务定义为估计 LEGO 飞机的 6DoF 位姿：求旋转 R 与平移 t，把物体参考系中的点映射到相机系，再用该图像对应的相机位姿把头显 tracking space 中的叠加对齐，并与目标位姿比较。训练数据全合成：Unity 中渲染 50,000 张 640×640 图像，约 90% 背景取自 indoorCVPR_09 的 classroom / living room / library 三类，其余为项目实际使用场景照片；按 domain randomization 变化位置与朝向、光照、零件拆除与旋转、运动模糊，并在相机与飞机之间放胶囊体近似手指造成的不完全遮挡。场景生成以 10% 概率渲染无飞机的空场景，含飞机时以 30% 概率在六个主轴方向附近采样视角。对含飞机的图像投影 20 个预定义 3D 关键点，逐点判定是否落在画面内、是否被遮挡，按 YOLO Pose 格式写类别、归一化框、关键点坐标与可见性；无飞机或画面内关键点少于 2 个的图像保留为空标注负样本。源渲染先按 80:20 划分训练/验证，再生成裁剪视图：保留全帧样本，并以 80% 的采样率在标注框周围额外裁剪，同一源图的所有版本留在同一划分内，框与关键点坐标同步重映射，最后统一缩放到 128×128 训练 YOLO26n-pose。端侧流程是闭环的：从单眼 passthrough RGB 的宽搜索窗起步，一旦 PnP 得到有效位姿，就用检测框设定下一帧 ROI 并随物体移动，跟踪丢失时逐步扩大搜索窗重捕获。每帧裁剪缩放到 128×128，用 Unity Sentis 2.5.0 在头显内推理，并记录裁剪原点与缩放比例，把预测关键点映射回原图坐标。位姿由 PnP + RANSAC 求解，要求至少 4 组内点，再用图像时间戳对应的 view pose 转入 XR tracking frame。为抑制抖动，显示位置做平滑、朝向做四元数插值；跟踪中断时虚拟模型保持上一帧位姿，超时后隐藏。",
+    "experiments": [
+      "合成训练集为 Unity 渲染的 50,000 张 640×640 图像，标注 20 个关键点及其可见性，约 90% 背景来自 indoorCVPR_09 的 classroom/living room/library，10% 为空场景、30% 在六个主轴方向附近采样，源图按 80:20 划分训练/验证。",
+      "训练 150 个 epoch 后，在 6,000 张合成验证图上 box mAP50 为 0.879、mAP50-95 为 0.546，2D 关键点对应分数为 0.678 与 0.440。",
+      "在 1,000 张验证图（825 张有飞机、175 张空标注）上做配对实验：用 GT 框裁剪使中位框长边由 57.1 px 增到 106.8 px，正样本检测率由 32.5% 升到 46.2%（+13.7 个百分点）。",
+      "同一配对实验中关键点平均命中率由 29.8% 升到 34.7%，但平均精度由 76.4% 降到 62.5%，平均 F1 仅由 42.9% 升到 44.6%（+1.7 个百分点）。",
+      "175 张空标注图在全帧与裁剪两种视图下均未产生检测（0/175），说明裁剪未引入明显误检。",
+      "分部位看，六个机翼关键点在两种视图下 F1 均约 38%，其余 14 个点在全帧约 45%、裁剪后约 47%，作者据此提出用左右翼点分离的辅助损失。",
+      "Meta Quest 3 上 2 Hz 目标跟踪率可使应用维持约 72 FPS；提高到 6 Hz 时应用降到约 40 FPS，跟踪回路在 5–6 Hz 波动。",
+      "两种设置下 YOLO 阶段平均约 75–81 ms、PnP 阶段约 3.2–3.5 ms，YOLO 是主要耗时项。",
+      "头显演示给出旋转前后两个稳定位姿下叠加对齐的定性结果，真实画面上的 6DoF 旋转/平移误差正文未报告。"
+    ],
+    "innovation": [
+      "把「Unity 合成渲染 + 域随机化 + 20 关键点 YOLO Pose 标注」整链落到一个课堂教学用的 LEGO 飞机上，相对 DOPE 显式建模了零件拆装、手指遮挡与运动模糊这三类真实课堂操作扰动。",
+      "用同一个关键点模型同时承担全局搜索与局部跟踪（靠 ROI 收缩/丢失时扩张切换），相对 Miu & Fryazinov 的双网络定位+跟踪方案减少一个网络与一次前向。",
+      "在 standalone Quest 3 上把输入压到 128×128 + Unity Sentis 推理，给出「2 Hz 跟踪仍保 72 FPS」的端侧算力预算证据，此前工作多在桌面或手机 GPU 上验证。",
+      "设计「全帧 vs GT 框裁剪」的同分辨率配对实验，把输入尺度效应单独隔离出来，量化了检测率 +13.7 个百分点与关键点精度 −13.9 个百分点的取舍。"
+    ],
+    "limits": [
+      "（作者承认）所有定量结果都来自合成验证集，且裁剪由 GT 框给出；真实头显画面上的 6DoF 平移/旋转误差尚未测量。",
+      "（作者承认）头显部分只有单个物体、单次手动旋转的定性演示，未测跟踪丢失后的重捕获行为，也未做用户实验。",
+      "（作者承认）2 Hz 的位姿更新在旋转过程中过稀，叠加 YOLO 约 75–81 ms 的延迟，会出现可见的叠加错位。",
+      "（我在正文发现）关键点平均 F1 只有 44.6%、精度降到 62.5%，而 PnP 要求至少 4 组内点，正文却未报告 PnP 的 RANSAC 内点数、求解失败率或重投影误差。",
+      "（我在正文发现）正样本检测率 46.2% 意味着过半有飞机的帧检不到框；ROI 依赖检测框，这条失效链（漏检→ROI 不更新→跟踪失败）正文没有分析。",
+      "（我在正文发现）未给模型参数量、FLOPs 或端到端延迟分解，也没有与 Vuforia Model Targets、DOPE 等基线在同一头显条件下的对比。"
+    ],
+    "relation": "相对 Shaghaghian et al. 2024 的 AR-Classroom 桌面版（网络摄像头 + 屏幕显示），本文把同一教学活动搬到头显并新增端侧跟踪，属继承场景、替换感知链路。几何求解沿用 BB8（Rad & Lepetit 2017）与 Tekin et al. 2018 的「预测 2D 投影 + PnP」范式，但把 3D 框角点换成 20 个物体关键点。合成数据路线来自 DOPE（Tremblay et al. 2018），差别在于针对课堂操作显式加了零件拆装与手指遮挡。相对 Miu & Fryazinov 2020 的双网络手机端方案，本文用单网络 + 自适应 ROI 取代，属简化与替换。相对 Vuforia Model Targets 的商业方案，本文给出可复现的开源式管线思路（但未放代码），属替代。",
+    "repro": "正文未给出代码或数据链接，也没有项目主页，属未开源。数据需自行用 Unity + 飞机数字模型重建 50,000 张渲染图，背景依赖公开的 indoorCVPR_09 数据集。硬件与软件栈较明确：Meta Quest 3、Unity、Unity Sentis 2.5.0、YOLO26n-pose、OpenCV PnP + RANSAC；关键超参也给了：150 epoch、128×128 输入、80:20 划分、80% 裁剪采样率、10% 空场景、30% 主方向采样、2 Hz 跟踪率。许可为 arXiv perpetual non-exclusive license（非 CC BY），二次使用与商用需另行确认。",
+    "action": "先读第 III-B 与第 III-C 节，核对合成数据比例（10%/30%/80%）与 ROI 更新规则；再逐行核对 Table I 的 1,000 图配对实验，重点确认「精度 76.4→62.5」与「F1 仅 +1.7」是否被摘要的 +13.7 个百分点掩盖。落地风险有三：F1 44.6% 不足以稳定支撑 PnP；2 Hz 更新对手部快速旋转不友好；完全无真实数据微调时域偏移未知。若要复用，建议先补真实 passthrough 采集与位姿真值，再评估是否需要单通道 Y 平面输入以省预处理。",
+    "scores": {
+      "IMP": 2,
+      "NOV": 2,
+      "TEC": 2,
+      "EXP": 2,
+      "PER": 2,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=2：端侧无标记 6DoF 跟踪对 standalone MR 确有价值，但本文只覆盖单个 LEGO 飞机、单个教学场景，属小众应用验证。NOV=2：合成数据 + YOLO Pose + PnP 是成熟组合，相对 DOPE/Miu & Fryazinov 只是工程性替换，无新表述。TEC=2：无位姿精度评测、裁剪用 GT 框、无基线对比、无失效链分析，缺口明显。EXP=2：仅一个自建合成验证集加两档头显帧率测量，无真实数据、无跨物体泛化。PER=2：只有内部配对比较（F1 +1.7 个百分点），没有与任何 SOTA 在同条件对比，谈不上相对提升。TRL=3：在 Quest 3 上跑通了含渲染的完整原型并给出演示，但只有定性验证。REP=2：无代码、无数据、无项目页。"
+  },
+  {
+    "id": "2611.18256",
+    "slug": "deep-bundle-adjustment",
+    "title_zh": "深度光束法平差（Deep Bundle Adjustment）",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "重建与SLAM",
+    "tags": [
+      "光束法平差 Bundle Adjustment",
+      "图神经网络 Graph Neural Network",
+      "运动恢复结构 Structure-from-Motion",
+      "迭代细化 Iterative Refinement",
+      "尺度不变监督 Scale-Invariant Supervision"
+    ],
+    "conclusion": "2.04M 参数的 GNN 把 BA 摊销成冷启动迭代细化：CO3Dv2 上 AUC@30° 78.6、RRA@15° 97.4，对最强 match-based 前作 GASfM(eLoFTR) 的 71.2/79.9 分别提升 10.4%/22.0%，参数量少 71×；DTU 结构 Acc@5cm 98.5% 对 GASfM 的 42.5%。",
+    "problem": "现代 SfM 与关键帧 SLAM 共用同一个求解器 bundle adjustment（BA），它在好的初始化下近最优，但非凸地形脆弱；增量 SfM 靠启发式与逐场景调参获得初始化，这些启发式在弱基线或平面结构上失效。另一方面，学习型半稠密/稠密匹配器已让匹配远比 SIFT 可靠，瓶颈从匹配转到求解器；然而把稠密匹配直接喂给 COLMAP 并不自动变好，因为其刚性 track building 会被匹配量淹没、初始化依旧脆弱。DUSt3R / MASt3R / VGGT 选择端到端回归几何，代价是丢掉「匹配器可替换」的模块化，且 VGGT 约 1.2B 参数、以第一帧为锚。缺口正是中间的空白：一个摊销 BA 本身、与匹配器解耦、可同时解任意视角数的学习型求解器。",
+    "method": "DeepBA 把 BA 写成对视图图的学习式迭代细化。输入是 N 张无序图的成对 2D 匹配，构造 G=(V, E_pair, E_match)：E_pair 为匹配数 ≥50 的相机对，E_match 为全部匹配。场景状态 s := ({T_i^abs}, {T_ij^rel}, {φ_i}, {D_i})，φ_i 为 log-FOV，D_i 为 32×32 网格上的 log 深度；相对位姿解耦为 T_ij^rel = (t̂_ij^rel, ω_ij^rel)，t̂ ∈ S² 为单位平移方向、ω ∈ R³ 为旋转向量，只监督方向故无需度量尺度。\n\n每次迭代从当前状态重算几何特征，隐状态不跨迭代传递（Markovian）。成对特征 f_ij^pair 为 14 维：相对位姿 6、两端内参 2、位姿图残差 6；匹配特征 f_e^match 为 12 维：两端像素 4、对极偏移 ε_e 2、重投影残差 ρ_e 2、log‖P_dst‖ 1、3D 一致性残差 δ_e^3D 3。隐状态统一 d_h=128；相机隐状态从共享嵌入 e_cam 起步。\n\n细化网络为 L=4 个不共享权重的 Match–Pair–Camera（MPC）块，每块三步：相机→对/匹配广播（h_ij^pair += W_1^pair(h_i^cam‖h_j^cam)）、匹配→对按注意力池化聚合、对→相机注意力（前向状态送目标相机），4 头点积。四个头输出 ΔT_i^abs ∈ R⁶、Δφ_i、ΔT_ij ∈ R⁶ 与匹配隐状态散射到 32×32 网格再池化得到的 ΔD_i；相对位姿取反对称平均 ΔT_ij^rel = ½(ΔT_ij − ΔT_ji)；状态按 s_{k+1} = s_k ⊞ Δs_k 复合。\n\n损失用尺度不变距离 d(T_a,T_b) = (1−cosθ_R) + (1−cosθ_t)，θ_R 为 SO(3) 测地角、θ_t 为平移方向夹角。r_ij^rel = d(T_ij^rel, T_ij^gt) 监督相对位姿；r_ij^abs = d(T_ij^abs, sg(T_ij^rel)) 借 stop-gradient 让绝对位姿跟随相对位姿，是学习版位姿图优化。几何项 L_2d、L_3d 用 smooth-L1 作用在 ρ_e 与 δ_e^3D 上，权重 w_e = γ²/(γ²+s_e²) 为按 GT 对极 Sampson 距离的 Cauchy 权重（γ=5×10⁻³），使损失只压内点；另有 L_fov 与不动点正则 L_fp = ‖Δs_k‖₁。训练 50,000 步 AdamW、lr 6×10⁻⁴，λ_2d=1、λ_3d=λ_fp=0.1，4×L40S；每步展开 K_train=100 次但只反传 24 次，视图图 ≤48 相机，状态从冷启动加高斯扰动开始。",
+    "experiments": [
+      "CO3Dv2（202 个留出场景，VGGT 的 10 帧协议）：DeepBA RRA@15° 97.4 / RTA@15° 89.2 / AUC@30° 78.6，对 GASfM(eLoFTR) 的 79.9/77.3/71.2 全面提升，也超 COLMAP(eLoFTR) 的 89.7/83.5/77.0。",
+      "RealEstate10K（108 段）：AUC@30° 84.0，对 GASfM(eLoFTR) 82.8、COLMAP(eLoFTR) 80.9、GLOMAP(SIFT) 71.7 均为最优。",
+      "模型规模 2.04M 参数，对 GASfM 的 145.2M 少约 71×，对 VGGT 的约 1.2B 少约 590×；同帧协议下 VGGT 仍更强（CO3Dv2 AUC@30° 85.1 vs 78.6）。",
+      "DTU 结构（15 个测试扫描）：Acc@1/2/5cm 为 34.1/62.3/98.5，Comp@1/2/5cm 为 37.1/59.5/96.1，15/15 扫描成功；GASfM(eLoFTR) 为 30.9/34.5/42.5 与 14/15。",
+      "消融（CO3Dv2）：隐宽 d_h 由 128 降到 64 使 AUC@30° 从 78.6 崩到 58.9；λ_3d 由 0.1 降到 0.01 降到 64.2；开启逐迭代 gauge strip 仅 78.3（几乎无影响）。",
+      "外点鲁棒性（CO3Dv2，把匹配沿 GT 对极线滑动）：10% 污染使 AUC@30° 从 78.6 降到 73.4（−5.2），50% 降到 62.4（−16.2），100% 降到 40.7。",
+      "运行时间（bonsai，N=292、3.4M 匹配、同一批 eLoFTR 匹配）：K=100 迭代 56 s、峰值 24 GB，对 COLMAP 988 s/0.9 GB 与 GLOMAP 793 s/0.5 GB；每次迭代成本 25 ms + 155 ns/匹配，随匹配数线性。",
+      "迭代外推（Mip-NeRF 360）：K=1000 使平均 RRA@10° 由 73.5 升到 82.2，但平均 RTA@10° 由 86.5 降到 84.5，故评测统一用 K_test=100。",
+      "失败面：ETH3D 上 RTA@10° 仅 49.1，对 COLMAP 的 75.5；Mip-NeRF 360 上 RRA@10° 73.5、RTA@10° 86.5 也落后于 mapper。"
+    ],
+    "innovation": [
+      "首次把 BA 求解器本身摊销为权重共享 GNN 的迭代细化，直接吃成对匹配、无 track-building、从冷启动收敛——相对 GASfM（仍需 point tracks、145M 参数）与 RESfM 是新的求解器范式。",
+      "提出尺度不变且 anchor-free 的监督：弦距旋转 + 仅方向平移 + 内参 + 自一致重投影/3D 项，使任意度量单位的数据集可混合训练；相对 VGGT 必须以首帧为参考系，这是结构性差异。",
+      "测试时迭代次数与训练计划解耦（K 可自由取 100→1000），把运行时间/精度 trade-off 交给用户，复刻了经典 BA 的迭代性质，学习型前作不具备。",
+      "把「学习型 SfM from matches」压到 2.04M 参数仍超过 145M 的 GASfM，证明该路线不必靠大模型；相对 VGGT 的 1.2B 是三个数量级的差距。",
+      "对匹配器族泛化：同一套权重可从 SIFT 稀疏匹配跑到稠密匹配而不重训（Table 5 覆盖 SIFT、SP+LG 等），相对绑定特定匹配器的 GASfM/DeepLM 类方法更模块化。"
+    ],
+    "limits": [
+      "（作者承认）平面场景存在焦距–深度歧义：ETH3D terrains 的 42 个视角中 18 个正对平墙，旋转正确但焦距被高估、相机被推得过远。",
+      "（作者承认）学习更新会漂移：bonsai 上即使从 GT 出发，100 次迭代仍产生 9.4° 的中位 pitch 误差；减到 32 个相机仍有 7.0°。",
+      "（作者承认）紧阈值精度不足且受针孔模型限制：Mip-NeRF 360 的 RRA@10° 73.5 / RTA@10° 86.5、ETH3D 的 RTA@10° 49.1 都落后经典 mapper。",
+      "（我在正文发现）DTU 的 @1cm 精度只有 34.1%，说明 98.5% 的高分依赖 @5cm 宽松阈值，绝对尺度与近距细节仍弱。",
+      "（我在正文发现）迭代并非单调收敛：K 由 100 加到 1000 只换来 RRA 提升、RTA 反而下降，正文以「无一致增益」带过，未分析是哪类场景在退化。",
+      "（我在正文发现）在重复结构（courtyard/facade）上会拟合「互相一致的错配」，全文除 Cauchy 权重外没有显式外点拒识或假设检验，鲁棒性上限被匹配器锁死。"
+    ],
+    "relation": "相对 COLMAP 与 GLOMAP，本文不替换整体管线而只替换其中的非线性求解器，且不需要初始化与 track building；相对 GASfM（同样 match-based 学习型 SfM，但用 point tracks + equivariant 层、145M 参数）是「去 track + 极小化」的改进；相对 RESfM（0.7M 参数但精度低）在结构精度上是取代。相对 DUSt3R / MASt3R / VGGT 这类 image-to-geometry 端到端模型，本文保留匹配器解耦、参数量小两到三个数量级，代价是精度仍差约 6.5 个 AUC 点，定位为「可组合的中间层」而非取代。相对 FlowMap 与 TFD-SfM，二者仍是逐场景优化（前者梯度下降穿稠密流，后者 track-free 但从冷启动逐场景优化），本文把这一步摊销到前向网络。",
+    "repro": "正文给出项目主页 https://cphjsn.github.io/deep-ba/，但未明确说明代码与权重是否已放出，属「有页面、代码待确认」。训练数据全为公开集：MegaDepth、CO3Dv2、ScanNet、BlendedMVS、DL3DV、Calle；评测用 CO3Dv2、RealEstate10K、ETH3D、DTU、Mip-NeRF 360、IMC2021 六个公开基准。超参与硬件齐全：50,000 步 AdamW、峰值 lr 6×10⁻⁴、λ_2d=1、λ_3d=λ_fp=0.1、K_train=100、反传 24、d_h=128、L=4、4×NVIDIA L40S。许可为 CC BY 4.0，可复用性较好。",
+    "action": "先读第 3.3 节（MPC 三步消息传递）与第 3.4 节（尺度不变监督 + stop-gradient 的绝对/相对耦合），这是全文最不可替代的部分；再核对 Table 1 与 Table 3 的两组数字，注意 78.6 vs 71.2 是 AUC@30°、98.5% 是 @5cm。重点复核三处：K=1000 时 RTA 为何下降、ETH3D 的 49.1 是否可归因于匹配器、以及 @1cm 的 34.1% 是否影响你的下游用途。落地风险：24 GB 显存与 56 s/场景对实时 SLAM 偏重；平面场景焦距歧义需要外部约束（如已知内参）；漂移问题意味着不宜把它当最终精化器单独使用。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：BA 是 SfM 与关键帧 SLAM 的共用求解器，其初始化脆弱与 track building 瓶颈是公认的卡点，属重要瓶颈。NOV=4：amortize BA + Markovian 迭代 + 尺度不变 anchor-free 监督 + 反对称相对位姿更新，是显著的新表述与组件，但不构成全新范式（仍是「学习式优化器」家族）。TEC=4：Lie 群更新、位姿图残差、Cauchy 内点权重、失败分析（重复结构、焦距歧义、漂移）都写清了，缺口是对漂移与 K 增大后 RTA 下降没有机理层面的解释。EXP=4：6 个基准 + DTU 结构 + 匹配器泛化 + 外点扫描 + 运行时/显存 + 迭代外推，消融充分；但没有真实机器人/移动端部署，也没有用户或在线实验。PER=4：对 GASfM 的 AUC +10.4%、RTA +15.4%，对 COLMAP 全面领先，落在 10–30% 档；但相对 VGGT 仍低 6.5 个 AUC 点，故不给 5。TRL=3：离线实验原型，项目页存在但未见可商用封装。REP=3：有项目主页与 CC BY 许可，代码是否放出正文未明确，按「承诺/待确认」计。"
+  },
+  {
+    "id": "2611.18170",
+    "slug": "affine-correspondences-beyond-patches",
+    "title_zh": "A·LoMa：超越局部图像块的仿射对应（Affine Correspondences）",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "重建与SLAM",
+    "tags": [
+      "仿射对应 Affine Correspondences",
+      "局部仿射帧 Local Affine Frames",
+      "稀疏匹配 Sparse Matching",
+      "相对位姿 Relative Pose",
+      "全局与跨视图上下文 Global & Cross-View Context"
+    ],
+    "conclusion": "在冻结的 LoMa 匹配器上加 3 层注意力仿射头，HPatches 中位 Frobenius 误差 1.50（×100）对 AffNet 26.9 与 Sun et al. 48.2 低约一个数量级（−94%），ScanNet1500 相对位姿 AUC@20° 70.2 对 Sun et al. 44.7 提升 25.5 点（相对 +57%）。",
+    "problem": "仿射对应（AC）比点对应（PC）多 4 个自由度，使最小解算器可用远少的样本（相对位姿 5 PC → 2 AC），但「AC 本身怎么估」长期停滞：传统路线是 Harris-Affine / Hessian-Affine 加 Baumberg 迭代细化，学习路线自 AffNet（2018）后几乎没进展，而 PC 侧已被 DKM、RoMa、SuperGlue、LoMa 的全局 + 跨视图上下文大幅改进。唯一的现代组合是 Sun et al.，但它仍只在每个匹配周围的小 patch 上预测，且 4 个自由度不联合回归——一个网络出 scale 与 orientation，另一个出 affine shape。缺口因此很具体：AC 估计没有吃到匹配器里已有的 image-wide 与 cross-view 信息，且四分量耦合使「从局部外观联合回归」被认为困难。",
+    "method": "把 AC 表述为：给定匹配点 x_i^A、x_j^B，两图局部由 warp φ 联系，x_j^B = φ(x_i^A)，AC 即 φ 在 x_i^A 处的 Jacobian，φ(x_i^A+v) ≈ x_j^B + A_ij v，A_ij := ∂φ/∂x|_{x_i^A}，是 2×2 矩阵的 4 个自由度。\n\n与「每对 patch 回归一个矩阵」不同，本文给每个关键点预测一个局部仿射帧 Â_i^A、Â_j^B ∈ R^{2×2}，可读作规范 patch 到各自邻域的线性映射；匹配的仿射由两者复合 Â_ij = Â_j^B (Â_i^A)^{-1}，逆一致性由构造保证。但该式只约束复合：对任意可逆 G，令 Â_i^A→Â_i^A G、Â_j^B→Â_j^B G 不改变损失，训练从不钉住单个帧本身，存在 gauge 自由度。为保证可逆，沿用分解 A = λ R(α) A′ = λ[[cosα, −sinα],[sinα, cosα]][[e^a, b],[0, e^{−a}]]，λ>0 为各向同性尺度（det A = λ²），R(α) 为平面旋转，A′ 为 det=1 的残差形状（拉伸 a、剪切 b）。\n\n仿射头挂在冻结的 LoMa 上：对每个关键点取 LoMa 的描述子，过 K=3 层交替 self-/cross-attention 的 transformer，再由 per-keypoint MLP 回归 5 个数——尺度 1 个、朝向 2 个（归一化为单位方向向量，避开角度回绕）、形状 2 个（拉伸 a 与剪切 b）。为让 Â 及其逆条件数良好，λ = e^{Δ tanh(·)}、a = Δ tanh(·) 用固定 Δ=2 限幅，b 直接回归；预测头末层零初始化，每个关键点从单位仿射帧起步。由于头跨视图注意，帧以配对图为条件。\n\n监督无需额外标注：由 GT 深度 D^A、内参 K^A,K^B 与相对位姿 (R,t) 写出 warp φ(x) = π(K^B(R D^A(x)(K^A)^{-1} x̃ + t))，再对 φ 在像素网格上做前向差分得 GT Jacobian，A_ij ≈ (1/h)[φ(x_i^A + h e_1) − φ(x_i^A) | φ(x_i^A + h e_2) − φ(x_i^A)]，h=1 px，结果写在归一化图像坐标。GT 匹配取深度 warp 的互为最近邻、且局部 Jacobian 有定义（避开遮挡边界）的点对。损失为 Charbonnier 鲁棒项 ρ(A,Â) = sqrt(‖A−Â‖_F² + δ²) − δ，δ=10⁻³，对匹配集取平均。训练 100K 步 AdamW、固定 lr 2×10⁻⁴、全局 batch 64、4×H200、560×560，约一天，放出 B/L/G 三个规模。",
+    "experiments": [
+      "HPatches（56 条视角序列、280 对）与 MegaDepth-1500（1500 对室外图）上，A·LoMa-G 中位 Frobenius 误差 1.50 / 3.61（×100），对 KN+HN+AN 的 26.9/32.7、Sun et al. 的 48.2/40.1、LoMa+S3E+AN 的 51.9/42.9 均低一个数量级。",
+      "同表的旋转误差：A·LoMa-G 为 0.23°/0.53°，对 AffNet 6.35°/7.17°、Sun et al. 3.82°/2.09°。",
+      "也优于用稠密 warp 微分得到的 AC：RoMa v2 在 HPatches/Mega1500 为 2.82/5.04，A·LoMa-G 为 1.50/3.61。",
+      "2AC + GC-RANSAC 的相对位姿：Mega1500 AUC@20° 87.5（L 版 87.8）、ScanNet1500 70.2；Sun et al. 官方 86.3 但只在室外训练，ScanNet 上仅 44.7（LoMa+S3E+AN 已 67.9）。",
+      "滚动快门 7AC（TUM-RS）AUC@20° 71.6，对 20PC 的 DKM 52.0、LoMa-B 36.7，以及 Sun et al. 的 69.0 均更优。",
+      "广义相对位姿+尺度（TUM RGB-D，9AC vs 26PC）：AUC@0.25m,2° 79.4，对 DKM 26PC 的 73.3、KN+HN 的 75.7；平均 RANSAC 迭代 73 次 vs 约 930 次（少约 14×），而 AffNet 反需 2.5× 更多迭代。",
+      "视觉定位（Cambridge Landmarks，UP1SIFT）：49.9 / 65.5（25cm,2° / 50cm,5°），对 S3Esti 的 44.8 / 59.6；P1AC 上 67.4 / 84.8 略优于 S3Esti 的 67.0 / 84.7。",
+      "表面法向（Map-free，AUC@5°）9.9、@10° 19.2、@20° 33.3，对 AffNet 的 0.3/1.3/4.8、Sun et al. 的 0.1/0.5/1.9；Mega1500 上 @20° 30.4 也超过 RoMa v2 的 29.2。",
+      "速度（H200，单对 batch）：A·LoMa-B 51.1 对/秒，对 Sun et al. 3.9、RoMa v2 4.3，快约 9–13×/8–12×。"
+    ],
+    "innovation": [
+      "首次让 AC 估计直接吃匹配器的全局与跨视图上下文，并用单个头联合回归完整 4-DoF 矩阵——相对 AffNet/S3Esti 的 32×32 局部 patch 与分解预测、Sun et al. 的双网络分解，是把「上下文」这一 PC 侧的成功因素搬到 AC 侧。",
+      "用 per-keypoint 帧复合 Â_ij = Â_j^B (Â_i^A)^{-1} 代替逐匹配直接回归，使逆一致性与可逆性由构造保证，无需对称化或后处理。",
+      "用「深度诱导 warp 的有限差分 Jacobian」直接作监督（h=1 px，截断误差 0.03，比方法自身在 HPatches 的 1.50 小约 55×），免去估法向再微分 homography 的两步误差。",
+      "首次系统量化 AC 的 gauge freedom：同一关键点在不同伙伴图下的帧漂移中位 30–130（×100），远高于稳定帧应有的 2.1–3.0，并给出 transport 平均方案把 per-view 帧误差约减半。",
+      "一个轻量头把 AC 估计提到 51.1 对/秒，且下游 7AC 优于 20PC（TUM-RS 71.6 vs 52.0），使「AC 替代 PC」在实时场景变得可行。"
+    ],
+    "limits": [
+      "（作者承认）逐对帧的 gauge 未被解决：HPatches 六个序列的漂移中位为 30/33/68/80/84/130，远高于稳定帧的 2.1–3.0，因此单帧不是视图无关量，需靠附录 F 的 transport 后处理。",
+      "（作者承认）ScanNet1500 上的大幅领先主要来自 LoMa 的 PC——LoMa+S3E+AN 已达 67.9，仿射头本身只带来 2.3 点（67.9→70.2）。",
+      "（作者承认）视觉定位在启用 local optimization 且 RANSAC ≥100 次后，UP1PfAC 与 P1AC 的增益基本消失，只剩 UP1SIFT 的增益稳定。",
+      "（我在正文发现）Mega1500 上点召回低于 Sun et al.（57.1% vs 本文更低），说明 yield 的瓶颈部分在 LoMa 匹配而非仿射头，正文未给按场景的分解。",
+      "（我在正文发现）监督是一阶有限差分近似 Jacobian，对大基线或强透视的匹配对存在系统偏差；正文只在小步长 h=1 上验证截断误差，未做大基线专项实验。",
+      "（我在正文发现）评测限于静态场景与中心投影相机：滚动快门只用 TUM-RS 一个数据集、一个 7AC solver，未验证与其他 RS solver 组合时的稳定性。"
+    ],
+    "relation": "相对 AffNet（2018，局部 32×32 patch 出 affine shape，需再配 S3Esti 出 scale/orientation），本文用一个跨视图头联合出全 4-DoF，属取代；相对 S3Esti（只出 scale 与 orientation、shape 设为单位阵），本文补上 shape 并联合优化。相对 Sun et al.（唯一把现代匹配器 DKM 与学习仿射结合的工作，但仍是 per-patch 预测 + 双网络分解），本文去掉 patch 裁剪、去掉分解、改为 4-DoF 联合，属改进并取代。相对 LoMa，本文冻结其匹配器、只加一个头，是「增量挂载」而非替换；相对 RoMa v2 的稠密 warp 微分路线，本文更准且快 8–12×，属替代。相对 Harris-Affine/Hessian-Affine + Baumberg 迭代的手工路线，是完全取代。",
+    "repro": "摘要直接给出代码 https://github.com/davnords/loma，并放出 B/L/G 三个预训练模型，可复现性最好。训练数据是带 GT 深度、内参、位姿的大型 3D 数据集混合（附录 B 列明），不需要新标注。超参与硬件完整：100K 步、AdamW、固定 lr 2×10⁻⁴、batch 64、560×560、4×H200、约一天；评测覆盖 HPatches、MegaDepth-1500、ScanNet-1500、TUM-RS、TUM RGB-D、Cambridge Landmarks、Map-free。许可 CC BY 4.0。需要注意 Sun et al. 的公开 demo 有四处实现 bug，作者修正后重跑，复现其数字时应采用本文的修正版本。",
+    "action": "先读第 3.2–3.4 节与 5.1 的上下文消融（局部 patch → 描述子 → 同图 → 跨视图，误差每步约减半），这是「为什么有效」的核心证据；再核对 Table 1 的 1.50/3.61 与 Table 2 的 ScanNet 70.2，注意后者混入了 LoMa 匹配器的贡献。重点核三处：gauge 漂移是否会影响你的 SfM 用法（若需要单视图帧，必须走附录 F 的 transport）、点召回是否成为 yield 瓶颈、以及 h=1 px 差分在大基线下的偏差。落地风险：pair-conditioned 帧不能直接塞进需要 per-image 帧的 BA/SfM 流程；跨视图注意力使速度依赖配对数量。",
+    "scores": {
+      "IMP": 3,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 4,
+      "REP": 4
+    },
+    "scores_why": "IMP=3：AC 能显著降低最小解算器所需样本数（2AC/7AC/9AC），对低纹理与实时几何有价值，但相对 PC 仍是较窄的口径，不是领域公认的卡脖子问题。NOV=4：把跨视图上下文引入 AC 估计并联合回归 4-DoF，加上 gauge freedom 的首次系统量化与 transport 方案，是显著的新组件与新表述。TEC=4：参数化、逆一致性、有限差分监督、上下文消融、多任务验证都完备，缺口是 gauge 未根治、差分近似只在 h=1 上验证。EXP=4：7 个基准（HPatches、Mega1500、ScanNet1500、TUM-RS、TUM RGB-D、Cambridge、Map-free）+ 参数化/监督/架构/上下文消融，覆盖很广；无真机或在线系统实验。PER=4：仿射误差降 94%（远超 30%），下游 Mega1500 AUC@20° 87.5 vs 86.3（+1.4%，小幅），ScanNet 70.2 vs 44.7（+57%），综合取 4。TRL=4：开源代码 + 三个预训练权重，可直接接入 SfM/定位，但依赖 H200 级 GPU。REP=4：代码与权重齐备、许可宽松，但仅 arXiv、训练数据为公开集混合而非单独发布。"
+  },
+  {
+    "id": "2611.18099",
+    "slug": "pinned-key-long-video-reconstruction",
+    "title_zh": "EcoVGGT：面向长视频高效可流式前馈三维重建的固定键推理（Pinned-Key Inference）",
+    "venue": "arXiv preprint（cs.CV）",
+    "track": "重建与SLAM",
+    "tags": [
+      "前馈三维重建 Feed-Forward 3D Reconstruction",
+      "长视频 Long Video",
+      "固定键集 Pinned Key Set",
+      "免训练推理 Training-Free Inference",
+      "在线流式 Online Streaming"
+    ],
+    "conclusion": "用 31 个均匀分布帧作固定键集、并以 pin/attach 精确分解替代全帧注意力，使 VGGT 在 500 帧 ScanNet 上成功率由 70% 升到 82%（+12 点，相对 +17%）、ATE 由 0.111 降到 0.090（−19%）、速度快 8.5×；π³ 版本在 1,000 帧保持 94% 成功率而快 13.8×，单卡可重建 4,000 帧。",
+    "problem": "VGGT、π³、VGGT-Ω、DA3 这类前馈重建靠 global block 的全帧 self-attention，成本随帧数平方增长、显存随帧数线性增长：2,000 帧 518×392 需要 >80 GB 显存。即便装得下，精度也会掉——500 帧时完整 VGGT 只在 50 个 ScanNet 场景的 70% 里把 ATE 控制在 0.2 m 内，且其预测置信度区分成败的能力接近随机（AUROC 0.61）。现有补救各自让一步：流式方法（StreamVGGT、RetrieveVGGT、InfiniteVGGT）把到达帧的 token 冻结，早期错误无法修正，最多一半场景达标；分块管线（VGGT-Long 等）逐窗处理，无回环处必然漂移；token merging（FastVGGT）虽保持单次前向，但 2,000 帧多数场景 OOM；给每帧选少量 key 的方法要么按固定间隔、要么按内容（diverse views、retrieval、Good Token Hunting）。由此留下两个未答问题：长视频是否真的需要对所有帧做注意力？每帧的 key 是否必须依赖视频内容？",
+    "method": "全帧注意力为 O_i = softmax(Q_i K^⊤/√d) V；网络交替 frame block F_{l+1} 与 global block G_l，联合前向 H_i^{(l+1)} = F_{l+1}(G_l(H_i^{(l)}; H^{(l)}))，用 KL(u‖a) = −log n − (1/n)Σ_j log a_j 度量注意力集中度。\n\n观察一（对齐带）：7-Scenes 三条 100 帧序列上，KL 中位在 block 10 前 ≤1、block 14 达峰；每场景 31 个散布帧上，远距帧对的注意力份额与共视度的秩相关在 block 0–9 仅 ≤0.16、block 13–15 达 0.66–0.68。故 block 10–15 称 alignment band。\n\n观察二（键可不看内容）：仅用 31–125 个均匀帧作 key 反而降低相对旋转误差；用全部 500 帧比 125 键差 7.2%（键数远超 24 帧训练上限后注意力被稀释）。键集取 p_k = 1 + round((k−1)(N−1)/(M−1))，M=31，注意力改为 O_i = softmax(Q_i K_P^⊤/√d) V_P，K_P、V_P 只留 pinned 帧。\n\nProposition 1（精确分解）：若所有 global block 都用上式，则 P 上的 pin pass 加其余帧分批的 attach pass，在精确算术下与联合前向逐帧相同。代价 M²T² + (N−M)MT² = NMT²，比 N²T² 低 N/M 倍（500 帧 16×、4,000 帧 129×）；Scene Cache 存 {H_P^{(l)}}，bfloat16 恒 1.5 GB。\n\nOnline Stream 每 κ 帧把最新帧作为候选，第 m 次 pass 在候选上均匀 pin ≤M_max=32 个，滞后 τ 个 pass 后输出其余帧；以深度中位比 s_m = median_k med(D̂_k)/med(D_k^{(m)}) 同缩放深度与平移，消除多 pass 尺度漂移（κ=32、VGGT τ=2、π³ τ=0）。\n\nAlignment Refocusing 只微调 block 10–15（76M 参数）：pin 24 个散布帧 P、另取 24 个只读这些键的帧 A，最小化 L = λ L_cam(P∪A) + L_depth(R)，λ=5、R 为 6 个随机帧；195 个 ScanNet 扫描、2,000 步、3.6 GPU 小时。Alignment Score 取 block 13 上 2,048 个 query、全头的 KL 90 分位，借 KL(u‖a) = log Σ_j e^{z_j} − q^⊤k̄/√d − log n 直接算出。",
+    "experiments": [
+      "500 帧 ScanNet（50 场景）：完整 VGGT 成功率 70%、ATE 0.111 m、196 s、23.1 GB；EcoVGGT(VGGT)+refocusing 为 82%、0.090 m、23.1 s、10.0 GB（8.5×）。",
+      "500 帧上 π³ 为 94%、ATE 0.054 m、138 s、24.4 GB；EcoVGGT(π³) 为 94%、0.052 m、19.9 s、9.9 GB（6.9×），无需任何微调。",
+      "1,000 帧上 EcoVGGT(π³) 保持 94%、ATE 0.060 m、40.4 s、9.9 GB，对完整 π³ 的 94%/0.058 m/557 s/43.4 GB 快 13.8×；EcoVGGT(VGGT) 70%→82%、772→46.5 s（16.6×）、44.2→10.0 GB。",
+      "2,000/4,000 帧：EcoVGGT(π³) 成功率 90–92%、ATE 0.060 m、40–41 ms/帧、9.9 GB；VGGT 版 82%、47 ms/帧；同条件下完整 VGGT、FastVGGT、StreamVGGT 在多数场景超过 80 GB 显存。",
+      "能效（1,000 帧）：EcoVGGT 只有 π³/VGGT 的 7%/6%（11.5 vs 167.0 J/帧；13.7 vs 223.4 J/帧）。",
+      "跨数据集（7-Scenes、NRGBD、TUM RGB-D、Replica）：EcoVGGT(π³) 与完整 π³ 的精度/完整度差 ≤2.4%，快 6.9–10.4×；对每个分块与流式方法 ATE 至少降 20%。",
+      "消融（500 帧）：去掉 refocusing 成功率 −10 点、AbsRel +29.0%；去掉 Pinned Key Set 成功率 −4 点但算力 9.96×；16 键 −4 点，63 键仅 −2.4~3.4% 但吞吐降到 70%；MegaLoc 内容选键使 π³ 的 ATE +9.3%；额外读 8 个邻近键成功率 −12 点、Acc +110.4%。",
+      "Alignment Score：完整 VGGT 500 帧上 AUROC 0.91，对预测置信度 0.61、归一化注意力熵 0.52；在 pin pass 中 0.84、成本为逐帧打分的 1/16。",
+      "在线：1,000 帧 18.6 FPS、每帧 6 s 内返回，在线 ATE 最低；对 StreamVGGT/RetrieveVGGT/InfiniteVGGT 的 ATE 降 51–83%，对 VGGT-SLAM 降 46–68%。"
+    ],
+    "innovation": [
+      "提出并验证「长视频的 key 可以完全不看内容」这一反直觉假设：31 个均匀帧即可，而按内容选键（Good Token Hunting / MegaLoc 描述子）反而使 ATE +9.3%——相对流式的 cache/检索键与离线的内容选键是方向性反转。",
+      "Proposition 1 给出 pin/attach 的精确等价分解（精确算术下与联合前向逐帧一致），使流式实现不因近似而损失精度；相对分块与冻结 token 的流式方法，这是「无损」而非「近似」。",
+      "发现 alignment band（global block 10–15 才把注意力与共视关联，秩相关 0.16→0.66），并据此把「对齐」抽成可复用模块：只调 6.5% 参数、3.6 GPU 小时就把 VGGT 成功率从 70% 拉到 82%。",
+      "Alignment Score 用 KL(u‖a) 的 90 分位做免训练、免 GT 的失败检测（AUROC 0.91 vs 自带置信度 0.61），且能在 pin pass 内提前给出，成本为全帧打分的 1/16。",
+      "Online Stream 的深度中位数重标定解决多 pass 尺度不一致：不做 rescaling 时点云精度误差 +189%、成功率 −12 点，是流式化必须补的一环。"
+    ],
+    "limits": [
+      "（作者承认）大房间失败继承自 backbone：backbone 只在短片段上训练，远距视角对齐差；在 π³ 上相对位姿误差比完整模型高 4%–11%（31 键使每帧可见视图更少），加到 125 键可降到约 1%。",
+      "（作者承认）refocusing 只在 ScanNet 上训练，迁移到 NRGBD/Replica 会抬高 ATE，并把 Replica 的预测 FOV 收窄 4.5°，需在多样相机上重训。",
+      "（作者承认）室外「车不回头」场景失效：KITTI 上多数键与当前帧无共视，无回环时在线漂移到平均 164 m（LongStream 65 m），改用近期键可降到 106 m。",
+      "（我在正文发现）成功率并非接近 100%：EcoVGGT(π³) 在 4,000 帧降到 90%，VGGT 版仅 82%，即约五分之一场景 ATE 仍 >0.2 m，正文的「保持成功率」是相对 backbone 而言。",
+      "（我在正文发现）主增益依赖 refocusing，而 refocusing 需 195 个扫描、2,000 步、3.6 GPU 小时，因此「training-free」只对 π³/DA3 版本严格成立，VGGT 版本实为「轻量微调」。",
+      "（我在正文发现）精度上限被 31 键的共视覆盖锁死，全文未给按键数/场景尺度自适应选 M 的策略，4,000 帧仍用同一 M=31；π³ 版本的 RPE 也略差于完整模型（500 帧 0.356 vs 0.343）。"
+    ],
+    "relation": "相对 VGGT，本文不改权重即可加速（Pinned Key Set 是纯推理改造），并在 refocusing 后反超其成功率，属「改进 + 部分取代」；对 π³、VGGT-Ω、DA3 同样成立，说明方法 backbone-agnostic。相对 StreamVGGT/RetrieveVGGT/InfiniteVGGT 这类「冻结早期 token 或检索近期键」的流式方案，本文用一套全局共享键 + 精确分解取代其近似，ATE 降 51–83%。相对 FastVGGT（token merging）与 VGGT-Long（分块 + 回环），本文在 2,000 帧以上给出不 OOM 且不漂移的替代。相对 Good Token Hunting / MegaLoc / diverse-views 等内容选键，本文证明均匀选键更好（内容键 ATE +9.3%），是对该子方向的否证。相对 VGGT-SLAM，本文不改 SLAM 后端、只改注意力预算，ATE 降 46–68%。",
+    "repro": "正文未给出代码或项目页链接，也未承诺开源，仓库需等作者放出。复现只依赖公开资产：官方 VGGT / π³ / DA3 权重与 FastVGGT 的评测协议；数据为 ScanNet 的 50 个评测场景 + 195 个训练扫描，另有 7-Scenes、NRGBD、TUM RGB-D、Replica、KITTI。硬件与超参写得较全：1×A100 80 GB、attach batch 64、M=31、M_max=32、κ=32（500 帧时 16）、τ=2（π³ 为 0）、refocus 2,000 步 AdamW lr 10⁻⁵。评测口径（0.2 m 成功率、ATE 中位、峰值显存是否含输入帧）也明确了，便于横向对齐。",
+    "action": "先读第 3.2 节（alignment band 的两条证据：KL 曲线与共视秩相关）和第 3.3 节的 Proposition 1，前者是「为什么 31 键够」、后者是「为什么无损」，二者决定方法是否可信；再核对 Table 1 的 500/1,000 帧六列（成功率、ATE、RPE、Acc、时间、显存），注意「8.5×/13.8×」分别对应不同 backbone，不能混用。重点核三处：refocusing 的泛化代价（NRGBD/Replica 变差、FOV −4.5°）、4,000 帧掉到 90% 的原因、以及 KITTI 类场景 164 m 漂移。落地风险：室内扫描可用，室外大范围需补共视选键与回环；若你的 backbone 是 VGGT 且不能微调，只能拿到 −4 点成功率的版本。",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 5,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=4：长视频前馈重建的显存与二次成本是当前 3D 基础模型的直接瓶颈（2,000 帧 >80 GB），属重要瓶颈而非纯应用优化。NOV=4：content-free 键 + 精确 pin/attach 分解 + alignment band 的可复用性，是显著的新表述与新组件；但仍在 VGGT 框架内做推理改造，非新范式。TEC=5：有 Proposition 1 与归纳证明、数值等价性检查、复杂度推导（NMT² vs N²T²）、四 backbone 验证与大量消融，理论与系统闭环。EXP=4：6 个数据集、4 个 backbone、21 个基线，覆盖 500–4,000 帧并含能效/延迟；但没有真机部署或用户实验，且 refocusing 只在一个数据集训练，故不给 5。PER=4：成功率 +12 点（相对 +17%）、ATE −19%、速度 8.5–13.8×，落在 10–30% 档；π³ 版本精度持平而非提升。TRL=3：可直接套在公开权重上跑，属可用的实验原型，但无代码、无工程封装。REP=2：正文无代码/数据链接，也未承诺开源。"
+  }
+]

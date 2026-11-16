@@ -1,0 +1,485 @@
+【摘要】
+
+【引言】
+ Figure 1 : Gaussian representations of a 2 × 2 2\times 2 light field at one requested scale; colours mark the K K primitives. Only the primitives generated at the red pixel are drawn; every LR pixel generates its own set.
+(a) Applying an image Gaussian decoder  [ 5 , 42 , 24 ] separately to each SAI gives U ​ V ​ K ​ h ​ w UVKhw primitives ( K K per pixel in each view) with separately predicted geometric parameters.
+(b) MacroGS jointly predicts K K primitives from the angular observations of each macro pixel and shares them across all SAIs, giving K ​ h ​ w Khw primitives. Each primitive’s disparity controls its displacement across views.
+Arbitrary-scale light field (LF) spatial super-resolution (LFSSR) reconstructs high-resolution sub-aperture images (SAIs) at a requested spatial scale from low-resolution multi-view observations, while retaining the input viewpoint grid.
+The views observe common surfaces at displaced image locations  [ 33 ] , providing complementary samples for recovering spatial detail  [ 1 ] .
+Recent encoders aggregate spatial and angular information into low-resolution features  [ 50 , 34 , 35 , 54 ] , which a decoder maps to high-resolution views.
+Fixed-factor upsamplers support only predefined upsampling factors.
+Coordinate-based implicit decoders allow arbitrary scales by predicting image values from queried coordinates and encoded features  [ 6 , 9 , 11 ] .
+However, reconstruction requires neural queries over the high-resolution grid of every view.
+Explicit 2D Gaussian decoders instead predict primitives from image features and splat them at the requested resolution  [ 5 , 42 , 24 ] .
+Each primitive contributes to multiple output pixels, allowing its parameters to be reused across spatial samples.
+For light fields, common scene structure also motivates sharing primitives across views.
+A direct extension of a single-image Gaussian decoder applies it separately to each SAI, producing view-specific primitive sets ( Fig.   1 a).
+Even when the input features contain multi-view information, these sets do not share primitive identities or geometric parameters.
+Common scene structure is therefore parameterized separately, and the primitive count grows with the number of views.
+We introduce MacroGS, a feed-forward decoder that jointly predicts Gaussian primitive sets and shares them across output views.
+It changes the generation unit from an individual SAI pixel to a macro pixel : the samples at one low-resolution spatial coordinate across the U × V U\times V views ( Fig.   1 b).
+For each requested scale, a macro pixel generates K K prim
+
+【方法】
+ Figure 2 : The framework of MacroGS for arbitrary-scale LFSSR. From the encoder features 𝐅 \mathbf{F} , MacroGS infers one set 𝒢 \mathcal{G} of K K Gaussian primitives per macro pixel, shared by all views, through (a) initialization from all views and (b) R R rounds of iterative cross-view reading. (c) View-conditioned rendering splats the set into every view at scale s s , and a view-wise convolutional branch ℛ \mathcal{R} adds a residual correction. EPFL  [ 43 ]
+HCInew  [ 20 ]
+HCIold  [ 52 ]
+INRIA  [ 30 ]
+STFgantry  [ 46 ]
+Average
+× 2 \times 2
+× 4 \times 4
+× 2 \times 2
+× 4 \times 4
+× 2 \times 2
+× 4 \times 4
+× 2 \times 2
+× 4 \times 4
+× 2 \times 2
+× 4 \times 4
+× 2 \times 2
+× 4 \times 4
+LF-InterNet  [ 47 ]
+34.11
+28.81
+37.17
+30.96
+44.57
+37.15
+35.83
+30.78
+38.44
+30.37
+38.02
+31.61
+LF-InterNet + MacroGS
+34.47 0.36
+29.36 0.55
+37.68 0.51
+31.62 0.66
+44.85 0.28
+37.75 0.60
+36.15 0.32
+31.27 0.49
+39.64 1.20
+31.56 1.19
+38.56 0.54
+32.31 0.70
+LF-DFnet  [ 48 ]
+34.40
+28.85
+37.60
+31.29
+44.36
+37.37
+36.34
+30.85
+39.94
+31.26
+38.53
+31.92
+LF-DFnet + MacroGS
+34.71 0.31
+29.53 0.68
+38.03 0.43
+31.74 0.45
+44.90 0.54
+37.96 0.59
+36.65 0.31
+31.68 0.83
+40.61 0.67
+31.92 0.66
+38.98 0.45
+32.57 0.65
+LF-IINet  [ 38 ]
+34.74
+29.05
+37.77
+31.33
+44.85
+37.62
+36.56
+31.04
+39.89
+31.26
+38.76
+32.06
+LF-IINet + MacroGS
+34.81 0.07
+29.53 0.48
+37.96 0.19
+31.71 0.38
+44.96 0.11
+37.84 0.22
+36.57 0.01
+31.47 0.43
+40.38 0.49
+31.78 0.52
+38.94 0.18
+32.47 0.41
+LFT  [ 34 ]
+34.80
+29.26
+37.84
+31.46
+44.52
+37.63
+36.59
+31.21
+40.51
+31.86
+38.85
+32.28
+LFT + MacroGS
+34.85 0.05
+29.66 0.40
+37.90 0.06
+31.67 0.21
+44.82 0.30
+37.83 0.20
+36.63 0.04
+31.64 0.43
+40.82 0.31
+32.28 0.42
+39.01 0.16
+32.62 0.34
+DistgSSR  [ 50 ]
+34.81
+28.99
+37.96
+31.38
+44.94
+37.56
+36.59
+30.99
+40.40
+31.65
+38.94
+32.12
+DistgSSR + MacroGS
+35.05 0.24
+29.68 0.69
+38.20 0.24
+31.91 0.53
+45.07 0.13
+38.09 0.53
+36.79 0.20
+31.63 0.64
+40.98 0.58
+32.47 0.82
+39.22 0.28
+32.76 0.64
+EPIT  [ 35 ]
+34.83
+29.34
+38.23
+31.51
+45.07
+37.68
+36.67
+31.37
+42.17
+32.18
+39.39
+32.42
+EPIT + MacroGS
+34.97 0.14
+29.90 0.56
+38.47 0.24
+31.89 0.38
+45.38 0.31
+38.07 0.39
+36.70 0.03
+31.98 0.61
+42.75 0.58
+32.74 0.56
+39.66 0.27
+32.92 0.50
+LF-DET  [ 8 ]
+35.26
+29.47
+38.31
+31.56
+44.99
+37.84
+36.95
+31.39
+41.76
+32.14
+39.45
+32.48
+LF-DET + MacroGS
+35.35 0.09
+30.09 0.62
+38.52 0.21
+31.97 0.41
+45.13 0.14
+38.12 0.28
+36.99 0.04
+32.00 0.61
+42.14 0.38
+32.79 0.65
+39.62 0.17
+32.99 0.51
+RASLF  [ 54 ]
+35.17
+29.76
+38.43
+31.67
+45.31
+37.89
+36.99
+31.76
+41.87
+32.37
+39.55
+32.69
+RASLF + MacroGS
+35.30 0.13
+30.09 0.33
+38.52 0.09
+31.97 0.30
+45.48 0.17
+38.16 0.27
+37.05 0.06
+32.13 0.37
+41.89 0.02
+32.85 0.48
+39.65 0.10
+33.04 0.35
+Rendering at the requested scale.
+Using continuous coordinates with the origin at the image corner, let 𝐒 = diag ⁡ ( s x , s y ) \mathbf{S}=\mathrm{diag}(s_{x},s_{y}) contain the horizontal and vertical scale factors.
+Each primitive spreads its colour over nearby HR pixels according to its scaled Gaussian footprint. At pixel 𝐩 \mathbf{p} , its spatial weight is
+w n , k ( a ) ​ ( 𝐩 ) \displaystyle w_{n,k}^{(a)}(\mathbf{p})
+= exp ⁡ ( − 1 2 ​ 𝚫 ⊤ ​ ( 𝐒 ​ 𝚺 n , k ​ 𝐒 ⊤ ) − 1 ​ 𝚫 ) , \displaystyle=\exp\Big(-\tfrac{1}{2}\boldsymbol{\Delta}^{\top}\big(\mathbf{S}\boldsymbol{\Sigma}_{n,k}\mathbf{S}^{\top}\big)^{-1}\boldsymbol{\Delta}\Big),
+𝚫 \displaystyle\boldsymbol{\Delta}
+= 𝐩 − 𝐒 ​ 𝝁 n , k ( a ) . \displaystyle=\mathbf{p}-\mathbf{S}\boldsymbol{\mu}_{n,k}^{(a)}.
+Multiplying this weight by the view-dependent opacity determines the primitive’s contribution.
+We combine the contributions through normalized splatting:
+I ^ a ​ ( 𝐩 ) = ∑ n , k w n , k ( a ) ​ ( 𝐩 ) ​ α n , k ( a ) ​ c n , k ( a ) max ⁡ ( ∑ n , k w n , k ( a ) ​ ( 𝐩 ) ​ α n , k ( a ) , ϵ ) . \hat{I}_{a}(\mathbf{p})=\frac{\sum_{n,k}w_{n,k}^{(a)}(\mathbf{p})\,\alpha_{n,k}^{(a)}c_{n,k}^{(a)}}{\max\big(\sum_{n,k}w_{n,k}^{(a)}(\mathbf{p})\,\alpha_{n,k}^{(a)},\,\epsilon\big)}.
+(5)
+The denominator normalizes the accumulated weights, and ϵ \epsilon prevents division by zero.
+Gaussian weights are evaluated within a local window around each centre.
+This renderer blends primitive colours without depth sorting.
+Residual refinement.
+To refine details in the splatted image, a convolutional branch predicts an additive correction from I ^ a \hat{I}_{a} and the encoder features of the same view:
+H ^ a = I ^ a + ℛ ⁡ ( [ 𝐅 a ↑ , I ^ a ] ) . \hat{H}_{a}=\hat{I}_{a}+\mathcal{R}\big([\mathbf{F}^{\uparrow}_{a},\hat{I}_{a}]\big).
+(6)
+Here, 𝐅 a ↑ \mathbf{F}^{\uparrow}_{a} denotes the encoder feature map bilinearly upsampled to the target resolution, and [ ⋅ , ⋅ ] [\cdot,\cdot] denotes channel concatenation.
+The branch ℛ \mathcal{R} is applied separately to each view with shared weights.
+Primitive inference and cross-view reading operate on the LR grid, while splatting and residual refinement produce the image on the HR grid. Params (M)
+FLOPs (G) / Time (s) / PSNR (in-scale)
+FLOPs (G) / Time (s) / PSNR (out-of-scale)
+× 2 \times 2
+× 3 \times 3
+× 4 \times 4
+× 6 \times 6
+× 8 \times 8
+DistgSSR  [ 50 ] (Baseline)
+[0.02, 0.07]
+0.4 /
+0.04  /
+38.94
+1.0 /
+0.04  /
+34.70
+1.7 /
+0.04  /
+32.12
+–
+–
+Implicit neural fields
+DistgSSR + LIIF  [ 6 ]
+0.09
+35.6 /
+0.07  /
+38.90
+79.9 /
+0.11  /
+34.81
+142.0 /
+0.17  /
+32.42
+319.5 /
+0.38  /
+29.39
+568.0 /
+0.68  /
+27.47
+DistgSSR + LTE  [ 32 ]
+0.13
+22.2 /
+0.07  /
+38.94
+47.5 /
+0.11  /
+34.88
+82.9 /
+0.16  /
+32.46
+184.1 /
+0.32  /
+29.43
+325.8 /
+0.57  /
+27.53
+DistgSSR + DIIF  [ 19 ]
+0.12
+20.4 /
+0.06  /
+38.92
+33.1 /
+0.06  /
+34.84
+47.5 /
+0.07  /
+32.44
+81.4 /
+0.11  /
+29.41
+122.1 /
+0.14  /
+27.54
+DistgSSR + CiaoSR  [ 2 ]
+0.22
+57.0 /
+0.11  /
+39.00
+127.8 /
+0.17  /
+34.92
+226.9 /
+0.26  /
+32.50
+510.1 /
+0.52  /
+29.50
+906.5 /
+0.98  /
+OOM
+DistgSSR + SEIIF  [ 9 ]
+0.12
+8.4 /
+0.07  /
+39.01
+16.6 /
+0.08  /
+34.93
+27.3 /
+0.08  /
+32.53
+56.5 /
+0.12  /
+29.48
+96.2 /
+0.16  /
+27.60
+DistgSSR + SAEIIF  [ 11 ]
+0.26
+15 /
+0.11  /
+39.03
+26 /
+0.13  /
+34.96
+41 /
+0.16  /
+32.55
+80 /
+0.30  /
+29.53
+132 /
+0.48  /
+27.63
+Gaussian splatting
+DistgSSR + GSASR  [ 5 ]
+2.57
+193.1 /
+0.30  /
+38.91
+199.5 /
+0.36  /
+34.86
+208.6 /
+0.43  /
+32.50
+233.9 /
+0.63  
+
+【实验】
+ across five benchmarks demonstrate that MacroGS integrates effectively with diverse light field encoders, improving reconstruction quality at fixed scales while achieving leading performance across most evaluated arbitrary-scale settings.
+The decoder also achieves speedups of approximately 𝟐 2 – 𝟏𝟎 × 10\times over state-of-the-art implicit light field decoders and 𝟏𝟎 10 – 𝟏𝟖 × 18\times over the view-wise Gaussian baseline.
+Our code is available at
+Github . Table 2 : Arbitrary-scale comparison: decoder FLOPs (G) / decoder time (s) / PSNR (dB) averaged over the five benchmarks; parameters count the decoder. All times are for a 5 × 5 × 32 × 32 5\times 5\times 32\times 32 input on a Tesla V100. Arbitrary-scale methods use one model per encoder for all factors; baselines use scale-specific models. Best and second-best PSNR in each block are in bold and underlined. OOM: out of memory  [ 9 ] . .
+4.2 Comparison with existing upsamplers
+Generality across encoders.
+Arbitrary-scale comparison.
+4.3 Learned disparity and scene geometry
+4.4 Importance of the learned disparity on five benchmarks demonstrating strong arbitrary-scale reconstruction and faster decoding, together with improvements across eight light field encoders after scale-specific fine-tuning. .
+Table   1 compares eight encoders with their original upsamplers and with MacroGS. Baseline results are from BasicLFSR  [ 49 ] and, for RASLF, from  [ 54 ] .
+For Tab.   2 , we follow the SEIIF  [ 9 ] protocol, combining DistgSSR and EPIT with SEIIF and with view-wise LIIF  [ 6 ] , LTE  [ 32 ] , DIIF  [ 19 ] and CiaoSR  [ 2 ] . PSNR, FLOPs and parameter counts of these combinations and the baselines are from SEIIF, and those of SAEIIF from  [ 11 ] . We also apply GSASR  [ 5 ] view by view, instantiating the per-view Gaussian sets of Fig.   1 a, and train it with the same data and training strategy as MacroGS. All these methods are timed on a single Tesla V100 with a 5 × 5 × 32 × 32 5\times 5\times 32\times 32 input.
+4.2 Comparison with existing upsamplers
+Generality across encoders.
+MacroGS improves the average PSNR of all eight encoders at both factors, with × 4 \times 4 gains of 0.34–0.70 dB and improvements on every dataset for every encoder ( Tab.   1 ).
+These results show that MacroGS can improve reconstruction even when the encoder already aggregates spatial and angular information.
+For every encoder, the gain is larger at × 4 \times 4 than at × 2 \times 2 .
+STFgantry, which has the widest disparity range, receives the largest gain for most encoders, while gains on the narrow-baseline Lytro datasets are generally smaller at × 2 \times 2 .
+Arbitrary-scale comparison.
+Against GSASR, which predicts a separate primitive set for each view, MacroGS is more accurate at every factor with both encoders while using far fewer parameters and decoding an order of magnitude faster ( Tab.   2 ); sharing one set across views thus comes with no loss in accuracy.
+Among all compared decoders, MacroGS is the most accurate in eight of the ten encoder–scale settings and close to the best in the other two, and at in-scale factors its advantage over SEIIF grows with the factor.
+MacroGS also decodes fastest at every factor, and its latency grows only slowly with the factor, whereas implicit decoders slow down as the number of queried output coordinates increases. At × 8 \times 8 it is about three times as fast as SEIIF, although its FLOPs are higher, mainly because of the HR residual branch ( Sec.   4.5 ).
+In Fig.   3 , errors concentrate around object boundaries and grow with the factor. GSASR leaves the largest boundary errors and more scattered errors in flat regions, and MacroGS reduces both, most visibly at the lower factors.
+In Fig.   4 , LFs first downsampled spatially by a factor of 4 are super-resolved at progressively larger factors that are not used in training. At × 16 \times 16 , MacroGS keeps the converging lines of the resolution chart apart over a longer span than GSASR and SEIIF ( Fig.   4(b) ).
+(a) DistgSSR encoder
+(b) EPIT encoder
+Figure 3 : Error maps of GSASR, SEIIF and MacroGS from × 2 \times 2 to × 8 \times 8 , using (a) DistgSSR and (b) EPIT encoders.
+(a) DistgSSR encoder
+(b) EPIT encoder
+Figure 4 : Arbitrary-scale results of GSASR, SEIIF and MacroGS at × 1.9 \times 1.9 , × 3.1 \times 3.1 , × 4.3 \times 4.3 and × 16 \times 16 , using (a) DistgSSR and (b) EPIT encoders.
+4.3 Learned disparity and scene geometry
+MacroGS learns disparity only through reconstruction, so we examine its correlation with scene geometry.
+At × 4 \times 4 , we average the two components of each primitive disparity and take the mean over the K K primitives of a macro pixel, weighted by central-view opacity.
+The reference disparity is the ground truth on HCIold and an SPO estimate  [ 58 ] on HCInew.
+Each macro pixel covers 4 × 4 4\times 4 HR pixels at this scale, so we average the reference over them.
+We compare the two at textured locations, where the central-view gradient magnitude exceeds the scene median.
+Pearson’s r r measures linear correlation, invariant to positive rescaling and additive offsets; Spearman’s ρ \rho measures rank correlation, indicating how well relative depth ordering is preserved.
+The mean disparity maps have r r and ρ \rho of at least 0.85 on both datasets, including HCIold with ground-truth disparity ( Tab.   3 ).
+This correlation holds across convolutional (DistgSSR), Transformer-based (EPIT) and state-space (RASLF) encoders, with RASLF attaining the highest values on both datasets.
+These strong correlations indicate that the learned disparities capture meaningful geometric structure, although they do not imply metrically accurate disparity, consistent with prior observations that geometry learned through reconstruction is optimized for the reconstruction objective  [ 27 , 3 ] .
+Figure   5 shows mean disparity maps from the arbitrary-scale RASLF model without further optimization or supervision.
+The maps distinguish foreground from backgroun
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.17957v1 [cs.CV] 13 Nov 2026
+MacroGS: Macro-Pixel Shared Gaussian Primitives for
+Arbitrary-Scale Light Field Super-Resolution
+Zeqiang Wei
+Affiliation:  Capital Normal University
+Angulia Yang
+Affiliation:  National University of Singapore
+Min Xu
+† † thanks: Corresponding author (email: xumin@cnu.edu.cn).
+Affiliation:  Capital Normal University We presented MacroGS, an arbitrary-scale LFSSR decoder that represents each macro pixel with a Gaussian set shared across views.
+This design makes the primitive count independent of the number of views, while per-primitive disparities guide both iterative cross-view feature reading and view-conditioned rendering.
+Learned solely through reconstruction, these disparities exhibit strong correlations with scene geometry.
+MacroGS improves all eight evaluated encoders over their original upsamplers, achieves the highest PSNR in eight of the ten arbitrary-scale settings, and provides a 10 10 – 18 × 18\times decoding speedup over our view-wise GSASR adaptation.
+These results support shared, disparity-guided Gaussian primitives as an effective representation for accurate and efficient light field spatial super-resolution.
+Future work will explore content-adaptive allocation of shared Gaussian primitives to better represent geometric boundaries and fine structures within a fixed primitive budget.
+References
+[1]
+T. E. Bishop and P. Favaro.
+The light field camera: Extended depth of field, aliasing, and
+superresolution.
+IEEE Transactions on Pattern Analysis and Machine
+Intelligence , 34(5):972–986, 2012.
+[2]
+Jiezhang Cao, Qin Wang, Yongqin Xian, Yawei Li, Bingbing Ni, Zhiming Pi, Kai
+Zhang, Yulun Zhang, Radu Timofte, and Luc Van Gool.
+CiaoSR: Continuous implicit attention-in-attention network for
+arbitrary-scale image super-resolution.
+In Proceedings of the IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR) , pages 1796–1807, 2023.
+[3]
+Kelvin C. K. Ch

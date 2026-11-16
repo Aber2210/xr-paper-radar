@@ -1,0 +1,139 @@
+【摘要】
+
+【引言】
+I-A Application and Motivation
+I-B Design Goal and Contributions I-A Application and Motivation
+Manipulating a physical model gives students a way to connect spatial transformations with their mathematical representations. Earlier desktop versions of AR-Classroom used a webcam to display an augmented view of the model on a computer screen. A student could rotate the model about a specified axis and observe the corresponding changes in its coordinate frame, rotation angle, and transformation matrix  [ 1 ] .
+The project has since extended this activity to head-mounted mixed reality  [ 2 ] . In a Meta Quest 3 prototype, students can view a physical airplane LEGO model and its virtual representation together as the model moves. In this setting, the overlay must stay aligned as both the model and the student’s viewpoint change. Once the action is complete, the system needs a pose estimate accurate enough to compare the model’s position and orientation with a target pose.
+On a standalone headset, camera processing, object tracking, and scene rendering share the same computing resources. This constraint motivates our preliminary investigation of low-compute, markerless tracking of the six-degree-of-freedom (6DoF) pose of a known physical model using the Meta Quest 3’s rendered passthrough view for one eye and onboard processing.
+I-B Design Goal and Contributions
+Our design goal is to estimate the pose of a known physical model from the passthrough view for one eye while leaving sufficient computing resources for mixed reality rendering on a standalone headset.
+1.
+Synthetic training data. We developed a Unity  [ 3 ] pipeline that renders the teaching model under varied viewpoints, lighting, part configurations, occlusion, and motion blur. It automatically annotates 20 object keypoints and their visibility in each image.
+2.
+On-device tracking. We implemented a tracking pipeline on the Meta Quest 3 that updates a crop around the object and resizes it to a 128 × 128 128\times 128 RGB input. A compact YOLO model trained on the synthetic dataset predicts the 2D keypoint locations. A perspective- n n -point (PnP) solver estimates the object’s pose for mixed reality visualization using these predictions and the corresponding known 3D points.
+3.
+Preliminary evaluation. We report 2D detection and
+keypoint localization results on synthetic validation images and
+runtime measurements on the Meta Quest 3. A qualitative headset
+demonstration shows how the estimated 6DoF pose drives a mixed
+reality overlay as a user rotates the physical airplane.
+
+【方法】
+listed below:
+Click the "Report Issue" (
+) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions .
+We gratefully acknowledge support from our major funders ,
+member institutions , ,
+and all contributors.
+About ·
+Help ·
+Contact ·
+Subscribe ·
+Copyright ·
+Privacy ·
+Accessibility ·
+Operational Status (opens in new tab) size and input resolution and using dynamic cropping to retain
+more pixels on the airplane. Feeding the camera’s native luminance
+(Y) plane directly to a single-channel model could further reduce
+preprocessing. We plan to compare this approach with RGB input under
+the same headset conditions and measure end-to-end latency and
+keypoint localization accuracy.
+The two stable poses in Fig.  3 illustrate the
+interaction supported by the current AR-Classroom prototype. A
+learner can rotate the physical airplane and pause to inspect its
+new orientation through the aligned virtual overlay. Design
+III-A Task Definition and Overview
+III-B Synthetic Data Generation and Training
+III-C Camera Input and Dynamic ROI
+III-D Pose Estimation and MR Feedback
+IV Preliminary Evaluation
+IV-A Detection and Keypoint Localization on Synthetic Data
+IV-B On-Device Runtime and Interaction Design
+III-A Task Definition and Overview
+We estimate the 6DoF pose of a known LEGO airplane model from the Meta Quest 3’s rendered passthrough view for one eye. The pose consists of a rotation 𝐑 \mathbf{R} and a translation 𝐭 \mathbf{t} that map points from the airplane’s reference frame to the camera frame. The system uses the camera pose associated with each image to express the estimated object pose in the headset’s tracking space. AR-Classroom can then use this pose to align virtual overlays with the airplane and compare its final pose with a target.
+Figure  1 shows the connection between offline training and on-device tracking. We render the airplane in Unity and generate keypoint annotations to train the YOLO model offline. On the headset, the tracker crops the current camera image and resizes the crop to a 128 × 128 128\times 128 RGB input. The trained model predicts the image locations of the airplane’s landmarks. The system maps these predictions back to the camera image coordinates and estimates the pose with PnP using the corresponding 3D landmarks and camera intrinsics. The detected bounding box and the validity of the pose estimate guide the crop for the next frame.
+Unity renders
+and labels
+Offline YOLO Quest passthrough
+image
+Adaptive crop
+YOLO keypoint
+prediction
+PnP and XR
+pose alignment
+AR-Classroom
+feedback
+Trained weights Next-frame crop
+Fig. 1: Offline training and on-device tracking of the LEGO airplane.
+The dashed arrow denotes the crop update for the next frame.
+III-B Synthetic Data Generation and Training
+We generated 50,000 source images at 640 × 640 640\times 640 pixels in Unity using a digital model of the LEGO airplane. To reflect the indoor settings in which learners handle the model, we drew approximately 90% of the backgrounds from the classroom, living room, and library categories of the indoorCVPR_09 dataset  [ 9 ] . The remaining backgrounds were photographs taken in the project’s intended use settings.
+Following the principle of domain randomization  [ 10 ] ,
+we varied the airplane’s position and orientation, lighting, part
+removal and rotation, and motion blur. We placed capsule-shaped objects between the camera and the airplane to approximate the partial occlusion caused by fingers during handling. We set a 10% probability of rendering a scene without the airplane. When the airplane was included, we set a 30% probability of sampling a view near one of its six principal directions. These probabilities governed scene generation, so the realized proportions could vary across batches.
+For scenes containing the airplane, we projected 20 predefined 3D landmarks into the image and checked whether each point fell within the frame and whether it was occluded. The standard YOLO Pose annotations were stored in separate text files containing the class ID, normalized bounding box, and landmark coordinates and visibility flags. Images without the airplane and images with fewer than two landmarks within the frame were retained as negative samples with empty annotation files.
+We split the source renders into training and validation sets at an 80:20 ratio before preparing the cropped views. We retained full-frame examples and used a preset sampling rate of 80% to generate additional crops around the annotated bounding boxes. All versions of a source render remained in the same split, and bounding boxes and landmark coordinates were remapped to the crop. The two types of views expose the model to the range of object scales encountered during wide-view search and close-up tracking on the headset. We resized the resulting images to 128 × 128 128\times 128 pixels for RGB training of the YOLO26n-pose model  [ 11 ] .
+Figure  2 compares the original render with
+the full-frame and cropped training views. At the same 128 × 128 128\times 128
+input resolution, the airplane occupies more of the cropped view.
+Additional synthetic examples are shown in the Appendix
+(Fig.  4 ).
+Fig. 2: A synthetic render of the LEGO airplane and its two training views.
+Bounding boxes and keypoints are overlaid in (b) and (c) for visualization. annotations are stored in separate YOLO Pose label text files.
+III-C Camera Input and Dynamic ROI
+The tra
+
+【结论/局限】
+References
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.18438v1 [cs.CV] 13 Nov 2026
+Toward On-Device Markerless 6DoF Tracking of a Physical Manipulative on a Mixed-Reality Headset: A Preliminary Study
+Thanks:  This material is based upon work supported by the National
+Science Foundation under Award No. 2119549.
+1 st Guangxi Feng
+Affiliation:  Department of Architecture
+Texas A&M University
+College Station, Texas
+feng.g@tamu.edu
+2 nd Philip Yasskin
+Affiliation:  Department of Mathematics
+Texas A&M University
+College Station, Texas
+yasskin@tamu.edu
+3 rd Wei Yan
+Affiliation:  Department of Architecture
+Texas A&M University
+College Station, Texas
+wyan@tamu.edu
+Affiliation: We developed a markerless 6DoF tracker for a physical LEGO airplane
+on the Meta Quest 3. The tracker uses a compact YOLO model trained
+on synthetic Unity renders to predict 2D keypoints from dynamic
+crops resized to 128 × 128 128\times 128 pixels. It then estimates the
+airplane’s pose using PnP.
+On synthetic validation images, cropping based on ground-truth boxes
+increased the detection rate on annotated images by 13.7 percentage
+points and raised mean keypoint F1 from 42.9% to 44.6%. On the headset,
+2 Hz was the highest tested tracking target at which the application
+maintained approximately 72 FPS. The rotation demonstration illustrates
+how the prototype can support an AR-Classroom exercise in which a learner
+rotates the physical airplane and pauses to inspect its new orientation
+through an aligned virtual overlay.
+(a) Motion blur
+(b) Partially out of frame
+(c) Near-frontal view
+(d) Simulated finger occlusion
+Fig. 4: Additional full-frame synthetic renders of the LEGO
+airplane generated in Unity.
+Acknowledgment
+Portions of this research were conducted with the advanced computing resources provided by Texas A&M High Performance Research Computing.
+References
+[1]
+Z. Shaghaghian, H. Burte, D. Song, and W. Yan (2024)
+An augmented reality application and experiment for understanding and 

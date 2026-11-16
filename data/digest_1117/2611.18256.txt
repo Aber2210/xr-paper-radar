@@ -1,0 +1,104 @@
+【摘要】
+
+【引言】
+ Recovering camera poses and scene geometry from a set of images is a foundational problem in 3D computer vision, addressed by structure-from-motion (SfM)  [ 40 ] and simultaneous localization and mapping (SLAM)  [ 34 ] . Most modern SfM pipelines and keyframe-based SLAM systems rely on the same classical solver, bundle adjustment (BA)  [ 52 , 14 ] , which jointly refines cameras and 3D points by minimizing reprojection residuals via non-linear least squares. Bundle adjustment is near-optimal given a good initialization, but its non-convex landscape is fragile. Incremental SfM obtains such an initialization through heuristics and per-scene tuning  [ 40 ] , yet these heuristics break down on weak baselines or planar structure  [ 51 ] . Meanwhile, learning-based semi-dense  [ 45 ] and dense  [ 8 , 9 ] matchers have made matches far more reliable than SIFT-style keypoints  [ 32 ] , shifting the bottleneck from matching to the solver. However, feeding them into a COLMAP-style pipeline does not automatically help, as its rigid track building is overwhelmed by the volume and its initialization stays brittle. This mismatch motivated a line of feed-forward 3D networks (DUSt3R  [ 58 ] , MASt3R  [ 24 ] , and VGGT  [ 57 ] ) that regress geometry directly from images, trading the classical pipeline’s modularity for robustness. There is a missing middle: a learned solver that amortizes bundle adjustment itself, while leaving the matcher decoupled and solving any number of views at once. Classical bundle adjustment already operates on a graph of cameras and their 2D matches, so a graph neural network is the natural architecture for that structure.
+We introduce DeepBA ( Deep B undle A djustment, Fig.   1 ), a GNN that takes 2D matches from an off-the-shelf matcher and jointly infers absolute camera poses, intrinsics, and 3D points. DeepBA replaces the per-scene non-linear least-squares solver with a learned Markovian iterative refinement. Each iteration recomputes geometric features from the current state and predicts an updated state via shared GNN weights. The number of iterations is a free choice at test time, independent of the training schedule: accuracy rises with the iteration count until it saturates, mirroring an iterative classical solver. It operates directly on pairwise matches, with no separate track-building stage. Our contributions are:
+•
+Amortized cold-start bundle adjustment via a GNN. We formulate bundle adjustment as a learned iterative refinement over the view graph of any number of views, with a Markovian update that lets the user trade runtime for
+
+【方法】
+3.1 Problem Setting and Notation
+3.2 Per-Iteration Geometric Features
+3.2.1 Pair Geometric Features ( → 𝐡 pair \rightarrow\mathbf{h}^{\text{pair}} )
+3.2.2 Match Geometric Features ( → 𝐡 match \rightarrow\mathbf{h}^{\text{match}} )
+3.3 Iterative Refinement Network
+State refinement block.
+MPC block composition.
+Prediction heads. Figure 2 : DeepBA architecture.
+Left:  one refinement iteration: the scene state 𝐬 k \mathbf{s}_{k} and
+view graph 𝒢 \mathcal{G} are encoded into ( 𝐡 pair , 𝐡 match ) (\mathbf{h}^{\text{pair}},\mathbf{h}^{\text{match}}) , re-initialized every iteration
+(Markovian), mixed by L L MPC blocks, and decoded into the state delta
+Δ ​ 𝐬 k \Delta\mathbf{s}_{k} composed via ⊞ \boxplus ( Eq.   3 ); the
+block is weight-shared across the K K iterations.
+Right:  one MPC block; its three message-passing steps are
+specified in Sec.   3.3 .
+We introduce DeepBA , a graph neural network that performs amortized bundle adjustment via iterative refinement over a graph of cameras and their pairwise matches ( Fig.   2 ).
+3.1 Problem Setting and Notation
+Given N N unordered images of a static scene, DeepBA maps pairwise 2D matches to per-image estimates of absolute pose, intrinsics, and a depth map (3D points are recovered by unprojection). The matches are image-point pairs from an off-the-shelf matcher. The inputs form a view graph 𝒢 = ( 𝒱 , ℰ pair , ℰ match ) \mathcal{G}=(\mathcal{V},\mathcal{E}_{\text{pair}},\mathcal{E}_{\text{match}}) in which 𝒱 \mathcal{V} is the set of N N cameras, ℰ pair \mathcal{E}_{\text{pair}} is the set of P P pairs of cameras connected by at least 50 50 matches, and ℰ match \mathcal{E}_{\text{match}} is the set of all M M matches over all pairs of the view graph.
+Each camera i ∈ 𝒱 i\in\mathcal{V} carries an absolute pose T i abs T^{\text{abs}}_{i} , a log field of view (log-FOV) ϕ i \phi_{i} (our default camera model, more detail in Sec.   A.2 ), and a log-depth map D i ∈ ℝ 1 × H d × W d D_{i}\in\mathbb{R}^{1\times H_{d}\times W_{d}} on a fixed grid with H d = W d = 32 H_{d}=W_{d}=32 . Each pair ( i , j ) ∈ ℰ pair (i,j)\in\mathcal{E}_{\text{pair}} carries a relative pose T i ​ j rel = ( 𝐭 ^ i ​ j rel , 𝝎 i ​ j rel ) T^{\text{rel}}_{ij}=(\hat{\mathbf{t}}^{\text{rel}}_{ij},\boldsymbol{\omega}^{\text{rel}}_{ij}) in a decoupled parameterization: a unit translation direction 𝐭 ^ i ​ j rel ∈ S 2 \hat{\mathbf{t}}^{\text{rel}}_{ij}\in S^{2} and a rotation vector 𝝎 i ​ j rel ∈ ℝ 3 \boldsymbol{\omega}^{\text{rel}}_{ij}\in\mathbb{R}^{3} . Together, these form the scene state
+𝐬 := ( { T i abs } i ∈ 𝒱 , { T i ​ j rel } ( i , j ) ∈ ℰ pair , { ϕ i } i ∈ 𝒱 , { D i } i ∈ 𝒱 ) . \mathbf{s}\;:=\;\bigl(\{T^{\text{abs}}_{i}\}_{i\in\mathcal{V}},\;\{T^{\text{rel}}_{ij}\}_{(i,j)\in\mathcal{E}_{\text{pair}}},\;\{\phi_{i}\}_{i\in\mathcal{V}},\;\{D_{i}\}_{i\in\mathcal{V}}\bigr).
+(1)
+The absolute poses, FOVs and depth maps already define the reconstruction. We still keep a relative pose per pair, which the network refines at every iteration under ground-truth (GT) supervision, while the absolute poses receive no GT supervision. The motivation of this design comes from pose-graph optimization. The absolute poses are updated to agree with the current relative poses instead of being pulled directly toward the GT, so they follow the gradual refinement of the relative poses. A relative pose is only a rotation and a translation direction, so its GT supervision needs no metric scale, while the reprojection error sets the translation lengths of the absolute poses.
+At every refinement iteration, the network predicts a delta
+Δ ​ 𝐬 = ( CLOSE { Δ ​ T i abs } i ∈ 𝒱 , { Δ ​ T i ​ j rel } ( i , j ) ∈ ℰ pair , OPEN { Δ ​ ϕ i } i ∈ 𝒱 , { Δ ​ D i } i ∈ 𝒱 ) , \begin{split}\Delta\mathbf{s}\;=\;\bigl(&\{\Delta T^{\text{abs}}_{i}\}_{i\in\mathcal{V}},\;\{\Delta T^{\text{rel}}_{ij}\}_{(i,j)\in\mathcal{E}_{\text{pair}}},\\
+&\{\Delta\phi_{i}\}_{i\in\mathcal{V}},\;\{\Delta D_{i}\}_{i\in\mathcal{V}}\bigr),\end{split}
+(2)
+with Δ ​ T i abs ∈ ℝ 6 \Delta T^{\text{abs}}_{i}\in\mathbb{R}^{6} in Lie-algebra coordinates, and
+composes it onto the current state,
+𝐬 k + 1 = 𝐬 k ⊞ Δ ​ 𝐬 k , \mathbf{s}_{k+1}\;=\;\mathbf{s}_{k}\,\boxplus\,\Delta\mathbf{s}_{k},
+(3)
+where ⊞ \boxplus acts component-wise (exact update rules and conventions in Sec.   A.1 ).
+3.2 Per-Iteration Geometric Features
+At every refinement iteration, DeepBA computes three hidden states from scratch ( Markovian : no hidden state crosses iterations): the per-pair 𝐡 pair \mathbf{h}^{\text{pair}} and per-match 𝐡 match \mathbf{h}^{\text{match}} encode closed-form geometric features of the current scene state, while the per-camera 𝐡 cam \mathbf{h}^{\text{cam}} takes no geometric input and starts from a single learned embedding 𝐞 cam ∈ ℝ d h \mathbf{e}^{\text{cam}}\in\mathbb{R}^{d_{h}} shared by every camera. All three hidden states have dimension d h = 128 d_{h}=128 .
+3.2.1 Pair Geometric Features ( → 𝐡 pair \rightarrow\mathbf{h}^{\text{pair}} )
+The pair geometric features give the network pairwise information. Although a pair stores a single relative pose, we featurize it in both directions so that message passing in the GNN reaches both of its cameras: we construct a 14 14 -dim feature per direction, 𝐟 i ​ j pair \mathbf{f}^{\text{pair}}_{ij} for the forward edge ( i → j i\rightarrow j ) and 𝐟 j ​ i pair \mathbf{f}^{\text{pair}}_{ji} for the inverse ( j → i j\rightarrow i ), and encode each into its own per-pair hidden state, 𝐡 i ​ j pair \mathbf{h}^{\text{pair}}_{ij} and 𝐡 j ​ i pair \mathbf{h}^{\text{pair}}_{ji} . The forward feature is
+𝐟 i ​ j pair = [ 𝐭 ^ i ​ j rel , 𝝎 i ​ j rel ⏟ rel-pose state ​ ( 6 ) , ϕ i , ϕ j ⏟ intrinsics ​ ( 2 ) , 𝜹 i ​ j t , 𝜹 i ​ j R ⏟ pose-graph residual ​ ( 6 ) ] \mathbf{f}^{\text{pair}}_{ij}\;=\;\bigl[\,\underbrace{\hat{\mathbf{t}}^{\text{rel}}_{ij},\,\boldsymbol{\omega}^{\text{rel}}_{ij}}_{\text{rel-pose state}\;(6)}\,,\;\underbrace{\phi_{i},\,\phi_{j}}_{\text{intrinsics}\;(2)}\,,\;\underbrace{\boldsymbol{\delta}^{\text{t}}_{ij},\;\bo
+
+【实验】
+4.1 Setup We evaluate DeepBA on multi-view camera pose across six benchmarks ( Sec.   4.2 ) and on structure accuracy on DTU ( Sec.   4.3 ), then ablate and analyze the upstream matcher, network capacity, outlier robustness, generalization beyond the training budget, and runtime scaling ( Sec.   4.4 ). The appendix adds the accuracy-versus-iteration profile ( Appendix   E ) and testing of camera localization on a frozen DeepBA map ( Appendix   G ). In this paper, we treat all image collections as unordered and without known intrinsics unless explicitly noted.
+4.1 Setup datasets. datasets.
+Following prior work  [ 58 , 24 , 57 , 56 ] , we evaluate on six benchmarks that span diverse imaging conditions: CO3Dv2  [ 38 ] , RealEstate10K  [ 63 ] , ETH3D  [ 41 ] , DTU  [ 21 ] , Mip-NeRF 360  [ 1 ] , and IMC2021  [ 22 ] . Per-dataset scene selection and frame sampling are detailed in Appendix   C . Five benchmarks (RealEstate10K, ETH3D, DTU, Mip-NeRF 360, and IMC2021) are absent from our training mixture, so they measure cross-dataset generalization; CO3Dv2 is in the mixture but is evaluated only on held-out scenes disjoint from the training set.
+
+【结论/局限】
+References
+A Method Details
+A.1 Lie-Group and Pose Conventions
+Component-wise state update ( ⊞ \boxplus , ).
+A.2 Focal Length ↔ \leftrightarrow FOV
+A.3 Pose-Graph Residual
+A.4 Match-Feature Residuals
+A.5 Depth Head
+B Metric Definitions
+B.1 Pose Accuracy
+B.2 Structure Accuracy
+C Benchmark Composition
+Baselines on eLoFTR.
+D Training and Implementation Details
+Gradient-iteration sampling.
+Scene and graph sampling.
+Robust kernel.
+E Convergence against the Refinement Iteration
+F Failure Analysis
+F.1 ETH3D
+F.2 IMC2021
+F.3 Mip-NeRF 360
+The room failure.
+The bonsai failure.
+G Camera Localization
+License: CC BY 4.0
+arXiv:2611.18256v1 [cs.CV] 13 Nov 2026
+Deep Bundle Adjustment
+Pak Hong Chui
+Affiliation:  Technical University of Munich
+Affiliation:  Munich Center for Machine Learning (MCML)
+Email:  pak.chui@tum.de
+Hector Andrade-Loarca
+Affiliation:  Technical University of Munich
+Affiliation:  Munich Center for Machine Learning (MCML)
+Email:  Hector.Andrade@tum.de
+Daniel Cremers
+Affiliation:  Technical University of Munich
+Affiliation:  Munich Center for Machine Learning (MCML)
+Email:  cremers@tum.de We presented DeepBA, a lightweight graph neural network that amortizes bundle
+adjustment. From the 2D matches of any off-the-shelf matcher and a trivial cold
+start, it jointly infers camera poses, intrinsics, and scene structure for arbitrarily many views.
+Across six benchmarks, DeepBA outperforms prior learned SfM from matches
+on most metrics with ∼ 71 × {\sim}71\times fewer parameters than GASfM, the strongest of them, and approaches
+image-to-geometry transformers that consume the images.
+Four limits remain: the focal–depth ambiguity on planar scenes, a drift of the learned update on some scenes, the accuracy at tight thresholds, and the pinhole camera model.
+We hope DeepBA encourages further work on learned solvers for multi-view
+geometry.
+References
+[1]
+J. T. Barron, B. Mildenhall, D. Verbin, P. P. Srinivasan, and P. Hedman.
+Mip-NeRF 360: Unbounded anti-aliased neural radiance

@@ -1,0 +1,337 @@
+【摘要】
+
+【引言】
+ Novel view synthesis (NVS) aims to recover the geometry and appearance of a scene from a limited set of images and render views from camera poses that were not observed during training. It has been used in areas such as virtual reality, autonomous driving, and visual effects. Neural radiance fields (NeRFs)   [ 27 , 28 , 3 , 1 ] are able to reconstruct detailed scenes, but their rendering process relies on sampling points along camera rays, which makes inference relatively expensive. 3D Gaussian Splatting (3DGS)   [ 20 ] uses anisotropic Gaussian primitives to represent a scene and performs differentiable rasterization, offering a practical compromise between rendering quality and computational cost.
+Under sparse-view supervision, limited geometric constraints make 3DGS susceptible to overfitting, producing blurred regions, floating artifacts, or distorted structures at unseen viewpoints   [ 4 ] . Existing approaches incorporate depth or geometric priors   [ 38 , 6 ] , image- or video-diffusion guidance   [ 37 , 43 ] , and modifications to Gaussian representations   [ 5 , 9 ] . Dropout-based methods randomly deactivate Gaussians during training   [ 33 , 31 , 39 ] , while structured masking strategies further consider spatial anchors, paired consistency, or depth reliability   [ 10 , 22 , 23 ] . However, the lineage relationships formed during densification remain less explored in dropout design.
+Dropout changes the Gaussian subsets participating in rendering, reducing dependence on fixed combinations and potentially improving generalization. However, neighboring Gaussians may compensate for dropped primitives, weakening the effect of independent dropout. We define a lineage family as an initialized Gaussian, termed the founder, together with its descendants generated through cloning or splitting. Members of the same family often exhibit spatial clustering and contribute to nearby regions. Independent dropout may therefore leave many related members active, limiting its effect on the family’s overall contribution.
+Based on these observations, we propose Stage-wise Lineage-aware Dropout (SLD), which applies shared masks to the descendants of selected families during the structure-regularization stage. Because family-level deactivation may interfere with late-stage detail optimization, SLD subsequently switches to independent Gaussian dropout. We further introduce Lineage-Balanced Densification (LBD), which constructs an expanded candidate pool and redistributes fixed cloning and splitting quotas according to family-level mean gradient scores and existing d
+
+【方法】
+ In this work, we propose a lineage-aware framework for sparse-view 3DGS combining Stage-wise Lineage-aware Dropout (SLD) and Lineage-Balanced Densification (LBD). SLD controls which Gaussians participate in rendering, while LBD redistributes fixed cloning and splitting quotas among lineage families. The overall framework is shown in Fig.  1 . 3-view
+6-view
+9-view
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+NeRF-based
+Mip-NeRF  [ 1 ]
+16.11
+0.401
+0.460
+22.91
+0.756
+0.213
+24.88
+0.826
+0.170
+DietNeRF  [ 18 ]
+14.94
+0.370
+0.496
+21.75
+0.717
+0.248
+24.28
+0.801
+0.183
+RegNeRF  [ 30 ]
+19.08
+0.587
+0.336
+23.10
+0.760
+0.206
+24.86
+0.820
+0.161
+FreeNeRF  [ 40 ]
+19.63
+0.612
+0.308
+23.73
+0.779
+0.195
+25.13
+0.827
+0.160
+SparseNeRF  [ 35 ]
+19.86
+0.624
+0.328
+–
+–
+–
+–
+–
+–
+3DGS-based
+3DGS  [ 20 ]
+19.17
+0.646
+0.268
+23.74
+0.807
+0.162
+25.44
+0.860
+0.096
+DNGaussian  [ 24 ]
+19.12
+0.591
+0.294
+22.18
+0.755
+0.198
+23.17
+0.788
+0.180
+FSGS  [ 44 ]
+20.43
+0.682
+0.248
+24.09
+0.823
+0.145
+25.31
+0.860
+0.122
+CoR-GS  [ 42 ]
+20.36
+0.710
+0.202
+24.34
+0.831
+0.122
+25.94
+0.872
+0.088
+DropoutGS  [ 39 ]
+19.39
+0.632
+0.279
+24.02
+0.816
+0.144
+25.13
+0.869
+0.099
+DropGaussian  [ 31 ]
+20.33
+0.709
+0.201
+24.58
+0.830
+0.125
+25.85
+0.864
+0.093
+DropAnSH-GS  [ 10 ]
+20.68
+0.724
+0.194
+24.76
+0.837
+0.116
+26.24
+0.875
+0.088
+Ours
+20.70
+0.717
+0.194
+24.72
+0.838
+0.111
+26.17
+0.875
+0.086
+Figure 6: Qualitative comparison on the MipNeRF360 dataset. From left to right, the columns show the ground truth, 3DGS, DropoutGS, DropGaussian, and the proposed method. The boxed regions highlight thin structures, cluttered background and patterned textures.
+Figure 7: Qualitative comparison on the Blender dataset. From left to right, the columns show the ground truth, 3DGS, DropoutGS, DropGaussian, and the proposed method. The boxed regions focus on object contours and appearance details.
+3.4 Lineage-Balanced Densification
+We introduce Lineage-Balanced Densification (LBD) to complement SLD by redistributing densification opportunities according to family-level gradient scores and descendant counts. LBD regulates growth concentration without enforcing equal family sizes, while preserving the cloning and splitting quotas determined by the original 3DGS criteria.
+Fixed Budgets and Expanded Candidate Pool. At each densification step, LBD computes the screen-space positional gradients and applies the original 3DGS gradient threshold θ g \theta_{g} together with the operation-specific criteria to construct separate candidate sets for cloning and splitting, denoted by 𝒫 t \text ​ c ​ l ​ o ​ n ​ e \mathcal{P}_{t}^{\text{clone}} and 𝒫 t \text ​ s ​ p ​ l ​ i ​ t \mathcal{P}_{t}^{\text{split}} , respectively. Rather than densifying these candidates immediately, LBD uses the size of each set as the fixed budget for its corresponding operation, K o = | 𝒫 t o | K_{o}=|\mathcal{P}_{t}^{o}| , where o ∈ { \text ​ c ​ l ​ o ​ n ​ e , \text ​ s ​ p ​ l ​ i ​ t } o\in\{\text{clone},\text{split}\} . These budgets are then redistributed across lineage families using the corresponding expanded candidate pools. To provide candidates from more lineage families for reallocation, we construct an expanded cross-family candidate pool 𝒫 o \mathcal{P}^{o} using a lower gradient threshold θ \text ​ p ​ o ​ o ​ l = γ ​ θ g \theta_{\text{pool}}=\gamma\theta_{g} , where γ \gamma defaults to 0.5. Since the expanded pool uses a lower gradient threshold, it contains all candidates selected under the original threshold.
+Family Growth Score. Let m k o m_{k}^{o} denote the number of candidates of lineage family k k in the expanded pool for operation o o , and let u k o u_{k}^{o} denotes the mean gradient score of the candidates, which is defined as
+u k o = 1 m k o ​ ∑ i ∈ 𝒫 o ∩ ℱ k s i , u_{k}^{o}=\frac{1}{m_{k}^{o}}\sum_{i\in\mathcal{P}^{o}\cap\mathcal{F}_{k}}s_{i},
+(6)
+where s i s_{i} denotes the gradient value of candidate i i . A larger u k o u_{k}^{o} indicates a stronger densification signal.
+To balance densification demand and family size, we define the lineage-balanced growth score of family k k as
+w k o ​ ( t ) = u k o ​ ( t ) ( d k ​ ( t ) + τ ) β t , w_{k}^{o}(t)=\frac{u_{k}^{o}(t)}{(d_{k}(t)+\tau)^{\beta_{t}}},
+(7)
+where d k ​ ( t ) d_{k}(t) denotes the number of descendants in family k k at iteration t t , τ \tau is a constant 1, and β t \beta_{t} controls the family-size penalty.
+In the fixed budget K o K_{o} , LBD assigns a candidate quota to each family according to:
+q k o = min ⁡ ( m k o , λ o ​ w k o ​ ( t ) ) , ∑ k q k o = K o , q_{k}^{o}=\min\left(m_{k}^{o},\lambda_{o}w_{k}^{o}(t)\right),\quad\sum_{k}q_{k}^{o}=K_{o},
+(8)
+where λ o \lambda_{o} scales the family growth scores to obtain provisional quotas, while the minimum operation limits each quota by its candidate capacity m k o m_{k}^{o} . We select the candidates with the top q k o q_{k}^{o} highest gradient scores from each family for cloning/splitting operations. The penalty term β t \beta_{t} is gradually increased to β max \beta_{\max} during training and remains fixed thereafter.
+LBD determines which candidate Gaussians are selected for cloning or splitting during densification, whereas SLD regulates which Gaussians participate in rendering. For more implementation details, see the supplementary materials. 12-view
+24-view
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+3DGS  [ 20 ]
+18.52
+0.523
+0.415
+22.80
+0.708
+0.276
+FSGS  [ 44 ]
+18.80
+0.531
+0.418
+23.70
+0.745
+0.230
+CoR-GS  [ 42 ]
+19.52
+0.558
+0.418
+23.39
+0.727
+0.271
+DropGaussian  [ 31 ]
+19.66
+0.569
+0.374
+23.71
+0.752
+0.227
+DropAnSH-GS  [ 10 ]
+19.93
+0.576
+0.362
+–
+–
+–
+Ours
+19.83
+0.578
+0.360
+24.15
+0.768
+0.211
+Table 3: Quantitative comparison on the Blender dataset. The best results are highlighted in bold, the second-best results are underlined, and the third-best results are marked with dotted underlines. PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \
+
+【实验】
+ Table 2: Quantitative comparison on the MipNeRF360 dataset. The best results are highlighted in bold, the second-best results are underlined, and the third-best results are marked with dotted underlines. Metrics. We use PSNR, SSIM, and LPIPS to evaluate novel-view reconstruction. Higher PSNR and SSIM values and a lower LPIPS value indicate better reconstruction results.
+More experimental analyses are provided in the supplementary materials.
+4.2 Quantitative Comparison
+Tables  1 , 2 , and 3 present the quantitative results of the proposed framework on the three datasets. Table  1 first reports the results on LLFF under sparse-view settings. In the 3-view case with the weakest constraints, our method achieves 20.70 dB in PSNR, which is 0.37 dB higher than DropGaussian  [ 31 ] , while its perceptual quality remains competitive. The results across different input-view settings show that our lineage-aware modules achieve competitive PSNR and SSIM metrics (best or second-best), while obtaining the best LPIPS scores, which demonstrates their effectiveness for sparse-view reconstruction.
+Table 4: Ablation of SLD and LBD under 3-view inputs on the LLFF dataset. The best results are highlighted in bold.
+Settings
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+SLD
+LBD
+× \times
+× \times
+19.17
+0.646
+0.268
+× \times
+✓ \checkmark
+19.84
+0.681
+0.213
+✓ \checkmark
+× \times
+20.50
+0.715
+0.197
+✓ \checkmark
+✓ \checkmark
+20.70
+0.717
+0.194
+Table 5: Ablation of dropout granularity and founder protection policy under 3-view inputs on the LLFF dataset. The best results are highlighted in bold.
+Dropout granularity
+in stage 2
+Founder policy
+in stage 1 & 2
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+Individual
+droppable
+20.38
+0.703
+0.205
+Individual
+preserved
+20.22
+0.708
+0.205
+Family
+droppable
+20.30
+0.704
+0.204
+Family
+preserved
+20.50
+0.715
+0.197
+Table 6: Ablation on t s t_{s} between Stage 2 and Stage 3 under 3-view inputs on the LLFF dataset. The best results are highlighted in bold.
+t s t_{s}
+PSNR ↑ \uparrow
+SSIM ↑ \uparrow
+LPIPS ↓ \downarrow
+5000
+20.4284 ± 0.1145 20.4284\pm 0.1145
+0.7062 ± 0.0029 0.7062\pm 0.0029
+0.2029 ± 0.0018 0.2029\pm 0.0018
+7000
+20.4329 ± 0.0519 20.4329\pm 0.0519
+0.7073 ± 0.0011 0.7073\pm 0.0011
+0.2018 ± 0.0006 0.2018\pm 0.0006
+9000
+20.4509 ± 0.0123 20.4509\pm 0.0123
+0.7070 ± 0.0004 0.7070\pm 0.0004
+0.2032 ± 0.0005 0.2032\pm 0.0005
+Table 7: Cross-framework validation under 3-view inputs on the LLFF dataset. The proposed SLD and LBD modules are added to four sparse-view Gaussian Splatting frameworks. The best results are highlighted in bold. Studies
+4.5 Cross-Framework Validation Studies
+The individual and joint effects of SLD and LBD are reported in Table  4 . The results show that both SLD and LBD improve the reconstruction quality, with SLD yielding a notable gain when used alone. The combination of SLD and LBD yields further improvements, indicating that the two modules provide complementary benefits during training. SLD controls which Gaussians participate in rendering, while LBD distributes densification opportunities among different lineage families.
+The effects of individual dropout and family-shared dropout under different founder policies are shown in Table  5 . When enabled, protection retains founders during pruning and splitting in Stages 1 and 2 and excludes them from dropout in Stage 2; it is disabled in Stage 3. With individual dropout, founder preservation improves SSIM but reduces PSNR, leaving LPIPS unchanged. With family-shared dropout, it improves all three metrics and yields the best overall performance, supporting the default SLD configuration.
+Table  6 shows only small performance differences across t s ∈ { 5000 , 7000 , 9000 } t_{s}\in\{5000,7000,9000\} , with all other settings fixed. Although t s = 9000 t_{s}=9000 achieves the highest PSNR, we adopt t s = 7000 t_{s}=7000 , which yields the best SSIM and LPIPS.
+4.5 Cross-Framework Validation
+We also test the adaptability of the proposed method by adding the lineage-aware modules to FSGS  [ 44 ] , CoR-GS  [ 42 ] , DNGaussian  [ 24 ] and Scaffold-GS  [ 25 ] . After the integration, PSNR and SSIM increase, and LPIPS decreases in all four frameworks, as shown in Table  7 . These results indicate that SLD and LBD can be introduced into different sparse-view Gaussian Splatting pipelines, while the extent of improvement depends on the specific framework and evaluation metric.
+
+【结论/局限】
+References
+6 Complete Descendant Deactivation
+7 LBD Implementation
+8 Family Growth Analysis
+9 Future Directions
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.17752v1 [cs.CV] 13 Nov 2026
+Stage-wise Lineage-aware Dropout for Sparse-View 3D Gaussian Splatting
+Yan Xing
+Zhi Chen
+Fanglue Zhang
+Junhong Zhao
+Bing Xue
+Mengjie Zhang
+Address:  School of Mathematics, Hefei University of Technology, Hefei 230009, China
+Address:  School of Engineering and Computer Science, Victoria University of Wellington, Wellington 6140, New Zealand
+Address:  School of Computer Science and Engineering, University of New South Wales, Sydney 2052, Australia
+Address:  Joint International Research Laboratory of Spatio-temporal Information and Intelligent Location Services, Guilin 541004, China We present a lineage-aware framework for sparse-view 3D Gaussian Splatting that combines Stage-wise Lineage-aware Dropout (SLD) with Lineage-Balanced Densification (LBD). SLD applies family-shared dropout before switching to independent dropout, while LBD redistributes densification opportunities among families without changing the original cloning and splitting quotas. Lineage statistics and ablation studies support the use of family information for regularization, with SLD providing the larger gain and LBD offering additional improvements. Quantitative and qualitative comparisons show competitive performance, although the gains vary across datasets, metrics, and training frameworks.
+Acknowledgements
+This work was supported in part by the Joint International Research Laboratory of Spatio-temporal Information and Intelligent Location Services (Grant No. C25GAH31).
+Competing interests
+The authors declare that they have no competing interests or financial conflicts to disclose.
+References
+[1]
+J. T. Barron, B. Mildenhall, M. Tancik, P. Hedman, R. Martin-Brualla, and P. P. Srinivasan (2021)
+Mip-NeRF: a multiscale representation for anti-aliasing neural radiance fields .
+In Proceedings of the IEEE

@@ -1,0 +1,135 @@
+【摘要】
+
+【引言】
+ Geometric constraints are fundamental to multiple-view geometry  [ 48 ] , with image correspondences providing the basis for many of its core estimation problems. Affine correspondences (ACs) enrich point correspondences (PCs) with the local 2 × 2 2\times 2 affine transformation between the corresponding image regions, providing four additional degrees of freedom (DoF) per match. This additional information enables minimal solvers with far fewer correspondences: for example, relative pose estimation requires 5 PCs  [ 67 ] , but only 2 ACs  [ 13 ] . ACs have similarly been exploited for surface-normal estimation  [ 47 ] , homography estimation  [ 12 ] , epipolar geometry  [ 49 , 71 , 20 , 70 , 13 ] , absolute pose  [ 54 , 89 ] , and focal length estimation  [ 18 , 87 ] .
+Despite these advances in using ACs, estimating ACs themselves has received little attention. Traditional approaches rely on hand-crafted affine region detectors, such as Harris-Affine  [ 62 ] and Hessian-Affine  [ 63 ] , followed by iterative refinement such as Baumberg iteration  [ 23 ] . Learned approaches later improved this pipeline, most notably AffNet  [ 66 ] . However, since its publication in 2018, progress in AC estimation has been limited, while PC estimation has seen many innovations.
+Modern PC estimators reason over global context within and across views, rather than treating correspondences as independent local patches. Detector-free methods such as DKM  [ 33 ] and RoMa  [ 38 , 37 ] , as well as learned sparse matchers such as SuperGlue  [ 75 ] and LoMa  [ 68 ] , have substantially improved the quality and robustness of PCs. Yet AC estimation has largely remained disconnected from this progress. To our knowledge, Sun et al. [81]  is the only approach that combines a modern matcher with learned affine estimation. However, the affine transformation is still predicted from a small local patch around each match, and its four DoF are not predicted. Instead, one network estimates scale and orientation, and a separate one the affine shape.
+This raises a natural question: can AC estimation benefit from the same contextual information that has improved PC estimation? Existing approaches reduce each correspondence to a local patch, discarding the image-wide and cross-view information already available in modern matchers. Moreover, the four components of an AC are coupled, making their joint prediction challenging from local appearance alone. Indeed, previous work has reported difficulties with jointly estimating these components  [ 66 , 81 ] , motivating decomposed predictions and mu
+
+【方法】
+3.1 Notation
+3.2 Predicting Affine Correspondences
+3.3 Affine Head Architecture
+3.4 Supervision We fix notation ( Sec.   3.1 ), then detail AC prediction ( Sec.   3.2 ), the architecture ( Sec.   3.3 ), and the learning objective ( Sec.   3.4 ). See Fig.   2 for an overview of 𝖠 ⋅ \mathsf{A}\cdot LoMa.
+3.1 Notation
+By 𝗑 i 𝒜 \mathsf{x}_{i}^{\mathcal{A}} and 𝗑 j ℬ \mathsf{x}_{j}^{\mathcal{B}} we denote a pair of corresponding keypoints in images 𝖨 𝒜 \mathsf{I}^{\mathcal{A}} and 𝖨 ℬ \mathsf{I}^{\mathcal{B}} . The two images are locally related by a warp ϕ : Ω 𝒜 → Ω ℬ \phi:\Omega^{\mathcal{A}}\rightarrow\Omega^{\mathcal{B}} between their image domains, i.e . , 𝗑 j ℬ = ϕ ⁡ ( 𝗑 i 𝒜 ) \mathsf{x}_{j}^{\mathcal{B}}=\phi(\mathsf{x}_{i}^{\mathcal{A}}) , induced by the 3D scene and generally known only implicitly, e.g . , through depth maps. The affine transformation of an AC ( Sec.   2 ) is then the local behavior of ϕ \phi around 𝗑 i 𝒜 \mathsf{x}_{i}^{\mathcal{A}} , given by its Jacobian 𝖠 i ​ j ∈ ℝ 2 × 2 \mathsf{A}_{ij}\in\mathbb{R}^{2\times 2} ,
+ϕ ⁡ ( 𝗑 i 𝒜 + 𝗏 ) ≈ 𝗑 j ℬ + 𝖠 i ​ j ​ 𝗏 , 𝖠 i ​ j := ∂ ϕ ∂ 𝗑 | 𝗑 i 𝒜 , \phi\left(\mathsf{x}_{i}^{\mathcal{A}}+\mathsf{v}\right)\approx\mathsf{x}_{j}^{\mathcal{B}}+\mathsf{A}_{ij}\,\mathsf{v},\qquad\mathsf{A}_{ij}:=\left.\frac{\partial\phi}{\partial\mathsf{x}}\right|_{\mathsf{x}_{i}^{\mathcal{A}}},
+(1)
+for a small displacement 𝗏 ∈ ℝ 2 \mathsf{v}\in\mathbb{R}^{2} , i.e . , 𝖠 i ​ j \mathsf{A}_{ij} describes how 𝗑 j ℬ \mathsf{x}_{j}^{\mathcal{B}} moves under a small displacement of 𝗑 i 𝒜 \mathsf{x}_{i}^{\mathcal{A}} .
+3.2 Predicting Affine Correspondences
+Our goal is a model that estimates ACs. This decomposes into finding matching points and predicting their local affine matrices. We obtain PCs from the frozen LoMa matcher. To obtain a local affine matrix for each detected keypoint, we append an affine head ( Sec.   3.3 ) to LoMa. In particular, we predict 𝖠 ^ i 𝒜 , 𝖠 ^ j ℬ ∈ ℝ 2 × 2 \hat{\mathsf{A}}_{i}^{\mathcal{A}},\hat{\mathsf{A}}_{j}^{\mathcal{B}}\in\mathbb{R}^{2\times 2} for 𝗑 i 𝒜 \mathsf{x}_{i}^{\mathcal{A}} and 𝗑 j ℬ \mathsf{x}_{j}^{\mathcal{B}} , respectively. Each can be read as a local frame mapping a shared canonical patch onto the neighborhood of its keypoint, so that composing them maps the neighborhood of 𝗑 i 𝒜 \mathsf{x}_{i}^{\mathcal{A}} onto that of 𝗑 j ℬ \mathsf{x}_{j}^{\mathcal{B}} .
+Given a PC ( i , j ) (i,j) , the affine transformation of the AC is obtained by composing the two per-keypoint matrices,
+𝖠 ^ i ​ j = 𝖠 ^ j ℬ ​ ( 𝖠 ^ i 𝒜 ) − 1 , \hat{\mathsf{A}}_{ij}=\hat{\mathsf{A}}^{\mathcal{B}}_{j}\left(\hat{\mathsf{A}}^{\mathcal{A}}_{i}\right)^{-1},
+(2)
+which we compare to the GT 𝖠 i ​ j \mathsf{A}_{ij} of Eq.   1 during training (see Sec.   3.4 ). While 𝖠 ^ i ​ j \hat{\mathsf{A}}_{ij} could also be regressed directly per match, per-keypoint frames make the estimate inverse-consistent by construction, i.e .  the reverse affine from ℬ \mathcal{B} to 𝒜 \mathcal{A} is exactly 𝖠 ^ i ​ j − 1 \hat{\mathsf{A}}_{ij}^{-1} , as the model is permutation equivariant.
+Note that Eq.   2 only constrains the composition of the two per-keypoint predictions: for any invertible 𝖦 ∈ ℝ 2 × 2 \mathsf{G}\in\mathbb{R}^{2\times 2} , replacing
+𝖠 ^ i 𝒜 → 𝖠 ^ i 𝒜 ​ 𝖦 \hat{\mathsf{A}}_{i}^{\mathcal{A}}\!\to\!\hat{\mathsf{A}}_{i}^{\mathcal{A}}\mathsf{G} and 𝖠 ^ j ℬ → 𝖠 ^ j ℬ ​ 𝖦 \hat{\mathsf{A}}_{j}^{\mathcal{B}}\!\to\!\hat{\mathsf{A}}_{j}^{\mathcal{B}}\mathsf{G} leaves 𝖠 ^ i ​ j \hat{\mathsf{A}}_{ij} , and hence the loss, unchanged. Training therefore never pins down 𝖠 ^ i 𝒜 \hat{\mathsf{A}}_{i}^{\mathcal{A}} itself, only its relation to that of a matched partner. We study this gauge
+freedom empirically in Sec.   5.2 .
+Each per-keypoint matrix must be parametrized to guarantee invertibility, as required by Eq.   2 . Following prior work  [ 66 , 81 ] , we decompose 𝖠 ∈ ℝ 2 × 2 \mathsf{A}\in\mathbb{R}^{2\times 2} into a scale, an orientation, and a shape,
+𝖠 = λ ​ 𝖱 ​ ( α ) ​ 𝖠 ′ = λ ​ ( cos ⁡ α − sin ⁡ α sin ⁡ α cos ⁡ α ) ​ ( e a b 0 e − a ) , \mathsf{A}=\lambda\,\mathsf{R}(\alpha)\,\mathsf{A}^{\prime}=\lambda\begin{pmatrix}\cos\alpha&-\sin\alpha\\
+\sin\alpha&\cos\alpha\end{pmatrix}\begin{pmatrix}e^{a}&b\\
+0&e^{-a}\end{pmatrix},
+(3)
+where λ > 0 \lambda>0 is an isotropic scale (so that det 𝖠 = λ 2 \det\mathsf{A}=\lambda^{2} ), 𝖱 ⁡ ( α ) \mathsf{R}(\alpha) a planar rotation, and 𝖠 ′ \mathsf{A}^{\prime} a residual shape with det 𝖠 ′ = 1 \det\mathsf{A}^{\prime}=1 . We evaluate a simpler parametrization based on LU decomposition in Sec.   5.1 and find that it performs almost as well, indicating that our approach is not highly sensitive to the parametrization.
+3.3 Affine Head Architecture
+For every detected keypoint, the affine head takes the output descriptors of LoMa, and passes them through K = 3 K=3 transformer layers of alternating self- and cross-attention. A per-keypoint MLP then regresses five numbers for the four DoF of Eq.   3 : scale (1), orientation (2, a direction vector normalized to unit length, which avoids the wraparound of regressing an angle directly), and shape (2, the stretch a a and the shear b b ), to compose 𝖠 ^ \hat{\mathsf{A}} . To keep 𝖠 ^ \hat{\mathsf{A}} , and hence its inverse in Eq.   2 , well conditioned, the scale λ = e Δ tanh ( ⋅ ) \lambda=e^{\Delta\tanh(\cdot)} and the stretch a = Δ tanh ( ⋅ ) a=\Delta\tanh(\cdot) are bounded with fixed Δ = 2 \Delta=2 , while the shear b b is regressed directly. The final layer of the prediction head is zero-initialized, so every keypoint starts with an identity affine frame. Because the head attends across views, the per-keypoint affine frames are conditioned on the partner image. We analyze this in Sec.   5.2 and propose in the Suppl. ( Appendix   F ) a method to obtain stable per-view affine frames, useful for e.g .  Structure-from-Motion (SfM).
+3.4 Supervision
+For each training pair we have a GT projective ( z z -axis) depth map D 𝒜 D^{\mathcal{A}} , camera intrinsics 𝖪 𝒜 , 𝖪 ℬ \mathsf{K}^{\mathcal{A}}
+
+【实验】
+ .
+D.3 Affine Accuracy in the Pixel Frame
+D.4 Sensitivity to the Ground-Truth Construction
+D.5 Full Orientation Estimation
+E Gauge Freedom
+Protocol. .
+F Per-View Frames by Transport
+G More Qualitative Results
+License: CC BY 4.0
+arXiv:2611.18170v1 [cs.CV] 13 Nov 2026
+𝖠 ⋅ \mathsf{A}\cdot LoMa: Affine Correspondences Beyond Patches
+David Nordström
+Affiliation:  Chalmers University of Technology
+Georg Bökman
+Affiliation:  University of Amsterdam
+Viktor Larsson
+Affiliation:  Lund University
+Fredrik Kahl
+Affiliation:  Chalmers University of Technology
+Jonathan Ventura
+Affiliation:  California Polytechnic State University We compare to state-of-the-art techniques for AC estimation on a wide range of benchmarks. We evaluate the accuracy of the ACs directly ( Sec.   4.1 ), and then their utility inside minimal solvers for relative pose ( Sec.   4.2 ), visual localization ( Sec.   4.3 ), and recovering surface normals ( Sec.   4.4 ). Throughout this section, the best , second , and third ranked results are highlighted. Additional details are given in the Suppl. ( Appendix   C ). .
+Tab.   12 reports the yield. The Point column is nearly identical for 𝖠 ⋅ \mathsf{A}\cdot LoMa-B/L/G and LoMa+S3E+AN, which use the matches of their LoMa backbones (G for LoMa+S3E+AN), so the comparison against LoMa+S3E+AN isolates the affine head: LoMa+S3E+AN loses most of its yield to the affine criterion (from 29.1 29.1 % to 2.8 2.8 % at τ A = 0.1 \tau_{A}=0.1 on Mega1500), whereas 𝖠 ⋅ \mathsf{A}\cdot LoMa-G loses little (to 23.0 23.0 %). Sun et al.  has a higher point recall on Mega1500 ( 57.1 57.1 %), but a lower yield at τ A = 0.25 \tau_{A}=0.25 than ours ( 17.4 17.4 % against 27.3 27.3 %).
+Table 12 : End-to-end AC yield. Percentage of a budget of 2048 2048 keypoints that yields an AC with a correct point ( τ p = 3 \tau_{p}=$3$\, px) and affine ( Eq.   9 ). The columns 0.25 0.25 and 0.1 0.1 give τ A \tau_{A} . Point drops the affine criterion. Higher is better. .
+Fig.   5 (b,c) shows the frames of one image under five partners and the drift over six HPatches viewpoint sequences. The median drift ( × 100 \times 100 ) is 30 30 ( london ), 33 33 ( coffeehouse ), 68 68 ( tempera ), 80 80 ( wormhole ), 84 84 ( calder ) and 130 130 ( gardens ), an order of magnitude or more above the 2.1 2.1 to 3.0 3.0 expected for stable frames. The gauge is therefore largely unresolved. This means that a frame predicted for one pair is not a view-independent quantity, which is what the transport ( Appendix   F ) aims to address.
+Appendix F Per-View Frames by Transport
+The frames 𝖠 ^ i 𝒜 \hat{\mathsf{A}}^{\mathcal{A}}_{i} and 𝖠 ^ j ℬ \hat{\mathsf{A}}^{\mathcal{B}}_{j} of a pair-conditioned 𝖠 ⋅ \mathsf{A}\cdot LoMa depend on the partner image ( Appendix   E ), whereas applications, such as SfM, benefit from a frame per keypoint that is independent of any other view. A head that reads a single image gives such a frame, 𝖠 ~ i 𝒫 \tilde{\mathsf{A}}_{i}^{\mathcal{P}} for keypoint 𝗑 i 𝒫 \mathsf{x}_{i}^{\mathcal{P}} in image 𝖨 𝒫 \mathsf{I}^{\mathcal{P}} , but is less accurate than the relative affine 𝖠 ^ i ​ j \hat{\mathsf{A}}_{ij} of the conditioned model. We combine the two by transport . Let 𝖨 𝒯 \mathsf{I}^{\mathcal{T}} be the image whose frames we want and 𝖨 𝒫 \mathsf{I}^{\mathcal{P}} another view of the scene, with a match ( i , j ) (i,j) between 𝗑 i 𝒫 \mathsf{x}_{i}^{\mathcal{P}} and 𝗑 j 𝒯 \mathsf{x}_{j}^{\mathcal{T}} . The relative affine 𝖠 ^ i ​ j \hat{\mathsf{A}}_{ij} carries the per-view frame of 𝗑 i 𝒫 \mathsf{x}_{i}^{\mathcal{P}} to
+𝖠 ^ j 𝒯 ← 𝒫 = 𝖠 ^ i ​ j ​ 𝖠 ~ i 𝒫 , \hat{\mathsf{A}}_{j}^{\mathcal{T}\leftarrow\mathcal{P}}\;=\;\hat{\mathsf{A}}_{ij}\,\tilde{\mathsf{A}}_{i}^{\mathcal{P}},
+(11)
+an estimate of the frame of 𝗑 j 𝒯 \mathsf{x}_{j}^{\mathcal{T}} in the convention of the per-view head. We average Eq.   11 over N N partner views in the parametrization of the head ( Eq.   3 ). Each transported matrix is decomposed into scale, rotation and shape as in Eq.   3 , then the log-scale, log shape exponent and shear are averaged arithmetically and the orientation as a circular mean (the normalized mean of ( cos ⁡ α , sin ⁡ α ) (\cos\alpha,\sin\alpha) ). A keypoint that no partner supports keeps 𝖠 ~ j 𝒯 \tilde{\mathsf{A}}_{j}^{\mathcal{T}} . On MegaDepth-1500 we use up to N N random views of the same scene with at least 100 matches to 𝖨 𝒯 \mathsf{I}^{\mathcal{T}} (never the two images of the evaluated pair), and all uses every other view. The relative affines come from 𝖠 ⋅ \mathsf{A}\cdot LoMa-B. The errors of the per-view head in different views are roughly independent and average down, while the accurate relative affines carry each frame between views. With N = 0 N=0 this is the per-view head, and Fig.   7 shows how the error decreases with N N . Averaging roughly halves the error of the single-view head. Eichhardt and Barath [39] similarly correct local affine frames using multiple views, though geometrically.
+Figure 7 : Averaged frames improve with the number of partners. Affine error (Frobenius) on MegaDepth-1500 against the number of partner views N N , from the per-view head ( N = 0 N=0 ) to the pairwise 𝖠 ⋅ \mathsf{A}\cdot LoMa-B.
+Appendix G More Qualitative Results
+In Fig.   8 , we provide additional examples of AC estimation on MegaDepth-1500. We compare 𝖠 ⋅ \mathsf{A}\cdot LoMa-B to KN+HN+AN (AffNet) and Sun et al.
+Figure 8 : Visualizing further affine estimations. Pairs from the two MegaDepth-1500 scenes, 0015 (left) and 0022 (right). Errors are median Frobenius ( × 100 \times 100 ).
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the Protocols
+Reproducing Sun et al.
+Affine shapes.
+Visual localization.
+Generalized relative pose and scale.
+Sur
+
+【结论/局限】
+We used Claude by Anthropic through Claude Code for:
+We did not use LLMs for:
+We have reviewed all LLM-assisted work.
+References
+A Implementation Details We revisit AC estimation and go beyond local patches. Our formulation allows a simpler pipeline that directly regresses the full 4-DoF affine matrix. Systematic ablations show that global context is crucial for affine estimation. Our method, 𝖠 ⋅ \mathsf{A}\cdot LoMa, adds a lightweight affine head to LoMa’s matcher, achieving an order of magnitude lower affine error than AffNet and Sun et al. , with consistent downstream gains.
+LLM Usage Statement
+We used Claude by Anthropic through Claude Code for:
+•
+Generating code for the experiments in Sec.   4 .
+–
+Source code was read by the authors and evaluations were based on previous work.
+–
+The core implementation of the model and loss was done without the assistance of LLMs.
+•
+Checking for typos.
+•
+Assist with editing the manuscript for clarity and writing quality.
+•
+Identifying relevant literature (checked by the authors).
+•
+Generating the TikZ and Matplotlib code for the figures.
+We did not use LLMs for:
+•
+Helping develop theoretical models or conceptual frameworks.
+•
+Suggesting presentation structure or style.
+•
+Designing or providing feedback on research methodology or experiments.
+•
+Proposing or refining hypotheses.
+•
+Assisting in natural-language translation.
+•
+Interpreting results.
+•
+Drafting any part of the paper. The authors wrote all sections of the paper and only then received assistance from the LLM to refine it.
+•
+Formatting references.
+We have reviewed all LLM-assisted work.
+We take responsibility for the final content of this work, including text, claims or artifacts produced with the aid of generative AI.
+Acknowledgements
+This work was supported by the Wallenberg Artificial
+Intelligence, Autonomous Systems and Software Program
+(WASP), funded by the Knut and Alice Wallenberg Foundation, by the strategic research environment ELLIIT, funded by the Swedish go

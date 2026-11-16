@@ -1,0 +1,133 @@
+【摘要】
+
+【引言】
+ Recent advances in novel-view synthesis (NVS) have demonstrated stunning visual quality, enabling photorealistic rendering of scenes from previously unseen viewpoints  [ FRFS24 , BMV*22 , KKLD23 ] .
+These approaches typically utilize a dataset comprising multiple images as input to optimize a detailed intermediate scene representation that is subsequently leveraged to render the scene from novel viewpoints.
+High visual quality, however, is often achieved at the expense of lengthy scene-specific optimization procedures, significantly extending the time between scene capture and re-rendering.
+To overcome this constraint, generalizable neural rendering networks are explored which amortize per-scene optimization, enabling immediate, high-quality view synthesis  [ HFF*23 , RK21 , SESM22 ] .
+These networks, however, are contingent on favorable generalization to new datasets.
+Recently, 3D Gaussian Splatting (3DGS)  [ KKLD23 ] has been applied in an on-the-fly manner by  [ MSL*25 ] :
+3D Gaussians are predicted online and optimized concurrently while rendering novel views. Given the real-time constraints, their initial rendering starts out commendable, but the ongoing optimization process is still noticeable, and image quality and optimization duration remain tightly linked.
+In contrast, our work omits iterative optimization as well as neural components within the NVS pipeline, thereby enabling more efficient resource allocation. We target scenarios involving simultaneous acquisition and re-rendering, a process that enables an observer to commence exploration of a scene while capture is still ongoing.
+Instead of solely focusing on RGB-only camera setups, we demonstrate how multi-sensor configurations enhance visual fidelity by leveraging data from different modalities.
+Therefore, we specifically target scenarios where multiple cameras, in addition to depth sensors (e.g., LiDAR sensors) are operating simultaneously.
+Our framework maintains an updating scene state that holds a posed set of images and an accumulated point cloud fused from depth sensor observations.
+For rendering, the point cloud is projected to a target view and completed into a dense depth map, refining sparse data via a hierarchical filling strategy anchored to real-world measurements. By using the resulting dense depth as proxy geometry for multi-view two-band blending  [ BL*03 ] , we facilitate accurate NVS.
+We evaluate our method qualitatively and quantitatively across these challenging settings and via conventional NVS benchmarks, measuring the suitability for live settings by the latency bet
+
+【方法】
+such as NeRFs  [ MST*21 , BMT*21 , BMV*23 ] , 3D Gaussian Splatting  [ KKLD23 , HFEM26 , WYZ*24 ] , or other neural rendering approaches  [ RFS22 , ASK*20 , TZN19 , FRFS24 ] achieve high-quality NVS by optimizing a scene-specific representation before rendering.
+While this is highly effective when observations can be processed offline, the optimization phase often requires minutes to hours, making it poorly suited to live operation.
+Several works consequently accelerate per-scene reconstruction in order to produce useful renderings as early as possible  [ MESK22 , MSL*25 , TZG*26 ] .
+[ MSL*25 ] encapsulate feed-forward prediction and optimization of gaussian primitives on-the-fly , to enable live NVS.
+Despite these advances, accelerated optimization-based methods still require computational effort to build and continually update a scene-specific representation.
+In a live system, this computation competes with rendering, camera tracking, and the processing of newly arriving observations.
+This motivates a complementary direction in NVS, rooted in image-based rendering  [ SCK08 ] , that seeks to synthesize novel views without per-scene optimization. Recently, such methods have increasingly been augmented with neural methodologies by incorporating learned components  [ HPP*18 , HXR*25 , RK21 , RALB22 , HFF*23 , FRF*23 ] , often relying on sensor-based depth observations such as RGB-D or point cloud input.
+In foundational work by  [ HPP*18 ] blending weights are predicted by a CNN to perform image synthesis.
+[ HXR*25 ] extend this idea for dynamic scenes captured by multi-view video in controlled studio settings.
+Similar to our approach, they use per-view proxy geometry by fusing a temporal consistent TSDF  [ CL96 ] which guides the image blending network. [ FRF*23 ] fuse depths from a live RGB-D stream, before projecting neural features into a target-view feature map, subsequently decoding into a novel view by a generalizable CNN.
+[ HFF*23 ] do so similarly, but leverage a point-based representation.
+Others adopt target-view-aligned multi-plane images (MPI)  [ MSO*19 , FBM*24 ] , building upon two-plane light fields  [ GGSC96 ] .
+[ MSO*19 ] show that MPI parameters can be predicted in a generalizable way.
+Further, [ FBM*24 ] enable real-time NVS through an iterative render-and-refine architecture with tailored attention operations, at the cost of extensive multi-GPU training.
+Recent advances in transformer-based architectures have enabled feed-forward prediction of explicit 3D geometry that can be readily used for NVS.
+Several directly regress per-pixel Gaussians  [ JMX*25 , ZBT*24 , LCL*25 , ZTZ*25 , KNY*26 , ICH*25 , ZTW*25 , TTXM25 ] or surface representations  [ WZB*24 , FFK*26 ] .
+A related line of work instead casts image synthesis as a decoding task, rendering views from ray-based queries and encoded image features  [ WWG*21 , SESM22 , JJT*24 , SCW*26 , JTW*25 ] .
+All of these approaches have substantial training demands and access to large-scale multi-view datasets.
+Our method retains explicit geometry to deliver scene-agnostic, high-quality NVS, without relying on learned components. Rather than reconstructing geometry from image evidence alone, we exploit data from sensors such as LiDAR or depth cameras. This design enables interactive rendering during capture while retaining quality that is competitive with optimization-based and neural methods alike.
+Natural applications of NVS under our set of constraints are automotive settings or high-quality previews for handheld RGB-D capturing.
+Driving scenarios pose a particularly challenging setting for offline and online NVS  [ TTXM25 , ZLS*24 , YPY*25 , HLF*25 ] .
+Building a sufficiently complete representation requires fusing heterogeneous observations from multiple cameras and, often, additional sensors such as LiDAR  [ CBL*20 , SKD*20 , LXG22 ] . Moreover, data are acquired in uncontrolled outdoor environments containing occlusions, moving objects, and substantial appearance variation  [ ZLW*25 , SKD*20 , CBL*20 ] .
+Finally, the capture trajectory is dictated by vehicle motion and the road network, resulting in predominantly street-level viewpoints and incomplete coverage of the scene  [ CBL*20 , SKD*20 , WQA*21 ] , making view extrapolation specifically challenging  [ ZLW*25 , YPY*25 ] .
+Due to these challenges, existing methods get specifically tailored to automotive settings, hindering their use in broader NVS scenarios.
+In case of handheld capture systems, live previews are central, communicating coverage, progress, and potential failures to users  [ FRF*23 , MSL*25 ] . However, for capture guidance, visually plausible learned synthesis  [ HFF*23 , FRF*23 ] is not necessarily desirable: prior-driven predictions may hide missing observations or acquisition artifacts.
+Conversely, our approach offers a visually appealing, yet deterministic rendering that unveils the current state of capture.
+3 Depth-completed Image-based Rendering
+Inspired by preceding IBR pipelines  [ BBM*01 , DYB98 ] , our approach comprises three main steps to perform view synthesis: initially, we construct a target view aligned geometric depth proxy (Sec.  3.1 ).
+This proxy enables projection of auxiliary images to the target view during the subsequent warping step (Sec.  3.2 ). Finally, data from multiple, projected auxiliary images is blended to create a novel view (Sec.  3.3 ).
+An overview of our method is presented in Fig.  1 .
+Our method assumes posed images  { ℐ } \{{\mathcal{I}}\} combined with an unstructured point cloud  𝒫 \mathcal{P} as input. We denote the target space as 𝒯 \mathcal{T} and the auxiliary images as { ℐ 𝒜 } i = 1 ​ … ​ k k ⊆ { ℐ } \{{{\mathcal{I}}_{\mathcal{A}}}\}^{k}_{i=1...k}\subseteq\{{\mathcal{I}}\} .
+While our approach allows the number of auxiliary images, k k , to be freely chosen, we generally set k = 4 k=4 as practical trade-off between coverage and overall performance, see supp. material (S5).
+Note that the approach neither ass
+
+【实验】
+are conducted on the native dataset resolution, except for Argoverse 2 , where we crop the front camera image to remove the bonnet ( 2048 × 1550 → 1800 × 1550 2048\times 1550\rightarrow 1800\times 1550 ).
+The absence of depth images in automotive datasets renders a comparison to LiveNVS infeasible.
+RGB-D.  The keyframed version of the LiveNVS dataset  [ FRF*23 ] comprises ∼ 1 \sim\!1 image per second.
+We thus choose a larger timing window of n = 15 n=15 , to ensure the acquisition of sufficient images for each approach.
+Each 16th frame is designated as a test frame.
+The dataset was requested from the authors.
+Offline.  In the context of offline scenarios, we deploy a common NVS evaluation by reporting metrics on a test set comprising every eighth image.
+Seven scenes of the MipNerf 360   [ BMV*22 ] dataset (i.e. garden, bicycle, bonsai, counter, kitchen, room, and stump) and four scenes of the Tanks and Temples   [ KPZK17 ] dataset (i.e. caterpillar, francis, playground, and train) are utilized. A dense COLMAP  [ SF16 ] reconstruction is performed before evaluation. We deploy MipNerf 360 on quarter resolution and Tanks and Temples on full resolution.
+Thermal.  The versatility of our method across different modalities is validated by a comparison of the quality of synthesis on thermal images.
+We compare our approach on the RGBT-Scenes dataset presented by  [ LCZ*24 ] .
+The evaluation of this dataset is analogous to that of the previously described offline scenes.
+S4 Additional Results
+Figure S1: Live NVS results on automotive scenes captured during night.
+Figure S2: Qualitative comparison in automotive live scenarios form the nuScenes , Waymo Open Dataset , and Argoverse 2 datasets.
+Figure S3: Qualitative comparison in handheld live scenarios form the LiveNVS dataset.
+Figure S4: Qualitative comparison in offline scenarios. Four MipNerf 360 and two Tanks and Temples scenes are displayed.
+Figure S5: Thermal images of the RGBT-Scenes dataset.
+Supplementing the results displayed in the manuscript, we provide further qualitative results.
+Fig.  S2 presents more comparisons in live automotive settings while Fig.  S3 display further comparisons on the handheld RGB-D LiveNVS dataset.
+Here, we provide visual comparisons with methods evaluated only quantitatively in the main manuscript.
+Fig.  S4 extends comparisons in offline scenarios and Fig.  S1 and Fig.  S5 provide further examples of low-light and thermal scenarios.
+Figure S6: Ablation of source of geometry. Comparison of input depth acquisition techniques (captured RGB-D from Zed 2i camera  [ Ste23 ] , monocular depth estimation  [ LCL*25 ] , transformer-based multi-view depth estimation  [ CF24 ] ) and target depth fusion (our depth completion vs nvblox TSDF  [ MOW*24 ] )
+Ours + MVS-Former++ Gg
+Ours using LiDAR data Gg
+Figure S7: Failure case of multi-view depth estimation with MVSFormer++ . In this automotive example including a strictly forward trajectory without lateral baseline, the depth estimation produces lots of floaters, severely impacting image quality ( left ), while using LiDAR data as depth data reveals no such issues ( right ).
+S4.1 Discussion of Metrics: PSNR vs. LPIPS
+In comparison to related work, our approach performs notably better in terms of the LPIPS metric than the PSNR metric.
+LPIPS aligns better with human perception as shown in the original LPIPS paper by [ ZIE*18 ] and [ ZD22 ] .
+Compared to the PSNR metric, LPIPS is more robust towards distortions, noise, blur, and shifts.
+[ ZD22 ] specifically highlighted the severely negative impact of slight misalignment on PSNR scores.
+As discussed, the artifacts most prominent with our approach are due to misalignment of reconstructed depth with ground truth, which shows itself as a visible seam in the area of depth discontinuities.
+These seams are visually similar to image shifts, hurting PSNR scores severely.
+Furthermore, LPIPS rightfully penalizes blurry images with a worse score, while PSNR tends to increase when blurring an image.
+As gaussians are blurry primitives by definition, 3D gaussian splatting based approaches perform well with PSNR scores.
+We argue that this results in comparatively worse PSNR scores, while our approach consistently outperforms competitors in LPIPS, which aligns better with human perception.
+S5 Further Ablations    Live.  Quantitative live-reconstruction results are reported in Tab.  1 .
+Our method achieves the best LPIPS across all datasets, competitive PSNR, and substantially lower capture-to-image time than baselines with comparable fidelity.
+Although Long-LRM , DrivingForward , and On-the-fly NVS achieve higher PSNR on individual nuScenes and Waymo evaluations, ours obtains lower LPIPS in all comparisons.
+Fig.  4 shows representative live automotive and handheld RGB-D results.
+Our method produces sharper textured details than On-the-fly NVS . Though ours can exhibit local artifacts at depth discontinuities, the latter’s time-constrained optimization may fail to converge, particularly for small capture baselines.
+Long-LRM suffers from blurry textures, missing high-frequency detail.
+Compared to DrivingForward , our method recovers finer detail but can smear in regions poorly covered by depth observations, while they better preserve dynamic objects.
+Under a lane shift setting, our method yields substantially more plausible views than both On-the-fly NVS and DrivingForward .
+Figure 4: Qualitative comparison with On-the-fly NVS   [ MSL*25 ] , Long-LRM   [ ZTZ*25 ] and DrivingForward   [ TTXM25 ] . We state measured capture-to-image times. Views taken from trajectories are highlighted by arrows. Extrapolating lane shifts are marked with .
+Offline.
+Figure 5: Qualitative comparison in an offline setting. Total reconstruction time is reported for each method. On-the-fly NVS and Faster-GS processed the scenes completely before rendering, while our approach reconstructs high-quality novel views without training or optimization.
+Qualitative and quantitati
+
+【结论/局限】
+and Conclusion
+References
+S1 Method
+S1.1 Depth Completion
+S1.2 SoftEDT
+S2 Baselines
+S3 Datasets
+S4 Additional Results
+S4.1 Discussion of Metrics: PSNR vs. LPIPS
+S5 Further Ablations
+S6 Accompanying Video
+License: arXiv.org perpetual non-exclusive license
+arXiv:2611.18340v1 [cs.CV] 13 Nov 2026
+\biberVersion \BibtexOrBiblatex \electronicVersion \PrintedOrElectronic
+DIRT: Depth-completed Image-based Rendering using Two-band Blending for Live Novel-view Synthesis
+Mathias Harrer,
+Laura Fink,
+Noah Lewis,
+Paul Himmler
+and Tim Weyrich
+Friedrich-Alexander-Universität Erlangen-Nürnberg and Conclusion
+Dynamic Scenes.  Our point accumulation splits scenes into static and dynamic components.
+Likewise, extending the IBR pipeline could enable handling of dynamic scenes.
+Accumulation Performance.  The point cloud accumulations’ performance depends on size and frequency of depth observations. In our experiments accumulation time was negligible compared to the other parts of the pipeline, hence we consider efficient handling of larger scenes future work.
+Edge Artifacts.  Our approach tends to produce artifacts at occlusion edges .
+As these stem from misalignment of reconstructed depth maps to ground truth, this invites further research regarding refinement of the depth completion.
+Occlusion Resolution.  Our conservative disocclusion resolution allows false negatives. Improving depth maps or the warping process could yield higher image quality.
+Data Dependency.  Insufficient sensor coverage results in degradation of image features. The exploration of additional assumptions or heuristics could be considered.
+Temporal Stability.  Our weights may cause temporal instability under movement. To reduce these artifacts, we employ temporal anti-aliasing, following  [ LRSF25 ] .
+We demonstrate the efficacy in the supp. video (S6).
+In summary, we present a live novel-view synthesis approach based on image-based rendering, combining measurement-anchored depth completion with frequency-aware two-b

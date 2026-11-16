@@ -1,0 +1,332 @@
+{
+ "2611.18438": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Toward On-Device Markerless 6DoF Tracking of a Physical Manipulative on a Mixed-Reality Headset: A Preliminary Study",
+  "abstract": "AR-Classroom uses physical models and virtual overlays to help learners explore spatial transformations. To align these overlays on a standalone headset, we developed a markerless six-degree-of-freedom(6DoF) tracker for a LEGO airplane on the Meta Quest 3. A compact YOLO model trained on synthetic Unity renders predicts 20 keypoints from dynamic RGB crops resized to 128 by 128 pixels. A perspective-n-point solver estimates the airplane's pose from these predictions and the corresponding 3D landmarks. In a paired evaluation on 1,000 synthetic validation images, cropping guided by ground-truth boxes increased the detection rate on annotated images from 32.5 to 46.2 percent. Mean keypoint F1 increased from 42.9 to 44.6 percent, with lower keypoint precision in the cropped view. In preliminary headset tests, 2 Hz was the highest tested tracking target at which the application maintained approximately 72 frames per second. A headset demonstration illustrates virtual overlay alignment with the physical airplane before and after a manual rotation. Quantitative 6DoF pose accuracy on real headset footage will be measured in future work.",
+  "announce": "cross",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.18256": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Deep Bundle Adjustment",
+  "abstract": "We present \\textbf{DeepBA} (\\textbf{Deep} \\textbf{B}undle \\textbf{A}djustment), a graph neural network (GNN) that recovers camera poses, intrinsics, and scene structure from 2D matches across an arbitrary number of views. Rather than solving a non-linear least-squares problem per scene, DeepBA amortizes bundle adjustment into a learned graph network that iteratively refines its estimate from geometric residuals. Where classical SfM computes its updates analytically and needs careful initialization, DeepBA learns them and converges from a cold start. It is trained with scale-invariant supervision (ground-truth rotation, translation direction, and intrinsics, plus reprojection self-consistency), so datasets with arbitrary metric units can be mixed without per-scene normalization. DeepBA is decoupled from the matcher. At 2.04M parameters, it outperforms prior learned SfM from matches on scene reconstruction and on most pose metrics, is competitive with classical SfM at moderate accuracy thresholds and overtakes it in wall time as the view count grows, and approaches monolithic image-to-geometry transformers such as VGGT ($\\sim$1.2B parameters) with greater modularity. Project~page: https://cphjsn.github.io/deep-ba/",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.18170": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "ALoMa: Affine Correspondences Beyond Patches",
+  "abstract": "Affine correspondences (ACs) enable robust and efficient solvers for multiple-view geometry by constraining the local geometry of point correspondences (PCs). Despite their utility in minimal solvers, AC estimation remains understudied. We revisit AC estimation beyond local image patches, extending it to the image and image-pair levels. Rather than estimating the components of the affine transformation separately, we learn the full 4-DoF matrix jointly. Building on this formulation, we introduce ALoMa, an AC estimator using LoMa keypoint descriptions, demonstrating consistent improvements across a wide range of downstream tasks. Code at https://github.com/davnords/loma.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.18097": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "AG-JEPA: Anatomically Guided Joint Embedding Predictive Architecture for Neurodegenerative Representation Learning",
+  "abstract": "Brain MRI can reveal early signs of Alzheimers disease (AD) before measurable cognitive decline becomes apparent. However, during the transition from cognitively normal (CN) to mild cognitive impairment (MCI), the disease-related signals are often subtle and confined to only a few brain regions. Existing Joint Embedding Predictive Architecture (JEPA) models learn general structural representations but do not explicitly capture the anatomical regions affected in AD. We propose Anatomically Guided JEPA (AG-JEPA), which introduces anatomical tokens that interact with patch tokens during pretraining to learn region-specific representations from brain regions relevant to neurodegeneration. Building on this representation space, we further propose Prog-AG-JEPA, which models disease progression trajectory as a conditioned latent displacement within this space. We evaluate AG-JEPA across five downstream tasks spanning Alzheimer's disease diagnosis and progression prediction. AG-JEPA improves diagnosis and MCI prognosis, achieving an 8.4 percentage point AUROC gain over the strongest baseline on CN/MCI classification and a 7.1 percentage point gain on out-of-distribution CN/AD classification on the MR-RATE dataset, highlighting its effectiveness across both early-stage detection and cross-cohort generalization. For disease progression modeling, Prog-AG-JEPA consistently outperforms all baselines on future diagnosis and brain volume change prediction, demonstrating the value of anatomically grounded neurodegeneration representations for diagnosis and prognosis.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.17957": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "MacroGS: Macro-Pixel Shared Gaussian Primitives for Arbitrary-Scale Light Field Super-Resolutio",
+  "abstract": "Arbitrary-scale light field spatial super-resolution reconstructs high-resolution views at any requested scale from low-resolution multi-view observations. Gaussian primitives enable continuous reconstruction, but generating separate primitive sets for each view redundantly encodes shared scene structure across views and causes the primitive count grow linearly with the number of views. To avoid such redundancy, we propose MacroGS, a feed-forward decoder that jointly predicts a single shared Gaussian set per macro pixel rather than generating separate sets for each view. Disparity-dependent replacement and angle-conditioned appearance allow each set to be reused across all output views, keeping the predicted primitive count independent of the number of views at each requested scale. The decoder iteratively predicts per-primitive disparities, retrieves the corresponding multi-view features, and updates the primitive states. Gaussian splatting and residual refinement then reconstruct the output light field. Despite being learned without geometric supervision, the predicted disparities strongly correlate with underlying scene geometry. Experiments across five benchmarks demonstrate that MacroGS integrates effectively with diverse light field encoders, improving reconstruction quality at fixed scales while achieving leading performance across most evaluated arbitrary-scale settings. The decoder also achieves speedups of approximately $2$-$10\\times$ over state-of-the-art implicit light field decoders and $10$-$18\\times$ over the view-wise Gaussian baseline.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.17758": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Efficient Genotype Classification from 3D MRI in ADPKD via Density-Aware Point Sampling and E(3)-invariance",
+  "abstract": "Early detection of genetic kidney diseases, especially autosomal dominant polycystic kidney disease (ADPKD), is crucial because certain genotypes such as truncating PKD1 mutations cause rapid kidney growth and early progression to end-stage kidney disease. MRI-based genotype inference is a potential low-cost complement to genetic testing. However, although many deep learning methods have been developed for classifying various MR images, applying them to ADPKD remains challenging: (1) abdominal MR images are generally too large to be handled by deep learning models designed for smaller images like brain MRI, and (2) the amount of labeled data for ADPKD genetic mutations is insufficient to train deep learning models. In order to address these challenges, we propose E3PN, an efficient 3D MRI-based ADPKD genotype classification network that relies on point sampling and E(3)-invariance. We utilize a point representation of 3D MRI, which consumes less GPU memory than a voxel representation. For further memory efficiency, 3D points are sampled from a mixture distribution over the two kidneys in each image. Since E(3)-invariance has been shown to improve data efficiency, we also incorporate it into our model through coordinate canonicalization. On our ADPKD dataset, E3PN trains 163 times faster and uses 103x less GPU memory than a 3D ResNet, while also improving F1 from 0.165 to 0.226 over both baselines. These results establish a first benchmark for five-way ADPKD genotype classification from 3D MRI and show that point sampling and coordinate canonicalization yield two-orders-of-magnitude efficiency gains with a modest but consistent improvement in F1.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.17752": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Stage-wise Lineage-aware Dropout for Sparse-View 3D Gaussian Splatting",
+  "abstract": "Sparse-view 3D Gaussian Splatting (3DGS) is prone to overfitting because only a limited number of images are available to constrain scene geometry. Dropout is one regularization strategy for alleviating this problem. We introduce the concept of a lineage family to describe a set of Gaussian primitives derived from the same founder through cloning or splitting operations. The founder Gaussians refer to all Gaussian primitives generated during initialization. Descendants within the same family often jointly contribute to the refinement of adjacent local regions. However, dropping individual Gaussians can be less effective due to the compensation effect from neighboring Gaussians for the dropped ones. To address this issue, we propose Stage-wise Lineage-aware Dropout(SLD), which applies lineage-family dropout during the structural regularization stage and switches to individual dropout during the later refinement stage. We further propose Lineage-Balanced Densification(LBD), which operates during densification by constructing an expanded candidate pool and reallocating the densification budget according to the mean gradient scores and existing descendant sizes of different families. Experiments on the LLFF, MipNeRF360, and Blender datasets show that the proposed framework achieves competitive performance in sparse-view reconstruction",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.18372": {
+  "day": "2026-11-16",
+  "cat": "cs.RO",
+  "title": "Vision-Language-Action Models: A Life-Cycle Survey of Design, Training and Deployment",
+  "abstract": "Vision-language-action (VLA) models adapt web-pretrained vision-language models to output robot actions, so that web knowledge carries over to physical control. In under 4 years the field has moved from RT-2, the first VLA, to open models that fine-tune on a single consumer GPU and to proprietary generalists that clean unseen homes. This survey reviews 88 works from December 2022 to October 2026, mainly on manipulation and navigation, plus humanoid control, world-action models and evaluation. We follow a VLA through its life cycle, from model design to training and deployment, along seven axes. Model design covers (a) inputs and memory, what the model observes; (b) architecture, how its pipeline is built; (c) action output, how it produces motor commands; and (d) intermediate predictions, what else it predicts, from reasoning steps to future observations. Training covers (e) pretraining data, the mix of robot, web, human and simulated data, and (f) post-training, adaptation to the target robot. Deployment covers (g) real-time execution, keeping pace with the robot. We analyse 22 models on these axes and report their training data, model size, inference speed and hardware. Three trends emerge: (i) training data has broadened, from about 10,000 hours of teleoperated robot data ($\\pi_0$) to 23,000 community-collected episodes (SmolVLA) and 20,000 hours of egocentric human video (GR00T N1.7); (ii) model sizes have split: most recent models have 3-7 billion parameters, while a new group under one billion runs on consumer GPUs; and (iii) generalist VLAs are emerging that handle both manipulation and navigation, such as UniVLA and Qwen-VLA. We also compare VLAs with world-action models, which predict future observations as well as actions. We review evidence that some VLAs with near-perfect benchmark scores fail when objects or the camera move slightly, and open up further research questions.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.17983": {
+  "day": "2026-11-16",
+  "cat": "cs.AI",
+  "title": "Interactive deep-learning based interface for brain tumour segmentation",
+  "abstract": "Brain tumour segmentation from MR images is an integral part of their treatment, either through surgical resection or radiotherapy. Both applications require a high degree of precision that can be difficult to ensure for all patients due to the high degree of variability in the size, shape, number, and location of these tumours. This leads to difficulties with their automatic segmentation via deep learning, which can display catastrophic segmentation errors when presented with images that differ, even subtly, in terms of the specific MR sequence used, which varies from vendor to vendor. This article presents a deep-learning-based interactive segmentation system that, while being fully automatic by default, has the capability of being easily corrected by human users, allowing them ensure sufficiently high brain tumour segmentation accuracy for all patients. This interface is evaluated both in terms of the accuracy of its automatic approach as well as its usability through a preliminary observational expert user study.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.17862": {
+  "day": "2026-11-16",
+  "cat": "cs.AI",
+  "title": "FlexCast: Flexible Context Learning for Time Series Foundation Models",
+  "abstract": "Time series foundation models (TSFMs) based on autoregressive (AR) next-token prediction entangle two factors: variable-context conditioning and prediction-unit factorization with autoregressive rollout. Strong AR performance therefore does not reveal whether generalization stems from the flexible training distribution, the local prediction target, the left-to-right inference process, or their combination. We propose FlexCast, a flexible context-target learning framework that disentangles these factors. FlexCast reformulates forecasting as variable-length masked prediction over time series patches: during pretraining, it dynamically samples visible context and masked target patches, exposing the model to diverse context-target configurations without sequential decoding. At inference time, the same pretrained model supports one-step forecasting, confidence-based iterative refinement, and next-token-style generation through a unified mask-and-predict interface, enabling controlled comparison of inference schedules under identical architecture, data, and objective. Evaluated on BLAST and multiple zero-shot benchmarks, FlexCast achieves accuracy competitive with or better than strong TSFM baselines while substantially reducing inference latency. Ablations confirm that context diversity and contiguous target masking drive performance, while left-to-right decoding does not yield consistent gains once flexible context-target relationships have been learned, suggesting that the key benefit of AR-style TSFMs lies in flexible training rather than sequential inference. The code is available at https://github.com/BenchCouncil/FlexCast.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.17854": {
+  "day": "2026-11-16",
+  "cat": "physics.ao-ph",
+  "title": "Tracing Uncertainties of Extreme El Ni\\~{n}o Prediction to Mesoscale Ocean Currents",
+  "abstract": "The predictability of the El Ni\\~{n}o-Southern Oscillation (ENSO) has historically been linked to large-scale errors in models' initial conditions such as heat content and surface wind stress. Here we demonstrate that these slowly evolving errors may ultimately originate from mesoscale errors in initial oceanic states that are common in current models and ocean observation systems. This hidden source of ENSO forecast uncertainty, in terms of mesoscale ocean-current errors, is convincingly exposed by the conditional nonlinear optimal perturbation (CNOP) method applied to a differentiable ocean AI model. The CNOP-identified most influential current errors are strongly event-dependent. For the 1997/98 El Ni\\~{n}o, the initial current errors in the eastern Pacific results in the largest forecast error through locally suppressing original subsurface warming. For the 2015/16 event, the dominate error originates from the western Pacific, which reorganizes upper ocean temperature structure and affects the eastern Pacific through the equatorial waveguide. Further analysis reveals that these current errors perturb mesoscale eddy count and eddy kinetic energy triggering large-scale temperature errors that hinder El Ni\\~{n}o development. The timing of the maximum growth rate of the obtained CNOP error is well aligned with the spring predictability barrier of ENSO, and the error structures are reflected in simulated analysis errors caused by unresolved mesoscale currents. These findings extend the potential source of ENSO predictability beyond large-scale thermal signals, reveal for the first time an uncharted route of ENSO forecast failure, and provide an important physical basis for targeted ocean observations and data assimilation in the future.",
+  "announce": "cross",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.18340": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "DIRT: Depth-completed Image-based Rendering using Two-band Blending for Live Novel-view Synthesis",
+  "abstract": "State-of-the-art novel-view synthesis (NVS) methods commonly require per-scene optimization before rendering, limiting their applicability in live settings. Live or ad-hoc NVS, however, demands low-latency rendering during capture and strong generalization to new scenes. Some previous work tried to address this task by adapting training- and optimization-based methods, trading quality for low latency. We introduce a live NVS approach following traditional image-based rendering that operates on a posed set of depth sensor observations and images. Our method leverages explicit, sparse point-based geometry obtained from active sensors, resulting in a sparsely filled depth buffer that is completed in the (novel) target view's screen-space. Using this proxy, a posed set of images is projected into the target frame before fusing the resulting observations through a frequency-aware two-band blending strategy. The pipeline is entirely non-neural and optimization-free, requiring no training data or scene-specific optimization. As a result, our approach reduces the delay between capture and novel-view rendering and does not rely on favorable network generalization. We validate the method's applicability to heterogeneous sensor setups - including handheld RGB-D cameras, automotive LiDAR, and thermal cameras - as well as challenging scenarios, such as low light captures. Our experiments demonstrate that the approach outperforms prior methods in live reconstruction scenarios, while maintaining competitive performance in conventional NVS benchmarks.",
+  "announce": "cross",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:view synthesis,depth"
+ },
+ "2611.18143": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "DRA-HTR: Disentangling Representation and Adaptation for Handwritten Text Recognition",
+  "abstract": "Handwritten text recognition (HTR), particularly when applied to historical documents, remains challenging due to the scarcity of annotated data and the substantial domain shifts caused by variations in handwriting styles, document degradation, acquisition conditions, and linguistic characteristics. While large amounts of unlabeled target-domain data are often available, effectively exploiting them requires adaptation strategies tailored to the specific requirements of HTR. We propose DRA-HTR, an unsupervised generative domain adaptation pipeline specifically designed for HTR and built upon the DRANet framework. The proposed approach combines source-domain pretraining, unsupervised adaptation to the visual characteristics of the target domain, relying on the generation of target-style source samples for task-specific training. We further investigate the integration of post-HTR correction to complement visual adaptation with language adaptation, relying on large language models, which we introduce as DRAL-HTR. The proposed framework is evaluated across seven HTR datasets spanning four languages, using a single set of hyperparameters for all source-target combinations. The recognition model achieves state-of-the-art performance on four datasets and competitive results on the remaining three. In addition, the proposed DRA-HTR establishes a new state-of-the-art for domain adaptation across all seven datasets and substantially improves overall robustness and training stability compared to the original DRANet framework: it reduces the Character Error Rate (CER) in average by 13.52 percentage points, and the average standard deviation decreases from 7.23 to 1.11 percentage points. Finally, post-HTR correction further reduces the CER by 2.16 percentage points.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.18099": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "EcoVGGT: Pinned-Key Inference for Efficient and Streamable Feed-Forward 3D Reconstruction from Long Videos",
+  "abstract": "Feed-forward multi-view transformers such as VGGT recover the cameras and geometry of a video in one pass, but the cost of their cross-frame attention grows quadratically with the frame count, and their accuracy drops on long videos. Most remedies approximate attention over all frames within a budget or select a few keys by their content. We hypothesize that the keys of a long video can be chosen without looking at its content, and our experiments on VGGT and $\\pi^3$ support it: a few dozen evenly spread frames can serve as the keys of every frame. We present EcoVGGT, a training-free inference framework whose keys form a Pinned Key Set of 31 such frames. A pin pass stores their tokens in a Scene Cache, and the other frames read it in independent batches that reproduce joint inference with these keys exactly, at a constant cost per frame. An Online Stream updates the pinned frames during recording. Six middle global blocks align the frames and form a reusable VGGT module: the Alignment Score reads their attention to flag failures, and Alignment Refocusing reduces them by fine-tuning only these blocks (3.6 GPU hours). EcoVGGT ($\\pi^3$) matches the success rate of $\\pi^3$ on 1,000-frame ScanNet videos at 13.8 times its speed. With refocusing, EcoVGGT (VGGT) raises the success rate of VGGT from 70% to 82% at 8.5 times its speed on 500 frames. EcoVGGT reconstructs 4,000 frames on one GPU, and EcoVGGT ($\\pi^3$) streams 1,000 frames at 18.6 frames per second with the lowest online absolute trajectory error.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:3d reconstruction"
+ },
+ "2611.18033": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Multi-level latent-diffusion adaptation for cross-region point cloud segmentation of ancient terraces",
+  "abstract": "Automated lidar feature detection from lidar point clouds can support archaeological surveys, but models trained in one landscape may transfer poorly to another because of differences in terrain, vegetation, acquisition characteristics, and feature morphology. We address this problem for cross-region detection of ancient terraces using transductive unsupervised domain adaptation that exploits an unlabelled target survey. We propose MELD (Multi-level Embedding-space Latent Diffusion), which trains separate diffusion denoisers on target-domain representations at four hierarchical PointNet++ feature levels. These target distribution priors are then used to refine source representations during supervised training and target representations during inference, allowing adaptation to act directly on the multi-scale features consumed by the segmentation decoder. We additionally investigate local geometric descriptors derived from K-nearest-neighbour neighbourhoods, including surface normals, slope, and aspect. MELD is evaluated bidirectionally between the Teyuna and Miraflores lidar surveys in the Sierra Nevada de Santa Marta, Colombia, against a source-only model and nine configurations of established domain adaptation approaches. MELD raises F1 over the source-only model from 0.397 to 0.459 for Teyuna-to-Miraflores transfer and from 0.557 to 0.594 in the reverse direction, achieving the highest F1 among the evaluated adaptation methods in both directions. Adding local geometry further raises F1 to 0.542 and 0.606, respectively. Multi-level ablation shows that refining all four PointNet++ levels provides the strongest performance in both directions. These results show that explicit modelling of target feature distributions in hierarchical point cloud feature space, complemented by local geometry, provides an effective route to cross-region archaeological mapping without target labels.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:point cloud"
+ },
+ "2611.18023": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "RSSA: Robust Semantic and Spatial Aligner for Collaborative Perception",
+  "abstract": "V2X collaborative perception improves single-vehicle perception by aggregating multi-view features from collaborative agents. However, existing methods typically rely on simple spatial warping to align the collaborative features, which can cause semantic misalignment during fusion. Meanwhile, these deterministic warping-based methods are highly sensitive to the positional noises. In this paper, we propose a plug-in module called Robust Semantic and Spatial Aligner (RSSA), which performs semantic and probabilistic spatial transformations for robust feature alignment. Specifically, a Semantic Transformation (SemT) block modulates feature channels based on the observed relative pose to correct semantic inconsistencies. Subsequently, a Probabilistic Spatial Transformation (P-SpaT) block performs probabilistic warping by sampling from the Gaussian-modeled relative pose space. A Relative Transformation Augmentation (RT-Aug) strategy is further introduced to augment the relative poses and facilitate the training of the RSSA. Extensive experiments on both simulated and real-world datasets demonstrate that RSSA improves the state-of-the-art methods by a large margin under the configuration of both clean and noisy positions.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.17966": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "From Images to Grounded Edits: A Real-World Benchmark for Chinese Grammatical Error Correction in Handwritten Essays",
+  "abstract": "Chinese Grammatical Error Correction (CGEC) is typically formulated as a text-to-text problem. While suitable for digital texts, this formulation falls short in real-world K-12 education, where AI-assisted corrections are expected directly on essay images, which are primarily handwritten and exhibit many irregularities. To bridge this gap, we introduce Grounded Chinese Grammatical Error Correction (G-CGEC), an image-to-grounded-edit task requiring systems to predict both corrections and their positions on essay images. We propose G-CGEC-Eval, a benchmark comprising real-world images of K-12 Chinese essays with fine-grained annotations. For evaluation, we adapt IoU-based metrics from object detection and propose a more tolerant alternative based on center-distance matching. Using this benchmark, we evaluate open-source and proprietary vision-language models under a direct single-pass setting, as well as settings with auxiliary components (OCR and character grounding) coordinated via pipelining or agentic harnessing. Results show that even top-tier proprietary models perform surprisingly poorly in the single-pass setting, while pipelining and agentic harnessing yield meaningful improvements. Notably, an error-type-based multi-agent workflow achieves the best performance, establishing it as the strongest baseline for future G-CGEC research. Through ablations and fine-grained analysis, we find the task remains far from solved, with linguistic error discovery and character-level grounding as the primary bottlenecks. This underscores the need for models that better integrate visual perception with linguistic reasoning and visual grounding.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.17952": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Domain Adaptation Based Pipeline for Character Classification and Handwritten Text Recognition",
+  "abstract": "Character classification and handwritten text recognition, particularly in specialized tasks, often suffer from limited labeled data, while a large amount of unlabeled data remains unused. To address this challenge, we propose a novel unsupervised domain adaptation-based pipeline to reduce the distribution gap between source and target domains. Our pipeline follows three main steps. In the first step, we pretrained an expert model on source data, to learn a strong general representation. In the second step, we perform unsupervised domain adaptation to leverage unlabeled target data, adapting the model to the specific characteristics of the target domain. In the third step, we trained the expert model on source data in the target style. By aligning the feature distributions between the source and target, our method enables the model to generalize effectively across diverse datasets. The unsupervised training increases the computation time only during training not in inference. We evaluate the pipeline on both character-level and historical handwritten line recognition tasks, demonstrating its flexibility. We establish a new state-of-the-art on the Safran-MNIST-DLS dataset defined in Track 2 of the DAGECC competition with 76.17% Macro F1-score and achieve competitive results on each of the specific datasets of READ 2018 without using the labels of the target data. Code is available at https://github.com/simon-corbi/DRANet-for-classification-and-htr",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.17903": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Zoom In, Scale Out: Metric Depth Models Mistake Digital Zoom for Moving Closer",
+  "abstract": "Many new AI models estimate how far away things are, in metres, from a single photo. To do this they must also work out what camera took the photo. We check whether they really do with a simple test: digital zoom, that is, cropping a photo and enlarging the crop back to full size. Zooming moves nothing in the scene, so a correct model should give the same distance for every point still in the picture. The test is free, exact and needs no labels. Two numbers describe a model's reaction: its depth changes like $s^{-\\alpha}$ (ideal $\\alpha=0$) and its focal-length estimate like $s^{\\beta}$ (ideal $\\beta=1$), for zoom factor $s$. On 800 images from KITTI, NYUv2 and DIODE, the widely used Depth Anything V2 has $\\alpha=0.95$: it treats a zoomed photo almost as if the camera had moved closer, because it judges distance mainly from how large things look. Models that also predict the camera remove only part of this error ($\\alpha\\approx0.31$-$0.36$), because their focal estimate grows too little. Given the true camera, Depth Pro and DA3-Nested keep their depth ($\\alpha\\approx0$), so the error lies in their camera estimate. The reason: a zoomed photo is, pixel for pixel, a normal photo of a scene squashed in depth, so size alone cannot tell the two apart, and a focal estimator trained by regression stays close to the cameras it saw in training. Undoing this needs no labels or training and makes Depth Pro pass the test ($\\alpha=0.04$) at almost no cost on normal photos. Controls, including a real optical zoom lens, rule out blur and resizing artefacts. Finally, label-free fine-tuning for self-consistency lowers $\\alpha$ to 0.05 on KITTI and 0.07 on NYUv2 once a \"blurry means zoomed\" shortcut is removed; we report what this costs on normal and unseen photos.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:depth"
+ },
+ "2611.17899": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "More Genes, Faster Inference: Efficient Large-Panel Spatial Transcriptomics Prediction from Histology",
+  "abstract": "Spatial transcriptomics (ST) prediction from histology aims to infer spatially resolved gene expression profiles directly from tissue images. This is a challenging problem that is currently often addressed with complicated model architectures, additional inputs, and complicated training procedures, while remaining limited to fixed, small gene panels. This raises a natural question: Is there an efficient method for large-panel ST prediction? Here, we present GeneFlow, a simpler yet effective framework for large-scale spatial gene expression prediction that unifies flow-matching generative modeling with structured multimodal fusion. Specifically, GeneFlow first encodes both histological morphology and cross-gene interactions in spatial spots through histology and gene tokenizers. The model directly predicts spatial gene expression, rather than an intermediate velocity field, while being trained with a velocity-based flow-matching objective. We show that, even without relying on heavy generative pipelines, GeneFlow achieves state-of-the-art performance across multiple ST benchmarks, with up to 56.8% gains in 1,000-gene prediction. Extensive experiments further show that GeneFlow produces biologically meaningful spot profiles while reducing computational cost by orders of magnitude, thereby improving efficiency and scalability, particularly in clinical settings. We believe GeneFlow provides an opportunity for leveraging widely available histology images for downstream biological discovery. Code is available at: https://github.com/ZZhangsm/GeneFlow",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.17828": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Signal Scaffolding: Unlocking the Potential of Lightweight Models for Self-Supervised Monocular Depth Estimation",
+  "abstract": "With the rising demand for edge devices, lightweight self-supervised monocular depth estimation methods have continued to evolve; however, existing methods generally suffer from poor accuracy. We find that the root cause may lies in the failure of conventional training regimes to fully exploit the inherent potential of lightweight models. To address this, we propose a novel three-phase training strategy for lightweight self-supervised monocular depth estimation, termed Signal Scaffolding (SS). Without introducing any additional dataset or parameters, we apply SS to ReForgeDepth, a lightweight network of our own design. Experiments on the KITTI and Cityscapes datasets demonstrate that our method achieves state-of-the-art performance in the accuracy-efficiency trade-off and running in real time on edge devices. These results suggest that lightweight models can be improved further within their existing capacity, and that the central question may be less about how parameters are allocated than about how to unlock this latent potential through training.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:depth"
+ },
+ "2611.17755": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "VACO: Vertex-Aligned Decoding for Dense Hand Contact Estimation from a Single Image",
+  "abstract": "Dense hand contact estimation from a single RGB image is a foundational primitive for dexterous manipulation and 3D interaction analysis. Direct predictors typically decode the entire per-vertex contact map from one shared query, leaving individual vertices ungrounded in the image and smearing contact across adjacent, non-touching surfaces. We present VACO, a vertex-aligned decoder in which each MANO vertex samples local image features at its projected location. A hand-reconstruction backbone, jointly trained for reconstruction and contact, predicts these locations at inference without an auxiliary reconstructor. Training uses noise-perturbed ground-truth projections and end-to-end feature adaptation to improve robustness and contact-sensitive features. A single VACO checkpoint sets a new state of the art on five benchmarks spanning hand-object, hand-human, hand-scene, and bimanual interactions. It improves F1 by +20.7 pp over the strongest prior direct predictor on Hi4D and generalizes to the held-out HOT3D and HOCap, with gains of +5.5 and +2.7 pp. The resulting contact predictions also improve downstream HOI reconstruction.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.17505": {
+  "day": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "Adversarial Tracking: Attacks on Image Sensors for Object Tracking in Autonomous Vehicles",
+  "abstract": "Object tracking systems estimate the motion of surrounding vehicles by linking detected objects across video frames. In particular, Tracking-By-Detection (TBD) systems combine object detectors with motion prediction and data association to maintain object identities over time. However, neural network-based detectors are vulnerable to adversarial attacks that perturb input images, and their impact on downstream trajectory estimation is not fully characterized by detection accuracy alone. Therefore, this paper evaluates image-specific and image-agnostic attacks on YOLOv3 and YOLOv4 detectors paired with SORT, Deep SORT, Strong SORT, and OC-SORT tracking systems. The evaluation uses CARLA simulator and measures tracking quality through Multiple Object Tracking Accuracy (MOTA), Higher Order Tracking Accuracy (HOTA), and Identification F1 (IDF1). Under image-specific attacks, HOTA for YOLOv3-based trackers declines from 53.45-56.19% to 14.85-17.03%, while MOTA reaches -772.60% in the worst case. YOLOv4-based trackers exhibit greater robustness, while HOTA still declines to 25.06-26.86%. In addition, image-agnostic attacks can reduce the tracking accuracy using a single Universal Adversarial Perturbation (UAP), without generating a separate perturbation for individual frames.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:tracking"
+ },
+ "2611.18243": {
+  "day": "2026-11-16",
+  "cat": "eess.IV",
+  "title": "D2ToF: One-Step Diffusion for Depth Super-Resolution from Lightweight Single-Photon LiDAR Waveforms",
+  "abstract": "Single-photon LiDAR (SPL) sensors offer exceptional temporal resolution and single-photon sensitivity for depth imaging. However, cost-effective SPL arrays typically suffer from extremely low spatial resolutions (e.g. $8\\times 8$ pixels), limiting their real-world utility. In this paper, we propose a novel, one-step super-resolution framework, D2ToF, Distilled Diffusion for Time-of-Flight, that bridges the gap between high-fidelity generative modeling and real-time execution. Our approach uses an amortized variational distillation strategy that allows for a measurement-based data consistency term to be incorporated directly into the one-step training objective. This encourages that the synthesized high-resolution depth maps are consistent with the captured low-resolution Time-of-Flight (ToF) histograms. To overcome the severe ill-posedness of upsampling extremely degraded inputs, we introduce a multimodal guidance strategy. By leveraging a foundational monocular depth model to extract structural priors from a high-resolution reflectivity image, our network is guided by a rich triad of the ToF histogram, reflectivity map, and relative depth estimate. Experimental results outperform evaluated baselines, achieving $16\\times$ spatial super-resolution (from $8\\times 8 \\times 100$ histograms to $128\\times 128$ depth maps) at an accelerated inference speed of approximately $83$ milliseconds.",
+  "announce": "cross",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:depth"
+ },
+ "2611.17458": {
+  "day": "2026-11-16",
+  "cat": "cs.GR",
+  "title": "FOMOS: Feature-Oriented Meshing of SDFs",
+  "abstract": "We introduce FOMOS, a purely geometric method for feature-oriented meshing of signed distance functions (SDFs) that addresses various challenges of the existing state-of-the-art methods. Our algorithm improves mesh quality and runtime, enabling the SDF meshing in a matter of seconds. While existing techniques such as Marching Cubes and Neural Dual Contouring either produce dense, low-quality triangulations or sacrifice details for sparsity, often requiring carefully chosen user parameters, our single-parameter FOMOS leverages feature sized sampling to dynamically adjust mesh resolution based on local feature size (LFS), which we compute efficiently by sampling a medial scaffold. The LFS considers not only curvature but also shape thickness and captures large features through non-local structure, omitting many redundant small triangles from existing methods. Through extensive comparisons, we demonstrate the distinct strengths of FOMOS in execution time, reconstructed result accuracy, and triangle quality in the output mesh. We also introduce a lightweight variant of FOMOS targeting huge ($10k^3$) sparse inputs, which, to the best of our knowledge, no existing method can handle except Marching Cubes. To demonstrate the usefulness of our method, we show that FOMOS enables instant previews using a sub-sampled medial scaffold and can accelerate volumetric simulations by orders of magnitude.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:mesh"
+ },
+ "2611.18491": {
+  "day": "2026-11-16",
+  "cat": "cs.RO",
+  "title": "When Will You Hand It Over? A Hidden Start Delay Makes Self-Play Handover Robust to Unfamiliar Partners",
+  "abstract": "Cooperative self-play can teach a humanoid to receive an object without any human data, but the partner it meets after training is never the one it trained with; we show that a fluent self-play handover policy breaks with unfamiliar partners, identify the main cause, and repair it. In a physics-based parcel handover between a Unitree G1 and a learned giver, both trained by alternating PPO self-play, the receiver completes 95% and 90% of handovers with its own partner (two training seeds) but only 31% with scripted partners it has never met. Paired interventions isolate the cause: under a shared reward the learned giver always starts its offer at once, so the receiver learns a single rendezvous, and delaying its own partner by one second cuts success from 95% to 6% (87% to 34% in the second seed). We introduce hidden start-delay randomisation (HSD), a one-line rule on the learned partner that the receiver never observes. After 300 further updates, success with unseen scripted partners rises from 31% to 80% in both seeds, against 35--41% for a budget-matched control. The gain holds on a fresh scenario seed, on eleven held-out partner conditions and on partners that start later than any training delay; it cuts high-force contact three- to five-fold and needs no retraining of the partner.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.18422": {
+  "day": "2026-11-16",
+  "cat": "cs.RO",
+  "title": "The State Is Not the Bottleneck: A Paged-State Gated-DeltaNet Tile on a Tri-Mode Multicast Mesh, Bit-Exact from RTL to Silicon",
+  "abstract": "Linear-attention language models replace a growing key-value cache with a recurrent state of fixed size. On an edge FPGA, this state can exceed the on-chip memory and must be paged to external memory. This paper asks whether such paging dominates the cost of decoding (generating tokens). We built a hardware tile that computes one complete layer of a custom 369-million-parameter hybrid Gated DeltaNet model on an Agilex 5 FPGA and pages its recurrent state. The model state needs 6.2 MiB, whereas the device has 0.87 MiB of block memory. Paging adds 26.0 MB of memory traffic per decoded token, at most 11.2 percent of the calculated total. On the board at 75 MHz, with synthetic weights, one token takes 11.15 ms in this layer. The matrix-vector products with the weights take about 62 percent of this time and the state phase, including the paging, 13 percent. The tile is one node of a multicast mesh of tri-mode processing elements. We measure the error of the fixed-point arithmetic against floating point and check that the hardware agrees bit for bit with a fixed-point reference. In simulation, the state logic agrees with the reference on all 18 recurrent layers. On the board, six builds pass all 30 runs of 64 tokens and two runs of 1,024 tokens. For this model and memory interface, the delivery of the weights limits the decoding performance, and the recurrent state does not. State paging is therefore practical for such a model on an edge FPGA.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:mesh"
+ },
+ "2611.18123": {
+  "day": "2026-11-16",
+  "cat": "cs.RO",
+  "title": "Evaluating Language Models as Spatial Priors for Object-Goal Navigation",
+  "abstract": "Semantic exploration methods for object-goal navigation use large language models (LLMs) to score how strongly a target object is associated with a room type or with a nearby object. This paper considers obtaining from the LLM a spatial prior instead: a distribution over the position of the target in a room. We evaluate whether two open-weight LLMs, Qwen3.5-27B and Gemma-4-31B-it, can provide such a prior. Using real room layouts from CubiCasa5K and ScanNet, we measure the likelihood the models assign to real and perturbed layouts, and the layouts they generate. The object frequencies and room sizes of the generated rooms follow the room type, but the proximity of the objects to the walls does not follow the differences between room types found in real rooms. The likelihood distinguishes real layouts from perturbed ones partly through their geometry and partly through the agreement between the coordinates and a field that states the wall each object touches; for the movable furniture of ScanNet, it is higher for layouts with all objects piled near the room center than for the real layouts in most rooms. When an object is given in the prompt, the models place a related object relative to it. When the wall of each object is given, they place most objects against that wall, but do not keep all objects inside a given room rectangle. As a prior for object search, the generated placements reduce the searched area relative to a uniform prior, but by less than a third of the reduction obtained with a prior built from real layouts, and by less than two thirds when both priors are spatially smoothed. These results support the use of LLMs for object-room associations and for writing coordinates under constraints determined by another component, followed by a geometric check, but not as a source of placement priors where real layouts are available.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.17730": {
+  "day": "2026-11-16",
+  "cat": "cs.RO",
+  "title": "ERA: Error-Resistant Autonomous Object Navigation with Predicted Depth",
+  "abstract": "Depth and 3D foundation models can predict geometry from RGB images, allowing zero-shot object navigation without a depth sensor. However, when predicted depth is mapped as if it came from a sensor, view-dependent errors accumulate in the map, remove exploration goals, and end the search before the agent can observe and correct them. We propose ERA, a training-free object navigation system that replaces the depth sensor with depth predicted from RGB images and poses. ERA follows a paradigm we call Move with Error: movement provides new views that correct map errors, and the corrected map enables further movement. It realizes this paradigm with revisable occupancy and with exploration from reachable viewpoints, which continues the search when no frontier remains, and verifies the target across views before stopping. On three benchmarks, ERA achieves state-of-the-art performance among training-free methods without depth sensors. Its map and exploration components also raise VLFM's success from 10.8% to 61.7% under the same predicted depth. We further deploy ERA on a real robot.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:depth"
+ },
+ "2611.17619": {
+  "day": "2026-11-16",
+  "cat": "cs.RO",
+  "title": "TouchTwin: Scaling Human Touch Data via Real-to-Sim-to-Real",
+  "abstract": "Human demonstrations are becoming the main source of data for dexterous manipulation, and real-to-sim-to-real pipelines multiply each demonstration in simulation. These pipelines rebuild the interaction from vision, which recovers how the hand moves. Which fingers touch, when, and how hard remain unobserved, because a hand pose shows where each finger stops on the surface rather than how far it is driven to close. This gap is a force gap: on held-out recordings, a hand policy that imitates the observed pose grips with 0.31x the recorded force, and a policy trained on physics replays of vision-tracked poses grips with 1.55x. TouchTwin closes the gap with measured human touch. Each selected TouchScale recording, captured with head and wrist RGB-D cameras and an 880-taxel glove, is rebuilt in MuJoCo. Coding agents write the objects as physics-tested programs, and a per-subject tactile hand replays the interaction with the recorded touch setting the contact and the closing force of each finger. In simulation, a policy trained on touch-grounded replays grips at 0.99x the recorded force and succeeds in 20/20 trials on held-out recordings and 35/36 unseen perturbations; a contact predictor trained on them misses 13% of real contact frames, against 32% for vision-based replays. Each replay also seeds perturbed demonstrations with simulated contact and force labels, rendered as realistic video in new views and scenes.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:sim-to-real"
+ },
+ "2611.17495": {
+  "day": "2026-11-16",
+  "cat": "cs.AI",
+  "title": "An Operationalization of Opaque Serial Depth",
+  "abstract": "Chain-of-thought (CoT) is currently a valuable tool for overseeing AI models, but some architectural shifts could significantly reduce CoT monitorability. We operationalize a measure that serves as a proxy for the amount of unverbalized serial cognition a model can perform, as a specific instantiation of the notion of opaque serial depth: roughly, the length of the longest path through a model's computation that does not pass through an interpretable bottleneck. Our main contribution is a particular standard for what counts as such a bottleneck. We define natural-language-rooted (NL-rooted) nodes as nodes that were initialized from a pre-training prior to produce human-understandable outputs, whose output space has not been expanded beyond that prior, and whose outputs the model has not been modified to interpret as a different type of data. By construction, the resulting measure, NLS depth, can be adjudicated before training from an architecture, training recipe, and deployment configuration alone, and is insensitive to ordinary post-training such as prompting, distillation, and RL. We find that, across open-weight models, NLS depth correlates strongly with layer count, with some exceptions, and has grown slowly over recent years. It would likely grow slowly under continued scaling of standard transformers, while latent-reasoning architectures such as full-bandwidth transformers could increase it by a large amount. We work through how NLS depth applies to a range of existing and proposed architectures, discuss alternative operationalizations, and give a worked example bounding the depth of Gemma3-1B. We argue that AI developers should track and report the NLS depth of their models as a complement to direct measurements of CoT monitorability.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:depth"
+ },
+ "2611.18542": {
+  "day": "2026-11-16",
+  "cat": "stat.ML",
+  "title": "Elliptic Sampling: Optimal Interpolant Schedules for Gaussians and Beyond",
+  "abstract": "Generative modeling based on stochastic interpolants requires specifying two key choices: an interpolant schedule bridging the initial and target distributions, and an efficient discretization of the resulting probability-flow ODE. In this work, we introduce a new framework for joint schedule/discretization design based on the analyticity properties of the (complexified) ODE trajectories, which in turn ensure good numerical behavior. Our formulation can be solved exactly via conformal mapping, yielding a natural family of variance-preserving elliptic schedules, parametrized by Jacobi elliptic functions. Pairing an elliptic schedule with a tailored discretization, we obtain Zoloflow, a new sampling algorithm closely connected to Zolotarev's optimal rational function approximants. Crucially, both the elliptic schedule and Zoloflow explicitly incorporate the condition number $\\kappa$ of the target distribution and reduce to the classical trig schedule in the limit $\\kappa \\rightarrow 1$. For Gaussian targets, Zoloflow achieves minimax optimality among all oblivious score-span algorithms, attaining total-variation error $\\varepsilon$ using $\\Theta(\\log\\kappa\\,\\log(\\sqrt d/\\varepsilon))$ (exact) score queries. For the log-concave case, the elliptic schedule allows sampling with at most $\\varepsilon$ 2-Wasserstein-error by requiring merely $\\widetilde{O}(\\sqrt{d} \\, \\mathrm{polylog}(\\kappa, 1/\\varepsilon))$ score evaluations. Complementing these theoretical results, we empirically evaluate the elliptic schedule on general (non-log-concave) target distributions, including detailed comparisons with alternative schedule proposals on both synthetic benchmarks and existing image generation datasets.",
+  "announce": "cross",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:gaussian"
+ },
+ "2611.17974": {
+  "day": "2026-11-16",
+  "cat": "eess.IV",
+  "title": "Few-Shot Open-Set Hyperspectral Pixel-Wise Classification with Spatial Aware Label Propagation",
+  "abstract": "Pixelwise classification of hyperspectral images (HSI) is a fundamental task in remote sensing, but its deployment in real-world applications is often limited by the scarcity of labeled data and the presence of unknown classes at inference time. In this work, we propose Few-shot Open-set hyperspectral recognition from Self-Supervised Learning training (FOSSeL), a unified framework for few-shot, open-set hyperspectral pixelwise classification that does not require supervised training. The proposed approach first leverages self-supervised learning to construct a discriminative feature space from unlabeled data. Then, given a small set of labeled seed pixels, class predictions are obtained through spatially-aware graph-based label propagation over superpixel representations, enabling the joint exploitation of spectral similarity and spatial consistency. To address the open-set scenario, we introduce simple yet effective strategies to identify pixels that do not belong to the known classes. We evaluate FOSSeL on three benchmark hyperspectral datasets under multiple few-shot settings. The results show that the proposed framework achieves competitive or superior performance compared to fully supervised methods while maintaining robustness in the presence of unknown classes. These findings highlight the potential of combining self-supervised feature learning with graph-based inference for practical HSI analysis in low-annotation and open-world scenarios.",
+  "announce": "new",
+  "published_rss": "2026-11-16",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ }
+}

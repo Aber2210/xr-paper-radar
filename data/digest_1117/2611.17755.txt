@@ -1,0 +1,66 @@
+【摘要】
+
+【引言】
+ Dense hand contact maps serve as a foundational visual primitive for physical interaction systems. Dexterous robotic manipulation policies require precise knowledge of which finger surfaces will touch an object  Grady et al. (2021) , while immersive AR/VR and digital-human pipelines rely on dense contact to re-target plausible grasps. Although specialized hardware—such as instrumented gloves  Brahmbhatt et al. (2019) —can collect accurate contact labels in controlled laboratory settings, they cannot scale to unconstrained, in-the-wild images. Fortunately, dense hand contact is a property human observers can confidently infer from sight alone: given a still image of a hand interacting with a tool, one can easily distinguish which knuckles press the surface and which finger pads are lifted. This cognitive capability makes per-vertex contact prediction directly from a single RGB image —estimating a binary label for every vertex of a parametric MANO  Romero et al. (2017) hand—a desirable yet challenging visual task.
+Figure 1: Dense hand contact paradigms. (a) Geometric proximity after reconstruction. (b) Shared-query direct prediction. (c) VACO samples image evidence at projected vertices.
+To date, two primary paradigms have tackled this image-to-contact problem, yet both leave critical cues unexploited. Reconstruction-based approaches  Grady et al. (2021) , also called reconstruct-then-query , first recover both the hand mesh and the interacting object, deriving contact from geometric proximity. While semantically explicit, this paradigm inherits the brittleness of full-object reconstruction, whose errors compound in cluttered scenes. Conversely, direct prediction methods regress per-vertex contact straight from pixels  Tse et al. (2022) ; Hu et al. (2024) . The strongest representative, HACO  Jung and Lee (2025) , achieves state-of-the-art performance by addressing data imbalance through a vertex-level class-balanced loss. However, these fast and scalable predictors treat the entire vertex set as a flat, 1D topological target. By reading every per-vertex output through a single shared contact query token—cross-attending to a spatial image feature grid and decoded by one shared linear head—the network has no per-vertex handle on the image evidence. The model never knows where on the image plane each vertex actually projects. This shared-query bottleneck creates a structural blind spot that produces geometric bleeding : contact predictions spill from a touching vertex onto neighboring non-touching vertices on adjacent fingers and knuckles, even when only a 
+
+【方法】
+3.1 Overview
+3.2 Per-Vertex Token Construction
+3.3 Vertex-Aligned Decoding and Multi-Granularity Readout Figure 2: VACO pipeline. A co-trained WiLoR  Potamias et al. (2025) backbone predicts MANO vertices and image features. Multi-scale sampling at vertex projections forms contact tokens; four decoder blocks combine mesh-wide self-attention with image cross-attention before per-vertex prediction.
+3.1 Overview
+Given a single RGB image I I , our goal is to predict a binary contact label c v ∈ { 0 , 1 } c_{v}\in\{0,1\} for every vertex v ∈ { 1 , … , V } v\in\{1,\dots,V\} of the MANO  Romero et al. (2017) mesh.
+As illustrated in Figure  2 , VACO combines a WiLoR  Potamias et al. (2025) backbone with a geometry-driven contact decoder. The backbone encodes I I into a feature pyramid 𝐅 vit \mathbf{F}_{\mathrm{vit}} and predicts a MANO mesh 𝒱 \mathcal{V} that serves as the spatial scaffold. Projecting 𝒱 \mathcal{V} onto the image yields vertex-aligned queries, which a lightweight Transformer decoder maps to contact probabilities:
+I \displaystyle I
+→ fine-tuned encoder 𝐅 vit , \displaystyle\xrightarrow{\;\text{fine-tuned encoder}\;}\;\mathbf{F}_{\mathrm{vit}},
+(1)
+( 𝐅 vit , 𝒱 ) \displaystyle\big(\mathbf{F}_{\mathrm{vit}},\,\mathcal{V}\big)
+→ VACO decoder 𝐜 ^ ∈ [ 0 , 1 ] V . \displaystyle\xrightarrow{\;\text{VACO{} decoder}\;}\;\hat{\mathbf{c}}\in[0,1]^{V}.
+Predicted meshes can propagate pose errors into contact estimates. During training, we therefore sample at ground-truth projections π ⁡ ( 𝒱 gt ) \pi(\mathcal{V}^{\mathrm{gt}}) perturbed with image-plane Gaussian noise and jointly optimize the shared backbone for contact and reconstruction. At inference, the predicted scaffold replaces these training projections; Table  4 shows that it matches ground-truth projections in contact performance.
+3.2 Per-Vertex Token Construction
+The central technical contribution of VACO lies in formulating each MANO vertex as an independent query token that reads out the localized 2D visual evidence at its own projected footprint.
+Multi-scale visual sampling.
+The raw ViT feature map, produced at the encoder’s native patch stride, lacks the spatial acuity necessary for vertex-level discrimination. We first upsample 𝐅 vit \mathbf{F}_{\mathrm{vit}} via a lightweight deconvolutional pyramid into S S progressively finer feature scales { 𝐅 vit s } s = 1 S \{\mathbf{F}^{s}_{\mathrm{vit}}\}_{s=1}^{S} . For each scale s s , we project the 3D vertices 𝒱 \mathcal{V} onto the image plane using the weak-perspective camera parameters 𝝅 ^ \hat{\boldsymbol{\pi}} predicted by the same WiLoR head as 𝒱 wilor \mathcal{V}^{\mathrm{wilor}} (and from dataset annotation paired with 𝒱 gt \mathcal{V}^{\mathrm{gt}} during training), and bilinearly sample the corresponding features:
+𝐟 v vit , s \displaystyle\mathbf{f}^{\mathrm{vit},s}_{v}
+= Bilinear ⁡ ( 𝐅 vit s , π ⁡ ( 𝐯 , 𝝅 ^ ) ) , \displaystyle=\mathrm{Bilinear}\!\left(\mathbf{F}^{s}_{\mathrm{vit}},\;\pi(\mathbf{v};\hat{\boldsymbol{\pi}})\right),
+(2)
+𝐟 v vit \displaystyle\mathbf{f}^{\mathrm{vit}}_{v}
+= [ 𝐟 v vit , 1 , … , 𝐟 v vit , S ] . \displaystyle=\big[\mathbf{f}^{\mathrm{vit},1}_{v},\,\dots,\,\mathbf{f}^{\mathrm{vit},S}_{v}\big].
+By fine-tuning the image encoder end-to-end with this explicit sampling grid, gradients flow directly from specific surface locations. This forces the multi-scale features to focus on localized contact boundaries rather than generic hand structures.
+3.3 Vertex-Aligned Decoding and Multi-Granularity Readout
+The sampled feature for each of the V V vertices is projected into a D D -dimensional token by a shallow MLP, and a learned per-vertex embedding 𝐞 v \mathbf{e}_{v} , indexed by the fixed MANO vertex order, is added: 𝐭 v ( 0 ) = MLP ⁡ ( 𝐟 v vit ) + 𝐞 v \mathbf{t}^{(0)}_{v}=\mathrm{MLP}(\mathbf{f}^{\mathrm{vit}}_{v})+\mathbf{e}_{v} . Tokens are kept in MANO vertex order, so each carries both its local appearance and the identity of the vertex it describes. These tokens are then fed into an N N -layer Transformer decoder with H H attention heads and hidden dimension D D . Hand-object interactions are structured; for instance, a power grasp involves strong correlations among all fingers, whereas a pinch relies on isolated fingertips. Each layer therefore performs two complementary reads. Self-attention runs globally over the set of V V vertex tokens, letting the decoder capture and propagate these structural contact patterns without hand-crafted heuristic rules. Cross-attention then queries the encoder’s native-stride feature map 𝐅 vit \mathbf{F}_{\mathrm{vit}} , flattened into key/value tokens, so that a vertex can also condition on scene context beyond its own projected footprint—the interacting object, the opposing hand, or an occluder in front of it—which the point-wise sample at its projection cannot carry.
+A shared contact readout head maps the refined vertex-token matrix
+𝐓 ∈ ℝ V × D \mathbf{T}\!\in\!\mathbb{R}^{V\times D} to per-vertex contact logits
+ℓ ^ = f out ​ ( 𝐓 ) ∈ ℝ V \hat{\boldsymbol{\ell}}=f_{\mathrm{out}}(\mathbf{T})\in\mathbb{R}^{V} , where
+f out f_{\mathrm{out}} is applied independently to each vertex token and outputs one scalar logit per vertex. The corresponding contact probabilities are given by
+𝐜 ^ = σ ⁡ ( ℓ ^ ) \hat{\mathbf{c}}=\sigma(\hat{\boldsymbol{\ell}}) .
+However, dense contact ground truth is derived from a proximity heuristic at the per-category threshold τ \tau (following HACO’s per-category protocol, 10 10  mm for most datasets; see App.  A ), making it noisy at the individual vertex level. Directly supervising this raw V V -dimensional output leads to an unstable loss landscape. Following HACO, we adopt a coarse-to-fine multi-granularity readout that aggregates ℓ ^ \hat{\boldsymbol{\ell}} at four structural resolutions ( r ∈ { V , V 2 , V 3 , J } r\in\{V,V_{2},V_{3},J\} , with V > V 2 > V 3 > J V>V_{2}>V_{3}>J ) through linear operators 𝐑 r ∈ ℝ n r × V \mathbf{R}_{r}\!\in\!\mathbb{R}^{n_{r}\times V} : the qslim mesh-downsampl
+
+【实验】
+ We evaluate cross-domain generalization (Sec.  5.2 ), analyze the model components and scaffold robustness (Sec.  5.3 ), and assess downstream HOI reconstruction (Sec.  5.4 ).
+
+【结论/局限】
+References
+A Datasets and Training Pool
+B Additional Implementation Details
+C Integrating VACO Contact Priors into AGILE
+D Additional Qualitative Comparisons
+E Left-Hand and Multi-Hand Inference
+License: CC BY 4.0
+arXiv:2611.17755v1 [cs.CV] 13 Nov 2026
+VACO: Vertex-Aligned Decoding for Dense Hand Contact Estimation from a Single Image
+Binhong Ye
+Affiliation:  State Key Lab of CAD & CG, Zhejiang University, China
+Jin-Chuan Shi
+Affiliation:  State Key Lab of CAD & CG, Zhejiang University, China
+Tao Liu
+Affiliation:  State Key Lab of CAD & CG, Zhejiang University, China
+Xin Wang
+Affiliation:  State Key Lab of CAD & CG, Zhejiang University, China
+Hao Chen
+Affiliation:  State Key Lab of CAD & CG, Zhejiang University, China
+Chunhua Shen
+Affiliation:  State Key Lab of CAD & CG, Zhejiang University, China
+Affiliation:  Zhejiang University of Technology, China * Equal contribution. † Corresponding author. We introduced VACO, grounding dense contact predictions in image features sampled at projected MANO vertices. Joint reconstruction and contact training lets the backbone predict these locations at inference. One checkpoint sets a new state of the art across hand–object, hand–human, hand–scene, and bimanual benchmarks and improves downstream HOI reconstruction with AGILE.
+Two limits are worth naming. Accuracy remains bounded by the predicted scaffold: under heavy occlusion or truncation, pose and contact errors are coupled, and the perturbation sweep of Table  4 covers only the measured regime. Grounding is also confined to the image plane: vertices whose projections coincide—most notably palmar and dorsal surfaces—sample identical image features. The learned per-vertex embedding lets such vertices produce different outputs, but the decoder receives no explicit depth, normal or visibility cue, so strongly overlapping surfaces remain ambiguous. The per-frame formulation omits temporal and cross-mesh reasoning, while proximity-derived labels limit supervision; temporal, multi-

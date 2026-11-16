@@ -1,0 +1,452 @@
+【摘要】
+
+【引言】
+ Monocular depth estimation is a core perception capability for autonomous driving and robotics. Supervised methods rely on costly LiDAR or manual annotation, whereas self-supervised methods recover depth from monocular video via photometric consistency alone [ 17 , 63 ] . The pursuit of benchmark accuracy has driven a steady increase in model scale: transformer-based [ 42 , 61 ] and diffusion-based self-supervised methods [ 44 , 25 , 18 ] routinely exceed tens of millions of parameters while pushing the state of the art. However, as perception tasks increasingly shift toward resource-constrained edge devices, deploying networks at such scale poses considerable challenges. Consequently, compact architectures have emerged as an active research direction [ 59 , 58 , 66 ] .
+Figure 1 : Performance and qualitative comparison. (a) Qualitative depth predictions: the proposed ReForgeDepth recovers finer boundary details than representative lightweight methods while using the fewest parameters. (b) Accuracy-cost trade-off on KITTI, where ReForgeDepth sits closer to the upper right corner.
+Existing research on lightweight monocular depth estimation focuses primarily on network architecture design [ 32 , 66 , 12 , 57 ] . For instance, Lyu et al. [ 37 ] introduced high-resolution skip connections to preserve spatial details; Zhang et al. [ 59 ] proposed a lightweight CNN-Transformer hybrid; and more recently, Chen et al. [ 4 ] introduced feature purification to improve estimation efficiency. However, despite continual architectural innovation, lightweight monocular depth estimation has long faced an unexplained accuracy ceiling: the most competitive compact models cluster within a narrow accuracy band, and pushing beyond it typically demands more parameters or more data [ 32 , 66 , 59 , 12 , 57 ] .
+In our experiments, we observe that pretraining does not always substantially improve the performance of lightweight networks—a phenomenon consistent with that reported by Muralidharan et al. [ 39 ] in supervised tasks. The prevailing view holds that this issue can only be resolved by further scaling up the network [ 66 ] or by introducing additional semantic segmentation datasets [ 48 ] ; yet both remedies run counter to the original intent of lightweight design and severely constrain the development of lightweight monocular depth estimation. We argue that the root cause might lie in the training pipeline inherited from networks of conventional scale: pretrain first, then fine-tune directly [ 15 , 14 ] . Networks with rich redundancy naturally absorb pretraining knowledg
+
+【方法】
+Year
+Train
+Depth Error ↓ \downarrow
+Depth Accuracy ↑ \uparrow Abs Rel ↓ \downarrow
+Sq Rel ↓ \downarrow
+RMSE ↓ \downarrow
+RMSE log ↓ \downarrow
+Params ↓ \downarrow
+DDVO [ 47 ]
+0.387
+4.720
+8.090
+0.204
+28.1M
+Monodepth2 [ 17 ]
+0.322
+3.589
+7.417
+0.163
+14.3M
+R-MSFM6 [ 65 ]
+0.334
+3.285
+7.212
+0.169
+3.8M
+Lite-Mono-tiny [ 59 ]
+0.318
+3.217
+7.234
+0.164
+2.2M
+Flex-Small [ 66 ]
+0.315
+3.127
+6.865
+0.159
+6.1M
+ReForgeDepth(Ours)
+0.311
+3.094
+6.995
+0.160
+1.5M
+4.4 Complexity and Runtime
+Table  3 reports model complexity and speed at 640 × \times 192 on a MacBook Air (M2) and an iPhone 12 (A14), measured with Apple Core ML (Float32) and averaged over 200 runs after 50 warm-ups. ReForgeDepth attains the highest FPS on both devices, sustaining real-time inference on the iPhone 12 with the best accuracy–efficiency trade-off.
+Why FLOPs fail to predict on-device latency. On mobile SoCs, latency depends more on operator-level hardware support than on FLOPs. Although Monodepth2-Res18 [ 17 ] requires 2.2 × \times more FLOPs than ReForgeDepth, both achieve nearly identical latency on the iPhone 12 because Monodepth2-Res18’s convolution-only architecture is well optimized by mobile inference engines. Conversely, PuriLight [ 4 ] has modest FLOPs but runs significantly slower because its frequency-domain operations are poorly supported on mobile devices.
+Table 3 : Model complexity and inference speed. All models process 640 × \times 192 inputs. Params: number of parameters; FLOPs:floating-point operations; FPS: frames per second. Full Model ↓ \downarrow
+Macbook Air (M2)
+iPhone 12 (A14)
+Params(M)
+FLOPs(G)
+Abs Rel
+Speed (ms) ↓ \downarrow
+FPS ↑ \uparrow
+Speed (ms) ↓ \downarrow
+FPS ↑ \uparrow
+Monodepth2 [ 17 ]
+14.3
+8.0
+0.115
+21.36
+47
+30.47
+33
+R-MSFM3 [ 65 ]
+3.5
+16.5
+0.114
+21.61
+46
+47.53
+21
+Lite-Mono [ 59 ]
+3.1
+5.0
+0.107
+18.27
+55
+41.65
+24
+PuriLight [ 4 ]
+2.7
+7.1
+0.106
+37.26
+27
+60.64
+16
+ReForgeDepth
+1.5
+3.6
+0.102
+17.28
+58
+29.80
+34
+Table 4 : Generalization of the Signal Scaffolding (SS) on the KITTI Eigen split. “w/o SS” denotes training with ImageNet initialization only, and “w/ SS” further applies Signal Scaffolding.
+Abs Rel ↓ \downarrow
+Sq Rel ↓ \downarrow
+RMSE ↓ \downarrow w/o
+w/
+w/o
+w/
+w/o
+w/
+(a) Teacher: Lite-Mono-8M
+Lite-Mono-tiny
+0.110
+0.106
+0.837
+0.799
+4.710
+4.574
+Flex-Nano
+0.110
+0.108
+0.794
+0.789
+4.678
+4.627
+Lite-Mono
+0.107
+0.105
+0.765
+0.747
+4.561
+4.511
+ReForgeDepth (ours)
+0.110
+0.104
+0.894
+0.746
+4.748
+4.521
+(b) Teacher: Flex-Large
+Lite-Mono-tiny
+0.110
+0.105
+0.837
+0.773
+4.710
+4.516
+Flex-Nano
+0.110
+0.106
+0.794
+0.757
+4.678
+4.547
+Lite-Mono-8M
+0.101
+0.100
+0.729
+0.696
+4.454
+4.356
+ReForgeDepth (ours)
+0.110
+0.102
+0.894
+0.726
+4.748
+4.459
+Table 5 : Sensitivity of the weight η \eta and its schedule on the KITTI Eigen split. η \eta is the coefficient of the distillation loss in Eq. ( 20 ); “Start ep.” denotes the epoch at which distillation is activated, and “Warm-up” indicates whether η \eta increases gradually from zero.
+Weight η \eta
+Warm-up
+Start ep.
+Teacher
+Abs Rel ↓ \downarrow
+(a) Distillation weight, activated from epoch 0
+0.1
+✗
+0
+LiteMono-8M
+0.106
+0.1
+✗
+0
+Flex-Large
+0.104
+0.05
+✗
+0
+LiteMono-8M
+0.107
+0.05
+✗
+0
+Flex-Large
+0.105
+0.025
+✗
+0
+LiteMono-8M
+0.108
+0.025
+✗
+0
+Flex-Large
+0.106
+(b) Distillation weight, activated from epoch 5
+0.1
+✗
+5
+LiteMono-8M
+0.106
+0.1
+✗
+5
+Flex-Large
+0.105
+0.05
+✗
+5
+LiteMono-8M
+0.107
+0.05
+✗
+5
+Flex-Large
+0.105
+0.025
+✗
+5
+LiteMono-8M
+0.108
+0.025
+✗
+5
+Flex-Large
+0.106
+(c) Warm-up ( η = 0.1 \eta=0.1 )
+0.1
+✓
+5
+LiteMono-8M
+0.107
+0.1
+✓
+5
+Flex-Large
+0.104
+0.1
+✓
+0
+LiteMono-8M
+0.104
+0.1
+✓
+0
+Flex-Large
+0.102
+Table 6 : Ablation of training components and teacher choice. Phase I denotes ImageNet initialization, Phase II denotes photometric self-supervised training, and Phase III denotes teacher distillation. A teacher name indicates that Phase III is used; ✗indicates that it is omitted. Best Abs Rel is in bold .
+Configuration
+KITTI Eigen
+Phase I
+Phase II
+Phase III
+Abs Rel ↓ \downarrow
+(a) Training-component ablation
+✗
+✗
+Lite-Mono-8M
+0.120
+✗
+✗
+Flex-Large
+0.147
+✗
+✓
+✗
+0.117
+✗
+✓
+Lite-Mono-8M
+0.115
+✗
+✓
+Flex-Large
+0.115
+✓
+✓
+✗
+0.110
+✓
+✓
+Teacher-free (30 epoch.)
+0.110
+✓
+✗
+Lite-Mono-8M
+0.113
+✓
+✗
+Flex-Large
+0.111
+(b) Teacher choice under the full SS strategy
+✓
+✓
+Depth Anything V3-Small
+0.114
+✓
+✓
+Lite-Mono-3.1M
+0.107
+✓
+✓
+Lite-Mono-8M
+0.104
+✓
+✓
+Flex-Large
+0.102 Year
+Train
+Depth Error ↓ \downarrow
+Depth Accuracy ↑ \uparrow w/o
+w/
+w/o
+w/
+w/o
+w/
+w/o
+w/
+(a) Teacher: Lite-Mono-8M [ 59 ]
+Lite-Mono-tiny [ 59 ]
+0.110
+0.106
+0.837
+0.799
+4.710
+4.574
+0.187
+0.182
+Flex-Nano [ 66 ]
+0.110
+0.108
+0.794
+0.789
+4.678
+4.627
+0.184
+0.184
+Lite-Mono [ 59 ]
+0.107
+0.105
+0.765
+0.747
+4.561
+4.511
+0.183
+0.181
+ReForgeDepth (ours)
+0.110
+0.104
+0.894
+0.746
+4.748
+4.521
+0.186
+0.180
+(b) Teacher: Flex-Large [ 66 ]
+Lite-Mono-tiny [ 59 ]
+0.110
+0.105
+0.837
+0.773
+4.710
+4.516
+0.187
+0.180
+Flex-Nano [ 66 ]
+0.110
+0.106
+0.794
+0.757
+4.678
+4.547
+0.184
+0.182
+Lite-Mono-8M [ 59 ]
+0.101
+0.100
+0.729
+0.696
+4.454
+4.356
+0.178
+0.176
+ReForgeDepth (ours)
+0.110
+0.102
+0.894
+0.726
+4.748
+4.459
+0.186
+0.179
+Sensitivity to the Distillation Weight η \eta
+Table  10 examines η \eta , its activation epoch, and warm-up. With a constant weight (a), η = 0.1 \eta=0.1 is best and smaller weights underfit (0.107–0.108 vs. 0.106 for Lite-Mono-8M [ 59 ] ). Delaying the onset to epoch 5 (b) removes early guidance and slightly degrades the results. With warm-up (c), ramping η \eta from zero starting at epoch 0 is consistently the best across both teachers (0.104 and 0.102), supporting the design adopted in the main paper. Year
+Train
+Depth Error ↓ \downarrow
+Depth Accuracy ↑ \uparrow 3.1 Encoder Design
+3.2 Decoder and RGB Boundary Residual
+3.3 PoseNet
+3.4 Self-supervised Objective
+3.5 Decoupling Depth from Capacity We propose ReForgeDepth, a lightweight architecture whose Gated Multi-Dilation Block and Detail-Compensated Global Interaction substantially reduce parameters, enabling effective deployment on mobile devices (Figure  2 ). The DepthNet adopts an encoder (Sec.  3.1 ) and decoder (Sec.  3.2 ) design and i
+
+【实验】
+ on the KITTI and Cityscapes datasets demonstrate that ReForgeDepth, when trained with SS, achieves state-of-the-art performance in the accuracy-efficiency trade-off, and runs in real time on edge devices. This section presents ReForgeDepth and its Signal Scaffolding framework, and evaluates their effectiveness. For conciseness, the main text reports condensed experimental results, while the complete results are provided in the supplementary material. 4.4 Complexity and Runtime We evaluate ReForgeDepth on the KITTI [ 13 ] and Cityscapes [ 5 ] benchmarks (Tables  1 ) 1 1
+1
+More qualitative results and visual comparisons are shown in the supplementary material and supplementary video. . At KITTI 640 × \times 192, with 1.5M parameters it attains Abs Rel 0.102, the best among lightweight methods—0.004 ahead of LEDepth [ 58 ] and PuriLight [ 4 ] —and surpasses Flex-Small [ 66 ] with under 25% of its parameters; only Flex-Medium/Large [ 66 ] stay ahead. At 1024 × \times 320 it again achieves the best Abs Rel, matching the best published result even without ImageNet pretraining. On Cityscapes it reaches 0.091, again the best among lightweight methods, surpassing all high-capacity baselines except Flex-Medium/Large [ 66 ] . Across all settings, ReForgeDepth markedly shifts the accuracy–parameter trade-off beyond same-scale models.
+Figure  5 compares ReForgeDepth with Monodepth2 [ 17 ] and recent lightweight models on KITTI [ 13 ] : it renders sharper depth discontinuities at object boundaries, where the others over-smooth edges or leak depth, and recovers fine structure with fewer artifacts, consistent with Table  1 . Transferred to Make3D [ 43 ] without fine-tuning [ 17 ] , it outperforms all lightweight methods (Table  2 ) with clearer boundaries and cleaner geometry (See supplementary materials). Overall, ReForgeDepth delivers the best accuracy–efficiency trade-off: 1.5M parameters matching models 4–22 × \times larger.
+Table 1 : Quantitative results. We compare ReForgeDepth with representative methods on the KITTI Eigen split [ 7 ] . The best and second-best results in lightweight are highlighted in bold and underlined , respectively. M: KITTI monocular videos. Study Study
+DepthNet (See supplementary materials). All variants are trained from scratch to isolate the architecture from pretraining. In every pairing, our GMD and DCGI match or outperform the Lite-Mono [ 59 ] CDC and LGFI at roughly half the parameters and 25% fewer FLOPs (0.124 at 1.29M vs. 2.67M); adding BR yields the best from-scratch result.
+Signal Scaffolding (Tables  4 , 5 , 6 ). Table  4 applies SS to different model scales under identical data. The gain decreases from 0.005 Abs Rel for Lite-Mono-tiny [ 59 ] to 0.001 for Lite-Mono-8M [ 59 ] , with the smallest model benefiting most. Under the same teacher, gains likewise shrink as model size grows. Teacher capability is thus a secondary factor; what dominates, instead, is likely the student’s recoverable capacity and its ability to exploit the training signal 2 2
+2
+See Supplementary Materials for details. . Table  5 shows that constant weights and delayed onset are suboptimal: full strength hinders optimization, while weaker weights lead to underfitting. Ramping the signal from zero performs best, allowing small networks to adapt gradually. Table 6 further shows that teacher quality and domain alignment matter: low-redundancy students amplify teacher noise, while cross-domain teachers introduce gaps that hinder learning. Simply extending training epochs provides little additional benefit.
+Overall, SS has enhanced the depth accuracy of compact models without increasing the inference burden. The longer the self-supervised training time of the traditional training strategy, the more limited the improvement achieved. These results indicate that the traditional training strategy may not be able to achieve the performance that compact models can reach, while SS reduces the mismatch between training strategy and model capacity and enables small models to better utilize their existing expressive capabilities.
+
+【结论/局限】
+References
+6 Supplementary data and results
+License: CC BY 4.0
+arXiv:2611.17828v1 [cs.CV] 13 Nov 2026
+Signal Scaffolding: Unlocking the Potential of Lightweight Models for Self-Supervised Monocular Depth Estimation
+Zhijie Wang
+Li Zhang
+† † thanks: Corresponding Author
+Yujie Chen
+Shibiao Deng
+Xin Gao
+Houzhi Zhou
+Jiangshuo Zhang
+Affiliation:  Department of Mathematics, Hefei University of Technology
+Affiliation:  Hefei, China
+Email:  lizhang@hfut.edu.cn This paper reveals the mismatch between the training strategy and model capacity in lightweight self-supervised depth estimation. We propose “Signal Scaffolding”—a three-phase strategy that gradually adjusts the training signals to approach the target task, thereby unlocking the latent representational capacity of the lightweight model without the need for additional dataset or parameters. In addition, we design ReForgeDepth, which reduces the number of parameters while retaining detailed information and the receptive field. On the KITTI and Cityscapes datasets, ReForgeDepth achieves the best balance of accuracy and efficiency among the compared methods, and outperforms other models of the same scale by a large margin.
+Two limitations remain: photometric consistency degrades depth around moving objects, and the lack of ground-truth depth caps accuracy. Future work will integrate motion-aware masking into Signal Scaffolding and explore stronger geometric priors in even more compact architectures, narrowing the supervised gap while preserving on-device efficiency.
+LLM Usage Statement
+During the preparation of this work, the authors used a large language model (LLM) to polish the language of the manuscript. The tool was not used to generate technical content, to conduct or analyze experiments, or to produce citations. All AI-assisted text was reviewed and edited by the authors, who take full responsibility for the content of this paper.
+References
+[1]
+A. Ali, H. Touvron, M. Caron, P. Bojanowski, M. Douze, A. Joulin, I. La

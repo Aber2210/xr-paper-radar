@@ -1,0 +1,368 @@
+【摘要】
+.
+
+【引言】
+ A Signed Distance Field (SDF) is a scalar function that, for any given point in space, returns the distance to the nearest point on a given boundary, with the sign indicating whether the point lies inside or outside the boundary. As a classical representation, SDFs have served as a fundamental building block for a wide range of applications in shape modeling and geometry processing. In addition to these traditional applications, recent advances in machine/deep learning have increasingly relied on SDFs for geometric deep learning, thanks to their advantages in continuous shape encoding and differentiable geometric operations. Despite the advantages of a continuous representation, which ensures resolution independence and facilitates procedural modeling and shape reconstruction (e.g., DeepSDF ( Park et al., 2019 ) ), it is often discretized into triangular meshes to support various downstream applications. This discretization is typically preferred as it can be easily parallelized, seamlessly integrated into standard rendering pipelines, and efficiently stored.
+Mesh generation from SDFs is often performed by sampling the function at discrete points, typically using grids, octrees, or point clouds. Although these methods are simple and easy to implement and use, their reliance on uniform sampling prioritizes volumetric coverage over geometric fidelity. This often leads to the omission of important edges, corners, or surface curvature variations, as it does not explicitly preserve these features. Consequently, it introduces approximation errors in critical applications such as computational fluid dynamics (CFD) and finite element methods (FEM), which reduce simulation accuracy. Although it is possible to implement workarounds using a very dense grid sampling followed by feature-aware remeshing, such solutions are both computationally expensive and require significant peak memory as volumetric data grows with cubic complexity. Furthermore, such workarounds are suboptimal as they do not account for the global shape structure.
+While traditional approaches, such as Marching Cubes and Dual Contouring (along with their numerous variants), rely on grids, recent techniques have investigated grid-free meshing using learned representations and optimization techniques ( Sellán et al., 2023 ; Sellán et al., 2024 ) . However, all of these methods, as shown in Figure 1 , are prone to over-smoothing, and some impose restrictions on the topology. The focus of this work is, therefore, to automatically and precisely mesh SDFs without making any topological assumptions.
+The c
+
+【方法】
+ The main technical challenge we are addressing is the LFS computation from SDFs.
+We then use it with a meshing algorithm to generate the desired surface/volume meshes from the SDFs. Thanks to the inherent property of feature-sized sampling constructed using the LFS, the resulting meshes are sampled proportionally to this local feature sizing function.
+In this section, after giving some definitions, we describe how we create a mesh for the zero surface of the SDF with feature-proportional triangle sizes.
+Then we show how to extend our method to a light-weight variant that handles huge inputs. CD ( ↓ \downarrow )
+RMSE ( ↓ \downarrow )
+F-Score ( ↑ \uparrow )
+NC ( ↑ \uparrow )
+MATFP
+9.1 × 10 − 4 9.1\times 10^{-4}
+0.00156
+99.98
+97.98
+VMAS
+1.08 × 10 − 3 1.08\times 10^{-3}
+0.00135
+99.53
+97.63
+MAT Topo
+1.15 × 10 − 3 1.15\times 10^{-3}
+0.00162
+99.08
+96.92
+Structural MAT
+7.29 × 10 − 4 7.29\times 10^{-4}
+0.00095
+99.99
+98.15
+FOMOS ( 512 3 512^{3} )
+6.1 × 𝟏𝟎 − 𝟒 \boldsymbol{6.1\times 10^{-4}}
+0.00082
+99.99
+98.16
+FOMOS ( 256 3 256^{3} )
+8.12 × 10 − 4 8.12\times 10^{-4}
+0.00105
+99.97
+98.05
+FOMOS ( 128 3 128^{3} )
+1.61 × 10 − 3 1.61\times 10^{-3}
+0.0023
+99.44
+97.32
+FOMOS ( 64 3 64^{3} )
+1.72 × 10 − 2 1.72\times 10^{-2}
+0.03413
+76.83
+87.41
+Table 1 . Quantitative evaluation of surface reconstructions from medial axes and radial functions using Chamfer Distance (CD), Root Mean Square Error (RMSE), F-Score, and Normal Consistency (NC). Best results are shown in bold and second-best results are underlined.
+Scalability of Medial Scaffold Computation:
+Figure 6 demonstrates the effect of multithreading on medial scaffold computation across different grid resolutions. While smaller grids exhibit diminishing returns after 8-16 cores, larger workloads continue to benefit from increased parallelism. For the 512 3 512^{3} grid, the execution time decreases from 18.99s to 2.96 on 64 cores, corresponding to a 6.41 × 6.41\times speedup and an 84.4 % 84.4\% reduction in runtime. Similarly, the 256 3 256^{3} grid achieves a 5.50 × 5.50\times speedup on 64 cores. In contrast, 64 3 64^{3} and 128 3 128^{3} grids attain their best measured performance at 16 and 32 cores, respectively, suggesting that parallelization overhead becomes increasingly significant relative to the computational workload at lower resolutions. These results demonstrate the scalability of the medial scaffold computation for high-resolution grids and indicate that the number of threads should be selected based on the workload size.
+Figure 6 . Runtime of medial scaffold computation for different grid resolutions and numbers of CPU cores.
+3.8. Handling Huge Sparse Inputs 32 3 32^{3}
+64 3 64^{3}
+128 3 128^{3}
+256 3 256^{3}
+512 3 512^{3}
+MC
+0.000329
+0.000077
+0.000030
+0.000019
+0.000017
+NDC
+0.000410
+0.000092
+0.000034
+0.000020
+× \times
+RFTS
+0.042924
+0.010607
+0.010054
+0.005694
+× \times
+RFTA
+0.005068
+0.005587
+0.000040
+0.003288
+× \times
+McGrids
+0.002787
+0.000098
+0.000028
+0.000028
+0.000026
+MESC
+0.000091
+0.002331
+0.001456
+× \times
+× \times
+FOMOS ( ε = 0.1 \varepsilon=0.1 )
+0.001441
+0.000090
+0.000027
+0.000026
+0.000023
+FOMOS ( ε = 0.2 \varepsilon=0.2 )
+0.004590
+0.000108
+0.000037
+0.000033
+0.000028
+FOMOS ( ε = 0.4 \varepsilon=0.4 )
+0.010600
+0.000188
+0.000087
+0.000058
+0.000040
+FOMOS ( ε = 0.8 \varepsilon=0.8 )
+0.017400
+0.000441
+0.000244
+0.000152
+0.000081
+Table 3 . Chamfer distance comparison across different SDF grid resolutions. Best results are shown in bold and second-best results are underlined. Missing values are marked with × \times .
+Grid Size 32 3 32^{3}
+64 3 64^{3}
+128 3 128^{3}
+256 3 256^{3}
+512 3 512^{3}
+MC
+0.01053
+0.00556
+0.00354
+0.00261 ¯ \underline{0.00261}
+0.00217
+NDC
+0.01225
+0.00623
+0.00378
+0.00267
+× \times
+RFTS
+0.10170
+0.03043
+0.03047
+0.01917
+× \times
+RFTA
+0.00909
+0.00767
+0.00309 ¯ \underline{0.00309}
+0.02115
+× \times
+McGrids
+0.00617
+0.00364 \mathbf{0.00364}
+0.00322
+0.00315
+0.00310
+MESC
+0.00485
+0.00781
+0.00511
+× \times
+× \times
+FOMOS ( ε = 0.1 \varepsilon=0.1 )
+0.01098
+0.00368 ¯ \underline{0.00368}
+0.00280
+0.00256
+0.00226 ¯ \underline{0.00226}
+FOMOS ( ε = 0.2 \varepsilon=0.2 )
+0.02011
+0.00455
+0.00353
+0.00316
+0.00269
+FOMOS ( ε = 0.4 \varepsilon=0.4 )
+0.03435
+0.00656
+0.00514
+0.00439
+0.00352
+FOMOS ( ε = 0.8 \varepsilon=0.8 )
+0.05100
+0.01037
+0.00820
+0.00683
+0.00515
+Table 4 . Mean distance comparison across different SDF grid resolutions. Best results are shown in bold and second-best results are underlined. Missing values are marked with × \times .
+Grid Size 32 3 32^{3}
+64 3 64^{3}
+128 3 128^{3}
+256 3 256^{3}
+512 3 512^{3}
+MC
+0.00992
+0.00551
+0.00355
+0.00261
+0.00217
+NDC
+0.01128
+0.00606
+0.00378
+0.00266
+× \times
+RFTS
+0.10038
+0.02843
+0.02808
+0.01781
+× \times
+RFTA
+0.00885
+0.00774
+0.00293
+0.01876
+× \times
+McGrids
+0.00617
+0.00327
+0.00299
+0.00293
+0.00288
+MESC
+0.00443
+0.00750
+0.00510
+× \times
+× \times
+FOMOS ( ε = 0.1 \varepsilon=0.1 )
+0.00985
+0.00353
+0.00268
+0.00243
+0.00216
+FOMOS ( ε = 0.2 \varepsilon=0.2 )
+0.01936
+0.00429
+0.00332
+0.00298
+0.00256
+FOMOS ( ε = 0.4 \varepsilon=0.4 )
+0.03053
+0.00603
+0.00477
+0.00411
+0.00333
+FOMOS ( ε = 0.8 \varepsilon=0.8 )
+0.04563
+0.00949
+0.00753
+0.00637
+0.00485
+Table 5 . Median distance comparison across different SDF grid resolutions. Best results are shown in bold and second-best results are underlined. Missing values are marked with × \times .
+Grid Size 32 3 32^{3}
+64 3 64^{3}
+128 3 128^{3}
+256 3 256^{3}
+512 3 512^{3}
+MC
+0.05322
+0.02116
+0.01274
+0.01140
+0.01156
+NDC
+0.04993
+0.02081
+0.01276
+0.01144
+× \times
+RSTS
+0.39638
+0.14064
+0.14272
+0.09344
+× \times
+RFTA
+0.04208
+0.03609
+0.01794
+0.09970
+× \times
+McGrids
+0.11006
+0.02430
+0.01898
+0.01864
+0.01821
+MESC
+0.02918
+0.02596
+0.01602
+× \times
+× \times
+FOMOS ( ε = 0.1 \varepsilon=0.1 )
+0.06384
+0.01480
+0.01225
+0.01189
+0.01170
+FOMOS ( ε = 0.2 \varepsilon=0.2 )
+0.08652
+0.01818
+0.01472
+0.01250
+0.01167
+FOMOS ( ε = 0.4 \varepsilon=0.4 )
+0.14384
+0.03038
+0.02466
+0.01920
+0.01524
+FOMOS ( ε = 0.8 \varepsilon=0.8 )
+0.20800
+0.05493
+0.04488
+0.03408
+0.02627
+Table 6 . Bidirectional Hausdorff distance comparison
+
+【实验】
+ Figure 8 . Sample meshes from our benchmark reconstructed using various state-of-the-art methods and Ours, on varying grid sizes.
+Experimental evaluations were performed on an NVIDIA A100 GPU workstation (64 CPU cores, 64 GB RAM). This setup was chosen to accommodate the GPU requirements of the NDC, thereby providing a consistent computational baseline for all comparative analyses, despite our method’s independence from GPU hardware. We implemented our code in parallel on the CPU and used the 3D mesher component of CGAL ( Alliez et al., 2024 ; Rineau and Yvinec, 2007 ) .
+Our experimental dataset consists of 100 SDFs, sampled on grids from randomly selected shapes within the
+McGill dataset ( Siddiqi et al., 2008 ) , including high-genus and thin-shell structures. Our method was extensively compared with various state-of-the-art SDF meshing techniques on our dataset: Marching Cubes ( Chernyaev, 1995 ) , Neural Dual Contouring ( Chen et al., 2022 ) , Reach for the Spheres ( Sellán et al., 2023 ) , Reach for the Arcs ( Sellán et al., 2024 ) , and Maximal Empty Sphere Contouring ( Kohlbrenner and Alexa, 2025 ) . To prioritize efficient meshing, we imposed a 30-minute execution cap, after which the process was terminated. Figure 8 illustrates results across varying grid resolutions. Notably, while Marching Cubes, McGrids, and FOMOS scaled effectively, other methods failed on larger grid sizes due to memory or time constraints.
+Grid Size in Tables 3 to 8 confirm that FOMOS, except at the lowest 32 3 32^{3} ,
+remained better than or comparable to SOTA methods across all metrics plus topology preservation.
+Figure 9 . Runtime and memory comparison (both logarithmic scale).
+Runtime and memory requirement
+The efficiency of the meshing algorithm is another important aspect, as it determines whether complex, high-resolution surfaces can be generated in real-time or if the process is bottlenecked by hardware limitations and slow processing cycles. This factor is particularly important for interactive setups, evolving physical simulation, or deployment on limited hardware such as a VR headset (for instance, ( Sureshkumar et al., 2025 ) ). Figure 9 shows the execution time and memory consumption for various methods on a logarithmic scale. As shown, FOMOS, even with a computationally intensive parameter of ε = 0.1 \varepsilon=0.1 , demonstrated superior efficiency compared to alternatives excluding MC and NDC (which failed to produce acceptable, high-quality surfaces). Furthermore, the memory requirements of FOMOS were also comparable to those of other techniques. Figure 12 shows how the memory and execution time vary with the ε \varepsilon value, and that FOMOS maintains high efficiency in terms of both temporal and spatial complexity.
+Note that our algorithm’s time and spatial complexity are fundamentally different from methods that only handle discrete SDFs. While their complexities are input-bound, a function of the (cubic) grid cell count, applying the mesher enables ours to become output-bound in the order of the (quadratic) target triangle count.
+Figure 10 . Number of triangles in meshes generated by different methods.
+Triangle quality
+Triangle quality is critical for downstream applications, such as rendering and physical simulation. To make the reconstructed mesh readily usable, the triangles must be high-quality. We evaluate the resulting triangle quality using three metrics: (1) shape ratio, which compares how closely the triangle approximates an equilateral triangle; (2) minimum angle, an indicator of "sliver" triangles (thin, needle-like shapes); and (3) aspect ratio (the ratio of the longest edge to the shortest) that measures the "stretch" or elongation of the triangle. Figure 11 illustrates the comparison of these metrics on meshes generated by various methods, showing that the meshes created by FOMOS exhibit high-quality triangles in contrast to all other SOTA methods - high shape ratios (0.4-1.0), high minimum angles ( 15 ∘ − 60 ∘ 15^{\circ}-60^{\circ} ), and low aspect ratios (1-4). on Meshing Quality
+Runtime and memory requirement
+Triangle quality
+Dependence on grid resolution and ε \varepsilon parameter
+Topological correctness
+Effect of noise on different datasets
+Alternative refinement strategy
+Volumetric Meshing.
+Application 1: Accelerating FEM Simulations
+Application 2: Instant SDF previewing on Meshing Quality
+First, we evaluate several complementary metrics like global geometry, local outliers, robustness, and visual quality. Specifically, we compare results across: (1) distance metrics (chamfer, mean, median, RMSE, and Hausdorff) to quantify geometric accuracy in terms of typical, robust, and worst-case errors, ensuring both average fidelity and bounds on local deviations, (2) F-score emphasizing how much of the surface lies within a tolerance (0.005), and (3) Normal consistency, to evaluate preservation of local surface orientation (crucial for visual quality). on different datasets
+A comprehensive evaluation was conducted on the McGill, SHREC, and a subset of 1,000 randomly selected meshes from the Thingi10K dataset to assess the robustness of FOMOS across geometries of increasing complexity, resulting in a total of 40,000 reconstructions. These datasets were deliberately selected because they represent distinct reconstruction challenges. McGill contains smooth organic shapes, making it suitable for evaluating reconstruction accuracy under favorable conditions. SHREC contains thin structures and complex topologies that are particularly sensitive to discretization and sampling errors. In contrast, Thingi10K contains CAD-like objects with sharp edges, corners, and planar regions that are inherently challenging for SDF meshing algorithms. Table 11 summarizes the quantitative evaluation. Across all datasets, the proposed method consistently achieves its best performance at lower ε \varepsilon values and higher grid resolutions, as evidenced by lower Chamfer distances and RMSE val
+
+【结论/局限】
+Acknowledgements
+References
+License: CC BY-NC-SA 4.0
+arXiv:2611.17458v1 [cs.GR] 12 Nov 2026
+FOMOS: Feature-Oriented Meshing of SDFs
+CCS:  Computing methodologies Shape analysis CCS:  Computing methodologies Point-based models CCS:  Computing methodologies Mesh geometry models CCS:  Computing methodologies Mesh models
+Stefan Ohrhallinger
+email: ohrhallinger@cg.tuwien.ac.at
+Affiliation:  TU Wien , Wien , Austria
+and
+Amal Dev Parakkat
+email: amal.parakkat@ip.paris.fr
+Affiliation:  LTCI-Telecom Paris, Institut Polytechnique de Paris , Paris , France
+Received  XXXX
+Figure 1 . Comparative evaluation of SDF meshing algorithms on a 128 3 128^{3} grid showing tradeoffs between speed (1.05s-2272s), memory (119MB-42563MB), mesh quality (0.0-12.6% defective sliver triangles, marked as triangle with exclamation), and geometric accuracy ( 2.81 × 10 − 5 2.81\text{\times}{10}^{-5} - 4.89 × 10 − 5 4.89\text{\times}{10}^{-5} CD). From left: Marching Cubes (MC, fastest, high errors, and bad triangle quality), Neural Dual Contouring (NDC, learned priors, non-manifold and unclean result on out-of-distribution data), Reach for the Spheres (RFTS, missing details and large execution time - ran until convergence after parameter tuning), Reach for the Arcs (RFTA, poorly reconstructed regions, dense meshing, bad triangles), Maximal Empty Sphere Contouring (MESC, slow, very high memory, bad triangles), and Our FOMOS for two sampling densities (fast, less memory, no errors and nicely shaped triangles). Red rectangles highlight reconstruction artifacts. In this work, we presented an end-to-end pipeline for efficiently meshing arbitrary SDFs with triangles proportional to local features, thereby directly and quickly creating concise representations even for huge datasets. These representations possess properties that make them highly suitable for simulations and are fast enough for interactively deforming SDFs, such as those from CFDs, thanks to our simple and efficiently computed medial scaffold

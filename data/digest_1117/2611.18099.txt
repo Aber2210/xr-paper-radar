@@ -1,0 +1,106 @@
+【摘要】
+
+【引言】
+ Feed-forward networks now recover 3D scenes directly from images  [ 54 , 24 , 51 ] . Given a video, the Visual Geometry Grounded Transformer (VGGT)  [ 51 ] predicts the camera pose and dense geometry of every frame in one forward pass, and later models such as π 3 \pi^{3}   [ 56 ] , VGGT- Ω \Omega   [ 52 ] , and Depth Anything 3 (DA3)  [ 26 ] work the same way. Their global blocks make this possible, since cross-frame self-attention lets each view draw on all other views.
+We study how such a model can reconstruct every frame of a long video in one coordinate frame at a constant cost per frame. Long videos challenge these models in two ways. First, the cost of cross-frame attention grows quadratically with the number of frames, and its memory grows proportionally with every frame. A two-thousand-frame video at 518 × \times 392 resolution requires > > 80 GB GPU memory, so long videos should be split into chunks or subsampled, and subsampling leaves most frames unreconstructed. Second, accuracy suffers even when the video can fit in memory. Our evaluations show that, at 500 frames, the full VGGT keeps its trajectory error within a 0.2 m tolerance in only 70% of 50 ScanNet scenes  [ 10 ] . Its predicted confidence flags failures barely better than chance ( Fig.   1 c), so users cannot tell which results to trust.
+Most existing remedies approximate attention over all frames within a budget, and each of them gives up part of this goal. Streaming variants  [ 65 , 66 , 62 ] process each frame once as it arrives and freeze its tokens, so early errors persist. They keep at most half the scenes within tolerance ( Tab.   1 ), and InfiniteVGGT misplaces walls in two long videos ( Fig.   5 ). Chunked pipelines  [ 14 , 16 ] see one window at a time, so their chain of windows drifts wherever no loop closure corrects it. Token merging  [ 39 ] keeps every frame in one pass and runs out of memory in most scenes at 2,000 frames. Methods that give each frame a few keys take them at fixed intervals  [ 46 , 12 , 47 ] or select them by content, such as diverse views  [ 63 , 37 ] or retrieved frames  [ 66 ] . Two questions remain open: whether a long video needs attention over all its frames, and whether the keys of each frame must depend on the video content.
+We hypothesize that the keys of a long video can be chosen without looking at its content. One shared context of a few dozen frames, spread evenly over the video, can serve as the keys of every frame, and the other frames need not read one another. Our experiments on long indoor videos with VGGT and π 3 \pi^{3} support th
+
+【方法】
+3.1 Cross-frame attention
+3.2 The alignment band
+3.3 Pinned Key Set
+3.4 Scene Cache
+3.5 Online Stream
+3.6 Alignment Refocusing
+3.7 Alignment Score EcoVGGT organizes VGGT-style inference around one shared context of pinned frames ( Fig.   2 ). It computes this context once, reads it exactly, and updates it online. For VGGT, an alignment module refocuses the blocks that align the frames and reads their attention to flag failures ( Secs.   3.6 and  3.7 ). We name each version after its backbone, VGGT, π 3 \pi^{3} , VGGT- Ω \Omega , or DA3. Analyses in this section use the 50 ScanNet scenes at 500 frames unless noted ( Sec.   4.1 ).
+Figure 2 : Overview of EcoVGGT. A pin pass processes the Pinned Key Set of evenly spread frames (dark blue) and stores the inputs of every global block in the Scene Cache. In attach passes, the other frames (light blue) read the keys K 𝒫 K_{\mathcal{P}} and values V 𝒫 V_{\mathcal{P}} only from this cache, so all predictions share one coordinate frame. Alignment Refocusing fine-tunes blocks 10 to 15, and the Alignment Score α \alpha reads block 13.
+3.1 Cross-frame attention
+Let a video have N N frames, each turned into T T tokens of dimension C C . The network alternates frame blocks, which mix the tokens within each frame, with L L global blocks, which mix them across frames. In one head of a global block, with X i ∈ ℝ T × C X_{i}\in\mathbb{R}^{T\times C} the tokens of frame i i and X X those of all frames, the attention output of frame i i is
+O i = softmax ⁡ ( Q i ​ K ⊤ d ) ​ V , O_{i}=\mathrm{softmax}\Big(\frac{Q_{i}K^{\top}}{\sqrt{d}}\Big)V,
+(1)
+where W Q W_{Q} , W K W_{K} , and W V W_{V} are the head’s projections, Q i = X i ​ W Q Q_{i}=X_{i}W_{Q} , K = X ​ W K K=XW_{K} , V = X ​ W V V=XW_{V} , and d d is the head dimension. Let H i ( l ) H_{i}^{(l)} be the tokens of frame i i entering global block l ∈ { 0 , … , L − 1 } {l\in\{0,\dots,L-1\}} . For l < L − 1 {l<L-1} , a joint pass computes
+H i ( l + 1 ) = F l + 1 ​ ( G l ​ ( H i ( l ) , H ( l ) ) ) , H_{i}^{(l+1)}=F_{l+1}\Big(G_{l}\big(H_{i}^{(l)};\,H^{(l)}\big)\Big),
+(2)
+where H ( l ) H^{(l)} stacks the tokens of all frames, F l + 1 F_{l+1} is the next frame block, and G l ​ ( A , B ) G_{l}(A;B) is global block l l with queries from A A and keys and values from B B . The tokens H i ( 0 ) H_{i}^{(0)} depend on frame i i alone, and every prediction head except the camera head of VGGT reads each frame separately. For one query in one head, let 𝐚 = ( a 1 , … , a n ) \mathbf{a}=(a_{1},\dots,a_{n}) and 𝐮 \mathbf{u} denote its attention over the n n keys and the uniform distribution, respectively. We measure the departure from uniform by
+KL ( 𝐮 ∥ 𝐚 ) = − log n − 1 n ∑ j = 1 n log a j , \mathrm{KL}(\mathbf{u}\,\|\,\mathbf{a})=-\log n-\frac{1}{n}\sum_{j=1}^{n}\log a_{j},
+(3)
+a Kullback–Leibler divergence that grows as more keys receive almost no weight. The attention share of one frame on another is the attention that its queries give to all keys of the other, averaged over queries and heads.
+3.2 The alignment band
+On three 100-frame sequences of 7-Scenes  [ 40 ] , the median divergence of VGGT stays near or below 1 up to global block 10, peaks in block 14, and falls below 1 at block 17, a profile that π 3 \pi^{3} shares ( Fig.   3 a). On 31 spread frames per ScanNet scene, we correlate the attention share of two distant frames (at least four pinned frames apart) with their co-visibility, the overlap of the surfaces that they observe. For VGGT, the rank correlation stays at or below 0.16 in blocks 0 to 9 and reaches 0.66 to 0.68 in blocks 13 to 15 ( Fig.   3 b), so these blocks relate frames by content. We call global blocks 10 to 15, where this correlation rises and peaks, the alignment band and call the later blocks the readout blocks.
+Figure 3 : The alignment band.
+(a) Divergence of the attention from uniform ( Eq.   3 ) in each global block, median over queries and three 100-frame sequences of 7-Scenes.
+(b) Rank correlation between the attention share of two distant frames and their co-visibility for VGGT and EcoVGGT (VGGT), median over 50 ScanNet scenes, with the interquartile range of VGGT in light blue.
+3.3 Pinned Key Set
+Using only 31 to 125 evenly spread frames as keys lowers the relative rotation error of VGGT ( Fig.   1 a), and with 31 keys at 1,000 frames, its median drops from 0.581° to 0.501°. Relative to 125 keys at 500 frames (0.549°), all 500 frames as keys raise this error by 7.2%, whereas 250 keys raise it by 2.6%, consistent with surplus keys diluting the attention once they reach 10 to 20 times the 24-frame training limit  [ 51 ] .
+We pin M M frames 𝒫 = { p 1 , … , p M } \mathcal{P}=\{p_{1},\dots,p_{M}\} evenly in time, p k = 1 + round ⁡ ( ( k − 1 ) ​ ( N − 1 ) / ( M − 1 ) ) {p_{k}=1+\mathrm{round}\big((k-1)(N-1)/(M-1)\big)} , and restrict the keys and values of every global block to 𝒫 \mathcal{P} ,
+O i = softmax ⁡ ( Q i ​ K 𝒫 ⊤ d ) ​ V 𝒫 , O_{i}=\mathrm{softmax}\Big(\frac{Q_{i}K_{\mathcal{P}}^{\top}}{\sqrt{d}}\Big)V_{\mathcal{P}},
+(4)
+where K 𝒫 K_{\mathcal{P}} and V 𝒫 V_{\mathcal{P}} keep the rows of the pinned frames. We use M = 31 {M=31} , the smallest tested size at which VGGT and π 3 \pi^{3} keep their success rates on the evaluation scenes. On 50 training scans, 31 keys match 63 and 125 keys in success rate (Sec. S6). The joint pass of Eq.   2 then becomes
+H i ( l + 1 ) = F l + 1 ​ ( G l ​ ( H i ( l ) , H 𝒫 ( l ) ) ) , H_{i}^{(l+1)}=F_{l+1}\Big(G_{l}\big(H_{i}^{(l)};\,H_{\mathcal{P}}^{(l)}\big)\Big),
+(5)
+where H 𝒫 ( l ) H_{\mathcal{P}}^{(l)} stacks the tokens of the pinned frames. Because pinned frames read only one another, a pin pass can process them alone and keep H 𝒫 ( l ) H_{\mathcal{P}}^{(l)} at every block. An attach pass then computes any other frame from the kept tokens, in a batch whose frames never read one another.
+Proposition 1 (Exact decomposition) .
+Let a joint pass over all N N frames use Eq.   4 in every global block, with the first frame pinned. A pin pass over 𝒫 \mathcal{P
+
+【实验】
+4.1 Setup
+Benchmarks
+Baselines and implementation
+4.2 Main results
+Offline
+Thousands of frames
+Online
+Other datasets
+4.3 Ablations and analysis
+Alignment Score Table 1 : Long ScanNet videos on one A100 GPU. Online methods emit frames during recording, and EcoVGGT emits every frame within ( τ + 1 ) ​ κ {(\tau+1)\,\kappa} frames of its arrival. Success is the share (%) of the 50 scenes with absolute trajectory error (ATE) below 0.2 m. Units are m for ATE, degrees for the relative rotation error (RPE), cm for point accuracy (Acc.), s for the time per scene, and GB for the peak memory of inference without input frames, largest over scenes. The first two rows are the full models, shaded rows are EcoVGGT, and bold marks the best value in each column of the Offline and Online groups. Failed marks a success rate below 20%, given in parentheses, and dashes mark omitted or missing values. † Trains or fine-tunes network weights. ‡ Full pipeline (inference 74 s and 151 s).
+500 frames
+1,000 frames at 500 and 1,000 frames
+VGGT-SLAM
+MUSt3R
+Sparse attention and key selection
+LiteVGGT
+Thousands of frames
+Standard ATE
+Confidence intervals
+S4 Other datasets
+S5 Online deployment and energy
+S6 Ablations and exactness
+Layout and content of the pinned frames at 500 and 1,000 frames
+Table   S1 extends Tab.   1 with RPE-t, AbsRel, and Comp. It adds rows for DA3, EcoVGGT (DA3), FrameVGGT, and MUSt3R offline, and Tab.   S2 lists Good Token Hunting. At 500 frames, EcoVGGT (DA3) succeeds in 66% of the scenes, against 64% for the full DA3, and runs 4.9 times as fast. At 1,000 frames, the full DA3 exceeds 80 GB in 84% of the scenes, which we run with CUDA unified memory. The full DA3 and EcoVGGT (DA3) both succeed in 70% of the scenes, and on the 16% of scenes that fit in 80 GB, EcoVGGT (DA3) runs 7.0 times as fast. No trajectory error changes significantly at either length, so the Pinned Key Set carries over to a third backbone.
+Table S2 : Sparse attention and key selection on ScanNet. Succ. is in %, RPE is the relative rotation error (RPE-r in Tab.   S1 ), and other units are as in Tab.   S1 . The first two rows are the full models, shaded rows are EcoVGGT, and bold marks the best value in each column of each backbone group. ∥ Run with unified memory in the 78% of scenes that exceed 80 GB at 1,000 frames, so we omit its time and memory.
+500 frames
+1,000 frames
+
+【结论/局限】
+and future work
+References
+S1 Online Stream
+S2 Compared methods
+Protocol
+Offline methods
+Chunked pipelines
+Streaming methods
+S3 Full results on ScanNet
+Metrics and future work
+EcoVGGT inherits its backbone’s failures in large rooms, since a backbone trained on short clips aligns distant views poorly ( Sec.   3.6 ). On π 3 \pi^{3} , its relative pose errors exceed those of the full model by 4% to 11%, as 31 keys give each frame fewer views, and 125 keys cut this gap to about 1%. Trained on ScanNet alone, refocusing raises the trajectory error of EcoVGGT (VGGT) on the synthetic NRGBD and Replica and narrows the predicted field of view on Replica by 4.5° toward that of ScanNet, so future work will train the band on varied cameras. Indoors, spread keys cover what every frame sees, whereas a car on KITTI rarely returns to a place, so most keys share no content with the current frame. Without loop closure, EcoVGGT ( π 3 \pi^{3} ) drifts online to a mean error of 164 m, against 65 m for the streaming-trained LongStream  [ 8 ] . Recent keys lower it to 106 m, and future work will select keys by co-visibility and add loop closure.
+Our results show that feed-forward 3D models can scale to long indoor videos through a small shared context, a design that future models can adopt in training.
+References
+[1]
+David Ahmedt-Aristizabal, Mohammad Ali Armin, Russell Tsuchida, and Lars Petersson.
+GeoCond: A conditioning-aware reliability adapter for feed-forward 3D reconstruction.
+In WACV , 2027.
+[2]
+Dejan Azinović, Ricardo Martin-Brualla, Dan B. Goldman, Matthias Nießner, and Justus Thies.
+Neural RGB-D surface reconstruction.
+In CVPR , 2022.
+[3]
+Gabriele Berton and Carlo Masone.
+MegaLoc: One retrieval to place them all.
+In CVPR Workshops , 2025.
+[4]
+Daniel Bolya, Cheng-Yang Fu, Xiaoliang Dai, Peizhao Zhang, Christoph Feichtenhofer, and Judy Hoffman.
+Token merging: Your ViT but faster.
+In ICLR , 2023.
+[5]
+Yohann Cabon, Lucas Stoffl, Leonid Antsfeld, Gabriela Csurka, Boris Chidlovskii, J
