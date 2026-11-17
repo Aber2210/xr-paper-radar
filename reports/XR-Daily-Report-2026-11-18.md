@@ -425,3 +425,14 @@
 - `papers/daily/2026-11-18/` 与 `papers/daily/backfill-1118/` 各含 `7dim-table.md`、`scored.md`、`run_log.md` 三件
 - 原子笔记 31 篇（`papers/notes/`）、MOC 2 份、`MOC-总索引.md` 刷新
 - registry 951 → **990**（+33 +6，备份 `registry.jsonl.bak-20261118`）
+
+## 七、发布与核验（2026-11-18 03:00 北京时间）
+
+- **渠道② GitHub Pages ✅ 已发布并逐项核验**
+  - 本地 commit `165d6ac` → `python scripts/push_to_github.py --incremental`：HEAD 1,840 条目 / 44.30 MB，增量 **变更 75、删除 0、未变 1,765**（远端 1,770 文件）→ main **`1192b15c`**；deploy-pages 运行 **44154025672** 结论 **success**（headSha 1192b15c）。
+  - 线上 `https://aber2210.github.io/xr-paper-radar/`：HTTP **200**、**4,720,983 bytes**，`const DATA` 字面量存在且可解析 → **990 / 632 / 67**（与磁盘 registry 990 / notes 632 / daily 67 逐项一致）。
+  - 卡片核验：`2026-11-18` count=**33**、avg=**3.549**、max=**4.43**、grades={A 19, B 7, C 7}；`backfill-1118` count=**6**、avg=**3.427**、max=**3.93**、grades={A 2, B 3, C 1}。
+  - 字节级核验：线上页面与本地 `web/xr-paper-hub.html` 规范化（CRLF→LF）后 **md5 完全一致 `19f8d078442797887e973ddca4759028`**。
+- **渠道① workbuddy_sites_deploy ⚠️ 不可用（累计第 29 批挂账：2026-10-21 ~ 2026-11-18）**
+  - 工具集内**不含**该工具（本轮检索仍为空，连续第 29 次）；`https://xr-paper-hub.app.workbuddy.host/` 返回 **HTTP 403**（3,174 bytes）。
+  - 因此**本期未通过渠道①发布，不得视为已在该域名上线**；以渠道② 的 GitHub Pages 为唯一已发布出口。渠道①恢复后需一次性补部署 10-21 起共 29 个批次。
