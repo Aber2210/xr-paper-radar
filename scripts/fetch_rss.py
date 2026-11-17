@@ -33,6 +33,15 @@ KW = [
     "scene reconstruction", "near-eye", "light field", "waveguide", "holographic display",
     "varifocal", "maxwellian", "retinal projection", "pancake optics", "foveated",
     "accommodation-vergence",
+    # 2026-11-18 补表：11-17 批次 KW 层仅命中 5/13，8 篇靠标题补扫才入池（其中 3 篇进 Top10），
+    # 以下为缺口词。泛词一律加限定词，避免 "mesh"/"depth" 单用引入噪声。
+    "tactile", "taxel", "haptic rendering", "signed distance field", "signed distance",
+    "surface reconstruction", "mesh extraction", "meshing", "affine correspondence",
+    "bundle adjustment", "image-based rendering", "light field super-resolution",
+    "single-photon", "spad", "monocular depth", "depth completion", "point cloud",
+    "novel view synthesis", "view synthesis", "6-dof", "6dof", "head mounted display",
+    "stereo matching", "visual odometry", "hand pose", "hand-object",
+    "egocentric video", "first-person", "user study", "sense of presence",
 ]
 
 # 缩写层（2026-10-19 漏网根因：标题里大量使用 VR/AR/MR/XR 缩写而全称关键词不命中）。

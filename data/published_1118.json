@@ -1,0 +1,275 @@
+{
+ "2611.19095": {
+  "title": "DEFDVO: Deformable Deep Visual Odometry for Equirectangular Images",
+  "published": "2026-11-14",
+  "updated": "2026-11-14",
+  "primary": "",
+  "comment": "Accepted to WACV 2027"
+ },
+ "2611.19803": {
+  "title": "Pros4D: Modeling Evolving 4D Worlds in Latent Space for Dynamic Spatial Reasoning",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "Project page: https://pros4d.github.io/"
+ },
+ "2611.19096": {
+  "title": "AdaptType: Accessible and Customizable Multimodal Text Entry in Virtual Reality for People with Upper-Body Motor Impairments",
+  "published": "2026-11-14",
+  "updated": "2026-11-14",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18708": {
+  "title": "TopSDF: Topological Signed Distance Field for High-Quality Triangle Mesh Extraction from 3D Gaussian Splatting",
+  "published": "2026-11-06",
+  "updated": "2026-11-06",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18734": {
+  "title": "Is It Still There? Place-Registered Verification Makes VLMs Reliable Scene-Change Detectors",
+  "published": "2026-11-10",
+  "updated": "2026-11-10",
+  "primary": "",
+  "comment": "23 pages, 13 figures, 11 tables. Code: https://github.com/Oran9er/STILL"
+ },
+ "2611.19429": {
+  "title": "Prepare Lighter and Faster for Open-Vocabulary Queries: A Query-Wise 3D Segmenter for Gaussian Splatting",
+  "published": "2026-11-14",
+  "updated": "2026-11-14",
+  "primary": "",
+  "comment": "Accepted at WACV 2027"
+ },
+ "2611.18679": {
+  "title": "Shared Mobile AR Without Depth Sensors from Monocular Point Maps",
+  "published": "2026-10-31",
+  "updated": "2026-10-31",
+  "primary": "",
+  "comment": "15 pages, 8 figures, 4 tables"
+ },
+ "2611.19773": {
+  "title": "SemLite-GS: Semantic-Selective Parallel Gaussian Splatting for Lightweight Building Reconstruction from UAV Oblique Imagery",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18894": {
+  "title": "CISyn: Human Mesh Recovery in Close Interactions with Physics-Simulated Synthetic Data",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18822": {
+  "title": "LongCat-Video-Avatar 1.6 Technical Report",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18979": {
+  "title": "Probing Where Surprise Happens: Localized Violation-of-Expectation Evaluation of Video World Models",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "primary": "",
+  "comment": "8 pages, 4 figures"
+ },
+ "2611.19765": {
+  "title": "M-CROSS: A Multisensor Simulation Dataset for SLAM across Water--Land Transitions",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "Submitted to ICRA 2027"
+ },
+ "2611.19771": {
+  "title": "JEPA4R: Embodied JEPA World Models with 4D Point Planning",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "Code: https://github.com/AIGeeksGroup/JEPA4R, Website: https://aigeeksgroup.github.io/JEPA4R"
+ },
+ "2611.20245": {
+  "title": "From XR Sketches to CAD: Preserving Design Intent with AI",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "Vision paper (6 pages, 1 figure) submitted to the Workshop on AI-Augmented 3D Sketching in Extended Reality (ACE-XR) at IEEE AIxVR 2027"
+ },
+ "2611.20568": {
+  "title": "sqrtVINS-Based 360 Visual-Inertial SLAM Systems: Hilti-Trimble SLAM Challenge 2026 Entry",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "2026 Hilti x Trimble SLAM Challenge at ICRA 2026 (2nd Place in the SLAM Category)"
+ },
+ "2611.20797": {
+  "title": "Correspondence-Free Camera Pose Estimation by Matching Moments",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "65 pages, including references and appendices; under review"
+ },
+ "2611.20950": {
+  "title": "ROSE: A Shared Cross-Embodiment Facial-Motion Latent Space for Humanoid Robot Expression",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.20879": {
+  "title": "Multi-Rate Flow Matching for Point Cloud Upsampling",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.20546": {
+  "title": "A Gaussian Primitive Data Management Framework for Efficient 3DGS Trajectory Rendering",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.20283": {
+  "title": "CiGS: Conduction in Gaussian Splats for Interior Temperature Field from Thermal Images",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "18 pages"
+ },
+ "2611.20196": {
+  "title": "DoF-Query Transformer for Adaptive Fusion of Egocentric Vision and Forearm HD-sEMG in Continuous Hand Kinematics",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.20083": {
+  "title": "WL-Headset Law: Projecting Future Headset Evolution from a Decade of Display and Mass Data",
+  "published": "2026-11-15",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "12 pages, 6 figures"
+ },
+ "2611.21060": {
+  "title": "MetricHand: Geometry-Aware Flow Matching for 4D Hand Reconstruction in Metric World Space",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.20570": {
+  "title": "OrthoMark: Place Recognition with Point-Anchored Orthographic Height Mark",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.20533": {
+  "title": "RemeshingAgent: An Iterative Agent for Repair-Based Decimation of Generated Building Meshes",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "11 pages, 12 figures, 3 tables"
+ },
+ "2611.21044": {
+  "title": "Body of Evidence: Triangulating 3D Human Pose with Geometry-Conditioned Depth",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.18267": {
+  "title": "TetraCoder: Adaptive Tetrahedral Encoding for Neural Fields",
+  "published": "2026-11-13",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "8 pages, 4 figures"
+ },
+ "2611.21253": {
+  "title": "QuantileGS: Quantile-Based Conformal Bounds on RGB Rendering Errors for Novel View Synthesis with 3D Gaussian Splatting",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2609.31117": {
+  "title": "Comparative Evaluation of an XR Pen-based Control Interface for Semi-Autonomous Mobile Robot Navigation in Service Environments",
+  "published": "2026-09-25",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "Accepted for presentation at the 2027 IEEE/SICE International Symposium on System Integration (SII), Kobe, Japan"
+ },
+ "2611.21233": {
+  "title": "A Study on Performance Enhancement of a Webcam-Based Real-Time Eye-Tracking System",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "9 pages, 5 figures, 5 tables"
+ },
+ "2605.05712": {
+  "title": "EgoEMG: A Multimodal Egocentric Dataset with Bilateral EMG and Vision for Hand Pose Estimation",
+  "published": "2026-05-07",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "21 pages, 13 figures, 20 tables, including supplementary material"
+ },
+ "2611.21143": {
+  "title": "WinDEX: Metric 3D Hand Motion Reconstruction in the Wild for Dexterous Teleoperation and Policy Learning",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.21479": {
+  "title": "LynnReal-Hand: Unlocking World Interaction with Hand Control",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2611.21383": {
+  "title": "The Mask Is Not the Object: Volumetric Supervision for 3D Gaussian Segmentation",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "Accepted at NeurIPS 2026. Project page: https://jhxcho.github.io/voda/"
+ },
+ "2611.21334": {
+  "title": "Real-world Polarimetric Environment Map Dataset",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "Published in SIGGRAPH Asia 2026 Conference Papers"
+ },
+ "2611.21485": {
+  "title": "Lost in the Hallway: Benchmarking Persistent Spatial Memory Across Revisits",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": ""
+ },
+ "2511.16349": {
+  "title": "LoC-IN: Real-Time Localization of Cameras in Neural Rendered Prior LiDAR Maps",
+  "published": "2025-11-20",
+  "updated": "2026-11-16",
+  "primary": "",
+  "comment": "Published in IEEE Robotics and Automation Letters, 8 pages, 4 figures"
+ },
+ "2607.03875": {
+  "title": "MACRO: Training-free Multi-plane Attention for Closeup Render Optimization",
+  "published": "2026-07-04",
+  "updated": "2026-11-14",
+  "primary": "",
+  "comment": "Project page: https://nitzanhod.github.io/MACRO"
+ },
+ "2605.09586": {
+  "title": "DeformMaster: An Interactive Physics-Neural World Model for Deformable Objects from Videos",
+  "published": "2026-05-10",
+  "updated": "2026-11-15",
+  "primary": "",
+  "comment": "NeurIPS 2026 camera ready version. Project page: https://can-lee.github.io/deformmaster-web/"
+ }
+}

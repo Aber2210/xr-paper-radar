@@ -1,0 +1,459 @@
+{
+  "2611.21383": {
+    "id": "2611.21383",
+    "title_en": "The Mask Is Not the Object: Volumetric Supervision for 3D Gaussian Segmentation",
+    "title_zh": "掩码不等于物体：面向三维高斯分割的体监督",
+    "track": "神经渲染",
+    "venue": "arXiv preprint",
+    "one_line": "直接监督深度簇内全部高斯，Removal-3D 上 mRDE 由 39.31 降至 27.34。",
+    "problem": "现有 3DGS 分割以渲染出的 2D 掩码准确率来训练与评测，但掩码正确并不代表底层三维选择完整。其根源是渲染式特征监督按每个高斯的 alpha 混合贡献分配梯度：主导贡献的高斯即可渲染出正确掩码，同一物体中被遮挡或低贡献的高斯只得到微弱甚至零梯度，移除后仍残留目标体，导致编辑不干净。",
+    "method": "提出 VODA 可插拔监督目标。深度感知光栅化器关闭透射率早停，收集每像素贡献者的深度与 alpha；以相邻深度间隔中位数自适应阈值 tau=clip(gamma*median(dz), tau_min, tau_max) 切分深度簇，取总贡献最大的簇 C*。再用完整渲染特征 F(p) 按 alpha 加权聚合成高斯级伪目标并 detach，对簇内每个高斯直接施加平方 L2 损失（LaGa 用余弦），使梯度绕过渲染权重；另加像素级 push 损失，惩罚不同掩码像素对余弦相似度超过 margin 0.3。总损失为基线损失加 lambda_direct=0.5、lambda_push=0.1，gamma=15，阈值限 [0.05,1.0]。几何、特征表示与推理流程不变，推理零开销；前两个基线在特征阶段启用，后两个追加 5000 步特征微调。",
+    "key_results": [
+      "Removal-3D 平均：OpenGaussian mRDE 39.31→27.34、mIoU 52.87→60.90；LaGa mRDE 36.93→21.66、mIoU 75.93→79.07。",
+      "LERF select-then-render：Gaussian Grouping mIoU 22.75→43.73、mAcc@0.25 42.14→76.27；ILGS mIoU 30.00→49.62。",
+      "ScanNet 19/15/10 类：LaGa mIoU 32.20→33.20、37.19→37.21、43.06→45.53，10 类 mAcc 61.31→65.24。",
+      "低贡献分析：被恢复高斯的 max w<1/255 占比在三个场景高 10.2–15.9 个百分点；8.5–18.7% 的恢复高斯在所有训练视图贡献为零。",
+      "开销：1000 次迭代在 RTX A5000 上为 OpenGaussian 增加约 10 分钟、Gaussian Grouping 约 20 分钟，推理无额外成本。"
+    ],
+    "baselines": [
+      "OpenGaussian",
+      "LaGa",
+      "Gaussian Grouping",
+      "ILGS",
+      "LangSplat",
+      "LEGaussians",
+      "Segment then Splat"
+    ],
+    "ablations": "同簇改走渲染路径时 Gaussian Grouping 的 LERF mIoU 仅 12.40，直接监督升至 43.73；push 主要降 mRDE（32.63→27.34）；Normalize、Clamp、KNN 均不及 VODA。",
+    "limitations": "深度聚类会把相互接触的物体并簇、把内部稀疏的物体切碎，push 仅部分缓解；遮挡高斯缺特征级真值，只能经下游选择与移除间接评估；精确体评测需成对的全场景与去物体深度图，仅 3 个合成场景具备。",
+    "novelty": "相对 Gaussian Grouping、OpenGaussian、LaGa、ILGS，指出梯度按渲染贡献分配的结构性偏差，改用深度簇直接监督全体成员；并提出 Removal-3D 与 RDE，把评价从渲染掩码转向体完整度。",
+    "reproducibility": "论文提供项目页，补充材料 checklist 声明将开源代码；Removal-3D 数据未见公开下载。arXiv preprint，未注明会议等级。",
+    "evidence": "FULL",
+    "chars": 88406,
+    "suggested": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 5,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 4,
+      "why": {
+        "IMP": "3DGS 物体级编辑完整性是卡点",
+        "NOV": "揭示贡献加权偏差并提出体监督",
+        "TEC": "理论、即插模块与四基线消融齐全",
+        "EXP": "两标准集加自建基准，覆盖两范式",
+        "PER": "mRDE 相对降约 30%，LERF 增益最大",
+        "TRL": "可插件但仅离线，代码待发布",
+        "REP": "承诺开源，基准数据未公开"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2611.21479": {
+    "id": "2611.21479",
+    "title_en": "LynnReal-Hand: Unlocking World Interaction with Hand Control",
+    "title_zh": "LynnReal-Hand：以手部控制解锁世界交互",
+    "track": "世界模型与仿真",
+    "venue": "arXiv preprint",
+    "one_line": "手控视频世界模型三阶段训练，FVD 181.67、MANO Dice 93.02，540p 单卡 18.03 FPS。",
+    "problem": "交互式视频世界模型多由文本、相机或高层指令控制，只能决定看哪里、去哪里，无法直接操作物体。手部提供自然细粒度接口，但手与接触区仅占画面极小部分，全局生成目标会低估决定控制保真的细节；把高质量模型加速为少步因果生成器会放大局部运动误差，且需以自身不完美的历史为条件；高分辨率潜变量解码仍是实时响应瓶颈。",
+    "method": "三阶段 IPT。Stage I：H3 VAE 编码，Qwen3-VL 文本与首帧、噪声 token 入双向 DiT，相机经 PRoPE 注入；损失为全局流匹配加手部三级监督 5*L_ROI、0.1*L_LPIPS_H、0.05*L_DINO_H。Stage II：LoRA 初始化少步因果学生，用 AnyFlow 学有限区间平均速度，两 chunk 窗口加 clean-history teacher forcing，推理三次转移。Stage III：在自生成 rollout 上做区域感知双 score 蒸馏，视频教师与评论器指导交互，冻结 Qwen-Image 经可微 bridge 只对非手区给外观梯度；局部 RoPE 重置并缓存未旋转 key，使 KV 有界。Ultra-Fast-VAE 保留 26 层、2048 维流，head 32→8、SwiGLU 8192→1536，361.2M。",
+    "key_results": [
+      "HandBench 八源：FVD 181.67 vs 双向微调 Hand2World 294.32（降 38.3%），MANO Dice 93.02 vs 90.60，LPIPS 0.2071 vs 0.2462。",
+      "LynnReal-Hand-Fast 三步：MANO Dice 92.49、FVD 237.33；OOD H2O Dice 92.78、TACO 91.67。",
+      "540p 流式单 H200：18.03 FPS、平均延迟 741 ms、峰值显存 34.89 GiB（17 帧，含在线手部编码与解码）。",
+      "Ultra-Fast-VAE：34.43 dB PSNR、46.77 ms/17 帧 @1344x768、361.2M；原生 H3 为 35.04 dB、831.30 ms、2423.5M。",
+      "用户偏好：Base 对 Hand2World-Bi 70.5%、Fast 58.5%；对 Hand2World-AR 均为 100%。",
+      "Stage III 前后（全 200 例）：FVD 404.68→194.01，MANO Dice 89.60→92.46。"
+    ],
+    "baselines": [
+      "JointControlVideo",
+      "Generated Reality",
+      "Hand2World (bidir., FT)",
+      "Hand2World (streaming)",
+      "Hand2World-AR",
+      "Tiny-H3",
+      "LightVAE",
+      "StreamRender"
+    ],
+    "ablations": "Stage-I 逐项开启：FVD 473.69→442.33→358.62→351.55，Dice 87.02→89.69→92.43→92.74；仅 ROI 加 LPIPS 已达 92.43；区域化蒸馏使三步行 FVD 减半。",
+    "limitations": "因果模型上下文有限且未显式建模长期记忆，长时交互一致性受限；作者指出 Stage II 的 flow map 在训练长度内已具较好质量，DMD 是否必要待验证；实时数字依赖单张 H200 与量化部署。",
+    "novelty": "相对 Hand2World、Generated Reality、JointControlVideo，首次把手部局部多级监督、视频与图像双 score 的区域分工、解码器压缩贯通到三步流式生成，并给出 HandBench 与开源权重。",
+    "reproducibility": "代码 https://github.com/LynnReal-AI/LynnReal，权重见 HuggingFace（Base-1.0、Fast-preview、ultra-fast-vae-1.0），声明将发布数据与完整训练推理代码。技术报告级 arXiv preprint。",
+    "evidence": "FULL",
+    "chars": 94704,
+    "suggested": {
+      "IMP": 5,
+      "NOV": 4,
+      "TEC": 5,
+      "EXP": 5,
+      "PER": 4,
+      "TRL": 5,
+      "REP": 5,
+      "why": {
+        "IMP": "手控交互是世界模型缺失的一环",
+        "NOV": "三阶段保交互训练加区域化双蒸馏",
+        "TEC": "数据引擎、三阶段训练与解码器全链",
+        "EXP": "200 例十源、OOD、偏好与延迟齐全",
+        "PER": "FVD 降 38%，Dice 与延迟同步领先",
+        "TRL": "单卡 18 FPS 流式，权重已公开",
+        "REP": "代码模型开放，报告完整"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2611.21485": {
+    "id": "2611.21485",
+    "title_en": "Lost in the Hallway: Benchmarking Persistent Spatial Memory Across Revisits",
+    "title_zh": "迷失在走廊：跨重访的持久空间记忆基准评测",
+    "track": "评估与数据集",
+    "venue": "arXiv preprint",
+    "one_line": "32 个模型在 3,244 题重访基准上最高仅 50.5%，人类为 90.1%。",
+    "problem": "具身智能体要在反复进入的环境中可靠工作，必须在地点重访时识别同一物理房间、把它与外观相似的其他房间区分开，并随环境变化更新记忆。现有评测往往把跨多次访问的物理地点身份隐含掉，缺少同型房间干扰与跨会话变化的受控设置，因而无法判断模型究竟记住了访问历史，还是只在做单段视频的熟悉度识别。",
+    "method": "仅摘要可得，无法陈述实现细节，摘要亦未给出网络结构、训练目标与推理流程。据摘要：构建 ReSpaceBench，含 590 个合成与真实家居场景、3,244 个问题，组织为 9 类任务，覆盖房间关联、持久状态跟踪与下游推理；用受控 walkthrough 以进入物理房间来界定一次访问，刻意加入同类型房间干扰项与跨会话物体变化；另提供 RS-30K 训练集，来自合成源，且在模板、场景、路线与视频四个层面与基准无重叠。",
+    "key_results": [
+      "ReSpaceBench：最强零样本模型总体准确率 50.5%，450 题子集 52.2%。",
+      "人类标注者总体准确率 90.1%，与最强模型相差约 39.6 个百分点。",
+      "评测 32 个模型与 3 个 agentic 视频理解框架，框架相对同基座直接推理无整体提升。",
+      "执行轨迹分析：主要失败模式为证据遗漏与跨访问房间错误关联。",
+      "RS-30K 微调 Qwen3-VL-8B：总体 35.5%→60.4%，关联类增益最大，真实家居场景亦有提升。"
+    ],
+    "baselines": [
+      "32 个零样本与微调模型（摘要未列名单）",
+      "3 个 agentic 视频理解框架",
+      "人类标注者"
+    ],
+    "ablations": "摘要级分析：annotation-guided sampling 表明保留中间访问与转场对成绩重要；模型在识别熟悉房间与指出正确访问房间之间存在明显差距，说明熟悉度不等于地点身份记忆。",
+    "limitations": "仅有摘要页，方法、指标定义与统计细节不可核实；场景以合成与真实家居为主，规模 590 个；微调后 60.4% 仍远低于人类 90.1%，跨用户与跨环境泛化未知。",
+    "novelty": "相对既有空间理解与长视频记忆基准，显式以物理房间进入定义访问单元，并用同型房间干扰与跨会话物体变化把地点身份记忆从单段视频识别中隔离出来；同时给出无重叠训练集 RS-30K 以检验可学习性。",
+    "reproducibility": "摘要称提供 RS-30K 训练集；代码与评测协议未见声明。arXiv preprint（cs.CV）。",
+    "evidence": "PARTIAL",
+    "chars": 5237,
+    "suggested": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 2,
+      "TRL": 2,
+      "REP": 3,
+      "why": {
+        "IMP": "重访记忆是具身智能硬需求",
+        "NOV": "以物理房间定义访问并设干扰",
+        "TEC": "基准与训练集完整，方法未公开",
+        "EXP": "32 模型加 3 框架，规模充足",
+        "PER": "只提基准，无新方法性能主张",
+        "TRL": "纯评测，暂无可部署产物",
+        "REP": "提供训练集，代码协议未见"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2511.16349": {
+    "id": "2511.16349",
+    "title_en": "LoC-IN: Real-Time Localization of Cameras in Neural Rendered Prior LiDAR Maps",
+    "title_zh": "LoC-IN：神经渲染先验 LiDAR 地图中的相机实时定位",
+    "track": "重建与SLAM",
+    "venue": "arXiv preprint",
+    "one_line": "实时图像匹配 LiDAR 神经渲染视图，自建数据集 0.59 cm 误差、100% 跟踪。",
+    "problem": "视觉 SLAM 累积漂移与尺度模糊，依赖人工标志或回环，长走廊等低重叠区易失败；网格化先验损失扫描几何精度，辐射场需大量带位姿图像且覆盖充分；跨模态 LiDAR 与图像匹配泛化差、开销大，多需初始位姿。静态 LiDAR 扫描可达亚毫米精度并自带米制尺度，但点云是无组织漂浮点，无法直接投影成连贯图像。",
+    "method": "以彩色静态 LiDAR 点云为先验。神经渲染器三遍投影：z-buffer 最小深度、阈值内颜色累积、取平均，再经分层深度滤波去背景泄漏、U-Net 补洞、TensorRT 加速；去掉视锥剔除与锁，5800 万点约 1.75 倍、2.88 亿点 32 倍加速。R&M 在点云内均匀采样位姿渲 cubemap，XFeat 特征加反投影路标建库，EigenPlaces 取 k=30 候选，PnP-RANSAC 粗定位后重渲染精化；跟踪时以上帧位姿渲染、与实时帧做 2D-2D 匹配，反投影得 3D 路标再 PnP，误差不无界累积。P&L 离线用 ORB 建位姿即真值的稀疏地图（3x3 窗口合并路标、单帧观测剔除），跟踪时原版 ORB-SLAM3 或 StellaVSLAM 以定位模式加载，无需 GPU 与在线渲染。",
+    "key_results": [
+      "自建 Lab 与 Synthetic：P&L-S 中位位置误差 0.59 cm、0.18 度，100.0% 定位率，小于 1 cm 占 75.4%；StellaVSLAM 为 7.11 cm、84.8%，ORB-SLAM3 为 29.70 cm。",
+      "ScanNet++：0.02 m 与 0.44–0.57 度，小于 5 cm 占 89.23%（ORB-SLAM3 64.04%），SSIM 0.691 vs 0.609。",
+      "Oxford Spires：P&L-S 0.05 m 与 0.33 度，小于 20 cm 占 94.7%；COLMAP 0.09 m 但仅 5.2% 帧，CMRNext 1.62 m、小于 20 cm 仅 31.5%。",
+      "跟踪速度（RTX 3500 Ada 笔记本）：P&L-Stella 33.2 FPS、P&L-ORB 31.9 FPS、R&M 13.5 FPS；重定位 30–72 ms。",
+      "点云抽稀至 10%：神经渲染 R&M 位置误差 1.08 cm、83.7% 定位，纯点渲染退化到 11.20 cm、2.4%。",
+      "R&M 加全局描述子重定位 47.2 ms，去掉后 659.8 ms。"
+    ],
+    "baselines": [
+      "StellaVSLAM",
+      "ORB-SLAM3",
+      "COLMAP",
+      "VILENS",
+      "CMRNext",
+      "ScanNet++ pipeline",
+      "点渲染与深度滤波渲染"
+    ],
+    "ablations": "特征后端：XFeat 定位率 83.8% vs ORB 27.5%；去掉全局描述子定位率升到 89.0% 但重定位耗时 659.8 ms；神经渲染在点云抽稀下退化最缓（10% 时仍 83.7% 定位）。",
+    "limitations": "依赖一次性高精度静态 LiDAR 扫描，设备昂贵；P&L 地图未针对评测轨迹优化，跟踪帧率低于原生 SLAM；ScanNet++ 参考位姿由 COLMAP 计算而非实测，仅作近似参考。",
+    "novelty": "相对 CMRNext 等跨模态方法（需初始位姿、1.6 FPS）与网格或辐射场先验，改用轻量神经渲染把 3D-2D 配准转成同模态 2D-2D 匹配，首帧即得全局米制位姿；P&L 还能零改代码接入现成 SLAM 且跟踪不需 GPU。",
+    "reproducibility": "未声明代码开源，自建 Lab 与 Synthetic 数据集未提供下载链接；arXiv preprint（v2，未注明会议或期刊）。",
+    "evidence": "FULL",
+    "chars": 51940,
+    "suggested": {
+      "IMP": 4,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 5,
+      "TRL": 4,
+      "REP": 2,
+      "why": {
+        "IMP": "无漂移定位是机器人与 XR 刚需",
+        "NOV": "神经渲染桥接域差，工程组合为主",
+        "TEC": "渲染器改造与两条管线消融完整",
+        "EXP": "两公开集加两自建集，多基线多指标",
+        "PER": "厘米级误差，定位率大幅领先 SLAM",
+        "TRL": "笔记本实时，可接入现成 SLAM",
+        "REP": "无代码与数据发布声明"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2605.05712": {
+    "id": "2605.05712",
+    "title_en": "EgoEMG: A Multimodal Egocentric Dataset with Bilateral EMG and Vision for Hand Pose Estimation",
+    "title_zh": "EgoEMG：面向手部位姿估计的双侧肌电与第一视角视觉数据集",
+    "track": "评估与数据集",
+    "venue": "arXiv preprint",
+    "one_line": "25.9 小时双侧 sEMG 加第一视角视频数据集，融合使 ViT-L 的 MAE 从 7.39 度降至 7.06 度。",
+    "problem": "第一视角手部位姿估计在自遮挡、物体遮挡、运动模糊与光照不足时退化。腕部表面肌电不依赖手部可见性，可作可穿戴补充，但验证其价值需要生理与视觉同步、且带连续位姿标注的数据；已有 EMG 位姿数据集缺少第一视角视频，无法在同一标注与划分下比较 EMG、视觉及融合。",
+    "method": "采集 68 人 81 段共 25.92 小时。每腕 8 通道 EMG 2 kHz 加 IMU，头戴第一视角，ZED 2i 与两台 D455，21 标记 120 Hz 动捕，全模态共主机时钟对齐。标注用 markers2mano 重建 MANO（4.3 mm 误差），UmeTrack 拟合得 20 指角加 2 腕角共 22 维（RMS 2.8 mm），3.6% 帧无效；60 手势类与 10 物体，附 SAM 3 分割与 FoundationPose 6D 位姿。基准：EMGFormer 为 TDS 卷积编码器加 RoPE Transformer 加回归头；视觉用 ResNet 与 DINOv2 ViT；残差融合共享 EMG 编码器，经时序注意力池化后与图像特征、左右手编码拼接，由共享投影与左右独立残差头修正视觉预测。四划分为 Gesture、User、G+U、Object。",
+    "key_results": [
+      "EgoEMG EMG-only：EMGFormer-S 总体 MAE 12.28 度 vs emg2pose 12.76 度（降 3.8%），Object 条件 9.92 度。",
+      "EMG2Pose：EMGFormer-L 在 User 11.2 度、User+Stage 13.9 度，优于 CLDM 的 11.3 度与 Position MT 的 14.6 度；S 在 Stage 最低 12.9 度。",
+      "视觉基线：ViT-S 8.55 度、ViT-B 8.02 度、ViT-L 7.39 度；融合后为 8.05、7.65、7.06 度，总体降 0.33–0.51 度。",
+      "Object 划分增益最大：各骨干降低 0.40–0.68 度；ViT-L 融合 7.41 度 vs 视觉 7.81 度。",
+      "按外部遮挡分位：融合增益从零遮挡组 0.59 度升至最高组 1.20 度，差 0.61 度（95% CI 0.39–0.81）。",
+      "时序视觉 17 帧：7.72 度，再加 EMG 降至 7.47 度。"
+    ],
+    "baselines": [
+      "emg2pose",
+      "vemg2pose",
+      "NeuroPose",
+      "SensingDynamics",
+      "CLDM",
+      "Position MT 与 Velocity MT",
+      "ResNet-18/50/152",
+      "ViT-S/14, ViT-B/14, ViT-L/14"
+    ],
+    "ablations": "残差融合优于直接融合（8.05 度 vs 8.14 度）；EMG 模型变大不降误差（M 与 L 均 12.46 度）；因果变体总体 MAE 与双向差 0.17 度以内但 User 条件变差；中心帧评估与滤波增广见附录。",
+    "limitations": "对未见用户的泛化仍是难点；融合把每个 EMG 窗口池化为单向量，未做全序列跨模态对齐，也未按手部可见度自适应分配权重；手势多为脚本化 prompt，与自然交互分布有差距。",
+    "novelty": "相对 EMG2Pose（无第一视角视频、无腕角与物体标注）与 H2O 和 HOT3D（无 EMG），首次把双侧 EMG、第一视角视频、22 维连续位姿与物体级标注对齐到同一时钟与同一评测划分，并给出 EMG、视觉、融合三套同目标基线。",
+    "reproducibility": "数据集 CC-BY-NC 4.0，基线代码 MIT，项目页 https://zhenqis123.github.io/egoemg-site/；arXiv preprint（v2）。",
+    "evidence": "FULL",
+    "chars": 86581,
+    "suggested": {
+      "IMP": 4,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 2,
+      "TRL": 3,
+      "REP": 5,
+      "why": {
+        "IMP": "遮挡下手部追踪是 XR 痛点",
+        "NOV": "首个双侧 EMG 加第一视角同步位姿集",
+        "TEC": "采集、标注、基准与融合模型完整",
+        "EXP": "68 人 25.9 小时，四划分六骨干",
+        "PER": "融合仅降 0.33–0.51 度，增益有限",
+        "TRL": "数据可支撑评估，未上机验证",
+        "REP": "数据与代码许可明确并开放"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2605.09586": {
+    "id": "2605.09586",
+    "title_en": "DeformMaster: An Interactive Physics-Neural World Model for Deformable Objects from Videos",
+    "title_zh": "DeformMaster：从视频学习可交互的物理-神经形变物体世界模型",
+    "track": "世界模型与仿真",
+    "venue": "arXiv preprint",
+    "one_line": "物理-神经残差加分布式柔顺驱动，20 条真实序列 IoU 0.748、Chamfer 0.011。",
+    "problem": "形变物体世界模型要同时恢复几何、外观与物理动力学。单目视频中线性、平面、体积物体形变维度高、交互含噪。物理数字孪生（PhysTwin、Spring-Gaus）受固定基底与纯参数拟合限制；纯学习动力学数据依赖强、绑定训练分布、新动作长程漂移；物理加生成的混合系统偏生成，难由显式动作控制且易幻觉。",
+    "method": "状态分材料粒子与外观粒子，动作为手或执行器锚点位置与速度。PNPGD 用可微 MPM 推进一帧得 s_tilde，PointNet 编码加坐标条件 MLP 在 Eulerian 网格上预测有界修正 alpha*tanh，按同一 B-spline 权重映回粒子得 delta_v，仅更新位置与速度，F 与 C 继承；残差为帧级扰动。DCA 在执行器邻域内以刚度与阻尼做柔顺耦合，a_p 以 n_p^(-1/2) 归一防力叠加，把稀疏含噪手轨迹转为有限接触面的分布驱动。MoCE 以 P_mix=sum w_k,p P_k 混合 NH、Cor、StVK 专家，权重由 patch 级 logits 插值，E 与 nu 可学。外观用 LBS 把粒子增量运动传给 3DGS。损失含 track、shape、length、RGB 四项；训练三阶段，并用 CMA-ES 选 DCA 增益。",
+    "key_results": [
+      "PhysTwin 20 条序列：IoU 0.748 vs 0.734，Chamfer 0.011 vs 0.012，Track 0.024 vs 0.023，PSNR 25.41 dB vs 25.16 dB。",
+      "对学习型基线：Chamfer 较 Spring-Gaus 0.062 与 GS-Dynamics 0.041 降低 3 倍以上，Track 至少降低 2.9 倍。",
+      "线性物体（绳索，n=3）：IoU 0.658→0.721，Chamfer 0.007→0.005，Track 0.013→0.010。",
+      "平面物体（布料与包装，n=9）：IoU 0.738→0.748、Chamfer 持平 0.013，但 Track 0.028→0.032 退化。",
+      "在线交互 rollout 超过 15 fps；材料场缩至 0.3 倍可产生断裂并支持新视角渲染。"
+    ],
+    "baselines": [
+      "PhysTwin",
+      "Spring-Gaus",
+      "GS-Dynamics",
+      "PAC-NeRF",
+      "GIC",
+      "PhysGaussian"
+    ],
+    "ablations": "去残差（纯 MPM）动静与外观均降，粒子网格残差优于 MLP 与 GNN；刚性约束 9/20 序列发散（含全部 8 个体积物体），单执行器稳定但降精度；单 Neo-Hookean 专家不如 MoCE；RGB 精化主要提升平面与体积。",
+    "limitations": "粒子网格仿真对极薄单层布不如带固定拓扑的弹簧质点，平面 Track 仍落后 PhysTwin；交互依赖观测到的手部运动，严重遮挡时动作信号不完整；运行时随 MPM 子步数增加，保真度与实时性需权衡。",
+    "novelty": "相对 PhysTwin、Spring-Gaus 的固定基底加纯参数拟合，以及 GS-Dynamics、AdaptiGraph 的纯学习转移，把物理 rollout、神经残差、柔顺分布驱动与空间变化本构混合统一，全部从真实视频学得。",
+    "reproducibility": "项目页公开，声明发表后开源代码与数据；评测基于 PhysTwin 的 20 条序列。arXiv preprint（v2）。",
+    "evidence": "FULL",
+    "chars": 68652,
+    "suggested": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 3,
+      "PER": 3,
+      "TRL": 3,
+      "REP": 3,
+      "why": {
+        "IMP": "可交互形变世界模型是具身关键",
+        "NOV": "物理残差、柔顺驱动与本构混合",
+        "TEC": "三模块公式与三阶段训练完整",
+        "EXP": "仅 20 条序列一基准，三基线",
+        "PER": "较 PhysTwin 小幅领先，平面退化",
+        "TRL": "15 fps 交互演示，代码待发布",
+        "REP": "承诺开源，数据复用他作"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2607.03875": {
+    "id": "2607.03875",
+    "title_en": "MACRO: Training-free Multi-plane Attention for Closeup Render Optimization",
+    "title_zh": "MACRO：面向特写渲染优化的免训练多平面注意力",
+    "track": "渲染与显示",
+    "venue": "arXiv preprint",
+    "one_line": "按深度平面裁剪参考图对齐尺度，LPIPS 0.343→0.330、DINOv2 0.205→0.152。",
+    "problem": "特写渲染指相机明显近于任何训练视角，3DGS 在此严重退化，细节无法从三维表示恢复。参考图条件增强假设目标与参考同尺度，但特写中尺度随深度变化。作者诊断：VAE 与 U-Net 特征非尺度不变，跨视注意力检索错误对应；VAE 编码器非尺度等变，故无法在潜空间纠正。渐进方法需多轮重训，误差累积且昂贵。",
+    "method": "MACRO 不改架构、不训练。用 3DGS 渲染的深度图在 1/z 空间做 k-means 得 P 个深度平面及掩码；每平面按尺度因子 s_p=d_p_ref/d_p_cu 在参考图上取 1/s_p 视野的裁剪，把该平面可见 3D 点投影到参考相机定裁剪中心，用 PFT-SR 上采样到 1k；K 个参考与 P 个平面共 K*P 个尺度匹配 patch，连同特写图一起经 VAE 编码，在 U-Net 的 reference mixing 层施加块掩码：同视图自注意力全开、参考之间互注意屏蔽、特写 token 只 attend 其所属平面同尺度 crop 的 token，掩码在 softmax 前加于注意力分数，单次前向完成。参考按视角覆盖贪心选 K=3，P=3。",
+    "key_results": [
+      "DL3DV-Closeup（44 场景 314 对）：LPIPS 0.330 vs Difix 0.343，DreamSim 0.105 vs 0.128，DINOv2 0.152 vs 0.205（降约 26%），PSNR 16.17 vs 15.81。",
+      "MobileClose-10（10 场景 39 对）：DreamSim 0.168 vs Difix 0.253，DINOv2 0.217 vs 0.352，LPIPS 0.551 vs 0.557，PSNR 14.60 vs 14.55。",
+      "相对未增强 3DGS：感知指标最高提升 67%（DL3DV）与 58%（MobileClose）；相对最强增强基线最高 26% 与 38%。",
+      "诊断实验：4 倍尺度下 VAE 潜变量余弦相似度由 1.0 降至 0.70；U-Net 注意力最近邻匹配准确率随尺度比单调下降。",
+      "深度比不小于 10 的 33 个特写：相对单平面 DreamSim 0.142→0.127（+10.5%），DINOv2 0.219→0.196（+10.4%）。",
+      "推理约 34 s/图（540x960）、104 s/图（1071x1428），远快于需 30 分钟以上的渐进重训方案。"
+    ],
+    "baselines": [
+      "3DGS",
+      "Mip-Splatting",
+      "SEVA",
+      "GSFixer",
+      "Difix",
+      "Difix3D 与 Difix3D+",
+      "PR-Difix3D 与 PR-Difix3D+"
+    ],
+    "ablations": "单平面（P=1）已超所有增强基线的感知指标，说明尺度校正是主因；加平面去掩码反而更差；LANCZOS 替代 PFT-SR 变差；反向 warp 大幅退化（LPIPS 0.399）；深度扰动 20% 时 LPIPS 变化不超过 0.007。",
+    "limitations": "裁剪上采样丢失高频，存在模糊与真实感的权衡；深度平面数 P 固定，未按视图深度复杂度自适应；依赖 3DGS 深度，欠观测区不准；平面边界偶有接缝；把输出蒸馏回 3DGS 会掉点。",
+    "novelty": "相对 Difix、GSFixer 的参考条件增强与 Close-up-GS 的渐进重训，先诊断特征非尺度不变与 VAE 非尺度等变，再用已知三维结构在图像空间做尺度匹配加深度掩码，免训练免改架构。",
+    "reproducibility": "项目页 https://nitzanhod.github.io/MACRO/；正文未声明代码或数据发布。arXiv preprint（v2，Amazon Prime Video）。",
+    "evidence": "FULL",
+    "chars": 68085,
+    "suggested": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 4,
+      "REP": 3,
+      "why": {
+        "IMP": "特写是虚拟制作与 3D 内容痛点",
+        "NOV": "尺度失配诊断加免训练多平面注意力",
+        "TEC": "诊断、方法、两基准与消融闭环",
+        "EXP": "两基准 353 对，九基线多感知指标",
+        "PER": "感知指标降 20–30%，PSNR 略升",
+        "TRL": "免训练即插即用，单图 34 秒",
+        "REP": "有项目页但无代码，arXiv"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2609.31117": {
+    "id": "2609.31117",
+    "title_en": "Comparative Evaluation of an XR Pen-based Control Interface for Semi-Autonomous Mobile Robot Navigation in Service Environments",
+    "title_zh": "面向服务环境半自主移动机器人导航的 XR 笔式控制接口对比评估",
+    "track": "交互与输入",
+    "venue": "arXiv preprint",
+    "one_line": "10 人四接口对比：XR 笔选择最快 2.44 s 但不显著，手柄负载最低。",
+    "problem": "服务机器人难以进入家庭：全自主在不可预测环境中仍不可靠，传统控制与编程对新手不友好。XR 可把路径与航点叠加到真实场景，避免在屏幕与现场间切换注意力，但手柄与捏合手势被反复报告为不直观、易挫败；笔式设备点选精度高、更轻，却因多为自制原型而缺少与既有方法的客观对照。",
+    "method": "在同一 AR 框架内实现四种接口：RViz 电脑基线（地图点选加鼠标拖方向箭头）、XR 手柄（主按钮）、Logitech MX Ink 6-DoF 笔（侧键）、捏合手势。流程一致：射线投射到地面定目标位置，按住拖拽增强箭头定朝向，释放后经 ROS TCP 发布到 /move_base_simple/goal，由 Fetch 底盘自主导航。硬件为 Meta Quest 3 透视模式、Unity 应用与笔记本中继。10 名被试（22–61 岁，6 国，全右利手）先看教程与练习，再对每接口在三个目标点各做静坐与走动 trial，共 24 次，顺序随机化；每接口后填 NASA-TLX 与 SUS，用重复测量 ANOVA 分析。",
+    "key_results": [
+      "原始工作负载（0–100）：手柄 25.54、RViz 25.58、笔 39.58、手势 40.25（p=.002，eta_p^2=.42）；手势显著高于 RViz（p=.044）与手柄（p=.027）。",
+      "SUS：手柄 77.00（可接受）、RViz 68.50、手势 57.50、笔 56.25（p=.043），两两无显著差异。",
+      "选择时间：笔 2.44±2.56 s 最短且方差最小，手柄 3.06、RViz 4.13、手势 4.97（p=.105，eta_p^2=.20，未达显著）。",
+      "完成时间无显著差异（56.07–63.90 s，p=.601）；目标位置显著（p=.004，eta_p^2=.46），厨房桌 79.69 s vs 客厅架 52.99 s、床头桌 48.89 s。",
+      "导航请求：RViz 4.61 vs 笔 9.54（约两倍），XR 三接口合计 9.74 vs RViz 4.65（p=.030）。"
+    ],
+    "baselines": [
+      "RViz（电脑基线）",
+      "XR motion controllers",
+      "hand gestures（捏合）"
+    ],
+    "ablations": "无组件消融；分层分析显示目标位置对完成时间影响显著且与接口无交互（p=.144）；剔除笔的跟踪故障后其主观评分是否具竞争力仍未验证。",
+    "limitations": "样本仅 10 人且部分有机器人经验，泛化到新手受限；笔在静止数秒后被头显切换为手跟踪导致选择冻结，故障频率未记录、污染主观评分；手势在静息位误触发；机器人自主导航的急停与重扫描主导时间指标。",
+    "novelty": "相对以往依赖自制笔原型的研究，首次用商用 MX Ink 在人形移动机器人、家庭式环境与遮挡目标下，与手柄、手势及 RViz 做含 NASA-TLX、SUS 与客观导航指标的四路对照，并明确报告了笔的跟踪故障这一混淆因素。",
+    "reproducibility": "未声明代码或数据开源；被试研究细节另见引用 [28]。arXiv preprint（cs.RO，v2）。",
+    "evidence": "FULL",
+    "chars": 52533,
+    "suggested": {
+      "IMP": 3,
+      "NOV": 2,
+      "TEC": 3,
+      "EXP": 2,
+      "PER": 1,
+      "TRL": 2,
+      "REP": 2,
+      "why": {
+        "IMP": "XR 机器人控制可用性有实用价值",
+        "NOV": "商用笔加四路对照，增量有限",
+        "TEC": "系统集成完整，分析方法常规",
+        "EXP": "仅 10 人，主指标多不显著",
+        "PER": "无显著性能优势，假设多被否",
+        "TRL": "实验原型，受跟踪故障制约",
+        "REP": "无代码数据，样本小难复现"
+      }
+    },
+    "outdated": "CURRENT"
+  },
+  "2611.18267": {
+    "id": "2611.18267",
+    "title_en": "TetraCoder: Adaptive Tetrahedral Encoding for Neural Fields",
+    "title_zh": "TetraCoder：面向神经场的自适应四面体编码",
+    "track": "神经渲染",
+    "venue": "arXiv preprint",
+    "one_line": "单层无哈希自适应四面体 CPWA 编码，解析提网格快 6.4 倍、参数约为三分之一。",
+    "problem": "隐式与显式几何各有优劣，高效互换极具价值。多分辨率哈希细节强但有碰撞、三线性插值破坏分片仿射，无法解析提面；多分辨率四面体哈希保 CPWA 却需跨层求交，层数增多后提取昂贵；固定四面体训练中不能调整空间域；网格编码依赖已重建表面。缺少既保解析对应、又能自适应且无碰撞的编码。",
+    "method": "用单层无哈希自适应四面体网格，顶点存位置与特征。编码时定位包含 x 的四面体，以体积比重心坐标 lambda_v=V(tau_v)/V(tau) 插值，得 e(x)=sum lambda_v f_v；面共享顶点保连续，以对面为底使 lambda 对 x 仿射，故每四面体内 e=A_tau x+b_tau，复合仿射层与 ReLU 解码器后仍 CPWA，可按 ReLU 激活区细分凸胞并解 a_C^T x+b_C=0 解析提面。自适应按 diam/|S|*sum||dL/de|| 致密化，插入顶点特征取旧编码值；剪枝低梯度近均值顶点；顶点按 Adam 移动；插入与剪枝触发 Delaunay 重建。射线追踪用邻接行走。任务含 2D 拟合、点云转网格、NeuS2 图像重建与顶点级编辑。",
+    "key_results": [
+      "R1 图像拟合：Albert 59.81 dB vs Instant-NGP Hash 50.31 dB（参数 3.61M vs 5.75M）；Pluto 48.63 vs 44.03（17.27M vs 23.96M）。",
+      "R2 Stanford 点云：CD 1.611e-3 vs TetraSDF-L 1.718，解析提取 0.446 s vs 2.859 s（约 6.4 倍），参数 5.221M vs 16.778M。",
+      "R2 网格质量：skinny triangles 9.14% vs 19.55%，Delaunay 边合规 83.50% vs 82.37%，SSDF 与 VSDF 均 0.027 vs 0.076 与 0.078。",
+      "R3 NeRF Synthetic：PSNR 33.27 vs Instant-NGP 32.75、NeuS2 31.58，SSIM 0.969，CD 3.93 mm vs 4.10。",
+      "R3 DTU：PSNR 32.34 vs 32.27，SSIM 0.943，CD 0.705 mm vs 0.711。",
+      "R4 编辑：未涂区域 2D MSE 0.048–0.160e-2 vs Hash 0.536–2.221；相对 NeuMesh++ 渲染约 2 倍、几何与外观编辑延迟低 19 倍与 18 倍。"
+    ],
+    "baselines": [
+      "Instant-NGP (Hash)",
+      "TetraSDF (Large)",
+      "NeuS2",
+      "Tetra-NeRF",
+      "NeuMesh++",
+      "Marching Cubes 与 Marching Tetrahedra",
+      "Dual Contouring"
+    ],
+    "ablations": "D、P、M 全开最优（CD 3.926e-3、PSNR 33.26 dB、SSIM 0.9689）；仅开 D 时 PSNR 高但 CD 7.185；仅开 P 或 M 几何明显退化，说明外观相近的渲染可掩盖不同表面。",
+    "limitations": "尚未扩展到动态 4D 场景；只有单层表示，无法做多级细节的解析提取；未证明隐式与显式链接的双向性（从提取网格反推 SDF）。",
+    "novelty": "相对 Instant-NGP（哈希加三线性）与 TetraSDF（多分辨率四面体哈希），改为单层无哈希自适应网格：既消除碰撞与跨层求交，又把编辑域与编码器合为一体，同时保持 CPWA 以支持精确解析提面。",
+    "reproducibility": "未声明代码或数据开源；致谢 NVIDIA 提供两块 RTX PRO 6000 算力。arXiv preprint（cs.GR，v2）。",
+    "evidence": "FULL",
+    "chars": 53920,
+    "suggested": {
+      "IMP": 3,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 2,
+      "why": {
+        "IMP": "隐式与显式转换是图形学基础问题",
+        "NOV": "单层自适应无哈希的 CPWA 编码",
+        "TEC": "编码、提取、编辑与四任务闭环",
+        "EXP": "四任务多数据集，含时间与拓扑指标",
+        "PER": "提面快 6.4 倍，参数降三分之二",
+        "TRL": "研究原型，未接内容管线",
+        "REP": "无代码声明，仅 arXiv"
+      }
+    },
+    "outdated": "CURRENT"
+  }
+}
