@@ -88,8 +88,13 @@ def base_id(full_id):
     return full_id.split(":")[-1].split("v")[0]
 
 
+# 发布形态：GitHub Pages 的站点根就是 web/，`../reports/...` 会落到站点根之外（实测 404）。
+# 文档本身已在同仓公开仓库里，统一指向仓库文件页：零体积、零额外发布步骤。
+REPO_BLOB = "https://github.com/Aber2210/xr-paper-radar/blob/main/"
+
+
 def rel(p):
-    return "../" + os.path.relpath(p, ROOT).replace(os.sep, "/")
+    return REPO_BLOB + os.path.relpath(p, ROOT).replace(os.sep, "/")
 
 
 def _cols_of(lines):
@@ -314,6 +319,25 @@ def first_sentence(path, maxlen=200):
 
 # ---------------- 每日批次（以各日 7 维表为权威清单） ----------------
 RUN_ORDER = {"backfill-2603-2609": ("2026-10-09", 1)}
+
+
+def _sort_key(key):
+    """批次排序键：backfill 依附所属公告日，序号 1 表示排在同日主批之后。
+
+    旧实现直接用 key 字符串排序：`backfill-*` 的字典序大于 `2026-*`，
+    倒序时 backfill 卡全部顶到首屏，与「按抓取时间倒序」的说明相反。
+
+    注意次键方向：前端 skDesc 在日期相同时用 `x[1]-y[1]`（升序），
+    所以主批取 0、backfill 取 1，页面才会把主批排在前面。
+    2026-11-17 复评踩坑：先取 -1 时页面首卡仍是 backfill-1117，
+    而 Python 镜像用 sorted(reverse=True) 会把次键一并反转，断言假绿。
+    """
+    if key in RUN_ORDER:
+        return RUN_ORDER[key]
+    m = re.match(r"^backfill-(?:26\d{2}-)?(\d{2})(\d{2})", key)
+    if m:
+        return ("2026-%s-%s" % (m.group(1), m.group(2)), 1)
+    return (key, 0)
 batches = []
 daily_root = os.path.join(ROOT, "papers/daily")
 for key in sorted(os.listdir(daily_root)):
@@ -390,7 +414,7 @@ for key in sorted(os.listdir(daily_root)):
         "avg": round(sum(r["value"] for r in rows) / len(rows), 3) if rows else None,
         "max": max((r["value"] for r in rows), default=None),
         "grades": grades, "statusNote": sn, "note": note, "links": links,
-        "_sort": RUN_ORDER.get(key, (key, 0)),
+        "_sort": _sort_key(key),
     })
 batches.sort(key=lambda b: b["_sort"])
 # _sort 保留在 JSON 中：前端「每日解读」排序需要（backfill 需依附 10-09 批次之后）
@@ -416,12 +440,33 @@ data = {
 }
 
 tpl = read_text(os.path.join(ROOT, "scripts/frontend_template.html"))
+MARK = "/*__DATA__*/"
+if MARK not in tpl:
+    raise SystemExit("FATAL: 模板缺少注入标记 %s（拒绝产出空壳页）" % MARK)
 payload = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-html = tpl.replace("/*__DATA__*/", payload, 1)
+html = tpl.replace(MARK, payload, 1)
+if payload not in html:
+    raise SystemExit("FATAL: 标记存在但 payload 未被注入")
 out = os.path.join(ROOT, "web/xr-paper-hub.html")
 os.makedirs(os.path.dirname(out), exist_ok=True)
 with open(out, "w", encoding="utf-8") as f:
     f.write(html)
+
+# 后置校验：唯一可信的口径是写盘后的产物，而不是内存里的对象。
+# 旧实现只打印内存计数，模板标记被删时会产出 `const DATA = ;` 且 exit 0（实测复现）。
+written = read_text(out)
+m = re.search(r"const DATA = (\{.*?\});\n</script>", written, re.S)
+if not m:
+    raise SystemExit("FATAL: 产物缺少 const DATA 字面量")
+try:
+    back = json.loads(m.group(1))
+except ValueError as e:
+    raise SystemExit("FATAL: 产物 DATA 不可解析: %s" % e)
+for k, n in (("papers", len(papers)), ("notes", len(notes)), ("batches", len(batches))):
+    got = len(back.get(k) or [])
+    if got != n:
+        raise SystemExit("FATAL: 产物 %s=%d 与源 %d 不一致" % (k, got, n))
+print("verified:", {k: len(back[k]) for k in ("papers", "notes", "batches")})
 print("papers:", len(papers), "| notes:", len(notes), "| batches:", len(batches))
 print("output:", out, "| size:", round(os.path.getsize(out) / 1024, 1), "KB")
 for b in batches:

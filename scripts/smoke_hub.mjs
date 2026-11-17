@@ -1,14 +1,22 @@
 // CDP smoke test for web/xr-paper-hub.html (Edge headless)
-// Usage: node smoke_hub.mjs <port>
+// Usage: node smoke_hub.mjs <port> [project-root]
+//
+// 断言口径（2026-11-17 整改）：只断言「不变量」，不再钉死单批计数。
+// 旧实现写死 papers===951 与 50+ 条 hasXXXXX，换批必须手改：
+// 漏改 → 假 FAIL（把好批次判坏）；改错 → 假 PASS（把错计数写进期望值）。
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 
 const port = Number(process.argv[2] || 9333);
+const root = process.argv[3] || 'D:/Agent/WorkBuddy/Research';
 const edge = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
-const target = 'file:///D:/Agent/WorkBuddy/Research/web/xr-paper-hub.html';
-const profile = path.join(os.tmpdir(), 'edge-smoke-' + port);
+const target = 'file:///' + path.join(root, 'web/xr-paper-hub.html').replace(/\\/g, '/');
+// profile 必须放 D 盘且用完即删：旧实现建在 os.tmpdir()（C 盘）且从不清理，
+// 每次运行约 300–400 MB，累积多批后把 C 盘写满（2026-11-17 实测仅剩 0 字节）。
+const TMP_ROOT = 'D:/Agent/.tmp';
+fs.mkdirSync(TMP_ROOT, { recursive: true });
+const profile = path.join(TMP_ROOT, 'edge-smoke-' + port);
 
 const proc = spawn(edge, [
   '--headless=new', `--remote-debugging-port=${port}`,
@@ -16,6 +24,22 @@ const proc = spawn(edge, [
 ], { stdio: 'ignore' });
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// 统一收尾：杀 Edge 后把 profile 目录删掉。Edge 释放句柄有延迟，故带重试；
+// 删除失败只在末尾告警，不改变断言语义。
+async function finish(code) {
+  try { proc.kill(); } catch { /* 已退出 */ }
+  let removed = false;
+  for (let i = 0; i < 20 && !removed; i++) {
+    await sleep(150);
+    try {
+      fs.rmSync(profile, { recursive: true, force: true });
+      removed = true;
+    } catch { /* Edge 还没释放句柄，重试 */ }
+  }
+  if (!removed) console.error('WARN: 未能删除 profile 目录，请手工清理', profile);
+  process.exit(code);
+}
 
 async function main() {
   // wait for devtools
@@ -64,75 +88,66 @@ async function main() {
   await send('Page.enable');
   await sleep(2500); // let page settle
 
+  // 磁盘口径：这是唯一不能被「改期望值」篡改的基准
+  const countLines = (p) => fs.readFileSync(p, 'utf8').split('\n').filter(l => l.trim()).length;
+  const countMd = (d) => fs.readdirSync(d).filter(f => f.endsWith('.md')).length;
+  const countDirs = (d) => fs.readdirSync(d, { withFileTypes: true }).filter(x => x.isDirectory()).length;
+  const disk = {
+    papers: countLines(path.join(root, 'papers/library/registry.jsonl')),
+    notes: countMd(path.join(root, 'papers/notes')),
+    batches: countDirs(path.join(root, 'papers/daily')),
+  };
+
   const probe = await send('Runtime.evaluate', {
     expression: `(() => {
       const d = (typeof DATA !== 'undefined') ? DATA : null;
-      const batchSel = document.querySelector('#batchSel, select');
-      const optTexts = batchSel ? Array.from(batchSel.options).map(o => o.textContent) : [];
+      const tabs = ['overview', 'daily', 'library', 'dim7', 'notes'];
+      const rendered = {};
+      for (const t of tabs) {
+        const btn = document.querySelector('nav.tabs button[data-tab="' + t + '"]');
+        if (!btn) { rendered[t] = -1; continue; }
+        btn.click();
+        const sec = document.getElementById('tab-' + t);
+        rendered[t] = sec ? sec.children.length : -1;
+      }
+      const back = document.querySelector('nav.tabs button[data-tab="overview"]');
+      if (back) back.click();
+      const days = d ? d.batches.filter(b => /^\\d{4}-/.test(b.key)).map(b => b.key).sort().reverse().slice(0, 3) : [];
       return JSON.stringify({
         hasData: !!d,
         papers: d ? d.papers.length : -1,
         notes: d ? d.notes.length : -1,
-        has1021: d ? d.papers.some(p => p.batch === '2026-10-21') : false,
-        hasBF1021: d ? d.papers.some(p => p.batch === 'backfill-1021') : false,
-        has1022: d ? d.papers.some(p => p.batch === '2026-10-22') : false,
-        has1023: d ? d.papers.some(p => p.batch === '2026-10-23') : false,
-        hasBF1023: d ? d.papers.some(p => p.batch === 'backfill-1023') : false,
-        has1024: d ? d.papers.some(p => p.batch === '2026-10-24') : false,
-        hasBF1024: d ? d.papers.some(p => p.batch === 'backfill-1024') : false,
-        has1025ref: d ? (d.batches.some(b => b.key === '2026-10-25' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 21)) : false,
-        has1026ref: d ? (d.batches.some(b => b.key === '2026-10-26' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 21)) : false,
-        has1027: d ? d.papers.some(p => p.batch === '2026-10-27') : false,
-        hasBF1027: d ? d.papers.some(p => p.batch === 'backfill-1027') : false,
-        has1028: d ? d.papers.some(p => p.batch === '2026-10-28') : false,
-        hasBF1028: d ? d.papers.some(p => p.batch === 'backfill-1028') : false,
-        has1029: d ? d.papers.some(p => p.batch === '2026-10-29') : false,
-        hasBF1029: d ? d.papers.some(p => p.batch === 'backfill-1029') : false,
-        has1031: d ? d.papers.some(p => p.batch === '2026-10-31') : false,
-        hasBF1031: d ? d.papers.some(p => p.batch === 'backfill-1031') : false,
-        has1103: d ? d.papers.some(p => p.batch === '2026-11-03') : false,
-        hasBF1103: d ? d.papers.some(p => p.batch === 'backfill-1103') : false,
-        has1104: d ? d.papers.some(p => p.batch === '2026-11-04') : false,
-        hasBF1104: d ? d.papers.some(p => p.batch === 'backfill-1104') : false,
-        has1105: d ? d.papers.some(p => p.batch === '2026-11-05') : false,
-        hasBF1105: d ? d.papers.some(p => p.batch === 'backfill-1105') : false,
-        has1106: d ? d.papers.some(p => p.batch === '2026-11-06') : false,
-        hasBF1106: d ? d.papers.some(p => p.batch === 'backfill-1106') : false,
-        has1107: d ? d.papers.some(p => p.batch === '2026-11-07') : false,
-        has1110: d ? d.papers.some(p => p.batch === '2026-11-10') : false,
-        hasBF1110: d ? d.papers.some(p => p.batch === 'backfill-1110') : false,
-        has1111: d ? d.papers.some(p => p.batch === '2026-11-11') : false,
-        hasBF1111: d ? d.papers.some(p => p.batch === 'backfill-1111') : false,
-        has1112: d ? d.papers.some(p => p.batch === '2026-11-12') : false,
-        hasBF1112: d ? d.papers.some(p => p.batch === 'backfill-1112') : false,
-        has1114: d ? d.papers.some(p => p.batch === '2026-11-14') : false,
-        hasBF1114: d ? d.papers.some(p => p.batch === 'backfill-1114') : false,
-        has1117: d ? d.papers.some(p => p.batch === '2026-11-17') : false,
-        hasBF1117: d ? d.papers.some(p => p.batch === 'backfill-1117') : false,
-        has1108ref: d ? (d.batches.some(b => b.key === '2026-11-08' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 23)) : false,
-        has1109ref: d ? (d.batches.some(b => b.key === '2026-11-09' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 23)) : false,
-        has1030ref: d ? (d.batches.some(b => b.key === '2026-10-30' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
-        has1101ref: d ? (d.batches.some(b => b.key === '2026-11-01' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
-        has1102ref: d ? (d.batches.some(b => b.key === '2026-11-02' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 24)) : false,
-        has1113ref: d ? (d.batches.some(b => b.key === '2026-11-13' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 19)) : false,
-        has1115ref: d ? (d.batches.some(b => b.key === '2026-11-15' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 28)) : false,
-        has1116ref: d ? (d.batches.some(b => b.key === '2026-11-16' && b.count === 0 && Array.isArray(b.refPapers) && b.refPapers.length === 28)) : false,
+        batches: d ? d.batches.length : -1,
+        lastThree: days,
+        lastThreePresent: d ? days.every(k => d.batches.some(b => b.key === k && Array.isArray(b.papers))) : false,
+        allTitled: d ? d.papers.every(p => p.id && p.title_zh) : false,
         bodyLen: document.body ? document.body.innerHTML.length : -1,
-        optTexts: optTexts.slice(-4)
+        rendered: rendered
       });
     })()`,
     returnByValue: true, awaitPromise: false,
   });
   const info = JSON.parse(probe.result.value);
   console.log('PROBE:', JSON.stringify(info, null, 1));
+  console.log('DISK:', JSON.stringify(disk));
   console.log('PAGE_ERRORS:', errors.length ? errors.join('\\n') : 'none');
-  const ok = info.hasData && info.papers === 951 && info.notes === 601 &&
-             info.has1021 && info.hasBF1021 && info.has1022 && info.has1023 && info.hasBF1023 && info.has1024 && info.hasBF1024 && info.has1025ref && info.has1026ref && info.has1027 && info.hasBF1027 && info.has1028 && info.hasBF1028 && info.has1029 && info.hasBF1029 && info.has1031 && info.hasBF1031 && info.has1103 && info.hasBF1103 && info.has1104 && info.hasBF1104 && info.has1105 && info.hasBF1105 && info.has1106 && info.hasBF1106 && info.has1107 && info.has1110 && info.hasBF1110 && info.has1111 && info.hasBF1111 && info.has1112 && info.hasBF1112 && info.has1114 && info.hasBF1114 && info.has1117 && info.hasBF1117 && info.has1030ref && info.has1101ref && info.has1102ref && info.has1108ref && info.has1109ref && info.has1113ref && info.has1115ref && info.has1116ref &&
-             info.bodyLen > 10000 && errors.length === 0;
+
+  const checks = {
+    hasData: info.hasData,
+    papersEqDisk: info.papers === disk.papers,
+    notesEqDisk: info.notes === disk.notes,
+    batchesEqDisk: info.batches === disk.batches,
+    lastThreePresent: info.lastThreePresent,
+    allTitled: info.allTitled,
+    tabsRender: Object.values(info.rendered).every(n => n > 0),
+    noPageErrors: errors.length === 0,
+    bodyLen: info.bodyLen > 10000,
+  };
+  console.log('CHECKS:', JSON.stringify(checks));
+  const ok = Object.values(checks).every(Boolean);
   console.log(ok ? 'SMOKE: PASS' : 'SMOKE: FAIL');
   sock.close();
-  proc.kill();
-  process.exit(ok ? 0 : 1);
+  await finish(ok ? 0 : 1);
 }
 
-main().catch(e => { console.error('FAIL:', e.message); proc.kill(); process.exit(1); });
+main().catch(e => { console.error('FAIL:', e.message); finish(1); });

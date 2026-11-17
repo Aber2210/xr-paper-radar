@@ -5,6 +5,8 @@ data/_chk/
 __pycache__/
 *.pyc
 .workbuddy/
+# TPIR 评审材料（含 artifact-base/fixed 快照与 worktree，体积大且非产物）
+_tpir/
 .wbapp_*.genie
 *.bak-*
 *.bak-2026*

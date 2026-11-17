@@ -1,0 +1,23 @@
+{
+ "_note": "已知未加「全分类失败即拒绝写盘」守卫的历史对账脚本（按日冻结、产物已发布，不重构）。基线只减不增：修好一份就从这里删一条，否则校验器报「基线过期」。",
+ "legacy_unguarded": [
+  "scripts/audit_gap_listing_1101.py",
+  "scripts/audit_gap_listing_1101b.py",
+  "scripts/audit_listing_1102.py",
+  "scripts/audit_listing_1102_fast.py",
+  "scripts/audit_listing_1103.py",
+  "scripts/audit_listing_1104.py",
+  "scripts/audit_listing_1105.py",
+  "scripts/audit_listing_1106.py",
+  "scripts/audit_listing_1107.py",
+  "scripts/audit_listing_1108.py",
+  "scripts/audit_listing_1109.py",
+  "scripts/audit_listing_1110.py",
+  "scripts/audit_listing_1111.py",
+  "scripts/audit_listing_1112.py",
+  "scripts/audit_listing_1113.py",
+  "scripts/audit_listing_1114.py",
+  "scripts/audit_listing_1115.py",
+  "scripts/audit_listing_1116.py"
+ ]
+}

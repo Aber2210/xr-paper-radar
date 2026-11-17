@@ -15,7 +15,7 @@
   data/missed_prev_1117.json      PREV_DAY 组未入 registry 条目
   data/missed_new_1117.json       NEW_DAYS 组未入 registry 条目
 """
-import urllib.request, re, json, time
+import urllib.request, re, json, time, sys
 
 CATS = ["cs.CV", "cs.GR", "cs.HC", "cs.MM", "cs.RO", "cs.AI", "eess.IV"]
 PREV_DAY = "2026-11-13"
@@ -114,6 +114,7 @@ def main():
             reg.add(d["id"].split(":")[-1].split("v")[0])
     print("registry:", len(reg), flush=True)
     cat_report = {}
+    ok_cats = 0
     missed_prev = {}
     newday = {}
     missed_new = {}
@@ -125,6 +126,7 @@ def main():
             print(f"[{c}] FAILED to fetch", flush=True)
             time.sleep(8)
             continue
+        ok_cats += 1
         got = info.get("got", {})
         decl = info.get("decl", {})
         newest = max(d for d, _, _ in page)
@@ -153,6 +155,11 @@ def main():
         print(f"[{c}] newest={newest} prev dec={decl.get(PREV_DAY)} got={len(got.get(PREV_DAY,{}))} [{f1}] "
               f"{newdesc} unreg_total={len(missed_new)} {notes} {time.time()-t0:.0f}s", flush=True)
         time.sleep(8)
+    # 全分类失败时不得写出「空 missed + 0 漏网」——那与真实的 0 漏网同形（2026-11-17 整改）。
+    if ok_cats < len(CATS):
+        print("FATAL: 仅 %d/%d 分类抓取成功，本次对账结论无效，不写 missed 文件"
+              % (ok_cats, len(CATS)), flush=True)
+        sys.exit(2)
     json.dump(cat_report, open("data/audit_1117_days.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(all_days, open("data/audit_1117_alldays.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(newday, open("data/newday_1117.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)

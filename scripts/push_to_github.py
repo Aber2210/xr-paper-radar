@@ -268,6 +268,9 @@ def main():
     ap.add_argument("--branch", default=None, help="目标分支，默认取 origin/HEAD 或 main")
     ap.add_argument("--incremental", action="store_true",
                     help="增量模式：只传与远端有差异的文件（日常使用）")
+    ap.add_argument("--allow-dirty", action="store_true",
+                    help="允许在工作区有未提交改动时推送（默认拒绝：脏工作区下"
+                         "「远端与 HEAD 一致」会被误读成「今天的产物已发布」）")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
@@ -285,6 +288,16 @@ def main():
             print("  ", e["mode"], e["path"])
         print("  ...（dry-run，未发起请求）")
         return
+
+    # 增量模式的前提是「工作区已全部提交」。旧实现只比 HEAD 与远端：
+    # 忘记 git commit 时会打印「远端已与本地 HEAD 一致，无需推送」并 exit 0，
+    # 与「已成功发布」不可区分（2026-10-20 与 2026-11-17 两次复现）。
+    if args.incremental and not args.allow_dirty:
+        dirty = git("status", "--porcelain").decode("utf-8", "replace").strip()
+        if dirty:
+            print("拒绝推送：工作区有未提交改动，先 git add -A && git commit", flush=True)
+            print(dirty[:2000], flush=True)
+            return 3
 
     api = GitHubApi(gh_token())
 

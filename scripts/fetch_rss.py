@@ -12,6 +12,7 @@ import argparse
 import json
 import os
 import re
+import sys
 import time
 import html
 import email.utils as eu
@@ -137,19 +138,31 @@ def main():
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     seen = {}
+    ok_cats = 0
+    failed_cats = []
     for c in cats:
         url = f"https://rss.arxiv.org/rss/{c}"
         print(f"[pull] {c} ...")
         st, body = fetch_url(url)
         if st != 200 or not body:
             print(f"  !! {c} 返回 {st}，跳过")
+            failed_cats.append(c)
             continue
         recs = parse_rss(body, c)
+        ok_cats += 1
         for r in recs:
             if r["base_id"] not in seen:
                 seen[r["base_id"]] = r
         print(f"  {c}: {len(recs)} 条，累计去重 {len(seen)}")
         time.sleep(2)
+
+    # 任一分类抓取失败都不得当作「当日无公告」（2026-11-17 复评 N-01）：
+    # 只判全失败时，单分类瞬时 500 若恰好是唯一有 XR 稿的源，仍会得到 0 新稿 + exit 0。
+    # 与 audit_listing_* 的「分类不全即 fatal」保持同一语义；skipDays 的 200+0 条目仍算成功。
+    if ok_cats < len(cats):
+        print("FATAL: 仅 %d/%d 分类抓取成功（失败：%s）——采集不完整，勿据此判定无新稿"
+              % (ok_cats, len(cats), ",".join(failed_cats) or "-"))
+        sys.exit(2)
 
     # 关键词过滤（KW 全称子串 + VR/AR/MR/XR 缩写词边界双层）
     if args.no_filter:
@@ -161,7 +174,7 @@ def main():
         for r in filtered:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     print(f"完成：全量去重 {len(seen)} 条 → 关键词命中 {len(filtered)} 条 → {args.out}")
-    print(f"WROTE={len(filtered)}")
+    print(f"WROTE={len(filtered)} OK_CATS={ok_cats}/{len(cats)}")
 
 
 if __name__ == "__main__":

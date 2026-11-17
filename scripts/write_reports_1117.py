@@ -2,6 +2,10 @@
 """2026-11-17 报告生成：主批 Top10 深度解读 + backfill-1117 报告。"""
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from grade_caliber import assign_grade  # noqa: E402  档位口径单一实现
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 os.chdir(ROOT)
@@ -13,6 +17,7 @@ G = json.load(open('data/gates_1117.json', encoding='utf-8'))
 TOP10_ORDER = G['top10']
 DATE, ANN = '2026-11-17', '2026-11-16'
 GATE3, G1 = G['gate3']['top10_mean'], G['gate1']['max_jaccard']
+HEAVY = bool(G['gate3']['heavy_day'])
 MANIFEST = json.load(open('data/fulltext/_manifest.json', encoding='utf-8'))
 for p in MAIN + BF:
     p['level'] = MANIFEST[p['id']]['level']
@@ -20,9 +25,9 @@ for p in MAIN + BF:
     p['announce'] = 'replace' if p['batch'].startswith('backfill') else 'new'
     p['status'] = 'CURRENT'
     v = p['value']
-    p['grade'] = 'S' if v >= 4.2 else ('A' if v >= 3.6 else ('B' if v >= 3.0 else 'C'))
-    if p['batch'].startswith('backfill') and p['grade'] == 'S':
-        p['grade'] = 'A'
+    # 档位口径（README 与门③ 一致）：S 需「分数 ≥4.20 且当日为重磅日」。实现在
+    # grade_caliber.assign_grade，与 7 维表/笔记/registry 共用，避免同批不同档。
+    p['grade'] = assign_grade(v, p['batch'], HEAVY)
 TOP10 = [next(p for p in MAIN if p['id'] == pid) for pid in TOP10_ORDER]
 
 

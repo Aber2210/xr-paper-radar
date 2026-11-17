@@ -26,12 +26,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 对账脚本守卫（2026-11-17，R-03）：漏网对账若在采集失败时仍写出空/残缺 missed，
+      # 与「真的 0 漏网」同形，下游只看退出码就会采信假结论。历史上该缺陷在 18 份同源
+      # 脚本里只修了 1 份，故改为「基线只减不增」的静态校验：新脚本必须带守卫。
+      - name: Audit guard check
+        run: python3 scripts/check_audit_guard.py
+
       # 双模式：仓库内已提交 web/xr-paper-hub.html 则直接使用；
       # 否则（大文件未入仓库时）在构建时从 WorkBuddy 托管链接拉取，保证两渠道同源。
       - name: Prepare hub page
         run: |
           mkdir -p web
-          if [ -f web/xr-paper-hub.html ] && grep -q "const DATA" web/xr-paper-hub.html; then
+          if [ -f web/xr-paper-hub.html ] && grep -Eq 'const DATA *= *\{' web/xr-paper-hub.html; then
             echo "using committed hub: $(wc -c < web/xr-paper-hub.html) bytes"
           else
             echo "hub not committed, fetching from WorkBuddy hosting..."
@@ -44,7 +50,7 @@ jobs:
               echo "fetch attempt $i failed, retrying in 15s..."; sleep 15
             done
             if [ "$ok" != "1" ]; then echo "::error::hub fetch failed"; exit 1; fi
-            if ! grep -q "const DATA" web/xr-paper-hub.html; then echo "::error::fetched file is not the hub"; exit 1; fi
+            if ! grep -Eq 'const DATA *= *\{' web/xr-paper-hub.html; then echo "::error::fetched file is not the hub"; exit 1; fi
             echo "hub fetched: $(wc -c < web/xr-paper-hub.html) bytes"
           fi
           cp web/xr-paper-hub.html web/index.html

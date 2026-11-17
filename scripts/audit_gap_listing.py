@@ -3,7 +3,12 @@ import urllib.request, re, json, time, sys
 CATS = ["cs.CV","cs.GR","cs.HC","cs.MM","cs.RO","cs.AI","eess.IV"]
 MONTHS = {'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
 DAY_RE = r'<h3>((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} \w{3} \d{4})([^<]*)</h3>'
-TARGET_LO = "2026-10-29"   # 目标窗口下界（含）= 上一批次公告日+1（10-31 运行：复核 10-29 公告是否延迟释放 + 审计 10-30 组）
+# 目标窗口下界必须是「上一批次公告日+1」，随批次变化。
+# 旧实现硬编码 2026-10-29：每跑一次都要人工改，忘记改就把 20 天窗口当成本批窗口。
+TARGET_LO = sys.argv[3] if len(sys.argv) > 3 else ""
+if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", TARGET_LO or ""):
+    print("FATAL: 必须传入目标窗口下界，用法: audit_gap_listing.py [cats] [out.json] YYYY-MM-DD", flush=True)
+    sys.exit(2)
 
 def get(url, tries=8):
     req = urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"})
@@ -26,8 +31,12 @@ def parse_page(html):
         dstr, cnt, body = parts[i], parts[i+1], parts[i+2]
         dm = re.match(r'(\w{3}), (\d{1,2}) (\w{3}) (\d{4})', dstr)
         if not dm: continue
-        day = f"{dm.group(4)}-{MONTHS[dm.group(3)]}-{dm.group(2)}"
-        m = re.search(r'showing\s+(?:first\s+)?(\d+)\s+of\s+(\d+)\s+entries', cnt)
+        # 必须补零：旧实现产出 "2026-10-9"，与 "2026-10-29" 做字典序比较时
+        # 会把 10-09 判成晚于窗口下界，导致窗口判定与 stop 逻辑同时失真。
+        day = f"{dm.group(4)}-{MONTHS[dm.group(3)]}-{int(dm.group(2)):02d}"
+        # 分页页头有 first / last / next 三种措辞，只认 first 会把 declared 读成 None，
+        # 而 None 会让完整性校验被整体跳过（最终仍打印「全部日期段采集完整」）。
+        m = re.search(r'showing\s+(?:(?:first|last|next)\s+)?(\d+)\s+of\s+(\d+)\s+entries', cnt)
         declared = int(m.group(2)) if m else None
         entries={}
         for b in re.split(r'<dt>', body)[1:]:
@@ -39,13 +48,14 @@ def parse_page(html):
         out.append((day, declared, entries))
     return out
 
-def audit(cats, out_json, show=250):
+def audit(cats, out_json, show=500):
     reg=set()
     for l in open("papers/library/registry.jsonl",encoding="utf-8"):
         if l.strip():
             d=json.loads(l); reg.add(d["id"].split(":")[-1].split("v")[0])
     print("registry:", len(reg), flush=True)
     days={}; declared_tot={}
+    ok_cats=0
     for c in cats:
         for attempt in range(1, 6):
             skip=0; seen=set(); pages=0; empty_pages=0; stop=False
@@ -99,6 +109,7 @@ def audit(cats, out_json, show=250):
                 for day, ents in cat_days.items():
                     for p,t in ents.items(): days.setdefault(day, {}).setdefault(p, (c,t))
                 for k,v in cat_decl.items(): declared_tot[k]=max(declared_tot.get(k,0), v)
+                if cat_days: ok_cats+=1
                 break
             print(f"  -> {c} 采集不完整，整体重试（{attempt}/5）", flush=True)
             time.sleep(20)
@@ -110,6 +121,15 @@ def audit(cats, out_json, show=250):
         if got < dec:
             print(f"  {c} {day}: SHORT {got}/{dec}"); bad+=1
     if bad==0: print("  全部日期段采集完整", flush=True)
+    # 写盘守卫（2026-11-17，与 audit_listing_1117 同类修复对齐）：
+    #   ① 某分类整段没抓到（get 重试耗尽）时，declared_tot 里根本没有该分类的键，bad 仍为 0，
+    #      于是会打印「全部日期段采集完整」并写出残缺 missed —— 与真实 0 漏网完全同形；
+    #   ② 有日期段 SHORT 时同样会写出 missed 并 exit 0，调用方按退出码判成功。
+    # 两种都不许写盘：宁可失败退出，也不产出看起来正常的空结论。
+    if ok_cats < len(cats) or bad:
+        print(f"FATAL: {ok_cats}/{len(cats)} 分类采到数据、{bad} 个日期段不足 declared，"
+              f"本次对账结论无效，不写 {out_json}", flush=True)
+        sys.exit(2)
     missed={}
     for day in sorted(days):
         if day < TARGET_LO: continue

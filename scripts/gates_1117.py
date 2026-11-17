@@ -6,7 +6,10 @@
   门② Top10 覆盖 ≥5 赛道
   门③ 当日最高分 vs 库内近 30 天 Top10 均分（date>=today-30 按 value 降序取前 10 均值，现算）
         today_max >= 均分 → 重磅日可评 S；否则非重磅日无 S（校准关，不触发重筛）
-  backfill 不参与门③（口径固定）。
+
+门③ 的「库内」= 本次运行**写库之前**的库况：只剔除「本次运行将要追加的批」，历史 backfill
+属于既有库强、照常计入。本批自己的 backfill 不参与「当日重磅日」判定，那是档位口径的事
+（见 scripts/grade_caliber.py），不是窗口的事——两者不要混为一谈。
 """
 import io, json, os, re, datetime, collections
 
@@ -66,7 +69,25 @@ tracks = collections.Counter(r["track"] for r in top10)
 all_tracks = collections.Counter(r["track"] for r in main)
 
 # ---- 门③ 价值天花板 ----
-win = [r for r in reg if r.get("date", "") >= LO]
+# 窗口必须是「本次运行之前」的库况，否则同一批次跑两次会得到两个均分：
+#   ① 当日主批：registry 在「知识库产物」阶段追加，首跑不含、重跑含；
+#   ② 当日 backfill：其 date 存的是**原公告日**，重跑时会被追加进 [LO, TODAY) 并抬高均值。
+# 因此按 batch 精确剔除「本次运行追加的批」，而不是笼统排除所有 backfill——
+# 历史 backfill 是库的既有强度，属于应被计入的部分。
+#
+# 「本次运行追加了哪些批」不能靠批名推断：库内既有 backfill-1012-1015 / backfill-2603-2609
+# 这类区间命名，精确匹配 backfill-MMDD 会漏判，漏判即把本批自己的稿子算进库强、抬高均值
+# （复评 N-05：合成两条区间命名 batch 后 4.4030 → 4.5230）。权威来源是本次运行的 scored
+# 清单本身——它就是「将要写进 registry 的批」的集合，不依赖任何命名约定。
+THIS_RUN_BATCHES = {str(r.get("batch") or "") for r in scored}
+
+
+def _this_run(batch):
+    return str(batch or "") in THIS_RUN_BATCHES
+
+
+win = [r for r in reg
+       if LO <= r.get("date", "") < TODAY.isoformat() and not _this_run(r.get("batch"))]
 top = sorted(win, key=lambda r: (-r.get("value", 0), r["id"]))[:10]
 mean = round(sum(r["value"] for r in top) / len(top), 4) if top else 0.0
 today_max = max(r["value"] for r in main)
@@ -79,6 +100,10 @@ out = {
               "all_batch_tracks": dict(all_tracks), "n_all": len(all_tracks),
               "pass": len(tracks) >= 5},
     "gate3": {"window_lo": LO, "window_hi": TODAY.isoformat(), "in_window": len(win),
+              "window_excludes_today": True,
+              "window_excludes_this_run_batches": True,
+              # 留痕：具体剔了哪些批，事后可自证「均分不是拿本批自己的稿子抬出来的」
+              "this_run_batches_excluded": sorted(THIS_RUN_BATCHES),
               "top10_mean": mean, "today_max": today_max,
               "heavy_day": today_max >= mean,
               "top10_lib": [{"id": r["id"], "date": r.get("date"), "value": r.get("value"),

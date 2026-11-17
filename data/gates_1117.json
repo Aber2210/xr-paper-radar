@@ -97,6 +97,12 @@
   "window_lo": "2026-10-18",
   "window_hi": "2026-11-17",
   "in_window": 398,
+  "window_excludes_today": true,
+  "window_excludes_this_run_batches": true,
+  "this_run_batches_excluded": [
+   "2026-11-17",
+   "backfill-1117"
+  ],
   "top10_mean": 4.403,
   "today_max": 3.93,
   "heavy_day": false,

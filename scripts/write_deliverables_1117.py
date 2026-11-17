@@ -12,6 +12,10 @@ import json
 import os
 import re
 import shutil
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from grade_caliber import assign_grade  # noqa: E402  档位口径单一实现
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 os.chdir(ROOT)
@@ -24,16 +28,16 @@ TOP10_ORDER = G['top10']
 DATE, ANN = '2026-11-17', '2026-11-16'
 GATE3 = G['gate3']['top10_mean']
 G1 = G['gate1']['max_jaccard']
+HEAVY = bool(G['gate3']['heavy_day'])
 MANIFEST = json.load(open('data/fulltext/_manifest.json', encoding='utf-8'))
 for p in MAIN + BF:
     p['level'] = MANIFEST[p['id']]['level']
     p['evidence'] = MANIFEST[p['id']]['evidence']
     p['announce'] = 'replace' if p['batch'].startswith('backfill') else 'new'
     p['status'] = 'CURRENT'
-    v = p['value']
-    p['grade'] = 'S' if v >= 4.2 else ('A' if v >= 3.6 else ('B' if v >= 3.0 else 'C'))
-    if p['batch'].startswith('backfill') and p['grade'] == 'S':
-        p['grade'] = 'A'   # 口径：backfill 不参与重磅日判定，≥4.2 一律记 A
+    # 档位走单一实现（S 需 ≥4.20 且当日重磅日）：此前这里只按分数判 S，
+    # 会让 7 维表出现 registry/报告里不存在的 S（2026-11-17 复评 N-06）。
+    p['grade'] = assign_grade(p['value'], p['batch'], HEAVY)
 TOP10 = [next(p for p in MAIN if p['id'] == pid) for pid in TOP10_ORDER]
 assert [p['id'] for p in TOP10] == TOP10_ORDER
 assert len(MAIN) == 13 and len(BF) == 3, (len(MAIN), len(BF))
