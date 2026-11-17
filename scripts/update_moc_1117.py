@@ -3,6 +3,10 @@
 import json
 import os
 import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from grade_caliber import assign_grade  # noqa: E402  档位口径单一实现
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 os.chdir(ROOT)
@@ -13,11 +17,11 @@ MAIN.sort(key=lambda r: (-r['value'], -r['scores']['IMP'], -r['scores']['NOV'], 
 G = json.load(open('data/gates_1117.json', encoding='utf-8'))
 TOP10_ORDER = G['top10']
 GATE3 = G['gate3']['top10_mean']
+HEAVY = bool(G['gate3']['heavy_day'])
 for _p in MAIN + BF:
-    _v = _p['value']
-    _p['grade'] = 'S' if _v >= 4.2 else ('A' if _v >= 3.6 else ('B' if _v >= 3.0 else 'C'))
-    if _p['batch'].startswith('backfill') and _p['grade'] == 'S':
-        _p['grade'] = 'A'
+    # 档位走单一实现（2026-11-17 复评 N-06 的第 5 处，b03 首轮漏改）：
+    # MOC 表里的等级此前只按分数判，非重磅日会与笔记/registry/报告不一致。
+    _p['grade'] = assign_grade(_p['value'], _p['batch'], HEAVY)
 
 
 def esc(s):

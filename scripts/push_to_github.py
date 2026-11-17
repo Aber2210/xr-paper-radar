@@ -195,6 +195,13 @@ def remote_tree_map(api, branch):
     commit = api.request("GET", f"/repos/{OWNER}/{REPO}/git/commits/{head}")
     base_tree = commit["tree"]["sha"]
     tree = api.request("GET", f"/repos/{OWNER}/{REPO}/git/trees/{base_tree}?recursive=1")
+    # GitHub 的 recursive tree 超过 10 万条或 7 MB 会截断并置 truncated=true（不报错）：
+    # 此时 remote_map 缺条目，增量对比会把缺失项当成「本地新增」，结论不可信
+    # （2026-11-17 复评 R-05）。宁可失败退出，也不要用不完整的对比去写远端。
+    if tree.get("truncated"):
+        raise RuntimeError(
+            "远端 tree 响应被截断（truncated=true，recursive=1 超限）："
+            "增量对比不可信，已拒绝推送。请改用全量推送或缩小仓库")
     remote_map = {
         t["path"]: t["sha"] for t in tree["tree"] if t["type"] == "blob"
     }

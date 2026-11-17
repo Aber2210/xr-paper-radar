@@ -148,7 +148,16 @@ def main():
             print(f"  !! {c} 返回 {st}，跳过")
             failed_cats.append(c)
             continue
-        recs = parse_rss(body, c)
+        recs = None
+        try:
+            recs = parse_rss(body, c)
+        except ET.ParseError as e:
+            # 截断/半截 XML（代理切断、分页边界）此前会抛 traceback：既没进 failed_cats，
+            # 也不计入 ok_cats，最后被 N-01 的「分类不全」判据漏掉（2026-11-17 复评 R-06）。
+            # 归入抓取失败，交给下面同一个守卫处理。
+            print(f"  !! {c} RSS 解析失败（{e}），视为该分类抓取失败")
+            failed_cats.append(c)
+            continue
         ok_cats += 1
         for r in recs:
             if r["base_id"] not in seen:
