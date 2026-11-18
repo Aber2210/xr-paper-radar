@@ -100,6 +100,7 @@ def build(mmdd):
     with open(path, "w", encoding="utf-8") as f:
         for r in rows:
             r["q"] = QUESTION_VERSION
+            r["cat"] = meta.get(r["id"], {}).get("cat", "")
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     n = {g: sum(1 for r in rows if r["group"] == g) for g in ("accepted", "rejected", "kw-missed")}
     print("golden -> %s 共 %d 条：accepted %d / rejected %d / kw-missed %d"
@@ -176,7 +177,11 @@ def _hits(row):
 
 
 def sheet(mmdd, per_group=20):
-    """生成人工标注表：每组一半取「边界项」（最有信息量），一半随机（避免选择偏差）。"""
+    """生成人工标注表：每组一半取「边界项」（最有信息量），一半随机（避免选择偏差）。
+
+    每条给出**完整摘要**（不是首句）与 arXiv 链接——判定需要的信息必须给够，
+    截断是我早期为了表格好看做的，会让本来可判的条目变得不可判。
+    """
     rows = [r for r in read_golden(mmdd) if r["group"] in ("accepted", "kw-missed")]
     rnd = random.Random(20261118)
     picked = []
@@ -195,18 +200,20 @@ def sheet(mmdd, per_group=20):
          "- **判 1（相关）**：论文的研究对象、被评估场景、硬件或用户任务中，**至少有一项属于**沉浸式/空间场景"
          "（头显、AR/VR 应用、空间交互、沉浸式内容与渲染、化身、触觉/遥操作、XR 系统与评估）。",
          "- **判 0（不相关）**：仅为通用视觉/图形/机器人方法，XR 只是**可能的迁移方向**而非论文的研究对象或评估场景。",
-         "- **判 ?（不确定）**：两条规则都能说得通，或摘要信息不足以判断。**宁可标 ?，不要猜**——"
+         "- **判 ?（不确定）**：两条规则都能说得通，或摘要信息确实不足以判断。**宁可标 ?，不要猜**——"
          "? 会从分母里剔除，不影响指标；猜错会污染基线。\n",
-         "## 必读\n",
-         "- 「预判」列是我用关键词密度挑的，**不是答案**；`边界` 项是关键词分不开的，`随机` 项用于防止选择偏差。",
-         "- 只需在最后一列填 `1` / `0` / `?`，其余不要动；填完告诉我，我用 `ingest` 回写。\n",
-         "| # | arXiv | 题目 | 摘要首句 | 预判 | 你的判定 |",
-         "|---:|---|---|---|---|---|"]
+         "## 怎么填\n",
+         "- 每条末尾有一行 `判定：`，在后面填 `1` / `0` / `?` 即可，其余不要动。",
+         "- 摘要已给全文（不截断）；仍拿不准就点 arXiv 链接看全文——**标注可以看全文，模型不可以**。",
+         "- `边界`／`随机` 是我抽样时的标记，**不是答案**。\n",
+         "---\n"]
     for i, (r, tag) in enumerate(picked, 1):
-        title = r["title"].replace("|", "/")[:110]
-        ab = re.split(r"(?<=[.!?])\s", r["abstract"].strip())[0][:150].replace("|", "/")
-        L.append("| %d | %s | %s | %s | %s |  |" % (i, r["id"], title, ab, tag))
-    L.append("\n> 共 %d 条。填完后：`python scripts/decision_probe.py ingest %s data/decision/labeling_%s.md`\n"
+        L.append("### %d · %s · %s\n" % (i, r["id"], r["title"].strip()))
+        L.append("- 类别：%s ｜ 抽样：%s ｜ 组：%s" % (r.get("cat") or "—", tag, r["group"]))
+        L.append("- 摘要：%s" % " ".join(r["abstract"].split()))
+        L.append("- 链接：https://arxiv.org/abs/%s" % r["id"])
+        L.append("- **判定：** \n")
+    L.append("---\n\n> 共 %d 条。填完后：`python scripts/decision_probe.py ingest %s data/decision/labeling_%s.md`\n"
              % (len(picked), mmdd, mmdd))
     open(path, "w", encoding="utf-8").write("\n".join(L) + "\n")
     n_acc = sum(1 for r, _t in picked if r["group"] == "accepted")
@@ -215,22 +222,22 @@ def sheet(mmdd, per_group=20):
 
 
 def ingest(mmdd, path):
-    """把标注表最后一列的 1/0/? 回写进 golden，标签来源记为人工确认。"""
+    """把每条 `判定：` 后的 1/0/? 回写进 golden，标签来源记为人工确认。"""
     rows = read_golden(mmdd)
     idx = {r["id"]: r for r in rows}
     n1 = n0 = nq = 0
+    cur = None
     for ln in open(path, encoding="utf-8"):
-        if not ln.startswith("| ") or "---" in ln:
+        m = re.match(r"^###\s+\d+\s+·\s+([0-9]{4}\.[0-9]{4,5})", ln.strip())
+        if m:
+            cur = m.group(1)
             continue
-        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
-        if len(cells) < 6:
+        m = re.match(r"^[-*]?\s*\**判定[:：]\**\s*([10?]|相关|不相关|不确定)\s*$", ln.strip())
+        if not m or cur not in idx:
             continue
-        pid, v = cells[1], cells[-1]
-        if pid not in idx or v not in ("1", "0", "?", "相关", "不相关", "不确定"):
-            continue
-        v = {"相关": "1", "不相关": "0", "不确定": "?"}.get(v, v)
-        idx[pid]["label"] = {"1": 1, "0": 0, "?": None}[v]
-        idx[pid]["label_status"] = "uncertain-human" if v == "?" else "confirmed-human"
+        v = {"相关": "1", "不相关": "0", "不确定": "?"}.get(m.group(1), m.group(1))
+        idx[cur]["label"] = {"1": 1, "0": 0, "?": None}[v]
+        idx[cur]["label_status"] = "uncertain-human" if v == "?" else "confirmed-human"
         n1 += v == "1"; n0 += v == "0"; nq += v == "?"
     with open(os.path.join(OUT_DIR, "golden_%s.jsonl" % mmdd), "w", encoding="utf-8") as f:
         for r in rows:
