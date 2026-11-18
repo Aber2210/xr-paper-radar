@@ -139,9 +139,11 @@ def run(mmdd, backend, limit=None):
         pred = backend_file(r, table) if backend.startswith("file:") else backend_stub(r)
         lab = r.get("label")
         out.append({"id": r["id"], "group": r["group"], "label": lab, "pred": pred,
-                    "ok": (None if lab is None else pred == lab), "title": r["title"][:80]})
+                    "ok": (None if lab is None else pred == lab), "abs_ok": r.get("abs_sufficient"),
+                    "title": r["title"][:80]})
 
-    print("\n%-12s %5s %5s %8s %10s" % ("group", "n", "判不准", "accuracy", "漏判(正例判0)"))
+    print("\n%-12s %5s %5s %8s %10s %9s"
+          % ("group", "n", "判不准", "accuracy", "漏判(正例判0)", "公平子集"))
     summary = {}
     for g in ("accepted", "rejected", "kw-missed"):
         sub = [x for x in out if x["group"] == g]
@@ -150,11 +152,19 @@ def run(mmdd, backend, limit=None):
         graded = [x for x in sub if x["ok"] is not None]      # 人工标「不确定」的不进分母
         acc = (sum(x["ok"] for x in graded) / len(graded)) if graded else None
         killed = sum(1 for x in graded if x["label"] == 1 and x["pred"] == 0)
+        # 公平子集：人工标注时**没标**「摘要不足」的条目。摘要不足的条目，任何只看摘要的
+        # 模型都不可能判对，把它们算进准确率等于拿信息缺失惩罚模型。
+        fair = [x for x in graded if x["abs_ok"] is not False]
+        acc_fair = (sum(x["ok"] for x in fair) / len(fair)) if fair else None
         summary[g] = {"n": len(sub), "n_unsure": len(sub) - len(graded),
-                      "acc": (round(acc, 4) if acc is not None else None), "missed_pos": killed}
-        print("%-12s %5d %5d %8s %10d"
+                      "acc": (round(acc, 4) if acc is not None else None),
+                      "n_abs_short": len([x for x in sub if x["abs_ok"] is False]),
+                      "acc_fair": (round(acc_fair, 4) if acc_fair is not None else None),
+                      "missed_pos": killed}
+        print("%-12s %5d %5d %8s %10s %9s"
               % (g, len(sub), len(sub) - len(graded),
-                 ("%.4f" % acc) if acc is not None else "—", killed))
+                 ("%.4f" % acc) if acc is not None else "—", killed,
+                 ("%.4f" % acc_fair) if acc_fair is not None else "—"))
 
     # 探针的真正产出：不一致清单（只报警，不改判）
     flags = [x for x in out if x["group"] == "kw-missed" and x["pred"] == 1]
@@ -203,8 +213,11 @@ def sheet(mmdd, per_group=20):
          "- **判 ?（不确定）**：两条规则都能说得通，或摘要信息确实不足以判断。**宁可标 ?，不要猜**——"
          "? 会从分母里剔除，不影响指标；猜错会污染基线。\n",
          "## 怎么填\n",
-         "- 每条末尾有一行 `判定：`，在后面填 `1` / `0` / `?` 即可，其余不要动。",
-         "- 摘要已给全文（不截断）；仍拿不准就点 arXiv 链接看全文——**标注可以看全文，模型不可以**。",
+         "- 每条末尾两行：`判定：` 填 `1` / `0` / `?`；`摘要是否足够：` 填 `是` / `否`。",
+         "- **标注请以「这篇到底是不是 XR」为准——摘要看不出来就点 arXiv 链接读全文**，目标是真值，不是复刻模型的视野。",
+         "- 同时如实标「摘要是否足够」：这一列决定模型评测的公平分母（摘要不足的条目，任何只看摘要的模型都不可能判对）。",
+         "- `?` 只留给「读完也说不清」的规则冲突（例：通用方法，只在实验末节放到 AR 眼镜上跑了一次）；"
+         "这类我会拿去改规则，而不是改标签。",
          "- `边界`／`随机` 是我抽样时的标记，**不是答案**。\n",
          "---\n"]
     for i, (r, tag) in enumerate(picked, 1):
@@ -212,7 +225,8 @@ def sheet(mmdd, per_group=20):
         L.append("- 类别：%s ｜ 抽样：%s ｜ 组：%s" % (r.get("cat") or "—", tag, r["group"]))
         L.append("- 摘要：%s" % " ".join(r["abstract"].split()))
         L.append("- 链接：https://arxiv.org/abs/%s" % r["id"])
-        L.append("- **判定：** \n")
+        L.append("- **判定：** （填 1 / 0 / ?）")
+        L.append("- 摘要是否足够： （是 / 否 —— 填「否」表示必须看全文才敢定）\n")
     L.append("---\n\n> 共 %d 条。填完后：`python scripts/decision_probe.py ingest %s data/decision/labeling_%s.md`\n"
              % (len(picked), mmdd, mmdd))
     open(path, "w", encoding="utf-8").write("\n".join(L) + "\n")
@@ -225,7 +239,7 @@ def ingest(mmdd, path):
     """把每条 `判定：` 后的 1/0/? 回写进 golden，标签来源记为人工确认。"""
     rows = read_golden(mmdd)
     idx = {r["id"]: r for r in rows}
-    n1 = n0 = nq = 0
+    n1 = n0 = nq = na = 0
     cur = None
     for ln in open(path, encoding="utf-8"):
         m = re.match(r"^###\s+\d+\s+·\s+([0-9]{4}\.[0-9]{4,5})", ln.strip())
@@ -233,17 +247,21 @@ def ingest(mmdd, path):
             cur = m.group(1)
             continue
         m = re.match(r"^[-*]?\s*\**判定[:：]\**\s*([10?]|相关|不相关|不确定)\s*$", ln.strip())
-        if not m or cur not in idx:
+        if m and cur in idx:
+            v = {"相关": "1", "不相关": "0", "不确定": "?"}.get(m.group(1), m.group(1))
+            idx[cur]["label"] = {"1": 1, "0": 0, "?": None}[v]
+            idx[cur]["label_status"] = "uncertain-human" if v == "?" else "confirmed-human"
+            n1 += v == "1"; n0 += v == "0"; nq += v == "?"
             continue
-        v = {"相关": "1", "不相关": "0", "不确定": "?"}.get(m.group(1), m.group(1))
-        idx[cur]["label"] = {"1": 1, "0": 0, "?": None}[v]
-        idx[cur]["label_status"] = "uncertain-human" if v == "?" else "confirmed-human"
-        n1 += v == "1"; n0 += v == "0"; nq += v == "?"
+        m = re.match(r"^[-*]?\s*\**摘要是否足够[:：]\**\s*(是|否)\s*$", ln.strip())
+        if m and cur in idx:
+            idx[cur]["abs_sufficient"] = (m.group(1) == "是")
+            na += m.group(1) == "否"
     with open(os.path.join(OUT_DIR, "golden_%s.jsonl" % mmdd), "w", encoding="utf-8") as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
-    print("回写完成：相关 %d / 不相关 %d / 不确定 %d（共 %d 条已人工标注）"
-          % (n1, n0, nq, n1 + n0 + nq))
+    print("回写完成：相关 %d / 不相关 %d / 不确定 %d ｜ 其中「摘要不足需看全文」 %d 条（共 %d 条已人工标注）"
+          % (n1, n0, nq, na, n1 + n0 + nq))
     return 0
 
 

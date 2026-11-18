@@ -10,18 +10,24 @@
    "n": 39,
    "n_unsure": 0,
    "acc": 0.6154,
+   "n_abs_short": 0,
+   "acc_fair": 0.6154,
    "missed_pos": 15
   },
   "rejected": {
    "n": 69,
    "n_unsure": 0,
    "acc": 0.6087,
+   "n_abs_short": 0,
+   "acc_fair": 0.6087,
    "missed_pos": 0
   },
   "kw-missed": {
    "n": 100,
    "n_unsure": 0,
    "acc": 0.99,
+   "n_abs_short": 0,
+   "acc_fair": 0.99,
    "missed_pos": 0
   }
  },
@@ -32,6 +38,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "Shared Mobile AR Without Depth Sensors from Monocular Point Maps"
   },
   {
@@ -40,6 +47,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "TopSDF: Topological Signed Distance Field for High-Quality Triangle Mesh Extract"
   },
   {
@@ -48,6 +56,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Is It Still There? Place-Registered Verification Makes VLMs Reliable Scene-Chang"
   },
   {
@@ -56,6 +65,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "LongCat-Video-Avatar 1.6 Technical Report"
   },
   {
@@ -64,6 +74,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "CISyn: Human Mesh Recovery in Close Interactions with Physics-Simulated Syntheti"
   },
   {
@@ -72,6 +83,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Probing Where Surprise Happens: Localized Violation-of-Expectation Evaluation of"
   },
   {
@@ -80,6 +92,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "DEFDVO: Deformable Deep Visual Odometry for Equirectangular Images"
   },
   {
@@ -88,6 +101,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "AdaptType: Accessible and Customizable Multimodal Text Entry in Virtual Reality "
   },
   {
@@ -96,6 +110,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "Prepare Lighter and Faster for Open-Vocabulary Queries: A Query-Wise 3D Segmente"
   },
   {
@@ -104,6 +119,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "M-CROSS: A Multisensor Simulation Dataset for SLAM across Water–Land Transitions"
   },
   {
@@ -112,6 +128,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "JEPA4R: Embodied JEPA World Models with 4D Point Planning"
   },
   {
@@ -120,6 +137,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "SemLite-GS: Semantic-Selective Parallel Gaussian Splatting for Lightweight Build"
   },
   {
@@ -128,6 +146,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Pros4D: Modeling Evolving 4D Worlds in Latent Space for Dynamic Spatial Reasonin"
   },
   {
@@ -136,6 +155,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "WL-Headset Law: Projecting Future Headset Evolution from a Decade of Display and"
   },
   {
@@ -144,6 +164,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "DoF-Query Transformer for Adaptive Fusion of Egocentric Vision and Forearm HD-sE"
   },
   {
@@ -152,6 +173,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "From XR Sketches to CAD: Preserving Design Intent with AI"
   },
   {
@@ -160,6 +182,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "CiGS: Conduction in Gaussian Splats for Interior Temperature Field from Thermal "
   },
   {
@@ -168,6 +191,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "RemeshingAgent: Self-Evolving Agent for Repair-Based Decimation of Generated Bui"
   },
   {
@@ -176,6 +200,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "A Gaussian Primitive Data Management Framework for Efficient 3DGS Trajectory Ren"
   },
   {
@@ -184,6 +209,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "√VINS-Based 360 Visual-Inertial SLAM Systems: Hilti–Trimble SLAM Challenge 2026 "
   },
   {
@@ -192,6 +218,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "OrthoMark: Place Recognition with Point-Anchored Orthographic Height Mark"
   },
   {
@@ -200,6 +227,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Correspondence-Free Camera Pose Estimation by Matching Moments"
   },
   {
@@ -208,6 +236,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "Multi-Rate Flow Matching for Point Cloud Upsampling"
   },
   {
@@ -216,6 +245,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "ROSE: A Shared Cross-Embodiment Facial-Motion Latent Space for Humanoid Robot Ex"
   },
   {
@@ -224,6 +254,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Body of Evidence: Triangulating 3D Human Pose with Geometry-Conditioned Depth"
   },
   {
@@ -232,6 +263,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "MetricHand: Geometry-Aware Flow Matching for 4D Hand Reconstruction in Metric Wo"
   },
   {
@@ -240,6 +272,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "WinDEX: Metric 3D Hand Motion Reconstruction in the Wild for Dexterous Teleopera"
   },
   {
@@ -248,6 +281,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "A Study on Performance Enhancement of a Webcam-Based Real-Time Eye-Tracking Syst"
   },
   {
@@ -256,6 +290,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "QuantileGS: Quantile-Based Conformal Bounds on RGB Rendering Errors for Novel Vi"
   },
   {
@@ -264,6 +299,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Real-world Polarimetric Environment Map Dataset"
   },
   {
@@ -272,6 +308,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "The Mask Is Not the Object: Volumetric Supervision for 3D Gaussian Segmentation"
   },
   {
@@ -280,6 +317,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "LynnReal-Hand: Unlocking World Interaction with Hand Control"
   },
   {
@@ -288,6 +326,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "Lost in the Hallway: Benchmarking Persistent Spatial Memory Across Revisits"
   },
   {
@@ -296,6 +335,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "LoC-IN: Real-Time Localization of Cameras in Neural Rendered Prior LiDAR Maps"
   },
   {
@@ -304,6 +344,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "EgoEMG: A Multimodal Egocentric Dataset with Bilateral EMG and Vision for Hand P"
   },
   {
@@ -312,6 +353,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "DeformMaster: An Interactive Physics-Neural World Model for Deformable Objects f"
   },
   {
@@ -320,6 +362,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "MACRO: Training-free Multi-plane Attention for Closeup Render Optimization"
   },
   {
@@ -328,6 +371,7 @@
    "label": 1,
    "pred": 1,
    "ok": true,
+   "abs_ok": null,
    "title": "Comparative Evaluation of an XR Pen-based Control Interface for Semi-Autonomous "
   },
   {
@@ -336,6 +380,7 @@
    "label": 1,
    "pred": 0,
    "ok": false,
+   "abs_ok": null,
    "title": "TetraCoder: Adaptive Tetrahedral Encoding for Neural Fields"
   },
   {
@@ -344,6 +389,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "GOOSELoc: A Multimodal Benchmark for Ground-to-Aerial Localization in Unstructur"
   },
   {
@@ -352,6 +398,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Agents Cannot Hand Over What They Have Not Yet Understood"
   },
   {
@@ -360,6 +407,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "SynPanZ: A Synthetic Dataset to Improve Multi-Animal Pose Estimation in Chimpanz"
   },
   {
@@ -368,6 +416,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Detection Is Not the Finish Line: Multiscale Decoding and Constraint-Aware Globa"
   },
   {
@@ -376,6 +425,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Target-Free Autocalibration of Stereo PIV Camera Systems via Persistent-State Mo"
   },
   {
@@ -384,6 +434,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Neural Latent Gaussian Process for 3D reconstruction of Mouse Brain Lipids"
   },
   {
@@ -392,6 +443,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "ST-Dist: Distilling Spatial Transcriptomics Predictions into Interpretable Gene "
   },
   {
@@ -400,6 +452,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Angel: Anchor-Structured Neural Gaussians for Explicit Fetal Diffusion MRI Slice"
   },
   {
@@ -408,6 +461,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Third-Place Solution for the UCF UrbanTwin V2X-Real Track at ECCV 2026: Syntheti"
   },
   {
@@ -416,6 +470,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "UnSPAD: Uncertainty-aware Single Photon Burst Photography"
   },
   {
@@ -424,6 +479,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Correcting Persistent Failures in Point-Cloud Grasping Policies using Human Demo"
   },
   {
@@ -432,6 +488,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "TMA: Sim-to-Real Forceful Humanoid Manipulation via Tactile-Driven Motor Adaptat"
   },
   {
@@ -440,6 +497,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Aspirational Identities: How VTubing Affords New Modes of Digital Embodiment"
   },
   {
@@ -448,6 +506,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Midsagittal Corpus Callosum Parameterization: A Framework for Spatially Detailed"
   },
   {
@@ -456,6 +515,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "ANCHOR: A Port-Hamiltonian Model for Forecasting Team Dynamics in Human-in-the-L"
   },
   {
@@ -464,6 +524,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Calibrating the Uncertainty of Self-Supervised Monocular Depth without Labels"
   },
   {
@@ -472,6 +533,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Ego2Sim2Humanoid: Agentic Real-to-Sim for Learning Loco-Manipulation VLAs withou"
   },
   {
@@ -480,6 +542,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Continuous Lower-Limb Joint-Angle Estimation from sEMG and IMU: The Conditional "
   },
   {
@@ -488,6 +551,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Distributed Shaping of Robot Swarms Through Spatial Moments of Arbitrary Order"
   },
   {
@@ -496,6 +560,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Residual Reinforcement Learning for Visual Servo Control with Zero-Shot Sim-to-R"
   },
   {
@@ -504,6 +569,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "AcousticBEV: Acoustic BEV Object Localization for Intelligent Vehicles"
   },
   {
@@ -512,6 +578,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Depth-Aware Path Planning and Collision Avoidance for Robotic Nursing Assistants"
   },
   {
@@ -520,6 +587,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Sharp First-Hit Identification from Finite Depth Samples"
   },
   {
@@ -528,6 +596,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Learning Spatially Aware Audio-Visual Features from Videos with Mono Audio"
   },
   {
@@ -536,6 +605,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Well-Log Reconstruction with Pre-trained Geological Knowledge: A Knowledge-Condi"
   },
   {
@@ -544,6 +614,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Floorplan-Context-Aware Cross-Environment Human Activity Recognition from mmWave"
   },
   {
@@ -552,6 +623,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Real-Time Air Pollution Monitoring and Tracking via Adaptive Density-Driven Mult"
   },
   {
@@ -560,6 +632,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Sim-to-Real Room-Mediated Object-Goal Navigation with ROS 2 and Nav2"
   },
   {
@@ -568,6 +641,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Beyond Vehicle-Centric Data: Scaling Autonomous Driving through Roadside-to-Vehi"
   },
   {
@@ -576,6 +650,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "PanDWM: Panoramic 4D Driving World Models"
   },
   {
@@ -584,6 +659,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "HIVE-ECIA: Identity-Aware Historical Evidence Acquisition for Bandwidth-Efficien"
   },
   {
@@ -592,6 +668,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "See the Lives of Stars in a Handful of Light"
   },
   {
@@ -600,6 +677,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "EgoSwarm: Learning Decentralized Robot Swarm Intelligence from Human Swarm Demon"
   },
   {
@@ -608,6 +686,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Cyber-Secure Wearable, Ultra-Low-Power Networked Sensors for Soldier Health Moni"
   },
   {
@@ -616,6 +695,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "DAPPT: Domain-Aware Policies from Procedural Trajectories for Sim-to-Real Dexter"
   },
   {
@@ -624,6 +704,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Radar Panoptic Transformer: Semantic-Guided Mask Queries for Dynamic Scene Under"
   },
   {
@@ -632,6 +713,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "AstroPIE-53: Towards Understanding Failure Modes of Human Pose Estimation in Spa"
   },
   {
@@ -640,6 +722,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "EvoMem3D: Adaptive-Depth Temporal Representation Memory for Multi-Camera 3D Dete"
   },
   {
@@ -648,6 +731,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Unreasonable Confidence from Simulator Misspecification: Directional Robustness "
   },
   {
@@ -656,6 +740,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Sidewalk Stewards: A Visual Analytics Approach for Interactive Topology Repair o"
   },
   {
@@ -664,6 +749,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Words Speak Louder? Exploring the Language Shortcut of LLM-Driven Incomplete Mul"
   },
   {
@@ -672,6 +758,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Structure-Guided Multi-Granularity Spatiotemporal Transformer for Efficient Mono"
   },
   {
@@ -680,6 +767,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Training-Free Anonymization of Driving Data with Promptable Segmentation and 3D "
   },
   {
@@ -688,6 +776,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "InterRSGaussian: Interactive Multi-view Instance Segmentation for 3D Remote Sens"
   },
   {
@@ -696,6 +785,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "XMimic and XSoma: Learning Humanoid Motion Tracking and Locomotion in Under a Mi"
   },
   {
@@ -704,6 +794,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Pointillist Maize: 3D Reconstruction of Field-Grown Maize Using RGB UAV Imagery"
   },
   {
@@ -712,6 +803,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "What the Averages Hide: Monocular Metric Depth Models Still Fail in Everyday Sce"
   },
   {
@@ -720,6 +812,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Example-Based Spatial Guidance for Training-Free Concept Erasure in Diffusion Mo"
   },
   {
@@ -728,6 +821,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "ASCG: Adaptive Spatial Classifier Guidance for Surgical Concept Suppression in D"
   },
   {
@@ -736,6 +830,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Event-Guided Stereo Video Super-Resolution"
   },
   {
@@ -744,6 +839,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "ARMFUL: Learning Whole-Arm Grasp Configurations for Single-Arm Pickup of Large O"
   },
   {
@@ -752,6 +848,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "SG-ODOM: Event-Driven Proprioceptive State Estimation with Stability-Gated Conta"
   },
   {
@@ -760,6 +857,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "TaF-Foundation: Wrench-Grounded Cross-Sensor Tactile Representations"
   },
   {
@@ -768,6 +866,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "CLIFT: Contrastive LiDAR Instance Features for 3D Pedestrian Tracking"
   },
   {
@@ -776,6 +875,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Non-Imaging Optical Tactile Sensors for Robotics: Transduction Principles, Syste"
   },
   {
@@ -784,6 +884,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "QTOP: Scaling Humanoid Motion Tracking with Quantile Critics"
   },
   {
@@ -792,6 +893,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "MVSTF: Multi-View Spatio-Temporal Fusion for LiDAR-Based Moving Object Segmentat"
   },
   {
@@ -800,6 +902,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Razavi-Bench: Tracking AI Progress in Analog Circuit Reasoning"
   },
   {
@@ -808,6 +911,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "TacBridge: Learning Unified Tactile Representations through Cross-Sensor Corresp"
   },
   {
@@ -816,6 +920,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Dataset Distillation for Handwritten Text Recognition: An Empirical Study"
   },
   {
@@ -824,6 +929,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "WiTac: Wrist-Informed Tactile Representations for Contact-Rich Manipulation"
   },
   {
@@ -832,6 +938,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "GRAZE: Text-Free Grasp Synthesis for Unseen Objects from Human Gaze"
   },
   {
@@ -840,6 +947,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Human-AI Co-Ideation Across Socio-Technical Configurations: An Interactional Ana"
   },
   {
@@ -848,6 +956,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "IGRecon4D: Dynamic-Object-Aware Feed-Forward Reconstruction of Driving Scenes"
   },
   {
@@ -856,6 +965,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "DRaGAN: Dynamic Graph Attention Network for Multi-Radar Point Cloud Encoding in "
   },
   {
@@ -864,6 +974,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "A2A-UAV: A Multimodal Air-to-Air Dataset for UAV Detection and Identification"
   },
   {
@@ -872,6 +983,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Exploring the link between predictive uncertainty and the sim-to-real gap in dee"
   },
   {
@@ -880,6 +992,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Shaping AI's Beliefs Before It Generates: Human Sense of Agency in Creative AI"
   },
   {
@@ -888,6 +1001,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "Power Line Detection in Point Clouds with Point-SAM and RANSAC"
   },
   {
@@ -896,6 +1010,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "A Line is Not Just a Line: Visualizing Harmonious Complex Line Sets"
   },
   {
@@ -904,6 +1019,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Conversing with a Conversational Agent: A Real Conversation, Not a Simulated One"
   },
   {
@@ -912,6 +1028,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "AgentFaultBench: State-Verified Evaluation of Tool-Fault Recovery"
   },
   {
@@ -920,6 +1037,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Asking the right question is key to AI discovery in a chain of hypotheses"
   },
   {
@@ -928,6 +1046,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Memorization Lives in a Few Attention Heads: Mitigating Memorization in Diffusio"
   },
   {
@@ -936,6 +1055,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Can an Agent Rethink What It Knows? Selective Scene Memory Updates in a Changing"
   },
   {
@@ -944,6 +1064,7 @@
    "label": 0,
    "pred": 1,
    "ok": false,
+   "abs_ok": null,
    "title": "SGIP: Learning Scene-Grounded Interaction Priors for Scene-Aware Human Motion Pr"
   },
   {
@@ -952,6 +1073,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "More Context, Mixed Results: Evaluating LLMs for Identifier Recovery and Code De"
   },
   {
@@ -960,6 +1082,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Calpha: Toward Native Biomolecular Intelligence in a General-Purpose Language Mo"
   },
   {
@@ -968,6 +1091,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "GHySSeg: Real-Time Geometric Ground and Road Segmentation for Hybrid Solid-State"
   },
   {
@@ -976,6 +1100,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "The Silent Cost of Conversation History in LLM Reasoning"
   },
   {
@@ -984,6 +1109,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "EviBridge: Encoding Predictive Visual Evidence for Proactive Interaction"
   },
   {
@@ -992,6 +1118,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Autonomous Multi-modal Agents for ITOps Observability"
   },
   {
@@ -1000,6 +1127,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "LABEL: Literature Asymmetry between Efficacy and Limits in Drug Knowledge and La"
   },
   {
@@ -1008,6 +1136,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "PRISM: Primitive-Integrated Separable Modulation with Priority Visual Memory Que"
   },
   {
@@ -1016,6 +1145,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Exploration of Reinforcement Learning in Generative Recommendation Models"
   },
   {
@@ -1024,6 +1154,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Algebraic Interaction: A Recipe for Neural Architecture Generation"
   },
   {
@@ -1032,6 +1163,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "How Much Determinism Can Fine-Tuning Buy? Margin Regularisation Against Batch-In"
   },
   {
@@ -1040,6 +1172,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Ask Precisely, Assume Wisely: Interactive Evaluation of Ambiguity Resolution in "
   },
   {
@@ -1048,6 +1181,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "MovieRoll: A Systematic Framework for Rolling Out Long-Form Videos"
   },
   {
@@ -1056,6 +1190,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Locational Marginal Pricing of Compute: Co-optimizing Compute and Energy for Tra"
   },
   {
@@ -1064,6 +1199,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "LiveView: Real-Time Camera-Controlled Re-filming of Streaming Videos"
   },
   {
@@ -1072,6 +1208,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Recognizing Events Is Not Enough: Why Streaming VLMs Struggle in Compositional I"
   },
   {
@@ -1080,6 +1217,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Risk-Averse Decision-Focused Learning: Minimizing CVaR of Regret"
   },
   {
@@ -1088,6 +1226,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Drift-Conditioned Structural Replay for Continual Cardiac Ultrasound Segmentatio"
   },
   {
@@ -1096,6 +1235,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "TRR: A Thermal Interaction Engine for Robot Simulation and RGBT Data Generation"
   },
   {
@@ -1104,6 +1244,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Self-Calibrating Vision-Agent-Action: Deploying Pick-and-Place to New Robot Cell"
   },
   {
@@ -1112,6 +1253,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Program Distillation: Transferring LLM Capability from System 2 to System 0"
   },
   {
@@ -1120,6 +1262,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Puzzle: One Pass Is Not Enough for Open-Vocabulary Remote Sensing Segmentation"
   },
   {
@@ -1128,6 +1271,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Think2Listen: Evidence-Centric Learning For Agentic Audio Understanding With LAL"
   },
   {
@@ -1136,6 +1280,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "GlyphAtlas: Disentangling Stroke Detail from Layout for Scene Text Synthesis"
   },
   {
@@ -1144,6 +1289,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Vegetation Health Classification for Low-Data and Edge Hardware Deployment"
   },
   {
@@ -1152,6 +1298,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Expertise capture in workplace AI"
   },
   {
@@ -1160,6 +1307,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Federated Dataset Simulation: Inducing Label-Free Heterogeneity Across Tasks"
   },
   {
@@ -1168,6 +1316,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "A Reinforcement Learning Method to Navigate SMEFT Operator Space"
   },
   {
@@ -1176,6 +1325,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "GameWM: Toward Next-Generation Video Games with Interaction-Centric World Models"
   },
   {
@@ -1184,6 +1334,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "SADL: On the Demand-Supply Geometry of Representation Collapse"
   },
   {
@@ -1192,6 +1343,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Exists, Valid: Calibrated Validity of Stored 3D Geometry Across Long Observation"
   },
   {
@@ -1200,6 +1352,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "When the Mythical Man-Month Meets Agentic Web Systems: Structured Coordination f"
   },
   {
@@ -1208,6 +1361,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "How Developer Personality Shapes the Use of AI Coding Assistants"
   },
   {
@@ -1216,6 +1370,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Architecting the Corporate AI Infrastructure: The Evolving Roles of AI Governanc"
   },
   {
@@ -1224,6 +1379,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "A Seismic Foundation Model for Dense Feature Extraction"
   },
   {
@@ -1232,6 +1388,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Counterfactual Feature Steering for Adjacency-Preserving Identity Unlearning"
   },
   {
@@ -1240,6 +1397,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Turing Agent: Agentic Formal Verification for Mathematical Research"
   },
   {
@@ -1248,6 +1406,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Pretty Linear Liars: Unregularized Probes Favor Intervention-Unfaithful Features"
   },
   {
@@ -1256,6 +1415,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "VisDrone-ReID: A Unified Multi-Category Object Re-Identification Benchmark"
   },
   {
@@ -1264,6 +1424,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Speaking-Clock Mamba: Phoneme-Conditioned State-Space Modeling for Visual Forced"
   },
   {
@@ -1272,6 +1433,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "GRACE: Parallel Best-of-N Multi-Agent Analysis of Closed-Form Questions over Dat"
   },
   {
@@ -1280,6 +1442,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Mem2Fair: Online Fairness Control for Text-to-Video Generation via Fair Memory"
   },
   {
@@ -1288,6 +1451,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Interactive Structured Environment Scaling for Large Language Model Agentic Reas"
   },
   {
@@ -1296,6 +1460,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "The Logic Chain Breaking Point: A Controlled-Variable Benchmark for Reasoning De"
   },
   {
@@ -1304,6 +1469,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Small Data in Long-Term Environmental Vision: Annotation Noise, Gamification, an"
   },
   {
@@ -1312,6 +1478,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "MarineSparkLM-4B: A Lightweight Language Model for Marine and Offshore Engineeri"
   },
   {
@@ -1320,6 +1487,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Experience Rot: Experienced Agents Fail Where Novices Succeed"
   },
   {
@@ -1328,6 +1496,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Mutual Colormap Dependence: How Recoloring Biomedical Images Changes Vision-Lang"
   },
   {
@@ -1336,6 +1505,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Refinement vs. Replanning: Inference Compute Allocation in Robot Policies"
   },
   {
@@ -1344,6 +1514,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Advancing Cognitive Pairwise Comparisons for Human-Centric Artificial Intelligen"
   },
   {
@@ -1352,6 +1523,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "VAST: Compiling Grounded Vulnerability Scenarios into Verifiable, Multi-Step Env"
   },
   {
@@ -1360,6 +1532,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Which AI Use Cases Deserve a Pilot? A Risk and Value Framework for Funding, Scop"
   },
   {
@@ -1368,6 +1541,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Inquest: Log-Guided Root-Cause Code Localization with a Staged Agent"
   },
   {
@@ -1376,6 +1550,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "RAMP: Rethinking Multimodal Evaluation through Answer Readout Protocols"
   },
   {
@@ -1384,6 +1559,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Perceptual Weight Space Programming for Diffusion Super-Resolution"
   },
   {
@@ -1392,6 +1568,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Interpretable deep concepts of organoid morphology"
   },
   {
@@ -1400,6 +1577,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "HEmIF-Bench: Benchmarking H&E-to-mIF Models BeyondVirtual-StainFidelity"
   },
   {
@@ -1408,6 +1586,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "UIAnchor: Anchoring UI Perception and Action Execution for Reliable Service-Comp"
   },
   {
@@ -1416,6 +1595,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "KUDEX: A Zero-Shot Decompositional Framework for Logical Analysis in Natural Lan"
   },
   {
@@ -1424,6 +1604,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "A Survey of Image-to-Code Generation for Software Engineering"
   },
   {
@@ -1432,6 +1613,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Data-Driven Predictive Control for Autonomous Vehicle Racing under Varying Frict"
   },
   {
@@ -1440,6 +1622,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Spectral Steering: Local Inverse Geometry for Frozen Diffusion Generators"
   },
   {
@@ -1448,6 +1631,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Surprise-Gated Memory for Live Speaker Diarization"
   },
   {
@@ -1456,6 +1640,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "ARC-VLN: Adaptive Recursive Computing-based Visual-Language Navigation"
   },
   {
@@ -1464,6 +1649,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Trait Collapse in Text-to-Image Generation: Evaluating and Mitigating Personalit"
   },
   {
@@ -1472,6 +1658,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "MORE: Merge Once, Route Early for Training-Free Multi-Subject Composition from L"
   },
   {
@@ -1480,6 +1667,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "VIVID: A Visual Harness for Agentic Video Editing"
   },
   {
@@ -1488,6 +1676,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "From Retouched Images to Paired Videos: A Synthetic Benchmark for Face Video Ret"
   },
   {
@@ -1496,6 +1685,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Explainable Federated Learning via Global-Local Attribution Alignment"
   },
   {
@@ -1504,6 +1694,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "TIVS: Mapping the Sensitivity Landscape of Visual Token Transformations in MLLMs"
   },
   {
@@ -1512,6 +1703,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Data Attribution Should Steer Pretraining"
   },
   {
@@ -1520,6 +1712,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Does a completed simulation run mean a usable urban wind result for AI agents?"
   },
   {
@@ -1528,6 +1721,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Cache or Denoise Less? Residual Reuse in a Flow-Matching World Action Model"
   },
   {
@@ -1536,6 +1730,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Physics-Informed Causal Reasoning for Nonstationary Robot Dynamics"
   },
   {
@@ -1544,6 +1739,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Multi-LLM Agentic AI at the Edge: Joint Agent Scheduling and Resource Allocation"
   },
   {
@@ -1552,6 +1748,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "When Tool Names Are Not Identities: Measuring Provider Misbinding in MCP-Based A"
   },
   {
@@ -1560,6 +1757,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "How Far Is Too Far? Object Recognition Declines Monotonically with Semantic Dist"
   },
   {
@@ -1568,6 +1766,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Language Models Meet Vibration Testing for LEO Constellation Satellites with Cal"
   },
   {
@@ -1576,6 +1775,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "What Moves a LoCoMo Score? Memory Context, Answer Prompts and Judges"
   },
   {
@@ -1584,6 +1784,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "OmitEHR: Scalable Omission Detection in LLM-Generated Clinical Summaries"
   },
   {
@@ -1592,6 +1793,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Explaining Cross-Label Decision Structure in Multi-Output Tree Ensembles"
   },
   {
@@ -1600,6 +1802,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "WeVisForensics: Self-Evolving Agent for Omni AI-Generated Video Detection"
   },
   {
@@ -1608,6 +1811,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Replicating and Extending Weight-Space Programming: Frontier LLMs Compile Progra"
   },
   {
@@ -1616,6 +1820,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Continuation-Guided LLM Evolution of Program Policies and Goal Compilers in Craf"
   },
   {
@@ -1624,6 +1829,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "EfficientSkill: Learning Skills for Token-Efficient Multi-Turn Agents"
   },
   {
@@ -1632,6 +1838,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Portrait Fitness as a Pretext: Probing Implicit Demographic Bias in VLMs"
   },
   {
@@ -1640,6 +1847,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "SCoRe: Support-Calibrated Role Fusion for Training-Free Cross-Domain Few-Shot Se"
   },
   {
@@ -1648,6 +1856,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Towards Probabilistically Safe Reinforcement Learning: Theory and Deployment on "
   },
   {
@@ -1656,6 +1865,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Harness Leverage Across Model Size: A Ladder of Five Local Agent Harnesses from "
   },
   {
@@ -1664,6 +1874,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "FM-Recon: Exploring Foundation Model Features for Accelerated Cardiac Cine MRI R"
   },
   {
@@ -1672,6 +1883,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Do Embedding-Map Distances Guide LLM Ideation? Four Tests Against What Came Next"
   },
   {
@@ -1680,6 +1892,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Evaluating the Robustness of Fact-Checking LLMs on Multilingual Evidence"
   },
   {
@@ -1688,6 +1901,7 @@
    "label": 0,
    "pred": 0,
    "ok": true,
+   "abs_ok": null,
    "title": "Fine-Grained RLAIF for Visual Safety: Learning to Zoom into Hazards for Multimod"
   }
  ],
