@@ -287,6 +287,59 @@ def ingest(mmdd, path):
     return 0
 
 
+def compare(mmdd):
+    """流水线 vs 人工标签的混淆矩阵（流水线判定：accepted=1，其余=0）。
+
+    这不是模型指标，而是**现有流水线的基线**：有了它，「某个模型值不值得接」才有参照系——
+    新方案必须在「不降低精确率」的前提下把漏检补回来，否则只是换了个错法。
+    """
+    all_rows = read_golden(mmdd)
+    # 只算人工标注过的：其余 168 条仍是「组默认标签」（accepted=1/其余=0），
+    # 把默认值当人工标签会把精确率算成恒 1.0，是最典型的假绿。
+    rows = [r for r in all_rows
+            if r.get("label") is not None and str(r.get("label_status", "")).endswith("human")]
+    if not rows:
+        print("没有人工标签，先 ingest")
+        return 2
+    pred = lambda r: 1 if r["group"] == "accepted" else 0
+    tp = [r for r in rows if pred(r) == 1 and r["label"] == 1]
+    fp = [r for r in rows if pred(r) == 1 and r["label"] == 0]
+    fn = [r for r in rows if pred(r) == 0 and r["label"] == 1]
+    tn = [r for r in rows if pred(r) == 0 and r["label"] == 0]
+    prec = len(tp) / (len(tp) + len(fp)) if tp or fp else None
+    rec = len(tp) / (len(tp) + len(fn)) if tp or fn else None
+    acc = (len(tp) + len(tn)) / len(rows)
+    fair = [r for r in rows if r.get("abs_sufficient") is not False]
+    acc_fair = (sum(1 for r in fair if pred(r) == r["label"]) / len(fair)) if fair else None
+
+    print("\n人工标注 %d 条（摘要不足 %d、未定 %d）"
+          % (len(rows), sum(1 for r in rows if r.get("abs_sufficient") is False),
+             sum(1 for r in read_golden(mmdd) if r.get("label") is None)))
+    print("\n                人工=1  人工=0")
+    print("  流水线收(1)   %5d  %5d" % (len(tp), len(fp)))
+    print("  流水线弃(0)   %5d  %5d" % (len(fn), len(tn)))
+    print("\n精确率 %.4f ｜ 召回 %.4f ｜ 总体准确率 %.4f ｜ 公平子集 %.4f"
+          % (prec or 0, rec or 0, acc, acc_fair if acc_fair is not None else acc))
+    if fn:
+        print("\n漏检（永久丢失项，%d 条）：" % len(fn))
+        for r in fn:
+            print("   -", r["id"], r["title"][:78])
+    if fp:
+        print("\n错收（%d 条）：" % len(fp))
+        for r in fp:
+            print("   +", r["id"], r["title"][:78])
+
+    out = os.path.join(OUT_DIR, "compare_%s.json" % mmdd)
+    json.dump({"question_version": QUESTION_VERSION,
+               "n": len(rows), "tp": len(tp), "fp": len(fp), "fn": len(fn), "tn": len(tn),
+               "precision": prec, "recall": rec, "accuracy": round(acc, 4),
+               "accuracy_fair": (round(acc_fair, 4) if acc_fair is not None else None),
+               "fn_ids": [r["id"] for r in fn], "fp_ids": [r["id"] for r in fp]},
+              open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("\n结果 -> %s" % out)
+    return 0
+
+
 def emit(mmdd, limit):
     rows = read_golden(mmdd)[:limit]
     for r in rows:
@@ -308,6 +361,7 @@ def main():
     e = sub.add_parser("emit"); e.add_argument("mmdd"); e.add_argument("--limit", type=int, default=2)
     s = sub.add_parser("sheet"); s.add_argument("mmdd"); s.add_argument("--per-group", type=int, default=20)
     i = sub.add_parser("ingest"); i.add_argument("mmdd"); i.add_argument("path")
+    c = sub.add_parser("compare"); c.add_argument("mmdd")
     a = ap.parse_args()
     if a.cmd == "build":
         return build(a.mmdd)
@@ -317,6 +371,8 @@ def main():
         return sheet(a.mmdd, a.per_group)
     if a.cmd == "ingest":
         return ingest(a.mmdd, a.path)
+    if a.cmd == "compare":
+        return compare(a.mmdd)
     return emit(a.mmdd, a.limit)
 
 
