@@ -1,0 +1,138 @@
+{
+ "2606.31679": {
+  "cat": "cs.GR",
+  "title": "Practical High-Fidelity Novel-View Synthesis of Mounted Lepidoptera",
+  "abstract": "Mounted butterflies are among the most striking objects in natural history collections. However, their beauty is notoriously hard to digitize in 3D: they are small and fragile, with microscopic hairs and vein structures. Capturing them in sufficient detail, therefore, requires a macro lens, which has a very limited Depth of Field (DoF). Moreover, a camera body cannot be maneuvered beneath a pinned specimen to photograph its ventral surface. We introduce an end-to-end pipeline that resolves these challenges, turning such specimens into photorealistic 3D models viewable from every direction. It combines three ingredients: handheld focus stacking for all-in-focus macro capture without a tripod, a non-contact first-surface mirror system that exposes the ventral surface without touching the specimen, and a segmentation-free, mirror-aware 3D Gaussian Splatting extension. We validate the reconstructions and design decisions on nine diverse specimens.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2607.05598": {
+  "cat": "cs.GR",
+  "title": "SSA-3DGS: Unsupervised Removal of Screen-Space Artifacts for 3D Gaussian Splatting",
+  "abstract": "Novel View Synthesis (NVS) methods, such as 3D Gaussian Splatting (3DGS), rely on the assumption of clean, multi-view consistent, posed input images. Real-world captures can violate this assumption due to \\textbf{screen-space artifacts}---static occlusions fixed to the 2D image plane rather than to the 3D world. Common examples include physical sensor defects, environmental obstructions (such as rain or mud on the lens enclosure), capture obstructions (such as a thumb over the camera sensor or a dashboard visible in dashcam footage), and digital overlays (such as watermarks or UI elements). When present, they are erroneously baked into the 3D geometry as ``floaters'' or near-camera artifacts, degrading the quality of novel-view rendering. In this work, we propose \\textit{SSA-3DGS}, an unsupervised framework that jointly optimizes a 3D scene and a learnable 2D overlay to recover a clean 3D scene and the corrupting artifacts. By exploiting geometric consensus across views, our method effectively disentangles static artifacts from the 3D scene geometry without supervision or manual input. Across diverse synthetic corruptions and a self-captured real-world dataset, SSA-3DGS improves reconstruction fidelity by up to ${\\sim}8$~dB PSNR over 3DGS trained on the same corrupted inputs, while faithfully preserving the corrupting artifact.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2512.19583": {
+  "cat": "cs.RO",
+  "title": "Learning Generalizable Hand-Object Tracking from Synthetic Demonstrations",
+  "abstract": "arXiv:2512.19583v2 Announce Type: replace-cross Abstract: We present a system for learning generalizable hand-object tracking controllers purely from synthetic data, without requiring any human demonstrations. Our approach makes two key contributions: (1) HOG, a highly efficient Hand-Object data generator that rapidly synthesizes diverse, large-scale, and uniformly distributed trajectories; and (2) HOT, a Hand-Object Tracker that bridges synthetic-to-physical transfer through reinforcement learning and interaction imitation learning. Our method extends to diverse object shapes and hand morphologies. HOT also enables cross-simulator transfer. Through extensive evaluations, we show that our approach enables dexterous hands to track challenging, long-horizon sequences including object re-arrangement and agile in-hand reorientation. These results represent a significant step toward scalable foundation controllers for manipulation that can learn entirely from simple, scalable synthetic data, breaking the data bottleneck that has long constrained progress in dexterous manipulation.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2507.14845": {
+  "cat": "cs.CV",
+  "title": "Training Self-Supervised Depth Completion Using Sparse Measurements and a Single Image",
+  "abstract": "Depth completion is an important vision task, and many efforts have been made to enhance the quality of depth maps from sparse depth measurements. Despite significant advances, training these models to recover dense depth from sparse measurements remains a challenging problem. Supervised learning methods rely on dense depth labels to predict unobserved regions, while self-supervised approaches require image sequences to enforce geometric constraints and photometric consistency between frames. However, acquiring dense annotations is costly, and multi-frame dependencies limit the applicability of self-supervised methods in static or single-frame scenarios. To address these challenges, we propose a novel self-supervised depth completion paradigm that requires only sparse depth measurements and their corresponding image for training. Unlike existing methods, our approach eliminates the need for dense depth labels or additional images captured from neighboring viewpoints. By leveraging the characteristics of depth distribution, we design novel loss functions that effectively propagate depth information from observed points to unobserved regions. Additionally, we incorporate segmentation maps generated by vision foundation models to further enhance depth estimation. Extensive experiments demonstrate the effectiveness of our proposed method.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2605.22631": {
+  "cat": "cs.CV",
+  "title": "HolisticMotion: Holistic Modeling for Motion Reconstruction from Sparse Tracking",
+  "abstract": "Reconstructing full-body motion from sparse tracking signals is crucial for immersive AR/VR applications. Existing methods predominantly adopt a sensor-centric observation perspective, learning full-body representations primarily under sparse conditioning, while additional joint observations available during training remain underutilized as inputs. We propose HolisticMotion, which shifts the modeling perspective toward holistic full-body modeling by treating every joint as a potential input source within a unified skeletal layout. Guided by this holistic perspective, we introduce three complementary designs. First, a curriculum masking strategy bridges full-body motion learning and sparse inference by gradually shifting training from a mixture of masked full-body and sparse inputs to exclusively sparse inputs. Second, body partitioning models region dynamics and helps preserve local motion cues. Third, Kinematic Attention coordinates body regions by combining dynamic spatial interactions with learnable structural priors inspired by the kinematic tree. Experiments on AMASS and HPS demonstrate competitive reconstruction performance across various tracking protocols, with the lowest positional errors among the compared methods. The unified representation also accommodates additional wearable sensors, yielding further improvements in reconstruction accuracy and motion smoothness.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2606.04493": {
+  "cat": "cs.CV",
+  "title": "Smooth Inliers, Erratic Outliers: Frequency-Aware Mamba for Two-View Correspondence Learning",
+  "abstract": "When shown matches between two photographs of the same cathedral, people can tell at a glance which ones are wrong: a window matched to its look-alike jumps against its neighbors, while correct matches shift together. Two-view correspondence learning, also called correspondence pruning, asks a network to make this judgment for thousands of candidate matches, most of which are wrong. Mamba, a fast sequence model, now drives strong pruners, but it reads the matches as a plain sequence, and whether its scan can capture such agreement is unclear. We propose SFMambaNet, which scans the matches cluster by cluster, so that correct matches vary slowly along the sequence while wrong ones stay erratic, and filters the scanned features with learnable frequency-domain gates between its forward and backward passes. On camera pose estimation, outlier removal and homography estimation, we find that SFMambaNet outperforms spatial-domain Mamba baselines with about two million parameters. Contrary to the usual expectation that such gains come from extra capacity, we find that a parameter-free low-pass filter beats point-wise layers as large as the gates. The learned gates turn low-pass on their own and make the scan far less sensitive to how the matches are shuffled. Together, these results show that frequency is a natural language for describing agreement between correspondences, with implications for other sequence models that must read unordered sets, such as point clouds and graphs.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2606.06074": {
+  "cat": "cs.CV",
+  "title": "VZCrash: A Large-Scale IMU Dataset of Ego-Vehicle Crashes",
+  "abstract": "We introduce VZCrash, the largest publicly available dataset of real-world vehicle collision data featuring Inertial Measurement Unit (IMU) telemetry. The dataset contains more than 31,000 validated crashes and 158,000 negative samples, including hard cases and distractors. Each sample includes acceleration and angular velocity at 100 Hz, and GPS speed at 1 Hz. Events in VZCrash were captured by devices installed on a fleet of 73,010 commercial vehicles of different sizes driving in the United States over the span of several years. We also present an extensive experimental study enabled by the volume of the dataset. We first benchmark several different approaches, from a simple threshold-based heuristic to state-of-the-art deep learning models. Then, we present an experiment demonstrating the importance of scaling data to train high-quality crash detection models, and we show that scale is especially important when these models need to be deployed into a real-world environment.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2611.20349": {
+  "cat": "cs.CV",
+  "title": "Words Speak Louder? Exploring the Language Shortcut of LLM-Driven Incomplete Multimodal Learning",
+  "abstract": "Is a face or a voice still heard once the words are known? Incomplete multimodal learning increasingly uses large language models (LLMs) as fusion engines: modality features enter as token blocks and missing modalities become placeholders. We find that LLM-driven fusion can override non-verbal evidence it can read. Contrasting its full-input prediction with counterfactual views, the same model shown one modality or no content, we identify language shortcuts. We build MR-Bench: MR-Bench-A types every test sample of four sentiment benchmarks; MR-Bench-H contains 900 human-validated clips (620 language-shortcut, LS; 280 non-verbal-shortcut, NS) from seven sources, and every model is scored on all of them. Zero-shot MLLMs solve at most 32.7% of the LS clips; adding the transcript to the muted video lowers vision-language accuracy by 46.1-53.1 points. Yet inverting a text-only model's answers solves 94.4%, so LS accuracy alone cannot establish use of non-verbal evidence. Inside the fusion LLM, fused states align increasingly with the text view late in the decoder. Counterfactual-View Reliability learning (CoVeR) trains views as unimodal judges and withholds fused supervision where they disagree. It achieves state-of-the-art results on five benchmarks without extra inference cost in accuracy mode. On MR-Bench-H, it reaches 61.7% LS and 93.6% NS accuracy; robust mode raises LS accuracy to 63.0% while lowering NS accuracy to 84.8%. Among LS clips solved without text, adding text causes errors on 30.1% with CoVeR versus 32.2% with LLM-Fusion. Project page: https://peacelwh.github.io/CoVeR/.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2611.21126": {
+  "cat": "cs.CV",
+  "title": "IGRecon4D: Dynamic-Object-Aware Feed-Forward Reconstruction of Driving Scenes",
+  "abstract": "Feed-forward 4D driving-scene reconstruction enables efficient modeling of dynamic autonomous-driving scenes, but current methods suffer from two complementary failure modes: semantic leakage of traffic participants into the static representation and geometric drift of Gaussian locations across viewpoints. We propose \\textbf{IGRecon4D}, a feed-forward dynamic scene reconstruction framework that addresses these failures with training-time instance-prior distillation and LiDAR-anchored Gaussian positioning. Specifically, an instance-level semantic branch provides a potentially dynamic participant prior, which is distilled into dynamic-mask learning through the Instance-Dynamic Consistency Constraint to encourage high-recall localization of traffic-participant regions prone to dynamic-static leakage. In parallel, sparse LiDAR measurements guide dense depth estimation, and the resulting depths are back-projected to anchor Gaussian positions for improved multi-view geometric consistency. Experiments on the Waymo Open Dataset and zero-shot evaluation on nuScenes demonstrate improved full-image reconstruction on the main benchmark and stronger traffic-participant-region reconstruction under cross-dataset evaluation.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2607.24744": {
+  "cat": "cs.RO",
+  "title": "Data Pyramid for Embodied Manipulation: A Survey",
+  "abstract": "arXiv:2607.24744v3 Announce Type: replace-cross Abstract: Multimodal foundation models learned to see and to speak by consuming the whole internet. Embodied agents admit no such shortcut, since they require data that couple observations with physical states and actions. These signals can be provided, to varying degrees, by multiple data sources. In this work, we organize the embodied data ecosystem as a \"pyramid'' spanning five complementary sources: real-robot data, UMI-style data, egocentric and exocentric data, simulation data, and general vision-language data. We organize the pyramid around the tension between scalability and robot alignment, and further characterize each source in terms of data quality, diversity, reusability, and physical fidelity. We then analyze recent embodied foundation models through the lens of data recipes, examining how different sources are selected, aligned, and mixed during pretraining. For embodied brain models, vision-language-action models, and world-action models alike, we relate data composition to capabilities in perception, reasoning, planning, action generation, and world prediction. To facilitate community use, we additionally consolidate over 10,000 hours of trajectories from widely used robot datasets into a unified LeRobot format, with transparent frame-level quality annotations for filtering. We close by discussing six open challenges: building large-scale tactile datasets, collecting failure and recovery data, developing scalable data-collection pipelines, aligning actions across embodiments, leveraging egocentric data for dexterous manipulation, and designing principled data recipes for robot learning. We hope this work lays the foundation for the design of next-generation embodied systems.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2610.27275": {
+  "cat": "cs.RO",
+  "title": "On Maximum Clique and Maximum Consensus Formulations in Point Cloud Registration",
+  "abstract": "arXiv:2610.27275v2 Announce Type: replace-cross Abstract: Maximum clique and maximum consensus are widely used formulations for robust point cloud registration. Maximum consensus seeks one transformation that aligns as many matches as possible, while maximum clique selects matches through pairwise distance tests. Maximum clique is often used as a substitute for or an approximation to maximum consensus, with empirical evidence suggesting a close relationship. However, how closely the two formulations agree is not fully understood. We study this relationship theoretically. We show that, at any fixed positive tolerance, a maximum clique can have arbitrarily large alignment error and be arbitrarily larger than a maximum consensus set. When rotation is fixed, we derive sharp error bounds and tests that exactly characterize maximum consensus for the translation subproblem. We also study group-$k$ consistency, which uses consistency of groups of $k$ matches, and determine the smallest group sizes that guarantee alignment error bounds independent of point cloud scale and geometry. These are $d+1$ for rotations and translations and $d+2$ when reflections are allowed, in dimensions $d\\ge2$. Finally, our experiments on nearly 8,000 registration examples quantify the frequency of these limitations in practice and show how the derived bounds can be used to check whether a subset of matches can be aligned within a point tolerance.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2606.02879": {
+  "cat": "cs.RO",
+  "title": "Direct Informed Sampling on Riemannian Manifolds via Loewner Order Lower Bounds",
+  "abstract": "Informed sampling techniques accelerate sampling-based motion planners by focusing the search on promising regions of the state space, yet most existing methods rely on Euclidean heuristics that can become inadmissible under configuration-dependent Riemannian metrics. While scalar eigenvalue bounds restore admissibility by uniformly scaling the Euclidean distance, they discard the directional structure of the metric, producing overly conservative informed sets. We propose a matrix-valued admissible heuristic that exploits the Loewner order on symmetric positive definite matrices to compute the tightest constant lower bound on the metric tensor while retaining directional information discarded by scalar bounds. The Cholesky factorization of this constant bound maps the lower-bound informed set to a standard prolate hyperspheroid in Euclidean space, enabling direct, rejection-free sampling using existing algorithms. We then present an incremental algorithm for computing such a constant lower bound on the metric tensor from a sequence of pointwise evaluations. Experiments on manipulation tasks with a 6-DoF UR5, 7-DoF Franka, and 14-DoF PR2 under three distinct Riemannian metrics show that our heuristic produces consistently tighter informed sets than those produced by the Euclidean and scalar-eigenvalue heuristics, accelerating convergence across multiple state-of-the-art asymptotically optimal planners. Our implementation is available in the open-source geodex framework at https://github.com/utiasSTARS/geodex.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2607.28045": {
+  "cat": "cs.RO",
+  "title": "RaDiVe: Robust 4D Radar Odometry with Distance-Bounded NDT and Velocity-Discrepancy Point Uncertainty",
+  "abstract": "Recent advances in 4D radar enable robust perception in adverse weather; however, the inherent sparsity, noise, and limited positional precision of radar point clouds pose significant challenges for registration-based odometry. In this letter, we propose RaDiVe, a 4D radar odometry framework that improves the accuracy and robustness of radar point cloud registration. We introduce a distance-bounded Normal Distributions Transform, which improves optimization stability and computational efficiency by restricting the correspondence search to near-distance voxel pairs. To mitigate measurement ambiguity, we propose a velocity-discrepancy point uncertainty model that weights each input 4D radar point according to the discrepancy between its measured Doppler radial velocity and the radial velocity predicted from the estimated ego-velocity. We also incorporate Signed Distance Function-based surface point extraction via implicit neural mapping to construct a geometrically consistent, noise-filtered local submap. Evaluations across multiple public datasets demonstrate that RaDiVe outperforms existing 4D radar odometry baselines by 44.4% in translational and 21.3% in rotational Absolute Trajectory Error on average, while maintaining real-time performance.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2610.40349": {
+  "cat": "cs.RO",
+  "title": "TouchBridge: Tactile-Conditioned Human-to-Robot Transfer for Dexterous Manipulation",
+  "abstract": "Human demonstrations offer an efficient and scalable source of data for dexterous robot manipulation, but differences in sensing and hand morphology complicate the transfer of contact-rich interactions. We present TouchBridge, a hardware--software co-designed framework for human-to-robot data transformation. A wearable human demonstration interface and a corresponding robot interface establish cross-embodiment correspondence in visual and fingertip tactile sensing. We introduce Tac-Retarget, a tactile-conditioned retargeting method that uses measured contact to align fingertip contact patches and preserve their spatial relations within and across hands. Unlike object-aware or simulation-based transfer pipelines, Tac-Retarget requires no object mesh, object-pose estimate, or physics simulation for retargeting, enabling direct and scalable conversion of human demonstrations into robot-domain training data. Combined with visual synthesis and camera-anchored action conversion, TouchBridge produces robot-domain demonstrations for fine-tuning a pretrained vision-language-action (VLA) model. Across four real-world contact-rich tasks, policies fine-tuned solely on TouchBridge-converted human demonstrations achieve a 72.5% average success rate, compared with 77.5% using an equal number of teleoperated robot demonstrations, while human demonstration collection is 7.0x faster. Under the same policy and training setup, Tac-Retarget outperforms DexPilot and UniDex by 25.0 and 42.5 percentage points, respectively.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2611.15659": {
+  "cat": "cs.RO",
+  "title": "GraSLA: A Lightweight Spatial-Language-Action Model with Grasp Hypotheses as Geometric Priors",
+  "abstract": "This paper focuses on improving the effectiveness and generalization of language-conditioned manipulation policies learned through imitation learning. Recently, continuous-control policies have become mainstream in robotic manipulation, but the lack of diverse demonstrations tends to restrict their generalization. To address this limitation, explicit geometric targets can provide additional guidance for action prediction. In particular, 6-DoF grasp detection generates diverse grasp hypotheses that suggest possible approach directions for the gripper. This motivates us to integrate them into continuous-control policies. To this end, we propose GraSLA, a lightweight and effective spatial-language-action model with grasp hypotheses as geometric priors. In particular, we employ spatial and language foundation models to encode scene geometry and task semantics, and integrate them with grasp hypotheses through bidirectional cross-attention for continuous action prediction. Simulation experiments demonstrate that our approach outperforms existing baselines on LIBERO, LIBERO+, and LIBERO-Pro, achieving average success rates of 99.30%, 73.7%, and 53.33%, respectively.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2611.16728": {
+  "cat": "cs.RO",
+  "title": "EgoX: Egocentric Cross-Embodiment Manipulation with Embodiment Dreaming",
+  "abstract": "Generalist manipulation policies can benefit from the complementary experience of humans, real robots, and simulated agents. However, differences in morphology, sensing, and control interfaces make it difficult to learn effectively from their combined demonstrations. We introduce EgoX, an egocentric cross-embodiment learning framework that shares manipulation structure through fine-grained, semantically corresponding observation and action modalities while keeping sensing and control interfaces embodiment-specific. EgoX pretrains a Modular Embodiment Dreamer (MED) on this mixture and fine-tunes it on target-embodiment demonstrations. Within each embodiment, MED assigns a dedicated tokenizer to each observation modality and a dedicated expert to each action modality, with a Transformer trunk shared across embodiments. A training-only embodiment-dreaming objective predicts latent representations of future visual and proprioceptive states, encouraging the shared trunk to model each embodiment's dynamics. Across 13 task-embodiment pairs spanning five tasks and six robot embodiments, including five physical robots and one simulated humanoid, cross-embodiment pretraining raises MED's average normalized task progress from 0.63 to 0.80 over training from scratch. The gains are particularly pronounced under out-of-distribution conditions, where average task progress increases from 0.53 to 0.77. Ablations demonstrate the benefits of broader pretraining mixtures, modular interfaces, and embodiment dreaming, with dreaming producing more similar latent geometry across embodiments. Project page: egox-dream.github.io.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ },
+ "2611.21057": {
+  "cat": "cs.RO",
+  "title": "WiTac: Wrist-Informed Tactile Representations for Contact-Rich Manipulation",
+  "abstract": "Similar tactile contacts can call for different corrections depending on the configuration of the hand, object and target. Rather than supplying touch and wrist vision separately, fusing them before policy injection better grounds tactile features in visual context, yielding more accurate contact representations. We introduce Wrist-Informed Tactile Representations (WiTac), a pretrained encoder that learns such representations before action generation. Pretrained on nearly 300 hours of SharpaDex data, WiTac deeply fuses tactile signals with hand motion and wrist views into a comprehensive contact representation. Conditioning downstream VLA policies (GR00T N1.7 and $\\pi_{0.5}$) on WiTac substantially improves task success over vision-only base policies across four contact-rich manipulation tasks (+28.8% and +15.0% on average), and further outperforms a wrist-free tactile encoder by 18.8% and 7.5%, respectively. Offline analyses further show that incorporating wrist vision yields more accurate contact descriptors, stronger joint task-contact discrimination, greater feature stability under tactile noise, and clearer action-direction readout from similar contacts. Project page: https://wrist-informed-tactile-representations.github.io/.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false
+ }
+}

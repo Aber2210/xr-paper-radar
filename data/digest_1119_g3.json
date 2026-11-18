@@ -1,0 +1,157 @@
+{
+ "2611.22415": {
+  "id": "2611.22415",
+  "title_en": "SpatialMind: Adaptive Multi-Level Geometric Fusion for Spatial Reasoning in Multimodal Large Language Models",
+  "title_zh": "SpatialMind：面向多模态大模型空间推理的自适应多层级几何融合",
+  "track": "感知与认知",
+  "problem": "MLLM 在 2D 视觉语义上表现良好，但对 3D 空间结构（距离、朝向、场景布局）的推理仍受限。已有把 3D 重建模型接入 MLLM 的工作，要么全任务只用单一几何粒度，要么采用固定不变的多层融合方案。作者通过在 VSI-Bench 上逐层移除几何注入发现：低级感知任务更依赖 shallow 特征，高级推理任务更依赖 deep 特征，因此固定融合无法匹配任务所需的几何粒度。",
+  "method": "骨干为 Qwen3.5-4B，几何侧使用完全冻结的 VGGT-1B，取 VGGT 第 11/17/23 层 patch token 作为 shallow/intermediate/deep 三级几何表示，经 layer-specific geometric merger（stride 2）对齐到 LLM 的 token 数与隐层维度。GeoFus 在每个注入位 s∈{0,1,2} 上为每个几何层配置独立的 position- and layer-specific projector P_{s,l}（LayerNorm + 两层 MLP），从而解耦不同注入深度的投影参数。门控条件由文本、视觉语义、几何三路构成：c_t 用 MaskedAvgPool 只聚合 query token 并排除 padding 与答案 token，c_v,s 对注入位视觉隐状态做 AvgPool，c_g,s 对三级几何描述子做 layer norm 后取均值。三者按可学习缩放因子 alpha_v,s、alpha_g,s 相加，经线性层得到 logits，再用温度控制的 softmax 归一化为融合权重 w_{s,l}。融合表示为投影特征的凸组合 G_s=sum_l w_{s,l} Z_{s,l}，并以残差方式注入视觉 token：V'_s = V_s + G_s。为缓解门控塌缩（权重全压到单层），引入负熵正则 L_gate = -lambda * (1/S) * sum_s H(w_s)，lambda=0.005。训练分两阶段：Stage 1 沿用 SpatialStack 的固定层映射，联合训练 LLM 与几何投影器 1 个 epoch（lr 1e-5）；Stage 2 冻结 LLM 与 LM head，只训练投影器、门控参数与缩放因子（lr 5e-5），目标为 L_LM + L_gate，8x A800 上 5B 约 30h + 15h。",
+  "key_results": [
+   "VSI-Bench 上 SpatialMind-5B 得 71.5，居 3-5B 组第一；同训练数据的 SpatialStack-5B 为 69.6。",
+   "SpatialMind-10B 得 72.3，居 8-10B 组第一，高于同数据 SpatialStack-10B 的 71.3 与 GeoThinker-9B 的 71.9。",
+   "六个空间基准（SparBench/VSI-Bench/SPBench/BLINK/MindCube/SQA3D）平均：5B 70.7（比同数据 SpatialStack-5B 高 2.1），六项中五项第一；10B 71.6，四项第一。",
+   "组件消融（VSI-Bench，三次独立运行均值）：固定基线 69.6 -> 文本门控 70.1 -> 加语义与空间条件 70.2 -> 允许跨层选择 70.9 -> 加负熵正则 71.5，累计 +1.9。",
+   "多层级几何消融：移除 shallow 注入使低级任务降 1.43 点（高级仅 0.17）；移除 deep 注入使高级任务降 2.07 点（低级 0.66）；移除 intermediate 分别降 1.33 与 1.58。",
+   "门控可视化：高层推理任务在 L2 注入位给 deep 特征 46.8% 权重，低层感知任务为 39.3%；低层任务在 L0 给 shallow 35.0%，高层为 28.8%。"
+  ],
+  "novelty": "把「不同认知层级的空间任务需要不同几何粒度」从观察提升为设计原则，并用任务条件化的门控在多个 LLM 注入层上做凸组合选择，而非固定层映射或固定层级拼接。负熵正则针对门控塌缩这一自适应融合的固有失效模式，属于有针对性的机制补丁。整体是在 SpatialStack 式多层注入框架上的架构性改造，而非全新范式。",
+  "limitations": "BLINK 上 5B 与 10B 均只排第二，作者归因于该基准含艺术风格、取证、拼图等 2D 视觉逻辑任务，显式几何线索帮助有限；训练语料偏空间推理也是原因之一。SPBench 上 10B 落后同数据 SpatialStack-10B 0.59 分（68.34 vs 68.93），差距集中在 SPBench-SI 的单视图绝对距离与方向估计（60.95 vs 63.50），说明细粒度单视图度量几何仍是短板。方法依赖冻结的 VGGT-1B 与 8xA800 两阶段训练，成本不低。",
+  "code": "https://github.com/zhaosb-star/SpatialMind",
+  "venue": "arXiv preprint（arXiv:2611.22415v1 [cs.CV]，17 Nov 2026）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：几何先验注入 MLLM 是 XR 空间理解的高频基础问题，但非卡脖子单点。NOV=3：任务自适应门控 + 负熵正则属组合式架构改进，问题观察有价值但范式未变。TEC=4：方法推导完整，组件/层级/门控三组消融齐备，含门控权重可视化与附录。EXP=4：六个基准、两个参数规模、三次重复消融，但无真机或用户实验。PER=3：同数据基线 69.6->71.5、71.3->72.3，提升幅度小且稳定。TRL=4：代码已开源、两阶段流程可复现。REP=4：有代码与充分超参，但未发表于顶会。"
+ },
+ "2611.22541": {
+  "id": "2611.22541",
+  "title_en": "From Perception to Simulation: Unveiling and Empowering Mental Spatial Dynamics in MLLMs",
+  "title_zh": "从感知到模拟：揭示并增强多模态大模型中的心理空间动力学",
+  "track": "感知与认知",
+  "problem": "现有 MLLM 空间推理研究与基准基本假设静态环境，只需对输入图像/视频做单次感知即可定位物体。真实环境是动态的：给定语言描述的动作序列后，模型必须在不看中间画面的情况下推演空间状态如何演化（作者称为 spatial simulation），而这一能力缺乏系统评测。已有心理模拟工作多局限于孤立物体或受限视角，未覆盖长程状态转移。",
+  "method": "构建 MentalGrid 基准：用 Habitat-Sim 从 ReplicaCAD、ArchitecTHOR、iTHOR、ProcTHOR、RoboTHOR 采集 349 个场景，渲染 1,100 张多视角图，生成 3,356 个 QA。状态定义为 S_i=(P_i, v_i, o_i)，P_i 为物体 2D 坐标集合，v_i 为 agent 位置，o_i 为 agent 朝向；动作为平移 f_t 与旋转 f_r 两类映射。按状态下标划分三任务：SSP（i=0，静态感知基线）、FSP（i=n，预测终态）、DPT（0<i<n，追踪任意中间态及相邻转移）。查询分 Distance-Object、Object-Distance、Direction-Object、Object-Direction 四类，并区分 allocentric（ALLO）与 egocentric（EGO）参考系。质量控制包括剔除占图像像素 <0.1% 的物体、去除重复/近义类别场景、以距离阈值排除 2D 投影垂直重叠。训练侧构造 16k QA（5,368 SSP / 5,289 FSP / 5,294 DPT），刻意排除 ArchitecTHOR 与 iTHOR 作域外测试；用 GPT-5-mini 逐步推理生成 CoT，仅保留准确率 >0.9 的轨迹。采用三阶段课程：Stage 1 在 SSP 上 SFT 建立感知锚定；Stage 2 在 FSP+DPT 上联合 SFT，用终态目标与过程目标互补；Stage 3 在 DPT 上用 GRPO 强化学习，奖励由格式模板分与预测状态对 ground truth 的准确分组成。基座为 Qwen2.5-VL-3B，得到 SpatialWalker-3B。",
+  "key_results": [
+   "MentalGrid 上 12 个 MLLM 评测：最佳 Gemini-3.1-Pro 仅 58.93%，低于人类 74.73% 约 16 个百分点；开源模型多在随机水平附近。",
+   "SpatialWalker-3B 总体 46.35%，比基座 Qwen2.5-VL-3B 的 12.54% 提升 33.81 个百分点，并超过 Gemini-3-Flash 的 45.24%。",
+   "域内平均 47.79%（+35.63）、域外平均 44.35%（+31.29）；域外 DPT 达 49.01%（+44.09），为各模型最高。",
+   "外部基准（MindCube / OmniSpatial / STARE）总体 41.42%，比基座高 4.92；OmniSpatial 动态推理（DR.）单项提升 18.81。",
+   "消融：去掉 Stage 2 总体掉 15.5%；去掉 Stage 3 掉 3.2%；去掉 Stage 1 静态感知掉 6.8%，但 DPT 反升 3.4%。",
+   "诊断实验：物体数 >20 时 SSP 准确率急剧下降，而 FSP/DPT 对场景复杂度不敏感；动作步数增加时 FSP 明显退化并收敛回原始输入水平。"
+  ],
+  "novelty": "把「无中间视觉反馈的多步空间状态推演」形式化为可评测任务，并用 SSP/FSP/DPT 三档下标统一定义静态感知与动态模拟，使感知误差与模拟误差可分离（相对 drop 率）。基准的场景、动作序列与答案由模拟器真值程序化生成，避免了真实采集无法获得任意旋转平移真值的问题。训练侧把诊断结论（低复杂度受感知制约、高复杂度受长程推理制约）直接映射为三阶段课程，形成诊断到课程的闭环。",
+  "limitations": "任务刻意不考虑物体位姿、材质、碰撞等物理因素，因此不能覆盖真实世界中带物理约束的空间模拟。由于需要对物体与 agent 做任意旋转平移、真实采集成本过高，全部场景均为仿真生成，作者仅以域外实验结果论证向真实场景的迁移。此外绝对水平仍低（46.35%），与人类 74.73%、Gemini-3.1-Pro 58.93% 差距明显。",
+  "code": "https://github.com/BugMakerzzz/MentalGrid",
+  "venue": "arXiv preprint（arXiv:2611.22541v1 [cs.CV]，17 Nov 2026）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：动态空间模拟是具身/XR 世界模型的关键能力，属重要高频问题。NOV=4：把无中间观测的状态推演形式化为 SSP/FSP/DPT 并配套程序化基准，属新问题形式化。TEC=4：基准流水线、三阶段训练、感知/模拟复杂度诊断与逐阶段消融完整。EXP=4：12 个模型、3,356 题、域内域外与三个外部基准，但人类基线仅 5 人小样本。PER=4：相对同规模基线 +33.8 点、超 Gemini-3-Flash，但绝对水平仍低于 Gemini-3.1-Pro。TRL=3：3B 模型与基准开源，仍属实验室原型。REP=4：代码与数据公开，附录给出训练细节。"
+ },
+ "2611.22614": {
+  "id": "2611.22614",
+  "title_en": "An Affordable Vibrotactile Surface for Tactile Figure Recognition: Exploration Strategies of Blind and Sighted Users",
+  "title_zh": "面向触觉图形识别的低成本振动触觉表面：盲人与明眼用户的探索策略",
+  "track": "触觉与多模态",
+  "problem": "高分辨率 refreshable tactile display 依赖独立致动器阵列，价格与机械复杂度高，难以进入资源受限的教学场景；静态 embossed 图形又无法刷新。用廉价振动马达替代精密点致动的振动触觉表面，能否传达简单图形、以及盲人与明眼人如何读这些图形，此前缺乏实证。作者先用 5x3 原型验证可行性，暴露分辨率、接触阻尼与像素不可更换三个问题后重做设计。",
+  "method": "第一代（论文主体）为 10x10 共 100 个像素的振动触觉表面：每像素由直径更小的圆柱形 ERM 马达嵌入两件式 PLA 3D 打印壳体，外形 11x11x16 mm、间距 2 mm，整机成本约 100 美元。关键机构是 load-decoupling cap：手指接触刚性顶盖，顶盖与马达振动端之间留 3 mm 间隙，按压力经壳体传递而不直接压在马达上，避免圆柱 ERM 在轻压下堵转；顶盖同时可徒手拆下，配合 berg-strip（header）连接器实现单像素无焊接更换。电路为马达 PCB（100 个带壳马达）加控制 PCB（ESP32、13 片级联 74HC595、逐马达 MOSFET），四组 25-pin Berg-strip 互联；固件用 Arduino IDE 编写，ESP32 起本地 Wi-Fi web server，实验者选图后经移位寄存器串出点亮对应马达。用 point spread function（PSF）表征两代设计的像素间振动耦合。用户研究：9 人（4 名先天盲且会盲文，5 名明眼），7 个直线段图形加 2 个训练图形；明眼者先蒙眼、后睁眼各做一轮，盲人被试单轮；每 trial 录像，用 30fps 帧差得到一维 motion-energy 信号，并由两名编码者独立编码接触方式、手别、扫描策略，报告 Cohen's kappa。",
+  "key_results": [
+   "纯触觉条件下（盲 + 蒙眼明眼合并，每图 n=9）：horizontal parallel lines 89%（8/9）、Pattern Y 78%、Square 67%、H 56%、Pattern X 56%、Diagonal parallel lines 56%、Plus 44%。",
+   "盲人与蒙眼明眼人准确率无显著差异：61%（17/28）vs 66%（23/35），Fisher 精确检验 p=.79。",
+   "速度差异显著：盲人中位 40 s，蒙眼明眼人 135 s（Mann-Whitney U=106，p<.0001，r=.78）。",
+   "睁眼使明眼人中位耗时从 135 s 降到 65 s（p<.0001，r=.56），准确率 66%->80% 但配对检验不显著（exact McNemar，p=.18）。",
+   "盲人停顿更少（0.13 vs 0.24 pauses/s），静止时间占比 4% vs 10%（U=132，p<.0001，r=.73）；同时翻阅参考表的时间占比 35.1% vs 7.2%。",
+   "对角线图形在两个阶段都最难：中位耗时 145 s，且睁眼后正确数由 2/5 降至 1/5，说明瓶颈在表征而非分辨率。"
+  ],
+  "novelty": "用廉价圆柱 ERM 马达加 3D 打印壳体构造大面积低分辨率振动触觉像素阵列，并以 load-decoupling cap 解决「接触即堵转」这一振动触觉器件的固有问题，同时把像素做成可徒手更换的独立单元。实证上把「器件渲染保真度」与「人的探索策略」分开测量：用帧差运动信号量化连续滑行 vs 停顿式搜索，并把盲人/蒙眼明眼人/睁眼三种条件并置，指出效率差异来自策略而非触觉灵敏度。",
+  "limitations": "作者自述为探索性混合方法研究，9 名被试（4 盲 5 明眼）各 7 个触觉 trial，不能推广为群体效应，且结果可能不适用于盲文水平或触觉显示器经验不同的盲人。运动分析基于帧差，只能给出全画面单一能量值，无法区分左右手、位置与方向；部分 trial 手部遮挡镜头，接触方式编码一致性仅中等（Cohen's kappa=0.60）。器件本身引入混淆：机械晃动可能导致马达瞬时断电，晃动的壳体还可能泄露「哪些像素在振动」的视觉线索；明眼组固定先蒙眼后睁眼，无法把视觉可得性与图形熟悉度分离。",
+  "code": "none",
+  "venue": "arXiv preprint（正文仅有 ACM 模板占位 DOI/会议信息，未声明实际会议）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：低成本可刷新触觉图形对 XR 无障碍有意义，但属垂直场景而非核心瓶颈。NOV=3：load-decoupling 像素与探索策略量化属器件加实证的组合式创新。TEC=3：硬件、PSF 表征、编码与统计基本完整，但缺功率分析与对照实验设计。EXP=3：单一站点 9 人、98 个 trial，样本量只够检出大效应。PER=3：无 SOTA 对比，仅报告绝对识别率（44%-89%）且显著高于随机。TRL=3：100 美元级可运行原型，尚未产品化。REP=3：无代码或制造文件链接，但结构尺寸与流程描述足以复现。"
+ },
+ "2611.22657": {
+  "id": "2611.22657",
+  "title_en": "SpatialCast: Reading the 3D World via Cast Shadows",
+  "title_zh": "SpatialCast：通过投射阴影读取三维世界",
+  "track": "感知与认知",
+  "problem": "现有空间基准主要评估相对位置、距离、朝向、空间记忆与视角推理，较少系统考察「物理场景条件如何决定其 2D 观测」，也少评估模型能否从变化前后的观测反推是哪个物理因素、变了多少。投射阴影同时受物体几何、位姿、光照与视点约束，是可观测的物理证据，但此前未被用作空间推理的系统性评测载体。",
+  "method": "把场景状态定义为 z=(G,P,L,C)（几何、位姿、光照、相机），渲染器 R 产生物体-阴影观测 I=R(z)，干预 a 通过状态变换 T_a 得到 z'=T_a(z)。用 BlenderProc 加 Blender Cycles 构建可控场景，几何池含 6 个基元、4 个组合、6 个程序化共 16 个形状族，场景结构分单物体、双物体阴影分离、双物体阴影重叠三档。设计三个互补任务：T1 Projection Compatibility（forward 选与几何加光照一致的投影；inverse 选与观测阴影一致的光照方位角或高度）、T2 Projection Propagation（给定初始图与干预，从四候选中选结果图；单因子 L/R/C 与双因子 LR/LC/RC）、T3 Projection Attribution（给定前后观测与已变化因子，推断变化参数的方向与幅度）。每题四选一，场景元数据确定正确项，模型只看到图像、prompt 与选项；干扰项通过省略某因子、反转转向或改变幅度构造。质量控制会剔除物体或阴影出画、阴影侵入画面边缘的场景，并渲染四个物理假设逐一比对，97.87% 的题目即使最近候选对也有 >=150 像素差异。规模 21,000 题（T1 8,400、T2 8,400、T3 4,200），划分 15,000 训练 / 1,500 验证 / 3,000 scene-test / 1,500 geometry-test，两个测试集共 4,500 题。另从 ReNe（ReLight My NeRF）标定光照照片构建 SpatialCast-Real：20 个场景、200 题（125 T2 + 75 T3）、587 张图。后训练用 GRPO，筛选后保留 11,186 题，四个基座共用同一数据顺序训练 1,399 次更新，每题采样 8 条回答，奖励含正确性、格式合规与长度惩罚。",
+  "key_results": [
+   "合成测试集 4,500 题上，GPT-6.1 Sol 总体 79.42%（T1 67.50 / T2 88.39 / T3 85.33），Gemini 4 Argon 57.71%；四个开源基座与 Spatial-SSRL、SpatialBlock、Spatial-MLLM、SpatialLadder 等空间训练基线总体仅 24.38%-25.91%，接近 25% 随机水平。",
+   "SpatialCast-GRPO 使 Qwen3-VL-8B 从 24.40% 升到 38.73%（+14.33 点），其中 T2 由 25.44% 升到 48.78%（+23.33 点）。",
+   "其余基座同样提升：4B 24.91->32.87、Qwen2.5-VL-3B 24.38->31.84、InternVL3-2B 25.78->34.58；四个基座在全部 T2 子类型上均有提升，而 T1 阴影长度与 T3 物体旋转归因提升有限或不一致。",
+   "8B 模型在 scene-test 上 +13.37 点、geometry-test 上 +16.27 点，但在 SpatialCast-Real 上仅 +2.00 点。",
+   "外部迁移（MindCube / MMSI / SPBench-SI / SPBench-MV / MMMU 五项均值）：8B 37.51->39.12，4B 36.10->40.34，3B 36.87->37.69，2B 反而 37.36->35.22；SPBench-MV 上 4B +8.19，2B -13.11。",
+   "阴影证据消融（240 道 T2-L 题）：GPT-6.1 Sol 完整输入 81.3%、仅阴影 81.7%，抹去阴影后跌到 25.0%；GRPO 的 4B/3B/2B 分别由 42.9/35.0/52.1 跌到 30.0/25.4/23.3。人类 5 人在 32 题试点上平均 65.00%（随机 26.56%）。"
+  ],
+  "novelty": "把投射阴影当作「物理读数」来探测 MLLM 是否理解场景条件与观测之间的因果关系，而不是当作待识别的视觉纹理。用同一个投影模型串起正向匹配（T1）、干预后预测（T2）、逆向归因（T3）三个推理方向，使「会不会预测」与「会不会反推」可分别测量。合成侧对场景参数做程序化控制并设置 scene-test / geometry-test 双测试分区，可区分新场景泛化与 held-out 几何参数泛化。",
+  "limitations": "合成场景被简化为一个平面阴影接收面加一至两个物体，与真实场景的遮挡、互反射、多光源差距明显，作者也承认 real 图上的增益远小于合成（8B 仅 +2.00 点）。T1 的阴影长度与光照高度判断是全模型共同弱项（Sol 分别 41.47% 与 39.00%），说明长度/高度这类度量线索未被真正掌握。外部迁移不稳定：2B 五项均值下降 2.14 点、SPBench-MV 掉 13.11 点。人类可答性仅由 5 人 32 题试点支撑，且只有 GPT-6.1 Sol 与 Gemini 4 Argon 跑完完整合成集。",
+  "code": "none",
+  "venue": "arXiv preprint（arXiv:2611.22657v1 [cs.CV]，17 Nov 2026，CC BY 4.0）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：光照-几何-投影一致性对 XR 内容理解有价值，但属诊断型能力而非核心管线。NOV=4：以投射阴影为物理读数并形式化 T1/T2/T3 三向推理，属新问题形式化。TEC=4：21k 合成题加 200 真题、双测试分区、质量控制与阴影证据消融齐备。EXP=4：4 个开源基座加 5 个 API 模型加外部基准迁移，但人类验证仅 5 人 32 题。PER=4：GRPO 使 8B 总体 +14.33 点、T2 +23.33 点，但仍远低于 GPT-6.1 Sol 的 79.42%。TRL=3：基准与训练配方可用，未给代码。REP=3：构建流程与超参详细，但无代码/数据链接。"
+ },
+ "2611.22742": {
+  "id": "2611.22742",
+  "title_en": "GaussianMamba: Geometric and Relational State Space Scanning of 3D Gaussian Primitives",
+  "title_zh": "GaussianMamba：三维高斯基元的几何与关系感知状态空间扫描",
+  "track": "感知与认知",
+  "problem": "3D 语义占据预测需要建模场景的空间结构与上下文关系。3D 高斯基元是稀疏自适应的表示，Mamba 能以线性代价提供长程上下文，但高斯基元本身不规则且无序，没有预定义遍历顺序。按原始索引或坐标排序会引入不连续，并忽视基元的各向异性 support；仅靠空间邻近也无法刻画学习到的特征与语义预测之间的关系。单一扫描顺序无法同时保持几何邻域与特征-语义邻域。",
+  "method": "在 GaussianFormer / GaussianFormer-2 的迭代细化架构上，为每个高斯基元维护中心 mu、各向异性尺度 s、旋转 R（四元数，协方差 Sigma=R diag(s)^2 R^T）、不透明度 alpha、语义概率 p 与实例特征 f。核心量是 support-normalized separation：rho_i(n_ij)=||diag(s_i) R_i^T n_ij||_2 为高斯基元沿连线方向的一倍标准差投影，g_ij = d_ij / (rho_i + rho_j + eps)，g_ij<=1 视为两个椭球在该方向上接触。CGSS（Contact-Guided Spatial Sequencing）先用量化中心构造 3D Hilbert 初始遍历，再在互不重叠的局部窗口 W=32 内做相邻交换，邻接代价 c_ij=log(1+g_ij)+d_ij/d0+|h_i-h_j|/W，仅当总边长与最大边长增长分别不超过 5%/10% 时接受交换，窗口端点固定，两轮 sweep 后得到几何序。DRSS（Directional Relation-Aware Semantic Scanning）先用 XYZ 蛇形遍历构造初始序，按 S=128 个基元一组、K=8 组一个 macro-block，组描述子为归一化均值特征、仅取高置信基元（max prob>=tau_c）的语义描述子与均值中心；组间亲和度 A_uv = f_u^T f_v + m_uv p_u^T p_v - min(||mu_u-mu_v||/d_a,3) - |u-v|/(K-1)，在 macro-block 内从首组贪心选最高亲和未访问组，末组固定。随后做 support-weighted boundary correction：以总变差 t_ij=0.5*||p_i-p_j||_1 度量语义分歧，接触因子 eta_ij=sqrt(alpha_i alpha_j) exp[-0.5 max(g_ij-1,0)^2]，权重 w_ij=t_ij exp[-(d_ij/r0)^2] eta_hat_ij，对每个基元取最高分邻居 j*，令 Delta_r,i = w_{i,j*} [LN(f_i)-LN(f_j*)]，即把特征推离跨预测边界的邻居。两序分别送入独立参数的单向 Mamba，再经 GSDF（Gaussian Support-Discrepancy Fusion）融合：k_ij=exp(-g_ij)，xi_b,i 为沿该扫描路径的 support 加权局部特征变化，q_b,i 为平均亲和，校正 Y'_b,i = Y_b,i + lambda q_b,i (xi_b,i - xi_b',i)，lambda=tanh(theta) 初始为 0（即从纯拼接起步），最后拼接后线性投影。每个细化阶段后接一层扫描层（共 4 层），末段经 Gaussian-to-voxel splatting 输出占据栅格。",
+  "key_results": [
+   "nuScenes-SurroundOcc：GaussianFormer 从 29.83 IoU / 19.10 mIoU 提升到 32.41 / 20.55（+2.58 / +1.45），超过 SurroundOcc 的 31.49 / 20.30；GaussianFormer-2 从 30.56 / 20.02 提升到 32.98 / 21.12（+2.42 / +1.10），为该表最高。",
+   "SSCBench-KITTI-360 单目设定：GaussianFormer 35.38 / 12.92 -> 37.87 / 13.95（+2.49 / +1.03）；GaussianFormer-2 38.37 / 13.90 -> 40.57 / 14.80（+2.20 / +0.90）。",
+   "nuScenes 上 GaussianFormer-2 在全部 16 个类上均提升，GaussianFormer 提升 13 个类；drivable surface 分别 +6.25 与 +3.14，terrain 亦一致改善；KITTI-360 上 road/sidewalk/building/vegetation 提升 +2.2 至 +3.8，单类回退不超过 0.35。",
+   "扫描策略对照（均双分支、拼接融合）：Hilbert+Hilbert 30.24 / 19.23，Hilbert+XYZ 30.48 / 19.42，CGSS+DRSS 31.82 / 20.25；同等双分支容量下比 Hilbert+XYZ 高 0.83 mIoU，代价为 7.6 ms 额外延迟。",
+   "组件消融：单 Mamba 30.05 / 19.18；+CGSS 30.88 / 19.48；+DRSS 30.68 / 19.62；三者全开 32.41 / 20.55。CGSS 与 DRSS 联合增益 1.02 高于各自增益之和（0.25 与 0.39）。",
+   "融合与效率：GSDF 比拼接提升 0.30 mIoU，仅增 0.40K 参数与 2.0 ms；cross-attention 参数为拼接的 4.7 倍却只多 0.04 mIoU。加入扫描后 144K 高斯延迟由 354.71 ms 升至 466.12 ms（约 +31%），25.6K 时 +30.61 ms，参数 +0.8M、显存 2.77->2.79 GB。"
+  ],
+  "novelty": "首次把高斯基元的各向异性 support（尺度加朝向投影出的一倍标准差范围）显式写进 Mamba 的序列构造，而非沿用坐标排序或空间填充曲线；并据此派生统一的 g_ij，同时驱动几何排序代价、语义边界加权与双分支融合权重，形成一套自洽的度量。用「几何序 + 语义路由序」双分支刻意制造两套不同邻域，再以两扫描路径的局部变化差异做融合，而非简单拼接或 cross-attention，属于针对高斯表示特性的结构设计。",
+  "limitations": "作者明确指出主要局限是推理延迟上升，144K 高斯时约 +31%（354.71->466.12 ms），对实时车载部署不利，未来工作指向更高效的扫描。收益并不随高斯数量单调：GaussianFormer 在 25.6K 高斯时仅 +0.88 IoU / +0.97 mIoU，明显弱于 144K 时的 +2.58 / +1.45，说明方法依赖足够密的基元。GSDF 带来的差异较小（0.02-0.30 mIoU），作者亦提示应谨慎解读。评测仅覆盖 camera-only 驾驶场景的 nuScenes-SurroundOcc 与 SSCBench-KITTI-360。",
+  "code": "none",
+  "venue": "arXiv preprint（arXiv:2611.22742v1 [cs.CV]，17 Nov 2026，CC BY 4.0）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：3D 语义占据是自动驾驶/XR 场景重建的重要环节，但本文面向车端感知而非 XR 交互核心。NOV=3：把各向异性 support 引入高斯序列构造有新意，但整体是 GaussianFormer 上的模块级组合改进。TEC=4：组件、扫描策略、融合方式、support 消融与效率分析齐全，含三次种子平均。EXP=4：两个数据集、两个骨干、多类消融与延迟测量充分，但无真实部署验证。PER=3：IoU +2.2-2.6、mIoU +0.9-1.5，相对提升不足 10%，属小幅稳定增益。TRL=3：方法完整但无代码，停留在实验室原型。REP=3：超参与阈值给得详细，缺代码与数据链接。"
+ }
+}

@@ -1,0 +1,125 @@
+{
+ "2605.22631": {
+  "id": "2605.22631",
+  "title_en": "HolisticMotion: Holistic Modeling for Motion Reconstruction from Sparse Tracking",
+  "title_zh": "HolisticMotion：稀疏跟踪下全身运动的整体建模",
+  "track": "化身与人体",
+  "problem": "消费级 VR/AR 只有头显与手柄提供 6-DoF 信号，要从这三个观测点恢复 22 关节全身运动是欠定逆问题：模型须解释已观测的局部运动、推断未观测肢体，并把各区协调为一个动作。AvatarPoser、EgoPoser、AvatarJLM、SAGE 等方法都持 sensor-centric 视角，只在稀疏条件下学习全身表征，训练时可得的其它关节真值仅用于监督而不作为输入，跨关节依赖未被当作可学习的观测结构。",
+  "method": "把 6-DoF 头与双手信号（每关节 18 维：3D 位置、3D 线速度、6D 旋转、6D 角速度）按 SMPL-H 前 22 关节的统一骨架展开为 X_holistic∈R^{T×J×C}，未观测关节零填充，使稀疏跟踪成为掩码姿态重建的特例。训练用 MPMG 课程：以概率 q(s) 采样掩码全身输入，头与双手作为 anchor 始终可见，其余关节按 Bernoulli(0.5) 采样且在整个时间窗内一致掩码以阻断时序插值；q(s) 随步数线性降到 0，逐步过渡到纯稀疏输入。输入按躯干（6 关节）与四肢（各 4 关节）分为 5 个功能区，嵌入加位置编码后由 MLP 预测每区 scale/shift 做特征调制。主干为堆叠 TK-Block：先对每个分区独立做 temporal MSA，左右对称肢体共享参数；再用双分支 Kinematic Attention 协调跨区——动态分支在 5 个分区 token 上做 S-MSA，结构分支用可学习张量 W_topo（初始化为以躯干为根的星形运动学树）经 tanh 做通道加权聚合，两支由分区特定门控 σ(G) 融合后接 LN 与 FFN。解码用 5 个分区专属 MLP 头（对称肢体共享权重）输出 6D 旋转并转 axis-angle 送 FK，另用 MLP 从全部区特征回归 16 维 SMPL shape β。损失为 root 朝向、局部旋转、关节位置、速度、加速度的 L1，加 shape L2 与帧间 β 一致性项；β 无直接监督，经 SMPL 关节位置间接优化。推理为滑窗，窗口 40 或 80 帧，可直接在统一布局的对应关节位塞入额外穿戴传感器而无需改网络。",
+  "key_results": [
+   "AMASS Protocol 1（标准模式）：HolisticMotion-40 MPJRE 2.20°、MPJPE 3.00 cm，HolisticMotion-80 MPJPE 2.95 cm / MPJVE 14.88 cm/s；对比 HMD-Poser 2.29°/3.15 cm/17.47 cm/s、AvatarJLM 3.01°/3.35 cm、EgoPoser 2.90°/3.80 cm、SAGE 2.49°/3.18 cm、RPM 3.25°/4.08 cm。",
+   "AMASS Protocol 2（标准模式）：HolisticMotion-80 MPJRE 4.66°、MPJPE 5.08 cm、MPJVE 27.16 cm/s、Jitter 6.53，优于 SAGE 4.72°/5.92 cm、EgoPoser 4.84°/6.26 cm、AvatarJLM 5.21°/5.23 cm。",
+   "HPS 跨数据集（仅用 AMASS-P1 训练）：MPJRE 7.29°、MPJPE 6.57 cm、MPJVE 25.91 cm/s、Jitter 4.79，四项均低于 EgoPoser 7.41°/6.93 cm/28.88 cm/s/5.55、HMD-Poser 9.25°/27.74 cm、AvatarJLM 10.17°/20.71 cm、SAGE 9.47°/12.76 cm、RPM 9.18°/16.44 cm。",
+   "推理速度（RTX 5060 Ti）：84.5 FPS，AvatarJLM 17.3 FPS、SAGE 15.0 FPS；EgoPoser 101.2 FPS、RPM 99.9 FPS 更快，但 HPS 四项误差均更高。",
+   "手部跟踪模式 AMASS-P1：MPJRE 3.22°、MPJPE 4.25 cm、MPJVE 22.41 cm/s，对比 EgoPoser 4.75°/6.14 cm、RPM 4.53°/6.50 cm。",
+   "传感器扩展（AMASS-P1，递减掩码课程）：HMD 2.22°/2.95 cm → +1 传感器（骨盆）1.82°/1.83 cm → +2（双膝）1.55°/1.18 cm → +3 1.24°/0.96 cm。"
+  ],
+  "novelty": "把稀疏跟踪从 sensor-centric 条件回归改写为 holistic 掩码全身观测建模：每个关节都是潜在输入源，稀疏推理只是掩码特例，并用 MPMG 课程桥接两种分布。引入功能区划分与运动学树先验的双分支 Kinematic Attention，在动态空间交互之外提供可学习结构先验。统一布局使增加穿戴传感器无需改架构，是同类工作中少见的可扩展表述。",
+  "limitations": "消融增益极小：去掉 MPMG 后 MPJRE 仅 2.22°→2.25°、MPJPE 2.95→3.01 cm，去结构分支 2.96 cm，均在噪声量级，核心设计的因果贡献未被清晰隔离。作者自述 84.5 FPS 只满足 60 Hz、达不到 120 Hz，需为资源受限设备另做轻量网络。shape 仅经关节位置间接监督，无 β 真值约束。手部跟踪 P2 上 MPJVE 45.04 与 Jitter 14.97 均劣于 RPM 的 38.93/1.72，平滑性是短板。",
+  "code": "none",
+  "venue": "arXiv preprint",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 2
+  },
+  "scores_why": "IMP=4：三点头显驱动的全身动捕是 VR 化身的高频刚需，但非显示/光学级卡脖子。NOV=3：掩码全身建模加课程有新表述，分区与运动学先验注意力属组合式改进。TEC=3：系统与消融齐全，但关键组件增益落在噪声内且无显著性检验。EXP=4：AMASS 两套协议 + HPS 跨域 + 手部模式 + 传感器扩展 + 速度，覆盖较全。PER=3：多数指标小幅稳定领先，HPS MPJPE 6.57 vs 6.93 约 5%。TRL=3：单卡 84.5 FPS 的实验室原型，未给代码。REP=2：无代码无数据，仅方法细节可循。"
+ },
+ "2607.05598": {
+  "id": "2607.05598",
+  "title_en": "SSA-3DGS: Unsupervised Removal of Screen-Space Artifacts for 3D Gaussian Splatting",
+  "title_zh": "SSA-3DGS：无监督去除 3D 高斯泼溅中的屏幕空间伪影",
+  "track": "神经渲染",
+  "problem": "3DGS/NeRF 假设输入是干净、多视角一致、已定位的图像，而真实采集常违反该假设：传感器坏点、镜头罩上的雨滴或泥点、手指遮挡、行车记录仪的仪表台、水印与 UI overlay。这些伪影固定在 2D 像平面而非 3D 世界，随相机运动相对场景“移动”，会被 3DGS 烤进几何成为近相机 floaters。现有 world-space transient 方法（SpotlessSplats、DeSplat、RobustNeRF）针对 3D 中变化的干扰物，逐帧 2D 修复或水印去除则缺 3D 知识、跨帧不一致且需人工 mask，都不对症。",
+  "method": "在 3DGS（gsplat 实现，ADC 与 MCMC 两种致密化都测）之上把成像写成 C(u)=A(u)·W(u)+(1−A(u))·Ĉ_3D(u)：W∈R^{H×W×3} 为伪影颜色图、A∈R^{H×W×1} 为 alpha matte，二者存为无约束张量经 sigmoid 映射，在像素坐标定义且对所有视角共享，因而与 3D 高斯的投影几何解耦。每轮先渲染干净 3D 场景得 Ĉ_3D，再叠加 overlay 与 GT 算 L1+SSIM；测试时丢弃 overlay、只渲染 Ĉ_3D。由于该分解欠约束，引入 L_sparse=mean|A(u)|（λ=0.05；对大面积遮挡的 mud 与全部真实场景用 0.01），把像素尽量交给 3D 几何解释，抑制两类退化解：把跨视角近静态的场景内容吸进 overlay，以及 overlay 退化成低不透明度均匀曝光层。初始化不用常数而用训练集逐像素统计：W(u)=μ(u)、A(u)=exp(−σ(u)/s)、s=5×10⁻²，使跨视角稳定的像素（疑似伪影）起始近不透明、变化大的像素（疑似场景）起始近透明。全流程无监督、无 mask、无预训练模型，30k 迭代，overlay 用 Adam、lr 5×10⁻³，λ_ssim=0.2；方法对致密化策略不敏感，可分别配 ADC 或 MCMC。",
+  "key_results": [
+   "合成 Mip-NeRF 360（7 场景 × 5 类伪影，ADC）：平均 PSNR 27.398 dB / SSIM 0.773 / FLIP 0.138，对比 3DGS 24.473/0.731/0.187、SpotlessSplats 25.742/0.759/0.167、DeSplat 25.506/0.810/0.171、RobustNeRF 24.163、Difix3D+ 22.997/0.644/0.218；干净参考上界 27.760/0.779/0.132。",
+   "换 MCMC 致密化后平均 29.000 dB / 0.869 / 0.122，距干净参考 29.461 dB 仅 0.5 dB；逐类 28.3–29.4 dB，且 MCMC 在干净场景下的不稳（bicycle 发散）被 overlay 吸收后消失。",
+   "单类最大增益：Dashboard 20.756→28.305 dB（约 +7.5 dB）、Mud 23.210→28.947 dB、Rain spots 26.077→28.938 dB，对应摘要所称最高约 8 dB。",
+   "自采真实数据（15 场景，ADC）：Finger 16.67 vs 最强基线 RobustNeRF 13.89 dB、Mud 19.25 vs DeSplat 16.15 dB、Occlusion 17.66 vs DeSplat 16.45 dB；总体 18.14 vs vanilla 3DGS 15.34 dB，DeSplat/SpotlessSplats/RobustNeRF/Difix3D+ 均在 15.3–15.6 dB。",
+   "消融：稀疏正则使合成平均 +1.93 dB（27.075→29.000）并把渲染平均色偏 Δc̄ 从 6.43 降到 3.19；统计初始化换常数在合成 −1.31 dB（主要掉在 Dashboard 28.31→23.12）、真实 −1.56 dB。"
+  ],
+  "novelty": "首次把 screen-space artifact 与世界空间 transient 明确区分并形式化：与视角无关的 2D overlay 与 3D 场景联合优化，靠运动视差和几何一致性在无监督下解耦。用稀疏正则把解释权优先交给 3D 几何、再用跨视角统计初始化把优化推离退化解，两个设计都是针对该分解的病态性提出的。副产品是恢复出的伪影层本身，可解释、可复用。",
+  "limitations": "依赖多视角共识，需要足够密集的采集，否则 3DGS 会用不被重叠视角惩罚的 view-dependent 效应去解释伪影。overlay 假设伪影严格固定在像平面，只能部分捕捉近静态遮挡（如实拍 Occlusion 类别），完全视角相关的遮挡仍是开放问题。对 λ_sparse 敏感：0.05 在合成 mud 上损失 1.3 dB，0.01 在 rain 上损失 3.3 dB，需按伪影类型手调。真实场景绝对 PSNR 仅 18 dB 量级。",
+  "code": "none",
+  "venue": "arXiv preprint",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：真实采集去伪影是 3DGS 内容管线的实际痛点，但属鲁棒性子问题。NOV=4：screen-space 与 world-space 伪影的区分及 scene/overlay 联合分解是新的问题形式化。TEC=4：两种致密化、五类伪影、15 个真实场景、消融与敏感度分析完整。EXP=4：合成 7 场景 + 自采 15 场景 + 3 台设备，规模充分。PER=4：平均较最强基线 +1.7 dB、较 3DGS +2.9 dB，真实场景 +18%，单类最高约 +37%。TRL=3：基于 gsplat 的研究原型，未给代码。REP=3：超参与流程写得可复现，数据集称将公开但暂无链接。"
+ },
+ "2606.04493": {
+  "id": "2606.04493",
+  "title_en": "Smooth Inliers, Erratic Outliers: Frequency-Aware Mamba for Two-View Correspondence Learning",
+  "title_zh": "平滑内点、跳变外点：面向双视图对应学习的频率感知 Mamba",
+  "track": "重建与SLAM",
+  "problem": "宽基线、重复纹理、光照变化下，SIFT/SuperPoint 最近邻得到的 putative matches 大多错误，RANSAC 随内点率下降急剧变慢，因此需要 correspondence pruning 网络先判内点。Mamba 类剪枝器把对应集合当普通序列扫描，留下两个问题：对应本是无序集合，扫描顺序任意，外点的跳变响应会被逐步向后传递；一致性只从粗粒度 4 维坐标推断，网络偏向平滑函数，会抹平区分内点与邻近外点的微小偏移。",
+  "method": "输入 N=2000 组 putative correspondences C∈R^{N×4}，走两个 pruning block（各保留较可靠的一半）加一个 verification block：由可微加权八点法解 Ê，再按极线距离回收被剪掉的内点。每个 block 内先用 ResNet 提特征，按 MS²DG-Net 的稀疏语义距离建 kNN 图，MLP+max pooling 得图特征 F^F。LSGA 的 SGEA 把邻居相对坐标 ΔC 用固定随机高斯投影 B 展成 sin/cos 傅里叶特征以对抗 MLP 的 spectral bias，再注入局部几何注意力：Q 来自 F^F，K/V 为邻居特征加几何嵌入，复杂度 O(NkD)。SSCM 用 DiffPool 软分配到 M≪N 个 cluster，以分配定义的顺序 Π 做 BiMamba 扫描，同时用 BiCSM 精炼 cluster 特征，再经多尺度交互让每个对应查询 cluster 共识。SIGM 复用 Π 排序，前向 Mamba 后用可学习复值频率门 W_gate1 滤波（FFT→逐频逐通道乘门→IFFT，门按序列长度插值），翻转后再过反向 Mamba 与第二道门，残差加 LN 融合；门只改变传播内容、不改 Mamba 状态转移，整体 O(DN log N)。训练目标为 BCE 分类损失加 γ 倍 Sampson 距离几何损失，500k 迭代、单卡 RTX 3090。",
+  "key_results": [
+   "YFCC100M Unknown（SIFT，无 RANSAC）mAP@5° 73.83% vs MatchMamba 70.23%（+3.60 点）、重训版 67.60（+6.23）；Known 62.28 vs 60.09。",
+   "SUN3D：Known 28.74 vs 27.23、Unknown 21.97 vs 21.37，两 split 均领先。",
+   "SuperPoint（YFCC100M）：Known @5° 50.20 vs 44.12、Unknown @5° 70.10 vs 64.43；@20° 58.82/81.04 vs 52.19/77.71，两 split 领先均超 6 点。",
+   "Outlier removal（SIFT）：YFCC100M F-score 83.16 vs 82.36（P 82.49、R 85.37），SUN3D F-score 81.51 vs 79.15（P 80.05、R 83.49），精度与召回同时上升。",
+   "消融（5 seed，YFCC Unknown @5°）：backbone baseline 55.87 → +LSGA 64.71（+8.84）→ +LSGA+SIGM 73.64（再 +8.93）；容量匹配的 point-wise MLP 与固定高斯低通均不如学习门。",
+   "效率：2.01M 参数、5.01 GFLOPs、AIT 4.80 ms、ART 370.42 ms，MatchMamba 为 2.08M/5.15 G/5.03 ms/383.31 ms；打乱输入仅改变 ≤1.5% 保留对应，pose 变化 <0.1 点。"
+  ],
+  "novelty": "把“内点平滑、外点跳变”转成沿 cluster 诱导顺序的频域性质，并在 Mamba 双向扫描之间插入可学习复值低通门，使频率在无序集合上获得可定义的含义。给出块内置换只产生低能量高频残差的定量解释，从理论上说明门控为何带来顺序不敏感性。用容量匹配 MLP、固定低通滤波器与能量重标定三组对照，证明收益来自频率响应而非参数或能量。",
+  "limitations": "前提是一致性呈低频谱结构；强重复纹理下成组错配彼此一致时会失效，作者承认这是所有一致性方法的共同问题。只对单阶段单门做精确分析，完整两阶段网络的顺序不变性只有经验验证，端到端保证仍是未来工作。主表协议不加 RANSAC，未验证与 MAGSAC 等鲁棒估计器组合后的收益。无公开代码。",
+  "code": "none",
+  "venue": "arXiv preprint",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：双视图对应剪枝是 SLAM、重定位与 SfM 前端的高频环节。NOV=4：频域视角加 cluster 序让 Mamba 扫描获得频率含义，是显著的新架构与新形式化。TEC=5：有顺序不敏感性的理论界、完整系统，以及五 seed 容量匹配、固定滤波器、置换干预等充分对照。EXP=4：YFCC100M、SUN3D、SuperPoint、HPatches 多基准覆盖，但无真机或下游 SLAM 验证。PER=3：相对 SOTA 多为 4–5% 的稳定领先，SuperPoint 上约 13% 相对提升。TRL=3：2M 参数、4.8 ms 的实验室原型，未给代码。REP=3：附录给全超参与协议，但无开源实现。"
+ },
+ "2610.27275": {
+  "id": "2610.27275",
+  "title_en": "On Maximum Clique and Maximum Consensus Formulations in Point Cloud Registration",
+  "title_zh": "点云配准中最大团与最大一致集表述的关系研究",
+  "track": "重建与SLAM",
+  "problem": "最大团（在 pairwise 距离一致性图上取最大 clique）常被当作最大一致集（找一个变换对齐最多对应）的替代或近似，二者在容差匹配时有 MC(τ)≤ω(2τ) 的上界关系，但团的对齐误差能有多大、团能比一致集大多少、加大 group 阶数能否弥合差距，此前没有定论。这直接决定配准管线该选哪种准则：clique 搜索快且抗极高外点率，但若其解根本无法被单一变换对齐，下游拟合与位姿精度就失去保证。",
+  "method": "在同一几何框架下比较三类准则：maximum consensus 求单一 T∈E(d) 使 ρ(C)=min_T max_i‖T(p_i)−q_i‖≤τ 的集合最大；pairwise consistency 用距离差 δ_ij=|‖p_i−p_j‖−‖q_i−q_j‖|≤ε 建图取 maximum clique；group-k consistency 要求每个至多 k 元的子集都能在 τ 内被各自（可不同）的变换对齐，等价于一致性超图上的最大团。已知旋转的平移子问题中每个对应给出候选平移 μ_i=q_i−Rp_i，问题化为包住这些点的最小球半径，用 Jung 定理得 ρ^(t)≤τJ_d、J_d=√(2d/(d+1))，再用广义 Jung 定理推到 group-k，J_{d,k}=√(kd/((d+1)(k−1)))，k=d+1 时因子为 1，故 group-(d+1) 的最大团恰等于平移子问题的最大一致集。未知旋转时构造反例：源点共线、目标点落在抛物线上，配合零和组合引理 |‖Σα_i p_i‖−‖Σα_i q_i‖|≤ρΣ|α_i|（Σα_i=0），可在固定 ε=2τ 下让所有 δ_ij 任意小而 ρ 任意大，得到 ω(2τ)=n 而 MC(τ)=2。再给依赖尺度与几何的界：近等距理论给 ρ≤c_d√(Dε)（3D 常数 c_3=18.8），并用平方距离差 h(C) 得 ρ(C)²≤√(2d)h(C)，据此在阈值 η=τ²/√(2d) 上建图取团作为充分条件。group-k 部分证明允许反射时 group-(d+1) 仍不约束误差（交换矩形下排两点的构造），group-(d+2) 才给出 ρ≤2√d ρ_{d+2}，限制到 SE(d) 时 d+1 即足够。复杂度上用 co-2-subdivision 把任意图实现为容差 1 的一致性图，证明固定维度 d≥2 下 maximum clique NP-hard，而固定 d 的 maximum consensus 可用多项式时间符号模式枚举精确求解。工程侧给出 anchor certificate：选定一个 anchor 三角形，用加权最小二乘/加权 SVD 的位移界在不拟合全团的前提下检验 ρ^+(C)≤τ 是否可行。",
+  "key_results": [
+   "图 1 单例（3DMatch，FPFH 互近邻，GT 内点 14）：最大团 47 个对应、最大一致集 39 个，拟合 RMSE 分别 55.0 cm 与 3.8 cm，直观说明两者解几乎不重叠。",
+   "五个真实基准共 7,998 对扫描（3DMatch 1,623、3DLoMatch 1,781、KITTI-10m 556、KITTI-LC 3,325、ETH 713）：每个数据集至少 99.8% 的 PMC 最大团在 τ 下被证明不可行，>57% 的团的 proper-motion 对齐误差超过 2τ。",
+   "中位对齐误差：3DMatch 1.57τ、3DLoMatch 1.87τ、ETH 1.78τ，KITTI-10m 与 KITTI-LC 接近 3τ；限制到 E(3) 后结论不变，说明不能只归因于排除反射。",
+   "group-4 误差至少占全团误差 80%：ρ^+(C)/ρ_4^+(C) 的验证上界在五个数据集每一对上均 <1.25，实测远低于理论因子 7 与 2√3，说明高阶一致性确实捕捉了大部分全团误差。",
+   "运行时（单核，3DMatch 单对、最多 2,246 个对应）：PMC 解完整 pairwise 图约 0.11 s；精确 GkCM 在 k=3 时超图构建就约 17 s、k=4 超 60 s，小输入即触 60 s 上限。",
+   "anchor certificate：加权 SVD 在 0.18 ms/团内拒掉 78.9–99.3% 的团（3DMatch 78.9%、3DLoMatch 88.0%、KITTI-10m 99.3%、KITTI-LC 98.5%、ETH 92.4%），精确可行性求解器 SCIP 为 99.8–100% 但需 389 ms；候选剔除 12.3–32.1%，参考不可行率 17.3–36.9%；配准成功率 86.1%/47.1%/98.9%/70.1%/94.1%。"
+  ],
+  "novelty": "首次证明 maximum clique 与 maximum consensus 在点云配准中可任意分离：固定容差下团的对齐误差可任意大、团可比一致集任意大，且不存在与数据无关的下界常数。给出平移子问题的 sharp bound 与 group-k 的最小充分阶数（proper motion 为 d+1，允许反射为 d+2），并用反例证明更小的组无法保证。建立复杂度分离（固定 d≥2 时 clique NP-hard、consensus 多项式可解），并把理论界落成 0.18 ms 的 anchor certificate。",
+  "limitations": "证书只是必要条件，拒绝率低于精确求解器的参考不可行率（如 3DMatch 78.9% vs 99.9%），无法证明可行。复杂度结论是 worst-case，作者明言不预测实际求解器运行时。实验只在 FPFH 互近邻对应与 PMC 选出的 clique 上评估，未把证书接回完整配准管线测最终位姿精度。group-k 的保证是保守上界，实测因子远小于 2√3 与 7，说明理论仍偏松。",
+  "code": "https://ariarobotics.github.io/mc-vs-mc-registration/",
+  "venue": "arXiv preprint",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 3,
+   "NOV": 5,
+   "TEC": 5,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 4
+  },
+  "scores_why": "IMP=3：为配准准则选择提供理论依据，影响 SLAM/重定位前端设计，但非直接系统贡献。NOV=5：给出团与一致集可任意分离的反例、sharp bound、最小充分 group 阶数 d+1/d+2 及 NP-hard 与多项式的分离。TEC=5：定理、完整证明、Lean 形式化与近 8000 对真实数据验证齐备。EXP=4：五个室内/城市/激光基准共 7,998 对，但未接入完整配准管线做精度评测。PER=3：不提升配准精度，证书 0.18 ms 内拒 78.9–99.3% 不可行团、较 SCIP 约 2000× 加速。TRL=2：理论与离线诊断工具，证书尚属概念验证。REP=4：代码、数据与 Lean 证明均公开，但无论文发表信息。"
+ }
+}

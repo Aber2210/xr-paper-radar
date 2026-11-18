@@ -1,0 +1,155 @@
+{
+ "2611.22151": {
+  "id": "2611.22151",
+  "title_en": "EgoHandWAM: Probing the Role of Hand Motion in Egocentric World–Action Modeling",
+  "title_zh": "EgoHandWAM：探究手部运动在第一人称世界-动作建模中的作用",
+  "track": "化身与人体",
+  "problem": "第一人称视频里，手腕与指尖轨迹究竟能在多大程度上预示两秒后的画面，以及这种手部信号对视觉预测与机器人策略是否真的有用，此前没有被分开测量。EgoDex 已给出官方的两秒 3D 手部预测对比，但 world-action 模型普遍以像素或特征为目标、把动作当作副产物，长期伸手的误差仍然很大。作者把问题拆成三个可分别检验的角色：手部运动作为预测目标、作为视觉预测的输入、以及作为机器人策略的辅助监督。",
+  "method": "任务设定为在 anchor 帧 t 输入一张 RGB 与八个手部状态，状态相对 t 的帧偏移为 (-60,-51,-43,-34,-26,-17,-9,0)，30 Hz 下覆盖两秒；每个状态含两腕与十指尖共 36 个位置、12 个腕旋转值、12 个有效位，拼接成 480 维历史。视觉侧用冻结的 DINOv2 Base（带 register）经 RAE 编码器接口取 768x16x16 特征，固定 3x5 pooling 后用固定种子投影压到 64 维并标准化。每个查询时刻把历史、图像特征与时间编码 q(tau)=[tau, tau^2, sin(pi tau), cos(pi tau)] 拼成 548 维，经两层宽 32 的 GELU 线性层得到共享隐状态，60 个查询并行计算。pose head 输出 12x3 无量纲残差，按 P_t + s_p (tau/tau_60) D 还原，s_p=0.1 m；visual head 只取最后一个查询的隐状态预测两秒后的 64 维特征。全部可训练参数仅 21,924，输出层零初始化使初始预测退化为复制当前位姿与当前特征。损失为 masked pose loss（L2 平滑项加三分之一的位移惩罚）加 lambda_v 倍 visual loss（64 维 smooth L1 加 0.1 倍 cosine 距离），action-only 取 lambda_v=0、joint 取 0.1。训练用 751,065 个 EgoDex 窗口、四个配对种子、2 epochs 共 11,736 updates、AdamW、batch 128、lr 3e-4、weight decay 1e-4、梯度裁剪 1。另设 ridge 回归 probe（927 窗口、183 会话、四个任务、5 折外层留出整段会话）比较记录的未来位移与预测轨迹对视觉特征变化的增益。最后在 RoboTwin 2.0 的双任务上用共享 Transformer 混入人对齐或打乱的手部历史，检验辅助特征监督是否提升闭环成功率。",
+  "key_results": [
+   "EgoDex 开发集 36,596 窗口上，action-only 把 wrist FDE 从 stationary 的 60.26 mm 降到 56.48±0.197 mm，wrist ADE 40.685→38.638 mm，MPJPE-12 48.056→45.413 mm；joint 模型为 56.46 mm 与 45.413 mm，加入视觉损失只改变 0.02 mm。",
+   "长距离伸手被严重欠估：记录位移不小于 80 mm 的手腕组平均 147.23 mm，预测仅 22.12 mm；全部 eligible 手腕记录 60.26 mm、预测 13.07 mm。",
+   "视觉头相对复制当前特征把 smooth L1 从 0.1850 降到 0.1825（-1.32%，会话区间 1.17%–1.46%），cosine 0.2045→0.2029；把历史跨会话打乱后反而升到 0.1884（+1.85%），63 个任务中 49 个任务上对齐历史优于复制。",
+   "四任务 probe 中，加入记录的未来位移把归一化 MSE 从 0.389063 降到 0.373793（-3.93%，区间 3.12%–4.72%）；只加未来有效性 mask 的变化小于 0.01%；换成预测轨迹仅 -0.0034%，在 lid 任务上还略微变差。",
+   "RoboTwin 2.0 的 100 个留出场景上，机器人单独训练与加入对齐人类历史对比：bottle grasping 16.0%→15.0%，block handover 39.0%→37.7%，三个种子下没有一致提升。"
+  ],
+  "novelty": "把手部运动拆成预测目标、视觉预测输入与机器人策略辅助监督三种角色，在同一数据与匹配训练预算下分别测量，而不是只报一个轨迹精度。用跨会话置换手部历史作为因果 control，能把「历史与画面对齐」所携带的信息量与「多给一个输入」区分开。整体是极小容量（21.9K 参数）的受控探针，结论以负结果与误差分解为主，对 world-action 模型的监督设计有诊断价值。",
+  "limitations": "pose loss 的位移惩罚系统性偏置短期预测：作者推导理想化最优在 150 mm 饱和，去掉惩罚后四任务 probe 的平均预测位移从 11.28 mm 升到 18.72 mm，仍远低于记录的 69.62 mm，且该惩罚在全量模型中的贡献作者明确说 remains unmeasured。64 维 pooled 特征不含显式物体动力学、不能解码 RGB，预测动作也不回灌视觉头，因此 world model 的表达能力有限。机器人结论只覆盖两个模拟任务、三个种子，分辨率与跨体现对照各只有一个种子；EgoDex 开发集已被作者检视、官方 test 未使用，无置信字段来源的跟踪质量也未测。",
+  "code": "none",
+  "venue": "arXiv preprint（cs.CV，arXiv:2611.22151v1，2026-11-17，arXiv.org perpetual non-exclusive license）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：第一人称手部轨迹对手部追踪与世界模型有参考价值，但本文是受控探针且以负结果为主，不构成卡脖子环节。NOV=3：把同一手部信号拆成三种角色并加置换 control 是清晰的问题形式化，但模型与损失都是既有组件的组合。TEC=3：匹配预算的四种子对照、probe 与机器人实验设计完整，但模型仅 21.9K 参数，位移惩罚在全量模型中的贡献作者明确说未测。EXP=3：核心量化只在 EgoDex 一个真实数据集（36,596 窗口）加两个 RoboTwin 模拟任务，无跨数据集验证。PER=3：相对 stationary 基线 wrist FDE 仅降 6.3%，视觉特征增益 1.3%–3.9%，属小幅稳定提升且长距离严重欠估。TRL=2：研究性探针，无代码、无系统集成。REP=3：超参、数据筛选与协议写得足够细，但无代码与数据发布，官方 test 未使用。"
+ },
+ "2611.22164": {
+  "id": "2611.22164",
+  "title_en": "HandRSI: Recursive Self-Improvement for Hand Pose Estimation",
+  "title_zh": "HandRSI：手部姿态估计的递归自我改进",
+  "track": "化身与人体",
+  "problem": "第一人称 3D 手部姿态估计在图像边界漏手、遮挡时深度错位、指尖抖动，现有做法靠手写推理后处理（harness）加网络微调两步修补，但两步分别调参且彼此耦合：网络一旦更新，原有修正可能冗余甚至有害。3D 感知的质量又是多维的（检测、3D 位姿、2D 对齐、放置、平滑度互相 trade-off），只对一个指标设门会放进损害其他维度的改动。作者要回答的是：能否让编码 agent 递归地同时改进 harness 与网络，而每次改动都不牺牲任何一项指标。",
+  "method": "系统被定义为估计器 theta 与可执行推理 harness H^I 的组合 S=(theta, H^I)；harness 是一串只读预测、帧与内参、绝不接触 GT 的确定性模块，每个模块只看一个 81 帧片段。Loop A 让 8 个编码 agent（4 个 Claude Opus 5.5/Claude Code、4 个 GPT-6-sol/Codex）并行改 harness 四小时，各领一个方向：检测、root 放置、朝向、手指、图像证据、时序、2D 关键点、出画手。提交先在 dev 免费预检，再在 val 上过 G_A=G_0.3%：十个指标（七个误差列加 FAcc/Recall/F1）逐项算相对改进并 clip 到 ±5%，取均值得 Delta，要求 90% paired bootstrap 下界 L_Delta>0、Delta 不小于阈值，且任何指标不得在显著时退化超过 2%、无条件退化超过 5%。通过的模块在 dev 上按 val 增益贪心合并，集成 agent 消解重叠，再用一次 val 比较在最佳提交、贪心合并与集成链之间选出 H^{I,star}。Loop B 把 GT 微调后的网络 C^1 加精炼 harness 当作教师，按信息源拆分监督：3D GT 监督 2D、腕相对、root、朝向与存在性，教师只在无 GT 帧与无标注视频上监督存在性与时序（关节速度与加速度的 Huber，delta=5 mm）。学生只训 rank-32 LoRA（DiT block）与预测头，lambda_GT=2、lambda_KD=0.25、lambda_e=0.5、lambda_R=0.25，lr 1e-4、LoRA+ 比例 4、batch 8 个 85 帧窗口、500 或 2,000 步，过了网络门 G_B 才替换 theta。随后在 dev 上对每个 harness 模块做 leave-one-out 成对消融，把冗余、显著有害或使单条录制 EPE 恶化两倍以上的模块联合剔除，再过回合门 G_1%。Loop C 由规划 agent 读取档案（门结果、val 聚合、dev 诊断与全部提交，永不见 test）产出下一轮 guidance 与至多两个白名单 Loop B 设置。最后在 val 上搜索 harness 子链，用 (log FPS, Delta) 上的 epsilon-dominance 与 hypervolume 选出 Lite/Medium/Heavy 三个嵌套部署档。",
+  "key_results": [
+   "HOT3D 上 MPJPE-p 从 ACE-Ego-Hand 的 12.97 mm 降到 8.37 mm（-35%），ARCTIC 留出 subject s05 上 15.58→13.85 mm（-11%）；jitter 分别 2.82→1.34 与 2.58→1.45 mm/frame^2（-52% 与 -44%）。",
+   "相对在相同 GT 上微调的 ACE-Ego-Hand（C^1，HOT3D MPJPE-p 9.91 mm），HandRSI 再降 MPJPE-p 16%、EPE 2D-p 27%、jitter 51%。",
+   "对九个复跑的已发表方法（WiLoR、HaWoR、EgoForce、HaMeR、Hamba、WildHands、InterWild、OmniHands 与 ACE-Ego-Hand），在 HOT3D 与 ARCTIC 的全部十个指标上均为最优；HOT3D 上 FAcc 0.982、Recall 0.996、MPJPE-p 8.37 mm、EPE 2D-p 4.07 px、CT-p 0.013 m。",
+   "三个部署档 Lite/Medium/Heavy 分别为 41.1/34.0/20.7 FPS（HOT3D MPJPE-p 9.06/9.04/8.41 mm），Lite 只比网络本身慢约 4%，仍全面优于所有已发表方法。",
+   "零样本 HOI4D（498 段）上 3D 位姿类指标最低（MPJPE-p 22.77 mm、jitter 1.01 对比 ACE 的 2.10），但 2D 误差 18.61 px、CT-p 0.064 m 落后于 ACE-Ego-Hand。",
+   "五轮共 156 次提交、73 次通过 G_A；蒸馏在第 2 轮后饱和，第 3 至 5 轮所有学生都以 1.7%–9.3% 的 2D/朝向/召回损失换 1%–3% 的 jitter，Delta 转负（-0.8% 至 -2.7%）。"
+  ],
+  "novelty": "把「编码 agent 改 harness、按信息源蒸馏进网络、网络更新后重验 harness」做成闭环，并用十指标 no-regression 门把多维 3D 感知的质量约束进搜索，避免单指标门控引入的 trade-off。首次把 harness 优化从「产出文本或程序」搬到度量 3D 感知上，并显式区分「harness 带来的增益」与「蒸馏进权重的增益」，配合逐轮 GT-only 与 harness-only 控制把两者拆开。除了精度，还给出超参数量与速度分档、以及可复现的评测器与结果文件。",
+  "limitations": "蒸馏在第 2 轮后饱和：后续十二个学生 checkpoint 都以 1.7%–9.3% 的 2D/朝向/召回损失换 1%–3% 的 jitter，Delta 转负，作者归因为 LoRA 预算下 harness 仍能提供的放置与关节拟合无法被学生吸收。第 1 至 2 轮操作者曾参考 test 分数做三个决定（Loop B 配方与两条门规则），第 1 轮还在 HOT3D FAcc r=-5.6% 超过 5% 上限时被人工接受，test 并非完全隔离。评测器是作者按 ACE-Ego-Hand 附录重写的（官方未公开），EPE 2D-p 因 miss 罚则定义不同而有偏差；HOI4D 上 2D、放置与检测仍落后于基线，增益主要来自 HOT3D/ARCTIC 相机。",
+  "code": "https://github.com/GinKenneth/Hand_RSI（权重与各轮 harness：https://huggingface.co/HandRSI/HandRSI）",
+  "venue": "arXiv preprint（Technical Report，cs.CV，arXiv:2611.22164v1，2026-11-17）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：第一人称 3D 手部姿态是 XR 手部追踪与示教学习的上游，35% 位姿误差下降加 20–41 FPS 分档有直接落地价值。NOV=4：把 agent 改 harness、按信息源蒸馏、更新后重验 harness 组成闭环，并用十指标 no-regression 门约束搜索，是新的系统构建范式而非单点模块。TEC=5：门控有形式化定义与 bootstrap 检验，配逐轮 GT-only/harness-only 控制、系统级消融、评测器重实现与负对照。EXP=4：HOT3D 1,162 段、ARCTIC 291 段、HOI4D 498 段零样本，九个方法同协议复跑，但缺真实部署或用户实验。PER=5：HOT3D MPJPE-p -35%、jitter -52%，相对同 GT 微调基线仍 -16%/-27%/-51%，远超 30%。TRL=4：代码、权重、评测器与三档部署全部开源，41 FPS 可跑，但仍是研究原型。REP=4：代码、权重、逐表结果文件与完整协议齐全，缺顶会背书与独立数据发布。"
+ },
+ "2611.22207": {
+  "id": "2611.22207",
+  "title_en": "ARG-Avatar: Animation-Rendering Guidance for Efficient Feedforward Avatar Reconstruction",
+  "title_zh": "ARG-Avatar：以动画-渲染引导实现高效前馈化身重建",
+  "track": "化身与人体",
+  "problem": "从随手拍照片或单目视频帧重建可动画 3D 化身，feedforward 方法已把推理压到数秒，但近期路线靠堆模型容量、私有数据与算力（LHM++ 609M 参数、约 300K 视频）。作者质疑这种 scaling-first 是否必要：模板锚定的化身本身有表示上限，而现有架构用通用 attention 从数据里硬学「化身元素对应哪块图像」，浪费了模板、LBS 与渲染已经给出的几何对应。目标是在公开数据与 68M 参数规模下达到 SOTA 的重建质量与效率。",
+  "method": "表示是在 MHR 模板 UV 图上锚定的 3DGS：每个 UV 网格点放一个高斯，位置为重心的插值锚点加学习到的 canonical offset，共 264K 个（定制 UV 光栅化给部分身体更高分辨率）。对每个目标姿态额外预测 10 维 pose-dependent 残差（位移 3、尺度 3、四元数 4），先形变再动画；动画用扩展的 forward LBS，在 UV 锚点处重心插值每顶点变换，得到刚体旋转与位置。网络输入零初始化 UV map 与 V 张图，每张图经冻结 SAM3DBody（给姿态与 ViT 稠密特征）与可训练 ConvNeXt 提特征后相加。核心 FACRoPE 把 UV token 当 query、图像 token 当 key：图像 token 坐标取 (u,v,0)，UV token 坐标取「动画并渲染后的投影位置」FAC=[x, y, z-D]，其中 D 从候选化身在该视角的渲染深度图采样，用 RoPE 让 attention 只依赖相对坐标偏移，从而把 token 精确对准它该看的 patch，遮挡 token 的坐标则被推离像平面。ITR 让这套坐标在中间层就可用：CMLP 从每个中间 token 解一个高斯、PMLP 解形变，合成 posed token-GS 化身，动画渲染后把 FAC 回填给下一层，形成 rendering-in-the-loop。两个 MV-ARGBlock 把 UV token 克隆到 V 个姿态分支、加姿态嵌入，各分支做 FAC 引导的 3D RoPE 交叉注意力，再以 elementwise attention 融回主 token 流，过 self-attention 与 FFN。解码端把 token 重排回 UV 布局，CDec 上采样出 canonical 高斯，PDec 出每个驱动姿态的形变。训练用光度损失，另加 common shell transfer 正则：用 IRLS 估跨视角共享 shell，stop-gradient 强迫共享形变进 canonical offset、视角特有部分留在 pose offset，避免两者解耦失败。只在公开数据（DNARendering、2K2K、4D-Dress、Human4DiT、THuman2.1、HumanVid，6.8K 主体、64K 序列）上训 100K 步、batch 96、AdamW、lr 1e-4 cosine，四张 A6000 约 200 小时。",
+  "key_results": [
+   "分布外 NeuMan 6 视角：30.82 dB PSNR / 0.975 SSIM / 0.016 LPIPS，比 LHM++ 的 28.09/0.972/0.022 高 2.73 dB；2 视角 29.17 对 27.97；1 视角 27.02 反而低于 LHM++ 的 27.71。",
+   "6 视角下 Multiview Videos 28.83 对 25.68（+3.2 dB）、3D Scans 26.81 对 22.49（+4.3 dB）、HumanVid 25.86 对 22.50（+3.4 dB）；NeuMan input-pose 重建 33.30 对 28.50（+4.8 dB）。",
+   "视角扩展性：输入从 1 增到 6 视角，ARG-Avatar 提升 3.8 dB，LHM++ 只提升 0.4 dB。",
+   "效率：68M 可训练参数（LHM 的 6%、LHM++ 的 11%，约 9 倍更少），64K 公开序列（约 LHM 的 21%），约 125 H100 等效 GPU-hours（LHM++ 的 7%）；6 视角含 SAM3DBody 前向 2.3 s，比 LHM++ 的 14.2 s 快 6.2 倍。",
+   "2^3=8 组组合消融：FACRoPE 在每种配置都提升 PSNR（即使候选化身只是中性 mesh）；ITR 与 pose deformation 各自有效，两者同时开启时 FACRoPE 增益最大；第三层不再涨点，最终用两层。"
+  ],
+  "novelty": "把模板、LBS 与渲染给出的几何对应直接写进 attention，而不是让网络从数据里学 token 到 patch 的对应：FAC 用动画渲染后的投影坐标做 RoPE，遮挡关系由深度差自然编码。ITR 把这个坐标从一次性先验变成层内可迭代的 rendering-in-the-loop，中间 token 解出的粗糙化身反过来修正下一层的注意力。用 68M 参数在多个数据集上超过 609M 的 LHM++，给出「几何先验换 scaling」的一条实证路线。",
+  "limitations": "单视角明显弱于 LHM++（27.02 对 27.71 dB），作者明确说模型没有训练 inpaint 不可见区域，V=1 的落后是预期的，实际使用需要多视角或视频。依赖 SAM3DBody 的姿态与 MHR 模板：2K2K 例子中头部区域因跟踪错位出现重影，说明位姿误差会直接进入渲染。模板锚定表示本身有上限（作者在引言中承认增加容量无法突破 template-anchored avatar 的表示约束），宽松衣物与长发只能靠 10 维 pose residual 近似。全文没有代码或项目页，训练需约 200 小时四张 A6000。",
+  "code": "none",
+  "venue": "arXiv preprint（cs.CV，arXiv:2611.22207v1，2026-11-17，CC BY-NC-SA 4.0）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：可动画化身重建是社交 XR 与虚拟人的核心能力，秒级 feedforward 重建属高频需求。NOV=4：把模板/LBS/渲染的几何对应以 FAC 写进 RoPE、并用 ITR 做层内 rendering-in-the-loop，是对通用 attention 加 scaling 路线的实质性替代架构。TEC=4：8 组组合消融、多数据集与效率/运行时分析齐全，但无失败案例系统分析与代码。EXP=4：NeuMan 分布外加五个公开数据集的留出主体验证，覆盖 6.8K 主体，但无用户研究与手机端部署。PER=4：6 视角 NeuMan +2.73 dB、3D Scans +4.3 dB、HumanVid +3.4 dB，相对提升约 10%–15%，但 1 视角低于 LHM++。TRL=3：实验室原型，训练需 200 小时四张 A6000，未发布代码。REP=3：附录给足损失系数、UV 分辨率与运行时剖面，细节可复现，但缺代码与数据链接。"
+ },
+ "2611.22235": {
+  "id": "2611.22235",
+  "title_en": "CoSphere-SLAM: Multi-Agent Panoramic Gaussian Splatting SLAM with Spherical Loop Closure",
+  "title_zh": "CoSphere-SLAM：带球面回环的多智能体全景高斯泼溅 SLAM",
+  "track": "重建与SLAM",
+  "problem": "多智能体稠密建图需要全景相机，但把全景高斯 SLAM 扩到多 agent 有三个耦合难题。任意 pitch/roll 下 equirectangular 的 yaw 是循环移位、tilt 会按纬度扭曲，平面匹配失效；全 3D 旋转搜索会把对称房间匹配成「互相一致的错误变换」，整片区域支持同一对称时成簇 outlier 无法被成对 robust kernel 拒绝；单目尺度持续漂移会让刚性合并的子图在重访墙处裂开，短基线深度噪声又按场景深度放大、扭曲回环平移方向。",
+  "method": "每个 agent 把 equirectangular 重采样成六个共享光心的 90 度 cube face，用冻结的 DROID-SLAM 前端以 T_i R_f^T 联合跟踪六面，得每关键帧一个 SE(3) 位姿 T_i。在更宽的重叠面上预测单目深度，按面做 log-scale 线性最小二乘对齐成球面深度 D_i；深度只约束前若干关键帧，之后靠多视光流与 agent 内回环。同时把水平面特征按行平均成 128x32 的 ring descriptor（8.1 KB），与位姿一起上传；服务端把六面稠密特征重采样到 HxW 单位方向网格，得球面特征图 F_i: S^2 到 R^C，把回环写成 F_j(x) 约等于 F_i(R_ij x)。先用 ring descriptor 的循环互相关做全部对的粗筛（yaw 化为列移位、对 tilt  tolerant），只对 top 对请求面与深度。球面相关把 R 分解为水平轴 tilt Q 与竖轴 yaw R_z(psi)，固定 Q 后沿经度做 1D 循环互相关，用一次逆 FFT 求出所有 yaw；粗到细扫 N_Q=108 个 tilt（7.5 度到 30 度，再 3 度精化），复杂度 O(N_Q C H W log W)，覆盖 360 度任意朝向。以 R* 初始化做六面 6-DoF 光流精化，把置信对应反投影成 3D 点对，用加权 Umeyama 解 Sim(3)，同时得到相对尺度、旋转与平移。全局 Sim(3) consensus 把每个候选变换按局部位姿转成 agent b 到 a 的相似变换并聚类，在「每对至多选一个簇」约束下最大化支持度，要求任意三 agent 闭环的乘积约等于 I（tau_t=1.0 m、tau_R=5 度），用至多 729 个 CPU 状态穷举，从而拒绝整片区域服从同一对称 G 的假簇。定向全局优化给每关键帧一个 Sim(3)，残差含旋转、局部系平移与 log-scale 三行；odo 边令 s 的观测为 1，使 log s 沿轨迹随机游走、在两次相遇间线性插值；回环平移取 Umeyama 的模长与光流的单位方向，信息矩阵沿该方向与垂直方向各给 lambda 平行、lambda 垂直，DCS 权重再按 1/m_ij 平衡长相遇与短相遇。全向高斯融合用射线式高斯求值（低通 A=(Sigma+kappa^2 ||mu||^2 I)^-1，解析最大响应 tau* 与闭式 alpha(d)）避免极点拉伸与接缝断裂；每个高斯按所属关键帧的 S_i 变换（协方差乘 s_i^2）；最后固定尺度，用立体角加权的 |I-I_hat| 加 SSIM 联合精化高斯与位姿，并对 SSIM 窗口施加随机 3D 旋转以避开极点。",
+  "key_results": [
+   "Holo360D 45 个测试场景：单 agent per-agent ATE 0.150 m、100% tracked，对比 DROID-SLAM 1.610、DPVO 1.576、MASt3R-SLAM 0.651、OpenVSLAM 0.543、ODGS-SLAM 1.613；多 agent 0.082 m，对比 MAGS-SLAM 1.353、CoMo3R-SLAM 0.606、OpenVSLAM-M 0.715。",
+   "45 场景 joint ATE 0.152 m，对比 MAGS-SLAM 3.165、CoMo3R-SLAM 5.054、OpenVSLAM-M 1.882；五个最长测试场景 mean ATE 在 0.053 到 0.300 m。",
+   "渲染：共享视角 PSNR 28.25 dB 与 LPIPS 0.235，对比 MAGS-SLAM 的 26.09/0.318；对 ODGS-SLAM 为 27.92 对 17.67 dB；Scene 009 novel-view WS-PSNR 28.95 对 PFGS360 的 21.20，full-scene 27.80 对 24.28（Ours Single）。",
+   "回环：dev 1 m 内相遇恢复 3,950 个回环、95.6% 精度、连上 69.7% 的相遇，前脸匹配只有 1,152 个与 28.9%；45 个测试场景在 33,815 个回环中连上 23,382 个重访，其中 55.3% 的朝向差超过 45 度。",
+   "360Loc 跨昼夜 18 条会话：多 agent 100% tracked、平均 ATE 0.30 m（四栋楼 joint 0.22 到 0.44 m），对比单 agent 0.88、MAGS-SLAM 2.04（83%）、MAC-Ego3D 23.59、ODGS+RICP 16.39（67%）。",
+   "多 agent 对齐耗时 3,113 s，比 ODGS+RICP 的 15,132 s 快 4.9 倍；建图 4.3 GPU-hours/agent，PFGS360 为 27.9。"
+  ],
+  "novelty": "首个多 agent 全景高斯 splatting SLAM，把回环从平面图像匹配改成 S^2 上的 SO(3) 相关：tilt 分解加经度 FFT，使任意 heading 都能在 O(N_Q C H W log W) 内匹配，且不会像针孔相机那样裁掉视野。用三 agent 闭环的全局 Sim(3) 一致性拒绝「整片对称区域共同支持」的假回环，这是成对 robust kernel 在结构上做不到的。把单目尺度漂移建成每关键帧 Sim(3) 的 log-scale 随机游走，并把回环平移的方向（光流）与模长（深度）分开加权；融合端用射线式高斯求值同时消掉极点拉伸与接缝断裂。",
+  "limitations": "作者明确假设静态场景且存在共享视野，纯视觉建图不处理动态物体，未来才做球面动态建模与惯性/测距融合以获得 metric scale 与机载部署。系统是离线服务端式的：输入仅 1.0 FPS，服务端对齐 3,113 s，建图在单张 A100 上完成，离在线机载还有距离。实验以 ATE 与 PSNR 为主，无用户研究；正文只给项目页、没有代码仓库。360Loc 上单 agent 0.88 m 与多 agent 0.30 m 的差距也说明跨会话仍依赖多 agent 相遇。",
+  "code": "none（正文仅给出项目页 https://cosphere-slam.github.io）",
+  "venue": "arXiv preprint（cs.CV，arXiv:2611.22235v1，2026-11-17）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：多 agent 全景稠密建图直接对应 AR 云与多机协同扫描，属重要且高频。NOV=4：SO(3) 球面相关、三 agent 全局 Sim(3) consensus、每关键帧 Sim(3) 的 log-scale 随机游走与射线式融合，是针对全景多 agent 的一组新机制，非单点增量。TEC=4：四段方法各有公式与七组消融、两个基准加计时，但缺代码与失败案例分析。EXP=5：Holo360D 45 个测试场景加 360Loc 18 条昼夜会话、十余个基线、真实采集数据，规模与覆盖充分。PER=5：单 agent ATE 1.610 到 0.150 m、多 agent 1.353 到 0.082 m（-94%），PSNR +2.16 dB，远超 30%。TRL=3：实验室原型，1 FPS 输入、服务端离线对齐 3,113 s、单 A100 建图，未开源。REP=3：tilt 步长、门限与信息矩阵等细节可复现，但只有项目页、无代码仓库。"
+ },
+ "2611.22240": {
+  "id": "2611.22240",
+  "title_en": "Cross3DGS: Unified Vulkan-Based 3D Gaussian Splatting Training from Workstations to Mobile Devices",
+  "title_zh": "Cross3DGS：从工作站到移动设备的统一 Vulkan 3D 高斯泼溅训练",
+  "track": "系统与平台",
+  "problem": "手机、平板与智能眼镜拍完 3DGS 场景仍要传回 CUDA 工作站训练，无法在采集设备上完成，也就无法保留隐私、去掉往返或离线使用。把 kernel 改写成跨厂商着色语言并不够：subgroup 宽度、float32 atomic add、storage-buffer 上限与批量命令提交的可靠性在不同 GPU 与 driver 上不同，直接决定一个名义等价的训练步能否执行并返回正确更新。现有可移植训练器 VkSplat 与 Brush 在部分移动 GPU 上根本跑不完标准质量训练。",
+  "method": "保留一个优化器 U(theta, I)（投影、tile binning 与排序、alpha 合成、损失、梯度、Adam；MCMC 细化在 U 之外），把「怎么在 GPU 上执行 U」抽象成六个选项：梯度方法（4 种 work assignment 乘 3 种 merge，共 8 值）、命令提交（batched 8 updates 或 fenced）、训练图像（resident 或 streamed）、radix sort（subgroup 或 portable）、projection+Adam（fused 或 split）、pair dispatch（indirect 或 direct），共 256 条 schedule。第一步用 13 条 feasibility rule 排除已知跑不对的 schedule：5 条读设备限制（subgroup 宽度、shared memory、storage-buffer range、float32 atomic add、vendor id），4 条读 workload（高斯容量、图像尺寸、训练图数量），4 条编码在特定 driver 上观测到的失败（全部 key 在 Qualcomm）。第二步不做设备端计时，用固定 preference order 在剩余可行 schedule 里逐选项取第一个可用值；AMD 与 Intel 各有一份离线定的顺序，其余厂商共用通用顺序。正确性不靠 bit 对齐：定义数值一致性 |q_hat - q| 不超过 eps_abs + eps_rel|q|（q 为梯度或 Adam 更新量），离线把每个可行梯度方法与同卡 reference（exact pair gather）比，再让每设备选中的 schedule 与独立 CPU 双精度实现比，并用故意漏掉一个 tile partial 的负对照证明测试会失败。实现是一个 C++20 训练库加自研小型 Vulkan compute runtime（多 pass program、exclusive scan、headless context、运行时 GLSL 到 SPIR-V），所有梯度手写 kernel，参数、优化器状态与活跃高斯数常驻 GPU 固定容量 buffer，command buffer 录一次反复 replay。桌面、Android 与 iOS 共用同一 core，Apple GPU 走 MoltenVK，RX9070XT 走 Mesa RADV；标准质量设定为 30k updates、SH degree 3、MCMC 细化、100 万高斯容量、0.8 L1 加 0.2(1-SSIM)。上层是 Android（ARCore 采集加 CPU COLMAP 端口）与 iOS（ARKit）的 capture-to-view 应用，采集、SfM、训练与查看全在设备上完成。评测用 Mip-NeRF 360 七个场景、Tanks and Temples 的 Train/Truck、Deep Blending 的 DrJohnson/Playroom，每八帧留一帧，统一 evaluator 算 PSNR/SSIM/LPIPS，每配置三次取中位数。",
+  "key_results": [
+   "八个配置（NVIDIA PRO6000、Intel Iris Xe、Intel UHD730、Arm Mali G1-Ultra、Qualcomm Adreno740、AMD RX9070XT、Apple M5Pro、Apple A14）全部完成 30k updates 与 100 万高斯的 standard-quality 训练；VkSplat 只在 4/5 个桌面配置完成（UHD730 在前 200 步挂死 GPU），Brush 完成 6/8（Adreno740 超出 128 MiB storage-buffer）。",
+   "跨设备最终质量几乎一致：bicycle 的 PSNR span 0.019 dB（25.28 到 25.30），garden 为 0.063 dB（26.97 到 27.03）；SSIM 与 LPIPS 变化不超过 0.001。",
+   "训练时间跨约两个数量级：PRO6000 115 s，两台 Android 与 iPhone 2.36 到 3.23 h，UHD730 3.44 h。",
+   "PRO6000 11 场景 macro：Cross3DGS 27.86/0.883/0.139、136.8 s；VkSplat 27.79/0.882/0.143、139.3 s；Brush 27.90/0.885/0.138、426 s（约 3 倍时间）。对 VkSplat 的 PSNR 增益 0.074 dB（95% 区间 0.002 到 0.14），时间差 4.4 s 的区间含 0。",
+   "更新一致性：同卡各可行梯度方法与 exact pair gather 的最大差为 3.4e-8（梯度）与 1.5e-6（Adam），对 CPU 双精度 oracle 的最大差 1.6e-5，零越界；负对照（故意漏掉一个 tile 的 partial）产生 29,921 个违规。",
+   "移动端能耗：Adreno740 16.9 Wh（6.0 W）、G1-Ultra 7.2 Wh（3.0 W）、A14 在 25.5k/30k 步约 9.2 Wh；应用从采集到可看模型 28 到 46 分钟，SfM（19 到 30 分钟）比 3DGS（7 到 18 分钟）更久。"
+  ],
+  "novelty": "把「可移植」从「换一门着色语言重写 kernel」重构为「同一数学更新加每设备选一条可行 schedule」：256 条 schedule 的目录、13 条读设备限制/workload/driver 的可行性规则、以及不在设备上计时的固定偏好序，使八个跨六厂商的配置都能跑完标准质量训练。把正确性形式化成更新级数值一致性测试（含 CPU 双精度 oracle 与负对照），而不是只看 PSNR 是否像样。工程上给出同一 C++20 core 经 MoltenVK 与 RADV 覆盖桌面、Android、iOS 的完整链路，以及可用的 capture-to-view 应用。",
+  "limitations": "作者自述固定偏好序是为可预测部署牺牲设备最优速度：每厂商的顺序只在单一设备与 driver 上定，同厂商其他设备可能排序不同；通用序在 RX9070XT 与 UHD730 上选出的方法比最快可行方法慢 2.94 与 4.17 倍。四条 driver 规则全部 key 在 Qualcomm、只在一个 Adreno740 与一个 driver 上测过，换 GPU 或新 driver 可能误排除本可运行的 schedule（只损速度不损正确性），而未预期的 driver 失败在发生前无法被规则捕获。证据范围有限：跨设备质量只覆盖两个场景，11 场景对比只在 PRO6000；与 VkSplat/Brush 是系统级比较，视图顺序、优化器状态与 densification 轨迹都不同；头显与智能眼镜留作未来工作。",
+  "code": "https://github.com/unclearness/cross3dgs（含 Android/iOS 应用与评测脚本）",
+  "venue": "arXiv preprint（cs.CV，arXiv:2611.22240v1，2026-11-17）",
+  "evidence": "FULL",
+  "scores_hint": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 5,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：把 3DGS 训练搬到采集设备是 XR 内容管线的实际瓶颈，跨六厂商可用性有直接工程价值。NOV=4：把可移植性重构为同一更新加 256 条 schedule、13 条可行性规则与固定偏好序，并以更新级数值一致性（含负对照）验证，是新的系统抽象。TEC=5：可行性、一致性均有形式化定义，八设备覆盖、CPU 双精度 oracle、负对照与能耗/热测量齐全。EXP=5：八配置乘三次乘 11 场景（PRO6000），加两台 Android 与 iPhone 的真机长跑，含电池与温度曲线。PER=3：相对 VkSplat 仅 +0.074 dB、相对 Brush +0.041 dB（后者 3 倍时间），质量是持平而非提升，卖点在覆盖与可移植。TRL=4：代码、Android/iOS 应用与评测脚本公开，可复现可部署，但场景证据有限。REP=4：代码、应用与脚本齐全，缺独立数据发布与顶会背书。"
+ }
+}

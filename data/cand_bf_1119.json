@@ -1,0 +1,42 @@
+{
+ "2605.22631": {
+  "cat": "cs.CV",
+  "title": "HolisticMotion: Holistic Modeling for Motion Reconstruction from Sparse Tracking",
+  "abstract": "Reconstructing full-body motion from sparse tracking signals is crucial for immersive AR/VR applications. Existing methods predominantly adopt a sensor-centric observation perspective, learning full-body representations primarily under sparse conditioning, while additional joint observations available during training remain underutilized as inputs. We propose HolisticMotion, which shifts the modeling perspective toward holistic full-body modeling by treating every joint as a potential input source within a unified skeletal layout. Guided by this holistic perspective, we introduce three complementary designs. First, a curriculum masking strategy bridges full-body motion learning and sparse inference by gradually shifting training from a mixture of masked full-body and sparse inputs to exclusively sparse inputs. Second, body partitioning models region dynamics and helps preserve local motion cues. Third, Kinematic Attention coordinates body regions by combining dynamic spatial interactions with learnable structural priors inspired by the kinematic tree. Experiments on AMASS and HPS demonstrate competitive reconstruction performance across various tracking protocols, with the lowest positional errors among the compared methods. The unified representation also accommodates additional wearable sensors, yielding further improvements in reconstruction accuracy and motion smoothness.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false,
+  "track": "化身与人体",
+  "batch": "backfill-1119"
+ },
+ "2607.05598": {
+  "cat": "cs.GR",
+  "title": "SSA-3DGS: Unsupervised Removal of Screen-Space Artifacts for 3D Gaussian Splatting",
+  "abstract": "Novel View Synthesis (NVS) methods, such as 3D Gaussian Splatting (3DGS), rely on the assumption of clean, multi-view consistent, posed input images. Real-world captures can violate this assumption due to \\textbf{screen-space artifacts}---static occlusions fixed to the 2D image plane rather than to the 3D world. Common examples include physical sensor defects, environmental obstructions (such as rain or mud on the lens enclosure), capture obstructions (such as a thumb over the camera sensor or a dashboard visible in dashcam footage), and digital overlays (such as watermarks or UI elements). When present, they are erroneously baked into the 3D geometry as ``floaters'' or near-camera artifacts, degrading the quality of novel-view rendering. In this work, we propose \\textit{SSA-3DGS}, an unsupervised framework that jointly optimizes a 3D scene and a learnable 2D overlay to recover a clean 3D scene and the corrupting artifacts. By exploiting geometric consensus across views, our method effectively disentangles static artifacts from the 3D scene geometry without supervision or manual input. Across diverse synthetic corruptions and a self-captured real-world dataset, SSA-3DGS improves reconstruction fidelity by up to ${\\sim}8$~dB PSNR over 3DGS trained on the same corrupted inputs, while faithfully preserving the corrupting artifact.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false,
+  "track": "神经渲染",
+  "batch": "backfill-1119"
+ },
+ "2606.04493": {
+  "cat": "cs.CV",
+  "title": "Smooth Inliers, Erratic Outliers: Frequency-Aware Mamba for Two-View Correspondence Learning",
+  "abstract": "When shown matches between two photographs of the same cathedral, people can tell at a glance which ones are wrong: a window matched to its look-alike jumps against its neighbors, while correct matches shift together. Two-view correspondence learning, also called correspondence pruning, asks a network to make this judgment for thousands of candidate matches, most of which are wrong. Mamba, a fast sequence model, now drives strong pruners, but it reads the matches as a plain sequence, and whether its scan can capture such agreement is unclear. We propose SFMambaNet, which scans the matches cluster by cluster, so that correct matches vary slowly along the sequence while wrong ones stay erratic, and filters the scanned features with learnable frequency-domain gates between its forward and backward passes. On camera pose estimation, outlier removal and homography estimation, we find that SFMambaNet outperforms spatial-domain Mamba baselines with about two million parameters. Contrary to the usual expectation that such gains come from extra capacity, we find that a parameter-free low-pass filter beats point-wise layers as large as the gates. The learned gates turn low-pass on their own and make the scan far less sensitive to how the matches are shuffled. Together, these results show that frequency is a natural language for describing agreement between correspondences, with implications for other sequence models that must read unordered sets, such as point clouds and graphs.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false,
+  "track": "重建与SLAM",
+  "batch": "backfill-1119"
+ },
+ "2610.27275": {
+  "cat": "cs.RO",
+  "title": "On Maximum Clique and Maximum Consensus Formulations in Point Cloud Registration",
+  "abstract": "arXiv:2610.27275v2 Announce Type: replace-cross Abstract: Maximum clique and maximum consensus are widely used formulations for robust point cloud registration. Maximum consensus seeks one transformation that aligns as many matches as possible, while maximum clique selects matches through pairwise distance tests. Maximum clique is often used as a substitute for or an approximation to maximum consensus, with empirical evidence suggesting a close relationship. However, how closely the two formulations agree is not fully understood. We study this relationship theoretically. We show that, at any fixed positive tolerance, a maximum clique can have arbitrarily large alignment error and be arbitrarily larger than a maximum consensus set. When rotation is fixed, we derive sharp error bounds and tests that exactly characterize maximum consensus for the translation subproblem. We also study group-$k$ consistency, which uses consistency of groups of $k$ matches, and determine the smallest group sizes that guarantee alignment error bounds independent of point cloud scale and geometry. These are $d+1$ for rotations and translations and $d+2$ when reflections are allowed, in dimensions $d\\ge2$. Finally, our experiments on nearly 8,000 registration examples quantify the frequency of these limitations in practice and show how the derived bounds can be used to check whether a subset of matches can be aligned within a point tolerance.",
+  "announce": "replace",
+  "published_rss": "2026-11-18",
+  "in_registry": false,
+  "track": "重建与SLAM",
+  "batch": "backfill-1119"
+ }
+}
