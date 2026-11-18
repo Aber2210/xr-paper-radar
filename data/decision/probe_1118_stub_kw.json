@@ -1,0 +1,1694 @@
+{
+ "question_version": "q1-2026-11-18",
+ "backend": "stub-kw",
+ "question": {
+  "type": "noul",
+  "instructions": "该论文是否与 AR/VR/MR/XR 相关？判定为相关需满足：论文的研究对象或核心方法服务于沉浸式显示（头显/眼镜/光波导/近眼显示）、空间交互与追踪、三维重建与神经渲染、化身与人体建模、触觉与遥操作、XR 系统/平台/评估，或上述场景的数据集与基准。仅为通用视觉/图形学方法、未面向沉浸式或空间场景者判为不相关。"
+ },
+ "summary": {
+  "accepted": {
+   "n": 39,
+   "acc": 0.5641,
+   "missed_pos": 17
+  },
+  "rejected": {
+   "n": 69,
+   "acc": 0.6087,
+   "missed_pos": 0
+  },
+  "kw-missed": {
+   "n": 100,
+   "acc": 0.99,
+   "missed_pos": 0
+  }
+ },
+ "items": [
+  {
+   "id": "2611.18679",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "Shared Mobile AR Without Depth Sensors from Monocular Point Maps"
+  },
+  {
+   "id": "2611.18708",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "TopSDF: Topological Signed Distance Field for High-Quality Triangle Mesh Extract"
+  },
+  {
+   "id": "2611.18734",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Is It Still There? Place-Registered Verification Makes VLMs Reliable Scene-Chang"
+  },
+  {
+   "id": "2611.18822",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "LongCat-Video-Avatar 1.6 Technical Report"
+  },
+  {
+   "id": "2611.18894",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "CISyn: Human Mesh Recovery in Close Interactions with Physics-Simulated Syntheti"
+  },
+  {
+   "id": "2611.18979",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Probing Where Surprise Happens: Localized Violation-of-Expectation Evaluation of"
+  },
+  {
+   "id": "2611.19095",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "DEFDVO: Deformable Deep Visual Odometry for Equirectangular Images"
+  },
+  {
+   "id": "2611.19096",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "AdaptType: Accessible and Customizable Multimodal Text Entry in Virtual Reality "
+  },
+  {
+   "id": "2611.19429",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "Prepare Lighter and Faster for Open-Vocabulary Queries: A Query-Wise 3D Segmente"
+  },
+  {
+   "id": "2611.19765",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "M-CROSS: A Multisensor Simulation Dataset for SLAM across Water–Land Transitions"
+  },
+  {
+   "id": "2611.19771",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "JEPA4R: Embodied JEPA World Models with 4D Point Planning"
+  },
+  {
+   "id": "2611.19773",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "SemLite-GS: Semantic-Selective Parallel Gaussian Splatting for Lightweight Build"
+  },
+  {
+   "id": "2611.19803",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Pros4D: Modeling Evolving 4D Worlds in Latent Space for Dynamic Spatial Reasonin"
+  },
+  {
+   "id": "2611.20083",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "WL-Headset Law: Projecting Future Headset Evolution from a Decade of Display and"
+  },
+  {
+   "id": "2611.20196",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "DoF-Query Transformer for Adaptive Fusion of Egocentric Vision and Forearm HD-sE"
+  },
+  {
+   "id": "2611.20245",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "From XR Sketches to CAD: Preserving Design Intent with AI"
+  },
+  {
+   "id": "2611.20283",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "CiGS: Conduction in Gaussian Splats for Interior Temperature Field from Thermal "
+  },
+  {
+   "id": "2611.20533",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "RemeshingAgent: Self-Evolving Agent for Repair-Based Decimation of Generated Bui"
+  },
+  {
+   "id": "2611.20546",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "A Gaussian Primitive Data Management Framework for Efficient 3DGS Trajectory Ren"
+  },
+  {
+   "id": "2611.20568",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "√VINS-Based 360 Visual-Inertial SLAM Systems: Hilti–Trimble SLAM Challenge 2026 "
+  },
+  {
+   "id": "2611.20570",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "OrthoMark: Place Recognition with Point-Anchored Orthographic Height Mark"
+  },
+  {
+   "id": "2611.20797",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Correspondence-Free Camera Pose Estimation by Matching Moments"
+  },
+  {
+   "id": "2611.20879",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "Multi-Rate Flow Matching for Point Cloud Upsampling"
+  },
+  {
+   "id": "2611.20950",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "ROSE: A Shared Cross-Embodiment Facial-Motion Latent Space for Humanoid Robot Ex"
+  },
+  {
+   "id": "2611.21044",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Body of Evidence: Triangulating 3D Human Pose with Geometry-Conditioned Depth"
+  },
+  {
+   "id": "2611.21060",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "MetricHand: Geometry-Aware Flow Matching for 4D Hand Reconstruction in Metric Wo"
+  },
+  {
+   "id": "2611.21143",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "WinDEX: Metric 3D Hand Motion Reconstruction in the Wild for Dexterous Teleopera"
+  },
+  {
+   "id": "2611.21233",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "A Study on Performance Enhancement of a Webcam-Based Real-Time Eye-Tracking Syst"
+  },
+  {
+   "id": "2611.21253",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "QuantileGS: Quantile-Based Conformal Bounds on RGB Rendering Errors for Novel Vi"
+  },
+  {
+   "id": "2611.21334",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Real-world Polarimetric Environment Map Dataset"
+  },
+  {
+   "id": "2611.21383",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "The Mask Is Not the Object: Volumetric Supervision for 3D Gaussian Segmentation"
+  },
+  {
+   "id": "2611.21479",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "LynnReal-Hand: Unlocking World Interaction with Hand Control"
+  },
+  {
+   "id": "2611.21485",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "Lost in the Hallway: Benchmarking Persistent Spatial Memory Across Revisits"
+  },
+  {
+   "id": "2511.16349",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "LoC-IN: Real-Time Localization of Cameras in Neural Rendered Prior LiDAR Maps"
+  },
+  {
+   "id": "2605.05712",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "EgoEMG: A Multimodal Egocentric Dataset with Bilateral EMG and Vision for Hand P"
+  },
+  {
+   "id": "2605.09586",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "DeformMaster: An Interactive Physics-Neural World Model for Deformable Objects f"
+  },
+  {
+   "id": "2607.03875",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "MACRO: Training-free Multi-plane Attention for Closeup Render Optimization"
+  },
+  {
+   "id": "2609.31117",
+   "group": "accepted",
+   "label": 1,
+   "pred": 1,
+   "ok": true,
+   "title": "Comparative Evaluation of an XR Pen-based Control Interface for Semi-Autonomous "
+  },
+  {
+   "id": "2611.18267",
+   "group": "accepted",
+   "label": 1,
+   "pred": 0,
+   "ok": false,
+   "title": "TetraCoder: Adaptive Tetrahedral Encoding for Neural Fields"
+  },
+  {
+   "id": "2611.16162",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "GOOSELoc: A Multimodal Benchmark for Ground-to-Aerial Localization in Unstructur"
+  },
+  {
+   "id": "2611.18642",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Agents Cannot Hand Over What They Have Not Yet Understood"
+  },
+  {
+   "id": "2611.18674",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "SynPanZ: A Synthetic Dataset to Improve Multi-Animal Pose Estimation in Chimpanz"
+  },
+  {
+   "id": "2611.18725",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Detection Is Not the Finish Line: Multiscale Decoding and Constraint-Aware Globa"
+  },
+  {
+   "id": "2611.18741",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Target-Free Autocalibration of Stereo PIV Camera Systems via Persistent-State Mo"
+  },
+  {
+   "id": "2611.18744",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Neural Latent Gaussian Process for 3D reconstruction of Mouse Brain Lipids"
+  },
+  {
+   "id": "2611.18756",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "ST-Dist: Distilling Spatial Transcriptomics Predictions into Interpretable Gene "
+  },
+  {
+   "id": "2611.18766",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Angel: Anchor-Structured Neural Gaussians for Explicit Fetal Diffusion MRI Slice"
+  },
+  {
+   "id": "2611.18778",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Third-Place Solution for the UCF UrbanTwin V2X-Real Track at ECCV 2026: Syntheti"
+  },
+  {
+   "id": "2611.18869",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "UnSPAD: Uncertainty-aware Single Photon Burst Photography"
+  },
+  {
+   "id": "2611.18919",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Correcting Persistent Failures in Point-Cloud Grasping Policies using Human Demo"
+  },
+  {
+   "id": "2611.18976",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "TMA: Sim-to-Real Forceful Humanoid Manipulation via Tactile-Driven Motor Adaptat"
+  },
+  {
+   "id": "2611.19055",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Aspirational Identities: How VTubing Affords New Modes of Digital Embodiment"
+  },
+  {
+   "id": "2611.19066",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Midsagittal Corpus Callosum Parameterization: A Framework for Spatially Detailed"
+  },
+  {
+   "id": "2611.19124",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "ANCHOR: A Port-Hamiltonian Model for Forecasting Team Dynamics in Human-in-the-L"
+  },
+  {
+   "id": "2611.19188",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Calibrating the Uncertainty of Self-Supervised Monocular Depth without Labels"
+  },
+  {
+   "id": "2611.19196",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Ego2Sim2Humanoid: Agentic Real-to-Sim for Learning Loco-Manipulation VLAs withou"
+  },
+  {
+   "id": "2611.19238",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Continuous Lower-Limb Joint-Angle Estimation from sEMG and IMU: The Conditional "
+  },
+  {
+   "id": "2611.19272",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Distributed Shaping of Robot Swarms Through Spatial Moments of Arbitrary Order"
+  },
+  {
+   "id": "2611.19318",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Residual Reinforcement Learning for Visual Servo Control with Zero-Shot Sim-to-R"
+  },
+  {
+   "id": "2611.19381",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "AcousticBEV: Acoustic BEV Object Localization for Intelligent Vehicles"
+  },
+  {
+   "id": "2611.19534",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Depth-Aware Path Planning and Collision Avoidance for Robotic Nursing Assistants"
+  },
+  {
+   "id": "2611.19563",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Sharp First-Hit Identification from Finite Depth Samples"
+  },
+  {
+   "id": "2611.19593",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Learning Spatially Aware Audio-Visual Features from Videos with Mono Audio"
+  },
+  {
+   "id": "2611.19624",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Well-Log Reconstruction with Pre-trained Geological Knowledge: A Knowledge-Condi"
+  },
+  {
+   "id": "2611.19640",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Floorplan-Context-Aware Cross-Environment Human Activity Recognition from mmWave"
+  },
+  {
+   "id": "2611.19703",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Real-Time Air Pollution Monitoring and Tracking via Adaptive Density-Driven Mult"
+  },
+  {
+   "id": "2611.19720",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Sim-to-Real Room-Mediated Object-Goal Navigation with ROS 2 and Nav2"
+  },
+  {
+   "id": "2611.19830",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Beyond Vehicle-Centric Data: Scaling Autonomous Driving through Roadside-to-Vehi"
+  },
+  {
+   "id": "2611.19857",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "PanDWM: Panoramic 4D Driving World Models"
+  },
+  {
+   "id": "2611.19897",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "HIVE-ECIA: Identity-Aware Historical Evidence Acquisition for Bandwidth-Efficien"
+  },
+  {
+   "id": "2611.20089",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "See the Lives of Stars in a Handful of Light"
+  },
+  {
+   "id": "2611.20100",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "EgoSwarm: Learning Decentralized Robot Swarm Intelligence from Human Swarm Demon"
+  },
+  {
+   "id": "2611.20187",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Cyber-Secure Wearable, Ultra-Low-Power Networked Sensors for Soldier Health Moni"
+  },
+  {
+   "id": "2611.20202",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "DAPPT: Domain-Aware Policies from Procedural Trajectories for Sim-to-Real Dexter"
+  },
+  {
+   "id": "2611.20203",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Radar Panoptic Transformer: Semantic-Guided Mask Queries for Dynamic Scene Under"
+  },
+  {
+   "id": "2611.20207",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "AstroPIE-53: Towards Understanding Failure Modes of Human Pose Estimation in Spa"
+  },
+  {
+   "id": "2611.20241",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "EvoMem3D: Adaptive-Depth Temporal Representation Memory for Multi-Camera 3D Dete"
+  },
+  {
+   "id": "2611.20321",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Unreasonable Confidence from Simulator Misspecification: Directional Robustness "
+  },
+  {
+   "id": "2611.20330",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Sidewalk Stewards: A Visual Analytics Approach for Interactive Topology Repair o"
+  },
+  {
+   "id": "2611.20349",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Words Speak Louder? Exploring the Language Shortcut of LLM-Driven Incomplete Mul"
+  },
+  {
+   "id": "2611.20361",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Structure-Guided Multi-Granularity Spatiotemporal Transformer for Efficient Mono"
+  },
+  {
+   "id": "2611.20412",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Training-Free Anonymization of Driving Data with Promptable Segmentation and 3D "
+  },
+  {
+   "id": "2611.20425",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "InterRSGaussian: Interactive Multi-view Instance Segmentation for 3D Remote Sens"
+  },
+  {
+   "id": "2611.20452",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "XMimic and XSoma: Learning Humanoid Motion Tracking and Locomotion in Under a Mi"
+  },
+  {
+   "id": "2611.20502",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Pointillist Maize: 3D Reconstruction of Field-Grown Maize Using RGB UAV Imagery"
+  },
+  {
+   "id": "2611.20518",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "What the Averages Hide: Monocular Metric Depth Models Still Fail in Everyday Sce"
+  },
+  {
+   "id": "2611.20623",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Example-Based Spatial Guidance for Training-Free Concept Erasure in Diffusion Mo"
+  },
+  {
+   "id": "2611.20625",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "ASCG: Adaptive Spatial Classifier Guidance for Surgical Concept Suppression in D"
+  },
+  {
+   "id": "2611.20629",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Event-Guided Stereo Video Super-Resolution"
+  },
+  {
+   "id": "2611.20692",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "ARMFUL: Learning Whole-Arm Grasp Configurations for Single-Arm Pickup of Large O"
+  },
+  {
+   "id": "2611.20710",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "SG-ODOM: Event-Driven Proprioceptive State Estimation with Stability-Gated Conta"
+  },
+  {
+   "id": "2611.20718",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "TaF-Foundation: Wrench-Grounded Cross-Sensor Tactile Representations"
+  },
+  {
+   "id": "2611.20737",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "CLIFT: Contrastive LiDAR Instance Features for 3D Pedestrian Tracking"
+  },
+  {
+   "id": "2611.20770",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Non-Imaging Optical Tactile Sensors for Robotics: Transduction Principles, Syste"
+  },
+  {
+   "id": "2611.20791",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "QTOP: Scaling Humanoid Motion Tracking with Quantile Critics"
+  },
+  {
+   "id": "2611.20872",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "MVSTF: Multi-View Spatio-Temporal Fusion for LiDAR-Based Moving Object Segmentat"
+  },
+  {
+   "id": "2611.20935",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Razavi-Bench: Tracking AI Progress in Analog Circuit Reasoning"
+  },
+  {
+   "id": "2611.20939",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "TacBridge: Learning Unified Tactile Representations through Cross-Sensor Corresp"
+  },
+  {
+   "id": "2611.21054",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Dataset Distillation for Handwritten Text Recognition: An Empirical Study"
+  },
+  {
+   "id": "2611.21057",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "WiTac: Wrist-Informed Tactile Representations for Contact-Rich Manipulation"
+  },
+  {
+   "id": "2611.21104",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "GRAZE: Text-Free Grasp Synthesis for Unseen Objects from Human Gaze"
+  },
+  {
+   "id": "2611.21125",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Human-AI Co-Ideation Across Socio-Technical Configurations: An Interactional Ana"
+  },
+  {
+   "id": "2611.21126",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "IGRecon4D: Dynamic-Object-Aware Feed-Forward Reconstruction of Driving Scenes"
+  },
+  {
+   "id": "2611.21162",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "DRaGAN: Dynamic Graph Attention Network for Multi-Radar Point Cloud Encoding in "
+  },
+  {
+   "id": "2611.21311",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "A2A-UAV: A Multimodal Air-to-Air Dataset for UAV Detection and Identification"
+  },
+  {
+   "id": "2611.21365",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Exploring the link between predictive uncertainty and the sim-to-real gap in dee"
+  },
+  {
+   "id": "2611.21405",
+   "group": "rejected",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Shaping AI's Beliefs Before It Generates: Human Sense of Agency in Creative AI"
+  },
+  {
+   "id": "2611.21438",
+   "group": "rejected",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "Power Line Detection in Point Clouds with Point-SAM and RANSAC"
+  },
+  {
+   "id": "2611.20190",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "A Line is Not Just a Line: Visualizing Harmonious Complex Line Sets"
+  },
+  {
+   "id": "2611.20826",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Conversing with a Conversational Agent: A Real Conversation, Not a Simulated One"
+  },
+  {
+   "id": "2611.20711",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "AgentFaultBench: State-Verified Evaluation of Tool-Fault Recovery"
+  },
+  {
+   "id": "2611.19841",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Asking the right question is key to AI discovery in a chain of hypotheses"
+  },
+  {
+   "id": "2611.19427",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Memorization Lives in a Few Attention Heads: Mitigating Memorization in Diffusio"
+  },
+  {
+   "id": "2611.19227",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Can an Agent Rethink What It Knows? Selective Scene Memory Updates in a Changing"
+  },
+  {
+   "id": "2611.20076",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 1,
+   "ok": false,
+   "title": "SGIP: Learning Scene-Grounded Interaction Priors for Scene-Aware Human Motion Pr"
+  },
+  {
+   "id": "2611.19043",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "More Context, Mixed Results: Evaluating LLMs for Identifier Recovery and Code De"
+  },
+  {
+   "id": "2611.20986",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Calpha: Toward Native Biomolecular Intelligence in a General-Purpose Language Mo"
+  },
+  {
+   "id": "2611.21507",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "GHySSeg: Real-Time Geometric Ground and Road Segmentation for Hybrid Solid-State"
+  },
+  {
+   "id": "2611.20071",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "The Silent Cost of Conversation History in LLM Reasoning"
+  },
+  {
+   "id": "2611.20916",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "EviBridge: Encoding Predictive Visual Evidence for Proactive Interaction"
+  },
+  {
+   "id": "2611.19982",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Autonomous Multi-modal Agents for ITOps Observability"
+  },
+  {
+   "id": "2611.19166",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "LABEL: Literature Asymmetry between Efficacy and Limits in Drug Knowledge and La"
+  },
+  {
+   "id": "2611.19828",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "PRISM: Primitive-Integrated Separable Modulation with Priority Visual Memory Que"
+  },
+  {
+   "id": "2611.19742",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Exploration of Reinforcement Learning in Generative Recommendation Models"
+  },
+  {
+   "id": "2611.18649",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Algebraic Interaction: A Recipe for Neural Architecture Generation"
+  },
+  {
+   "id": "2611.19135",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "How Much Determinism Can Fine-Tuning Buy? Margin Regularisation Against Batch-In"
+  },
+  {
+   "id": "2611.18905",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Ask Precisely, Assume Wisely: Interactive Evaluation of Ambiguity Resolution in "
+  },
+  {
+   "id": "2611.21339",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "MovieRoll: A Systematic Framework for Rolling Out Long-Form Videos"
+  },
+  {
+   "id": "2611.20116",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Locational Marginal Pricing of Compute: Co-optimizing Compute and Energy for Tra"
+  },
+  {
+   "id": "2611.20461",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "LiveView: Real-Time Camera-Controlled Re-filming of Streaming Videos"
+  },
+  {
+   "id": "2611.18743",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Recognizing Events Is Not Enough: Why Streaming VLMs Struggle in Compositional I"
+  },
+  {
+   "id": "2611.19575",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Risk-Averse Decision-Focused Learning: Minimizing CVaR of Regret"
+  },
+  {
+   "id": "2611.19756",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Drift-Conditioned Structural Replay for Continual Cardiac Ultrasound Segmentatio"
+  },
+  {
+   "id": "2611.20792",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "TRR: A Thermal Interaction Engine for Robot Simulation and RGBT Data Generation"
+  },
+  {
+   "id": "2611.19198",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Self-Calibrating Vision-Agent-Action: Deploying Pick-and-Place to New Robot Cell"
+  },
+  {
+   "id": "2611.19461",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Program Distillation: Transferring LLM Capability from System 2 to System 0"
+  },
+  {
+   "id": "2611.19146",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Puzzle: One Pass Is Not Enough for Open-Vocabulary Remote Sensing Segmentation"
+  },
+  {
+   "id": "2611.21083",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Think2Listen: Evidence-Centric Learning For Agentic Audio Understanding With LAL"
+  },
+  {
+   "id": "2611.20192",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "GlyphAtlas: Disentangling Stroke Detail from Layout for Scene Text Synthesis"
+  },
+  {
+   "id": "2611.19495",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Vegetation Health Classification for Low-Data and Edge Hardware Deployment"
+  },
+  {
+   "id": "2611.21456",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Expertise capture in workplace AI"
+  },
+  {
+   "id": "2611.19975",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Federated Dataset Simulation: Inducing Label-Free Heterogeneity Across Tasks"
+  },
+  {
+   "id": "2611.21439",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "A Reinforcement Learning Method to Navigate SMEFT Operator Space"
+  },
+  {
+   "id": "2611.19247",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "GameWM: Toward Next-Generation Video Games with Interaction-Centric World Models"
+  },
+  {
+   "id": "2611.21596",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "SADL: On the Demand-Supply Geometry of Representation Collapse"
+  },
+  {
+   "id": "2611.18672",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Exists, Valid: Calibrated Validity of Stored 3D Geometry Across Long Observation"
+  },
+  {
+   "id": "2611.19140",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "When the Mythical Man-Month Meets Agentic Web Systems: Structured Coordination f"
+  },
+  {
+   "id": "2611.21240",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "How Developer Personality Shapes the Use of AI Coding Assistants"
+  },
+  {
+   "id": "2611.19670",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Architecting the Corporate AI Infrastructure: The Evolving Roles of AI Governanc"
+  },
+  {
+   "id": "2611.20745",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "A Seismic Foundation Model for Dense Feature Extraction"
+  },
+  {
+   "id": "2611.20637",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Counterfactual Feature Steering for Adjacency-Preserving Identity Unlearning"
+  },
+  {
+   "id": "2611.21299",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Turing Agent: Agentic Formal Verification for Mathematical Research"
+  },
+  {
+   "id": "2611.20371",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Pretty Linear Liars: Unregularized Probes Favor Intervention-Unfaithful Features"
+  },
+  {
+   "id": "2611.20372",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "VisDrone-ReID: A Unified Multi-Category Object Re-Identification Benchmark"
+  },
+  {
+   "id": "2611.18667",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Speaking-Clock Mamba: Phoneme-Conditioned State-Space Modeling for Visual Forced"
+  },
+  {
+   "id": "2611.20983",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "GRACE: Parallel Best-of-N Multi-Agent Analysis of Closed-Form Questions over Dat"
+  },
+  {
+   "id": "2611.19215",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Mem2Fair: Online Fairness Control for Text-to-Video Generation via Fair Memory"
+  },
+  {
+   "id": "2611.19871",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Interactive Structured Environment Scaling for Large Language Model Agentic Reas"
+  },
+  {
+   "id": "2611.20447",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "The Logic Chain Breaking Point: A Controlled-Variable Benchmark for Reasoning De"
+  },
+  {
+   "id": "2611.18706",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Small Data in Long-Term Environmental Vision: Annotation Noise, Gamification, an"
+  },
+  {
+   "id": "2611.19151",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "MarineSparkLM-4B: A Lightweight Language Model for Marine and Offshore Engineeri"
+  },
+  {
+   "id": "2611.20922",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Experience Rot: Experienced Agents Fail Where Novices Succeed"
+  },
+  {
+   "id": "2611.18765",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Mutual Colormap Dependence: How Recoloring Biomedical Images Changes Vision-Lang"
+  },
+  {
+   "id": "2611.19034",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Refinement vs. Replanning: Inference Compute Allocation in Robot Policies"
+  },
+  {
+   "id": "2611.20926",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Advancing Cognitive Pairwise Comparisons for Human-Centric Artificial Intelligen"
+  },
+  {
+   "id": "2611.19465",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "VAST: Compiling Grounded Vulnerability Scenarios into Verifiable, Multi-Step Env"
+  },
+  {
+   "id": "2611.20894",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Which AI Use Cases Deserve a Pilot? A Risk and Value Framework for Funding, Scop"
+  },
+  {
+   "id": "2611.19554",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Inquest: Log-Guided Root-Cause Code Localization with a Staged Agent"
+  },
+  {
+   "id": "2611.20653",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "RAMP: Rethinking Multimodal Evaluation through Answer Readout Protocols"
+  },
+  {
+   "id": "2611.18690",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Perceptual Weight Space Programming for Diffusion Super-Resolution"
+  },
+  {
+   "id": "2611.20840",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Interpretable deep concepts of organoid morphology"
+  },
+  {
+   "id": "2611.19905",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "HEmIF-Bench: Benchmarking H&E-to-mIF Models BeyondVirtual-StainFidelity"
+  },
+  {
+   "id": "2611.20753",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "UIAnchor: Anchoring UI Perception and Action Execution for Reliable Service-Comp"
+  },
+  {
+   "id": "2611.18851",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "KUDEX: A Zero-Shot Decompositional Framework for Logical Analysis in Natural Lan"
+  },
+  {
+   "id": "2611.18575",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "A Survey of Image-to-Code Generation for Software Engineering"
+  },
+  {
+   "id": "2611.21378",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Data-Driven Predictive Control for Autonomous Vehicle Racing under Varying Frict"
+  },
+  {
+   "id": "2611.19572",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Spectral Steering: Local Inverse Geometry for Frozen Diffusion Generators"
+  },
+  {
+   "id": "2611.20819",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Surprise-Gated Memory for Live Speaker Diarization"
+  },
+  {
+   "id": "2611.18696",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "ARC-VLN: Adaptive Recursive Computing-based Visual-Language Navigation"
+  },
+  {
+   "id": "2611.20381",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Trait Collapse in Text-to-Image Generation: Evaluating and Mitigating Personalit"
+  },
+  {
+   "id": "2611.21077",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "MORE: Merge Once, Route Early for Training-Free Multi-Subject Composition from L"
+  },
+  {
+   "id": "2611.20688",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "VIVID: A Visual Harness for Agentic Video Editing"
+  },
+  {
+   "id": "2611.18791",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "From Retouched Images to Paired Videos: A Synthetic Benchmark for Face Video Ret"
+  },
+  {
+   "id": "2611.20445",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Explainable Federated Learning via Global-Local Attribution Alignment"
+  },
+  {
+   "id": "2611.19745",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "TIVS: Mapping the Sensitivity Landscape of Visual Token Transformations in MLLMs"
+  },
+  {
+   "id": "2611.19698",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Data Attribution Should Steer Pretraining"
+  },
+  {
+   "id": "2611.19385",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Does a completed simulation run mean a usable urban wind result for AI agents?"
+  },
+  {
+   "id": "2611.19709",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Cache or Denoise Less? Residual Reuse in a Flow-Matching World Action Model"
+  },
+  {
+   "id": "2611.19251",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Physics-Informed Causal Reasoning for Nonstationary Robot Dynamics"
+  },
+  {
+   "id": "2611.20915",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Multi-LLM Agentic AI at the Edge: Joint Agent Scheduling and Resource Allocation"
+  },
+  {
+   "id": "2611.21577",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "When Tool Names Are Not Identities: Measuring Provider Misbinding in MCP-Based A"
+  },
+  {
+   "id": "2611.19747",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "How Far Is Too Far? Object Recognition Declines Monotonically with Semantic Dist"
+  },
+  {
+   "id": "2611.20579",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Language Models Meet Vibration Testing for LEO Constellation Satellites with Cal"
+  },
+  {
+   "id": "2611.19199",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "What Moves a LoCoMo Score? Memory Context, Answer Prompts and Judges"
+  },
+  {
+   "id": "2611.19343",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "OmitEHR: Scalable Omission Detection in LLM-Generated Clinical Summaries"
+  },
+  {
+   "id": "2611.20996",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Explaining Cross-Label Decision Structure in Multi-Output Tree Ensembles"
+  },
+  {
+   "id": "2611.21373",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "WeVisForensics: Self-Evolving Agent for Omni AI-Generated Video Detection"
+  },
+  {
+   "id": "2611.21449",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Replicating and Extending Weight-Space Programming: Frontier LLMs Compile Progra"
+  },
+  {
+   "id": "2611.19537",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Continuation-Guided LLM Evolution of Program Policies and Goal Compilers in Craf"
+  },
+  {
+   "id": "2611.19823",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "EfficientSkill: Learning Skills for Token-Efficient Multi-Turn Agents"
+  },
+  {
+   "id": "2611.21403",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Portrait Fitness as a Pretext: Probing Implicit Demographic Bias in VLMs"
+  },
+  {
+   "id": "2611.20582",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "SCoRe: Support-Calibrated Role Fusion for Training-Free Cross-Domain Few-Shot Se"
+  },
+  {
+   "id": "2611.19616",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Towards Probabilistically Safe Reinforcement Learning: Theory and Deployment on "
+  },
+  {
+   "id": "2611.21407",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Harness Leverage Across Model Size: A Ladder of Five Local Agent Harnesses from "
+  },
+  {
+   "id": "2611.21290",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "FM-Recon: Exploring Foundation Model Features for Accelerated Cardiac Cine MRI R"
+  },
+  {
+   "id": "2611.21408",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Do Embedding-Map Distances Guide LLM Ideation? Four Tests Against What Came Next"
+  },
+  {
+   "id": "2611.18623",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Evaluating the Robustness of Fact-Checking LLMs on Multilingual Evidence"
+  },
+  {
+   "id": "2611.19786",
+   "group": "kw-missed",
+   "label": 0,
+   "pred": 0,
+   "ok": true,
+   "title": "Fine-Grained RLAIF for Visual Safety: Learning to Zoom into Hazards for Multimod"
+  }
+ ],
+ "flags": [
+  "2611.20076"
+ ]
+}
