@@ -8,16 +8,19 @@
  "summary": {
   "accepted": {
    "n": 39,
-   "acc": 0.5641,
-   "missed_pos": 17
+   "n_unsure": 0,
+   "acc": 0.6154,
+   "missed_pos": 15
   },
   "rejected": {
    "n": 69,
+   "n_unsure": 0,
    "acc": 0.6087,
    "missed_pos": 0
   },
   "kw-missed": {
    "n": 100,
+   "n_unsure": 0,
    "acc": 0.99,
    "missed_pos": 0
   }
@@ -291,8 +294,8 @@
    "id": "2511.16349",
    "group": "accepted",
    "label": 1,
-   "pred": 0,
-   "ok": false,
+   "pred": 1,
+   "ok": true,
    "title": "LoC-IN: Real-Time Localization of Cameras in Neural Rendered Prior LiDAR Maps"
   },
   {
@@ -315,8 +318,8 @@
    "id": "2607.03875",
    "group": "accepted",
    "label": 1,
-   "pred": 0,
-   "ok": false,
+   "pred": 1,
+   "ok": true,
    "title": "MACRO: Training-free Multi-plane Attention for Closeup Render Optimization"
   },
   {

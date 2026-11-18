@@ -68,8 +68,9 @@ def build(mmdd):
     rejected = set(load(mmdd, "rejected") or [])
 
     meta = {}
-    for src in (pool, nonxr):
-        for k, v in src.items():
+    # 摘要只存在于候选池/补录数据里：scored_1118.json 只带标题与评分
+    for name in ("xr_pool", "nonxr", "cand_main", "cand_bf", "old_replace"):
+        for k, v in (load(mmdd, name) or {}).items():
             meta[k] = v
 
     rows = []
@@ -135,19 +136,24 @@ def run(mmdd, backend, limit=None):
     out = []
     for r in rows:
         pred = backend_file(r, table) if backend.startswith("file:") else backend_stub(r)
-        out.append({"id": r["id"], "group": r["group"], "label": r["label"], "pred": pred,
-                    "ok": pred == r["label"], "title": r["title"][:80]})
+        lab = r.get("label")
+        out.append({"id": r["id"], "group": r["group"], "label": lab, "pred": pred,
+                    "ok": (None if lab is None else pred == lab), "title": r["title"][:80]})
 
-    print("\n%-12s %5s %8s %10s" % ("group", "n", "accuracy", "漏判(正例判0)"))
+    print("\n%-12s %5s %5s %8s %10s" % ("group", "n", "判不准", "accuracy", "漏判(正例判0)"))
     summary = {}
     for g in ("accepted", "rejected", "kw-missed"):
         sub = [x for x in out if x["group"] == g]
         if not sub:
             continue
-        acc = sum(x["ok"] for x in sub) / len(sub)
-        killed = sum(1 for x in sub if x["label"] == 1 and x["pred"] == 0)
-        summary[g] = {"n": len(sub), "acc": round(acc, 4), "missed_pos": killed}
-        print("%-12s %5d %8.4f %10d" % (g, len(sub), acc, killed))
+        graded = [x for x in sub if x["ok"] is not None]      # 人工标「不确定」的不进分母
+        acc = (sum(x["ok"] for x in graded) / len(graded)) if graded else None
+        killed = sum(1 for x in graded if x["label"] == 1 and x["pred"] == 0)
+        summary[g] = {"n": len(sub), "n_unsure": len(sub) - len(graded),
+                      "acc": (round(acc, 4) if acc is not None else None), "missed_pos": killed}
+        print("%-12s %5d %5d %8s %10d"
+              % (g, len(sub), len(sub) - len(graded),
+                 ("%.4f" % acc) if acc is not None else "—", killed))
 
     # 探针的真正产出：不一致清单（只报警，不改判）
     flags = [x for x in out if x["group"] == "kw-missed" and x["pred"] == 1]
@@ -160,6 +166,77 @@ def run(mmdd, backend, limit=None):
                "summary": summary, "items": out, "flags": [x["id"] for x in flags]},
               open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\n结果 -> %s（%d 条）" % (path, len(out)))
+    return 0
+
+
+def _hits(row):
+    t = row["title"].lower()
+    a = row["abstract"].lower()
+    return sum(3 for k in XR_TERMS if k in t) + sum(1 for k in XR_TERMS if k in a)
+
+
+def sheet(mmdd, per_group=20):
+    """生成人工标注表：每组一半取「边界项」（最有信息量），一半随机（避免选择偏差）。"""
+    rows = [r for r in read_golden(mmdd) if r["group"] in ("accepted", "kw-missed")]
+    rnd = random.Random(20261118)
+    picked = []
+    for g, reverse in (("accepted", False), ("kw-missed", True)):
+        grp = [r for r in rows if r["group"] == g]
+        grp.sort(key=lambda r: (_hits(r), r["id"]), reverse=reverse)
+        half = per_group // 2
+        boundary = grp[:half]
+        rest = [r for r in grp[half:] if r["id"] not in {x["id"] for x in boundary}]
+        rnd.shuffle(rest)
+        picked.extend([(r, "边界") for r in boundary] + [(r, "随机") for r in rest[:half]])
+
+    path = os.path.join(OUT_DIR, "labeling_%s.md" % mmdd)
+    L = ["# 判定标注表 %s（问题版本 %s）\n" % (mmdd, QUESTION_VERSION),
+         "## 判定规则（按规则判，不按感觉判）\n",
+         "- **判 1（相关）**：论文的研究对象、被评估场景、硬件或用户任务中，**至少有一项属于**沉浸式/空间场景"
+         "（头显、AR/VR 应用、空间交互、沉浸式内容与渲染、化身、触觉/遥操作、XR 系统与评估）。",
+         "- **判 0（不相关）**：仅为通用视觉/图形/机器人方法，XR 只是**可能的迁移方向**而非论文的研究对象或评估场景。",
+         "- **判 ?（不确定）**：两条规则都能说得通，或摘要信息不足以判断。**宁可标 ?，不要猜**——"
+         "? 会从分母里剔除，不影响指标；猜错会污染基线。\n",
+         "## 必读\n",
+         "- 「预判」列是我用关键词密度挑的，**不是答案**；`边界` 项是关键词分不开的，`随机` 项用于防止选择偏差。",
+         "- 只需在最后一列填 `1` / `0` / `?`，其余不要动；填完告诉我，我用 `ingest` 回写。\n",
+         "| # | arXiv | 题目 | 摘要首句 | 预判 | 你的判定 |",
+         "|---:|---|---|---|---|---|"]
+    for i, (r, tag) in enumerate(picked, 1):
+        title = r["title"].replace("|", "/")[:110]
+        ab = re.split(r"(?<=[.!?])\s", r["abstract"].strip())[0][:150].replace("|", "/")
+        L.append("| %d | %s | %s | %s | %s |  |" % (i, r["id"], title, ab, tag))
+    L.append("\n> 共 %d 条。填完后：`python scripts/decision_probe.py ingest %s data/decision/labeling_%s.md`\n"
+             % (len(picked), mmdd, mmdd))
+    open(path, "w", encoding="utf-8").write("\n".join(L) + "\n")
+    n_acc = sum(1 for r, _t in picked if r["group"] == "accepted")
+    print("标注表 -> %s（%d 条：accepted %d / kw-missed %d）" % (path, len(picked), n_acc, len(picked) - n_acc))
+    return 0
+
+
+def ingest(mmdd, path):
+    """把标注表最后一列的 1/0/? 回写进 golden，标签来源记为人工确认。"""
+    rows = read_golden(mmdd)
+    idx = {r["id"]: r for r in rows}
+    n1 = n0 = nq = 0
+    for ln in open(path, encoding="utf-8"):
+        if not ln.startswith("| ") or "---" in ln:
+            continue
+        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        if len(cells) < 6:
+            continue
+        pid, v = cells[1], cells[-1]
+        if pid not in idx or v not in ("1", "0", "?", "相关", "不相关", "不确定"):
+            continue
+        v = {"相关": "1", "不相关": "0", "不确定": "?"}.get(v, v)
+        idx[pid]["label"] = {"1": 1, "0": 0, "?": None}[v]
+        idx[pid]["label_status"] = "uncertain-human" if v == "?" else "confirmed-human"
+        n1 += v == "1"; n0 += v == "0"; nq += v == "?"
+    with open(os.path.join(OUT_DIR, "golden_%s.jsonl" % mmdd), "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    print("回写完成：相关 %d / 不相关 %d / 不确定 %d（共 %d 条已人工标注）"
+          % (n1, n0, nq, n1 + n0 + nq))
     return 0
 
 
@@ -182,11 +259,17 @@ def main():
     r = sub.add_parser("run"); r.add_argument("mmdd")
     r.add_argument("--backend", default="stub-kw"); r.add_argument("--limit", type=int)
     e = sub.add_parser("emit"); e.add_argument("mmdd"); e.add_argument("--limit", type=int, default=2)
+    s = sub.add_parser("sheet"); s.add_argument("mmdd"); s.add_argument("--per-group", type=int, default=20)
+    i = sub.add_parser("ingest"); i.add_argument("mmdd"); i.add_argument("path")
     a = ap.parse_args()
     if a.cmd == "build":
         return build(a.mmdd)
     if a.cmd == "run":
         return run(a.mmdd, a.backend, a.limit)
+    if a.cmd == "sheet":
+        return sheet(a.mmdd, a.per_group)
+    if a.cmd == "ingest":
+        return ingest(a.mmdd, a.path)
     return emit(a.mmdd, a.limit)
 
 
