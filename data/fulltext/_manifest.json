@@ -1,0 +1,4860 @@
+{
+ "2609.18473": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18473v1",
+  "evidence": "FULL",
+  "chars": 98772,
+  "title": "CADSplat: Sparse-View 3D Gaussian Splatting Aided by CAD Models for Robust, Photorealistic Digital-Twin Reconstruction"
+ },
+ "2609.18898": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18898v1",
+  "evidence": "FULL",
+  "chars": 78915,
+  "title": "NormLift: From Lifted Features To Semantic Reliability In 3D Gaussian Splatting"
+ },
+ "2609.18634": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18634v1",
+  "evidence": "FULL",
+  "chars": 62229,
+  "title": "GenStream: Semantic Streaming Framework for Generative Reconstruction of Human-centric Media"
+ },
+ "2609.18632": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18632v1",
+  "evidence": "FULL",
+  "chars": 61134,
+  "title": "VibeAvatar: Aligning Phonetic Kinematics and Human Aesthetics for High-Fidelity Talking Avatar Synthesis"
+ },
+ "2609.17814": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.17814v1",
+  "evidence": "FULL",
+  "chars": 82627,
+  "title": "GazeDiT: Gaze-Accurate Diffusion Image Generation for Eye Tracking via Spatial Conditioning"
+ },
+ "2609.17909": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.17909v1",
+  "evidence": "FULL",
+  "chars": 57723,
+  "title": "Zing-0.5: Toward Playable Worlds with Real-Time Joint Action and Text Control"
+ },
+ "2609.18232": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18232v1",
+  "evidence": "FULL",
+  "chars": 47870,
+  "title": "UMI-Bridge: Action-Anchored Latent Alignment across Human and Robot Manipulation Data"
+ },
+ "2609.18430": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18430v1",
+  "evidence": "FULL",
+  "chars": 86686,
+  "title": "StrucPhysVideo: Learning Physical Dynamics from Structured Captions and Robot Actions"
+ },
+ "2609.18548": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18548v1",
+  "evidence": "FULL",
+  "chars": 51355,
+  "title": "HAP: A Hand-Driven Active Perception Framework for Egocentric Head Motion Prediction"
+ },
+ "2609.18624": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.18624v1",
+  "evidence": "FULL",
+  "chars": 34555,
+  "title": "MoQSplat: Adaptive Progressive Streaming of 3D Gaussian Splatting via MoQ"
+ },
+ "2609.17810": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.17810v1",
+  "evidence": "FULL",
+  "chars": 42837,
+  "title": "Wind on Trees: Testing Physical Grounding in Dynamic 4D Gaussian Splatting"
+ },
+ "2609.17688": {
+  "level": "L0",
+  "source": "https://arxiv.org/html/2609.17688v1",
+  "evidence": "FULL",
+  "chars": 117557,
+  "title": "CapMem: A Benchmark for Caption-Based Episodic Memory in Egocentric Video"
+ },
+ "2609.21502": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 116842,
+  "url": "https://arxiv.org/html/2609.21502v1",
+  "fetched": "2026-09-23T03:31:05"
+ },
+ "2609.21347": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88955,
+  "url": "https://arxiv.org/html/2609.21347v1",
+  "fetched": "2026-09-23T03:31:26"
+ },
+ "2609.24140": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51993,
+  "url": "https://arxiv.org/html/2609.24140v1",
+  "fetched": "2026-09-23T03:31:47"
+ },
+ "2609.22913": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 102775,
+  "url": "https://arxiv.org/html/2609.22913v1",
+  "fetched": "2026-09-23T03:31:51"
+ },
+ "2609.24253": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44680,
+  "url": "https://arxiv.org/html/2609.24253v1",
+  "fetched": "2026-09-23T03:32:12"
+ },
+ "2609.21176": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 25283,
+  "url": "https://arxiv.org/html/2609.21176v1",
+  "fetched": "2026-09-23T03:32:33"
+ },
+ "2609.21480": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43057,
+  "url": "https://arxiv.org/html/2609.21480v1",
+  "fetched": "2026-09-23T03:32:53"
+ },
+ "2609.21498": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48072,
+  "url": "https://arxiv.org/html/2609.21498v1",
+  "fetched": "2026-09-23T03:33:14"
+ },
+ "2609.22941": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74359,
+  "url": "https://arxiv.org/html/2609.22941v1",
+  "fetched": "2026-09-23T03:33:18"
+ },
+ "2609.23005": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84905,
+  "url": "https://arxiv.org/html/2609.23005v1",
+  "fetched": "2026-09-23T03:33:38"
+ },
+ "2609.23027": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 33927,
+  "url": "https://arxiv.org/html/2609.23027v1",
+  "fetched": "2026-09-23T03:34:03"
+ },
+ "2609.23049": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44777,
+  "url": "https://arxiv.org/html/2609.23049v1",
+  "fetched": "2026-09-23T03:34:24"
+ },
+ "2609.23182": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82487,
+  "url": "https://arxiv.org/html/2609.23182v1",
+  "fetched": "2026-09-23T03:34:45"
+ },
+ "2609.23436": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87088,
+  "url": "https://arxiv.org/html/2609.23436v2",
+  "fetched": "2026-09-26T03:09:32"
+ },
+ "2609.23509": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47059,
+  "url": "https://arxiv.org/html/2609.23509v1",
+  "fetched": "2026-09-23T03:35:33"
+ },
+ "2609.24158": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87469,
+  "url": "https://arxiv.org/html/2609.24158v1",
+  "fetched": "2026-09-23T03:35:55"
+ },
+ "2609.25002": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74151,
+  "url": "https://arxiv.org/html/2609.25002v1",
+  "fetched": "2026-09-23T03:36:15"
+ },
+ "2609.23755": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 97228,
+  "url": "https://arxiv.org/html/2609.23755v1",
+  "fetched": "2026-09-23T03:36:19"
+ },
+ "2609.25604": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 78118,
+  "url": "https://arxiv.org/html/2609.25604v1",
+  "fetched": "2026-09-24T03:16:05"
+ },
+ "2609.26795": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43280,
+  "url": "https://arxiv.org/html/2609.26795v1",
+  "fetched": "2026-09-24T03:16:26"
+ },
+ "2609.25422": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47500,
+  "url": "https://arxiv.org/html/2609.25422v1",
+  "fetched": "2026-09-24T03:16:47"
+ },
+ "2609.26203": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 109382,
+  "url": "https://arxiv.org/html/2609.26203v1",
+  "fetched": "2026-09-24T03:17:07"
+ },
+ "2609.24531": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54759,
+  "url": "https://arxiv.org/html/2609.24531v1",
+  "fetched": "2026-09-24T03:17:11"
+ },
+ "2609.25527": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45575,
+  "url": "https://arxiv.org/html/2609.25527v1",
+  "fetched": "2026-09-24T03:17:32"
+ },
+ "2609.25746": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 35704,
+  "url": "https://arxiv.org/html/2609.25746v1",
+  "fetched": "2026-09-24T03:17:53"
+ },
+ "2609.26315": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47973,
+  "url": "https://arxiv.org/html/2609.26315v1",
+  "fetched": "2026-09-24T03:18:13"
+ },
+ "2609.25036": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 204688,
+  "url": "https://arxiv.org/html/2609.25036v1",
+  "fetched": "2026-09-24T03:18:34"
+ },
+ "2609.25466": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 4267,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2609.25466",
+  "fetched": "2026-09-24T03:18:40"
+ },
+ "2609.25633": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 95725,
+  "url": "https://arxiv.org/html/2609.25633v1",
+  "fetched": "2026-09-24T03:19:01"
+ },
+ "2609.15795": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54791,
+  "url": "https://arxiv.org/html/2609.15795v2",
+  "fetched": "2026-09-24T03:19:04"
+ },
+ "2609.27104": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 16192,
+  "url": "https://arxiv.org/html/2609.27104v1",
+  "fetched": "2026-09-25T03:05:23"
+ },
+ "2609.27235": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 19314,
+  "url": "https://arxiv.org/html/2609.27235v1",
+  "fetched": "2026-09-25T03:05:44"
+ },
+ "2609.27264": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 28512,
+  "url": "https://arxiv.org/html/2609.27264v1",
+  "fetched": "2026-09-25T03:06:04"
+ },
+ "2609.27509": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77272,
+  "url": "https://arxiv.org/html/2609.27509v1",
+  "fetched": "2026-09-25T03:06:25"
+ },
+ "2609.27560": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 33518,
+  "url": "https://arxiv.org/html/2609.27560v1",
+  "fetched": "2026-09-25T03:06:45"
+ },
+ "2609.27595": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 40409,
+  "url": "https://arxiv.org/html/2609.27595v1",
+  "fetched": "2026-09-25T03:07:06"
+ },
+ "2609.27600": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 62778,
+  "url": "https://arxiv.org/html/2609.27600v1",
+  "fetched": "2026-09-25T03:07:27"
+ },
+ "2609.27702": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54418,
+  "url": "https://arxiv.org/html/2609.27702v1",
+  "fetched": "2026-09-25T03:07:47"
+ },
+ "2609.27778": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47054,
+  "url": "https://arxiv.org/html/2609.27778v1",
+  "fetched": "2026-09-25T03:08:08"
+ },
+ "2609.27779": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 107523,
+  "url": "https://arxiv.org/html/2609.27779v1",
+  "fetched": "2026-09-25T03:08:28"
+ },
+ "2609.27850": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57173,
+  "url": "https://arxiv.org/html/2609.27850v1",
+  "fetched": "2026-09-25T03:08:49"
+ },
+ "2609.27868": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69830,
+  "url": "https://arxiv.org/html/2609.27868v1",
+  "fetched": "2026-09-25T03:09:10"
+ },
+ "2609.27938": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48925,
+  "url": "https://arxiv.org/html/2609.27938v1",
+  "fetched": "2026-09-25T03:09:31"
+ },
+ "2609.28131": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 116267,
+  "url": "https://arxiv.org/html/2609.28131v1",
+  "fetched": "2026-09-25T03:09:52"
+ },
+ "2609.28296": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50016,
+  "url": "https://arxiv.org/html/2609.28296v1",
+  "fetched": "2026-09-25T03:10:13"
+ },
+ "2609.28539": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43734,
+  "url": "https://arxiv.org/html/2609.28539v1",
+  "fetched": "2026-09-26T03:05:00"
+ },
+ "2609.28812": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 89981,
+  "url": "https://arxiv.org/html/2609.28812v1",
+  "fetched": "2026-09-26T03:05:21"
+ },
+ "2609.29173": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46779,
+  "url": "https://arxiv.org/html/2609.29173v1",
+  "fetched": "2026-09-26T03:05:41"
+ },
+ "2609.29686": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 5170,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2609.29686",
+  "fetched": "2026-09-26T03:06:03"
+ },
+ "2609.30076": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 129423,
+  "url": "https://arxiv.org/html/2609.30076v1",
+  "fetched": "2026-09-26T03:06:24"
+ },
+ "2609.28645": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 85897,
+  "url": "https://arxiv.org/html/2609.28645v1",
+  "fetched": "2026-09-26T03:06:45"
+ },
+ "2609.28930": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65802,
+  "url": "https://arxiv.org/html/2609.28930v1",
+  "fetched": "2026-09-26T03:07:06"
+ },
+ "2609.28997": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 114291,
+  "url": "https://arxiv.org/html/2609.28997v1",
+  "fetched": "2026-09-26T03:07:26"
+ },
+ "2609.29073": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59625,
+  "url": "https://arxiv.org/html/2609.29073v1",
+  "fetched": "2026-09-26T03:07:47"
+ },
+ "2609.29106": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69727,
+  "url": "https://arxiv.org/html/2609.29106v1",
+  "fetched": "2026-09-26T03:08:08"
+ },
+ "2609.29292": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56042,
+  "url": "https://arxiv.org/html/2609.29292v1",
+  "fetched": "2026-09-26T03:08:28"
+ },
+ "2609.29836": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51830,
+  "url": "https://arxiv.org/html/2609.29836v1",
+  "fetched": "2026-09-26T03:08:32"
+ },
+ "2609.29963": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 27434,
+  "url": "https://arxiv.org/html/2609.29963v1",
+  "fetched": "2026-09-26T03:08:36"
+ },
+ "2609.29985": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67523,
+  "url": "https://arxiv.org/html/2609.29985v1",
+  "fetched": "2026-09-26T03:08:40"
+ },
+ "2609.30187": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 23329,
+  "url": "https://arxiv.org/html/2609.30187v1",
+  "fetched": "2026-09-26T03:08:44"
+ },
+ "2609.30245": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 91046,
+  "url": "https://arxiv.org/html/2609.30245v1",
+  "fetched": "2026-09-26T03:08:47"
+ },
+ "2609.29374": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69369,
+  "url": "https://arxiv.org/html/2609.29374v1",
+  "fetched": "2026-09-26T03:09:08"
+ },
+ "2609.29603": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 105456,
+  "url": "https://arxiv.org/html/2609.29603v1",
+  "fetched": "2026-09-26T03:09:29"
+ },
+ "2609.29041": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 29934,
+  "url": "https://arxiv.org/html/2609.29041v1",
+  "fetched": "2026-09-26T03:09:53"
+ },
+ "2609.28976": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48410,
+  "url": "https://arxiv.org/html/2609.28976v1",
+  "fetched": "2026-09-26T03:10:14"
+ },
+ "2609.34527": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 123990,
+  "url": "https://arxiv.org/html/2609.34527v1",
+  "fetched": "2026-10-02T23:33:24"
+ },
+ "2609.32626": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54138,
+  "url": "https://arxiv.org/html/2609.32626v1",
+  "fetched": "2026-10-02T23:33:49"
+ },
+ "2610.02207": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 90553,
+  "url": "https://arxiv.org/html/2610.02207v1",
+  "fetched": "2026-10-02T23:33:57"
+ },
+ "2609.34817": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 85882,
+  "url": "https://arxiv.org/html/2609.34817v1",
+  "fetched": "2026-10-02T23:34:22"
+ },
+ "2609.35743": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70928,
+  "url": "https://arxiv.org/html/2609.35743v1",
+  "fetched": "2026-10-02T23:34:27"
+ },
+ "2609.34346": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72368,
+  "url": "https://arxiv.org/html/2609.34346v1",
+  "fetched": "2026-10-02T23:34:51"
+ },
+ "2609.34367": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 106505,
+  "url": "https://arxiv.org/html/2609.34367v2",
+  "fetched": "2026-10-02T23:35:03"
+ },
+ "2609.33969": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63642,
+  "url": "https://arxiv.org/html/2609.33969v1",
+  "fetched": "2026-10-02T23:35:31"
+ },
+ "2609.35616": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 111197,
+  "url": "https://arxiv.org/html/2609.35616v1",
+  "fetched": "2026-10-02T23:36:03"
+ },
+ "2609.36596": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47241,
+  "url": "https://arxiv.org/html/2609.36596v1",
+  "fetched": "2026-10-02T23:36:10"
+ },
+ "2609.34286": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 101263,
+  "url": "https://arxiv.org/html/2609.34286v1",
+  "fetched": "2026-10-02T23:36:22"
+ },
+ "2609.32983": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 94196,
+  "url": "https://arxiv.org/html/2609.32983v1",
+  "fetched": "2026-10-02T23:36:44"
+ },
+ "2610.01943": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46153,
+  "url": "https://arxiv.org/html/2610.01943v1",
+  "fetched": "2026-10-02T23:37:30"
+ },
+ "2609.38054": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 55399,
+  "url": "https://arxiv.org/html/2609.38054v1",
+  "fetched": "2026-10-02T23:37:36"
+ },
+ "2609.34630": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87915,
+  "url": "https://arxiv.org/html/2609.34630v1",
+  "fetched": "2026-10-02T23:38:14"
+ },
+ "2609.36404": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 95906,
+  "url": "https://arxiv.org/html/2609.36404v1",
+  "fetched": "2026-10-02T23:41:01"
+ },
+ "2610.00040": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 42567,
+  "url": "https://arxiv.org/html/2610.00040v1",
+  "fetched": "2026-10-04T03:15:54"
+ },
+ "2610.00069": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 25444,
+  "url": "https://arxiv.org/html/2610.00069v1",
+  "fetched": "2026-10-03T03:07:10"
+ },
+ "2610.00195": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 4350,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.00195",
+  "fetched": "2026-10-04T03:16:16"
+ },
+ "2610.01863": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71635,
+  "url": "https://arxiv.org/html/2610.01863v1",
+  "fetched": "2026-10-03T03:07:53"
+ },
+ "2609.11434": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 37421,
+  "url": "https://arxiv.org/html/2609.11434v2",
+  "fetched": "2026-10-03T03:07:56"
+ },
+ "2609.09158": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 78208,
+  "url": "https://arxiv.org/html/2609.09158v2",
+  "fetched": "2026-10-03T03:08:00"
+ },
+ "2610.02322": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56867,
+  "url": "https://arxiv.org/html/2610.02322v1",
+  "fetched": "2026-10-06T03:18:19"
+ },
+ "2610.02697": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52670,
+  "url": "https://arxiv.org/html/2610.02697v1",
+  "fetched": "2026-10-06T03:18:23"
+ },
+ "2610.02715": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 114226,
+  "url": "https://arxiv.org/html/2610.02715v1",
+  "fetched": "2026-10-06T03:18:27"
+ },
+ "2610.03162": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 135046,
+  "url": "https://arxiv.org/html/2610.03162v1",
+  "fetched": "2026-10-06T03:18:31"
+ },
+ "2610.03192": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57553,
+  "url": "https://arxiv.org/html/2610.03192v1",
+  "fetched": "2026-10-06T03:18:35"
+ },
+ "2610.03232": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 85174,
+  "url": "https://arxiv.org/html/2610.03232v1",
+  "fetched": "2026-10-06T03:18:39"
+ },
+ "2610.03283": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58584,
+  "url": "https://arxiv.org/html/2610.03283v1",
+  "fetched": "2026-10-06T03:18:43"
+ },
+ "2610.03441": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 29838,
+  "url": "https://arxiv.org/html/2610.03441v1",
+  "fetched": "2026-10-06T03:18:47"
+ },
+ "2610.03599": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66058,
+  "url": "https://arxiv.org/html/2610.03599v1",
+  "fetched": "2026-10-06T03:18:51"
+ },
+ "2610.03607": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 142533,
+  "url": "https://arxiv.org/html/2610.03607v1",
+  "fetched": "2026-10-06T03:18:55"
+ },
+ "2610.07729": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57909,
+  "url": "https://arxiv.org/html/2610.07729v1",
+  "fetched": "2026-10-08T03:05:57"
+ },
+ "2610.07795": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77622,
+  "url": "https://arxiv.org/html/2610.07795v1",
+  "fetched": "2026-10-08T03:06:01"
+ },
+ "2610.07958": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 106670,
+  "url": "https://arxiv.org/html/2610.07958v1",
+  "fetched": "2026-10-08T03:06:05"
+ },
+ "2610.08179": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54665,
+  "url": "https://arxiv.org/html/2610.08179v1",
+  "fetched": "2026-10-08T03:06:09"
+ },
+ "2610.08756": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80706,
+  "url": "https://arxiv.org/html/2610.08756v1",
+  "fetched": "2026-10-08T03:06:13"
+ },
+ "2610.06970": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 5120,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.06970",
+  "fetched": "2026-10-08T03:06:19"
+ },
+ "2610.07477": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 155894,
+  "url": "https://arxiv.org/html/2610.07477v1",
+  "fetched": "2026-10-08T03:06:23"
+ },
+ "2610.07507": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46589,
+  "url": "https://arxiv.org/html/2610.07507v1",
+  "fetched": "2026-10-08T03:06:27"
+ },
+ "2610.08305": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 12115,
+  "url": "https://arxiv.org/html/2610.08305v1",
+  "fetched": "2026-10-08T03:06:31"
+ },
+ "2610.08619": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 22424,
+  "url": "https://arxiv.org/html/2610.08619v1",
+  "fetched": "2026-10-08T03:06:34"
+ },
+ "2610.08700": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 40705,
+  "url": "https://arxiv.org/html/2610.08700v1",
+  "fetched": "2026-10-19T05:06:11"
+ },
+ "2610.08339": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50790,
+  "url": "https://arxiv.org/html/2610.08339v1",
+  "fetched": "2026-10-08T03:06:42"
+ },
+ "2610.08192": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 101506,
+  "url": "https://arxiv.org/html/2610.08192v2",
+  "fetched": "2026-10-19T05:07:17"
+ },
+ "2610.07569": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54757,
+  "url": "https://arxiv.org/html/2610.07569v1",
+  "fetched": "2026-10-08T03:06:50"
+ },
+ "2610.08726": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 108763,
+  "url": "https://arxiv.org/html/2610.08726v1",
+  "fetched": "2026-10-08T03:06:54"
+ },
+ "2610.12461": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96480,
+  "url": "https://arxiv.org/html/2610.12461v1",
+  "fetched": "2026-10-10T03:10:48"
+ },
+ "2610.10811": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68974,
+  "url": "https://arxiv.org/html/2610.10811v1",
+  "fetched": "2026-10-10T03:10:52"
+ },
+ "2610.11070": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63475,
+  "url": "https://arxiv.org/html/2610.11070v1",
+  "fetched": "2026-10-10T03:10:56"
+ },
+ "2610.11815": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 62155,
+  "url": "https://arxiv.org/html/2610.11815v1",
+  "fetched": "2026-10-10T03:11:00"
+ },
+ "2610.11011": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57791,
+  "url": "https://arxiv.org/html/2610.11011v1",
+  "fetched": "2026-10-10T03:11:04"
+ },
+ "2610.10945": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 95686,
+  "url": "https://arxiv.org/html/2610.10945v1",
+  "fetched": "2026-10-10T03:11:08"
+ },
+ "2610.11181": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 35948,
+  "url": "https://arxiv.org/html/2610.11181v1",
+  "fetched": "2026-10-10T03:11:12"
+ },
+ "2610.11412": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 75725,
+  "url": "https://arxiv.org/html/2610.11412v1",
+  "fetched": "2026-10-10T03:11:16"
+ },
+ "2610.12299": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 98968,
+  "url": "https://arxiv.org/html/2610.12299v1",
+  "fetched": "2026-10-10T03:11:20"
+ },
+ "2610.12442": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74942,
+  "url": "https://arxiv.org/html/2610.12442v1",
+  "fetched": "2026-10-10T03:11:24"
+ },
+ "2610.21121": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72494,
+  "url": "https://arxiv.org/html/2610.21121v1",
+  "fetched": "2026-10-17T10:31:14"
+ },
+ "2610.21067": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82432,
+  "url": "https://arxiv.org/html/2610.21067v1",
+  "fetched": "2026-10-17T10:31:18"
+ },
+ "2610.21386": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 119735,
+  "url": "https://arxiv.org/html/2610.21386v1",
+  "fetched": "2026-10-17T10:31:22"
+ },
+ "2610.21484": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 36280,
+  "url": "https://arxiv.org/html/2610.21484v1",
+  "fetched": "2026-10-17T10:31:27"
+ },
+ "2610.16186": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43779,
+  "url": "https://arxiv.org/html/2610.16186v2",
+  "fetched": "2026-10-17T10:31:30"
+ },
+ "2610.21634": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65772,
+  "url": "https://arxiv.org/html/2610.21634v1",
+  "fetched": "2026-10-17T10:31:34"
+ },
+ "2610.21668": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84815,
+  "url": "https://arxiv.org/html/2610.21668v1",
+  "fetched": "2026-10-17T10:31:38"
+ },
+ "2610.22363": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 97259,
+  "url": "https://arxiv.org/html/2610.22363v1",
+  "fetched": "2026-10-17T10:31:42"
+ },
+ "2610.20904": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61488,
+  "url": "https://arxiv.org/html/2610.20904v1",
+  "fetched": "2026-10-17T10:31:48"
+ },
+ "2610.20958": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49660,
+  "url": "https://arxiv.org/html/2610.20958v1",
+  "fetched": "2026-10-17T10:31:52"
+ },
+ "2610.21282": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 112930,
+  "url": "https://arxiv.org/html/2610.21282v1",
+  "fetched": "2026-10-17T10:31:56"
+ },
+ "2610.21619": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50703,
+  "url": "https://arxiv.org/html/2610.21619v1",
+  "fetched": "2026-10-17T10:32:01"
+ },
+ "2610.21199": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47912,
+  "url": "https://arxiv.org/html/2610.21199v1",
+  "fetched": "2026-10-17T10:32:05"
+ },
+ "2610.21353": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46762,
+  "url": "https://arxiv.org/html/2610.21353v1",
+  "fetched": "2026-10-17T10:32:08"
+ },
+ "2610.21965": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 62238,
+  "url": "https://arxiv.org/html/2610.21965v1",
+  "fetched": "2026-10-17T10:32:12"
+ },
+ "2610.21409": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 27548,
+  "url": "https://arxiv.org/html/2610.21409v1",
+  "fetched": "2026-10-17T10:32:16"
+ },
+ "2610.19541": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47964,
+  "url": "https://arxiv.org/html/2610.19541v2",
+  "fetched": "2026-10-17T10:32:20"
+ },
+ "2610.21588": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 124604,
+  "url": "https://arxiv.org/html/2610.21588v1",
+  "fetched": "2026-10-17T10:32:24"
+ },
+ "2610.16277": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 81203,
+  "url": "https://arxiv.org/html/2610.16277v1",
+  "fetched": "2026-10-17T17:18:03"
+ },
+ "2610.19998": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77370,
+  "url": "https://arxiv.org/html/2610.19998v1",
+  "fetched": "2026-10-17T17:18:14"
+ },
+ "2610.16256": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82215,
+  "url": "https://arxiv.org/html/2610.16256v1",
+  "fetched": "2026-10-17T17:18:19"
+ },
+ "2610.17605": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 40291,
+  "url": "https://arxiv.org/html/2610.17605v1",
+  "fetched": "2026-10-17T17:18:25"
+ },
+ "2610.19290": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83950,
+  "url": "https://arxiv.org/html/2610.19290v1",
+  "fetched": "2026-10-17T17:18:40"
+ },
+ "2610.18950": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 90591,
+  "url": "https://arxiv.org/html/2610.18950v1",
+  "fetched": "2026-10-17T17:18:52"
+ },
+ "2610.13309": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88704,
+  "url": "https://arxiv.org/html/2610.13309v1",
+  "fetched": "2026-10-17T17:19:00"
+ },
+ "2610.13498": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58130,
+  "url": "https://arxiv.org/html/2610.13498v1",
+  "fetched": "2026-10-17T17:19:06"
+ },
+ "2610.16143": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43280,
+  "url": "https://arxiv.org/html/2610.16143v1",
+  "fetched": "2026-10-17T17:19:12"
+ },
+ "2610.16177": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 105708,
+  "url": "https://arxiv.org/html/2610.16177v1",
+  "fetched": "2026-10-17T17:19:26"
+ },
+ "2602.03538": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 91060,
+  "url": "https://arxiv.org/html/2602.03538v2",
+  "fetched": "2026-10-17T17:19:33"
+ },
+ "2610.13177": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66697,
+  "url": "https://arxiv.org/html/2610.13177v1",
+  "fetched": "2026-10-17T17:19:38"
+ },
+ "2610.13860": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67891,
+  "url": "https://arxiv.org/html/2610.13860v1",
+  "fetched": "2026-10-17T17:19:44"
+ },
+ "2610.18822": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83040,
+  "url": "https://arxiv.org/html/2610.18822v1",
+  "fetched": "2026-10-17T17:19:49"
+ },
+ "2610.19847": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46241,
+  "url": "https://arxiv.org/html/2610.19847v1",
+  "fetched": "2026-10-17T17:19:54"
+ },
+ "2610.20590": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72849,
+  "url": "https://arxiv.org/html/2610.20590v1",
+  "fetched": "2026-10-17T17:20:00"
+ },
+ "2610.17513": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84883,
+  "url": "https://arxiv.org/html/2610.17513v1",
+  "fetched": "2026-10-17T17:20:05"
+ },
+ "2610.17260": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57177,
+  "url": "https://arxiv.org/html/2610.17260v1",
+  "fetched": "2026-10-17T17:20:11"
+ },
+ "2610.17302": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96278,
+  "url": "https://arxiv.org/html/2610.17302v1",
+  "fetched": "2026-10-17T17:20:17"
+ },
+ "2610.17474": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69218,
+  "url": "https://arxiv.org/html/2610.17474v1",
+  "fetched": "2026-10-19T05:05:55"
+ },
+ "2610.18183": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77104,
+  "url": "https://arxiv.org/html/2610.18183v1",
+  "fetched": "2026-10-19T05:05:59"
+ },
+ "2610.19152": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83808,
+  "url": "https://arxiv.org/html/2610.19152v1",
+  "fetched": "2026-10-19T05:06:03"
+ },
+ "2610.19413": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46897,
+  "url": "https://arxiv.org/html/2610.19413v1",
+  "fetched": "2026-10-19T05:06:06"
+ },
+ "2610.15074": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80623,
+  "url": "https://arxiv.org/html/2610.15074v1",
+  "fetched": "2026-10-19T05:06:15"
+ },
+ "2610.18746": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61129,
+  "url": "https://arxiv.org/html/2610.18746v1",
+  "fetched": "2026-10-19T05:06:19"
+ },
+ "2610.18872": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 139281,
+  "url": "https://arxiv.org/html/2610.18872v1",
+  "fetched": "2026-10-19T05:06:23"
+ },
+ "2610.19857": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56245,
+  "url": "https://arxiv.org/html/2610.19857v1",
+  "fetched": "2026-10-19T05:06:26"
+ },
+ "2610.16252": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50272,
+  "url": "https://arxiv.org/html/2610.16252v1",
+  "fetched": "2026-10-19T05:06:30"
+ },
+ "2610.13549": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74110,
+  "url": "https://arxiv.org/html/2610.13549v1",
+  "fetched": "2026-10-19T05:06:34"
+ },
+ "2610.19726": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59781,
+  "url": "https://arxiv.org/html/2610.19726v1",
+  "fetched": "2026-10-19T05:06:38"
+ },
+ "2610.14685": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 132797,
+  "url": "https://arxiv.org/html/2610.14685v1",
+  "fetched": "2026-10-19T05:06:42"
+ },
+ "2610.19681": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 90236,
+  "url": "https://arxiv.org/html/2610.19681v1",
+  "fetched": "2026-10-19T05:06:46"
+ },
+ "2610.19502": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48415,
+  "url": "https://arxiv.org/html/2610.19502v1",
+  "fetched": "2026-10-19T05:06:50"
+ },
+ "2610.19674": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 165161,
+  "url": "https://arxiv.org/html/2610.19674v1",
+  "fetched": "2026-10-19T05:06:54"
+ },
+ "2610.14951": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49464,
+  "url": "https://arxiv.org/html/2610.14951v1",
+  "fetched": "2026-10-19T05:06:58"
+ },
+ "2610.13541": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 92415,
+  "url": "https://arxiv.org/html/2610.13541v1",
+  "fetched": "2026-10-19T05:07:03"
+ },
+ "2610.18446": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66378,
+  "url": "https://arxiv.org/html/2610.18446v2",
+  "fetched": "2026-10-19T05:07:06"
+ },
+ "2610.16176": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50586,
+  "url": "https://arxiv.org/html/2610.16176v1",
+  "fetched": "2026-10-19T05:07:10"
+ },
+ "2610.08684": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44131,
+  "url": "https://arxiv.org/html/2610.08684v1",
+  "fetched": "2026-10-19T05:07:14"
+ },
+ "2610.18447": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 120401,
+  "url": "https://arxiv.org/html/2610.18447v2",
+  "fetched": "2026-10-19T05:07:21"
+ },
+ "2610.17521": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45564,
+  "url": "https://arxiv.org/html/2610.17521v1",
+  "fetched": "2026-10-19T05:07:25"
+ },
+ "2610.22681": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 112505,
+  "url": "https://arxiv.org/html/2610.22681v1",
+  "fetched": "2026-10-20T05:12:51"
+ },
+ "2610.22720": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66738,
+  "url": "https://arxiv.org/html/2610.22720v1",
+  "fetched": "2026-10-20T05:12:55"
+ },
+ "2610.22748": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 118689,
+  "url": "https://arxiv.org/html/2610.22748v1",
+  "fetched": "2026-10-20T05:12:59"
+ },
+ "2610.22778": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96804,
+  "url": "https://arxiv.org/html/2610.22778v1",
+  "fetched": "2026-10-20T05:13:03"
+ },
+ "2610.22822": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 105308,
+  "url": "https://arxiv.org/html/2610.22822v1",
+  "fetched": "2026-10-20T05:13:07"
+ },
+ "2610.22878": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70867,
+  "url": "https://arxiv.org/html/2610.22878v1",
+  "fetched": "2026-10-20T05:13:11"
+ },
+ "2610.23039": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45271,
+  "url": "https://arxiv.org/html/2610.23039v1",
+  "fetched": "2026-10-20T05:13:15"
+ },
+ "2610.23050": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 104080,
+  "url": "https://arxiv.org/html/2610.23050v1",
+  "fetched": "2026-10-20T05:13:19"
+ },
+ "2610.23336": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56174,
+  "url": "https://arxiv.org/html/2610.23336v1",
+  "fetched": "2026-10-20T05:13:23"
+ },
+ "2610.23496": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50541,
+  "url": "https://arxiv.org/html/2610.23496v1",
+  "fetched": "2026-10-20T05:13:27"
+ },
+ "2610.23772": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96505,
+  "url": "https://arxiv.org/html/2610.23772v1",
+  "fetched": "2026-10-20T05:13:31"
+ },
+ "2610.23833": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 92883,
+  "url": "https://arxiv.org/html/2610.23833v1",
+  "fetched": "2026-10-20T05:13:35"
+ },
+ "2610.21297": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45788,
+  "url": "https://arxiv.org/html/2610.21297v1",
+  "fetched": "2026-10-20T05:13:39"
+ },
+ "2602.07891": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 103963,
+  "url": "https://arxiv.org/html/2602.07891v2",
+  "fetched": "2026-10-20T05:13:42"
+ },
+ "2602.11693": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77941,
+  "url": "https://arxiv.org/html/2602.11693v2",
+  "fetched": "2026-10-20T05:13:46"
+ },
+ "2604.00852": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63669,
+  "url": "https://arxiv.org/html/2604.00852v2",
+  "fetched": "2026-10-20T05:13:49"
+ },
+ "2604.02107": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67754,
+  "url": "https://arxiv.org/html/2604.02107v2",
+  "fetched": "2026-10-20T05:13:52"
+ },
+ "2605.25563": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74550,
+  "url": "https://arxiv.org/html/2605.25563v2",
+  "fetched": "2026-10-20T05:13:56"
+ },
+ "2606.28637": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48980,
+  "url": "https://arxiv.org/html/2606.28637v2",
+  "fetched": "2026-10-20T05:13:59"
+ },
+ "2608.15060": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 114968,
+  "url": "https://arxiv.org/html/2608.15060v2",
+  "fetched": "2026-10-20T05:14:03"
+ },
+ "2610.24812": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83372,
+  "url": "https://arxiv.org/html/2610.24812v1",
+  "fetched": "2026-10-21T02:37:14"
+ },
+ "2610.24926": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66126,
+  "url": "https://arxiv.org/html/2610.24926v1",
+  "fetched": "2026-10-21T02:37:17"
+ },
+ "2610.26067": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 86191,
+  "url": "https://arxiv.org/html/2610.26067v1",
+  "fetched": "2026-10-21T02:37:21"
+ },
+ "2610.24237": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 144066,
+  "url": "https://arxiv.org/html/2610.24237v1",
+  "fetched": "2026-10-21T02:37:26"
+ },
+ "2610.24364": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 136184,
+  "url": "https://arxiv.org/html/2610.24364v1",
+  "fetched": "2026-10-21T02:37:30"
+ },
+ "2610.24640": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 107256,
+  "url": "https://arxiv.org/html/2610.24640v1",
+  "fetched": "2026-10-21T02:37:34"
+ },
+ "2610.26278": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72659,
+  "url": "https://arxiv.org/html/2610.26278v1",
+  "fetched": "2026-10-21T02:37:38"
+ },
+ "2610.26338": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 101735,
+  "url": "https://arxiv.org/html/2610.26338v1",
+  "fetched": "2026-10-21T02:37:42"
+ },
+ "2610.26360": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 85889,
+  "url": "https://arxiv.org/html/2610.26360v1",
+  "fetched": "2026-10-21T02:37:46"
+ },
+ "2610.26598": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67639,
+  "url": "https://arxiv.org/html/2610.26598v1",
+  "fetched": "2026-10-21T02:37:49"
+ },
+ "2610.24257": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50917,
+  "url": "https://arxiv.org/html/2610.24257v1",
+  "fetched": "2026-10-21T02:37:53"
+ },
+ "2610.24400": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 141031,
+  "url": "https://arxiv.org/html/2610.24400v1",
+  "fetched": "2026-10-21T02:37:58"
+ },
+ "2610.24452": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 94081,
+  "url": "https://arxiv.org/html/2610.24452v1",
+  "fetched": "2026-10-21T02:38:01"
+ },
+ "2610.24462": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 109276,
+  "url": "https://arxiv.org/html/2610.24462v1",
+  "fetched": "2026-10-21T02:38:06"
+ },
+ "2610.25887": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 24189,
+  "url": "https://arxiv.org/html/2610.25887v1",
+  "fetched": "2026-10-21T02:38:09"
+ },
+ "2610.26641": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73283,
+  "url": "https://arxiv.org/html/2610.26641v1",
+  "fetched": "2026-10-21T02:38:13"
+ },
+ "2610.25006": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 42937,
+  "url": "https://arxiv.org/html/2610.25006v1",
+  "fetched": "2026-10-21T02:38:17"
+ },
+ "2610.26583": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59126,
+  "url": "https://arxiv.org/html/2610.26583v1",
+  "fetched": "2026-10-21T02:38:21"
+ },
+ "2610.26549": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 5177,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.26549",
+  "fetched": "2026-10-21T02:38:26"
+ },
+ "2610.26625": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69526,
+  "url": "https://arxiv.org/html/2610.26625v1",
+  "fetched": "2026-10-21T02:38:30"
+ },
+ "2610.26780": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71206,
+  "url": "https://arxiv.org/html/2610.26780v1",
+  "fetched": "2026-10-21T02:38:34"
+ },
+ "2610.25309": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 89592,
+  "url": "https://arxiv.org/html/2610.25309v1",
+  "fetched": "2026-10-21T02:38:38"
+ },
+ "2610.24031": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58199,
+  "url": "https://arxiv.org/html/2610.24031v1",
+  "fetched": "2026-10-21T02:38:42"
+ },
+ "2610.23895": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66477,
+  "url": "https://arxiv.org/html/2610.23895v1",
+  "fetched": "2026-10-21T02:38:46"
+ },
+ "2610.25011": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87319,
+  "url": "https://arxiv.org/html/2610.25011v1",
+  "fetched": "2026-10-21T02:38:50"
+ },
+ "2610.25681": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52191,
+  "url": "https://arxiv.org/html/2610.25681v1",
+  "fetched": "2026-10-21T02:38:54"
+ },
+ "2610.24811": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49533,
+  "url": "https://arxiv.org/html/2610.24811v1",
+  "fetched": "2026-10-21T02:38:58"
+ },
+ "2610.23899": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48328,
+  "url": "https://arxiv.org/html/2610.23899v1",
+  "fetched": "2026-10-21T02:39:02"
+ },
+ "2610.26633": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49127,
+  "url": "https://arxiv.org/html/2610.26633v1",
+  "fetched": "2026-10-21T02:39:06"
+ },
+ "2610.24285": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87375,
+  "url": "https://arxiv.org/html/2610.24285v1",
+  "fetched": "2026-10-21T02:39:10"
+ },
+ "2610.23903": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 26060,
+  "url": "https://arxiv.org/html/2610.23903v1",
+  "fetched": "2026-10-21T02:39:14"
+ },
+ "2603.24591": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63987,
+  "url": "https://arxiv.org/html/2603.24591v2",
+  "fetched": "2026-10-21T02:39:34"
+ },
+ "2504.20829": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66939,
+  "url": "https://arxiv.org/html/2504.20829v2",
+  "fetched": "2026-10-21T02:39:38"
+ },
+ "2512.19283": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 79328,
+  "url": "https://arxiv.org/html/2512.19283v2",
+  "fetched": "2026-10-21T02:39:41"
+ },
+ "2606.05102": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63096,
+  "url": "https://arxiv.org/html/2606.05102v2",
+  "fetched": "2026-10-21T02:39:45"
+ },
+ "2606.25430": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71977,
+  "url": "https://arxiv.org/html/2606.25430v2",
+  "fetched": "2026-10-21T02:39:48"
+ },
+ "2609.03892": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69178,
+  "url": "https://arxiv.org/html/2609.03892v2",
+  "fetched": "2026-10-21T02:39:52"
+ },
+ "2605.17661": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82520,
+  "url": "https://arxiv.org/html/2605.17661v2",
+  "fetched": "2026-10-21T02:39:55"
+ },
+ "2605.10760": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76114,
+  "url": "https://arxiv.org/html/2605.10760v2",
+  "fetched": "2026-10-21T02:39:59"
+ },
+ "2606.16881": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54915,
+  "url": "https://arxiv.org/html/2606.16881v2",
+  "fetched": "2026-10-21T02:40:02"
+ },
+ "2511.09397": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56719,
+  "url": "https://arxiv.org/html/2511.09397v2",
+  "fetched": "2026-10-21T02:40:06"
+ },
+ "2610.26898": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72049,
+  "url": "https://arxiv.org/html/2610.26898v1",
+  "fetched": "2026-10-22T02:38:51"
+ },
+ "2610.26920": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 30095,
+  "url": "https://arxiv.org/html/2610.26920v1",
+  "fetched": "2026-10-22T02:38:55"
+ },
+ "2610.27108": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 127196,
+  "url": "https://arxiv.org/html/2610.27108v1",
+  "fetched": "2026-10-22T02:38:59"
+ },
+ "2610.27271": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 42551,
+  "url": "https://arxiv.org/html/2610.27271v1",
+  "fetched": "2026-10-22T02:39:03"
+ },
+ "2610.27564": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54832,
+  "url": "https://arxiv.org/html/2610.27564v1",
+  "fetched": "2026-10-22T02:39:07"
+ },
+ "2610.27604": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48557,
+  "url": "https://arxiv.org/html/2610.27604v1",
+  "fetched": "2026-10-22T02:39:11"
+ },
+ "2610.27654": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 104160,
+  "url": "https://arxiv.org/html/2610.27654v1",
+  "fetched": "2026-10-22T02:39:15"
+ },
+ "2610.27696": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48908,
+  "url": "https://arxiv.org/html/2610.27696v1",
+  "fetched": "2026-10-22T02:39:19"
+ },
+ "2610.27712": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 60591,
+  "url": "https://arxiv.org/html/2610.27712v1",
+  "fetched": "2026-10-22T02:39:22"
+ },
+ "2610.27725": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57002,
+  "url": "https://arxiv.org/html/2610.27725v1",
+  "fetched": "2026-10-22T02:39:26"
+ },
+ "2610.27776": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52632,
+  "url": "https://arxiv.org/html/2610.27776v1",
+  "fetched": "2026-10-22T02:39:30"
+ },
+ "2610.27877": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83880,
+  "url": "https://arxiv.org/html/2610.27877v1",
+  "fetched": "2026-10-22T02:39:34"
+ },
+ "2610.27946": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73272,
+  "url": "https://arxiv.org/html/2610.27946v1",
+  "fetched": "2026-10-22T02:39:38"
+ },
+ "2610.28190": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50565,
+  "url": "https://arxiv.org/html/2610.28190v1",
+  "fetched": "2026-10-22T02:39:42"
+ },
+ "2610.28402": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82560,
+  "url": "https://arxiv.org/html/2610.28402v1",
+  "fetched": "2026-10-22T02:39:46"
+ },
+ "2610.28490": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 130608,
+  "url": "https://arxiv.org/html/2610.28490v1",
+  "fetched": "2026-10-22T02:39:50"
+ },
+ "2610.28502": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57311,
+  "url": "https://arxiv.org/html/2610.28502v1",
+  "fetched": "2026-10-22T02:39:54"
+ },
+ "2610.28530": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 26524,
+  "url": "https://arxiv.org/html/2610.28530v1",
+  "fetched": "2026-10-22T02:39:58"
+ },
+ "2610.28554": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72971,
+  "url": "https://arxiv.org/html/2610.28554v1",
+  "fetched": "2026-10-22T02:40:02"
+ },
+ "2610.28615": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82336,
+  "url": "https://arxiv.org/html/2610.28615v1",
+  "fetched": "2026-10-22T02:40:06"
+ },
+ "2610.28631": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70586,
+  "url": "https://arxiv.org/html/2610.28631v1",
+  "fetched": "2026-10-22T02:40:10"
+ },
+ "2610.29014": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 110221,
+  "url": "https://arxiv.org/html/2610.29014v1",
+  "fetched": "2026-10-23T02:35:23"
+ },
+ "2610.29517": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 93359,
+  "url": "https://arxiv.org/html/2610.29517v1",
+  "fetched": "2026-10-23T02:35:27"
+ },
+ "2610.30032": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83592,
+  "url": "https://arxiv.org/html/2610.30032v1",
+  "fetched": "2026-10-23T02:35:31"
+ },
+ "2610.07217": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66924,
+  "url": "https://arxiv.org/html/2610.07217v2",
+  "fetched": "2026-10-23T02:35:35"
+ },
+ "2610.28821": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73299,
+  "url": "https://arxiv.org/html/2610.28821v1",
+  "fetched": "2026-10-23T02:35:39"
+ },
+ "2610.28962": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51485,
+  "url": "https://arxiv.org/html/2610.28962v1",
+  "fetched": "2026-10-23T02:35:43"
+ },
+ "2610.29106": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 75479,
+  "url": "https://arxiv.org/html/2610.29106v1",
+  "fetched": "2026-10-23T02:35:47"
+ },
+ "2610.29374": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 41612,
+  "url": "https://arxiv.org/html/2610.29374v1",
+  "fetched": "2026-10-23T02:35:51"
+ },
+ "2610.29396": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73658,
+  "url": "https://arxiv.org/html/2610.29396v1",
+  "fetched": "2026-10-23T02:35:55"
+ },
+ "2610.29647": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53073,
+  "url": "https://arxiv.org/html/2610.29647v1",
+  "fetched": "2026-10-23T02:35:59"
+ },
+ "2610.29768": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 125033,
+  "url": "https://arxiv.org/html/2610.29768v1",
+  "fetched": "2026-10-23T02:36:03"
+ },
+ "2610.29936": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57112,
+  "url": "https://arxiv.org/html/2610.29936v1",
+  "fetched": "2026-10-23T02:36:07"
+ },
+ "2610.30013": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72201,
+  "url": "https://arxiv.org/html/2610.30013v1",
+  "fetched": "2026-10-23T02:36:11"
+ },
+ "2610.30089": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 113079,
+  "url": "https://arxiv.org/html/2610.30089v1",
+  "fetched": "2026-10-23T02:36:15"
+ },
+ "2610.25988": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58257,
+  "url": "https://arxiv.org/html/2610.25988v2",
+  "fetched": "2026-10-23T02:36:19"
+ },
+ "2610.26918": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 79633,
+  "url": "https://arxiv.org/html/2610.26918v1",
+  "fetched": "2026-10-23T02:37:11"
+ },
+ "2610.27622": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 29750,
+  "url": "https://arxiv.org/html/2610.27622v1",
+  "fetched": "2026-10-23T02:37:15"
+ },
+ "2610.28004": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 97991,
+  "url": "https://arxiv.org/html/2610.28004v1",
+  "fetched": "2026-10-23T02:37:19"
+ },
+ "2610.28131": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 4552,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.28131",
+  "fetched": "2026-10-23T02:37:24"
+ },
+ "2610.28585": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 139019,
+  "url": "https://arxiv.org/html/2610.28585v1",
+  "fetched": "2026-10-23T02:37:28"
+ },
+ "2604.11685": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66076,
+  "url": "https://arxiv.org/html/2604.11685v2",
+  "fetched": "2026-10-23T02:37:31"
+ },
+ "2608.21009": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51117,
+  "url": "https://arxiv.org/html/2608.21009v2",
+  "fetched": "2026-10-23T02:37:35"
+ },
+ "2604.10809": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 119031,
+  "url": "https://arxiv.org/html/2604.10809v2",
+  "fetched": "2026-10-23T02:37:38"
+ },
+ "2607.06464": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51140,
+  "url": "https://arxiv.org/html/2607.06464v2",
+  "fetched": "2026-10-23T02:37:42"
+ },
+ "2610.30910": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44426,
+  "url": "https://arxiv.org/html/2610.30910v1",
+  "fetched": "2026-10-24T02:38:51"
+ },
+ "2610.30353": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 108292,
+  "url": "https://arxiv.org/html/2610.30353v1",
+  "fetched": "2026-10-24T02:38:55"
+ },
+ "2610.30731": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54516,
+  "url": "https://arxiv.org/html/2610.30731v1",
+  "fetched": "2026-10-24T02:38:58"
+ },
+ "2610.30734": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71776,
+  "url": "https://arxiv.org/html/2610.30734v1",
+  "fetched": "2026-10-24T02:39:02"
+ },
+ "2610.30293": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58317,
+  "url": "https://arxiv.org/html/2610.30293v1",
+  "fetched": "2026-10-24T02:39:06"
+ },
+ "2610.30326": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53020,
+  "url": "https://arxiv.org/html/2610.30326v1",
+  "fetched": "2026-10-24T02:39:11"
+ },
+ "2610.30468": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57975,
+  "url": "https://arxiv.org/html/2610.30468v1",
+  "fetched": "2026-10-24T02:39:15"
+ },
+ "2610.30619": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61799,
+  "url": "https://arxiv.org/html/2610.30619v1",
+  "fetched": "2026-10-24T02:39:19"
+ },
+ "2610.30908": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87991,
+  "url": "https://arxiv.org/html/2610.30908v1",
+  "fetched": "2026-10-24T02:39:23"
+ },
+ "2610.31284": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 39907,
+  "url": "https://arxiv.org/html/2610.31284v1",
+  "fetched": "2026-10-24T02:39:27"
+ },
+ "2610.31293": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47658,
+  "url": "https://arxiv.org/html/2610.31293v1",
+  "fetched": "2026-10-24T02:39:30"
+ },
+ "2610.31299": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 102326,
+  "url": "https://arxiv.org/html/2610.31299v1",
+  "fetched": "2026-10-24T02:39:35"
+ },
+ "2610.31320": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54113,
+  "url": "https://arxiv.org/html/2610.31320v1",
+  "fetched": "2026-10-24T02:39:39"
+ },
+ "2610.31321": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45841,
+  "url": "https://arxiv.org/html/2610.31321v1",
+  "fetched": "2026-10-24T02:39:43"
+ },
+ "2610.31156": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56479,
+  "url": "https://arxiv.org/html/2610.31156v1",
+  "fetched": "2026-10-24T02:39:47"
+ },
+ "2610.31221": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67384,
+  "url": "https://arxiv.org/html/2610.31221v1",
+  "fetched": "2026-10-24T02:39:51"
+ },
+ "2610.31472": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45447,
+  "url": "https://arxiv.org/html/2610.31472v1",
+  "fetched": "2026-10-24T02:39:54"
+ },
+ "2605.22190": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66915,
+  "url": "https://arxiv.org/html/2605.22190v2",
+  "fetched": "2026-10-24T02:39:58"
+ },
+ "2609.16684": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43564,
+  "url": "https://arxiv.org/html/2609.16684v2",
+  "fetched": "2026-10-24T02:40:01"
+ },
+ "2508.15169": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 62633,
+  "url": "https://arxiv.org/html/2508.15169v2",
+  "fetched": "2026-10-24T02:40:05"
+ },
+ "2601.14895": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54130,
+  "url": "https://arxiv.org/html/2601.14895v2",
+  "fetched": "2026-10-24T02:40:09"
+ },
+ "2610.31747": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 126513,
+  "url": "https://arxiv.org/html/2610.31747v1",
+  "fetched": "2026-10-27T02:34:16"
+ },
+ "2610.31908": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71343,
+  "url": "https://arxiv.org/html/2610.31908v1",
+  "fetched": "2026-10-27T02:34:20"
+ },
+ "2610.32019": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70083,
+  "url": "https://arxiv.org/html/2610.32019v1",
+  "fetched": "2026-10-27T02:34:24"
+ },
+ "2610.32166": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 79423,
+  "url": "https://arxiv.org/html/2610.32166v1",
+  "fetched": "2026-10-27T02:34:28"
+ },
+ "2610.32232": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 4869,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.32232",
+  "fetched": "2026-10-27T02:34:34",
+  "note": "ar5iv 仅返回摘要页（无正文章节），按摘要级评估并显式声明"
+ },
+ "2610.32561": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73640,
+  "url": "https://arxiv.org/html/2610.32561v1",
+  "fetched": "2026-10-27T02:34:38"
+ },
+ "2610.32915": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 108078,
+  "url": "https://arxiv.org/html/2610.32915v1",
+  "fetched": "2026-10-27T02:34:42"
+ },
+ "2412.01090": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59648,
+  "url": "https://arxiv.org/html/2412.01090v2",
+  "fetched": "2026-10-27T02:34:46"
+ },
+ "2503.21288": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 81134,
+  "url": "https://arxiv.org/html/2503.21288v2",
+  "fetched": "2026-10-27T02:34:49"
+ },
+ "2601.00705": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72254,
+  "url": "https://arxiv.org/html/2601.00705v2",
+  "fetched": "2026-10-27T02:34:53"
+ },
+ "2606.15417": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70487,
+  "url": "https://arxiv.org/html/2606.15417v2",
+  "fetched": "2026-10-27T02:34:56"
+ },
+ "2607.01202": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74866,
+  "url": "https://arxiv.org/html/2607.01202v2",
+  "fetched": "2026-10-27T02:35:00"
+ },
+ "2608.05663": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66094,
+  "url": "https://arxiv.org/html/2608.05663v2",
+  "fetched": "2026-10-27T02:35:03"
+ },
+ "2608.16499": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50425,
+  "url": "https://arxiv.org/html/2608.16499v2",
+  "fetched": "2026-10-27T02:35:07"
+ },
+ "2610.25068": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45727,
+  "url": "https://arxiv.org/html/2610.25068v2",
+  "fetched": "2026-10-27T02:35:10"
+ },
+ "2610.33868": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48039,
+  "url": "https://arxiv.org/html/2610.33868v1",
+  "fetched": "2026-10-28T02:34:43"
+ },
+ "2610.34093": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84795,
+  "url": "https://arxiv.org/html/2610.34093v1",
+  "fetched": "2026-10-28T02:34:46"
+ },
+ "2610.34223": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 5083,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.34223",
+  "fetched": "2026-10-28T02:34:52"
+ },
+ "2610.34233": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68429,
+  "url": "https://arxiv.org/html/2610.34233v1",
+  "fetched": "2026-10-28T02:34:56"
+ },
+ "2610.34235": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80879,
+  "url": "https://arxiv.org/html/2610.34235v1",
+  "fetched": "2026-10-29T02:37:01"
+ },
+ "2610.34263": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69360,
+  "url": "https://arxiv.org/html/2610.34263v1",
+  "fetched": "2026-10-28T02:35:04"
+ },
+ "2610.34344": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 116122,
+  "url": "https://arxiv.org/html/2610.34344v1",
+  "fetched": "2026-10-28T02:35:08"
+ },
+ "2610.34745": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80935,
+  "url": "https://arxiv.org/html/2610.34745v1",
+  "fetched": "2026-10-28T02:35:12"
+ },
+ "2610.34845": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 108206,
+  "url": "https://arxiv.org/html/2610.34845v1",
+  "fetched": "2026-10-28T02:35:16"
+ },
+ "2610.34865": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 23720,
+  "url": "https://arxiv.org/html/2610.34865v1",
+  "fetched": "2026-10-28T02:35:20"
+ },
+ "2610.34952": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58867,
+  "url": "https://arxiv.org/html/2610.34952v1",
+  "fetched": "2026-10-28T02:35:23"
+ },
+ "2610.35002": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50364,
+  "url": "https://arxiv.org/html/2610.35002v1",
+  "fetched": "2026-10-28T02:35:27"
+ },
+ "2610.35152": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 98276,
+  "url": "https://arxiv.org/html/2610.35152v1",
+  "fetched": "2026-10-28T02:35:31"
+ },
+ "2610.35224": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 41417,
+  "url": "https://arxiv.org/html/2610.35224v1",
+  "fetched": "2026-10-28T02:35:35"
+ },
+ "2610.35361": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70335,
+  "url": "https://arxiv.org/html/2610.35361v1",
+  "fetched": "2026-10-28T02:35:39"
+ },
+ "2610.35756": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63713,
+  "url": "https://arxiv.org/html/2610.35756v1",
+  "fetched": "2026-10-28T02:35:43"
+ },
+ "2610.33158": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49077,
+  "url": "https://arxiv.org/html/2610.33158v1",
+  "fetched": "2026-10-28T02:35:47"
+ },
+ "2610.33558": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43416,
+  "url": "https://arxiv.org/html/2610.33558v1",
+  "fetched": "2026-10-28T02:35:51"
+ },
+ "2610.33966": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 166062,
+  "url": "https://arxiv.org/html/2610.33966v1",
+  "fetched": "2026-10-28T02:35:55"
+ },
+ "2610.34283": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 118570,
+  "url": "https://arxiv.org/html/2610.34283v1",
+  "fetched": "2026-10-28T02:35:59"
+ },
+ "2610.34564": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 104786,
+  "url": "https://arxiv.org/html/2610.34564v1",
+  "fetched": "2026-10-28T02:36:03"
+ },
+ "2610.34597": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 12463,
+  "url": "https://arxiv.org/html/2610.34597v1",
+  "fetched": "2026-10-28T02:36:07"
+ },
+ "2610.35414": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48492,
+  "url": "https://arxiv.org/html/2610.35414v1",
+  "fetched": "2026-10-28T02:36:11"
+ },
+ "2610.35554": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65385,
+  "url": "https://arxiv.org/html/2610.35554v1",
+  "fetched": "2026-10-28T02:36:15"
+ },
+ "2610.33174": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47399,
+  "url": "https://arxiv.org/html/2610.33174v1",
+  "fetched": "2026-10-28T02:36:19"
+ },
+ "2610.33356": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 42935,
+  "url": "https://arxiv.org/html/2610.33356v1",
+  "fetched": "2026-10-28T02:36:23"
+ },
+ "2610.33191": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 129287,
+  "url": "https://arxiv.org/html/2610.33191v1",
+  "fetched": "2026-10-28T02:36:26"
+ },
+ "2601.00913": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 131491,
+  "url": "https://arxiv.org/html/2601.00913v2",
+  "fetched": "2026-10-28T02:36:30"
+ },
+ "2602.13444": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 118988,
+  "url": "https://arxiv.org/html/2602.13444v2",
+  "fetched": "2026-10-28T02:36:34"
+ },
+ "2603.28064": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58198,
+  "url": "https://arxiv.org/html/2603.28064v2",
+  "fetched": "2026-10-28T02:36:37"
+ },
+ "2604.07279": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76819,
+  "url": "https://arxiv.org/html/2604.07279v2",
+  "fetched": "2026-10-28T02:36:40"
+ },
+ "2605.18553": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 110562,
+  "url": "https://arxiv.org/html/2605.18553v2",
+  "fetched": "2026-10-28T02:36:44"
+ },
+ "2605.30488": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51339,
+  "url": "https://arxiv.org/html/2605.30488v2",
+  "fetched": "2026-10-28T02:36:47"
+ },
+ "2605.31352": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53766,
+  "url": "https://arxiv.org/html/2605.31352v2",
+  "fetched": "2026-10-28T02:36:51"
+ },
+ "2606.01950": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52057,
+  "url": "https://arxiv.org/html/2606.01950v2",
+  "fetched": "2026-10-28T02:36:54"
+ },
+ "2609.02847": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53323,
+  "url": "https://arxiv.org/html/2609.02847v2",
+  "fetched": "2026-10-28T02:36:58"
+ },
+ "2609.31418": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45971,
+  "url": "https://arxiv.org/html/2609.31418v2",
+  "fetched": "2026-10-28T02:37:01"
+ },
+ "2610.35902": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61316,
+  "url": "https://arxiv.org/html/2610.35902v1",
+  "fetched": "2026-10-29T02:37:04"
+ },
+ "2610.36014": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 4706,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.36014",
+  "fetched": "2026-10-29T02:37:10"
+ },
+ "2610.36168": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50853,
+  "url": "https://arxiv.org/html/2610.36168v1",
+  "fetched": "2026-10-29T02:37:14"
+ },
+ "2610.36312": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59514,
+  "url": "https://arxiv.org/html/2610.36312v1",
+  "fetched": "2026-10-29T02:37:18"
+ },
+ "2610.36384": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 135360,
+  "url": "https://arxiv.org/html/2610.36384v1",
+  "fetched": "2026-10-29T02:37:22"
+ },
+ "2610.36462": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 115650,
+  "url": "https://arxiv.org/html/2610.36462v1",
+  "fetched": "2026-10-29T02:37:26"
+ },
+ "2610.36592": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68941,
+  "url": "https://arxiv.org/html/2610.36592v1",
+  "fetched": "2026-10-29T02:37:30"
+ },
+ "2610.36610": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 28957,
+  "url": "https://arxiv.org/html/2610.36610v1",
+  "fetched": "2026-10-29T02:37:34"
+ },
+ "2610.36658": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 109281,
+  "url": "https://arxiv.org/html/2610.36658v1",
+  "fetched": "2026-10-29T02:37:38"
+ },
+ "2610.36674": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 31451,
+  "url": "https://arxiv.org/html/2610.36674v1",
+  "fetched": "2026-10-29T02:37:42"
+ },
+ "2610.36760": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 64516,
+  "url": "https://arxiv.org/html/2610.36760v1",
+  "fetched": "2026-10-29T02:37:46"
+ },
+ "2610.36853": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58514,
+  "url": "https://arxiv.org/html/2610.36853v1",
+  "fetched": "2026-10-29T02:37:50"
+ },
+ "2610.36876": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84735,
+  "url": "https://arxiv.org/html/2610.36876v1",
+  "fetched": "2026-10-29T02:37:54"
+ },
+ "2610.37036": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50191,
+  "url": "https://arxiv.org/html/2610.37036v1",
+  "fetched": "2026-10-29T02:37:58"
+ },
+ "2610.37149": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74435,
+  "url": "https://arxiv.org/html/2610.37149v1",
+  "fetched": "2026-10-29T02:38:02"
+ },
+ "2610.37172": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 75716,
+  "url": "https://arxiv.org/html/2610.37172v1",
+  "fetched": "2026-10-29T02:38:07"
+ },
+ "2610.37271": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 32742,
+  "url": "https://arxiv.org/html/2610.37271v1",
+  "fetched": "2026-10-29T02:38:10"
+ },
+ "2610.37427": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 25273,
+  "url": "https://arxiv.org/html/2610.37427v1",
+  "fetched": "2026-10-29T02:38:15"
+ },
+ "2610.37602": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 146381,
+  "url": "https://arxiv.org/html/2610.37602v1",
+  "fetched": "2026-10-29T02:38:19"
+ },
+ "2508.04236": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52679,
+  "url": "https://arxiv.org/html/2508.04236v2",
+  "fetched": "2026-10-29T02:38:23"
+ },
+ "2510.01767": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 60908,
+  "url": "https://arxiv.org/html/2510.01767v2",
+  "fetched": "2026-10-29T02:38:27"
+ },
+ "2604.23018": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 75479,
+  "url": "https://arxiv.org/html/2604.23018v2",
+  "fetched": "2026-10-29T02:38:31"
+ },
+ "2605.31466": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 105670,
+  "url": "https://arxiv.org/html/2605.31466v2",
+  "fetched": "2026-10-29T02:38:34"
+ },
+ "2610.37818": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 126850,
+  "url": "https://arxiv.org/html/2610.37818v1",
+  "fetched": "2026-10-31T02:36:22"
+ },
+ "2610.38117": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88543,
+  "url": "https://arxiv.org/html/2610.38117v1",
+  "fetched": "2026-10-31T02:36:25"
+ },
+ "2610.38278": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 78133,
+  "url": "https://arxiv.org/html/2610.38278v1",
+  "fetched": "2026-10-31T02:36:29"
+ },
+ "2610.38349": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76101,
+  "url": "https://arxiv.org/html/2610.38349v1",
+  "fetched": "2026-10-31T02:36:33"
+ },
+ "2610.38358": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84207,
+  "url": "https://arxiv.org/html/2610.38358v1",
+  "fetched": "2026-10-31T02:36:37"
+ },
+ "2610.38536": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 36969,
+  "url": "https://arxiv.org/html/2610.38536v1",
+  "fetched": "2026-10-31T02:36:41"
+ },
+ "2610.38629": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 26072,
+  "url": "https://arxiv.org/html/2610.38629v1",
+  "fetched": "2026-10-31T02:36:45"
+ },
+ "2610.38951": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96462,
+  "url": "https://arxiv.org/html/2610.38951v1",
+  "fetched": "2026-10-31T02:36:49"
+ },
+ "2610.39076": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52726,
+  "url": "https://arxiv.org/html/2610.39076v1",
+  "fetched": "2026-10-31T02:36:52"
+ },
+ "2610.39147": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 93716,
+  "url": "https://arxiv.org/html/2610.39147v1",
+  "fetched": "2026-10-31T02:36:57"
+ },
+ "2610.39201": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68602,
+  "url": "https://arxiv.org/html/2610.39201v1",
+  "fetched": "2026-10-31T02:37:00"
+ },
+ "2610.39399": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 98807,
+  "url": "https://arxiv.org/html/2610.39399v1",
+  "fetched": "2026-10-31T02:37:05"
+ },
+ "2610.39745": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 64870,
+  "url": "https://arxiv.org/html/2610.39745v1",
+  "fetched": "2026-10-31T02:37:09"
+ },
+ "2610.39936": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96789,
+  "url": "https://arxiv.org/html/2610.39936v1",
+  "fetched": "2026-10-31T02:37:13"
+ },
+ "2610.40495": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 113572,
+  "url": "https://arxiv.org/html/2610.40495v1",
+  "fetched": "2026-10-31T02:37:17"
+ },
+ "2610.40525": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 64857,
+  "url": "https://arxiv.org/html/2610.40525v1",
+  "fetched": "2026-10-31T02:37:21"
+ },
+ "2610.40599": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77975,
+  "url": "https://arxiv.org/html/2610.40599v1",
+  "fetched": "2026-10-31T02:37:25"
+ },
+ "2610.40614": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 97581,
+  "url": "https://arxiv.org/html/2610.40614v1",
+  "fetched": "2026-10-31T02:37:28"
+ },
+ "2501.12060": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43601,
+  "url": "https://arxiv.org/html/2501.12060v2",
+  "fetched": "2026-10-31T02:37:32"
+ },
+ "2604.19673": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44240,
+  "url": "https://arxiv.org/html/2604.19673v2",
+  "fetched": "2026-10-31T02:37:35"
+ },
+ "2605.07351": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74143,
+  "url": "https://arxiv.org/html/2605.07351v2",
+  "fetched": "2026-10-31T02:37:39"
+ },
+ "2605.29583": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69915,
+  "url": "https://arxiv.org/html/2605.29583v2",
+  "fetched": "2026-10-31T02:37:42"
+ },
+ "2608.08285": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58067,
+  "url": "https://arxiv.org/html/2608.08285v2",
+  "fetched": "2026-10-31T02:37:46"
+ },
+ "2608.27562": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63876,
+  "url": "https://arxiv.org/html/2608.27562v2",
+  "fetched": "2026-10-31T02:37:49"
+ },
+ "2610.40760": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 24878,
+  "url": "https://arxiv.org/html/2610.40760v1",
+  "fetched": "2026-11-03T02:38:19"
+ },
+ "2610.40832": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 64678,
+  "url": "https://arxiv.org/html/2610.40832v1",
+  "fetched": "2026-11-03T02:38:23"
+ },
+ "2610.41011": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 86588,
+  "url": "https://arxiv.org/html/2610.41011v1",
+  "fetched": "2026-11-03T02:38:27"
+ },
+ "2610.41127": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 97258,
+  "url": "https://arxiv.org/html/2610.41127v1",
+  "fetched": "2026-11-03T02:38:31"
+ },
+ "2610.41496": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76959,
+  "url": "https://arxiv.org/html/2610.41496v1",
+  "fetched": "2026-11-03T02:38:34"
+ },
+ "2610.41501": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73041,
+  "url": "https://arxiv.org/html/2610.41501v1",
+  "fetched": "2026-11-03T02:38:38"
+ },
+ "2610.41602": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 99856,
+  "url": "https://arxiv.org/html/2610.41602v1",
+  "fetched": "2026-11-03T02:38:43"
+ },
+ "2610.41671": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 34954,
+  "url": "https://arxiv.org/html/2610.41671v1",
+  "fetched": "2026-11-03T02:38:47"
+ },
+ "2610.41680": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5660,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2610.41680",
+  "fetched": "2026-11-03T02:38:52",
+  "note": "ar5iv only returned abstract page (43KB HTML, no body sections); arxiv html 404; assessed at abstract level"
+ },
+ "2610.41833": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 89537,
+  "url": "https://arxiv.org/html/2610.41833v1",
+  "fetched": "2026-11-03T02:38:56"
+ },
+ "2610.41987": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 228891,
+  "url": "https://arxiv.org/html/2610.41987v1",
+  "fetched": "2026-11-03T02:39:01"
+ },
+ "2511.11231": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49854,
+  "url": "https://arxiv.org/html/2511.11231v2",
+  "fetched": "2026-11-03T02:39:04"
+ },
+ "2602.21535": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48187,
+  "url": "https://arxiv.org/html/2602.21535v2",
+  "fetched": "2026-11-03T02:39:07"
+ },
+ "2611.00356": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 94548,
+  "url": "https://arxiv.org/html/2611.00356v1",
+  "fetched": "2026-11-04T02:40:32"
+ },
+ "2611.00375": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56627,
+  "url": "https://arxiv.org/html/2611.00375v1",
+  "fetched": "2026-11-04T02:40:36"
+ },
+ "2611.00482": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 178813,
+  "url": "https://arxiv.org/html/2611.00482v1",
+  "fetched": "2026-11-04T02:40:40"
+ },
+ "2611.00509": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 41353,
+  "url": "https://arxiv.org/html/2611.00509v1",
+  "fetched": "2026-11-04T02:40:44"
+ },
+ "2611.00870": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53073,
+  "url": "https://arxiv.org/html/2611.00870v1",
+  "fetched": "2026-11-04T02:40:48"
+ },
+ "2611.00898": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65083,
+  "url": "https://arxiv.org/html/2611.00898v1",
+  "fetched": "2026-11-04T02:40:52"
+ },
+ "2611.01162": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 145520,
+  "url": "https://arxiv.org/html/2611.01162v1",
+  "fetched": "2026-11-04T02:40:56"
+ },
+ "2611.01229": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 4899,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.01229",
+  "fetched": "2026-11-04T02:41:02"
+ },
+ "2611.01361": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 97173,
+  "url": "https://arxiv.org/html/2611.01361v1",
+  "fetched": "2026-11-04T02:41:06"
+ },
+ "2611.01495": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 14301,
+  "url": "https://arxiv.org/html/2611.01495v1",
+  "fetched": "2026-11-04T02:41:10"
+ },
+ "2611.01534": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47038,
+  "url": "https://arxiv.org/html/2611.01534v1",
+  "fetched": "2026-11-04T02:41:14"
+ },
+ "2611.01543": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61525,
+  "url": "https://arxiv.org/html/2611.01543v1",
+  "fetched": "2026-11-04T02:41:17"
+ },
+ "2611.01627": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 117841,
+  "url": "https://arxiv.org/html/2611.01627v1",
+  "fetched": "2026-11-04T02:41:21"
+ },
+ "2611.01759": {
+  "level": "L1",
+  "evidence": "FULL",
+  "chars": 5252,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.01759",
+  "fetched": "2026-11-04T02:41:26"
+ },
+ "2611.01937": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68273,
+  "url": "https://arxiv.org/html/2611.01937v1",
+  "fetched": "2026-11-04T02:41:30"
+ },
+ "2611.01939": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68444,
+  "url": "https://arxiv.org/html/2611.01939v1",
+  "fetched": "2026-11-04T02:41:34"
+ },
+ "2611.02034": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 36176,
+  "url": "https://arxiv.org/html/2611.02034v1",
+  "fetched": "2026-11-04T02:41:38"
+ },
+ "2611.02044": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 137898,
+  "url": "https://arxiv.org/html/2611.02044v1",
+  "fetched": "2026-11-04T02:41:42"
+ },
+ "2611.02051": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76915,
+  "url": "https://arxiv.org/html/2611.02051v1",
+  "fetched": "2026-11-04T02:41:46"
+ },
+ "2611.02363": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 38364,
+  "url": "https://arxiv.org/html/2611.02363v1",
+  "fetched": "2026-11-04T02:41:50"
+ },
+ "2611.02447": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 20113,
+  "url": "https://arxiv.org/html/2611.02447v1",
+  "fetched": "2026-11-04T02:41:54"
+ },
+ "2611.02490": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54114,
+  "url": "https://arxiv.org/html/2611.02490v1",
+  "fetched": "2026-11-04T02:41:58"
+ },
+ "2611.02537": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 35822,
+  "url": "https://arxiv.org/html/2611.02537v1",
+  "fetched": "2026-11-04T02:42:02"
+ },
+ "2611.02658": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 64991,
+  "url": "https://arxiv.org/html/2611.02658v1",
+  "fetched": "2026-11-04T02:42:06"
+ },
+ "2611.02767": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46376,
+  "url": "https://arxiv.org/html/2611.02767v1",
+  "fetched": "2026-11-04T02:42:10"
+ },
+ "2611.03021": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74878,
+  "url": "https://arxiv.org/html/2611.03021v1",
+  "fetched": "2026-11-04T02:42:14"
+ },
+ "2611.03052": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83165,
+  "url": "https://arxiv.org/html/2611.03052v1",
+  "fetched": "2026-11-04T02:42:18"
+ },
+ "2611.03062": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63783,
+  "url": "https://arxiv.org/html/2611.03062v1",
+  "fetched": "2026-11-04T02:42:22"
+ },
+ "2611.03106": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46133,
+  "url": "https://arxiv.org/html/2611.03106v1",
+  "fetched": "2026-11-04T02:42:26"
+ },
+ "2611.03114": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82182,
+  "url": "https://arxiv.org/html/2611.03114v1",
+  "fetched": "2026-11-04T02:42:30"
+ },
+ "2611.03228": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72042,
+  "url": "https://arxiv.org/html/2611.03228v1",
+  "fetched": "2026-11-04T02:42:34"
+ },
+ "2611.03254": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49093,
+  "url": "https://arxiv.org/html/2611.03254v1",
+  "fetched": "2026-11-04T02:42:38"
+ },
+ "2611.03283": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56396,
+  "url": "https://arxiv.org/html/2611.03283v1",
+  "fetched": "2026-11-04T02:42:42"
+ },
+ "2611.03389": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61217,
+  "url": "https://arxiv.org/html/2611.03389v1",
+  "fetched": "2026-11-04T02:42:45"
+ },
+ "2611.03646": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 105690,
+  "url": "https://arxiv.org/html/2611.03646v1",
+  "fetched": "2026-11-04T02:42:49"
+ },
+ "2508.13537": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 79428,
+  "url": "https://arxiv.org/html/2508.13537v2",
+  "fetched": "2026-11-04T02:42:53"
+ },
+ "2509.10759": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76032,
+  "url": "https://arxiv.org/html/2509.10759v2",
+  "fetched": "2026-11-04T02:42:56"
+ },
+ "2511.20348": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 36875,
+  "url": "https://arxiv.org/html/2511.20348v2",
+  "fetched": "2026-11-04T02:43:00"
+ },
+ "2512.17541": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71724,
+  "url": "https://arxiv.org/html/2512.17541v2",
+  "fetched": "2026-11-04T02:43:03"
+ },
+ "2603.22174": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49248,
+  "url": "https://arxiv.org/html/2603.22174v2",
+  "fetched": "2026-11-04T02:43:07"
+ },
+ "2605.05155": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 145619,
+  "url": "https://arxiv.org/html/2605.05155v2",
+  "fetched": "2026-11-04T02:43:10"
+ },
+ "2606.18588": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 91335,
+  "url": "https://arxiv.org/html/2606.18588v2",
+  "fetched": "2026-11-04T02:43:14"
+ },
+ "2607.20790": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48767,
+  "url": "https://arxiv.org/html/2607.20790v2",
+  "fetched": "2026-11-04T02:43:17"
+ },
+ "2611.04666": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68892,
+  "url": "https://arxiv.org/html/2611.04666v1",
+  "fetched": "2026-11-05T02:37:18"
+ },
+ "2611.05176": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46261,
+  "url": "https://arxiv.org/html/2611.05176v1",
+  "fetched": "2026-11-05T02:37:22"
+ },
+ "2611.04173": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73044,
+  "url": "https://arxiv.org/html/2611.04173v1",
+  "fetched": "2026-11-05T02:37:25"
+ },
+ "2611.04195": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51760,
+  "url": "https://arxiv.org/html/2611.04195v1",
+  "fetched": "2026-11-05T02:37:29"
+ },
+ "2611.04358": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 33685,
+  "url": "https://arxiv.org/html/2611.04358v1",
+  "fetched": "2026-11-05T02:37:33"
+ },
+ "2611.04374": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52158,
+  "url": "https://arxiv.org/html/2611.04374v1",
+  "fetched": "2026-11-05T02:37:37"
+ },
+ "2611.04498": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88973,
+  "url": "https://arxiv.org/html/2611.04498v1",
+  "fetched": "2026-11-05T02:37:41"
+ },
+ "2611.05359": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5282,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.05359",
+  "fetched": "2026-11-05T02:37:46",
+  "note": "ar5iv 仅返摘要页+arXiv 样板，无正文节；人工复核改判 PARTIAL（原脚本按字符数误判 FULL）"
+ },
+ "2611.04494": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44789,
+  "url": "https://arxiv.org/html/2611.04494v1",
+  "fetched": "2026-11-05T02:37:50"
+ },
+ "2606.26364": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88923,
+  "url": "https://arxiv.org/html/2606.26364v2",
+  "fetched": "2026-11-05T02:37:53"
+ },
+ "2603.07604": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 55512,
+  "url": "https://arxiv.org/html/2603.07604v2",
+  "fetched": "2026-11-05T02:37:57"
+ },
+ "2603.16016": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 142478,
+  "url": "https://arxiv.org/html/2603.16016v2",
+  "fetched": "2026-11-05T02:38:03"
+ },
+ "2606.01643": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 120236,
+  "url": "https://arxiv.org/html/2606.01643v2",
+  "fetched": "2026-11-05T02:38:07"
+ },
+ "2606.03994": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 99830,
+  "url": "https://arxiv.org/html/2606.03994v2",
+  "fetched": "2026-11-05T02:38:10"
+ },
+ "2606.29494": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49908,
+  "url": "https://arxiv.org/html/2606.29494v2",
+  "fetched": "2026-11-05T02:38:13"
+ },
+ "2607.18539": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58093,
+  "url": "https://arxiv.org/html/2607.18539v2",
+  "fetched": "2026-11-05T02:38:17"
+ },
+ "2608.00232": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59052,
+  "url": "https://arxiv.org/html/2608.00232v2",
+  "fetched": "2026-11-05T02:38:20"
+ },
+ "2611.05593": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 99550,
+  "url": "https://arxiv.org/html/2611.05593v1",
+  "fetched": "2026-11-06T02:37:33"
+ },
+ "2611.05938": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 31866,
+  "url": "https://arxiv.org/html/2611.05938v1",
+  "fetched": "2026-11-06T02:37:37"
+ },
+ "2611.06020": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 118628,
+  "url": "https://arxiv.org/html/2611.06020v1",
+  "fetched": "2026-11-06T02:37:41"
+ },
+ "2611.06061": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 60983,
+  "url": "https://arxiv.org/html/2611.06061v1",
+  "fetched": "2026-11-06T02:37:44"
+ },
+ "2611.06121": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63768,
+  "url": "https://arxiv.org/html/2611.06121v1",
+  "fetched": "2026-11-06T02:37:48"
+ },
+ "2611.06258": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80899,
+  "url": "https://arxiv.org/html/2611.06258v1",
+  "fetched": "2026-11-06T02:37:52"
+ },
+ "2611.06273": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46235,
+  "url": "https://arxiv.org/html/2611.06273v1",
+  "fetched": "2026-11-06T02:37:56"
+ },
+ "2611.06308": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44881,
+  "url": "https://arxiv.org/html/2611.06308v1",
+  "fetched": "2026-11-06T02:38:00"
+ },
+ "2611.06593": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45285,
+  "url": "https://arxiv.org/html/2611.06593v1",
+  "fetched": "2026-11-06T02:38:03"
+ },
+ "2611.06689": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 21776,
+  "url": "https://arxiv.org/html/2611.06689v1",
+  "fetched": "2026-11-06T02:38:07"
+ },
+ "2611.06734": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50674,
+  "url": "https://arxiv.org/html/2611.06734v1",
+  "fetched": "2026-11-06T02:38:11"
+ },
+ "2611.06817": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 178380,
+  "url": "https://arxiv.org/html/2611.06817v1",
+  "fetched": "2026-11-06T02:38:15"
+ },
+ "2401.08739": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 123799,
+  "url": "https://arxiv.org/html/2401.08739v2",
+  "fetched": "2026-11-06T02:38:18"
+ },
+ "2506.07886": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 93379,
+  "url": "https://arxiv.org/html/2506.07886v2",
+  "fetched": "2026-11-06T02:38:22"
+ },
+ "2511.17747": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77918,
+  "url": "https://arxiv.org/html/2511.17747v2",
+  "fetched": "2026-11-06T02:38:26"
+ },
+ "2607.14836": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87740,
+  "url": "https://arxiv.org/html/2607.14836v2",
+  "fetched": "2026-11-06T02:38:29"
+ },
+ "2611.00177": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77308,
+  "url": "https://arxiv.org/html/2611.00177v2",
+  "fetched": "2026-11-06T02:38:32"
+ },
+ "2604.24033": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88017,
+  "url": "https://arxiv.org/html/2604.24033v2",
+  "fetched": "2026-11-06T02:38:36"
+ },
+ "2611.06974": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 104482,
+  "url": "https://arxiv.org/html/2611.06974v1",
+  "fetched": "2026-11-07T13:48:14"
+ },
+ "2611.07049": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63879,
+  "url": "https://arxiv.org/html/2611.07049v1",
+  "fetched": "2026-11-07T13:48:24"
+ },
+ "2611.07272": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58579,
+  "url": "https://arxiv.org/html/2611.07272v1",
+  "fetched": "2026-11-07T13:48:28"
+ },
+ "2611.07345": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 111229,
+  "url": "https://arxiv.org/html/2611.07345v1",
+  "fetched": "2026-11-07T13:48:33"
+ },
+ "2611.07386": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 62721,
+  "url": "https://arxiv.org/html/2611.07386v1",
+  "fetched": "2026-11-07T13:48:40"
+ },
+ "2611.07463": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49528,
+  "url": "https://arxiv.org/html/2611.07463v1",
+  "fetched": "2026-11-07T13:48:46"
+ },
+ "2611.07673": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48907,
+  "url": "https://arxiv.org/html/2611.07673v1",
+  "fetched": "2026-11-07T13:48:53"
+ },
+ "2611.07683": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 146316,
+  "url": "https://arxiv.org/html/2611.07683v1",
+  "fetched": "2026-11-07T13:49:12"
+ },
+ "2611.07687": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51881,
+  "url": "https://arxiv.org/html/2611.07687v1",
+  "fetched": "2026-11-07T13:49:18"
+ },
+ "2611.07709": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 124913,
+  "url": "https://arxiv.org/html/2611.07709v1",
+  "fetched": "2026-11-07T13:49:39"
+ },
+ "2611.07798": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 13629,
+  "url": "https://arxiv.org/html/2611.07798v1",
+  "fetched": "2026-11-07T13:49:44"
+ },
+ "2611.07873": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 92629,
+  "url": "https://arxiv.org/html/2611.07873v1",
+  "fetched": "2026-11-07T13:49:52"
+ },
+ "2611.07902": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 136040,
+  "url": "https://arxiv.org/html/2611.07902v1",
+  "fetched": "2026-11-07T13:50:15"
+ },
+ "2611.07909": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 84890,
+  "url": "https://arxiv.org/html/2611.07909v1",
+  "fetched": "2026-11-07T13:50:27"
+ },
+ "2611.07979": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 54740,
+  "url": "https://arxiv.org/html/2611.07979v1",
+  "fetched": "2026-11-07T13:50:36"
+ },
+ "2611.08167": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 38153,
+  "url": "https://arxiv.org/html/2611.08167v1",
+  "fetched": "2026-11-07T13:50:40"
+ },
+ "2611.08288": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88402,
+  "url": "https://arxiv.org/html/2611.08288v1",
+  "fetched": "2026-11-07T13:51:02"
+ },
+ "2611.08301": {
+  "level": "L0",
+  "evidence": "PARTIAL",
+  "chars": 82948,
+  "url": "https://arxiv.org/html/2611.08301v1",
+  "fetched": "2026-11-07T13:51:12",
+  "note": "arXiv HTML 仅提供 Supplementary Material（主文缺失：问题陈述/训练细节/数据集名称）；ar5iv 无转换版；方法与实验基于补充材料实证，摘要级评估并显式声明"
+ },
+ "2611.08321": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46954,
+  "url": "https://arxiv.org/html/2611.08321v1",
+  "fetched": "2026-11-07T13:51:16"
+ },
+ "2611.08330": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 179859,
+  "url": "https://arxiv.org/html/2611.08330v1",
+  "fetched": "2026-11-07T13:51:31"
+ },
+ "2611.08398": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 25978,
+  "url": "https://arxiv.org/html/2611.08398v1",
+  "fetched": "2026-11-07T13:51:36"
+ },
+ "2611.08436": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65902,
+  "url": "https://arxiv.org/html/2611.08436v1",
+  "fetched": "2026-11-07T13:51:47"
+ },
+ "2611.08477": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72083,
+  "url": "https://arxiv.org/html/2611.08477v1",
+  "fetched": "2026-11-07T13:51:55"
+ },
+ "2611.09089": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 102419,
+  "url": "https://arxiv.org/html/2611.09089v1",
+  "fetched": "2026-11-10T02:36:25"
+ },
+ "2611.09129": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 76015,
+  "url": "https://arxiv.org/html/2611.09129v1",
+  "fetched": "2026-11-10T02:36:29"
+ },
+ "2611.09195": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 4731,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.09195",
+  "fetched": "2026-11-10T02:36:34",
+  "note": "arXiv HTML 404，ar5iv 仅摘要页 4,731 字符无正文节，无 PDF 解析器 → 摘要级评估"
+ },
+ "2611.09238": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57634,
+  "url": "https://arxiv.org/html/2611.09238v1",
+  "fetched": "2026-11-10T02:36:37"
+ },
+ "2611.09394": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 48327,
+  "url": "https://arxiv.org/html/2611.09394v1",
+  "fetched": "2026-11-10T02:36:41"
+ },
+ "2611.09708": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 4839,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.09708",
+  "fetched": "2026-11-10T02:36:46",
+  "note": "arXiv HTML 404，ar5iv 仅摘要页 4,839 字符无正文节，无 PDF 解析器 → 摘要级评估"
+ },
+ "2611.09458": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82309,
+  "url": "https://arxiv.org/html/2611.09458v1",
+  "fetched": "2026-11-10T02:36:50"
+ },
+ "2611.09036": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77451,
+  "url": "https://arxiv.org/html/2611.09036v1",
+  "fetched": "2026-11-10T02:36:55"
+ },
+ "2611.09074": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82734,
+  "url": "https://arxiv.org/html/2611.09074v1",
+  "fetched": "2026-11-10T02:36:59"
+ },
+ "2611.08731": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71774,
+  "url": "https://arxiv.org/html/2611.08731v1",
+  "fetched": "2026-11-10T02:37:03"
+ },
+ "2611.09692": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59780,
+  "url": "https://arxiv.org/html/2611.09692v1",
+  "fetched": "2026-11-10T02:37:07"
+ },
+ "2611.08578": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 126305,
+  "url": "https://arxiv.org/html/2611.08578v1",
+  "fetched": "2026-11-10T02:37:11"
+ },
+ "2611.09584": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46548,
+  "url": "https://arxiv.org/html/2611.09584v1",
+  "fetched": "2026-11-10T02:37:15"
+ },
+ "2611.09524": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 25010,
+  "url": "https://arxiv.org/html/2611.09524v1",
+  "fetched": "2026-11-10T02:37:19"
+ },
+ "2511.18127": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57703,
+  "url": "https://arxiv.org/html/2511.18127v2",
+  "fetched": "2026-11-10T02:37:23"
+ },
+ "2605.16981": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83449,
+  "url": "https://arxiv.org/html/2605.16981v2",
+  "fetched": "2026-11-10T02:37:26"
+ },
+ "2605.31557": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 134811,
+  "url": "https://arxiv.org/html/2605.31557v2",
+  "fetched": "2026-11-10T02:37:30"
+ },
+ "2607.24409": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 148056,
+  "url": "https://arxiv.org/html/2607.24409v2",
+  "fetched": "2026-11-10T02:37:34"
+ },
+ "2611.10013": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 89160,
+  "url": "https://arxiv.org/html/2611.10013v1",
+  "fetched": "2026-11-11T02:35:26"
+ },
+ "2611.10699": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63601,
+  "url": "https://arxiv.org/html/2611.10699v1",
+  "fetched": "2026-11-11T02:35:31"
+ },
+ "2611.11640": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 27835,
+  "url": "https://arxiv.org/html/2611.11640v1",
+  "fetched": "2026-11-11T02:35:34"
+ },
+ "2611.12319": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49827,
+  "url": "https://arxiv.org/html/2611.12319v1",
+  "fetched": "2026-11-11T02:35:38"
+ },
+ "2611.12716": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47603,
+  "url": "https://arxiv.org/html/2611.12716v1",
+  "fetched": "2026-11-11T02:35:42"
+ },
+ "2611.10578": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 117577,
+  "url": "https://arxiv.org/html/2611.10578v1",
+  "fetched": "2026-11-11T02:35:46"
+ },
+ "2611.11636": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 98731,
+  "url": "https://arxiv.org/html/2611.11636v1",
+  "fetched": "2026-11-11T02:35:50"
+ },
+ "2611.11653": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 31881,
+  "url": "https://arxiv.org/html/2611.11653v1",
+  "fetched": "2026-11-11T02:35:54"
+ },
+ "2611.11830": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 58075,
+  "url": "https://arxiv.org/html/2611.11830v1",
+  "fetched": "2026-11-11T02:35:58"
+ },
+ "2611.12529": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 93827,
+  "url": "https://arxiv.org/html/2611.12529v1",
+  "fetched": "2026-11-11T02:36:01"
+ },
+ "2611.09926": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 107956,
+  "url": "https://arxiv.org/html/2611.09926v1",
+  "fetched": "2026-11-11T02:36:05"
+ },
+ "2611.10199": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57654,
+  "url": "https://arxiv.org/html/2611.10199v1",
+  "fetched": "2026-11-11T02:36:09"
+ },
+ "2611.10370": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74011,
+  "url": "https://arxiv.org/html/2611.10370v1",
+  "fetched": "2026-11-11T02:36:13"
+ },
+ "2611.10379": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 85904,
+  "url": "https://arxiv.org/html/2611.10379v1",
+  "fetched": "2026-11-11T02:36:17"
+ },
+ "2611.10509": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 128424,
+  "url": "https://arxiv.org/html/2611.10509v1",
+  "fetched": "2026-11-11T02:36:21"
+ },
+ "2611.10562": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70393,
+  "url": "https://arxiv.org/html/2611.10562v1",
+  "fetched": "2026-11-11T02:36:25"
+ },
+ "2611.10637": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 75293,
+  "url": "https://arxiv.org/html/2611.10637v1",
+  "fetched": "2026-11-11T02:36:29"
+ },
+ "2611.10652": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 60819,
+  "url": "https://arxiv.org/html/2611.10652v1",
+  "fetched": "2026-11-11T02:36:33"
+ },
+ "2611.11169": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61365,
+  "url": "https://arxiv.org/html/2611.11169v1",
+  "fetched": "2026-11-11T02:36:37"
+ },
+ "2611.11586": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 57821,
+  "url": "https://arxiv.org/html/2611.11586v1",
+  "fetched": "2026-11-11T02:36:41"
+ },
+ "2611.11951": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 103203,
+  "url": "https://arxiv.org/html/2611.11951v1",
+  "fetched": "2026-11-11T02:36:48"
+ },
+ "2611.11964": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 66492,
+  "url": "https://arxiv.org/html/2611.11964v1",
+  "fetched": "2026-11-11T02:36:52"
+ },
+ "2611.12149": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77486,
+  "url": "https://arxiv.org/html/2611.12149v1",
+  "fetched": "2026-11-11T02:36:56"
+ },
+ "2611.12259": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43312,
+  "url": "https://arxiv.org/html/2611.12259v1",
+  "fetched": "2026-11-11T02:37:00"
+ },
+ "2611.10349": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 107277,
+  "url": "https://arxiv.org/html/2611.10349v1",
+  "fetched": "2026-11-11T02:37:04"
+ },
+ "2611.12038": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80804,
+  "url": "https://arxiv.org/html/2611.12038v1",
+  "fetched": "2026-11-11T02:37:08"
+ },
+ "2611.12452": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 42502,
+  "url": "https://arxiv.org/html/2611.12452v1",
+  "fetched": "2026-11-11T02:37:12"
+ },
+ "2611.10239": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46572,
+  "url": "https://arxiv.org/html/2611.10239v1",
+  "fetched": "2026-11-11T02:37:16"
+ },
+ "2611.10994": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 74406,
+  "url": "https://arxiv.org/html/2611.10994v1",
+  "fetched": "2026-11-11T02:37:20"
+ },
+ "2611.12130": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 4833,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.12130",
+  "fetched": "2026-11-11T02:37:25",
+  "note": "ar5iv 仅返摘要页（4,833 字符，无 Introduction/Method 节），改判 PARTIAL，按摘要级评估"
+ },
+ "2611.11825": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49046,
+  "url": "https://arxiv.org/html/2611.11825v1",
+  "fetched": "2026-11-11T02:37:29"
+ },
+ "2609.11894": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 134523,
+  "url": "https://arxiv.org/html/2609.11894v2",
+  "fetched": "2026-11-11T02:37:32"
+ },
+ "2503.00747": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 63091,
+  "url": "https://arxiv.org/html/2503.00747v2",
+  "fetched": "2026-11-11T02:37:36"
+ },
+ "2603.10801": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72491,
+  "url": "https://arxiv.org/html/2603.10801v2",
+  "fetched": "2026-11-11T02:37:39"
+ },
+ "2605.11594": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50969,
+  "url": "https://arxiv.org/html/2605.11594v2",
+  "fetched": "2026-11-11T02:37:43"
+ },
+ "2605.12297": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 79588,
+  "url": "https://arxiv.org/html/2605.12297v2",
+  "fetched": "2026-11-11T02:37:46"
+ },
+ "2609.00775": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46651,
+  "url": "https://arxiv.org/html/2609.00775v2",
+  "fetched": "2026-11-11T02:37:49"
+ },
+ "2608.30368": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 33033,
+  "url": "https://arxiv.org/html/2608.30368v2",
+  "fetched": "2026-11-11T02:37:53"
+ },
+ "2512.14329": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5391,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2512.14329",
+  "fetched": "2026-11-11T02:37:58",
+  "note": "ar5iv 仅返摘要页（5,391 字符，无 Introduction/Method 节），改判 PARTIAL，按摘要级评估"
+ },
+ "2611.12912": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47039,
+  "url": "https://arxiv.org/html/2611.12912v1",
+  "fetched": "2026-11-12T02:42:21"
+ },
+ "2611.13280": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72653,
+  "url": "https://arxiv.org/html/2611.13280v1",
+  "fetched": "2026-11-12T02:42:25"
+ },
+ "2611.13296": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 4350,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.13296",
+  "fetched": "2026-11-12T02:42:30",
+  "note": "arXiv HTML 404，ar5iv 仅返 arXiv 摘要页（4,350 字符，无 Introduction/Method 节），人工抽看正文后改判 PARTIAL，按摘要级评估"
+ },
+ "2611.13486": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59550,
+  "url": "https://arxiv.org/html/2611.13486v1",
+  "fetched": "2026-11-12T02:42:34"
+ },
+ "2611.13528": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65058,
+  "url": "https://arxiv.org/html/2611.13528v1",
+  "fetched": "2026-11-12T02:42:38"
+ },
+ "2611.13626": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 87709,
+  "url": "https://arxiv.org/html/2611.13626v1",
+  "fetched": "2026-11-12T02:42:42"
+ },
+ "2611.13628": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68190,
+  "url": "https://arxiv.org/html/2611.13628v1",
+  "fetched": "2026-11-12T02:42:46"
+ },
+ "2611.13654": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 112993,
+  "url": "https://arxiv.org/html/2611.13654v1",
+  "fetched": "2026-11-12T02:42:50"
+ },
+ "2611.13662": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52610,
+  "url": "https://arxiv.org/html/2611.13662v1",
+  "fetched": "2026-11-12T02:42:54"
+ },
+ "2611.13772": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47193,
+  "url": "https://arxiv.org/html/2611.13772v1",
+  "fetched": "2026-11-12T02:42:58"
+ },
+ "2611.13808": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 56681,
+  "url": "https://arxiv.org/html/2611.13808v1",
+  "fetched": "2026-11-12T02:43:02"
+ },
+ "2611.13906": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 26116,
+  "url": "https://arxiv.org/html/2611.13906v1",
+  "fetched": "2026-11-12T02:43:05"
+ },
+ "2611.14029": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49227,
+  "url": "https://arxiv.org/html/2611.14029v1",
+  "fetched": "2026-11-12T02:43:09"
+ },
+ "2611.14062": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 107773,
+  "url": "https://arxiv.org/html/2611.14062v1",
+  "fetched": "2026-11-12T02:43:13"
+ },
+ "2611.14389": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 86006,
+  "url": "https://arxiv.org/html/2611.14389v1",
+  "fetched": "2026-11-12T02:43:17"
+ },
+ "2608.04971": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82526,
+  "url": "https://arxiv.org/html/2608.04971v2",
+  "fetched": "2026-11-12T02:43:20"
+ },
+ "2605.22715": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 114240,
+  "url": "https://arxiv.org/html/2605.22715v2",
+  "fetched": "2026-11-12T02:43:24"
+ },
+ "2505.20858": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 78301,
+  "url": "https://arxiv.org/html/2505.20858v2",
+  "fetched": "2026-11-12T02:43:28"
+ },
+ "2503.00868": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71312,
+  "url": "https://arxiv.org/html/2503.00868v2",
+  "fetched": "2026-11-12T02:43:32"
+ },
+ "2611.14895": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47963,
+  "url": "https://arxiv.org/html/2611.14895v1",
+  "fetched": "2026-11-14T02:37:25"
+ },
+ "2611.15561": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 80047,
+  "url": "https://arxiv.org/html/2611.15561v1",
+  "fetched": "2026-11-14T02:37:29"
+ },
+ "2611.17018": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 96708,
+  "url": "https://arxiv.org/html/2611.17018v1",
+  "fetched": "2026-11-14T02:37:33"
+ },
+ "2611.16171": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 171293,
+  "url": "https://arxiv.org/html/2611.16171v1",
+  "fetched": "2026-11-14T02:37:37"
+ },
+ "2611.15153": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67174,
+  "url": "https://arxiv.org/html/2611.15153v1",
+  "fetched": "2026-11-14T02:37:41"
+ },
+ "2611.16840": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 150432,
+  "url": "https://arxiv.org/html/2611.16840v1",
+  "fetched": "2026-11-14T02:37:45"
+ },
+ "2611.16472": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52594,
+  "url": "https://arxiv.org/html/2611.16472v1",
+  "fetched": "2026-11-14T02:37:49"
+ },
+ "2611.15802": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 43212,
+  "url": "https://arxiv.org/html/2611.15802v1",
+  "fetched": "2026-11-14T02:37:53"
+ },
+ "2611.16259": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47125,
+  "url": "https://arxiv.org/html/2611.16259v1",
+  "fetched": "2026-11-14T02:37:56"
+ },
+ "2611.15435": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53595,
+  "url": "https://arxiv.org/html/2611.15435v1",
+  "fetched": "2026-11-14T02:38:00"
+ },
+ "2611.16012": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 140456,
+  "url": "https://arxiv.org/html/2611.16012v1",
+  "fetched": "2026-11-14T02:38:05"
+ },
+ "2611.16446": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69343,
+  "url": "https://arxiv.org/html/2611.16446v1",
+  "fetched": "2026-11-14T02:38:08"
+ },
+ "2611.16594": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 60373,
+  "url": "https://arxiv.org/html/2611.16594v1",
+  "fetched": "2026-11-14T02:38:12"
+ },
+ "2611.16793": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 55628,
+  "url": "https://arxiv.org/html/2611.16793v1",
+  "fetched": "2026-11-14T02:38:16"
+ },
+ "2611.17331": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 104829,
+  "url": "https://arxiv.org/html/2611.17331v1",
+  "fetched": "2026-11-14T02:38:20"
+ },
+ "2611.15143": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 100344,
+  "url": "https://arxiv.org/html/2611.15143v1",
+  "fetched": "2026-11-14T02:38:24"
+ },
+ "2611.15429": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 55677,
+  "url": "https://arxiv.org/html/2611.15429v1",
+  "fetched": "2026-11-14T02:38:28"
+ },
+ "2611.15437": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 59723,
+  "url": "https://arxiv.org/html/2611.15437v1",
+  "fetched": "2026-11-14T02:38:32"
+ },
+ "2611.16056": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 70627,
+  "url": "https://arxiv.org/html/2611.16056v1",
+  "fetched": "2026-11-14T02:38:36"
+ },
+ "2611.15526": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 75088,
+  "url": "https://arxiv.org/html/2611.15526v1",
+  "fetched": "2026-11-14T02:38:40"
+ },
+ "2607.14203": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 62958,
+  "url": "https://arxiv.org/html/2607.14203v2",
+  "fetched": "2026-11-14T02:38:43"
+ },
+ "2510.03857": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73149,
+  "url": "https://arxiv.org/html/2510.03857v2",
+  "fetched": "2026-11-14T02:38:47"
+ },
+ "2512.10095": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68023,
+  "url": "https://arxiv.org/html/2512.10095v2",
+  "fetched": "2026-11-14T02:38:50"
+ },
+ "2603.09741": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82283,
+  "url": "https://arxiv.org/html/2603.09741v2",
+  "fetched": "2026-11-14T02:38:54"
+ },
+ "2605.21714": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 73573,
+  "url": "https://arxiv.org/html/2605.21714v2",
+  "fetched": "2026-11-14T02:38:57"
+ },
+ "2607.05243": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69115,
+  "url": "https://arxiv.org/html/2607.05243v2",
+  "fetched": "2026-11-14T02:39:01"
+ },
+ "2508.16731": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 47054,
+  "url": "https://arxiv.org/html/2508.16731v2",
+  "fetched": "2026-11-14T02:39:04"
+ },
+ "2603.01178": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 149662,
+  "url": "https://arxiv.org/html/2603.01178v2",
+  "fetched": "2026-11-14T02:39:08"
+ },
+ "2611.18438": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 24146,
+  "url": "https://arxiv.org/html/2611.18438v1",
+  "fetched": "2026-11-17T02:34:37"
+ },
+ "2611.18256": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 82020,
+  "url": "https://arxiv.org/html/2611.18256v1",
+  "fetched": "2026-11-17T02:34:42"
+ },
+ "2611.18170": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 83553,
+  "url": "https://arxiv.org/html/2611.18170v1",
+  "fetched": "2026-11-17T02:34:45"
+ },
+ "2611.18099": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 128049,
+  "url": "https://arxiv.org/html/2611.18099v1",
+  "fetched": "2026-11-17T02:34:49"
+ },
+ "2611.17957": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 61410,
+  "url": "https://arxiv.org/html/2611.17957v1",
+  "fetched": "2026-11-17T02:34:53"
+ },
+ "2611.17752": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52112,
+  "url": "https://arxiv.org/html/2611.17752v1",
+  "fetched": "2026-11-17T02:34:57"
+ },
+ "2611.18340": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77013,
+  "url": "https://arxiv.org/html/2611.18340v1",
+  "fetched": "2026-11-17T02:35:01"
+ },
+ "2611.17755": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 65371,
+  "url": "https://arxiv.org/html/2611.17755v1",
+  "fetched": "2026-11-17T02:35:06"
+ },
+ "2611.17458": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 102424,
+  "url": "https://arxiv.org/html/2611.17458v1",
+  "fetched": "2026-11-17T02:35:10"
+ },
+ "2611.17619": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 24182,
+  "url": "https://arxiv.org/html/2611.17619v1",
+  "fetched": "2026-11-17T02:35:13"
+ },
+ "2611.18243": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 72438,
+  "url": "https://arxiv.org/html/2611.18243v1",
+  "fetched": "2026-11-17T02:35:17"
+ },
+ "2611.17828": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68521,
+  "url": "https://arxiv.org/html/2611.17828v1",
+  "fetched": "2026-11-17T02:35:21"
+ },
+ "2611.17903": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5216,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.17903",
+  "fetched": "2026-11-17T02:35:27",
+  "note": "ar5iv 仅返回摘要页（5,216 字符无正文节）；arXiv HTML 404 且沙箱无 PDF 解析库 → 摘要级评估"
+ },
+ "2501.12764": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 46770,
+  "url": "https://arxiv.org/html/2501.12764v2",
+  "fetched": "2026-11-17T02:35:30"
+ },
+ "2608.19372": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 112020,
+  "url": "https://arxiv.org/html/2608.19372v2",
+  "fetched": "2026-11-17T02:35:33"
+ },
+ "2611.17238": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 184205,
+  "url": "https://arxiv.org/html/2611.17238v2",
+  "fetched": "2026-11-17T02:35:37"
+ },
+ "2611.18679": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 36988,
+  "url": "https://arxiv.org/html/2611.18679v1",
+  "fetched": "2026-11-18T02:35:08"
+ },
+ "2611.18708": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 145593,
+  "url": "https://arxiv.org/html/2611.18708v1",
+  "fetched": "2026-11-18T02:35:13"
+ },
+ "2611.18734": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 71431,
+  "url": "https://arxiv.org/html/2611.18734v1",
+  "fetched": "2026-11-18T02:35:17"
+ },
+ "2611.18822": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 4567,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.18822",
+  "fetched": "2026-11-18T02:35:22",
+  "note": "ar5iv 仅返回摘要页（无正文章节），arXiv HTML 404，沙箱无 PDF 解析库 → 摘要级评估"
+ },
+ "2611.18894": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 94629,
+  "url": "https://arxiv.org/html/2611.18894v1",
+  "fetched": "2026-11-18T02:35:26"
+ },
+ "2611.18979": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 37069,
+  "url": "https://arxiv.org/html/2611.18979v1",
+  "fetched": "2026-11-18T02:35:29"
+ },
+ "2611.19095": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69060,
+  "url": "https://arxiv.org/html/2611.19095v1",
+  "fetched": "2026-11-18T02:35:33"
+ },
+ "2611.19096": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 135224,
+  "url": "https://arxiv.org/html/2611.19096v1",
+  "fetched": "2026-11-18T02:35:37"
+ },
+ "2611.19429": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52261,
+  "url": "https://arxiv.org/html/2611.19429v1",
+  "fetched": "2026-11-18T02:35:41"
+ },
+ "2611.19765": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 45738,
+  "url": "https://arxiv.org/html/2611.19765v1",
+  "fetched": "2026-11-18T02:35:45"
+ },
+ "2611.19771": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 69662,
+  "url": "https://arxiv.org/html/2611.19771v1",
+  "fetched": "2026-11-18T02:35:49"
+ },
+ "2611.19773": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 115364,
+  "url": "https://arxiv.org/html/2611.19773v1",
+  "fetched": "2026-11-18T02:35:53"
+ },
+ "2611.19803": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 77990,
+  "url": "https://arxiv.org/html/2611.19803v1",
+  "fetched": "2026-11-18T02:35:57"
+ },
+ "2611.20083": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67882,
+  "url": "https://arxiv.org/html/2611.20083v1",
+  "fetched": "2026-11-18T02:36:01"
+ },
+ "2611.20196": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5535,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.20196",
+  "fetched": "2026-11-18T02:36:05",
+  "note": "ar5iv 仅返回摘要页（无正文章节），arXiv HTML 404，沙箱无 PDF 解析库 → 摘要级评估"
+ },
+ "2611.20245": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 36008,
+  "url": "https://arxiv.org/html/2611.20245v1",
+  "fetched": "2026-11-18T02:36:09"
+ },
+ "2611.20283": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 118776,
+  "url": "https://arxiv.org/html/2611.20283v1",
+  "fetched": "2026-11-18T02:36:13"
+ },
+ "2611.20533": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 49481,
+  "url": "https://arxiv.org/html/2611.20533v1",
+  "fetched": "2026-11-18T02:36:17"
+ },
+ "2611.20546": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 92435,
+  "url": "https://arxiv.org/html/2611.20546v1",
+  "fetched": "2026-11-18T02:36:21"
+ },
+ "2611.20568": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 15755,
+  "url": "https://arxiv.org/html/2611.20568v1",
+  "fetched": "2026-11-18T02:36:25"
+ },
+ "2611.20570": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5058,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.20570",
+  "fetched": "2026-11-18T02:36:30",
+  "note": "ar5iv 仅返回摘要页（无正文章节），arXiv HTML 404，沙箱无 PDF 解析库 → 摘要级评估"
+ },
+ "2611.20797": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 414440,
+  "url": "https://arxiv.org/html/2611.20797v1",
+  "fetched": "2026-11-18T02:36:34"
+ },
+ "2611.20879": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50510,
+  "url": "https://arxiv.org/html/2611.20879v1",
+  "fetched": "2026-11-18T02:36:38"
+ },
+ "2611.20950": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 50329,
+  "url": "https://arxiv.org/html/2611.20950v1",
+  "fetched": "2026-11-18T02:36:42"
+ },
+ "2611.21044": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 67437,
+  "url": "https://arxiv.org/html/2611.21044v1",
+  "fetched": "2026-11-18T02:36:46"
+ },
+ "2611.21060": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 44619,
+  "url": "https://arxiv.org/html/2611.21060v1",
+  "fetched": "2026-11-18T02:36:50"
+ },
+ "2611.21143": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 89138,
+  "url": "https://arxiv.org/html/2611.21143v1",
+  "fetched": "2026-11-18T02:36:54"
+ },
+ "2611.21233": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 42679,
+  "url": "https://arxiv.org/html/2611.21233v1",
+  "fetched": "2026-11-18T02:36:58"
+ },
+ "2611.21253": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 108156,
+  "url": "https://arxiv.org/html/2611.21253v1",
+  "fetched": "2026-11-18T02:37:02"
+ },
+ "2611.21334": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 60979,
+  "url": "https://arxiv.org/html/2611.21334v1",
+  "fetched": "2026-11-18T02:37:06"
+ },
+ "2611.21383": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 88406,
+  "url": "https://arxiv.org/html/2611.21383v1",
+  "fetched": "2026-11-18T02:37:10"
+ },
+ "2611.21479": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 94704,
+  "url": "https://arxiv.org/html/2611.21479v1",
+  "fetched": "2026-11-18T02:37:13"
+ },
+ "2611.21485": {
+  "level": "L1",
+  "evidence": "PARTIAL",
+  "chars": 5237,
+  "url": "https://ar5iv.labs.arxiv.org/abs/2611.21485",
+  "fetched": "2026-11-18T02:37:18",
+  "note": "ar5iv 仅返回摘要页（无正文章节），arXiv HTML 404，沙箱无 PDF 解析库 → 摘要级评估"
+ },
+ "2511.16349": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 51940,
+  "url": "https://arxiv.org/html/2511.16349v2",
+  "fetched": "2026-11-18T02:37:22"
+ },
+ "2605.05712": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 86581,
+  "url": "https://arxiv.org/html/2605.05712v2",
+  "fetched": "2026-11-18T02:37:25"
+ },
+ "2605.09586": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68652,
+  "url": "https://arxiv.org/html/2605.09586v2",
+  "fetched": "2026-11-18T02:37:29"
+ },
+ "2607.03875": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 68085,
+  "url": "https://arxiv.org/html/2607.03875v2",
+  "fetched": "2026-11-18T02:37:32"
+ },
+ "2609.31117": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 52533,
+  "url": "https://arxiv.org/html/2609.31117v2",
+  "fetched": "2026-11-18T02:37:35"
+ },
+ "2611.18267": {
+  "level": "L0",
+  "evidence": "FULL",
+  "chars": 53920,
+  "url": "https://arxiv.org/html/2611.18267v2",
+  "fetched": "2026-11-18T02:37:39"
+ }
+}

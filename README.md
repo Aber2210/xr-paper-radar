@@ -70,3 +70,21 @@ python scripts/build_frontend.py   # 从 registry/notes/daily 表重新生成 we
 - 报告显式区分「公告日」与「拉取日」；积压窗口如实标注，不伪装当日新论文。
 - 评分不虚构：低量日不凑数，非重磅日无 S 级；方法路线落后者在索引与章节处标 ⚠️。
 - backfill 批次（历史漏网/旧稿补录）单独编号，不与当日新稿混淆。
+
+## 版本与回滚
+
+每批交付后打一个注释标签，标签即「已验证可用」的回滚点：
+
+```bash
+git tag -n1                                   # 列出全部回滚点
+git reset --hard <tag>                        # 全量回滚（代码 + 产物 + registry）
+git checkout <tag> -- scripts/                # 只回滚脚本，保留已产出的知识库
+```
+
+标签口径：`v<主>.<次>-<日期>`（如 `v1.0-20261118`）。打标签前必须让发布门通过：
+
+```bash
+python scripts/check_release.py --smoke   # G1 计数一致 / G2 留痕齐全 / G3 档位自洽 / G4 前端冒烟
+```
+
+`data/fulltext/_manifest.json` 随版本提交（正文不入库），保证回滚后仍能复算 L0/FULL 与字符数。

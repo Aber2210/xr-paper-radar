@@ -1,5 +1,8 @@
 #  regenerable cache & local-only artifacts
-data/fulltext/
+data/fulltext/*
+# 全文 manifest 是「L0/FULL 证据等级」的索引，必须随版本走：否则回滚代码后证据链断裂，
+# 笔记里的字符数与 evidence 断言无法复算（只提交 manifest，不提交 56MB 正文）
+!data/fulltext/_manifest.json
 data/tmp_check/
 data/_chk/
 __pycache__/
