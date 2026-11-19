@@ -96,6 +96,10 @@ out = {
               "top10_mean": mean, "today_max": today_max,
               "margin": margin, "heavy_day_raw": heavy_raw,
               "heavy_day": heavy_raw, "blockbuster": blockbuster,
+              # s_awarded = 本批实际授予 S 的条件是否成立（≥4.20 且 blockbuster）。
+              # 2026-11-19 首次生成时漏了这一项（写成 null），会让发布门 G2 判「留痕不全」、
+              # 也让「本批有没有 S」无法从事后产物自证（2026-11-19 补）。
+              "s_awarded": bool(blockbuster and today_max >= 4.2),
               "top10_lib": [{"id": r["id"], "date": r.get("date"), "value": r.get("value"),
                              "grade": r.get("grade")} for r in top]},
     "top10": [r["id"] for r in top10],
