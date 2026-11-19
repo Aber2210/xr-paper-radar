@@ -35,3 +35,14 @@
 ## 7. 失败与降级
 - 无抓取失败；2611.24193 证据降级 PARTIAL 并显式声明
 - smoke/CDP 与发布结果见第 8 节（发布阶段追加）
+
+## 8. 发布与自检
+- `check_release.py` **PASS**：G1 1043/680/71 三计数一致 ｜ G2 `gates_1120.json` 字段齐 ｜ G3 本批授予S=False、backfill 记S=0、泄漏 0 ｜ R 残差 2.8%
+- `check_release.py --record` 已记账 → `data/verdicts.jsonl`（`2026-11-20` PASS，`residual_rate=0.0276`）
+- `check_audit_guard.py` PASS（23 份脚本：守卫 5 / 基线豁免 18 / 违规 0）
+- `node --check`：抽取 2 个 `<script>` 块（3,315,277 + 33,328 字符）语法通过
+- `smoke_hub.mjs`（Edge headless CDP）**PASS**：papers/notes/batches 与磁盘一致、末三批在列、全部有标题、4 个 tab 渲染、0 页面错误、7 档排序单调、隐藏开关落盘可复原、信息弹层开合正常
+- 渠道② GitHub Pages：`git add -A && git commit`（54a4118）→ `push_to_github.py --incremental`（85 变更 / 0 删除 / 1914 未变）→ 远端 `be9027a5`，tree `2a5d45be` 与本地 `HEAD^{tree}` **完全一致** → `deploy-pages.yml` run 44595847237 **success**
+- 线上核验：`https://aber2210.github.io/xr-paper-radar/` HTTP **200**，含 `const DATA`，计数 **1043 / 680 / 71**；`2026-11-20` 卡 count=25（A18/B4/C3，max 4.33）、`backfill-1120` 卡 count=3（A2/B1）
+- md5 说明：本地 `096f3852…`（5,198,955 B，CRLF 730 行）与线上 `5e6dfe72…`（5,198,225 B）差异仅行尾——**CRLF→LF 归一化后逐字节一致**（已验证 `norm == live`），非内容差异
+- 渠道① WorkBuddy 托管：`workbuddy_sites_deploy` 不在工具集，**不可用**，按「累计第 31 批挂账」如实记录，未声称已发布
