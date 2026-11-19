@@ -11,6 +11,7 @@
     python scripts/check_release.py --smoke    # 追加前端冒烟（调用 smoke_hub.mjs，约 20s）
 """
 import argparse
+import datetime
 import glob
 import json
 import os
@@ -35,17 +36,36 @@ def load_data_counts():
 
 
 def latest_gates():
+    """返回 (路径, 批次日期 YYYY-MM-DD)。
+
+    批次日**必须读文件内容里的 gate3.window_hi**：实际文件名是 gates_MMDD.json（如 gates_1119.json），
+    早期版本用文件名正则只认 gates_YYYY-MM-DD.json，回退成 "1119"，导致下游 `batch` 与
+    `backfill-<MMDD>` 全部拼错 —— G3 的「本批泄漏 S」检查一直在空跑（2026-11-19 自查发现）。
+    """
     files = sorted(glob.glob("data/gates_*.json"))
     if not files:
         return None, None
     p = files[-1]
-    m = re.search(r"gates_(\d{4}-\d{2}-\d{2})\.json$", p) or re.search(r"gates_(\d{4})\.json$", p)
-    return p, m.group(1) if m else None
+    try:
+        g = json.load(open(p, encoding="utf-8"))
+        d = (g.get("gate3") or {}).get("window_hi")
+        if isinstance(d, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
+            return p, d
+    except Exception:
+        pass
+    m = re.search(r"gates_(\d{4})-(\d{2})-(\d{2})\.json$", p)
+    if m:
+        return p, "-".join(m.groups())
+    m = re.search(r"gates_(\d{2})(\d{2})\.json$", p)
+    if m:
+        return p, "2026-%s-%s" % (m.group(1), m.group(2))
+    return p, None
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--record", action="store_true", help="把判决追加到 data/verdicts.jsonl（按批次幂等）")
     args = ap.parse_args()
     fails = []
 
@@ -108,12 +128,48 @@ def main():
         if not ok4:
             fails.append("G4 前端冒烟未通过")
 
-    if fails:
-        for f in fails:
-            print("ERROR:", f)
-        return 1
-    print("RELEASE GATE: PASS —— 可以打标签")
-    return 0
+    # R 残差复核（诊断项：不阻塞发布，超阈值记 WARN）
+    warns, resid_rate = [], None
+    if gdate:
+        rp = "data/residual_%s.json" % (gdate[5:7] + gdate[8:10])
+        if os.path.exists(rp):
+            rd = json.load(open(rp, encoding="utf-8"))
+            resid_rate = rd.get("rate")
+            print("R 残差复核：扫描 %s 条、疑似漏检 %s 条（%.1f%%）→ %s"
+                  % (rd.get("n_scanned", 0), rd.get("n_flagged", 0), 100 * (resid_rate or 0),
+                     "WARN" if (resid_rate or 0) > 0.12 else "OK"))
+            if (resid_rate or 0) > 0.12:
+                warns.append("残差漏检率 %.1f%% > 12%%（连续 3 日需上报）" % (100 * resid_rate))
+        else:
+            print("R 残差复核：未见 data/residual_%s.json → 未执行" % (gdate[5:7] + gdate[8:10]))
+            warns.append("第 3.5 步残差复核未执行")
+
+    # 判决：FAIL > WARN > PASS
+    level = "FAIL" if fails else ("WARN" if warns else "PASS")
+    for f in fails:
+        print("ERROR:", f)
+    for w in warns:
+        print("WARN :", w)
+    print("VERDICT: %s%s" % (level, "" if level == "PASS" else " —— 见上方逐条原因"))
+
+    if args.record:
+        rec = {"batch": gdate, "verdict": level,
+               "counts": {"papers": reg, "notes": notes, "batches": daily},
+               "gate3": {k: g3.get(k) for k in ("top10_mean", "today_max", "margin", "blockbuster", "s_awarded")},
+               "residual_rate": resid_rate, "reasons": fails + warns,
+               "at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}
+        path = "data/verdicts.jsonl"
+        hist = []
+        if os.path.exists(path):
+            hist = [json.loads(l) for l in open(path, encoding="utf-8") if l.strip()]
+        hist = [r for r in hist if r.get("batch") != gdate] + [rec]
+        hist.sort(key=lambda r: r.get("batch") or "")
+        with open(path, "w", encoding="utf-8") as f:
+            for r in hist:
+                f.write(json.dumps(r, ensure_ascii=False) + "\n")
+        print("判决已记账 -> %s（共 %d 批）" % (path, len(hist)))
+
+    return 1 if fails else 0
 
 
 if __name__ == "__main__":

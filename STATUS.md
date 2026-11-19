@@ -36,6 +36,7 @@
 | C-4 | R-05 `truncated` 未检查 / R-06 RSS 解析未兜异常 | 注入测试：truncated→RuntimeError；截断 XML→exit 2 | 11-18 |
 | C-5 | 11-19 批 `s_awarded` 为 null | 补字段并重算，12 字段不变；发布门 G2 由此 PASS | 11-19 |
 | C-6 | 召回缺口的量化（此前"0 漏网"结论无独立证据） | 100 条盲评：7/7 确认为真，漏检率 7.0%（CI 3.4–13.7%） | 11-19 |
+| C-7 | `check_release.py` 只认 `gates_YYYY-MM-DD.json`，而实际文件名是 `gates_MMDD.json` → 批次日期解析成 "1119"，G3 的「本批泄漏 S」**一直在空跑** | 改为读 `gate3.window_hi`；注入一条 11-19 的 S 后 G3 正确变红（VERDICT FAIL / rc=1） | 11-19 |
 
 ## 3. 关键红线（违反即视为回归）
 
@@ -59,9 +60,15 @@
   4. 前端冒烟 + 线上 md5 核对。
   历史判决归档，不再重开；若确需 `PASS`，另起独立确认席（约 30 分钟，仅对当批断言复跑）。
 
+- **判决记账**：`python scripts/check_release.py --record` 会把本批判决写入 `data/verdicts.jsonl`
+  （按批次日幂等：`{batch, verdict, counts, gate3, residual_rate, reasons, at}`）。
+  三档语义：`PASS` 全绿；`WARN` 有诊断性问题但不阻塞（如残差复核未执行、漏检率 >12%）；
+  `FAIL` 硬门不过（计数不一致 / 留痕缺失 / 档位泄漏），**不得发布**。
+
 ## 5. 每轮自检清单（收尾前逐条打勾）
 
 - [ ] `python scripts/check_release.py` 全 PASS
+- [ ] `python scripts/check_release.py --record` 已把本批判决写入 `data/verdicts.jsonl`（VERDICT 行与台账一致）
 - [ ] `python scripts/check_audit_guard.py` 无违规
 - [ ] `data/residual_<MMDD>.json` 已生成，报告含「残差复核」一行
 - [ ] `data/gates_<MMDD>.json` 四字段齐全且 `s_awarded` 为布尔

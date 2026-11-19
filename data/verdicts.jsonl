@@ -1,0 +1,1 @@
+{"batch": "2026-11-19", "verdict": "WARN", "counts": {"papers": 1015, "notes": 655, "batches": 69}, "gate3": {"top10_mean": 4.423, "today_max": 4.3, "margin": -0.123, "blockbuster": false, "s_awarded": false}, "residual_rate": null, "reasons": ["第 3.5 步残差复核未执行"], "at": "2026-11-19 15:30"}
