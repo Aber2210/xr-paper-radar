@@ -46,3 +46,4 @@
 - 线上核验：`https://aber2210.github.io/xr-paper-radar/` HTTP **200**，含 `const DATA`，计数 **1043 / 680 / 71**；`2026-11-20` 卡 count=25（A18/B4/C3，max 4.33）、`backfill-1120` 卡 count=3（A2/B1）
 - md5 说明：本地 `096f3852…`（5,198,955 B，CRLF 730 行）与线上 `5e6dfe72…`（5,198,225 B）差异仅行尾——**CRLF→LF 归一化后逐字节一致**（已验证 `norm == live`），非内容差异
 - 渠道① WorkBuddy 托管：`workbuddy_sites_deploy` 不在工具集，**不可用**，按「累计第 31 批挂账」如实记录，未声称已发布
+- **部署故障（诚实记录）**：补文档的第二次提交 `b59ad6c`（远端 `f393b6ef`）触发的 deploy run `44596069182` 两次（含 `--failed` 重跑）与 `workflow_dispatch` 的 `44596257214`，均以 GitHub Actions **artifact 元数据接口**报错失败（`Fetching artifact metadata failed … .github#16`），属平台侧故障而非构建问题。该提交**未改动 `web/xr-paper-hub.html`**，线上仍是 `44595847237` 成功部署的构建（复核 HTTP 200 / `5e6dfe72…` / 1043/680/71，内容不受影响）；工作流含每日 UTC 22:00 定时兜底，下次重试或定时任务即自动补齐
