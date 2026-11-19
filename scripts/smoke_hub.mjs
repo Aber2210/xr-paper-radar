@@ -132,6 +132,96 @@ async function main() {
   console.log('DISK:', JSON.stringify(disk));
   console.log('PAGE_ERRORS:', errors.length ? errors.join('\\n') : 'none');
 
+  // ---- 交互断言（STATUS O-3）：7 档排序 / 隐藏开关 / 信息弹层 ----
+  // 全部读真实 DOM 状态，不改期望值；排序用「单调性」而非镜像实现来验证。
+  let ui = {};
+  try {
+    const r = await send('Runtime.evaluate', {
+      expression: `(async () => {
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+        const out = { sorts: {}, hide: {}, pop: {} };
+        const dailyBtn = document.querySelector('nav.tabs button[data-tab="daily"]');
+        if (dailyBtn) dailyBtn.click();
+        await sleep(200);
+        if (!document.getElementById('dailySort')) return JSON.stringify({ error: 'no #dailySort' });
+
+        const cards = () => [...document.querySelectorAll('#tab-daily .bcard:not(.hidden)')];
+        const stat = (c) => {
+          const bn = (c.querySelector('.bn') || {}).textContent || '';
+          const m = bn.match(/(\\d+)/);
+          const st = (c.querySelector('.stats') || {}).innerText || '';
+          const a = st.match(/均分\\s*([\\d.]+)/), x = st.match(/最高\\s*([\\d.]+)/);
+          const eye = c.querySelector('[data-hide]');
+          return { key: eye ? eye.dataset.hide : null, n: m ? +m[1] : 0,
+                   avg: a ? +a[1] : null, max: x ? +x[1] : null };
+        };
+        // renderDaily() 会重建 select，必须每次重新取
+        const setSort = async (v) => {
+          const s = document.getElementById('dailySort');
+          s.value = v;
+          s.dispatchEvent(new Event('change', { bubbles: true }));
+          await sleep(160);
+          return cards().map(stat);
+        };
+        const mono = (arr, key, desc) => {
+          const vals = arr.map(x => x[key]).filter(v => v != null);
+          for (let i = 1; i < vals.length; i++) {
+            if (desc ? vals[i] > vals[i - 1] + 1e-9 : vals[i] < vals[i - 1] - 1e-9) return false;
+          }
+          return true;
+        };
+
+        const base = await setSort('date-desc');
+        const asc = await setSort('date-asc');
+        // 页面口径：date-asc 按 (日期, 次键) 升序；date-desc 日期降序但**同日次键仍升序**
+        // （与 skill 里「skDesc 次键不反转」一致）。故不能用「整体反转」来断言。
+        const S = new Map(DATA.batches.map(b => [b.key, b._sort || [b.key, 0]]));
+        const tuples = (arr) => arr.map(x => S.get(x.key)).filter(Boolean);
+        const lexAsc = (ts) => ts.every((t, i) => i === 0 || t[0] > ts[i - 1][0] || (t[0] === ts[i - 1][0] && t[1] >= ts[i - 1][1]));
+        const dateDescSubAsc = (ts) => ts.every((t, i) => i === 0 || t[0] < ts[i - 1][0] || (t[0] === ts[i - 1][0] && t[1] >= ts[i - 1][1]));
+        out.sorts.dateAscMono = lexAsc(tuples(asc));
+        out.sorts.dateDescMono = dateDescSubAsc(tuples(base));
+        out.sorts.countDesc = mono(await setSort('count-desc'), 'n', true);
+        out.sorts.countAsc = mono(await setSort('count-asc'), 'n', false);
+        out.sorts.avgDesc = mono(await setSort('avg-desc'), 'avg', true);
+        out.sorts.avgAsc = mono(await setSort('avg-asc'), 'avg', false);
+        out.sorts.maxDesc = mono(await setSort('max-desc'), 'max', true);
+        out.sorts.nCards = base.length;
+        await setSort('date-desc');
+
+        const c0 = cards()[0];
+        const k0 = c0 ? (c0.querySelector('[data-hide]') || {}).dataset?.hide : null;
+        if (k0) {
+          c0.querySelector('[data-hide]').click();
+          await sleep(150);
+          const hid = JSON.parse(localStorage.getItem('xrhub.daily.hidden') || '{}');
+          const card = [...document.querySelectorAll('#tab-daily .bcard')]
+            .find(c => c.querySelector('[data-hide]')?.dataset.hide === k0);
+          out.hide = { key: k0, stored: !!hid[k0], cardHidden: card ? card.classList.contains('hidden') : null };
+          if (card) card.querySelector('[data-hide]').click();
+          await sleep(150);
+          const after = JSON.parse(localStorage.getItem('xrhub.daily.hidden') || '{}');
+          out.hide.restored = !after[k0];
+        } else { out.hide.error = 'no card'; }
+
+        const ib = document.querySelector('.info-btn[data-info="daily"]');
+        if (ib) {
+          ib.click(); await sleep(100);
+          const pop = document.getElementById('info-daily');
+          out.pop.shown = !!pop && pop.classList.contains('show');
+          document.body.click(); await sleep(100);
+          out.pop.closed = !!pop && !pop.classList.contains('show');
+        } else { out.pop.error = 'no info button'; }
+        return JSON.stringify(out);
+      })()`,
+      returnByValue: true, awaitPromise: true,
+    });
+    ui = JSON.parse(r.result.value);
+  } catch (e) {
+    ui = { error: String(e.message || e).slice(0, 160) };
+  }
+  console.log('UI:', JSON.stringify(ui));
+
   const checks = {
     hasData: info.hasData,
     papersEqDisk: info.papers === disk.papers,
@@ -142,6 +232,9 @@ async function main() {
     tabsRender: Object.values(info.rendered).every(n => n > 0),
     noPageErrors: errors.length === 0,
     bodyLen: info.bodyLen > 10000,
+    uiSorts: Object.entries(ui.sorts || {}).filter(([k]) => k !== 'nCards').every(([, v]) => v === true),
+    uiHide: !!(ui.hide && ui.hide.stored && ui.hide.cardHidden && ui.hide.restored),
+    uiPop: !!(ui.pop && ui.pop.shown && ui.pop.closed),
   };
   console.log('CHECKS:', JSON.stringify(checks));
   const ok = Object.values(checks).every(Boolean);
