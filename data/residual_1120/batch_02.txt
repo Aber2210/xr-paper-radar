@@ -1,0 +1,108 @@
+[381] 2611.24699 | When Does Continual Pre-Training Help? A Controlled Study of Dialectal Adaptation for Qu\'ebec 
+      Continual pre-training (CPT) is widely used to adapt pretrained language models to dialectal and non-standard language varieties, yet it remains unclear when this additional training is necessary, what drives its benefits, and whether aggregate evaluation scores adequately capture its effects. In this paper, we present a controlled study of CPT for Qu\'ebec 
+[382] 2611.24706 | Can Omni-modal LLMs Understand Spoken Intentions?
+      Omni-modal large language models (omni-modal LLMs) can respond to spoken requests directly through voice and video calls. Such requests rely on the scene shared by the user and the assistant, so the same utterance may call for different help or for no response.
+[383] 2611.24708 | F$^3$: What Makes Good Experience in World-Action Models?
+      Deployed world-action models (WAMs) can keep improving only if they make good use of their own experience. Existing methods supply retrieved rollouts or demonstrations to the policy as context, yet such experience often turns previously solved tasks into failures.
+[384] 2611.24711 | Openhagen Worlds: Calibrated Environments for Measuring and Training Scientific Discovery Agent
+      Agents that do science must choose informative experiments and reason from their results, but most discovery benchmarks cannot separate that skill from recall, unstated scoring rules or shortcut policies. We introduce Openhagen Worlds, a suite of 27 procedurally generated environments (some with finite truth spaces), from classic puzzles of experimental reas
+[385] 2611.24715 | Interpersonal trust, institutional trust and trust in technology in Air Traffic Control
+      Air traffic control (ATC), the safe, orderly and efficient management of planes through controlled airspace is a complex task. In this article, we explore the roles that different kinds of trust play in ATC.
+[386] 2611.24719 | DRIFT: Detachable Reasoning for Runtime-Flexible and Efficient End-to-End Driving
+      The integration of vision-language models (VLMs) into end-to-end (E2E) autonomous driving has demonstrated strong potential by providing scene description and reasoning capabilities. However, VLMs are computationally expensive, and switching language reasoning on and off at runtime without hurting closed-loop performance has not been demonstrated, which hind
+[387] 2611.24726 | Generalization of Text Line Segmentation for HTR in Historical Documents
+      In this paper we investigate the generalization capability of state-of-the-art object detection models (Hi-SAM, YOLO, and RT-DETR) for the automatic segmentation of text lines in historical documents. Generalization is needed because it is not practical for museums and archives to produce large amounts of labeled samples for each new collection.
+[388] 2611.24728 | How Generative Models Generate: A Concise Guide to the Generative AI Landscape
+      The rapidly expanding generative AI landscape brings together methods that differ in architecture, learning objective, mathematical representation and sampling procedure. A concise, selectively organised technical guide can provide an accessible starting point for developing a coherent understanding of this increasingly complex landscape.
+[389] 2611.24738 | Jeveration: System One Models Now Generate
+      System One models such as Jev return decisions through fast, parallel prediction. In this paper, we introduce Jeveration, showing that the same decision paradigm can also generate high-quality images in a single forward pass.
+[390] 2611.24762 | A$^3$Bench: Compositional Reasoning over Aggressive Interactions in Videos
+      Recent Multimodal Large Language Models (MLLMs) have achieved strong performance on general video understanding benchmarks, yet their ability to reason about participant roles in aggressive interactions remains largely unexplored. Existing violence and crime datasets primarily evaluate whether aggression occurs, without testing whether models can identify wh
+[391] 2611.24763 | Elysium: Simulation-Free Unbalanced Schr\"odinger Bridges
+      Reconstructing cellular dynamics from snapshots is challenging because the destructive nature of single-cell measurements makes tracking the same cells over time impossible. Cellular dynamics are inherently stochastic and involve changes in population size through proliferation and apoptosis.
+[392] 2611.24764 | Horizontal Flow Matching for Single-Cell Spatiotemporal Dynamics
+      Learning the spatiotemporal dynamics of cells from spatial transcriptomics requires connecting snapshots of different cells acquired in different coordinate frames. A rotation or translation of a section can appear as cell movement and distort the inferred correspondence.
+[393] 2611.24765 | LLM-Guided Cyber-Physical Attack Path Identification in Smart Grids
+      Identifying high-impact attack paths in cyber-physical power systems is critical for improving grid resilience. Existing methods typically rely on either structural topology analysis or simulation-based cascading-failure models.
+[394] 2611.24771 | Hierarchical Admittance-Impedance Control for Mobile Manipulator Load Transfer
+      This paper presents a hierarchical admittance-impedance controller that combines an inner Cartesian impedance controller, an outer 6D admittance supervisor, and workspace-aware mobile-base assistance for guided load transfer. The method is motivated by assistive tasks such as airport baggage handling, where a robot should support a payload while a human work
+[395] 2611.24776 | 4D-TEMPO: Differentiable 4D-STEM ptychography via fast Physics Optimizers
+      Electron ptychography recovers atomic structure from 4D-STEM data: diffraction patterns at multiple positions of a scanned probe. Current codes reconstruct an image and read atoms off it, or fit atoms under an $L_1$ loss; neither gives per-atom uncertainty.
+[396] 2611.24778 | Counterfactual World Models: JEPAs That Reason About "What If"
+      World models operate in a world they cannot fully observe. When a hidden disturbance, such as a current pushing a boat, changes the outcome of an action, a counterfactual question follows: what would have happened under a different action, subject to the same disturbance?
+[397] 2611.24782 | Learning Trajectories Leave Decodable Traces in Neural Network Weight Space and Internal Repres
+      Neural networks trained on the same task develop related weight-space structures, yet remain distinguishable after learning. Do these differences merely reflect alternative solutions, or do they preserve information about individual learning histories?
+[398] 2611.24785 | Read Together, Answer Apart: How Earlier Questions Help Vision-Language Models Look
+      Vision-language models (VLMs) are often asked several questions about the same image in a single prompt (co-asking), yet existing evaluations report conflicting accuracy gains and hallucinations at the prompt level without tracking how individual answers change. By pairing each question's single-question and co-asked answers across 22 open-weight VLMs (1B-35
+[399] 2611.24788 | Isabelle Pool Server: a pooled verification service for prover training and multi-agent proving
+      Isabelle Pool Server (IPS), a verification service with a pool of warm headless Isabelle sessions behind an HTTP API, with session leasing and reclamation, memory-aware admission control, and a time budget on every call. Its verification interface spans single-step execution, block-level proof checking and whole-theory builds, with checkpoints for cheap bran
+[400] 2611.24789 | HINT-WAM: Hindsight-Informed Training for World Action Models
+      World action models (WAMs) have shown promising generalization and data efficiency in robot manipulation by coupling action generation with predictions of future visual dynamics. Translating these capabilities into reliable task execution, however, remains a challenge for existing post-training methods.
+[401] 2611.24791 | Towards Transparent Computational Agents for Air Traffic Control: Explainability, Interpretabil
+      We report preliminary findings from an ongoing investigation into transparency techniques for computational Air Traffic Control agents. Air Traffic Controller Officers (ATCOs) observed two types of agent in simulated air traffic controlling exercises.
+[402] 2611.24792 | Training-free motion statistics match self-supervised behavior encoders
+      Self-supervised encoders for animal behavior are often trained on, or fed, hand-built movement features. We ask whether they beat those ingredients when compared fairly.
+[403] 2611.24793 | The Elephant in the Question: Unified Models Picture the Concepts Behind Their Answers
+      Visualizing intermediate representations could help us inspect the reasoning steps underlying a model output. Unified multimodal models offer this opportunity by combining understanding and generation in one architecture.
+[404] 2611.24795 | Ultimate3D: Teaching Multimodal LLMs 3D Camera-Object Relations by Large-Scale Visual Instructi
+      Multimodal Large Language Models (MLLMs) struggle with accurately capturing camera-object relations, especially for object orientation, camera viewpoint, and camera shots. This stems from the fact that existing MLLMs are trained on images with limited diverse camera-object relations and corresponding textual descriptions.
+[405] 2611.24797 | Bias-Only Training Dynamics in ReLU Networks
+      Neural networks with randomly initialized, fixed weights and trainable biases are universal approximators, yet the dynamics of bias-only training remain largely unexplored. We study these dynamics in one-hidden-layer ReLU networks through activation codes, the binary patterns of active neurons that partition the input space into convex polyhedral regions.
+[406] 2611.24798 | Soft Mixture of Quantum Experts for Hybrid Quantum-Classical Learning
+      Quantum Machine Learning (QML) has attracted increasing interest as a possible route to construct feature representations that are difficult to reproduce with classical models. However, near-term QML architectures based on trainable parametrized quantum circuits remain affected by limited hardware resources, noise, and severe optimization difficulties such a
+[407] 2611.24800 | Planner-Controller Interaction for Ackermann Navigation: A Matched Simulation and Hardware Benc
+      Global planners and path-tracking controllers are often evaluated independently, although their interaction determines how a vehicle follows a planned path. Whether simulation accurately predicts the performance of specific planner-controller combinations on Ackermann-steered hardware remains uncertain.
+[408] 2611.24806 | ReCoCo: From Patches to Compositions for Visual Representation Learning
+      Self-supervised learning has produced powerful visual representations, yet learning strong dense features remains challenging. While consistency between augmented views provides strong image-level supervision, extending this principle to local visual content is less straightforward.
+[409] 2611.24816 | RoboMorpher: Scaling Robot Morphology Representations for Cross-Embodiment Action Prediction
+      Learning shared action representations is central to cross-embodiment manipulation. However, identical joint values can produce different spatial configurations across robots, limiting representations learned from joint values alone.
+[410] 2611.24818 | Data-driven simulation of the brain's response to stimulation: a system identification approach
+      Closed-loop neuromodulation uses a physiomarker to control stimulation. Developing such controllers requires exploring a large space of strategies and parameters, which is often not feasible with the human-in-the-loop.
+[411] 2611.24827 | Synthesizing hyperspectral Data using generative Models to train spectral Unmixing Methods for 
+      The spectral range of the Field Imaging Nanosatellite for Crop residue Hyperspectral Mapping (FINCH), developed by the University of Toronto Aerospace Team's Space System Division, poses significant challenges for hyperspectral unmixing to determine crop residue cover fractional abundances. The severe lack of standard indices necessitates the use of complex,
+[412] 2611.24830 | A Foundation Model to Measure and Predict Human Behaviour
+      Large language models (LLMs) are increasingly used to infer psychological attributes, predict individual behaviour, and simulate human populations. However, despite generating plausible responses, they often misrepresent individuals and distort population statistics.
+[413] 2611.24831 | Overlooked and Underutilized: Prototypes are the Missing Piece in Tabular XAI
+      Explainable AI (XAI) is frequently applied to high-stakes tabular data, yet the field relies heavily on feature attribution methods. While these approaches offer technical transparency, evaluating dozens of isolated features demands excessive cognitive effort from non-expert users.
+[414] 2611.24836 | DiWALI: Diffusion Policy Learning in World Models via Latent Action Inference from Human and Ro
+      Learning robot manipulation is constrained by the availability of action-labeled robot data, for both imitation and world models. Humans can demonstrate skills in seconds, but their demonstrations lack the required robot actions.
+[415] 2611.24840 | Does the Action Matter? Probing Action-Conditioned Semantic Forecasting as a World Model for Au
+      World models are increasingly used in autonomous driving to predict how a scene evolves under the ego vehicle's actions, supporting counterfactual reasoning and model-based planning. However, existing evaluations focus on prediction fidelity and planning performance, and rarely verify that the predictions depend on the conditioning action.
+[416] 2611.24844 | General progress substitutes for specific training data in language models
+      Language models acquire their capabilities from training data, and developers withhold data during training to keep models from learning capabilities that could be misused. How long this delays a capability, and how much data is needed to acquire it later, is unknown.
+[417] 2611.24845 | Vibe-Trading: Towards Agent-Native Trading
+      Existing AI agents can retrieve information, call tools, run experiments, and produce multi-step outputs. Yet most are built around relatively static workflows and struggle to preserve reliable state as the environment changes.
+[418] 2611.24862 | Gaspard: Expressive unified speech and gesture synthesis with continuous autoregressive flow-ma
+      Human communication involves highly coordinated multimodal signals such as speech and co-speech gestures. Existing approaches for generating both modalities commonly follow a cascaded pipeline, where speech is generated first and subsequently used to drive gesture generation; speech generation is therefore independent of gestures.
+[419] 2611.24864 | NereidVLA: Learning to Understand and Navigate the Underwater World
+      Underwater navigation requires translating visual spatial cues into motion, yet marine vision-language datasets rarely include paired robot trajectories. We present NereidVLA, a vision-language-action model that transfers marine spatial knowledge to language-conditioned 3D navigation.
+[420] 2611.24867 | Choosing What to Observe: Budget-Paired Counterfactual Audits for Credible Evaluation of Visual
+      Visual agents that read dense documents must ration a finite observation budget across candidate regions, yet answer accuracy conflates where an agent looks, how it adapts to the reads that remain, and how it an?swers once observation stops. We introduce budget-paired counterfactual audits, an evaluation protocol that holds public evidence and region binding
+[421] 2611.24869 | WorldRuler: Interactive World Modeling under Configurable Rules
+      Rules govern how player actions change interactive worlds. Different rules create distinct gameplay experiences within similar scenes and action spaces.
+[422] 2611.24876 | Learning to Interact in Multi-Agent Self-Play for Controllable Autonomous Driving Scenario Gene
+      Large-scale, multi-agent self-play trains robust driving policies effectively in simulation, but controlling these models to generate specific, safety-critical edge cases remains a key challenge. Existing goal-conditioned self-play frameworks rely primarily on static map-location goals and fail to reliably produce complex agent interactions such as aggressiv
+[423] 2611.24877 | Auditing black-box clinical prediction models with a large language model through queries alone
+      Large language models (LLMs) are used to explain clinical prediction models, on the promise that they can say what a model computes, find its faults and even reveal new knowledge in it. We tested the three promises where the answers could be checked.
+[424] 2611.24880 | Local AI Agents in Power Electronics Simulation: Deployment, Measurements and Costs
+      Agentic artificial intelligence (AI) is emerging in power electronics, where it drives the simulation loop that engineers used to close largely by hand. In this loop, a converter design, or a study of the network it connects to, is built, run, measured and revised until it satisfies its specification.
+[425] 2611.24888 | Who are you? The Personal Imitation Game
+      Large Language Models (LLMs) now perform strongly on Alan Turing's 1950 Imitation Game, so we propose a harder challenge, the Personal Imitation Game, which asks whether a machine can replicate a specific individual in conversation rather than a generic human. Testing with 30 participants, we establish a human baseline and report the identity signals interro
+[426] 2611.24904 | ShadowTransfer: A Geographic Transfer Benchmark for Overhead Shadow Detection
+      Overhead aerial imagery feeds dense-prediction pipelines that are routinely trained in one geographic region and deployed in another, yet no benchmark measures how shadow detection models transfer across regions. Existing overhead shadow datasets either lack a geographic transfer protocol or rely on automatically generated labels.
+[427] 2611.24915 | PrismRestore: A Compact Restoration Toolbox for Agentic Image Restoration
+      Agentic image restoration composes operations to handle mixed degradations, yet its toolbox often requires storing multiple restoration networks. We propose PrismRestore, which constructs a compact bank of callable restoration actions from a single frozen all-in-one model.
+[428] 2611.24917 | Unified Law for Visual Tasks (The Four Laws of Computer Vision)
+      In this paper, we propose a Unified Law for Visual Tasks, which could be further divided into Four Laws of Computer Vision, with the goal of enabling a single framework or method to uniformly train on and perform nearly all visual tasks. Our starting point is an inspiration and hypothesis: if the world information is encoded into image, which we call World S
+[429] 2611.24924 | Agentic Harness Engineering Beta: Requirement-Centered Evolution of Agent Harnesses
+      Real-world harness engineering is driven by explicit and implicit user requirements, which guide development and validation. However, existing harness evolution methods often overlook implicit requirements and interaction needs, while using a single evolution agent to modify the harness and benchmark scores to select changes.
+[430] 2611.24925 | Render the Robot, Generate the World: One Video World Model Across Embodiments
+      Predicting the consequences of an agent's actions requires modeling both the body's motion and the environment's response. Most video world models attempt to learn both from numerical actions, even though geometry and kinematics already specify the intended motion.
+[431] 2611.24926 | Grana: Compositional Reward Modeling for Long-Horizon Robot Manipulation
+      Robot reward modeling faces two challenges: generalizing across tasks and accurately tracking progress in long-horizon manipulation. General-purpose reward models demonstrate broad task transfer, but transfer from short-task pretraining to long-horizon tasks remains underexplored.
+[432] 2611.24927 | Mapping the AI Supply Chain: Dependencies, Vulnerabilities, and Market Concentration in the AI 
+      AI systems are built across many organizations that contribute models, data, compute, capital, talent, and other assets. While the layers of the AI stack are relatively well understood, the relationships between actors and components across layers remains sparsely documented.
+[433] 2611.24932 | Knowing What You Know: A Trait Theory of Reviewer Value in Human-AI Cognitive Systems
+      When a capable model and a human reviewer cooperate on the same decision, which human still adds value? We argue this is a question about a single cognitive trait, metacognitive calibration: the alignment between a reviewer's behavioral confidence and the actual correctness of their judgments.
+[434] 2611.24940 | $Z$-sight: Unifying Vision-Language-Action and Latent World Modeling
+      We introduce $Z$-sight, a unified robot foundation model that couples vision-language-action (VLA) and generative latent world modeling. Video-based world action models (WAMs) show the value of joint future-and-action generation for control, yet inherit the heavy cost of video generators.

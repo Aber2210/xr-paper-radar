@@ -1,0 +1,104 @@
+{
+ "date": "2026-11-20",
+ "gate1": {
+  "max_jaccard": 0.072,
+  "pair": [
+   "2611.23935",
+   "arXiv:2609.25746"
+  ],
+  "pass": true
+ },
+ "gate2": {
+  "tracks_top10": [
+   "世界模型与仿真",
+   "化身与人体",
+   "感知与认知",
+   "神经渲染",
+   "系统与平台",
+   "触觉与多模态",
+   "重建与SLAM"
+  ],
+  "n_tracks": 7,
+  "pass": true
+ },
+ "gate3": {
+  "window_lo": "2026-10-21",
+  "window_hi": "2026-11-20",
+  "in_window": 457,
+  "window_excludes_today": true,
+  "window_excludes_this_run_batches": true,
+  "this_run_batches_excluded": [
+   "2026-11-20",
+   "backfill-1120"
+  ],
+  "top10_mean": 4.423,
+  "today_max": 4.33,
+  "margin": -0.093,
+  "heavy_day_raw": false,
+  "heavy_day": false,
+  "blockbuster": false,
+  "s_awarded": false,
+  "top10_lib": [
+   {
+    "id": "arXiv:2611.06817",
+    "date": "2026-11-06",
+    "value": 4.57,
+    "grade": "S"
+   },
+   {
+    "id": "arXiv:2611.11169",
+    "date": "2026-11-11",
+    "value": 4.57,
+    "grade": "S"
+   },
+   {
+    "id": "arXiv:2603.01178",
+    "date": "2026-11-14",
+    "value": 4.5,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2611.21143",
+    "date": "2026-11-18",
+    "value": 4.43,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2610.39399",
+    "date": "2026-10-31",
+    "value": 4.37,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2611.09458",
+    "date": "2026-11-10",
+    "value": 4.37,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2611.21479",
+    "date": "2026-11-18",
+    "value": 4.37,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2611.07902",
+    "date": "2026-11-07",
+    "value": 4.36,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2610.34263",
+    "date": "2026-10-28",
+    "value": 4.35,
+    "grade": "A"
+   },
+   {
+    "id": "arXiv:2611.08578",
+    "date": "2026-11-10",
+    "value": 4.34,
+    "grade": "A"
+   }
+  ]
+ }
+}

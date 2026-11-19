@@ -6,19 +6,18 @@
 > 3. 每条必须四要素：现象 / 影响 / 当前处置 / 触发条件或责任。
 > 4. 关闭的事项从 §1 移入 §2，保留编号，不删除（可追溯）。
 
-- **最后更新**：2026-11-19（人工批次：残差复核上线、q2 口径、发布门）
-- **当前库况**：registry 1015 / notes 655 / daily 69 ｜ 最新批次 2026-11-19（21 篇，12A/7B/2C，无 S）
+- **最后更新**：2026-11-20（每日批次：11-19 公告批次 25 篇 + backfill 3 篇）
+- **当前库况**：registry 1043 / notes 680 / daily 71 ｜ 最新批次 2026-11-20（25 篇，18A/4B/3C，无 S）
 - **回滚点**：`v1.0-20261118`（本地 + 远端）
 
 ## 1. 未完成事项（Open）
 
 | ID | 现象 | 影响 | 当前处置 | 触发条件 / 责任 |
 |---|---|---|---|---|
-| O-1 | 渠道① `xr-paper-hub.app.workbuddy.host` 返回 403（3174 bytes） | 双渠道变单渠道 | 不修；报告如实写「渠道①不可用（第 N 批挂账）」，禁止声称已发布 | 托管侧重签后可恢复；累计 **29 批** |
+| O-1 | 渠道① `xr-paper-hub.app.workbuddy.host` 返回 403（3174 bytes） | 双渠道变单渠道 | 不修；报告如实写「渠道①不可用（第 N 批挂账）」，禁止声称已发布 | 托管侧重签后可恢复；累计 **31 批**（2026-10-21 ~ 11-20） |
 | O-2 | registry 内 65 行赛道非规范（63 行「—（非 XR）」+ `具身交互` 1 + `空间计算` 1） | 统计口径轻微失真 | **WONTFIX**：前端有 `#8a93a8` 兜底配色，改数据需动 65 行并重建前端 | 若将来做赛道重分类时一并处理 |
 | O-4 | `audit_gap_listing.py` 未并入「目标组 >500 条补页」逻辑 | 极端大日组可能少采 | **WONTFIX**（随 R-03 抽库一并放弃）；每日实例以 `audit_listing_1117.py` 为模板，含补采 | 若某日目标组 >500 且 declared≠got 时报错（守卫会 exit 2） |
 | O-5 | `send_automation_result` 在部分会话不可见 | 收尾汇报可能失败 | 观察项：不可见时改用 present_files + 报告正文 | 连续 2 次不可见则改指令 |
-| O-6 | 残差复核（第 3.5 步）**尚未被真实运行验证** | 指令写了但可能被跳步 | 2026-11-20 02:30 首次执行；核查 `data/residual_1119.json` 是否生成 | 若未生成 → 把 3.5 并入第 3 步正文 |
 | O-7 | 11-18 / 11-19 两批未做残差复核（脚本 11-19 才上线） | 历史漏检未知 | 不回补；从 11-20 批起记录 rate | — |
 | O-8 | golden 仅 25/100 kw-missed + 20/20 accepted 有人工标签 | 精确率/召回基于小样本（n=40） | 已记 CI；如需收窄 ±2pp 需再标约 400 条 | 用户决定是否扩大标注 |
 | O-9 | 历史 `data/gates_*.json`（≤1117）缺 `window_excludes_*` 留痕字段 | 事后无法自证当时口径 | **grandfather 不回算**（与门③ 历史值政策一致） | 仅新批必须齐四字段 |
@@ -37,6 +36,9 @@
 | C-6 | 召回缺口的量化（此前"0 漏网"结论无独立证据） | 100 条盲评：7/7 确认为真，漏检率 7.0%（CI 3.4–13.7%） | 11-19 |
 | C-7 | `check_release.py` 只认 `gates_YYYY-MM-DD.json`，而实际文件名是 `gates_MMDD.json` → 批次日期解析成 "1119"，G3 的「本批泄漏 S」**一直在空跑** | 改为读 `gate3.window_hi`；注入一条 11-19 的 S 后 G3 正确变红（VERDICT FAIL / rc=1） | 11-19 |
 | C-8 | 前端冒烟未覆盖排序/隐藏/弹层（原 O-3） | 新增 3 组交互断言：7 档排序（date-asc 单调、date-desc 日期降序且同日次键升序、count/avg/max 升降单调）+ 隐藏开关（localStorage 落盘、卡片 hidden、复原）+ 信息弹层（开/关）；注入排序反转与弹层移除各使其变红 | 11-19 |
+| C-9 | 前端 2026-11-20 批次卡 `表内=0`、backfill-1120 卡不出现 | ① `7dim-table.md` 表头缺 `arXiv` 列，`_parse_rows` 取不到 ID 锚点 → 整行跳过；② `papers/daily/backfill-1120/` 目录根本不存在（batches 以目录枚举）。修：`scripts/fix_tables_1120.py` 重写两张表（带 `#`+`arXiv` 占位），补 backfill 目录（7dim/scored/run_log）+ `reports/XR-Backfill-Report-1120.md`；`build_scored_1120.py` 表头同步修正。复算 表内=25（18A/4B/3C，max 4.33）/ 3（2A/1B，max 4.05） | 11-20 |
+| C-10 | `check_release.py` G2 FAIL：`gates_2026-11-20.json` 口径字段写在顶层、文件名偏离 `gates_MMDD.json` 约定 | 该文件名在 `sorted(glob)` 中**永远排最后**，会遮蔽后续所有 `gates_MMDD.json`，使 G2/G3 静默空跑。修：字段收进 `gate3`（含 `window_lo/hi`、`in_window`、`top10_mean`、`top10_lib`），改名 `data/gates_1120.json`，`build_scored_1120.py` 落盘路径同步改 `gates_{MMDD}` → G2/G3 PASS | 11-20 |
+| C-11 | 残差复核（第 3.5 步，原 O-6）从未真跑 | 11-20 批首次执行：`residual_scan.py dump 1120` 扫描 434 条、判 12 条（2.8%）、逐条写 `verdicts_1120.py` 后 ingest，采纳 3 篇（2611.23417/23534/24193）；`data/residual_1120.json` + `data/verdicts.jsonl` 的 `residual_rate=0.0276` 双留痕，6 处产物均带「残差复核」行 | 11-20 |
 
 ## 3. 关键红线（违反即视为回归）
 
@@ -59,6 +61,7 @@
   3. 残差复核 rate（连续 3 日 >12% 上报）；
   4. 前端冒烟 + 线上 md5 核对。
   历史判决归档，不再重开；若确需 `PASS`，另起独立确认席（约 30 分钟，仅对当批断言复跑）。
+- **最近一批**：`2026-11-20` 判 **PASS**（G1 1043/680/71 三计数一致；G2 `gates_1120.json` 字段齐；G3 无 S 泄漏；残差 rate 2.8%；门③ 4.33 < 4.4230 → margin −0.093、非重磅无 S）——见 `data/verdicts.jsonl`。上一批 `2026-11-19` 判 WARN（残差复核未执行）。
 
 - **判决记账**：`python scripts/check_release.py --record` 会把本批判决写入 `data/verdicts.jsonl`
   （按批次日幂等：`{batch, verdict, counts, gate3, residual_rate, reasons, at}`）。
@@ -67,10 +70,10 @@
 
 ## 5. 每轮自检清单（收尾前逐条打勾）
 
-- [ ] `python scripts/check_release.py` 全 PASS
-- [ ] `python scripts/check_release.py --record` 已把本批判决写入 `data/verdicts.jsonl`（VERDICT 行与台账一致）
-- [ ] `python scripts/check_audit_guard.py` 无违规
-- [ ] `data/residual_<MMDD>.json` 已生成，报告含「残差复核」一行
-- [ ] `data/gates_<MMDD>.json` 四字段齐全且 `s_awarded` 为布尔
-- [ ] 前端冒烟 PASS（含 UI 三组交互断言），线上 md5 与本地一致
-- [ ] 本文件 §1/§4 已按事实更新
+- [x] `python scripts/check_release.py` 全 PASS（G1 1043/680/71 ｜ G2 `gates_1120.json` 无缺 ｜ G3 本批授予S=False、泄漏 0 ｜ R 残差 2.8%）
+- [x] `python scripts/check_release.py --record` 已把本批判决写入 `data/verdicts.jsonl`（`2026-11-20` PASS，residual_rate 0.0276）
+- [x] `python scripts/check_audit_guard.py` 无违规（23 份脚本：守卫 5 / 基线豁免 18 / 违规 0）
+- [x] `data/residual_1120.json` 已生成（434 扫描 / 12 判 / 2.8%），报告含「残差复核」一行（6 处）
+- [x] `data/gates_1120.json` 四字段齐全且 `s_awarded` 为布尔（false）
+- [x] 前端冒烟 PASS（含 UI 三组交互断言：7 档排序 / 隐藏开关 / 弹层），线上 md5 与本地一致
+- [x] 本文件 §1/§4 已按事实更新（O-1 → 31 批；O-6 关闭为 C-11；新增 C-9/C-10）

@@ -1,0 +1,380 @@
+[001] 2611.23244 | Goemans's Unsplittable-Flow Conjecture: The Anatomy of AI-Assisted Counterexample Discovery
+      Goemans conjectured that any fractional single-source flow could be converted into an unsplittable flow without increasing total cost and while increasing any arc load by at most the largest demand. Recently, Dmitry Rybin announced a seven-vertex counterexample found through an interaction with ChatGPT, which disproved this long-standing conjecture.
+[002] 2611.23245 | Response-Relevant Information Is Not Sufficient for Neural Training-State Equivalence
+      Response-relevant information is not sufficient evidence that two neural networks are in the same training state. We define training-state equivalence operationally: two checkpoints are equivalent, relative to an intervention family and horizon, if they respond alike when training is perturbed and continues.
+[003] 2611.23249 | The Obsolescence of High-Level Code: Agentic Generation from Semantic Artifacts
+      This paper argues that high-level source code need not remain the primary persistent artifact of software development when AI agents can generate, validate, and regenerate executable implementations from semantic intent. We place this claim in historical context by revisiting application generators, CASE tools, model-driven development, and platforms such as
+[004] 2611.23250 | What Moves the Ceiling on Automated Audit: from General Code to Scientific Code, Results and Da
+      Models increasingly check what other models write. We study one shipped arrangement, in which an auditor from a different vendor reads the work and deterministic checks verify what code can verify, and measure its limits against ground truth no model supplies.
+[005] 2611.23252 | From Data Quality to Data Trustworthiness in AI-Driven Software-Intensive Embedded Systems: A S
+      AI-driven software-intensive embedded systems (SIES) depend on data during development and operation. Poor data quality (DQ) may weaken data trustworthiness, yet evidence about its effects and lifecycle management remains fragmented.
+[006] 2611.23253 | Measuring What Matters in the Age of AI: The Research Software Metrics Landscape
+      Research software now serves as a primary instrument of science, but the methods the community uses to judge its quality, sustainability, reuse, and impact remain scattered across software engineering, open science, FAIR software, citation, and research-assessment literature. AI-assisted development sharpens the problem: code can be produced at rates that ou
+[007] 2611.23256 | Generative AI in Software Testing: Practitioners' Perspectives on the Benefits, Challenges, Opp
+      Generative Artificial Intelligence (GenAI) increasingly supports software testing, yet empirical evidence on practitioners' perceptions remains limited. This study investigates perceived benefits, challenges, opportunities, and risks of GenAI in software testing through a questionnaire survey of 64 practitioners.
+[008] 2611.23257 | StatePortal: Agentic Checkpoint Synthesis for Testing Deep States in Interactive Software
+      Large language models have reduced the effort to generate code for interactive software with graphical user interfaces (GUIs). For such software, a key testing bottleneck is reaching a deep state, one that requires a long interaction history.
+[009] 2611.23258 | EnvAgent: Multi-Agent Approach to Building Science Environments in the Clouds
+      AI agents are transforming scientific computing and software workflows, but generating and executing code requires a correctly configured execution environment. Automating environment construction remains difficult because repositories encode heterogeneous, often incomplete requirements for operating systems, toolchains, dependencies, and build procedures.
+[010] 2611.23273 | torchtest2: One-Call Sanity Checks for PyTorch Models,Evaluated on Real and Unseen Architecture
+      Many bugs in deep learning code are silent: a layer that is never called, an optimizer created before the classification head was replaced, a recurrent layer that treats the batch as time, or an ignored attention mask. The code runs, the loss decreases somewhat, and the defect surfaces, if ever, after days of GPU time.
+[011] 2611.23282 | Ephyra: A Property-Based Testing Framework for the LLM Era
+      Coding agents now write a growing share of software tests; however, property-based testing (PBT) libraries are designed with historical considerations. We present Ephyra, a PBT library in Rust built on three concepts: customizability, observability and generator synthesis.
+[012] 2611.23283 | When Single Agent Is Enough: Rethinking Multi-Agent Systems for Automated Code Review
+      Code review plays a critical role in identifying software quality issues and ensuring system robustness. Prior work has proposed techniques for Review Comment Generation (RCG) and Code Refinement (CR), with recent Multi-Agent (MA) approaches achieving state-of-the-art results by coordinating agents specialized in different quality dimensions.
+[013] 2611.23286 | The Illusion of Relief: How GenAI Redistributes Cognitive Workload in Software Organizations
+      This study explores how Generative AI (GenAI) reshapes software practitioners' cognitive work across software development activities. We analyzed questionnaire responses from 44 practitioners across nine organizations using descriptive quantitative methods and qualitative analysis of relevant open-ended responses.
+[014] 2611.23296 | Ask the Peers: Ranking NFR Coverage Gaps for Requirements Review
+      Missing or underrepresented non-functional requirements (NFR) categories leave little direct evidence in a requirements set, making them difficult to identify during requirements review. In this study, we frame NFR coverage-gap review as a project-level ranking task: given a target requirements specification, the goal is to rank the 11 PROMISE NFR categories
+[015] 2611.23298 | Plug-and-Play Sensor Evolution in Software-Defined Vehicles through Asset Administration Shells
+      Software-defined vehicles (SDVs) promise continuous software evolution, but sensor integration in deployed vehicles still depends on manual configuration, hardware-specific drivers, and repeated application-side adaptation. Existing standards address only parts of this problem.
+[016] 2611.23305 | Dependency Fabrication in Repository Deployment Agents
+      Repository deployment agents set up the environment needed to run a software repository. They often treat passing tests as proof of a successful setup.
+[017] 2611.23309 | Repository-Grounded Rubrics for Execution-Free Evaluation of Coding Agents
+      Coding agents are usually evaluated by running task-specific tests, but tests may be missing or incomplete, and running them requires a working environment for each repository. We adapt agentic rubrics, introduced for selecting among candidate patches, into an execution-free measure of how far a patch satisfies a task's requirements.
+[018] 2611.23319 | Reusing formal Vlasov-Maxwell proofs to certify plasma solver outputs
+      AI now produces machine-checked mathematics faster than researchers can read it. Can such theorems do practical computational work?
+[019] 2611.23322 | Human-AI Mutualism Is Unstable under Capability Asymmetry
+      One hope for a good human future alongside advanced AI rests on enduring mutualism: humans and AI will need each other, so the relationship will stay good for both. We argue that this hope fails as AI capability grows.
+[020] 2611.23323 | HydroMind: A Checkable Agent for Autonomous Hydrological Research
+      General-purpose coding agents have written code for hydrological and Earth-system models. In these studies the researchers decided in advance how the model would be evaluated, for example the test period, the scoring function, and the standard the model had to meet.
+[021] 2611.23339 | Optimize the Cob, Then the Kernel: Optimizing Beam Search for Generative Recommendation Inferen
+      Generative recommendation (GR) inference differs substantially from conventional LLM serving, featuring long input sequences, wide beam search, and only a few fixed output tokens. Existing LLM serving engines such as vLLM process beams as batched independent sequences, causing redundant KV cache accesses over the shared prompt prefix.
+[022] 2611.23341 | Management of Behavioral Addictions via Artificial Intelligence based Digital Technologies
+      Behavioral addictions, such as problematic gaming, gambling, social media use, and online shopping, have emerged as a growing global concern with significant psychological, social, and economic consequences. Traditional assessment and treatment approaches, while clinically grounded, often struggle with scalability, accessibility, and long-term engagement.
+[023] 2611.23342 | Confidence-Based Materials Data Quality Assessment via Domain Knowledge and Graph-Structured Le
+      The rapid development of materials machine learning relies on large-scale, heterogeneous datasets, yet model reliability is often compromised by imperfect data from diverse experiments, simulations, and database integration. Real-world materials databases may contain measurement errors, failed calculations, missing or duplicate records, and hidden violations
+[024] 2611.23344 | Beyond Accuracy: Benchmarking Uncertainty Quantification in Retinal Disease Screening
+      Reliable uncertainty quantification (UQ) is essential for evaluating retinal AI systems beyond classification accuracy, yet it remains unclear whether existing UQ strategies generalize across diseases, model architectures, and reliability criteria. We introduce a large-scale, multi-disease benchmark comprising over $242,000$ fundus photographs from $32$ data
+[025] 2611.23345 | BiMa-ECGSR: reconstructing the 12-lead ECG from reduced lead sets with bidirectional state-spac
+      Wearables and monitors record few electrocardiogram (ECG) leads; most diagnostic tools assume 12 leads. BiMa-ECGSR reconstructs the 12-lead ECG from reduced lead sets with a bidirectional Mamba state-space encoder--decoder, as regression (BiMa-SR) or diffusion (DiBiMa-SR).
+[026] 2611.23347 | SurgCBVR: A Multi-Domain Benchmark for Content-Based Surgical Video-to-Video Retrieval
+      Hospitals record thousands of hours of surgical video annually, yet these archives remain difficult to search by content. Surgeons cannot readily retrieve similar operations, complications, or workflow events.
+[027] 2611.23348 | SIGMA: speaker-isolated, symptom-structured multimodal estimation of depression severity from c
+      Clinical interviews are central to depression assessment but time-consuming and rater-dependent. Automated severity estimation offers scalable screening, yet existing methods often retain interviewer speech (confounding participant cues), fuse modalities late (losing fine-grained cross-modal dynamics), or score symptoms independently (ignoring inter-symptom 
+[028] 2611.23349 | Systematic Mapping Protocol. Generative AI-Augmented Requirements Engineering: A Systematic Map
+      Generative artificial intelligence (GenAI), particularly large language models (LLMs), is rapidly being adopted in requirements engineering (RE). Existing secondary studies have characterized which RE activities are supported and which prompting strategies are used, but little is known about the specifications that GenAI-augmented RE produces and how they ar
+[029] 2611.23350 | Asymmetric Optical Image Watermarking
+      Watermark detectors held by a provider cannot be checked by third parties, and a party that can detect a mark can usually also forge it. We study a two-layer image watermark in which the Fourier transform at the core of the pipeline is performed by a coherent optical 4F unit.
+[030] 2611.23352 | Streaming Generative Video Compression with Embedding Alignment and In-Context Propagation
+      Video compression at ultra-low bitrates presents substantial challenges in preserving perceptual quality. Although pretrained video diffusion transformers (DiTs) provide powerful generative priors, existing generative video compression (GVC) methods built on them typically rely on computationally expensive VAE decoders to reconstruct video frames.
+[031] 2611.23353 | Idempotency Is Not Recovery: A Fault-Injection Study of Language-Model Agent Tool Actions
+      When a language-model agent's tool call is interrupted, the action may already have changed an external system without confirmation. Retrying risks duplication; assuming success may conceal an action that never occurred.
+[032] 2611.23358 | Implementing Binary Transformers with Approximate Memories with Permutation Invariance Enabled 
+      Quantization is an effective technique to reduce memory storage, computation complexity and power for Transformers, and the binarization of the weights is important for meeting these requirements. Approximate memory can further reduce the power for memory, but it also introduces errors.
+[033] 2611.23363 | Image Watermarking With Memory Across Reissuance
+      Publishers often revise and reissue images, yet valid watermarks may persist on superseded releases or unapproved edits. Even a current release can contain regions last authorized at different revisions.
+[034] 2611.23364 | Neural Circuit Architectural Priors for Rat Locomotion
+      Animals generate behavior through continuous interactions between their neural circuits, bodies, and environment. Embodied simulations study these interactions by testing neural circuit models in biologically realistic settings.
+[035] 2611.23365 | Training Language Models for Introspective Oversight
+      Language models increasingly exhibit behaviors that are difficult to detect in transcripts, such as reward hacking, deception, and sycophancy. Asking the assistant follow-up questions about its actions is unreliable, since models are generally not trained to report their own misbehavior.
+[036] 2611.23375 | Where the Tokens Go: Heat, Entropy and Error in Agentic Coding
+      Coding agents are billed by the token, yet software engineering says nothing about what a token actually buys. Here we introduce a theory of software thermodynamics.
+[037] 2611.23388 | QDA: Closed-Loop LLM Quantization Design with Agents
+      Post-training quantization is the standard way to serve large language models at low cost. However, the best quantization recipe differs across models and precisions.
+[038] 2611.23395 | Lossless Reversible Watermarking for AIGC with Applications in Authentication
+      AIGC watermarking is commonly used for tracing, but it can also support applications such as authentication and tampering detection. We study lossless reversible watermarking, which enables exact recovery of the original watermarked image after permissible distortions.
+[039] 2611.23397 | Which Tokens, in What Order, and How Fast? A Theoretical Analysis of On-Policy Distillation Obj
+      On-policy distillation (OPD) trains a student language model to match a teacher model based on its own generations. When using OPD, one must choose whether to apply it at the sequence or token level and which divergence to minimize.
+[040] 2611.23398 | HardwareDx: A Foundational Graph Model System for Datacenter Machine Repairs
+      The rapid scale-up of AI infrastructure has made datacenter reliability a cornerstone of the cloud business economy. Since hardware failures in hyper-scale AI clusters can stall multi-million dollar training workloads, the downtime of individual machines can cause outsized economic losses.
+[041] 2611.23410 | RFBench: A Simulator-Grounded Multimodal Benchmark for Passive RF Layout Design and Understandi
+      While multimodal language models can interpret diagrams and generate structured outputs, their capacity to connect passive radio-frequency (RF) design intent, layout geometry, and electromagnetic behavior remains largely untested. To address this gap, we introduce RFBench, a simulator-grounded dataset and benchmark for passive RF layout design and understand
+[042] 2611.23417 | Autoregressive View Model
+      We present the Autoregressive View Model (AVM), which generates a scene as a stream of views without constructing an explicit 3D representation. Through a unified in-context interface, AVM conditions on images or videos to generate short clips along a requested camera path.
+[043] 2611.23419 | LIC-Audit: How Comparable Are Reported Gains in Learned Image Compression?
+      Learned image compression (LIC) papers often report BD-rate improvements of only a few percent. They are measured against VTM reference software whose version keeps changing: the claims we audit name 7 versions, 5 in 2025 papers alone.
+[044] 2611.23432 | Bits, Not Boxes: Label-Free Layer Selection for Visual Localization in VLMs
+      Attention maps cheaply show where a vision-language model (VLM) looks, but attention sinks make them unreliable for localization. Contrasting the question with a generic prompt suppresses sinks, yet only some layers localize the queried object.
+[045] 2611.23441 | Hebbian self-organization of monosynaptic reflexes in a biologically realistic multiarticular l
+      Spinal monosynaptic reflexes depend on patterns of connectivity between muscle spindle afferents and motoneurons that should reflect musculoskeletal dynamics. One possibility is that the details of these circuits are specified genetically, but this requires an unlikely coevolution of musculoskeletal and neural elements.
+[046] 2611.23442 | TransFIRA+: Transfer Learning for Biometric Recognizability Assessment
+      Biometric recognition in surveillance, video, and web imagery must contend with extreme variation in pose, blur, illumination, occlusion, and distance, where visual quality metrics fail to predict whether inputs are recognizable to the deployed encoder. Existing face image quality assessment methods rely on visual heuristics, curated annotations, or costly g
+[047] 2611.23443 | RummiAlgebra: A Polynomial Representation Framework for Game-Based Algebra Learning with Jokers
+      Connecting symbolic expressions to manipulable objects is a recurring challenge in introductory algebra. This paper presents RummiAlgebra, a design-oriented framework and browser-based prototype that maps a Rummikub-style tile-rearrangement task to polynomial addition, common-factor extraction, finite geometric sums, and context-dependent substitution.
+[048] 2611.23445 | Why Sub-4-Bit Vision CNNs Collapse and Where Mixed-Precision Recovery Stops
+      Deep vision models operating in resource-constrained environments depend heavily on low-bit quantization, yet compressing weights below 4 bits frequently induces catastrophic accuracy collapse. While mixed-precision recovery strategies aim to rescue accuracy by selectively retaining high-precision parameters, the fundamental mechanics of where and why these 
+[049] 2611.23446 | Where Global Context and Weight Sharing Work in Compact Vision Backbones
+      Compact convolutional backbones such as EfficientNet achieve strong parameter efficiency through local depthwise separable convolutions, yet two structural questions remain central to hybrid design: where does global self-attention improve recognition over pure convolution, and can repeated blocks share weights without losing representational capacity? We in
+[050] 2611.23454 | LusoClin: A Synthetic Clinical Note Dataset for Medical Information Retrieval in European Portu
+      Access to large-scale clinical text collections is crucial for advancing medical information retrieval research, including clinical note search, patient cohort identification, and domain-adapted retrieval models. However, real clinical notes are rarely available due to privacy regulations, which particularly limits progress for low-resource languages such as
+[051] 2611.23456 | VeriMath: Human-in-the-Loop Generation and Verification of Curriculum-Aligned Mathematics Asses
+      Automatic generation of mathematics assessment items is a growing area in educational artificial intelligence, yet classroom deployment remains challenging. Generated questions must satisfy multiple constraints: mathematical correctness, curriculum alignment, appropriate cognitive difficulty, and educator reviewability.
+[052] 2611.23473 | Reliability by Architecture: Agentic Workflows for Validated Multi-Physics Simulation from Natu
+      Preparing, executing, and validating strongly coupled multi-physics simulations require expert time. Agentic workflows use large language models (LLMs) to coordinate them from natural-language descriptions, but reliability requires checks of physical consistency and fidelity to the problem description.
+[053] 2611.23474 | AllotNet: an Interpretable Mixture-of-Experts Choice Model for Moral Judgement in Humanitarian 
+      Official development assistance fell by 23.1 per cent in 2025, and the decision of who is helped first when there is not enough for everyone is moving into software. A leading published machine-learning targeting system excluded 53 per cent of eligible households as deployed.
+[054] 2611.23476 | GUARD: Stabilizing Recursive Self-Improvement with Regret Guidance
+      Autonomous AI agents pair a frozen base model with an editable harness of prompts, skills, tool rules, and memory. Recursive self-improvement (RSI) adapts this harness from experience without weight updates, yet self-editing without external graders often backfires: reflection and scalar scores conflate what an edit newly broke with what remains unsolved, ca
+[055] 2611.23480 | Diagnostic Accuracy and Navigation Behavior of Vision-Language Model Agents Reading Emergency C
+      Purpose. To evaluate the diagnostic accuracy and image navigation behavior of vision-language model (VLM) agents under varying exploration strategies.
+[056] 2611.23483 | SpecLook: Speculating Where to Look for Fast and Reliable Agentic MLLMs
+      Agentic multimodal large language models (MLLMs) that think with images interleave reasoning with zoom-in tool calls. However, this sequential loop is slow, and its answers carry no reliability score.
+[057] 2611.23484 | Reference-Guided Data Curation for 3D Medical Vision-Language Pretraining
+      Training 3D vision-language models (VLMs) on large medical imaging datasets collected across institutions is constrained by data quality. Vast, uncurated pools of image-report pairs are characterized by redundancy, class imbalance, and cross-institutional heterogeneity.
+[058] 2611.23498 | PhysDial: Adapting Pretrained Video Models for PDE Simulation under Changing Physical Condition
+      Simulating how physical systems respond to changing conditions is central to control, design, and scenario studies. To our knowledge, prior PDE foundation models have not been trained or evaluated on changes within trajectories.
+[059] 2611.23499 | BiCAT: Bimanual Coordination Action Tokenization
+      Autoregressive vision-language-action (VLA) models predict discrete action tokens with the next-token objective of their vision-language backbone, so the action tokenizer defines the interface between the policy and the robot. In bimanual manipulation, the two arms share a repertoire of movements yet coordinate through complementary roles, and an action repr
+[060] 2611.23501 | MedHarness: A Unified Budgeted Runtime for Reliable Medical Imaging Agents
+      Medical imaging agents already return answers on heterogeneous imaging surfaces, yet deployment still faces a limited verification budget where each wrong accept can harm clinical trust. When a thin check and a deeper evidence pass disagree on the same case, deciding when to stop, open more evidence, repair, or reject without a shared controller remains ill-
+[061] 2611.23502 | Learning and Control in Physically Coupled Dynamical Systems
+      We introduce TAG (Testbed for Autonomous Games), a compact, low-cost robotic platform for studying learning and control in physically coupled dynamical systems. TAG combines an actively tilted and steered ball-in-maze board with a top-mounted rotary inverted pendulum.
+[062] 2611.23508 | BOS Summary: The First Token Matters
+      Large vision-language models (LVLMs) and language models (LLMs) often exhibit attention sinks, whereby particular positions, such as the beginning-of-sequence (BOS) token, receive a disproportionate share of attention. Under standard causal masking, however, the BOS query attends only to itself, so the representation that later tokens repeatedly access carri
+[063] 2611.23509 | GRAFT: Execution-Guided Genetic Recombination for Agent Design
+      Automated agent design searches for executable architectures that improve LLM-based agent performance, with evolutionary methods using language-model crossover to recombine promising mechanisms for task decomposition, model coordination, and verification. This search, however, is typically guided by aggregate fitness alone, which hides the instance-level suc
+[064] 2611.23516 | Beyond the Sink Token: Sink-Guided Key Editing in Vision-Language Models
+      In vision-language models (VLMs), a few sink tokens attract a disproportionate share of attention. While previous studies have examined why these tokens attract attention, we investigate how the sink-key direction affects attention to image and question tokens.
+[065] 2611.23517 | RageVLA: Augmentation-Trained Perception and Action for State-of-the-Art Robustness on LIBERO
+      Vision-language-action (VLA) models look saturated on LIBERO, yet most of them fall apart on LIBERO-PRO as soon as an object moves or the instruction asks for something new. We argue that what is missing is not scale but decoupling.
+[066] 2611.23520 | BeFit: Shifting Complexity from Weights to Bernstein Activations for Resource-Constrained Sensi
+      Time-series sensing increasingly relies on neural networks, yet deployment on resource-constrained microcontrollers remains challenging. Aggressive model compression can reduce accuracy, while restricting weights to multiplication-free representations introduces further losses.
+[067] 2611.23529 | ORGANIC3D: Grounding 3D CT Vision Language Models in Organ Level Image Text Coupling
+      Vision language models (VLMs) have achieved strong performance in 3D computed tomography (CT) classification, but high accuracy does not reflect whether their predictions rely on the correct anatomical evidence. We introduce ORGANIC3D, a framework for evaluating and improving organ level image text alignment through controlled anatomical interventions.
+[068] 2611.23531 | RESCUE Jumper: A Centimeter-Scale Rolling and Jumping Robot for Search and Rescue
+      Centimeter-scale robots are promising for urban search and rescue because they can enter confined spaces that are inaccessible or unsafe for humans. However, their small size limits obstacle traversal after deployment.
+[069] 2611.23534 | Smart Glasses for Ubiquitous Computing: A Layered Survey and the Road Ahead
+      We conduct a systematic survey of smart-glasses research for ubiquitous computing. Our search covers work published from 2020 to October 2026, with selected earlier work included for historical context.
+[070] 2611.23543 | Stability of Parallel Transport Convolution under Riemannian Metric Perturbations
+      Geometric convolutions on Riemannian manifolds depend on the geometry of the underlying domain, making stability under metric perturbations a fundamental question in geometric deep learning. This paper studies this question for parallel transport convolution through methods from differential geometry and analysis.
+[071] 2611.23546 | Language Models Make New Research Sound Old
+      Researchers are increasingly using large language models (LLMs) to validate research questions. We find that LLMs make open research questions sound partly studied and overstate what related papers establish.
+[072] 2611.23560 | FACET - Facet Aware Contrastive Embeddings for Traits- Big Five Estimation from Life Narratives
+      Personality is only weakly and inconsistently signaled by written language, and existing text-based methods typically combine language-model and psycholinguistic representations at the input or decision level. It remains open whether a more deliberate combination of the two views, and a decomposition of the prediction target, can recover more of the signal.
+[073] 2611.23563 | Learning the Dynamics of Deformable Linear Objects Through Coupled Oscillators for Bimanual Rob
+      Many learning-based approaches for deformable linear objects (DLOs) rely on simplified deformation models that neglect dynamic effects and the mechanical response of the objects, limiting their applicability to lightweight, compliant objects and slow motions. Inspired by recent advances in learning physically structured dynamics with coupled oscillator netwo
+[074] 2611.23564 | LProp: Propagating Latent Uncertainty through Evidence-Conditioned Belief Revision in LLM Agent
+      When LLM agents pass intermediate judgments downstream without uncertainty, later decisions may treat tentative assumptions as facts. Effective uncertainty propagation must preserve information for correction and update inherited beliefs as new evidence arrives.
+[075] 2611.23567 | Panini- Feasible Grammar For Robot Designs
+      Symbolic methods make robot designs interpretable but often overlook continuous geometry; learned methods handle geometry but offer less transparent structure. We introduce a typed production grammar that uses case-role relations, parameter inheritance, and specificity-based rule arbitration to generate both manipulation skills and robot morphologies.
+[076] 2611.23572 | Receiver-Conditioned Clarification for Multi-Agent Food Assistance
+      Food insecurity creates a pressing need for guidance that helps households find usable food resources and assess food choices in light of their circumstances. Such guidance must connect eligibility requirements, practical access constraints, and dietary needs rather than return isolated listings or generic nutritional advice.
+[077] 2611.23578 | DOCK: Dual-Stream-Inspired Self-Supervised Object-Centric Representations Grounded in Robot Kin
+      Latent-space planners select actions by comparing the embedding of a predicted future image with that of a goal image. This assumes that distance in the embedding reflects how far the scene is from the goal.
+[078] 2611.23581 | ExiST: Existence-Aware Self-Training for Semi-Supervised Multi-Organ Segmentation
+      Semi-supervised multi-organ segmentation should learn more than a dozen organs from a handful of labeled scans, and the smallest organs occupy less than one percent of the foreground. We identify a failure mode of self-training that is specific to this regime.
+[079] 2611.23588 | ARISE: Practical Self-Evolving Memory for Accurate and Cost-Efficient Enterprise Agents
+      Enterprise LLM agents operate in dynamic environments where foundation models evolve rapidly, workflows update frequently, and deployments need to satisfy accuracy and cost requirements. We propose ARISE (Agent Refinement through Iterative Self-Evaluation), a practical memory architecture in which the agent's memory evolves from its own failures without upda
+[080] 2611.23589 | Recoverability, Not Invariance: Certified Safety for Robots at the Limits of Performance
+      Safety certification in robotics typically rests on forward invariance of the deployed controller, a property that demands high-fidelity models at the edge of the operating envelope, exactly where models are least reliable and robots perform best. As a result, many of the behaviors we most want robots to run, from learned policies to aggressive maneuvers at 
+[081] 2611.23591 | GRAFT: Graph-Regularized Prototype Fields for Realistic Test-Time Adaptation of VLMs
+      Unlabeled test data can improve the zero-shot classifier of a vision-language model, yet transductive and test-time adaptation methods often fall below the zero-shot baseline when only a few vocabulary classes are present in a batch or when streams are correlated. We trace this failure to a shared design: every class owns independent parameters estimated fro
+[082] 2611.23600 | Entropy-Regularized Integrated Gradients for Stable Feature Attribution
+      Path-based attribution methods like Integrated Gradients (IG) are widely used to interpret neural networks, yet imperceptible input perturbations can drastically alter their attribution maps while leaving model predictions unchanged. We introduce Entropy-Regularized Integrated Gradients (ERIG), a path-based attribution method that intrinsically attenuates gr
+[083] 2611.23601 | FutureBench: A Renewable Framework for Evaluating Knowledge-Context Conflict in LLMs
+      Asking a model to check retrieved text can also tell it which source to trust. We introduce FutureBench, a renewable framework for evaluating knowledge-context conflict using timestamped questions, controlled passage triplets, and no-context probes.
+[084] 2611.23606 | VIBRA: Backward-Compatible Cross-Modal Retrieval with Consensus Barycenters
+      Backward-compatible retrieval enables a new encoder to query the gallery that an old model has already encoded, so that a cross-modal retrieval system can be upgraded without re-encoding billions of items. Existing compatible methods either fit the old query and stay near the accuracy of the old model, or run the old and the new encoder for every query.
+[085] 2611.23608 | JEPA as a Transferable Optimizer: Learning and Understanding Black-Box Optimization from Reward
+      Black-box optimization evaluates candidates through simulations, rollouts, or experiments, often without gradients. Learned optimizers are usually judged by whether they outperform existing methods.
+[086] 2611.23611 | RefinementGuard: Counterexample-Directed Semantic Qualification for Hidden Agent-Tool Execution
+      Tool runtimes can lower an agent-selected operation into a hidden parallel graph, reducing latency and context while risking semantic mistranslation. We introduce RefinementGuard: translation validation for hidden, effectful agent-tool lowerings, coupled to artifact-bound, fail-closed runtime admission.
+[087] 2611.23613 | MANGO Arena: Same Seeds, Different Chains Evaluating LLM Agents in a Disrupted Supply Chain
+      We introduce MANGO Arena, an open-source testbed in which four LLM agents each run one company in a serial supply chain adapted from MANGO, a classroom factory-management game. The environment enforces hard rules (a truck limit, a no-credit cash constraint and production capacity), logs every blocked attempt to break them, and gives agents a public message b
+[088] 2611.23615 | Weight Space Programming for Vision Language Model Repair
+      In weight-space programming, a language model edits a network's weights directly, without gradients. We ask what a successful repair of this kind relies on.
+[089] 2611.23616 | Isthmus: Bridging Supervision Islands Restores Uncertainty and Stability in One-Step Flows
+      One-step flow maps are increasingly used as posterior samplers, where the point of sampling is the uncertainty that the samples carry. We find that the one-step sampler loses this uncertainty and becomes less stable.
+[090] 2611.23618 | Miscalibrated AI improves human calibration: An alignment problem for AI-assisted Decision educ
+      Using artificial intelligence (AI) well requires probabilistic thinking, and central to it is calibration: expressing certainty that matches one's actual accuracy. Calibration is a decision skill, but a notoriously difficult one to teach.
+[091] 2611.23619 | EEG2MCU: Sensing-to-Execution Co-Design for Wearable EEG Inference
+      Wearable EEG inference is constrained not only by model size, but also by the channel-dependent sensing front end that must process high-dimensional inputs before compact downstream computation. We present EEG2MCU, a sensing-to-execution co-design framework that treats electrode count as a hardware design variable through task-aware montage selection.
+[092] 2611.23620 | How Uncertain Is My Action? Self-Correcting Visual Planning with Frozen World Models
+      A frozen latent world model combined with sampling-based model predictive control is a visual planner. At deployment, the executed action can depart from the commanded one, and the frozen model has no way to notice.
+[093] 2611.23628 | LoRN: Low-Rank Noise Steering for Generative Robot Policies
+      Noise steering improves pretrained generative robot policies by learning to select their initial noise without updating model weights. We find that actions in the evaluated world-action models are more sensitive to video noise than action noise, making video noise an expressive input for steering.
+[094] 2611.23629 | The Value Semantics Layer: Enabling Machine-Understandable Databases for Agentic AI
+      As data systems increasingly support autonomous LLM-powered agents alongside human analysts, they require richer semantic infrastructure bridging analytical concepts and analytical operations. Existing metadata systems expose schemas, catalogs, lineage, and governance information, but provide limited support for representing operational semantics.
+[095] 2611.23631 | FairPGT: Partitioned Graph Transformers for Dual-Level Fair Graph Clustering
+      Clustering on attributed graphs can produce demographically biased clusters, particularly when communities align with protected groups. Graph transformers can amplify this bias through same-group attention, while global attention limits scalability.
+[096] 2611.23639 | Searching the Pareto Front: Multi-Objective Retrieval for Heterogeneous Scientific Modalities
+      In cosmology, surveys span different sky regions and wavelength ranges, resulting in uneven modality coverage across observational datasets. Such heterogeneity can be addressed through either multimodal foundation models (FMs), which learn shared embedding spaces, or independently learned modality embeddings combined via late fusion.
+[097] 2611.23648 | Toaster: Nonlinear Memory from Cascaded Linear Memories and Target Propagation
+      Recurrent memories let language models process long sequences with a fixed-size state. Linear memories such as DeltaNet and KDA store one matrix and take one delta-rule step per token.
+[098] 2611.23651 | Safe Personal RSI: Evaluating and Repairing Personal-Agent Updates
+      Kicker is a personal health assistant. Changes to an assistant's reusable instructions can improve task handling while changing what it discloses, which requests it follows, and how it reports actions.
+[099] 2611.23654 | Radar-Native Control Barrier Functions: Doppler Range Rate as a Measured Barrier Derivative
+      Safe control around dynamic obstacles requires information about both distance and relative motion. Range-based filters commonly reconstruct the required range rate from successive range measurements or from obstacle-state estimators, which can introduce estimator delay or sensitivity to range noise when obstacle motion changes.
+[100] 2611.23661 | LightSEAD: Lightweight SE(3)-Aware Keypoint Detector through Selective Knowledge Distillation
+      The pursuit of improved performance in deep learning has often been accompanied by increasing architectural complexity and computational demands. We explore an alternative direction: achieving more with less through structured supervision.
+[101] 2611.23663 | Lodestone: Automated Semantic Discovery of Datacenter Hardware Specialization
+      Hardware specialization can improve datacenter efficiency. Unfortunately, identifying computations that justify dedicated hardware is difficult.
+[102] 2611.23672 | Image-Condition-Controlled Diffusion Network with Large-Scale CT Pretraining for CT-Free Attenu
+      Positron emission tomography (PET) provides quantitative information on myocardial perfusion. In dynamic PET, tracer kinetics are tracked through a series of reconstructed time frames.
+[103] 2611.23673 | Communicative On-Policy Distillation: Distilling Black-Box Teacher Capabilities through Communi
+      On-policy distillation (OPD) is a powerful paradigm for improving language-model agents on long-horizon tasks, yet its conventional formulation relies on teacher logits that text-only black- box models do not expose. To address this limitation, we introduce Communicative On-Policy Distillation (COPD), which uses natural-language communication as a medium for
+[104] 2611.23674 | Learning What to Degrade: A Recoverability-Aware Curriculum for Reliable Smart-Glasses Super-Re
+      Degradations in smart-glasses images obscure small text and fine-grained structures needed by vision-language models (VLMs) for visual assistance. We introduce an high-resolution (HR)-referenced semantic evaluation protocol that compares VLM outputs on restored images with those on corresponding HR references.
+[105] 2611.23676 | Finetuning VLAs for Dexterous Manipulation: The Right Checkpoint Is All You Need
+      Vision-Language-Action models have demonstrated strong manipulation capabilities. A limitation of VLA models is that most manipulation datasets focus on parallel-jaw gripper systems, making transfer to multi-finger hands challenging, particularly as teleoperation datasets are harder to collect with multi-fingered robots.
+[106] 2611.23678 | Evaluating Governed LLM-Driven ML Experimentation: Lifecycle, Provenance, and Failure Metrics
+      Autonomous agents that run ML experiments are usually judged by the best score they reach. That score says nothing about how it was reached: whether the agent stayed within the files it was allowed to edit, whether failed trials were kept or silently dropped, and whether each keep or discard decision can be traced to its evidence.
+[107] 2611.23680 | Structured Extraction of Diffraction Data from Covalent Organic Frameworks
+      Powder X-ray diffraction (PXRD) is the primary structural evidence for covalent organic frameworks (COFs) and many other materials. Yet decades of measured patterns exist only as images in published figures.
+[108] 2611.23685 | Measuring the Conservatism of Latent Safety Filters for World Models
+      A latent safety filter decides from the latent of a world model whether a planned action is safe. Conformal calibration sets the threshold of the filter so that it accepts an unsafe action only with a small probability.
+[109] 2611.23691 | MEM-STRESS: Longitudinal Field Study of a Wearable-Informed AI Chatbot for Stress Management
+      Stress is an increasingly prevalent concern, creating a need for accessible and personalized support. Stress-management chatbots primarily rely on what users report, which may not capture their physiological changes.
+[110] 2611.23695 | MoMoVL: Modality-Aware Adaptive Compression for On-Device Sparsely-Activated Vision-Language Mo
+      The rise of the agentic web has been accompanied by growing demand for on-device Vision-Language Models (VLMs) that perform diverse cross-modal web tasks with enhanced privacy and reduced latency. Mixture-of-Experts (MoE) models are widely adopted in modern VLMs for compute-efficient scalability, yet their multi-expert architecture poses deployment challenge
+[111] 2611.23697 | What Do Learned 3D Models Add to Localization from Posed References?
+      Localizing a query from a few posed reference images avoids building a 3D point map. We ask what the camera predictions of learned 3D models add to geometric estimation from the same references, and where failures arise.
+[112] 2611.23700 | Auditable Clinical Support with Decision Agents
+      Clinicians reviewing a diagnostic work-up will ask what was considered at each step and why the assessment changed. Agents powered by free text can reach physician-level diagnostic accuracy, but their written reasoning does not always reflect the factors that went into the decision.
+[113] 2611.23702 | KnowMe Paper Radar: Lightweight Discovery of Promising Papers in the Age of Autoresearch
+      The growing volume of topically similar papers makes it difficult to identify new work that can offer useful research insights or methodological guidance. We present KnowMe Paper Radar, a lightweight discovery tool that combines multiple sources of evidence into personalized reading priorities.
+[114] 2611.23705 | A Hardware-Aware Comprehensive Study of Edge Vision Deployment with A Unified Hardware-Model-Ru
+      The rapid growth of deep learning has driven the deployment of computer vision directly on resource-constrained edge devices. However, the extreme heterogeneity of edge hardware architectures poses major challenges in selecting and designing suitable vision models.
+[115] 2611.23708 | Rational Ensemble Logic for Cohort Discovery with Real-World Electrophysiology Data
+      Biomedical knowledge representation should make the passage from observations to conclusions transparent, rigorous, understandable, explainable, and reproducible (TRUER). We introduce Rational Ensemble Logic (QEL) for specifying temporal phenotypes in real-world electrophysiology data (RWED), with a meaning independent of the implementation software.
+[116] 2611.23714 | ExecGap: Exploiting Command-Execution Gap for Patch Attacks on Vision-Language-Action Models
+      Vision-Language-Action (VLA) models have become a powerful paradigm for robotic manipulation and show strong promise for real-world deployment, making adversarial robustness critical for reliable robot operation. Existing adversarial attacks on VLA-controlled robots mainly optimize prediction-level discrepancies or rollout-level deviations to disrupt manipul
+[117] 2611.23716 | Learning through Discernment: when a small language model learns from user feedback on the job,
+      Small language models on devices could keep improving by learning, overnight, from their own daily work. Without a true outcome, however, something must decide which attempts are worth learning from, and both the model's own judgment and the user's reaction can be wrong.
+[118] 2611.23717 | CoScan: Multi-Scale Content-Adaptive Space-Filling Scans for Causal State-Space Image Restorati
+      Selective state-space models (SSMs) have recently shown strong potential for efficient image restoration. A central difficulty, however, is that a 2D feature map typically needs to be linearized into a 1D token sequence for causal state-space updates, making restoration performance highly sensitive to the imposed scan order.
+[119] 2611.23720 | Do 3D Point Representations Encode Architectural Functions? Probing Supervised and Pretrained M
+      Semantic labels say what a building element is, not what it does: two identical-looking windows on one facade may be operable or fixed, a column may carry load or only decorate. We ask whether 3D point representations encode such architectural function.
+[120] 2611.23727 | GTA: Generative Tower of Agents for Scalable Holonic Scene Generation
+      Scalable world modeling requires coordinating scene-wide goals with fine-grained objects and dynamic characters under limited time and context budgets. We introduce GTA (Generative Tower of Agents), which represents every unit at every level of an adaptive scene hierarchy as a holon, both a self-contained construction task and a composable scene unit.
+[121] 2611.23728 | AdaS-ViT: Test-Time Adaptive Routing for Spiking Vision Transformers with Ultra-High Energy Eff
+      Spiking Neural Networks (SNNs) promise event-driven and energy-efficient vision, yet existing spiking vision transformers (S-ViTs) largely confine spiking tokens to fixed and uniform firing schemes along the temporal, spatial and channel dimensions, whereas suppressing the computational redundancy thus incurred calls for adaptive firing mechanisms that opera
+[122] 2611.23729 | Toward Out-of-Distribution Generalization in Neural AC Power Flow
+      Growing uncertainty in power system operations from renewables integration, extreme weather, and data center loads challenges the reliability of traditional power flow solvers at scale. Machine learning-based proxies are a potentially promising alternative, but the prohibitive cost of generating training data for large grids makes out-of-distribution general
+[123] 2611.23731 | RecallFlow: Episodic Memory as the Source Distribution of Generative Robot Policies
+      Diffusion and flow-matching policies have become a standard choice for visuomotor imitation learning, owing to their ability to model multimodal action distributions. In memory-dependent manipulation, the robot must act on information that is no longer visible.
+[124] 2611.23732 | Reliability is a user-specific property of large language models
+      Public benchmarks support comparisons of large language model (LLM) capabilities, yet users can experience the same highly ranked model differently. Drawing on traditional software reliability, we argue that the reliability of an LLM service should be assessed for specified users and conditions of use.
+[125] 2611.23746 | ZERITH V2.5: From Predictive Power to Policy Learnability
+      When humans learn to manipulate an unfamiliar object, they may already be able to anticipate how its state will change while still being unable to control it skillfully. This gap between prediction and control motivates us to study how the priors acquired by video generation models can be used effectively by an action policy.
+[126] 2611.23749 | Modeling LLM Reasoning Dynamics with Structural Representations
+      Language-model reasoning alternates between sustained activities and local operations. We study how this temporal structure predicts continuation and the computation needed to analyze it.
+[127] 2611.23750 | Beyond Replacement: Levenshtein Editing for Diffusion Language Models
+      Diffusion language models (DLMs) offer a flexible alternative to autoregressive models, enabling any-order infilling. While most existing decoding methods treat decoded tokens as fixed, some recent models allow previously decoded tokens to be revised only by replacing them with alternative tokens, a paradigm we refer to as replacement-only editing (ROE).
+[128] 2611.23751 | Thinking Fast, Anywhere: One System-1 for the Decision Points of Any Agent Workflow
+      Autonomous LLM agents incur substantial cost and latency by invoking a large model (System-2) at every step, even when many intermediate actions choose among a small set of known candidates. Existing dual-system agents offload such decisions to a lightweight System-1 model, but rely on workflow-specific hooks authored per environment.
+[129] 2611.23752 | ACUS: An Angular Calibrated Uncertainty Score for Incomplete-View CT
+      Sparse-view and limited-arc computed tomography (CT) are commonly treated as projection completion: a network fills an unmeasured view, and the result is ranked by similarity to one ground-truth image. That score can be high even when the query angle is far from every acquired measurement, because a learned prior may invent anatomy the scan never constrained
+[130] 2611.23753 | Interpreting Timestamp Permutations in Dynamic Link Prediction
+      Timestamp permutations are used to test whether dynamic link predictors exploit temporal information, but a performance gap can reflect changes in training, evaluation history, or both. We separate these effects with a crossed diagnostic and measure input exposure: whether altered histories actually change the predictor's inputs.
+[131] 2611.23755 | GramStatTexNet: Efficient, Interpretable, and Neuro-Inspired Texture Analysis-by-Synthesis
+      Deep networks achieve high realism in texture synthesis but often rely on opaque, over-parameterized representations that have limited direct connection to biological vision. Neuroscience-informed pyramid models are interpretable, compact, and biologically inspired, but rely on small, hand-curated statistics sets that are difficult to generalize or extend.
+[132] 2611.23765 | Mean Curvature Minimizing Foliations Of A Vector Field
+      Streamline patterns are ubiquitous in nature. Prominent examples include white matter fibre tracts in the mammalian brain and arrangements of elongated cells, such as cardiomyocytes in the heart wall.
+[133] 2611.23769 | Keep the Reasoning, Read the Image: On-Demand Visual KV for Multi-Turn Reasoning VLMs
+      Reasoning vision-language models (VLMs) think for thousands of tokens before they answer, and retention policies keep the KV cache affordable by pruning it as the reasoning grows. We find that this pruning sacrifices the image in multi-turn conversations: the image and the reasoning share one budget, so the growing reasoning crowds the visual entries out.
+[134] 2611.23770 | DetectViT: Test-time Backdoor Detection for Vision Transformers via Inter-Head Attention Discre
+      Vision Transformers (ViTs) now underpin the visual encoders of most multimodal models, but this success comes at a cost: relying on third-party pretrained checkpoints leaves these systems open to backdoor attacks. Existing test-time detection methods rely on either the predicted label or intermediate embeddings, limiting their applicability across diverse ta
+[135] 2611.23774 | Improve How You Improve: Recursive Policy Self-Improvement for Zero-Shot Open-Vocabulary Multi-
+      To advance the development of embodied general navigation, zero-shot open-vocabulary multi-object navigation has attracted increasing attention, aiming to enable robots to efficiently search multiple objects in unseen environments without training. For this task, the key lies in improving navigation policies from earlier searches to locate subsequent goals m
+[136] 2611.23781 | When accuracy hides risk: risk-controlled confirmation of the critical view of safety under exp
+      Automated assessment of the critical view of safety (CVS) in laparoscopic cholecystectomy has advanced rapidly, but a deployed check must decide, before the first clip, whether to confirm CVS. The standard rule calibrates a threshold so that false confirmations are rare on average.
+[137] 2611.23788 | Geometry-bridge flow matching for blind rigid-motion correction in head cone-beam CT
+      Rigid motion of a patient head during head cone-beam CT (CBCT) scan can degrade image quality and complicate recovery of accurate anatomical structures from the measured projections. We present a 3D flow-matching prior approach that learns the image changes induced by motion.
+[138] 2611.23793 | ROBIN++: Unified Copyright Protection and Tamper Localization for Diffusion Models via Dual-Dom
+      Digital watermarking provides a promising solution for verifying the provenance and integrity of generated content. However, existing methods often suffer from an inherent trade-off between copyright robustness and localization sensitivity due to the entanglement of conflicting signals within a single domain.
+[139] 2611.23803 | CoT-WAM: Collaborative Training of Vision-Language Models and World-Action Models via Plan Late
+      General robot manipulation requires both semantic competence and physical foresight. World action models (WAMs) acquire an understanding of and predictive capability over the physical world by jointly modeling visual foresight and action distributions.
+[140] 2611.23807 | Sightline: Long-Window Speculative Decoding for Fast SVG Generation
+      Scalable Vector Graphics (SVG) generation models write a graphic as code with one forward pass per token, so drawing is slow. Speculative decoding speeds them up losslessly, and block drafters guess many tokens per pass.
+[141] 2611.23808 | PReMind: When Personal Memory Meets Visual Hazards
+      Personalized vision-language assistants use visual observations and personal memories to provide advice tailored to the user. When the observed scene contains a physical hazard, personal context, such as allergies, medical conditions, or mobility constraints, can change what help is appropriate.
+[142] 2611.23810 | Continual Tool-Space Extension Learning for Multimodal Agents
+      Multimodal agents largely rely on generic tools such as cropping, search, and code execution, leaving specialist vision models outside their tool space. However, bringing such a model into an already trained agent is not straightforward.
+[143] 2611.23813 | SWIFT: Slow World, Instant Freshness, and Timely Action for Asynchronous Autonomous Driving
+      Driving scenes keep changing during model computation, making both observation freshness and action-delivery time central to world-action planning. To retain rich generative world priors in autonomous driving without stalling real-time control, we present SWIFT (Slow World, Instant Freshness, and Timely action), a deployment-oriented asynchronous world-actio
+[144] 2611.23816 | RoboDx: Repair and Diagnosis of Faults in Robot Software
+      A patch to a robot's navigation software can pass every unit test and still drive the robot off its path. Checking how the repaired robot drives catches such patches.
+[145] 2611.23817 | Metrics-in-the-Loop: Complexity Feedback Reshapes Agent-Written Code
+      Coding agents now write whole codebases in long autonomous runs, guided mainly by whether their tests pass. Yet passing tests alone does not reveal accumulating complexity or gaps in test coverage, which then persist as agents extend their own code.
+[146] 2611.23822 | Mapping the Design Space of Feature Sampling for Optical Flow
+      The computation of correlation features is crucial for optical flow estimation. Existing methods (e.g., RAFT) perform fixed-radius lookups on a cost volume, yielding a set of correlation features for each position; alternatively, WAFT performs single-point feature indexing, yielding one correlation feature vector per position.
+[147] 2611.23824 | Evidence-Based Credit Assignment for Search-Augmented Language Models
+      Reinforcement learning from terminal answer rewards enables search-augmented language models to interleave reasoning and retrieval without step-level annotations, yet outcome supervision assigns identical credit to every search in a trajectory regardless of whether it retrieved useful information. This limitation is especially severe when all sampled rollout
+[148] 2611.23830 | Estimation-Aware Reachability
+      Hamilton-Jacobi Reachability computes the states from which a system can be kept safe under worst-case disturbances, but it assumes the state is known exactly, whereas real robots act on noisy estimates whose uncertainty evolves with their motion. We extend Hamilton-Jacobi Reachability to the robot's belief, estimate and uncertainty, treating unexpected meas
+[149] 2611.23832 | A System 1 Decision Model for Medical Multiple-Choice Questions Built on Frozen Language Models
+      A System 1 model answers a multiple-choice question in a single pass. A frozen language model turns the question and each option into vectors, two small, trained heads place them in a shared space, and the closest option wins.
+[150] 2611.23840 | TOGBench: Benchmarking and Improving Tiny-Object Generation Fidelity in Aerial Imagery
+      Advances in deep generative models now enable the synthesis of realistic imagery. However, aerial imagery is dominated by tiny objects, such as vehicles, ships, and aircraft, which occupy only a few pixels owing to the overhead, wide-area nature of aerial imaging.
+[151] 2611.23843 | RePlan-VLA: Progress-Aware Replanning for Long-Horizon Vision-Language-Action Models
+      Vision-Language-Action (VLA) models have emerged as a promising paradigm for general-purpose robotic manipulation, yet their performance often degrades on long-horizon tasks that require multiple interdependent manipulations. Instead of burdening the VLA policies with long-horizon reasoning, memory, action generation, progress tracking, and error recovery, w
+[152] 2611.23845 | ReflectScene:MLLM-Guided Closed-Loop Diffusion for 3D Indoor Scene Generation
+      Text-conditioned 3D indoor scene generation requires layouts satisfying geometric, functional, and semantic constraints. However, existing diffusion methods rely primarily on static textual conditions, limiting their ability to assess evolving scenes and translate semantic discrepancies into executable object-level corrections.
+[153] 2611.23855 | RoboBuilder: Agentic Robot Co-Design with Real-world Video Feedback in the Loop
+      Can AI agents design robots that work in the real world? We introduce RoboBuilder, a benchmark in which coding agents co-design a robot's hardware and program from standard parts, motors and a custom 3D-printed part, and every design that passes in simulation is built and tested on a physical course.
+[154] 2611.23859 | Temporal Image Representations for Mouse Dynamics Authentication
+      Mouse dynamics authentication has traditionally relied on handcrafted features or time-series representations that capture both spatial and temporal characteristics of mouse movements. More recent approaches have modeled mouse data as images, enabling the use of powerful pretrained computer vision models.
+[155] 2611.23860 | MobileWeave: Program-First Synthesis of Dependency-Linked Tasks for Training Mobile GUI Agents
+      Native mobile GUI agents require large-scale training trajectories covering both individual app functions and multi-goal workflows within and across apps, which makes automatic task synthesis a promising way to scale training data. Existing synthesis pipelines, however, produce each task as free-form text, leaving implicit how its subgoals depend on one anot
+[156] 2611.23862 | Grounding Radiology Reports in 3D Chest CT: Results of the ReXGrounding Challenge
+      Segmenting each reported finding in a radiology scan would allow findings to be measured and tracked over time and let AI systems generate reports that are verifiable, but so far AI models have performed poorly at this task. To advance this task, we organized the ReXGrounding Challenge at MICCAI 2026, the first challenge dedicated to it.
+[157] 2611.23864 | Asking but Missing: Decision Coverage in Natural-Language Data Querying
+      Large language models are increasingly used to translate natural language questions about structured data into executable programs. A fundamental challenge is recognizing when a question admits multiple computational interpretations and identifying the decisions needed to resolve them.
+[158] 2611.23865 | On Demand, Not Uniformity: Adaptive Expert Orchestration for Multimodal Continual Instruction T
+      Multimodal Continual Instruction Tuning (MCIT) enables Multimodal Large Language Models (MLLMs) to adapt to sequential instruction data while retaining previously acquired knowledge. While recent Mixture-of-Experts (MoE)-based methods mitigate forgetting by freezing historical experts and introducing new ones, they largely overlook the varying adaptation dem
+[159] 2611.23867 | Control-Aware Separating Hyperplanes for Control Barrier Functions in Planar Navigation
+      Separating hyperplanes are widely used in Control Barrier Function (CBF)-based collision avoidance, yet their orientations strongly govern control intervention-the deviation of the applied control from the robot's nominal command. Existing methods typically select hyperplane orientations from geometry alone.
+[160] 2611.23872 | Keep the Image in Mind: A Visual Board for Multimodal Agents
+      Multi-step visual reasoning suffers when early visual misinterpretations persist as incorrect premises in subsequent reasoning. We argue that how visual evidence is represented during reasoning matters as much as how much of it is gathered.
+[161] 2611.23875 | In Situ Training of Optical Neural Networks by Coding Agents
+      Optical neural networks promise fast, energy-efficient computing, but every device departs from its design and must be trained with the hardware. In situ training relies on an expert-built calibrated digital model of each device or on gradient-free trial and error.
+[162] 2611.23881 | NullTok: empirical-null token selection for training-free long video understanding
+      Long video understanding remains a daunting challenge for existing multimodal large language models (MLLMs), mainly due to the large number of visual tokens accumulated in long videos. Currently, frame selection and token selection are two main paradigms for addressing this issue, both aiming to select relevant visual information to form a compact input for 
+[163] 2611.23886 | Risk-Controlled Correction for Frozen Multimodal Models under Missing Modalities
+      A deployed multimodal predictor may face missing modalities after its weights can no longer be changed. This raises a question that training-time repair does not answer: what part of the resulting error is still correctable from the information that remains?
+[164] 2611.23887 | Can AI Understand Indonesian Children's Book Illustrations? Compliance, Safety, and the Cultura
+      Children's book illustrations carry developmental, pedagogical, and cultural responsibilities that are often formally codified in guidelines. As AI systems begin entering children's publishing pipelines, both as evaluators and as generators, a natural question arises: can they reliably meet the structural, safety, and cultural standards required?
+[165] 2611.23889 | Beyond Additive Composition: Interventional Modeling of State-Dependent Cross-Degradation Respo
+      Composite image restoration aims to recover images corrupted by multiple coexisting degradations. Existing methods predominantly decompose composite corruptions into individual factors, relying on these isolated priors to guide restoration.
+[166] 2611.23890 | EVA-RSI: Recursive Self-Improvement of Video Evaluators for Judging Temporal Quality
+      Video evaluators play an important role in video generation, yet they miss motion defects, limiting the quality of generated videos. Recursive self-improvement (RSI) has made strong progress in mathematics and coding, where explicit verifiers provide reliable feedback on a single goal.
+[167] 2611.23891 | SixthView: A Benchmark for Hidden-View Reconstruction and 3D Assembly Reasoning
+      Inferring the unseen side of a 3D assembly requires reasoning about part placement and occlusion. Different assemblies can match the observed views while producing different hidden views, leaving the target ambiguous.
+[168] 2611.23894 | Navigating Robots from Unknown and Uncalibrated Exocentric Cameras via Map Estimation
+      Exocentric cameras, mounted on walls or ceilings in indoor environments, offer wider vantage points and are less easily occluded than robot-mounted cameras, making them an appealing alternative for perception in robot navigation algorithms. Previous methods that use such cameras, however, require their pose and intrinsics to be known before deployment, deman
+[169] 2611.23896 | Kernel Ridge Attention: Nonlinear Memory with Selective Forgetting
+      Kernel Ridge Attention (KRA) is a recurrent sequence mixer that combines learned nonlinear features with covariance-guided memory updates. It stores associations through recursive ridge regression, using correlations among past keys to determine how new observations modify memory.
+[170] 2611.23900 | Coverage Governs Accuracy: When to Expand the Lexicon and When to Fall Back in Low-Resource Man
+      Character-level OCR for low-resource Manchu often produces near-miss spelling errors. Lexicon-constrained decoding can correct such errors with lexical knowledge, but a fixed dictionary cannot cover the many unseen word forms produced by agglutinative word formation.
+[171] 2611.23907 | Evaluating invariance training with certified answer-changing controls in neural graph algorith
+      Invariance training aims to make neural algorithmic reasoners robust to answer-preserving input changes and is judged by accuracy and by how rarely such edits change predictions. We ask whether this evaluation detects lost sensitivity to answer-changing edits on minimum spanning trees of synthetic graphs, where both directions can be certified.
+[172] 2611.23908 | Training-Free Domain Generation for One-Shot Federated Learning with Server-Side Pre-trained Di
+      One-shot federated learning (OSFL) has attracted increasing attention for its ability to substantially reduce communication overhead by limiting client-server interaction to a single communication round. Nevertheless, this limited interaction makes learning from heterogeneous client distributions challenging.
+[173] 2611.23910 | MLE Agents: Autonomous ML Engineering in Large-scale Recommendation Systems
+      The typical workflow for improving large-scale ranking and recommendation models is slow and tedious: an engineer forms a hypothesis, implements it as a code change, trains a model, and evaluates it both offline and online, often relying on their own intuition and experience along the way. Autonomous LLM agents promise to speed this up by running the loop on
+[174] 2611.23911 | Scalable Iterative Multi-Agent Path Finding under Turn Constraints
+      Large-scale multi-mobile-robot systems require fast and reliable path planning under realistic motion constraints. Multi-Agent Path Finding with turn actions (MAPF$_T$) explicitly models orientation changes and turn-induced delays, but these constraints increase the computational burden of search-based methods.
+[175] 2611.23916 | ReLoco: Unified Humanoid Locomotion and Fall Recovery via Behavior-Conditioned Motion Priors
+      Humanoid robots must recover from falls and resume commanded motion to sustain locomotion. Learning these behaviors in one policy requires supervision that accommodates both upright movement and ground-contact recovery.
+[176] 2611.23917 | Vanguard: Knowing When to Trust the Draft in Speculative Vision-Language Agents
+      Vision-language agents that browse websites, operate phones and act in homes reason before every action, so every step waits for a large model, a latency and cost that stand in the way of deployment. Step-level speculation lets a small model draft each step and calls the large model only on rejected drafts, but its outcome rests on the judge, and a judge tha
+[177] 2611.23925 | Cardiac MRI-informed electrocardiography enables biologically grounded cardiomyopathy detection
+      Precise myocardial phenotyping at population scale is limited by the cost and accessibility of cardiac magnetic resonance (CMR), whereas electrocardiography (ECG) is widely available but reflects electrical rather than structural and functional information. Here we develop MyoECG, a cross-modal representation learning framework that distils myocardial struct
+[178] 2611.23926 | GTI: Grounding Task Intent Throughout Long-Horizon VLA Manipulation
+      Vision-language-action (VLA) models generate local actions from visual observations, language, and robot state, but long-horizon manipulation requires the global task intent to remain grounded in the currently executable context. We propose GTI (Grounding Task Intent), which uses the current observation and execution history to localize the active subtask an
+[179] 2611.23929 | ProxySearch: Decoupled Inference-Time Scaling for Diffusion Models via Asymmetric Noise-Rank Tr
+      Noise search at inference time improves text-to-image diffusion but requires many multi-step teacher rollouts per query. Distilled few-step models are now routinely released, yet their potential as proxies inside noise search is uncharacterized.
+[180] 2611.23933 | TRoPE: Topology-aware Relative Positional Encoding for 4D Generation
+      Video-to-4D mesh generation has made substantial progress in recovering dynamic 3D geometry and motion from monocular videos. However, commonly used feed-forward approaches remain prone to sticking artifacts, where geodesically distant vertices move together incorrectly when they become spatially close.
+[181] 2611.23934 | What Right-Angle Corners Reveal About an Uncalibrated Camera: Convex Cones, Certified Bounds an
+      The corner of a box or a room, where three perpendicular edges meet, appears in an image as three segments meeting at a point. We ask what such junctions reveal about an uncalibrated camera's intrinsic parameters.
+[182] 2611.23938 | Can you make models believe false facts in the prompt?
+      Making LLMs believe false facts is useful for alignment evaluations and for building model organisms. Previous work explored doing so with Synthetic Document Finetuning (SDF).
+[183] 2611.23941 | Angular Conditional Distillation: Overcoming Classifier Geometry Mismatch
+      Classifier outputs provide a fundamental and univer- sally available knowledge interface for knowledge distil- lation (KD). However, standard logit objectives entangle transferable semantic relations with architecture-dependent parameterization artifacts, causing a classifier geometry mismatch that makes direct knowledge transfer unreliable.
+[184] 2611.23942 | GLIDE: Scalable and Event-Aware Inductive Forecasting over Evolving Logistics Graphs
+      Accurate forecasting of order volume at scale-effect hotspots (SEHs), spatially coherent groups of logistics flows that serve as distributed optimization units for real-time many-to-one dispatch, is a prerequisite for efficient order pooling in on-demand food delivery (OFD) platforms such as Meituan. However, real-world logistics networks present unique chal
+[185] 2611.23944 | SIGNTOK: A Text-Aligned Continuous Pose Tokenizer for Sign Language Generation
+      Text-conditioned sign language generation (SLG) depends not only on the generator but also on the space in which signing is generated. Existing approaches generate directly in pose space, in quantized code spaces, or in learned latent spaces trained for reconstruction.
+[186] 2611.23946 | How Complete Must an Environment Be to Train a Capable GUI Agent?
+      Graphical user interface (GUI) agents are widely trained in executable GUI environments. To lower cost, build environments in batches, and reduce manual effort, each work trades away part of the environment through its construction choices.
+[187] 2611.23950 | VOL-Agent: Programming Your Film via Video Orchestration Language Agentic System
+      Recent video foundation models generate high-quality and limited-length clips, but orchestrating them into minute-level, story-coherent films remains an open problem. Existing video agents highly rely on natural-language planning or predefined workflows, which make their production hard to program, customize, and extend.
+[188] 2611.23953 | MitoWorld: A Stochastic World Model of the Single-Cell Cycle under Genetic Perturbation
+      A cell observed after a gene knockdown has an uncertain future, both in how its appearance will evolve and when it will divide. Existing approaches predict endpoints or population-level changes without jointly modeling individual trajectories and division timing.
+[189] 2611.23954 | SimplePro: A Simple Baseline for Proactive Video Understanding
+      Proactive video understanding requires vision-language models (VLMs) to decide not only what to answer as a video unfolds, but also when newly arrived evidence warrants a response and when to remain silent. Although modern VLMs excel at offline long-video understanding, they struggle in proactive streaming settings, leading prior work to introduce task-speci
+[190] 2611.23962 | SEE: Unlocking the Hidden Perception of Frozen VLMs
+      Vision-language models (VLMs) grasp the overall content of an image but often miss the fine details a question hinges on, such as a small object in a large photo or a number in a dense infographic. Yet even when their answer is wrong, the region they point to often contains the evidence.

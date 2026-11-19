@@ -1,0 +1,32 @@
+{
+ "2511.18173": {
+  "cat": "cs.CV",
+  "title": "EgoControl: Controllable Egocentric Video Generation via 3D Full-Body Poses",
+  "abstract": "Egocentric video generation with fine-grained control through body motion is a key requirement towards embodied AI agents that can simulate, predict, and plan actions. In this work, we propose EgoControl, a pose-controllable video diffusion model trained on egocentric data. We train a video prediction model to condition future frame generation on explicit 3D body pose sequences. To achieve precise motion control, we introduce a novel pose representation that captures both global camera dynamics and articulated body movements, and integrate it through a dedicated control mechanism within the diffusion process. Given a short sequence of observed frames and a sequence of target poses, EgoControl generates temporally coherent and visually realistic future frames that align with the provided pose control. Experimental results demonstrate that EgoControl produces high-quality, pose-consistent egocentric videos, paving the way toward controllable embodied video simulation and understanding.",
+  "announce": "replace",
+  "published_rss": "2026-11-19",
+  "in_registry": false,
+  "track": "化身与人体",
+  "batch": "backfill-1120"
+ },
+ "2606.07179": {
+  "cat": "cs.CV",
+  "title": "Lifting 3D Gaussians: A Wavelet Multiresolution Representation for Scalable Gaussian Splatting Streaming",
+  "abstract": "3D Gaussian Splatting (3DGS) represents a scene as an unstructured set of primitives optimized at a single scale, offering no native support for progressive delivery to heterogeneous devices. Existing scalable approaches organize these primitives into independent quality layers or spatial hierarchies. However, maintaining separate splat representations across scales introduces redundancy, while independent layers have limited ability to correct coarse geometry as finer detail arrives. We present LiftGS, a multiresolution representation that organizes a scene into a coarse Gaussian set and a tree of refinements. Each refinement replaces one coarse Gaussian with two finer children whose attributes are learned relative to their parent. Inspired by wavelet lifting, we encode these changes using a shared detail vector and per-attribute factors that allow the two children to differ asymmetrically from the parent. A client first receives the coarse set, then reconstructs and substitutes children as refinement data arrives. This construction reuses previously transmitted attributes to encode finer detail and removes replaced parents from the active rendering set, reducing both refinement payload and rendering memory. Extensive experiments on four benchmark datasets show LiftGS cuts splat redundancy from over 65% to under 25%, reduces transmission payload and GPU memory by up to 2.4x and 5.5x over state-of-the-art scalable-3DGS baselines, achieves smooth quality transitions in simulated progressive delivery, and compresses a further 8.7x with standard coding at negligible quality loss. Project website: https://yuang-ian.github.io/liftgs/",
+  "announce": "replace",
+  "published_rss": "2026-11-19",
+  "in_registry": false,
+  "track": "神经渲染",
+  "batch": "backfill-1120"
+ },
+ "2607.08514": {
+  "cat": "cs.CV",
+  "title": "Do Egocentric Video-Language Models Capture Both Hand- and Object-Centric Cues?",
+  "abstract": "Recognizing hand-object interactions (HOIs) requires capturing both hand dynamics and object transformations, which provide complementary information for distinguishing visually similar manipulations. However, Video-Language Models (VLMs) trained solely on egocentric videos tend to over-rely on hand appearance, struggling to distinguish interactions with similar visual appearances but different dynamics (e.g., taking vs. kneading dough). To better utilize complementary hand- and object-centric cues, we propose a learning paradigm with (i) hand-object masked training to encode both hand- and object-centric cues and learn their relationships through cross-cue reconstruction, and (ii) an HOI-dynamics-aware decoder that grounds each cue through auxiliary location and semantic predictions. To assess how effectively models leverage hand- and object-centric cues for action recognition, we introduce Cue-Isolated HOI (CI-HOI), which independently evaluates recognition performance based on each cue. To enable this evaluation, we curate the DEHOI testbed using video inpainting to selectively remove either hands or manipulated objects, allowing us to evaluate action recognition with each cue isolated. DEHOI reveals that existing VLMs trained only on egocentric video rely more on hand-centric cues than VLMs trained on more non-egocentric video data. We show that our training paradigm mitigates this hand-centric bias, outperforming VLMs trained on the same egocentric data across DEHOI, standard action recognition, and object state recognition benchmarks.",
+  "announce": "replace",
+  "published_rss": "2026-11-19",
+  "in_registry": false,
+  "track": "感知与认知",
+  "batch": "backfill-1120"
+ }
+}

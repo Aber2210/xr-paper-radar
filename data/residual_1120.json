@@ -1,0 +1,113 @@
+{
+ "mmdd": "1120",
+ "n_scanned": 434,
+ "n_flagged": 12,
+ "rate": 0.0276,
+ "by_track": {
+  "神经渲染": 1,
+  "系统与平台": 3,
+  "世界模型与仿真": 3,
+  "内容生成": 2,
+  "评估与数据集": 2,
+  "化身与人体": 1
+ },
+ "flagged": [
+  {
+   "id": "2611.23417",
+   "n": 42,
+   "title": "Autoregressive View Model",
+   "cat": "cs.CV",
+   "track": "神经渲染",
+   "why": "沿指定相机路径生成视角流的自回归视角模型，属新视角合成"
+  },
+  {
+   "id": "2611.23534",
+   "n": 69,
+   "title": "Smart Glasses for Ubiquitous Computing: A Layered Survey and the Road Ahead",
+   "cat": "cs.HC",
+   "track": "系统与平台",
+   "why": "智能眼镜 2020-2026 系统综述，XR 设备层直接参考"
+  },
+  {
+   "id": "2611.23674",
+   "n": 104,
+   "title": "Learning What to Degrade: A Recoverability-Aware Curriculum for Reliable Smart-Glasses Super-Resolution",
+   "cat": "cs.CV",
+   "track": "系统与平台",
+   "why": "智能眼镜图像超分/复原课程学习，VLM 视觉辅助前置"
+  },
+  {
+   "id": "2611.23727",
+   "n": 120,
+   "title": "GTA: Generative Tower of Agents for Scalable Holonic Scene Generation",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "分层 holon 场景生成，面向可扩展世界建模"
+  },
+  {
+   "id": "2611.23845",
+   "n": 152,
+   "title": "ReflectScene:MLLM-Guided Closed-Loop Diffusion for 3D Indoor Scene Generation",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "MLLM 闭环扩散的 3D 室内场景生成"
+  },
+  {
+   "id": "2611.23891",
+   "n": 167,
+   "title": "SixthView: A Benchmark for Hidden-View Reconstruction and 3D Assembly Reasoning",
+   "cat": "cs.CV",
+   "track": "评估与数据集",
+   "why": "隐藏视角重建与 3D 装配推理基准"
+  },
+  {
+   "id": "2611.24010",
+   "n": 204,
+   "title": "HHW-Ego: DSLR-Quality Enhancement for Multi-Source Wearable Ego Imaging",
+   "cat": "cs.CV",
+   "track": "系统与平台",
+   "why": "可穿戴自我中心影像 DSLR 级增强，智能眼镜成像管线"
+  },
+  {
+   "id": "2611.24193",
+   "n": 268,
+   "title": "WM^MLLM: Turning MLLMs into World Models",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "MLLM 交互式世界模型，单图持久可编辑世界生成"
+  },
+  {
+   "id": "2611.24253",
+   "n": 287,
+   "title": "One Shot, Any View: High-Fidelity Video Reshooting with Geometry Guidance and Visual References",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "按用户相机轨迹重拍视频，6-DoF 视角合成式内容编辑"
+  },
+  {
+   "id": "2611.24408",
+   "n": 325,
+   "title": "StrideWorld: Benchmarking Scene Rigidity and Action Consistency in Interactive Video World Model",
+   "cat": "cs.CV",
+   "track": "评估与数据集",
+   "why": "交互式视频世界模型的场景刚性与动作一致性基准"
+  },
+  {
+   "id": "2611.24862",
+   "n": 418,
+   "title": "Gaspard: Expressive unified speech and gesture synthesis with continuous autoregressive flow-matching and decoupled classifier-free guidance",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "语音与手势统一生成的说话化身驱动"
+  },
+  {
+   "id": "2611.24869",
+   "n": 421,
+   "title": "WorldRuler: Interactive World Modeling under Configurable Rules",
+   "cat": "cs.AI",
+   "track": "世界模型与仿真",
+   "why": "可配置规则下的交互式世界建模"
+  }
+ ],
+ "note": "只报警清单：入馆须另行走全文抓取→评分→产物，本文件不改变 registry"
+}
