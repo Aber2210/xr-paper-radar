@@ -1,0 +1,72 @@
+{
+ "mmdd": "1121",
+ "n_scanned": 431,
+ "n_flagged": 7,
+ "rate": 0.0162,
+ "by_track": {
+  "化身与人体": 2,
+  "内容生成": 1,
+  "神经渲染": 1,
+  "世界模型与仿真": 2,
+  "重建与SLAM": 1
+ },
+ "flagged": [
+  {
+   "id": "2611.25166",
+   "n": 36,
+   "title": "CoRelate: Coordinated Human-Object Motion Synthesis through Interaction Relations",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "人-物协同运动合成，接触约束下的人类动作生成（化身/动画管线）"
+  },
+  {
+   "id": "2611.25389",
+   "n": 100,
+   "title": "Zero to Four Views: Unified Panorama Generation and Preference RL for Unobserved Regions",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "少视图条件下生成等距柱状全景，可作沉浸式场景背景"
+  },
+  {
+   "id": "2611.25696",
+   "n": 215,
+   "title": "LIFT: Lifting Language-Controlled Image Fusion to Free-Viewpoint 3D Scenes",
+   "cat": "cs.CV",
+   "track": "神经渲染",
+   "why": "把语言控制图像融合提升到自由视点 3D 场景，属新视角合成"
+  },
+  {
+   "id": "2611.25801",
+   "n": 246,
+   "title": "Fast and Accurate Body Estimation in Pixels, World Space and Scenes",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "快速人体估计，直接预测骨架关节与稠密表面点（虚拟化身驱动）"
+  },
+  {
+   "id": "2611.25802",
+   "n": 247,
+   "title": "World-delta: Continually Integrating Observations for Incremental 3D Scene Generation",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "增量式 3D 场景生成，可随新观测持续扩展/修订三维世界"
+  },
+  {
+   "id": "2611.25838",
+   "n": 256,
+   "title": "ContextRenderer: Dynamic-Context Video Generation for Interactive Game Worlds",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "交互式游戏世界的动态上下文视频渲染（生成式渲染器）"
+  },
+  {
+   "id": "2611.26433",
+   "n": 392,
+   "title": "AdaPixFlow: Learning Continuous-Time 3D Dynamics Across Scenes from Sparse Multi-view Observations",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "稀疏多视图下连续时间 3D 动力学重建与任意时刻位置预测"
+  }
+ ],
+ "note": "只报警清单：入馆须另行走全文抓取→评分→产物，本文件不改变 registry"
+}

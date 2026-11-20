@@ -1,0 +1,217 @@
+{
+ "2611.26434": {
+  "title": "HumanCOIN: A 12,500-Hour Dataset for Human Intent in Egocentric Manipulation",
+  "cat": "cs.CV",
+  "why": "第一人称操作意图数据集（机器人学习向）"
+ },
+ "2611.26380": {
+  "title": "EgoCaptioner: Towards Comprehensive and Fine-Grained Egocentric Video Captioning",
+  "cat": "cs.CV",
+  "why": "第一人称视频描述生成"
+ },
+ "2611.26128": {
+  "title": "CryoGaussian: Heterogeneous Cryo-EM Reconstruction Made Explicit with Gaussian Splatting",
+  "cat": "cs.CV",
+  "why": "冷冻电镜高斯重建（科学成像）"
+ },
+ "2611.26120": {
+  "title": "Better Retrieval, Not Better Binding: Pretraining Exposure in Egocentric Video Retrieval",
+  "cat": "cs.CV",
+  "why": "第一人称视频检索组合性诊断"
+ },
+ "2611.25873": {
+  "title": "WHU-Road3D: A dataset and benchmark towards fine-grained road surface mapping",
+  "cat": "cs.CV",
+  "why": "路面要素建图数据集"
+ },
+ "2611.25819": {
+  "title": "SCCV-6D: Sparse Canonical Coordinate Voting for Holistic Multi-View RGB-D 6D Pose Estimation in Robotic Bin Picking",
+  "cat": "cs.CV",
+  "why": "机器人料箱抓取 6D 位姿"
+ },
+ "2611.25722": {
+  "title": "DACA: Dual-Anchor Collaborative Agent for Zero-Shot 3D Visual Grounding",
+  "cat": "cs.CV",
+  "why": "3D 视觉定位智能体（工具链编排）"
+ },
+ "2611.25453": {
+  "title": "Beyond Resemblance: Image Fusion Reimagined",
+  "cat": "cs.CV",
+  "why": "多模态图像融合"
+ },
+ "2611.25417": {
+  "title": "MIR-Depth: Multi-Range Refinement for Single-View RGB-D Depth Completion of Transparent Objects",
+  "cat": "cs.CV",
+  "why": "透明物体抓取深度补全（机器人）"
+ },
+ "2611.26420": {
+  "title": "Awaken-HI: Scaling Humanoid Intelligence with Whole-Body Human Experience",
+  "cat": "cs.RO",
+  "why": "人形机器人全身经验数据"
+ },
+ "2611.26405": {
+  "title": "TacInno: Teaching Vision-Language-Action Models the Contact Dynamics Beyond Vision and Action",
+  "cat": "cs.RO",
+  "why": "触觉创新项 VLA 策略"
+ },
+ "2611.26146": {
+  "title": "A Practical Proprioceptive Data Collection Utility for the Unitree GO1",
+  "cat": "cs.RO",
+  "why": "Unitree GO1 数据采集工具"
+ },
+ "2611.25377": {
+  "title": "VideoTrail: Interactive Video Foraging Through Hierarchical Visualization",
+  "cat": "cs.HC",
+  "why": "视频检索浏览器插件，非沉浸式"
+ },
+ "2611.25082": {
+  "title": "A Human-Centric Adaptive Multi-Fidelity Digital Twin Framework for Cyber-Physical Systems",
+  "cat": "cs.HC",
+  "why": "赛博物理系统数字孪生框架，非 XR 显示/交互"
+ },
+ "2611.26519": {
+  "title": "ACE-Brain-0.7: Learning Execution-Grounded Reasoning for Embodied Agents",
+  "cat": "cs.RO",
+  "why": "具身智能体执行推理 VLM"
+ },
+ "2611.26276": {
+  "title": "I See You: Initial Multi-Robot LiDAR Registration with Mutual-Observation Checks",
+  "cat": "cs.RO",
+  "why": "多机器人 LiDAR 配准"
+ },
+ "2611.26090": {
+  "title": "Dynamic Human-Robot Role Allocation through Entropy-Based Monitoring and LLM Reasoning",
+  "cat": "cs.RO",
+  "why": "人机角色分配"
+ },
+ "2611.26083": {
+  "title": "Reference-Twist-Based Velocity-Domain Spatiotemporal Calibration for mmWave Radar, Event Camera, and IMU",
+  "cat": "cs.RO",
+  "why": "毫米波雷达/事件相机标定"
+ },
+ "2611.26048": {
+  "title": "AGE-Capture: Autonomous, General, and Efficient UAV Capture for High-Fidelity Scene Reconstruction",
+  "cat": "cs.RO",
+  "why": "无人机主动采集重建（航空测绘向）"
+ },
+ "2611.25854": {
+  "title": "Learning-Based System Identification for DVL-Constrained AUV Localization",
+  "cat": "cs.RO",
+  "why": "AUV DVL 约束定位"
+ },
+ "2611.25683": {
+  "title": "TipDex-VTLA: Learning When to Refine Actions with Touch for Dexterous Manipulation",
+  "cat": "cs.RO",
+  "why": "视触觉 VLA 灵巧操作策略"
+ },
+ "2611.25460": {
+  "title": "LoongForge-Embodied: A Unified Framework for Training Heterogeneous Embodied Models",
+  "cat": "cs.AI",
+  "why": "VLA/WAM 训练框架（具身基础设施）"
+ },
+ "2611.25282": {
+  "title": "MS-Point: Multi-Modal Hierarchical Spectral Learning for Point Cloud Understanding",
+  "cat": "cs.AI",
+  "why": "点云-图像预训练表征，通用 3D 视觉"
+ },
+ "2611.26111": {
+  "title": "Physics-Informed Deep Learning for Shear Wave Speed Estimation in MR Elastography",
+  "cat": "eess.IV",
+  "why": "MR 弹性成像（医学）"
+ },
+ "2611.26269": {
+  "title": "Tracking Objects Through Assembly and Decomposition",
+  "cat": "cs.CV",
+  "why": "装配/拆解过程目标跟踪"
+ },
+ "2611.26065": {
+  "title": "Domain-Aware Conformal Prediction for Trustworthy Spacecraft Pose Estimation under Sim-to-Real Shift",
+  "cat": "cs.CV",
+  "why": "航天器位姿保形预测"
+ },
+ "2611.26035": {
+  "title": "Fixing the Twin, Not the Detector: Sim-to-Real Roadside LiDAR Detection from Digital-Twin Data",
+  "cat": "cs.CV",
+  "why": "路侧 LiDAR 仿真到真实检测"
+ },
+ "2611.25771": {
+  "title": "Driver Gaze Target Identification via Gaze Estimation and Structured Driving Scene Understanding",
+  "cat": "cs.CV",
+  "why": "驾驶员注视目标识别"
+ },
+ "2611.25730": {
+  "title": "CGM: Chaos-Guided Graph Attention and Expert Routing for Autism Stereotypy Detection",
+  "cat": "cs.CV",
+  "why": "自闭症刻板动作检测"
+ },
+ "2611.25513": {
+  "title": "Mesh-Free Keypoint Learning for Category-Level 6D Object Pose Estimation",
+  "cat": "cs.CV",
+  "why": "类别级 6D 位姿（工业分拣向）"
+ },
+ "2611.25283": {
+  "title": "Persistent Identity in Person Tracking: Online Enrollment and Registered Recognition",
+  "cat": "cs.CV",
+  "why": "体育视频多目标跟踪重识别"
+ },
+ "2611.25113": {
+  "title": "Do Deep Stereo Models Learn Shape Priors?",
+  "cat": "cs.CV",
+  "why": "立体匹配形状先验诊断，纯几何视觉，无 XR 场景"
+ },
+ "2611.26569": {
+  "title": "Text-Aware, Vision-Blind: How Multimodal Image Editing Systems Handle Unsafe Inputs",
+  "cat": "cs.CR",
+  "why": "图像编辑安全基准"
+ },
+ "2611.25904": {
+  "title": "Multiple-Camera Tracking of Rigid Objects",
+  "cat": "cs.RO",
+  "why": "多相机刚体跟踪（旧稿 cross）"
+ },
+ "2611.25294": {
+  "title": "Modeling Learner-Technology Interaction Through Multilevel Gaze Transition Dynamics to Inform Usability in Online Learning",
+  "cat": "cs.HC",
+  "why": "在线学习眼动可用性研究，非 XR 设备"
+ },
+ "2611.26161": {
+  "title": "One View, One Action: Spatially Generalizable VLAs through Observation-Aligned Experts and Cross Graph Consistency",
+  "cat": "cs.RO",
+  "why": "VLA 空间泛化策略"
+ },
+ "2611.26127": {
+  "title": "Spatially Conditioned Trajectory Diffusion",
+  "cat": "cs.RO",
+  "why": "多机器人轨迹扩散规划"
+ },
+ "2611.25866": {
+  "title": "From Sequence to Space: Explicit Spatial Belief with Vision-Language Distillation for Active Geo-Localization",
+  "cat": "cs.RO",
+  "why": "空中主动地理定位"
+ },
+ "2611.25366": {
+  "title": "Learning to Move from and for Manipulation Policies: Spatializing Latent Action Representations for Goal-Pose-Free Mobile Manipulation",
+  "cat": "cs.RO",
+  "why": "移动操作策略学习"
+ },
+ "2611.25884": {
+  "title": "Trustworthy Geospatial AI Workflows: Reproducible Maritime Analytics and Forecasting on Open-Source AIS Data",
+  "cat": "cs.AI",
+  "why": "海事地理空间分析工作流"
+ },
+ "2611.26525": {
+  "title": "Backtracking Agent Applications Security Incidents",
+  "cat": "cs.CR",
+  "why": "智能体安全事件回溯"
+ },
+ "2611.26407": {
+  "title": "Flow Matching from Non-Gaussian Sources: A Theory of Efficient Sampling",
+  "cat": "stat.ML",
+  "why": "非高斯源流匹配理论"
+ },
+ "2611.25703": {
+  "title": "From Geographic Memory to Spatial Generalization in Large Language Models",
+  "cat": "cs.CL",
+  "why": "LLM 地理空间泛化"
+ }
+}
