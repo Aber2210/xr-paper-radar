@@ -42,24 +42,26 @@ def latest_gates():
     早期版本用文件名正则只认 gates_YYYY-MM-DD.json，回退成 "1119"，导致下游 `batch` 与
     `backfill-<MMDD>` 全部拼错 —— G3 的「本批泄漏 S」检查一直在空跑（2026-11-19 自查发现）。
     """
-    files = sorted(glob.glob("data/gates_*.json"))
+    files = glob.glob("data/gates_*.json")
     if not files:
         return None, None
-    p = files[-1]
-    try:
-        g = json.load(open(p, encoding="utf-8"))
-        d = (g.get("gate3") or {}).get("window_hi")
-        if isinstance(d, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
-            return p, d
-    except Exception:
-        pass
-    m = re.search(r"gates_(\d{4})-(\d{2})-(\d{2})\.json$", p)
-    if m:
-        return p, "-".join(m.groups())
-    m = re.search(r"gates_(\d{2})(\d{2})\.json$", p)
-    if m:
-        return p, "2026-%s-%s" % (m.group(1), m.group(2))
-    return p, None
+    # 按**文件内容里的批次日**取最大，而不是按文件名排序取最后一个：
+    # 2026-11-20 曾出现 `gates_2026-11-20.json`，字典序永远排最后，会遮蔽后续所有
+    # `gates_MMDD.json`，让 G2/G3 静默跑在错的文件上（STATUS C-10）。
+    best = None
+    for p in files:
+        d = None
+        try:
+            g = json.load(open(p, encoding="utf-8"))
+            d = (g.get("gate3") or {}).get("window_hi") or g.get("date")
+        except Exception:
+            pass
+        if not (isinstance(d, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d)):
+            m = re.search(r"gates_(\d{2})(\d{2})\.json$", p)
+            d = "2026-%s-%s" % m.groups() if m else None
+        if d and (best is None or d > best[1]):
+            best = (p, d)
+    return best if best else (sorted(files)[-1], None)
 
 
 def main():

@@ -39,6 +39,7 @@
 | C-9 | 前端 2026-11-20 批次卡 `表内=0`、backfill-1120 卡不出现 | ① `7dim-table.md` 表头缺 `arXiv` 列，`_parse_rows` 取不到 ID 锚点 → 整行跳过；② `papers/daily/backfill-1120/` 目录根本不存在（batches 以目录枚举）。修：`scripts/fix_tables_1120.py` 重写两张表（带 `#`+`arXiv` 占位），补 backfill 目录（7dim/scored/run_log）+ `reports/XR-Backfill-Report-1120.md`；`build_scored_1120.py` 表头同步修正。复算 表内=25（18A/4B/3C，max 4.33）/ 3（2A/1B，max 4.05） | 11-20 |
 | C-10 | `check_release.py` G2 FAIL：`gates_2026-11-20.json` 口径字段写在顶层、文件名偏离 `gates_MMDD.json` 约定 | 该文件名在 `sorted(glob)` 中**永远排最后**，会遮蔽后续所有 `gates_MMDD.json`，使 G2/G3 静默空跑。修：字段收进 `gate3`（含 `window_lo/hi`、`in_window`、`top10_mean`、`top10_lib`），改名 `data/gates_1120.json`，`build_scored_1120.py` 落盘路径同步改 `gates_{MMDD}` → G2/G3 PASS | 11-20 |
 | C-11 | 残差复核（第 3.5 步，原 O-6）从未真跑 | 11-20 批首次执行：`residual_scan.py dump 1120` 扫描 434 条、判 12 条（2.8%）、逐条写 `verdicts_1120.py` 后 ingest，采纳 3 篇（2611.23417/23534/24193）；`data/residual_1120.json` + `data/verdicts.jsonl` 的 `residual_rate=0.0276` 双留痕，6 处产物均带「残差复核」行 | 11-20 |
+| C-12 | `latest_gates()` 按文件名排序取最后一个，遇到 `gates_YYYY-MM-DD.json` 会永久遮蔽后续 `gates_MMDD.json`（C-10 的根因之一） | 改为遍历全部 `gates_*.json`、按内容 `gate3.window_hi` 取最大；构造 `gates_2099-01-01.json`（window_hi=2099-01-01）验证会正确选中它，删除后回到 1120 | 11-20 |
 
 ## 3. 关键红线（违反即视为回归）
 
@@ -63,6 +64,9 @@
   历史判决归档，不再重开；若确需 `PASS`，另起独立确认席（约 30 分钟，仅对当批断言复跑）。
 - **最近一批**：`2026-11-20` 判 **PASS**（G1 1043/680/71 三计数一致；G2 `gates_1120.json` 字段齐；G3 无 S 泄漏；残差 rate 2.8%；门③ 4.33 < 4.4230 → margin −0.093、非重磅无 S）——见 `data/verdicts.jsonl`。上一批 `2026-11-19` 判 WARN（残差复核未执行）。
 
+- **读数修正（2026-11-20）**：残差漏检率首跑实测 **2.8%（12/434，95% CI 约 1.6%–4.8%）**，
+  是此前 100 条抽样的 7.0%（折算 25–102 篇/批）的 1/2.5。**全量扫描优于抽样，后续引用以实测为准**，
+  7% 仅作上界参考。按 2.8% 折算：约 **12 篇/批**被判应收录，本批采纳 3 篇入馆。
 - **判决记账**：`python scripts/check_release.py --record` 会把本批判决写入 `data/verdicts.jsonl`
   （按批次日幂等：`{batch, verdict, counts, gate3, residual_rate, reasons, at}`）。
   三档语义：`PASS` 全绿；`WARN` 有诊断性问题但不阻塞（如残差复核未执行、漏检率 >12%）；
