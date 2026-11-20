@@ -20,3 +20,4 @@
 - **渠道①**：`xr-paper-hub.app.workbuddy.host` 仍 403，**渠道①不可用（累计第 32 批挂账）**，本批未发布。
 - **渠道②（GitHub Pages）**：commit `82a2222` → `push_to_github.py --incremental` 增量 **96 文件**（56.72 MB 全量树中未变 1992）→ main **`4fd76fe8`**；deploy run **44798357045** success；`https://aber2210.github.io/xr-paper-radar/` **HTTP 200 / 5,613,320 bytes**，含 `const DATA`，**md5 `16dd0617c6a87a29074a285adc33f26f` 与本地 LF 归一化版逐字节相等**；线上含 `2026-11-21` ×425 / `backfill-1121` ×14 / `AnyVIO` ×8。
 - **两次仅文档的后续推送**：`6022ae7`（run_log/STATUS/报告渠道①口径）→ main `c3baf0a1`，deploy `44798650783` success；`d4be314e`（`data/missed_xr.json` 补记三批零漏网）→ deploy `44798863138` success。两次均未改 HTML，线上 md5 保持 `16dd0617c6a87a29074a285adc33f26f` 不变（复验 HTTP 200 / 5,613,320 bytes）。
+> **SHA 对照说明**：`push_to_github.py` 走 Git Data API 重建提交，**本地 commit SHA 与远端不同**（tree 相同）。本批映射：本地 `82a2222`/`6022ae7`/`f8b7df9`/`6eadcb9` → 远端 `4fd76fe8`/`c3baf0a1`/`d4be314e`/`9d2486ba`。核对内容一致性看远端 tree 或线上 md5，不要用本地 SHA 去远端找。
