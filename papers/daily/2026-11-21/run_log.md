@@ -11,3 +11,11 @@
 - 第 7 步 Top10：实数 10 篇（4.43–4.00），全部 A；C 级 1 篇（2611.25934 AGSR 2.78）仅入馆不解读。
 - 第 8 步 产物：报告 2 + 笔记 38 + MOC 2 + 总索引 + 7 维/scored/run_log；registry 1,043 → 1,082（备份 `registry.jsonl.bak-20261121`）。
 - 第 9 步 发布：见下方发布记录（构建 → 冒烟 → check_release → 提交 → 推送 → Pages 核验）。
+
+## 发布记录（第 9 步）
+
+- **前端重建**：`build_frontend.py` → `verified: {'papers': 1082, 'notes': 718, 'batches': 73}`；批次卡 `2026-11-21` 表内=37（23A/13B/1C，max 4.43）、`backfill-1121` 表内=2（1A/1B，max 4.08）；两个 `<script>` 块 `node --check` 通过。
+- **冒烟**：`node scripts/smoke_hub.mjs` → **PASS**（磁盘不变量 papers/notes/batches 全等；lastThree 首卡 2026-11-21；排序 8 项断言、隐藏开关、弹层全绿；PAGE_ERRORS none）。
+- **发布前自检**：`check_release.py` → **PASS**（G1 1082/718/73 ｜ G2 `gates_1121.json` 无缺、险过四字段齐 ｜ G3 本批授予S=False、泄漏 0 ｜ R 残差 1.6%）；`--record` 已写入 `data/verdicts.jsonl`；`check_audit_guard.py` PASS（24 份：守卫 6 / 豁免 18 / 违规 0）。
+- **渠道①**：`xr-paper-hub.app.workbuddy.host` 仍 403，**渠道①不可用（累计第 32 批挂账）**，本批未发布。
+- **渠道②（GitHub Pages）**：commit `82a2222` → `push_to_github.py --incremental` 增量 **96 文件**（56.72 MB 全量树中未变 1992）→ main **`4fd76fe8`**；deploy run **44798357045** success；`https://aber2210.github.io/xr-paper-radar/` **HTTP 200 / 5,613,320 bytes**，含 `const DATA`，**md5 `16dd0617c6a87a29074a285adc33f26f` 与本地 LF 归一化版逐字节相等**；线上含 `2026-11-21` ×425 / `backfill-1121` ×14 / `AnyVIO` ×8。

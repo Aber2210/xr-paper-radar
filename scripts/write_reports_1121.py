@@ -219,7 +219,7 @@ A('- **关键词表**：本批 30/77 靠标题级补扫入池（其中 3 篇进 
 A('- **残差率**：本批 1.6%（上批 2.8%），连续两批远低于 12% 阈值，词表不需要整体重估。\n')
 A('- **未覆盖方向**：硬件显示侧（波导 / 可变焦 / Maxwellian / 光场显示）连续第 32 批无器件级破冰；'
   '本批 `渲染与显示` 5 篇均为算法侧（HDR-GS / MergeableRF / GaussTrans / FFGaussType / AGSR）。\n')
-A('- **渠道①**：`workbuddy_sites_deploy` 仍不在工具集中，本轮只走渠道②（GitHub Pages）。\n')
+A('- **渠道①不可用（累计第 32 批挂账）**：`workbuddy_sites_deploy` 不在本会话工具集中，渠道①未发布，**不得视为已双渠道上线**；本轮只走渠道②（GitHub Pages，commit `82a2222` → main `4fd76fe8`，deploy run `44798357045` success，线上 HTTP 200 / md5 `16dd0617…` 与本地 LF 归一化版逐字节相等）。\n')
 
 open('reports/XR-Daily-Report-%s.md' % DATE, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
 print('main report', len('\n'.join(L)))

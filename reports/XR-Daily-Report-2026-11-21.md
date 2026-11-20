@@ -681,5 +681,5 @@ VLM 在相对位置、远近比较等定性空间任务上已较强，但涉及�
 
 - **未覆盖方向**：硬件显示侧（波导 / 可变焦 / Maxwellian / 光场显示）连续第 32 批无器件级破冰；本批 `渲染与显示` 5 篇均为算法侧（HDR-GS / MergeableRF / GaussTrans / FFGaussType / AGSR）。
 
-- **渠道①**：`workbuddy_sites_deploy` 仍不在工具集中，本轮只走渠道②（GitHub Pages）。
+- **渠道①不可用（累计第 32 批挂账）**：`workbuddy_sites_deploy` 不在本会话工具集中，渠道①未发布，**不得视为已双渠道上线**；本轮只走渠道②（GitHub Pages，commit `82a2222` → main `4fd76fe8`，deploy run `44798357045` success，线上 HTTP 200 / md5 `16dd0617…` 与本地 LF 归一化版逐字节相等）。
 
