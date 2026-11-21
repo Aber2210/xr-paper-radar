@@ -88,14 +88,25 @@
 
 ## 5. 每轮自检清单（收尾前逐条打勾）
 
+**2026-11-22（周日状态日）**
+
+- [x] `python scripts/check_release.py` → **WARN / rc=0**（G1 1082/718/**74** PASS ｜ G2 `gates_1122.json` 无缺、险过四字段齐 PASS ｜ G3 本批授予S=False、泄漏 0 PASS ｜ R 残差「未执行」= 状态日无 `nonxr_1122`，如实登记未补造）
+- [x] `python scripts/check_audit_guard.py` 无违规（**25 份**脚本：守卫 7 / 基线豁免 18 / 违规 0；本日新增 `audit_listing_1122.py` 自带 `ok_cats<7 → exit 2` 且在任何 `json.dump(...missed...)` 之前）
+- [x] 对账 `audit_listing_1122.py` **7/7 分类 exit 0**、11-20 组逐分类 declared=got（605 槽位 / 508 唯一）；未入馆 471 篇摘要级 471/471 覆盖，命中 43 篇**全部**在上批处置集合 → 0 漏网
+- [x] `data/gates_1122.json` 四字段齐全且布尔自洽（`today_max=null`、`heavy_day_raw=false`、`margin=null`、`blockbuster=false`、`s_awarded=false`）+ `window_excludes_*` 三项留痕
+- [x] 残差复核：状态日不适用（无新增 nonxr），未生成 `residual_1122.json`；历史 rate 2.8% → 1.6% 连续低位
+- [x] 前端重建 `verified: {papers:1082, notes:718, batches:74}`；11-22 卡片 count=0 + **refPapers=39**；两个 `<script>` 块 `node --check` 通过
+- [x] 前端冒烟 PASS（磁盘不变量 + 4 标签渲染 + 7 档排序 / 隐藏开关 / 弹层三组交互，nCards=74，lastThree 首卡 2026-11-22，零页面异常）
+- [x] 总索引刷新：状态注记追加 11-22、速查入口换「最新运行状态=状态报告 2026-11-22」、批次表加 1 行、头部批次清单追加、页脚换 11-22（库内 1,082 / 笔记 718 / MOC 61）
+- [x] 交付前抽查 `title == id` / `len(title)<12`：0 命中（未改 registry，无备份需要）
+- [x] 本文件 §1/§4/§5 已按事实更新（O-1 → 33 批；§4 增 11-22 状态日 WARN 说明）
+- [x] 渠道② 已实推并核验：本地 commit `13528da` → 远端 main **`17b296a1`**（增量 20 文件）→ deploy run `44936806929` 首次失败（`Fetching artifact metadata failed`，github#16/#17 已知间歇故障）→ **重跑 success**；线上 **HTTP 200 / 5,628,313 bytes**，Range 5×1MB 重组后与本地 LF 归一化版 **md5 `05eacac8…` 完全一致（byte-equal=True）**，线上 DATA 1082/718/74 与 11-22 卡片逐项一致
+- [x] 渠道① 不可用：ToolsSearch 无 `workbuddy_sites_deploy`，`xr-paper-hub.app.workbuddy.host` 根与子路径均 **403 / 3,174 bytes** → 报告与 run_log 均写「渠道①不可用（累计第 **33** 批挂账）」，未声称已发布
+
+**2026-11-21（上一批，留档）**
+
 - [x] `python scripts/check_release.py` 全 PASS（G1 1082/718/73 ｜ G2 `gates_1121.json` 无缺、险过四字段齐 ｜ G3 本批授予S=False、泄漏 0 ｜ R 残差 1.6%）
 - [x] `python scripts/check_release.py --record` 已把本批判决写入 `data/verdicts.jsonl`（`2026-11-21` PASS，residual_rate 0.0162）
-- [x] `python scripts/check_audit_guard.py` 无违规（24 份脚本：守卫 6 / 基线豁免 18 / 违规 0）
 - [x] `data/residual_1121.json` 已生成（431 扫描 / 7 判 / 1.6%），报告含「残差复核」一行（6 处）
-- [x] `data/gates_1121.json` 四字段齐全且 `s_awarded` 为布尔（false）；`heavy_day_raw=false`、`margin=+0.007`、`blockbuster=false`
-- [x] 前端重建 `verified: {papers:1082, notes:718, batches:73}`；两个 `<script>` 块 `node --check` 通过
-- [x] 前端冒烟 PASS（磁盘不变量 + UI 三组交互断言：7 档排序 / 隐藏开关 / 弹层，nCards=73，lastThree 首卡 2026-11-21）
-- [x] 总索引刷新：头部计数 1082、批次清单追加 11-21、状态注记追加、速查入口换最新/上一期、批次表加 2 行、页脚换 11-21；**并补齐 11-20 缺失明细段**（C-13）
-- [x] 本文件 §1/§4 已按事实更新（O-1 → 32 批；新增 C-13；§4 最近一批改 11-21 PASS + 残差读数修正）
-- [x] 渠道② 已实推并核验：commit `82a2222` → main `4fd76fe8`（增量 96 文件）→ deploy run `44798357045` success；线上 **HTTP 200 / 5,613,320 bytes**，md5 `16dd0617…` 与本地 LF 归一化版**逐字节相等**
-- [x] 渠道① 不可用：`xr-paper-hub.app.workbuddy.host` 403 → 报告与 run_log 均写「渠道①不可用（累计第 32 批挂账）」，未声称已发布
+- [x] 前端重建 `verified: {papers:1082, notes:718, batches:73}`；冒烟 PASS（nCards=73）
+- [x] 渠道② commit `82a2222` → main `4fd76fe8` → deploy `44798357045` success；渠道① 32 批挂账
