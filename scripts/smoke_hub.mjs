@@ -86,7 +86,22 @@ async function main() {
 
   await send('Runtime.enable');
   await send('Page.enable');
-  await sleep(2500); // let page settle
+  // 就绪轮询：5.6 MB 单文件 + 冷启动时，固定 sleep 会和解析竞态（2026-11-23 实测探针在
+  // readyState=loading、document.body 尚未生成时执行，导致 hasData/bodyLen 全 -1 假 FAIL）。
+  // 这里只等页面自己就绪，不改任何断言口径。
+  let ready = false;
+  for (let i = 0; i < 60; i++) {
+    try {
+      const r = await send('Runtime.evaluate', {
+        expression: `(document.readyState === 'complete') && (typeof DATA !== 'undefined') && !!document.body`,
+        returnByValue: true,
+      });
+      if (r.result && r.result.value === true) { ready = true; break; }
+    } catch { /* 解析中执行上下文可能被替换，重试 */ }
+    await sleep(500);
+  }
+  if (!ready) console.error('WARN: 页面 30s 内未就绪，后续断言可能失败');
+  await sleep(500); // 让首屏渲染与事件绑定完成
 
   // 磁盘口径：这是唯一不能被「改期望值」篡改的基准
   const countLines = (p) => fs.readFileSync(p, 'utf8').split('\n').filter(l => l.trim()).length;

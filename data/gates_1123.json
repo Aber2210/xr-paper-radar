@@ -1,0 +1,104 @@
+{
+ "run_date": "2026-11-23",
+ "run_type": "status_day_weekend_no_announcement",
+ "registry_total": 1082,
+ "grades": {
+  "S": 18,
+  "A": 526,
+  "B": 408,
+  "C": 130
+ },
+ "notes": 718,
+ "daily_dirs": 74,
+ "moc_files": 62,
+ "gate1": "N/A（0 候选：周末 skipDays 无 11-21/11-22/11-23 公告组）",
+ "gate2": "N/A（0 候选）",
+ "gate3": {
+  "window_lo": "2026-10-24",
+  "window_hi": "2026-11-23",
+  "window_excludes_today": true,
+  "window_excludes_this_run_batches": true,
+  "this_run_batches_excluded": [],
+  "in_window": 464,
+  "top10_mean": 4.432,
+  "top10_lib": [
+   {
+    "id": "arXiv:2611.06817",
+    "date": "2026-11-06",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-06"
+   },
+   {
+    "id": "arXiv:2611.11169",
+    "date": "2026-11-11",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-11"
+   },
+   {
+    "id": "arXiv:2603.01178",
+    "date": "2026-11-14",
+    "value": 4.5,
+    "grade": "A",
+    "batch": "backfill-1114"
+   },
+   {
+    "id": "arXiv:2611.21143",
+    "date": "2026-11-18",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-18"
+   },
+   {
+    "id": "arXiv:2611.26625",
+    "date": "2026-11-21",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-21"
+   },
+   {
+    "id": "arXiv:2610.39399",
+    "date": "2026-10-31",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-10-31"
+   },
+   {
+    "id": "arXiv:2611.09458",
+    "date": "2026-11-10",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-11-10"
+   },
+   {
+    "id": "arXiv:2611.21479",
+    "date": "2026-11-18",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-11-18"
+   },
+   {
+    "id": "arXiv:2611.07902",
+    "date": "2026-11-07",
+    "value": 4.36,
+    "grade": "A",
+    "batch": "2026-11-07"
+   },
+   {
+    "id": "arXiv:2610.34263",
+    "date": "2026-10-28",
+    "value": 4.35,
+    "grade": "A",
+    "batch": "2026-10-28"
+   }
+  ],
+  "today_max": null,
+  "margin": null,
+  "heavy_day_raw": false,
+  "heavy_day": false,
+  "blockbuster": false,
+  "s_awarded": false,
+  "verdict": "no_candidate_status_day"
+ }
+}
