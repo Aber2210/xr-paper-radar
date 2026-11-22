@@ -101,7 +101,7 @@
 - [x] 总索引刷新：状态注记追加 11-23、速查入口换「最新运行状态=状态报告 2026-11-23」、批次表加 1 行、页脚换 11-23（库内 1,082 / 笔记 718 / daily 75）
 - [x] 交付前抽查 `title == id` / `len(title)<12`：0 命中（未改 registry，无备份需要）
 - [x] 本文件 §1/§4/§5 已按事实更新（O-1 → 34 批；§4 增 11-23 状态日 WARN 说明）
-- [x] 渠道② 已实推并核验（见下方发布记录）
+- [x] 渠道② 已实推并核验：本地 commit **`fcebc54`** → 增量推送 **23 blob** → 远端 main **`9be55d2c`**（`pushedAt` 2026-11-22T18:40:36Z）→ deploy run **`45056432539` success**；线上 **5,643,592 bytes**，Range 5×1MB 重组后与本地 LF 归一化版 **md5 `36ed272a…` 完全一致（byte-equal=True）**，DATA 1082/718/75、11-23 卡片 count=0 / refPapers=39 与本地逐项一致
 - [x] 渠道① 不可用：ToolSearch 无 `workbuddy_sites_deploy`，`xr-paper-hub.app.workbuddy.host` 根与子路径均 **403 / 3,174 bytes** → 报告与 run_log 均写「渠道①不可用（累计第 **34** 批挂账）」，未声称已发布
 
 **2026-11-22（上一批，留档）**
