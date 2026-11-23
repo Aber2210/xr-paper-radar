@@ -1,0 +1,79 @@
+{
+ "mmdd": "1124",
+ "n_scanned": 371,
+ "n_flagged": 8,
+ "rate": 0.0216,
+ "by_track": {
+  "化身与人体": 2,
+  "世界模型与仿真": 4,
+  "重建与SLAM": 1,
+  "系统与平台": 1
+ },
+ "flagged": [
+  {
+   "id": "2611.26773",
+   "n": 22,
+   "title": "FACET: A Data-Efficient Regional Parametric Head Model",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "参数化头部模型 FACET，FACS 可控、小样本身份，直接服务虚拟化身"
+  },
+  {
+   "id": "2611.26981",
+   "n": 83,
+   "title": "ViewDreamer: A Robot World Model beyond Fixed Camera Setups",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "ViewDreamer：不固定相机配置的机器人世界模型，多视角同步生成"
+  },
+  {
+   "id": "2611.27164",
+   "n": 148,
+   "title": "PhysForce: Physics-aware Force Control for Interactive Video World Model",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "PhysForce：交互式视频世界模型的物理感知力控制（用户施力驱动状态变化）"
+  },
+  {
+   "id": "2611.27336",
+   "n": 207,
+   "title": "Zing-1.0: A Playable World System Built on Controllable Rendering",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "Zing-1.0：可玩世界系统，基于可控渲染由玩家动作驱动状态更新"
+  },
+  {
+   "id": "2611.27397",
+   "n": 234,
+   "title": "AnyBodyCodec: A Shared Native Interface for Body-Model Conversion, Extension, and Humanoid Control",
+   "cat": "cs.RO",
+   "track": "化身与人体",
+   "why": "AnyBodyCodec：参数化人体模型的共享原生接口，跨 body model 转换与扩展"
+  },
+  {
+   "id": "2611.27412",
+   "n": 239,
+   "title": "Projector Time Map Calibration for Event-based Structured Light",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "事件相机结构光投影仪时间映射标定，修正平行栅格与独立时间戳假设"
+  },
+  {
+   "id": "2611.27845",
+   "n": 341,
+   "title": "Humanoid robots for safety-critical electrical switching: A perception-informed runtime constraint filter",
+   "cat": "cs.RO",
+   "track": "系统与平台",
+   "why": "人形机器人 VR 遥操作电气切换的运行时安全滤波器"
+  },
+  {
+   "id": "2611.27963",
+   "n": 369,
+   "title": "Non-penetrating World Models",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "Non-penetrating World Models：交互式视频世界模型的穿模抑制与 NoPeBench 基准"
+  }
+ ],
+ "note": "只报警清单：入馆须另行走全文抓取→评分→产物，本文件不改变 registry"
+}

@@ -1,0 +1,101 @@
+{
+ "2605.19889": {
+  "cat": "cs.GR",
+  "title": "GLUT: 3D Gaussian Lookup Table for Continuous Color Transformation",
+  "abstract": "3D Lookup Tables (3D LUTs) are widely used for color mapping, but their grid-based representation discretizes the RGB space, leading to a capacity-memory trade-off that becomes prohibitive when storing large numbers of LUTs. Recent approaches use implicit neural representations to improve scalability, but their black-box nature limits interpretability and localized editing. In this paper, we propose Gaussian LUT (GLUT), a continuous and explicit representation of color transformations using learnable 3D Gaussian primitives. By eliminating fixed-resolution grids, GLUT provides flexible representational capacity with a compact memory footprint. Its spatially localized primitives also facilitate interpretation and targeted editing. Building on GLUT, we introduce Conditional Gaussian LUT (CGLUT), a compact generator that predicts GLUT parameters for multiple LUTs within a shared framework, enabling smooth blending between color styles. GLUT further supports efficient local editing by allowing targeted adjustments to specific color regions without retraining the model. Experiments show that GLUT outperforms existing neural LUT representations in both accuracy and efficiency, while supporting controllable localized color editing. CGLUT further improves compact modeling and smooth blending of multiple color styles. Code is available at https://github.com/CVC-Color/glut.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "神经渲染",
+  "why": "3D 高斯查找表的连续色彩变换",
+  "day": "backfill-1124"
+ },
+ "2606.16202": {
+  "cat": "cs.CV",
+  "title": "EgoPhys: Physics-Informed Digital Twins for Deformable Objects from Egocentric Video",
+  "abstract": "Humans naturally understand object physics through everyday interactions, but predicting how deformable objects, such as soft objects and fabrics, respond to manipulation remains a major challenge for computer vision and robotics. Existing deformable physical twin methods typically rely on controlled multi-view or depth capture and costly per-object physical refinement. We present EgoPhys, a framework for constructing predictive deformable physical twins from a single egocentric RGB interaction. EgoPhys combines persistent correspondences with per-frame monocular 3D observations to fit a sequence-specific spring-mass model from moving-camera observations. Because a short interaction weakly constrains fine-grained local stiffness, EgoPhys amortizes this refinement across training interactions using a compact state-conditioned residual model that predicts bounded local corrections around the sequence-specific estimate and remains frozen at test time. Experiments show improved held-out future prediction over adapted deformable-twin baselines, with the amortized residual further improving prediction while reducing local-refinement cost by approximately 10-59x over dense per-spring optimization. The resulting twins also support deformable-object action selection, with representative physical robot manipulation providing a qualitative proof of concept.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "世界模型与仿真",
+  "why": "第一视角可形变物体的物理数字孪生",
+  "day": "backfill-1124"
+ },
+ "2607.02921": {
+  "cat": "cs.CV",
+  "title": "R3D: Quantitative 3D Spatial Reasoning for Egocentric Wearables",
+  "abstract": "Quantitative 3D spatial reasoning from egocentric RGB-D video is an important capability for next-generation wearable assistants. Yet existing benchmarks do not reflect the challenges of handling (1) natural egocentric video, (2) posed RGB-D video inputs, and (3) challenging quantitative 3D spatial reasoning Q&A. To fill this gap, we introduce R3D-Bench (Reasoning in 3D), a benchmark of 2,950 quantitative spatial reasoning questions across 15 types--spanning multiple-choice, distance-based, and volumetric reasoning questions--built on top of 57 egocentric video sequences from Aria Digital Twin. To set a strong baseline on this dataset, we introduce R3D, a model-agnostic spatial tool-calling framework. In contrast to existing approaches that directly embed 3D information into the model's input representation, R3D constructs a 3D scene from video using segmentation and depth-lifted object representations. It provides this information to an LLM through seven composable spatial tools. On R3D-Bench, R3D with Qwen3.6 35B-A3B outperforms all baselines $<$100B parameters, achieving 55.6% mean relative accuracy, a substantial increase over the second-best approach (CuTR+Tools, 47.7%). In the $\\ge$100B parameter domain, our R3D Qwen3-VL 235B-A22B Thinking variant improves upon its base model by 7.7% absolute, achieving 57.0% accuracy and outperforming all open- and closed-source models except closed-source GPT-5.5 (59.1%), with which it remains competitive. We publicly release both R3D-Bench and our full implementation.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "评估与数据集",
+  "why": "第一视角可穿戴设备的定量 3D 空间推理基准",
+  "day": "backfill-1124"
+ },
+ "2609.08848": {
+  "cat": "cs.CV",
+  "title": "FIRE3D: Feed-forward Interactive 3D Scene Reconstruction Within A Minute",
+  "abstract": "We present FIRE3D, a unified framework that transforms a single RGB image or casual video into interactable 3D scene assets for games and interactive applications in under a minute for up to twelve textured instances including preprocessing. At the core of FIRE3D is a feed-forward inference pipeline that predicts a compositional scene representation from posed RGB-D observations estimated from the RGB capture, including the 6-DoF pose, bounding box, mesh, and texture for detected objects. By modeling the scene as a collection of discrete entities, FIRE3D produces amodal object assets that can be independently edited and used in interactive applications. Our framework requires no test-time optimization, runs substantially faster than the compared reconstruction systems, and provides object-level completeness beyond existing feed-forward 3D approaches. We demonstrate leading detection accuracy, strong geometry reconstruction, and competitive rendering quality on the evaluated benchmarks, with substantial runtime gains.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "重建与SLAM",
+  "why": "单图/随手视频一分钟内交互式 3D 场景重建",
+  "day": "backfill-1124"
+ },
+ "2609.31248": {
+  "cat": "cs.CV",
+  "title": "TailorGS: Made-to-Measure Density Control for 3D Gaussian Splatting",
+  "abstract": "3D Gaussian Splatting reconstructs a scene from a set of posed photographs called the capture; Gaussian count affects reconstruction quality, storage, and rendering cost. How to select this number automatically across capture scales remains unresolved: density control techniques effective on standard benchmarks can leave larger captures with too few Gaussians to reconstruct fine details. We observe that the surface to represent, given by capture extent and resolution, is known before training, whereas the capacity needed to reconstruct its content depends strongly on the 3D optimization trajectory and becomes apparent during reconstruction. We introduce TailorGS, which unifies coverage-scaled exploration and coverage-weighted self-distillation under a non-redundant 3D scene coverage measure. Before training, TailorGS groups observed surface points into coarse voxels and shares each voxel's weight among views observing it from the same side. Combined with image resolution, these weights set a generous exploration cap that limits budget inflation from repeated observations. During the first 80% of training, TailorGS grows toward this cap. The resulting model serves as teacher for a single closed-form self-distillation step, balancing fidelity to its renderings against Gaussian count under the same coverage measure. The retained primitives are refined over the remaining 20% of training. On 13 standard scenes, TailorGS matches the mean PSNR of the best-performing evaluated baseline, LeGS, with 48% fewer Gaussians. On eight large captures, the same configuration automatically scales to larger models when necessary, achieving the highest mean PSNR across 13 evaluated baselines: 0.63 dB above the runner-up by allocating 2.8 times as many Gaussians.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "神经渲染",
+  "why": "3DGS 密度控制的自适应选取",
+  "day": "backfill-1124"
+ },
+ "2611.25417": {
+  "cat": "cs.CV",
+  "title": "MIR-Depth: Multi-Range Refinement for Single-View RGB-D Depth Completion of Transparent Objects",
+  "abstract": "Recovering accurate visible-surface depth from a single RGB-D image and an object mask is essential for robotic grasping and manipulation of transparent objects. Specular reflections cause missing depth, while refraction corrupts nonzero returns with background depth, making raw measurements unreliable as surface anchors. Under a fixed sampling budget, refining an initial single-view prediction within a single search interval either misses large refraction offsets or sacrifices fine local resolution. To resolve this single-view trade-off, MIR-Depth constructs Coordinate-Aware Multi-Range Hypotheses: a 3D-aggregated global inverse-depth volume and depth-axis-filtered pixel-wise local volumes around a prior-guided initial depth. Selective Recurrent Refinement then introduces out-of-bounds lookup masking and validity-masked softmax fusion to iteratively update inverse depth from these volumes using a multi-scale ConvGRU. Finally, Spatially Gated Correction applies a learned per-pixel spatial gate to the full-resolution residual, preserving accurate initial geometry without imposing raw sensor readings as hard constraints. Experiments on TransCG, TODD, TRansPose, ClearPose, and HouseCat6D show that MIR-Depth achieves lower error than ReMake, DFNet, BP-Net, and PSD. Real-robot evaluations confirm accurate surface geometry for 6-DoF grasp pose prediction. Code and pretrained models will be publicly available.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "重建与SLAM",
+  "why": "透明物体单视 RGB-D 深度补全",
+  "day": "backfill-1124"
+ },
+ "2601.13574": {
+  "cat": "cs.RO",
+  "title": "Highly Deformable Proprioceptive Membrane for Real-Time 3D Shape Reconstruction",
+  "abstract": "Reconstructing the three-dimensional (3D) geometry of surfaces is essential for robot perception and physical interaction. Vision-based approaches reconstruct surfaces at high resolution from an external viewpoint but often require a clear line of sight. A conformable membrane that reconstructs its own deformation offers a complementary route. Based on optical waveguide shape sensing, this work presents a stretchable proprioceptive silicone membrane that reconstructs localized contact and in-plane stretching under large deformation. The membrane integrates edge-mounted light-emitting diodes (LEDs) and centrally distributed photodiodes (PDs) in an elastomeric waveguide using liquid-metal interconnects. A neural network maps the optical intensity measurements to a dense point cloud of the membrane surface. Optical acquisition and model inference run in real time at about 90~Hz. Under localized pressing of up to about 25~mm depth, the membrane achieves an overall shape reconstruction error of 1.580~mm. It also localizes finger contacts with a mean error of 1.779~mm. Extreme strain tests show that the optical signals remain informative for in-plane outline reconstruction up to 75\\% strain, approaching the mechanical limit of the liquid-metal circuit. These results indicate a practical route to proprioceptive shape sensing in deformable robotic systems.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "触觉与多模态",
+  "why": "可变形本体感知膜实时 3D 形貌重建",
+  "day": "backfill-1124"
+ },
+ "2605.19257": {
+  "cat": "cs.RO",
+  "title": "PRISM-SLAM: Probabilistic Ray-Grounded Inference for Scale-aware Metric SLAM",
+  "abstract": "Monocular SLAM historically suffers from scale ambiguity and tracking failure in dynamic environments. While recent vision foundation models (VFMs) provide remarkable zero-shot depth priors, naively integrating these deterministic predictions ignores predictive uncertainty and frame-to-frame scale inconsistencies. We propose PRISM-SLAM, a real-time framework that rigorously integrates VFM priors into a structured Bayesian factor graph to achieve scale-aware, metric-consistent localization and mapping. Specifically, we introduce a Pl\\\"ucker Ray-Distance Factor to anchor monocular observations in absolute space within a globally consistent metric coordinate system, mathematically resolving scale drift by making the metric scale Fisher-identifiable. To handle environmental dynamics, we derive an epistemic uncertainty proxy from temporal depth consistency and formulate a Dynamic Scene Uncertainty Gating (DSUG) mechanism. This soft-gating approach probabilistically down-weights dynamic distractors without incurring the heavy computational overhead associated with traditional semantic segmentation masks. By employing a multi-process architecture that asynchronously processes VFM inference and geometric tracking, PRISM-SLAM provides verified metric output at 30 FPS using solely RGB input, bridging the gap between foundation models and real-world robotic applications. Evaluated on the TUM RGB-D and 7-Scenes benchmarks, PRISM-SLAM achieves a metric $SE(3)$ Absolute Trajectory Error (ATE) nearly identical to its oracle-aligned $Sim(3)$ error. This demonstrates that our system can produce deployment-ready metric trajectories by delivering robust metric SLAM solutions without any post-hoc scale correction. Project page: https://prismslam-cmd.github.io/prismslam_pr/",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "重建与SLAM",
+  "why": "视觉基础模型先验的尺度感知单目 SLAM",
+  "day": "backfill-1124"
+ },
+ "2611.21057": {
+  "cat": "cs.RO",
+  "title": "WiTac: Wrist-Informed Tactile Representations for Contact-Rich Manipulation",
+  "abstract": "Similar tactile contacts can call for different corrections depending on the configuration of the hand, object and target. Rather than supplying touch and wrist vision separately, fusing them before policy injection better grounds tactile features in visual context, yielding more accurate contact representations. We introduce Wrist-Informed Tactile Representations (WiTac), a pretrained encoder that learns such representations before action generation. Pretrained on nearly 300 hours of SharpaDex data, WiTac deeply fuses tactile signals with hand motion and wrist views into a comprehensive contact representation. Conditioning downstream VLA policies (GR00T N1.7 and $\\pi_{0.5}$) on WiTac substantially improves task success over vision-only base policies across four contact-rich manipulation tasks (+28.8% and +15.0% on average), and further outperforms a wrist-free tactile encoder by 18.8% and 7.5%, respectively. Offline analyses further show that incorporating wrist vision yields more accurate contact descriptors, stronger joint task-contact discrimination, greater feature stability under tactile noise, and clearer action-direction readout from similar contacts. Project page: https://wrist-informed-tactile-representations.github.io/.",
+  "announce": "replace",
+  "published_rss": "2026-11-23",
+  "in_registry": false,
+  "track": "触觉与多模态",
+  "why": "腕部信息融合的触觉表征用于富接触操作",
+  "day": "backfill-1124"
+ }
+}
