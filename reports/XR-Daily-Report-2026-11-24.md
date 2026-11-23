@@ -650,4 +650,6 @@ Tracktail 把任务拆成「逐相机视频编码 + 逐查询解码」：预训�
 - **残差率 2.2%**（上批 1.6%、再上批 2.8%），连续三批低于 12% 阈值；本批 8 条采纳全部来自「世界模型/化身」表述，说明缺口集中在 `world model` 与 `avatar` 的语义边界，而非词表整体失效。
 
 - **PARTIAL 处理需固化**：ar5iv 对部分新稿只返回摘要落地页，`chars` 在 4–6k 区间时应直接判 PARTIAL 而非 FULL。下批拟在 `fetch_fulltext.py` 增加「chars < 8000 且命中 landing 特征 → 强制 PARTIAL」的守卫。
+- **渠道① 不可用（累计第 35 批挂账）**：`workbuddy_sites_deploy` 不在本会话工具集中，渠道①**未发布**，不得视为已双渠道上线。本轮只走渠道②。挂账按每日运行计（含状态日，区间 2026-10-21 ~ 2026-11-24），与 `STATUS.md` §1 O-1 同口径。
+- **渠道② 已实际完成推送**（非「工作流会自动同步」）：本地 commit `f0774fa` → GitHub Git Data API 增量推送（`101` 变更 / `2119` 未变 / `2124` 远端文件，`60.37 MB`）→ 远端 main `67868a4b`；`Deploy Pages` run `45244161325` **conclusion=success**；线上 `https://aber2210.github.io/xr-paper-radar/` 返回 **HTTP 200**、含 `const DATA`，md5 `0705fad6…` 与本地 LF 归一化版**逐字节相等**。
 

@@ -11,4 +11,4 @@
 - 第 6 步 三关：门① 0.40（2609.31248 vs 库内 2611.02044）；门② 7 赛道（未重筛）；门③ 4.27 vs 4.432，margin −0.162 → heavy_day_raw=false，blockbuster=false，无 S。
 - 第 7 步 Top10：实数 10 篇（4.27–3.92），全部 A；本批无 C 级（入池门槛已把 C 级挡在候选外）。
 - 第 8 步 产物：报告 2 + 笔记 50 + MOC 2 + 总索引 + 7dim-table（主批/backfill 各 1）+ scored.md + run_log；registry 1,082 → 1,132（备份 `registry.jsonl.bak-20261124`）。易错点：`7dim-table.md` 表头必须保留 `arXiv` 列，否则前端批次卡表内计数为 0。
-- 第 9 步 发布：见下方发布记录（构建 → `node --check` → CDP 冒烟 → `check_release` → 提交 → 推送 → Pages 核验）。
+- 第 9 步 发布：`build_frontend.py` → `verified {papers: 1132, notes: 768, batches: 77}`（5,808.8 KB）；`smoke_hub.mjs` CDP 冒烟 **SMOKE: PASS**（papersEqDisk / notesEqDisk / batchesEqDisk / uiSorts / uiHide / uiPop 全 true，PAGE_ERRORS none，77 张卡）；`check_release.py` **VERDICT: PASS**（G1 1132/768/77、G2 险过四字段齐、G3 无 S 泄漏、R 残差 2.2%）；渠道① `workbuddy_sites_deploy` 不在工具集 → 不可用（累计第 35 批挂账，含状态日）；渠道② 本地 commit `f0774fa` → **增量推送**（101 变更 / 2119 未变 / 60.37 MB）→ main `67868a4b` → Deploy Pages run `45244161325` **success** → 线上 HTTP 200、含 `const DATA`、md5 `0705fad6…` 与本地 LF 归一化版逐字节相等。
