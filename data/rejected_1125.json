@@ -1,0 +1,842 @@
+{
+ "2611.31164": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Analyzing and Improving FlowMap Distillation of Autoregressive Video Models",
+  "abstract": "FlowMap distillation offers a natural route to few-step generative modeling by directly learning a teacher's denoising trajectories. Yet for autoregressive (AR) video generation, existing few-step models still rely on distribution matching distillation (DMD) to remain competitive, sacrificing sample diversity and requiring a large bidirectional teacher. In this work, we analyze what limits standalone AR FlowMap distillation and introduce two complementary guidance mechanisms to close this gap: (1) anti-drifting guidance, which helps the AR teacher correct drifted student rollouts by training an auxiliary model to mimic student drift and using it as a negative guidance branch; and (2) motion-aware guidance, which makes motion easier for a FlowMap student to learn by locating motion patches and selectively applying skip-layer guidance. Empirically, our approach applies to $\\pi$-Flow, MeanFlow, and consistency distillation with 1.3B AR teachers, improving generation quality and reducing drift over 30 s rollouts. Notably, our 4-step $\\pi$-Flow students match DMD students distilled from 14B teachers on VBench while preserving the sample diversity of their AR teachers, demonstrating that pure FlowMap distillation is effective for few-step autoregressive video generation.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.31128": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "CrownFusion: 3D Dental Crown Generation Using Geometry Images and Latent Diffusion",
+  "abstract": "We introduce CrownFusion, a latent diffusion model to generate 3D dental crown designs from geometry images, a 2D-grid encoding of surface coordinates. Departing from traditional approaches that use point clouds, our \"CrownImage\" representation not only unlocks the full power of image-based generative architectures, but also preserves fine geometric detail by operating at far higher spatial resolutions than point clouds to alleviate smoothing artifacts in the 3D generation. Conditioned on jointly learned embeddings of the surrounding dentition, our probabilistic diffusion model produces anatomically plausible crowns with morphological variations tailored to individual patient cases. To accommodate multiple valid designs, we propose an occlusal fit metric based on proximity to the antagonist teeth. We evaluate our method through quantitative experiments and qualitative studies involving expert testimonials. We also release the FDI 16 Crown Dataset, comprising 11,513 annotated intra-oral scans, to support future research in dental CAD.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.31022": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "OmniV-Bench: Can MLLMs Comprehend Immersive Spatio-temporal Scenes?",
+  "abstract": "Omnidirectional videos (ODVs) capture dynamic environments with a full $360^\\circ$ field of view, providing rich spatial context and temporal dynamics for applications such as virtual reality (VR), augmented reality (AR), and embodied intelligence. Recent multimodal large language models (MLLMs) have made great progress in spatial and temporal understanding, yet their ability to comprehend the immersive 360 spatio-temporal information conveyed by ODVs remains largely unexplored. To bridge this gap, we first introduce OmniV-Bench, a Benchmark designed to comprehensively evaluate the capabilities of MLLMs on spatio-temporal Omnidirectional Video understanding. OmniV-Bench contains 4,123 high-quality ODVs collected from diverse scenes, along with 8,923 human-annotated question-answer pairs spanning 11 fine-grained tasks across three categories, i.e., general, spatial, and spatio-temporal understanding. Extensive benchmark experiments reveal that the spatio-temporal complexity of ODVs poses significant challenges for current MLLMs. To address these limitations, we further propose OmniV-Harness, an agentic harness that enhances ODV understanding through viewpoint-guided evidence initialization and task-relevant evidence acquisition with adaptive tool use. Comprehensive experiments demonstrate that OmniV-Harness consistently improves immersive spatio-temporal reasoning ability of MLLMs. Both OmniV-Bench and OmniV-Harness will be released upon publication.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30728": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Same Seed, Different Picture? Deciding Early at Low Resolution for Seed-Faithful Few-Step Flow Sampling",
+  "abstract": "Few-step samplers make large text-to-image flow models fast, but from the same noise they no longer generate the image of the standard 50-step sampler. Subjects, attributes and layout change, not just fine detail. We trace this loss of seed fidelity to the start of sampling. The coarse part of the initial noise decides coarse structure first, while the noise level is still above 0.9. Few-step samplers cross this range in their first steps, which account for 25-52% of their distance to the 50-step reference. Because this decision is coarse, a half-resolution run from the same coarse noise can make nearly the same decision at a third of the cost. We therefore propose Decide-then-Render (DtR), a training-free sampler that decides the composition in a few low-resolution steps, rebuilds the full-resolution state with the seed's own noise and renders the details. On 4 large models, DtR runs 11-25$\\times$ faster than the reference sampler. At each speed-up, it is closer to the reference and rated higher by ImageReward than every compared sampler, including few-step schedules calibrated per budget and published multi-resolution samplers. On FLUX.1-dev, it remains the most faithful sampler down to about $8\\times$, ahead of caching accelerators. A user study on this model found DtR's samples closer to the reference in 86% of pairwise trials. DtR transfers to a held-out model and to video, and distilled models can serve as its renderers. Project link: https://duanhuiran.github.io/DtR",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30602": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "GSDet: Gaussian Splatting for Oriented Object Detection",
+  "abstract": "Oriented object detection has advanced with the development of convolutional neural networks (CNNs) and transformers. However, modern detectors still rely on predefined object candidates, such as anchors in CNN-based methods or queries in transformer-based methods, which struggle to capture spatial information effectively. To address the limitations, we propose GSDet, a novel framework that formulates oriented object detection as Gaussian splatting. Specifically, our approach performs detection within a 3D feature space constructed from image features, where 3D Gaussians are employed to represent oriented objects. These 3D Gaussians are projected onto the image plane to form 2D Gaussians, which are then transformed into oriented boxes. Furthermore, we optimize the mean, anisotropic covariance, and confidence scores of these randomly initialized 3D Gaussians, using a decoder that incorporates 3D Gaussian sampling. Moreover, our method exhibits flexibility, enabling adaptive control and a dynamic number of Gaussians during inference. Experiments on 3 datasets indicate that GSDet achieves AP$_{50}$ gains of 0.7\\% on DIOR-R, 0.3\\% on DOTA-v1.0, and 0.55\\% on DOTA-v1.5 when evaluated with adaptive control and outperforms mainstream detectors.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30471": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Inclusion of obstacles in ground point classification in ALS data for terrain models used for analysis of vehicle traversability",
+  "abstract": "Classification of ALS point clouds has been studied for decades, but it remains challenging in forest contexts due to the great variety of terrain types, sensor equipment, flight parameters, and resulting point densities. Point cloud density has increased significantly in recent years, and existing algorithms, developed for lower density point clouds, may no longer be effective. It is beyond the scope of most existing algorithms to classify obstacles, such as boulders, while also distinguishing non-obstacles, such as bushes and undergrowth. We evaluate the performance of different algorithms for ground point classification in ALS data in a context where obstacles are included in the ground class, resulting in terrain models useful for offroad machinery route planning and navigation. The evaluation is performed using metrics directly on the point clouds (Precision, Recall, $F_1$-score) and on resulting terrain models (RMSE and maps of differences). The results show that there are several algorithms that perform well, but performance is highly affected by the parameters used. The best results in terms of terrain model RMSE are obtained with the CSF-algorithm, with an average RMSE of 0.08 meters. The results indicate that existing algorithms can be adapted to include obstacles in the ground class under the tested conditions.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30283": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "AdvMTO: Multimodal and Temporal Adversarial Object Attacks via 2D Gaussian Splatting for BEV-Based 3D Object Detection",
+  "abstract": "Adversarial object attacks pose a threat to BEV-based 3D object detectors in autonomous driving. Existing attacks typically target a single modality, coordinate camera and LiDAR observations at the current timestamp, or model temporal persistence mainly in camera streams. Without a unified construction of current and historical observations, attacks can leave part of the detector's accumulated evidence unsuppressed, limiting their effectiveness. In this paper, we propose AdvMTO, a 2D Gaussian Splatting (2DGS) framework for suppressing detection of persistent adversarial objects. Its oriented surfels encode appearance, geometry, and opacity in one object state, from which camera images and scanline LiDAR returns are generated. AdvMTO then constructs current and historical inputs through detector-native processing, regenerating LiDAR returns in each native source sweep for fusion detectors. We optimize bounded appearance perturbations for each detector, propagating gradients through historical BEV memory for temporal camera detectors. For fusion detectors, bounded geometry refinement along local normals further perturbs both sensing modalities. Experiments on nuScenes demonstrate effective suppression of traffic-cone detection across three BEV detectors. Temporal ablations further highlight the importance of detector-native history modeling for both attack construction and optimization.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30055": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Bi-Refine: Semantic Verification-Guided Progressive Refinement for Moment Retrieval",
+  "abstract": "Moment Retrieval (MR) aims to identify the temporal segment in an untrimmed video that corresponds to a natural language query. Existing approaches commonly refine temporal predictions within the localization pathway, without explicitly verifying candidate-level semantic consistency. Moreover, directly reusing semantic scores as feedback can cause over-correction when the verification signal is unreliable. To address these issues, we propose Bi-Refine, a semantic verification-guided progressive refinement framework that formulates MR as a closed-loop verification-and-refinement process. A Heuristic Localization Branch first generates candidate moments, while a Semantic Verification Branch evaluates their query consistency in a semantically enriched latent space. Query supervision further trains the verifier with the same candidate moment but different queries, encouraging it to distinguish the matched query from semantically similar mismatched queries. The resulting verification features are incorporated into a Progressive Refinement Loop that updates both query representations and multimodal features. To suppress potentially harmful updates, a lightweight reliability estimator gates query updates and reweights candidate contributions in feature feedback. A convergence-based adaptive stopping strategy additionally terminates unnecessary refinement during inference. Experiments on three standard MR benchmarks demonstrate the effectiveness and state-of-the-art performance of our method.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30040": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Teaching How to Reason, Beyond What to Answer: Evidence-Faithful On-Policy Distillation for streaming video understanding",
+  "abstract": "Moment Retrieval (MR) aims to localize the temporal segment in a video that corresponds to a given textual description. However, a textual query often provides only a sparse semantic description of the target event, whereas the video contains rich and fine-grained visual variations. This mismatch creates an inherent gap between textual semantics and visual content, making a single textual input insufficient for precise cross-modal alignment. As a result, when multiple temporally adjacent or semantically similar segments exist, the model may struggle to distinguish the target moment from confusing candidates. To address this challenge, we propose a Multi-Perspective Auxiliary Representation (MPAR) framework, which aims to bridge this alignment gap by enriching a single textual input with complementary visual cues from multiple perspectives. Specifically, MPAR consists of three key components: (1) Auxiliary Representation Initialization (ARI) constructs multiple learnable representation slots from the original query, preserving the query intent while preparing flexible carriers for subsequent visual cue injection; (2) Visual-Induced Semantic Structuring (VISS) injects target-specific visual attributes into each representation while preserving semantic coherence with the original query; and (3) Multi-Perspective Semantic Aligner (MPSA) aligns each auxiliary representation with corresponding video regions to enhance discriminative localization. By constructing multi-perspective auxiliary representations and guiding the model to attend to relevant visual regions across these representations, our model achieves more accurate moment localization. Extensive experiments on MR benchmarks demonstrate that our MPAR outperforms state-of-the-art methods, validating the effectiveness of MPAR.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29850": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Ego2Wrist: Bootstrapping Wrist-View Synthesis from Egocentric Video",
+  "abstract": "Wrist cameras provide an action-centric view that is directly relevant to robot manipulation. However, collecting human wrist-camera videos at scale is challenging due to cumbersome setups that can interfere with natural hand movements. In contrast, head-mounted human egocentric videos are much easier to scale. We introduce Ego2Wrist, which synthesizes synchronized wrist-camera views from human egocentric videos and task descriptions. Trained on approximately 940 hours of paired head- and wrist-camera recordings, Ego2Wrist jointly generates three views. To evaluate generated wrist views without ground truth, we propose hand-centric cross-view consistency (HCC), which measures consistency between generated wrist views and corresponding hand regions in the input head view. HCC ranks model checkpoints comparably to ground-truth-based LPIPS, and human evaluators prefer HCC-selected generations in 77% of responses. Evaluated on four datasets, Ego2Wrist outperforms fine-tuned WorldWander, reducing LPIPS by 28% and receiving human preference in 76% of responses. More importantly, HCC facilitates recursive self-improvement on in-the-wild egocentric videos by selecting generated wrist views for further training. Generation quality progressively improves over three rounds. These results demonstrate a scalable approach to generating real-world wrist-view human manipulation videos for robot policy training.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29388": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SpectralGS: Spectral Gaussian Splatting for Unsupervised Spectral Super-Resolution",
+  "abstract": "Unsupervised spectral super-resolution aims to recover spectral information from RGB images without paired hyperspectral data. However, the limited spectral information in RGB observations makes learning an effective spatial-spectral representation challenging, requiring the incorporation of structured spectral modeling with sensor imaging. In this paper, we propose SpectralGS, a spectral Gaussian splatting framework comprising two components: Shared Spectral Gaussian Representation and Spectral Response Projection Rendering. The representation module constructs a continuous spatial-spectral representation via shared spectral and local spatial Gaussian primitives, exploiting the low-rank spectral structure of hyperspectral images. The rendering module utilizes the spectral response function (SRF) to apply integral projection to the continuous representation, blending it to generate an RGB image. Consistency between the rendered and observed RGB images provides training supervision. Our main contribution is a Gaussian splatting framework that integrates structured continuous spatial-spectral representation with imaging response-based rendering, enabling unsupervised spectral reconstruction. Extensive experiments demonstrate that our method outperforms current state-of-the-art methods.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29213": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PartPO: Part-Level Policy Optimization for Shape-to-Program Generation",
+  "abstract": "We present PartPO, a reinforcement learning method for generating structured shape programs from 3D point clouds. Existing shape-to-program models are trained with supervised learning on procedurally generated data and generalize poorly to more diverse shapes, while reinforcement learning from execution feedback assigns a single scalar reward to a long program that builds many parts, making credit assignment difficult. PartPO instead builds on a core property of the task: shape programs are self-describing, with each semantically named part produced by its own code block. It segments each generated program by its parts and applies part-level rewards only to the code of the corresponding part, a category reward only to the object name, and a shape-level reward to the whole program. The required part supervision is obtained without manual annotation, by grounding part names on target meshes with an open-vocabulary segmentation model prompt-tuned on the model's own outputs. Applied to MeshCoder, PartPO improves reconstruction accuracy and execution success on ShapeNetCore and ABO over the base model, rejection-sampling fine-tuning and trajectory-level RL, and generalizes to the unseen HSSD dataset. Code will be released at https://github.com/HannuoZ/PartPO.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29194": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Unleashing the Value of Raw Point Clouds for 3D Understanding with LLMs",
+  "abstract": "Standard 3D point cloud language models typically rely on pretrained point encoders to extract 3D features and project them into representations processable by large language models (LLMs). However, these encoders are often originally optimized for pre-defined tasks, resulting in a representation bottleneck that may lead to a substantial mismatch with downstream 3D understanding. Moreover, existing models largely follow a single pass closed-book generation, limiting their ability to actively inspect task-relevant 3D regions or retrieve necessary external knowledge. In this work, we present PointTool, an encoder-free and tool-augmented framework for 3D reasoning. PointTool introduces Alignment-Free Patch Tokenization (AFPT) to locally aggregate raw point clouds while preserving fine-grained geometric structure, and Decoupled Point-Text LoRA (DPL) to facilitate global aggregation and 3D knowledge internalization within a frozen LLM. Building upon these designs, Program-Supervised Tool Reasoning (PSTR) enables the model to explicitly operate on raw 3D data and external resources through executable tools, supporting interactive 3D reasoning grounded in spatial evidence. We further introduce PointCloud-TR, a benchmark comprising 13K 3D objects, 39.8K questions, and 35.6K tool trajectories to facilitate training and evaluation of complex 3D reasoning. Experiments demonstrate that PointTool achieves strong performance on both standard and complex 3D understanding tasks, validating the effectiveness of the proposed framework.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29148": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "ArborNet: Volume- and skeleton-aware completion of tree quantitative structure models from incomplete point clouds using anchor-conditioned graph learning",
+  "abstract": "Terrestrial laser scanning (TLS) enables 3D reconstruction of trees and quantitative structure models (QSMs) for estimating woody volume and structural traits. However, occlusion in single-station or sparsely sampled TLS causes incomplete branch observations and biased volume estimates. Existing point-cloud completion methods recover plausible geometry but do not explicitly preserve branch topology, cylinder radii, or woody volume. We propose ArborNet, a volume- and skeleton-aware framework for completing tree structures in the QSM domain. Each tree is represented as a TreeQSM cylinder graph encoding cylinder geometry, branch level, parent-child topology, and branch identity. A multi-relation graph encoder propagates information across parent, child, and intra-branch connections. An anchor-conditioned decoder generates missing cylinders through terminal-branch continuation and new-branch generation. Geometry, existence, branch, radius, axis-smoothness, and volume losses encourage structural consistency. During inference, generated cylinders are selected under predicted level-wise missing-volume budgets. We evaluate ArborNet on DART-simulated TLS trees and urban TLS trees from Hong Kong, using single-station QSMs as partial inputs and multi-station QSMs as references. Under budget-constrained inference, ArborNet achieves mean total-volume relative error of 0.081% and mean level-wise volume error of 0.676% against reference QSMs, while reducing skeleton geometry error relative to evaluated point-cloud completion baselines. These errors quantify agreement with reference QSMs, not accuracy against destructively measured woody volume. Ablation results show that joint volume supervision is particularly important for volume control. These results demonstrate the potential of QSM-domain completion to recover explicit woody structure while constraining geometry and volume.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29071": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Projecting Beauty: Transferring Image Aesthetic Analysis onto 3D Heritage and Urban Scenes",
+  "abstract": "Judgments about the beauty of buildings and streets inform architectural design, urban planning, and heritage conservation, yet increasingly rely on scanned 3D models over material fabric. Automatic aesthetic assessment remains largely confined to 2D photographs. We ask what survives when image aesthetic assessment crosses this dimensional gap to produce dense, per-point aesthetic descriptions of heritage and urban point clouds. We examine three routes that sidestep costly, and sometimes ethically dubious, human labeling at scale: (1) lifting scalar scores from image aesthetic models (NIMA, SAAN) onto geometry; (2) training Aesthetic Visual Analysis (AVA) regression heads on frozen vision backbones (DINOv3, TIPS, SigLIP2, PE, RADSeg) or, in a 3D-native variant, a generalist point encoder on feed-forward AVA reconstructions; and (3) querying lifted vision-language features with a natural-language aesthetic label, taking similarity as a score. The two supervised routes transfer poorly: heads fitting AVA in-domain produce architectural class profiles that neither reproduce one another nor track other signals, while the 3D-native probe stays near chance due to reconstruction geometry quality. Text querying is markedly more coherent. Projecting out the class-text direction from point features raises mean cross-model agreement on architectural part profiles from +0.035 to +0.352, and from +0.113 to +0.293 per point; the four backbones passing a semantic sanity check correlate at 0.31-0.73, while the failing one remains an outlier. Since model agreement is not agreement with human aesthetic perception, we detail a part-aware rating protocol to clarify where human and automatic ratings disagree. We provide a reproducible transfer protocol, an account of which pseudo-labeling routes carry signal, and dense aesthetic pseudo-labels meant as hypotheses rather than ground truth.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29002": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Demystifying Classifier-Free Guidance for Auto-Regressive Image Generation",
+  "abstract": "Classifier-free guidance (CFG) has been widely adopted in autoregressive (AR) models for high-quality image generation. Despite its strong empirical performance, its mechanism in AR models remains unclear. This paper demystifies the mechanism of CFG through both empirical and theoretical studies. By examining the top-ranked semantics of different components in CFG, we show that texture information is primarily encoded in the difference between the conditional and unconditional logits, whereas both logits share previous-token repetition as their leading semantics. This strong repetition semantics obscures the desired texture information, causing greedy decoding from the conditional logits alone to produce nearly pure-color images. Through a training-dynamics analysis of shallow transformers, we prove that this shared repetition semantics does not arise from limitations or failures of pretraining, but instead originates from the texture sparsity of images. We further show that CFG improves generation quality by rectifying this repetition bias during inference. Motivated by the shared semantics between conditional and unconditional logits, we propose Attention Weight Reuse (AttnReuse), which reuses intermediate attention computations from the conditional-logit forward pass to accelerate the unconditional-logit computation. AttnReuse reduces about $25\\%$ of attention computation with little performance degradation across different models.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28901": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Gaze Graphs: A Scene-Level Representation of Visual Attention in the Operating Room",
+  "abstract": "Purpose: Analyzing clinicians' visual attention from exocentric camera views can support surgical scene understanding without requiring wearable eye trackers. However, existing gaze-following research in the operating room (OR) estimates only 2D gaze locations without identifying attended scene entities or localizing gaze targets in 3D space. In this work, we investigate gaze graphs as a scene-level representation of visual attention that connects clinicians to attended scene entities, and evaluate their utility for fine-grained surgical action recognition and semantic scene graph (SSG) generation. Methods: We extend the public EgoExOR dataset with gaze annotations to create EgoExOR-Gaze, the first benchmark for multi-view gaze graph generation in the OR. We propose a novel architecture that jointly estimates 3D gaze targets and predicts attended entities using only exocentric camera views. Specifically, our approach exploits 3D gaze geometry to sample local visual features across multiple views for attended entity prediction. We further utilize predicted gaze graphs for fine-grained surgical action recognition and SSG generation. Results: For gaze graph generation, our model outperforms both exocentric-only and combined exocentric-egocentric baselines. For surgical action recognition, our model incorporating predicted gaze graphs outperforms both exocentric and egocentric baselines across all evaluated metrics, with particularly strong gains in temporal metrics. For SSG generation, incorporating gaze graphs improves macro-F1 from 0.42 to 0.52 compared to exocentric inputs alone, although performance remains below that achieved with egocentric inputs. Conclusion: Our results demonstrate the value of gaze graphs for surgical action recognition and SSG generation, highlighting the importance of explicitly modeling scene-level visual attention even when egocentric views are unavailable.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28820": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PointNeXt Adapter Improved Model for BIM Component Defect Association under Construction Images and Design Model Attributes",
+  "abstract": "Construction site defect analysis increasingly requires linking field evidence to the correct BIM object, because a crack, spalling area, missing sleeve or misaligned support is useful for quality control only when it is connected with component identity, location, responsibility and design intent. This paper proposes a PointNeXt Adapter improved model for BIM component defect association under construction images and design model attributes. The method aligns site image crops, local point cloud patches, BIM component identifiers, geometry attributes, material categories, installation stage, inspection distance, viewpoint quality and source reliability tags into component level inspection windows. PointNeXt learns local geometry and deviation from as built point evidence, while the adapter injects BIM attributes so the same geometric irregularity can be interpreted differently for structural, envelope, MEP and embedded components. The fusion head outputs component link, defect class, defect probability, confidence, dominant evidence and recommended review action. A synthetic multisource BIM inspection dataset is used to evaluate repeated layouts, occlusion, sparse point clouds, registration errors and unseen component arrangements. Results show that attribute aware point learning improves association accuracy, defect recall and confidence calibration compared with image only, point only, simple fusion and adapter free baselines. The framework is positioned as traceable BIM issue review support, requiring manual confirmation and staged field validation before operational deployment.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28545": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Reconstruction-Guided Dual-Branch Learning for LiDAR Anomalous Object Detection",
+  "abstract": "Detecting unexpected objects is essential for autonomous driving safety. Most existing LiDAR anomaly detectors rely on semantic discrimination, which primarily captures category-discriminative features but may overlook deviations from broader feature relationships in normal scenes. Reconstruction offers a complementary perspective by assessing consistency with learned normal patterns. However, pointwise reconstruction errors alone struggle to distinguish anomalies from normal variability in complex outdoor point clouds. We propose Structured Residual Reasoning (SRR) to extract additional anomaly evidence from residual structure across feature channels, time sequences, and geometric space. We further establish that semantic discrimination and normal-pattern reconstruction capture fundamentally different yet complementary anomaly evidence: category compatibility and consistency with learned normal patterns, respectively. At matched background false-positive rates, SRR recovers more objects missed entirely by the semantic branch while producing fewer false positives in normal-only scenes. Building on this finding, we propose Reconstruction-Guided Dual-Branch (RGDB) learning, in which SRR-derived normal-pattern consistency cues guide a semantic-conditioned anomaly decoder to complement reconstruction-based predictions during training. At inference, the two branches jointly exploit their complementary anomaly evidence. Experiments show that standalone SRR establishes a strong reconstruction-based baseline without semantic labels from the target-scene training data, while RGDB achieves state-of-the-art performance on the STU validation set.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28402": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Plan Big, Paint Small: Semantic-Aware Computation Allocation for Efficient Autoregressive Video Generation",
+  "abstract": "Autoregressive (AR) video diffusion streams a video chunk by chunk, but large AR models are too slow for real-time use. We ask where in an AR rollout a large model is actually needed. Pairing Krea-Realtime-14B with Self-Forcing-1.3B, which share their latent space and denoising schedule, we find that the order of the two models matters: when the 14B model generates only the first chunk and the 1.3B model continues, the rollout keeps 95\\% of the 14B model's semantic advantage, whereas the reverse allocation keeps 16\\% at about ten times the cost. The large model decides what the video shows; the small model only has to carry it forward. We turn this into BigSmall, a training-free planner--renderer sampler. The 14B model plans the opening chunk and sketches the chunks in which content changes, which preserves motion, and the 1.3B model renders the rest; a faster variant, BigSmall, plans only the opening chunk. A cross-model KV cache that is approximate, windowed and lazy lets the planner leave and re-enter the rollout at low cost. On VBench, BigSmall is $3.02\\times$ faster than the 14B model at an unchanged semantic score and motion, and $1.55\\times$ faster than SDVG, which lets the small model draft first; BigSmall reaches $3.77\\times$ at the same semantic score, trading away 10\\% of the motion. On minute-long videos (LoCoT2V-Bench), where the 14B model degrades when it reads its own long history, BigSmall is $3.14\\times$ faster than the 14B model and scores higher ($+1.78$).`",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28191": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "BReD: BEV Residual Diffusion for Feed-Forward Road Gaussian Reconstruction",
+  "abstract": "Accurate road surface reconstruction is essential for autonomous-driving mapping and simulation, but existing methods trade reconstruction quality for cross-scene inference. Optimization-based methods recover detailed surfaces through costly per-scene optimization, while feed-forward methods lack road-specific constraints and often produce large elevation errors. We propose \\textbf{BReD}, a feed-forward framework for reconstructing road elevation, appearance, and semantics from calibrated six-camera sequences. BReD first estimates coarse elevation through LiDAR-supervised depth learning and BEV lifting, using only cameras at inference. A lightweight BEV residual diffusion model then conditions elevation refinement on a camera-derived depth--elevation discrepancy and elevation-aware image features. Diffusion-indexed perturbations expose the model to different discrepancy corruption levels during training, while inference performs one deterministic refinement from the clean discrepancy. The refined elevations are temporally aggregated to anchor road-aligned Gaussians, whose attributes are predicted by a geometry-prior-guided decoder without test-time optimization. On four held-out nuScenes scenes, BReD achieves 7.34 cm elevation RMSE and 90.92\\% semantic mIoU, compared with 14.43 cm for RoGS without test-time LiDAR and 8.88 cm for its test-time-LiDAR-assisted variant; both RoGS variants require per-scene optimization.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28129": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Urban State Representation for Autonomous Mobility: A Survey of Multimodal Perception, Architectures, Datasets, and Benchmarks",
+  "abstract": "Cities are sensed by many platforms at once: on-board cameras, LiDAR and radar on autonomous vehicles, roadside units at intersections, drones and satellites overhead, and the GNSS traces of millions of trips. Yet most learned representations are built for one platform, one city, and one task. We survey this fragmented landscape through a single lens, the Urban State Representation (USR): a georeferenced, layered, time-varying, uncertainty-aware state that any sensing platform can write to and any downstream task can read from. We (i) formalize USR and five desiderata for it, and relate it to bird's-eye-view (BEV) features, occupancy, vectorized maps, neural fields and 3D Gaussians, scene graphs, road-network graphs, language tokens, and world-model latents; (ii) organize sensing platforms, cross-view (ground-aerial) matching, fusion operators, 3D geometric foundation models, end-to-end and vision-language-action models, and generative world models and data engines in one taxonomy that spans sensors to decisions; (iii) compile 26 urban datasets and simulators across ego, cooperative (V2X), aerial, trajectory, and language settings, with a metric glossary, a cross-benchmark results snapshot, a trend analysis, and a platform-coverage gap analysis; and (iv) review applications and propose, as an outlook, USR-5, a five-test protocol with explicit references and one aggregate score for measuring whether a state is shared, together with a research agenda of six open problems covering cross-city and cross-sensor transfer, uncertainty, efficiency, sim-to-real evaluation, and governance. This survey is an entry point for computer vision, autonomous driving, transportation, and urban computing researchers; the paper list, datasets, and USR-5 code are at https://github.com/binayksingh/Awesome-Urban-State-Representation.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30813": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "HIVE-Bench: Evaluating Patch-Level Visual Representations for Egocentric Robot Manipulation",
+  "abstract": "Pretrained vision is a common start for robot learning, but most comparisons still score one pooled vector from a third-person image. Bimanual policies instead read dense patch tokens from cameras on the robot. We introduce HIVE-Bench: one shared flow-matching policy reads 20 encoders from seven families on 24 egocentric bimanual tasks, across adaptation, task sharing, and sweeps of data, model size, and layer. Keeping the patches matters. Averaging each view to one token removes most of the success, adaptation helps every pair we test, and one shared policy keeps most of the success of separate policies at a fraction of the updates. The same tokens are then scored with statistics, state and object readouts, published vision scores, and an inverse-dynamics readout. That readout of the commanded motion is one of the strongest measurements available before a policy is trained. Recognition, depth, and correspondence do not transfer reliably. Fine-tuning can improve the action readout even when other measurements move the other way, and no statistic is stable enough to replace a rollout before any deployment.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30658": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Active Observation for Robust Visual Servoing in Robotic Manipulation",
+  "abstract": "Robust visual servoing during robotic grasping remains challenging, as approach-phase occlusion frequently disrupts closed-loop control. To address this, we present an active observation framework in which one arm of an existing dual-arm platform carries an RGB-D camera as an active observer while the other executes grasping. The observer repositions to maintain or recover a shared target-gripper view within the feasible shared-view workspace. Occlusion during the final approach is particularly acute: fixed eye-to-hand lacks an active recovery mechanism once the target is hidden, while eye-in-hand can suffer from self-occlusion and sensitivity to hand-eye calibration. The observer first uses an active two-phase viewpoint strategy to align high-precision RGB-D axes with task-relevant error components. If visibility later degrades, an occlusion-triggered exploration module pauses the worker arm and scores candidate viewpoints by observation quality to recover a shared target-gripper view. Because both objects are detected in a single RGB-D image, the resulting Relative Servo Error avoids differencing two independently transformed target and gripper estimates. We evaluate the system on a dual 6-DoF Piper platform using an open-vocabulary detector with text prompts, without task-specific fine-tuning or demonstrations. Across 50 randomized trials per object, the system achieves 94% grasp success versus 76% for a reactive viewpoint baseline and 64% for a fixed camera. On triggered severe-occlusion trials, recovery takes $1.8 \\pm 0.6$ s on average.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30490": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "EgoStudy: How Does Scaling Egocentric Data Affect VLA and WAM Pretraining?",
+  "abstract": "Egocentric human manipulation data offer a scalable resource for training dexterous robot policies. However, how effectively robots can learn and benefit from these data remains unclear due to the embodiment gap between humans and robots. We present EgoStudy, a systematic, controlled study of egocentric data for robot learning. Holding the robot dataset fixed, we vary the scale and diversity of egocentric data, data processing strategies, and co-training configurations. We investigate three questions: (1) Which data processing and pretraining choices most effectively exploit egocentric data? (2) Which components of robot action prediction benefit most from scaling these data? (3) How do scaling effects differ between vision-language-action models (VLAs) and world-action models (WAMs)? Our experiments yield three main findings. First, data diversity, alignment between trajectories, and detailed language annotations are key factors in effective transfer. Second, scaling egocentric data yields larger gains in predicting end-effector translation than in predicting fine-grained finger movements. Third, WAMs perform better when egocentric data are limited, whereas VLAs exhibit greater gains as the amount of egocentric data increases. Together, these findings provide practical guidance on processing and using egocentric data to train VLAs and WAMs, while clarifying the benefits and limitations of scaling these data.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30310": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Seeing Together, Acting Apart: Shared Environmental Understanding for Multi-Robot Navigation",
+  "abstract": "Multi-robot embodied systems are typically designed to collaborate by coordinating actions, sharing trajectories, or learning joint policies. We ask a complementary question: can collaboration emerge before decision-making, by first building a shared understanding of the environment? We introduce Shared Environmental Understanding, a policy-agnostic representation that aggregates partial egocentric observations from multiple robots into a shared latent world model. This shifts collaboration from the policy space to the representation space, enabling decentralized decision-making with shared environmental context. To this end, we propose Shared Environment Encoding and Retrieval (SEER), a framework that organizes multi-robot observations into a shared memory, retrieves relevant context via spatio-temporal similarity, and encodes it using a predictive latent world model. The resulting representations are injected into downstream navigation agents as tokens. Experimental results demonstrate that SEER captures action-relevant environmental structure and consistently improves navigation performance across both specialized VLN agents and general vision-language model agents, while preserving single-agent capabilities.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29377": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Contact Harness: Enabling VLM Agents to Perform Contact-Rich Manipulation",
+  "abstract": "Agents built on pretrained VLMs have demonstrated zero-shot control of real robots, but vision alone is often insufficient for reliable contact-state assessment in contact-rich manipulation. Force and tactile feedback provide complementary information, but their semantic ambiguity makes them difficult for agents to use directly. These signals must be interpreted according to their physical meaning, together with task phase and visual evidence. We propose Contact Harness, which uses reusable, optimized skills to guide a VLM agent in assessing contact states from multimodal feedback and selecting subsequent actions. A compliant execution mechanism regulates in-contact motions using real-time force feedback. The framework requires no model fine-tuning, task demonstrations, or simulation training. We conduct zero-shot real-robot evaluations using GPT-6 Astra on Rokae and Franka robots. With a single prompt skill, Contact Harness achieves a full-insertion rate of 90.7% across 15 connector types, with further evaluations on a real PC under variations in lighting, background, and position. Across four additional contact-rich tasks, including whiteboard wiping, writing, peeling, and pivoting, Contact Harness achieves an average success rate of 100%. On six simulated tasks, Contact Harness reaches 96.7% success, compared with at most 68.3% for pretrained VLA baselines fine-tuned on task demonstrations, showing the potential of agent-based manipulation for contact-rich real-world deployment.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29116": {
+  "day": "2026-11-24",
+  "cat": "physics.ins-det",
+  "title": "A Camera-Based Single-Volume, Monolithic Compton Camera",
+  "abstract": "A Compton camera measures two events in a detector from individual gamma-rays to reconstruct the radiation source. Conventional scintillator-based Compton cameras consist of two separate scintillator volumes or a single segmented scintillator, resulting in drawbacks regarding detector bulkiness and efficiency. Their scintillator readout techniques struggle to resolve two nearby events in one monolithic scintillator. Single-photon avalanche diode (SPAD) cameras have recently been proposed for measuring scintillation events in various configurations. SPAD array sensors enable high-resolution photon-counting acquisition at high rates that is easily scalable to millions of pixels. Prior work has explored different optics and measurement arrangements as well as demonstrated measurement of single interaction locations. In this work, we extend these capabilities to demonstrate a practical radiation imaging device in the form of a Compton camera consisting of a SPAD camera and one compact, monolithic scintillator. Our Compton camera prototype successfully reconstructs a gamma-ray source over multiple locations that span a 4$\\pi$ steradian field of view. Our approach is able to resolve two simultaneous events in one monolithic scintillator and enables Compton camera devices with compact, monolithic scintillator volumes for enhanced portability.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28403": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Occupancy Planar Patch: Incremental Probabilistic Bounded-Plane Reconstruction from LiDAR Data",
+  "abstract": "Online surface reconstruction from LiDAR scans requires observation models that respect the sensor's physical measurement geometry. Unlike unordered point sets, LiDAR returns carry anisotropic range noise along known rays, which also implicitly identify free space. We introduce the Occupancy Planar Patch (OPP), an incremental bounded planar patch representation that evaluates surface likelihoods and free space directly in range-space, allowing sensor noise, plane uncertainty, and ray clearance to be explicitly modelled during reconstruction. A single ray-to-patch association weight jointly updates plane geometry, refines surface boundaries, and blends camera imagery. The method is evaluated using six sequences from the Oxford Spires and Multi-Campus datasets. OPP achieves the highest precision and lowest reconstruction error among evaluated methods, while producing stored maps among the most compact. By conservatively admitting surfaces only where geometric evidence is certain, OPP prioritises structural precision over unconstrained completeness, which is well suited for architectural modelling. Geometric reconstruction operates in real time, requiring 81 ms per frame on a representative sequence, with texture projection adding 134 ms.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28197": {
+  "day": "2026-11-24",
+  "cat": "cs.AI",
+  "title": "From Point Clouds to Engineering Models: Benchmarking Agentic 3D Reconstruction in the Built Environment",
+  "abstract": "Coding agents can translate 3D measurements into CAD geometry, but reconstructing engineering models for the built environment demands semantic interpretation and consistent construction constraints beyond surface fitting. We formulate scene-level Scan-to-BIM (Building Information Modeling) as an agentic 3D coding task and introduce S2Bench, comprising public and proprietary scans of 128 real-world scenes across five domains, paired with expert-curated reference models spanning diverse spatial scales. A shared framework lets agents measure scans in Python, build class-labeled components in a live CAD/BIM kernel, and iteratively refine their code. We also propose parallel asynchronous collaboration, where a lead delegates versioned tasks, continues modeling while workers execute, and integrates revision-bound proposals. Evaluating five agents and a collaborative team across 1,028 reconstructions shows that scan-to-model residuals directly guide geometric repair, whereas inferring semantic classes and construction relations requires joint geometric, visual, and engineering reasoning that agents struggle to ground and verify. Consequently, the leading agent fits scan geometry closely ($96\\%$ coverage within $5\\,\\text{cm}$) yet reaches only $63\\%$ mIoU, and no agent passes all engineering checks on more than $38\\%$ of scenes. Coverage and engineering conformance drop with scene scale, whereas running a smaller model as a team improves all three axes with greater coverage gains on larger scenes. The project page is available at https://tumcms.github.io/S2Bench.github.io/",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.27996": {
+  "day": "2026-11-24",
+  "cat": "cs.HC",
+  "title": "Participant-Independent Validation of Smartphone Video and Wearable Inertial Sensing for Coach-Rated Running-Form Classification",
+  "abstract": "Automated running-form assessment could make technique feedback more accessible outside professional coaching and laboratory settings. We evaluated a low-cost pipeline combining side-view smartphone video with wearable inertial measurement unit (IMU) acceleration for coach-rated running-form classification. The dataset comprised 294 labeled recordings from 20 runners and 1,555 windows across four cues: landing position, suspension, triple extension, and upper-body posture. The primary analysis used 100 repeated four-runner holdout splits, recording-level aggregation of window predictions, and LightGBM models with hyperparameters fixed from prior modality-specific searches. Video-only LightGBM achieved mean macro F1 of 0.310, versus 0.168 for a majority-class baseline. Adding IMU features reduced macro F1 to 0.267, a paired mean difference of -0.043. Robustness analysis with Logistic Regression, Linear SVM, Random Forest, XGBoost, and LightGBM found that video-only models had higher mean performance than the majority baseline, whereas fusion effects depended on model family: Linear SVM showed a small positive effect, Logistic Regression was approximately neutral, and tree-based models showed lower performance with fusion. These results indicate a modest participant-independent signal in smartphone pose features. However, apparent IMU-fusion gains depended strongly on validation design, model family, and target category. The gap between recording-level and participant-independent performance underscores the need for runner-holdout evaluation and suggests that simple feature-level fusion does not reliably generalize to unseen runners.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.27423": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "ADEPT: Adaptive Monocular Depth Estimation via Model-In-The-Loop Photometric Tuning with Capture Risk Prediction",
+  "abstract": "Exposure and gain determine the visual evidence available to monocular depth estimation (MDE), particularly when robot motion creates a tradeoff between light collection and motion blur. We present ADEPT, a framework that adapts these settings using learned feedback from a frozen depth model. During training, ground-truth depth identifies the lowest-error reference within a group of physically evaluated camera settings. A compact predictor learns reference-relative disagreement (RRD) between each candidate's depth prediction and the reference prediction using regression and ranking losses. At deployment, it scores observed captures using frozen-model features and camera, motion, and illumination context, without ground truth or reference images. A contextual Gaussian-process controller uses recent scores to select subsequent exposure and gain settings under motion and photometric constraints. We evaluate offline camera selection with relative and metric Depth Anything v2 and demonstrate online control with the affine-invariant variant on a mobile robot. Across nine equally weighted scene-illumination conditions, ADEPT reduces mean scale-and-shift-aligned $\\mathrm{Abs}_{\\mathrm{rel}}$ by 14.6% relative to built-in auto-exposure and by 10.0% relative to the best-performing evaluated prior controller.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29206": {
+  "day": "2026-11-24",
+  "cat": "cs.HC",
+  "title": "DataRecycle: Trustworthy Distillation of Structured Data from Scattered Web Evidence",
+  "abstract": "The web contains vast amounts of scattered quantitative evidence that is difficult to organize into comparable and verifiable structures. Yet its unstructured, sparse, and sometimes conflicting nature makes a systematic distillation costly and error-prone. Existing approaches force users to make a trade-off: search engines return document lists that require labor-intensive extraction and reconciliation, while generative AI systems produce fluent summaries that obscure data provenance, introduce reporting bias, and hide inconsistencies. We present DataRecycle, an interactive system that helps transform scattered web evidence into structured tables of comparable numerical facts. Given a user's query or statement, DataRecycle decomposes it into entities and attributes, retrieves candidate evidence, and organizes scattered, potentially conflicting records in a table-based evidence view. To address key challenges in automated data distillation (i.e., incomplete retrieval, untraceable generation, sparse data distribution, and multi-source inconsistency), DataRecycle adopts an ontology-guided, top-down data acquisition strategy, visualizes the recorded lineage from retrieved snippets to extracted values, and aligns heterogeneous data across dimensions such as time, definition, and scale. We evaluate DataRecycle through module-level experiments, a usage scenario, and a user study, showing that the system helps users organize numerical web evidence into provenance-linked tables and inspect uncertainty and conflicting sources.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28706": {
+  "day": "2026-11-24",
+  "cat": "cs.HC",
+  "title": "SkillLens: An Interactive Human-LLM System for Diagnosing and Refining Agent Skills",
+  "abstract": "LLM agents increasingly rely on reusable skills, yet maintaining them requires developers to connect revisions with changes in behavior and task outcomes. Existing workflows fragment evidence across versions, evaluation cases, and execution traces. We present SkillLens, an interactive human-LLM system for diagnosing and refining agent skills. A formative study with five developers and researchers identified challenges in prioritizing failures, reconstructing case-level evidence, and preserving context across revisions. SkillLens links performance changes, case transitions, skill diffs, invocation sequences, traces, and outputs in a recoverable workflow, while keeping model-generated explanations and refinements under human review. Through a between-subjects user study with 20 participants, we show that SkillLens supports developers in diagnosing and refining agent skills through a more usable and less demanding workflow than the baseline. These findings highlight the value of linking version comparisons, case-level evidence, and human-reviewed refinement across skill iterations.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29283": {
+  "day": "2026-11-24",
+  "cat": "cs.SD",
+  "title": "ARRANGE: Agentic Skills for Layering Vocals",
+  "abstract": "Adding a singing voice to an existing piano recording requires decisions about melody, syllable placement, pronunciation, timing, and vocal register. ARRANGE organizes this work as a sequence of agent skills with readable intermediate artifacts and composer approval checkpoints. An LLM translates instructions in plain English, notes played on a keyboard, and vocal references into local edits; deterministic scripts validate and apply those edits before open audio models render the result. The Score Canvas makes note, syllable, and pronunciation decisions inspectable and editable. In a benchmark of 16 revision requests, three draws per request, and five LLMs, typed edits achieved exact-change correctness of 0.83-0.98, compared with 0.33-0.69 for whole-plan rewriting without ARRANGE instructions. A separate score-editing benchmark and a first-person worked example examine the interaction between representations and corrections. Author listening evaluations further explore voice transfer and register selection, including 185 listening presentations across eight copied voices. These evaluations support the value of constrained editing and expose limits of both model execution and listening measures. The contribution is an interaction architecture for retaining musical decisions through inspectable intermediate representations, rather than a new singing model or evidence of general usability.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30495": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "DexDuet: Learning Contact-Preserving Bimanual Dexterity from Human Demonstrations",
+  "abstract": "Human demonstrations provide a rich source of bimanual dexterous skills, yet transferring them to robot hands remains challenging. Existing methods primarily optimize object trajectory tracking, often overlooking how human hands interact with the object. Even with accurate tracking, robots may contact incorrect object parts or slide their fingers, resulting in unstable manipulation. We present DexDuet, a framework that learns contact-preserving bimanual dexterity from a single human demonstration. DexDuet employs two interaction rewards to preserve human hand-object configurations and contacts. To enable coordinated manipulation, we factorize the bimanual policy into two weight-sharing per-hand policies that condition on each other's states. We further propose assisted reference-state initialization (A-RSI), an adaptive curriculum that adjusts object assistance and training starts across demonstration segments to overcome difficult manipulation phases. Across four benchmarks spanning three simulators and five robot embodiments, DexDuet improves object-tracking ADD-AUC by 11 to 41 points over the corresponding baselines while consistently achieving better contact preservation. Notably, among 122 paired runs with comparable object-tracking accuracy, DexDuet preserves the human's contacts better in 117 cases. Code and videos are available at https://rcl-robotics.github.io/Dexduet.io/",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30026": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Design of a Compact Cable-driven 4-DoF Salamander Robotic Limb with Large Range of Motion and High Load Capacity",
+  "abstract": "A compact yet agile and powerful limb is essential for amphibious legged robots that transition between spine-based swimming and leg-based terrestrial walking, as salamanders do. Salamander limbs combine large ranges of motion (ROM), multiple degrees of freedom (DoFs), and high load capacity. These features enable swinging and body-weight support during walking, as well as folding alongside the body during swimming. Their proximal kinematics can be represented by three rotational DoFs at the hip and one at the knee. Replicating these capabilities within a compact robotic limb is challenging with direct-drive architectures, because multiple joint-mounted actuators must be sufficiently spaced or placed distally to avoid self-collision, increasing limb size and rotational inertia. Here we present a cable-driven 4-DoF salamander robotic limb with a spatial cable-routing architecture that relocates actuators proximally while preserving large ROM and load capacity. Transmission-induced coupling is mitigated by mechanically compensating multi-segment cable paths, model-based feedforward decoupling, and output-side joint angle feedback. Compared with a direct-drive limb, the proposed design reduces mass by 20.4%, projected envelope area by 20.5%, and estimated effective yaw-axis inertia by 31.9%. Experiments verify independent, decoupled control over joint-angle ranges of 45 deg, 118 deg, 118 deg, and 135 deg for hip pitch, yaw, roll, and knee flexion/extension, respectively. During lifting tests, the limb supported an equivalent vertical load of at least 5.4 times its own weight. The proposed limb provides a compact, biologically representative platform for future studies of salamander locomotion and neural control.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29980": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "TeleMultiStream: An Integrated Robot Teleoperation System with Low-Latency Multi-Stream Video Feedback",
+  "abstract": "Training embodied-intelligence models requires large-scale, high-quality demonstration data. Robot teleoperation provides an important means of collecting these data. Low-latency teleoperation also helps human operators take control promptly and provide corrective demonstrations in DAgger-based interactive learning. This paper presents TeleMultiStream, a robot teleoperation system that combines multi-stream WebRTC video feedback with UDP pose downlink. The system supports heterogeneous video sources and uses buffer reuse, bounded queues, and native XR rendering to reduce processing and waiting. In wired-LAN ZED Mini tests, TeleMultiStream's software and high-performance hardware encoding modes achieved dominant-interval Glass-to-Glass latency medians of 60 and 66~ms, respectively. These medians were 26.8\\% and 19.5\\% lower than the 82-ms RobotVision-PC reference, respectively. At the lower tested resolutions, the two TeleMultiStream encoding modes provided comparable visual latency. Their respective medians in three-stream Configuration~1 were 72 and 66~ms. In the higher-resolution Configuration~2, high-performance hardware encoding outperformed software encoding in latency and CPU utilization. It reduced mean encoding time from 11.85 to 8.80~ms and the dominant-interval Glass-to-Glass median from 94 to 88~ms. Its CPU utilization was approximately 67\\%, compared with 265\\% for software encoding. During three-stream reception with high-performance hardware encoding, the mean corrected one-way UDP latencies at 100~Hz were 1.576 and 1.800~ms in Configurations~1 and~2, respectively. Mean estimated packet loss was 0.0033\\% in both configurations. These results support responsive teleoperation for robot demonstration collection.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29868": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Arcadian: Open-Source Humanoid Ecosystem for Accessible and Customizable Research and Education",
+  "abstract": "Reproducing and modifying a meter-scale humanoid remains challenging for research and teaching groups with limited fabrication resources and engineering support. This paper presents Arcadian, an open-source humanoid ecosystem that offers accessible and customizable humanoid hardware and software with community support. Arcadian aims to strike a balance among cost-effectiveness, structural durability, and full customizability, lowering the barrier to entry for research and education. Specifically, this meter-scale humanoid adopts metal-embedded 3D printing to achieve a high strength-to-cost ratio, eliminating the need for computer numerical control (CNC) machining while retaining design flexibility. Extensive simulation and hardware tests validate the design: a reinforcement-learning (RL) locomotion policy trained in simulation transfers to the hardware, and a virtual reality (VR) teleoperation interface drives both arms for simple manipulation tasks. The robot is around one meter tall and costs approximately $6,800 to build. All computer-aided design (CAD) models, the bill of materials, assembly documentation, and training and deployment code are publicly released, distributed through Tnkr.ai and MakerWorld and supported by a Discord server and a project forum through which community feedback informs design updates. The ecosystem resources are available at https://anonymous-humanoid.gitbook.io/docs.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29662": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Grounded in Contact: Reducing Floating and Interpenetration Artifacts with Multimodal Skill-Effect Models",
+  "abstract": "Learning to predict the effects of contact-rich manipulation skills requires models that represent distinct outcome modes rather than a single expected result. Even for basic skills such as pushing, picking, and placing, small variations in contact conditions or object geometry can produce qualitatively different object motions under nearly identical states and actions. Deterministic and Gaussian models tend to average over these alternatives or represent them as a single broad distribution, obscuring distinct modes such as sliding, toppling, and rotating. We study probabilistic skill-effect models that learn multimodal distributions over object pose changes given partial point clouds and actions. We instantiate this abstraction with three representative model classes: mixture density networks, state tokenization, and flow matching, each paired with latent dynamics for next-step prediction. Across diverse objects and skills, explicitly multimodal models predict which outcome occurs more accurately than deterministic and Gaussian baselines. In planning, flow matching significantly improves task success over the deterministic baseline on every skill and achieves the highest success on every multi-step sequence. On a real robot, probabilistic models succeed at pick about twice as often as the deterministic baseline, providing evidence that probabilistic skill effects offer a practical abstraction for reasoning and planning under uncertainty.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29279": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "A2I-VLA: A Two-Stage Vision-Language-Action model with Semantic-Physical Alignment and Integration",
+  "abstract": "Force and tactile feedback provide essential information about physical interactions in contact-rich manipulation that visual observations alone cannot reliably capture.However, integrating these signals into vision-language-action (VLA) models remains challenging owing to the representational gap between visual-language semantics and physical measurements.To address this challenge, we propose A2I-VLA, a two-stage VLA framework that first learns semantically Aligned force-tactile representations and then Integrates them into a VLA model.In Stage I, a cross-modal alignment loss is introduced to promote correspondence between semantic and physical representations. The tactile and force feature streams are then integrated through a hierarchical multimodal fusion network, and the resulting representations are jointly supervised by future wrench and action prediction losses. The former encourages the model to anticipate physical responses, while the latter associates force-tactile observations with task-relevant manipulation behaviors.In Stage II, a gated cross-attention bridge module adaptively integrates the hierarchical physical features learned in Stage I into the VLA model to guide action generation.Real-world experiments demonstrate that the proposed A2I-VLA significantly outperforms the baseline PI05 across three contact-rich manipulation tasks, improving the success rate from 70% to 95%.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29195": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "FunGrasp-Zero: Field-Conditioned Graph Attention Policy for Zero-Shot Cross-Embodiment Dexterous Functional Grasping",
+  "abstract": "Dexterous functional grasping is critical for robotic tool use, yet current dexterous hands exhibit substantial morphological diversity. This hardware heterogeneity makes cross-embodiment functional grasping a fundamental but largely unexplored problem. Existing functional grasping methods use retargeted hand poses as guidance, tying task representation to a specific embodiment and failing to explicitly capture object-centric functional contact intent, limiting generalization across hands. To address this, we propose FunGrasp-Zero, a reinforcement learning framework for zero-shot cross-embodiment functional grasping. Instead of relying on embodiment-specific joint configuration, FunGrasp-Zero captures functional intent via an object-centric, cross-embodiment-consistent contact map, adapted to heterogeneous hands through morphological mapping. We construct a hand-object potential field from mapped contact regions, yielding attractive and repulsive guidance vectors. A Field-Conditioned Graph Attention Network (FC-GAT) leverages these vectors to coordinate multi-finger motion across hands, while a potential field reward guides fingers toward target regions and penalizes non-target collisions to enforce functional alignment and stability. We further establish X-FunBench for cross-embodiment functional grasping, evaluating both physical grasp success and functional intent preservation across hands. Evaluated on X-FunBench, our unified policy, co-trained on four embodiments, achieves 86% average grasp success rate across five unseen hands on novel objects. Deployed on four unseen physical hands (Leap, Inspire, Sharpa, Wuji) for novel object grasping, the policy achieves 80% average success rate without fine-tuning. To our knowledge, FunGrasp-Zero is the first RL-based framework to achieve zero-shot cross-embodiment functional grasping across unseen hands in both simulation and the real world.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28752": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "VTLA-RL: Learning Visuotactile Policies for Load-Adaptive Grasping",
+  "abstract": "Vision-language-action foundation models learn general manipulation priors, but object mass and local slip are difficult to infer from vision alone. Changing loads require contact-driven grasp adjustments that demonstrations collected under fixed conditions may not adequately cover. We present VTLA-RL to study visuotactile grasping policies and their reinforcement learning (RL) post-training under varying loads. Our main approach shares a visual encoder between tactile-image histories and RGB inputs to jointly generate and execute motion and bilateral force targets in a unified action space. Mixed real and simulated demonstrations first establish motion and contact priors. Two-stage multi-task RL then uses only simulated interaction to optimize the policy through task-success returns without continued real-demonstration supervision, and the trained policy deploys directly to real robots. We compare tactile representations and RL post-training routes in simulation and separately evaluate load variation and placement perturbations on hardware. The full method achieves higher grasping success than the supervised initialization, while RL post-training gains differ across approaches, providing empirical evidence for choosing representations and training approaches for this task.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28697": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Distilling Touch into Vision-Only Policies for Contact-Rich Manipulation",
+  "abstract": "Tactile feedback benefits contact-rich manipulation, yet deploying tactile sensors introduces additional hardware and maintenance requirements. Tactile experience can still provide effective supervision for policies that operate without tactile sensors at deployment. Tactile imagination methods such as TacImag remove this hardware dependency by predicting tactile observations, but retain a reconstruction stage whose errors can propagate into action generation. We present TacitTouch, a distillation framework that transfers tactile-guided behavior directly into a vision-only policy. The core shift is from \"learn to imagine what touch would feel like\" to \"learn to behave as if you could feel touch\": the student directly learns tactile-guided action patterns without reconstructing tactile observations. A frozen visuotactile teacher supervises the student's denoising predictions and intermediate action representations at the same noisy action and flow time. Training also uses demonstrated-action supervision. Deployment retains only the visual policy, with no tactile encoder, expert, or generator. Across four simulated UniVTAC tasks and four real-world tasks, TacitTouch achieves absolute improvements of 16.0% and 22.5% in mean success rate over vision-only control, respectively. The absolute gaps to the teacher using measured tactile input are only 2.0% and 3.75%, respectively. In robustness tests, it also outperforms TacImag, with absolute gains of up to 20.0% in mean success rate. Project page: https://pier-lab.github.io/tacittouch/",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28675": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Doing More with Less: Complex Manipulation with a Contact-Adaptive Robotic Hand",
+  "abstract": "Anthropomorphic robotic hands offer the potential to manipulate objects designed for human hands in environments adapted to human use. However, developing a robotic hand that replicates the human hand in terms of morphology, degrees of freedom, force output, durability, and sensing capabilities remains a formidable challenge, as these requirements inherently involve trade-offs. Here, we propose a robotic hand mechanism designed to address several of these trade-offs by enabling contact-adaptive finger motion, slender fingers, a wide grasping range, and sustained gripping force. We also introduce a motion glove based on quaternion swing-twist decomposition to extract human manipulation intentions and translate them into robotic hand commands, along with a forearm-mounted interface designed to enhance the operator's sense of embodiment. Experimental demonstrations show that a robotic hand with limited active degrees of freedom and no tactile sensing can perform complex tasks, including smartphone pickup and charging, in-hand manipulation, object unboxing and repackaging, and cutting and tying cords, through the combination of the proposed mechanism and effective bimanual coordination.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28521": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Environment-Aware Probabilistic State Estimation of Continuum Robots from Planar Imaging",
+  "abstract": "Continuum robots are compliant along their entire length, making them well suited to navigating confined environments where contact with surrounding structures is often unavoidable. However, this compliance makes their modeling more complex compared to rigid robots, especially under contact, so their state must often be estimated from information available during operation. In many applications, the environment is known in advance, for example from preoperative imaging in medicine or from design models in industrial inspection. We present a probabilistic state estimator that represents the known environment as a signed distance field, informing the estimated shape. Continuous in arclength and time, it estimates the full state from asynchronous measurements anywhere along the robot. It also fuses planar images of body-fixed markers from a moving camera with commanded actuation, so the robot needs no embedded sensors. In a simulated aortic arch and a hardware phantom, the estimator tracked the robot into the target branch, and with a single view, using the known environment lowered the tip error from 2.5% to 1.6% and from 20.0% to 11.3% of the robot length, respectively. The continuous estimate of the full state and its uncertainty can support navigation and control of sensorless continuum robots.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.28438": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "LoKiTO: Local Kinodynamic Trajectory Optimization for UAVs based on Memory-Efficient Neural Distance Fields",
+  "abstract": "This paper introduces LoKiTO, a 3D local kinodynamic trajectory optimizer that combines a Chebyshev polynomial parameterization with an online neural Euclidean Signed Distance Field (ESDF) representation for aerial robotics. While current gradient-based planners often struggle with the high memory requirements of explicit volumetric maps or fail to strictly enforce dynamic limits, LoKiTO embeds kinodynamic constraints directly into a modular cost function and exploits the numerical conditioning properties of the Chebyshev basis. Collision awareness is provided by a continuous, memory-efficient neural ESDF updated online from LiDAR measurements, which drastically reduces map memory consumption to approximately 1.0 MB. Benchmarking in highly cluttered simulated environments against state-of-the-art baselines (Fast-Planner and EGO-Planner) demonstrates the superiority of our approach. Experimental results show that LoKiTO achieves over 99.4% dynamic feasibility compliance, significantly outperforming the baselines, and maintaining higher median clearance from obstacles. By coupling a well-conditioned continuous parameterization with explicit kinodynamic reasoning, LoKiTO provides a practical and extensible basis for local replanning in aerial robotics.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.30720": {
+  "day": "2026-11-24",
+  "cat": "cs.AI",
+  "title": "Testing Quantized KV-Cache Maintenance: Encoding Layout and Historical Restoration",
+  "abstract": "Repeating rows then selecting originals retains layout-dependent drift despite equal encoding counts. We measure when existing checks fail to establish preservation contracts in fixed quantized KV-cache implementations. In four-bit HQQ axis zero at sixteen cycles, median paired relative-L2 increases over same-shape re-encoding are 7.22 percentage points for Qwen3-1.7B and 11.59 for SmolLM3-3B. Matched encoded states cover sixteen shared questions per model at one and sixteen cycles. Axis one matches the shape-preserving control; lazy reorders preserve the initial state. On one known input, fixed update counts retain the difference; preserving group members removes it. Our prefix-view extension passes current-prefix checks yet changes history and next logits in six model/codec settings at residual capacities four and 128. Public lookup reaches this boundary, including one of four precommitted project-new GPU inputs; fixed query swaps isolate a conditional old-history effect. Checkpoint/dense rollback is exact. An explicit delayed lookup client admits a supported 129-token path excluded by native AR on one known context. Failed task-harm expansion precludes population failure-rate or general answer-degradation claims. Native MLX-LM fixtures expose stale caller caches; synchronization restores the tested in-place contract with native computations preserved. In rejection tests, stale callers change logits but not greedy tokens.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.31129": {
+  "day": "2026-11-24",
+  "cat": "cs.CR",
+  "title": "FATCAT: Fault Injection Attacks Targeting Chip-level Alignment",
+  "abstract": "Model alignment is the primary safety and security mechanism for enforcing refusal of malicious prompts in modern foundation models; yet, existing adversarial evaluations implicitly assume underlying hardware integrity. In this paper, we present FATCAT, the first physical fault-injection attacks capable of eliminating refusal in modern large language and vision-language models. Specifically, we present a non-invasive electromagnetic (EM) fault injection attack targeting GPU-accelerated Systems-on-Chip with physical access, requiring neither software execution privileges nor model-layer access. By leveraging an autonomous Radio Frequency (RF) side-channel trigger to synchronize EM faults to the prompt prefill phase, the attack corrupts safety-critical memory transactions across off-chip LPDDR5 DRAM and on-chip LPDDR physical interfaces without crashing the system while preserving model coherence. Evaluated on an NVIDIA Jetson Orin Nano and AGX Thor running Llama 3.2 1B and Gemma 3 1B, localized physical faults reliably force models to fulfill restricted requests, demonstrating that model-level alignment provides no robust security guarantees without hardware-level fault tolerance. Finally, we demonstrate the physical-world consequences of this vulnerability on an active 6-DoF robotic manipulator controlled by a SmolVLA vision-language-action policy. Our attack silently corrupts the model forcing the arm into abrupt, hazardous lunges; in two instances the robotic arm attempted to pinch the paper author -- proving that hardware faults can directly translate into real physical harm.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.29226": {
+  "day": "2026-11-24",
+  "cat": "cs.SD",
+  "title": "Tenlai-TTS 2.0: Continuous-Representation LLM-Based TTS System with End-to-End Training",
+  "abstract": "Autoregressive text-to-speech (TTS) with continuous speech latents avoids quantization-induced information loss, but typically relies on a latent space that is learned separately and then frozen before language-model training. Such a space must satisfy two competing requirements: it must retain enough acoustic detail for high-fidelity reconstruction, yet be sufficiently structured and regularized to support autoregressive prediction by a language model. We present Tenlai-TTS 2.0, which learns continuous speech representations through end-to-end training to balance acoustic detail with autoregressive predictability. The model comprises a speech encoder with a capacity-controlled Gaussian bottleneck, a large language model (LLM) with an autoregressive diffusion transformer (AR-DiT) head, a flow-matching (FM) mel-spectrogram decoder, and a multi-task recognition model (RM). With energy normalization and fixed-variance Gaussian noise, the bottleneck has a closed-form upper bound on its information rate. Through joint optimization with reconstruction, recognition, and next-patch prediction objectives, we learn continuous speech representations that suit all three tasks and train the LLM and AR-DiT for autoregressive generation. The LLM and AR-DiT are further optimized using differentiable reconstruction and recognition feedback on their predicted latents through the FM decoder and RM. On Seed-TTS-eval, this feedback-based optimization reduces character error rate (CER) from 0.82% to 0.74% on test-zh and from 8.32% to 7.08% on test-hard-zh, and word error rate (WER) from 1.32% to 1.27% on test-en, compared with joint training alone. Subsequent reinforcement learning further reduces CER to 6.29% on test-hard-zh and WER to 1.08% on test-en, with speaker similarity scores of 0.811, 0.766, and 0.784 on test-zh, test-en, and test-hard-zh, respectively.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2606.28090": {
+  "day": "2026-11-24",
+  "cat": "cs.HC",
+  "title": "Typing Behavior in Human-LLM Interaction: Keystroke Dynamics Reveal Cognitive Effort During Prompting",
+  "abstract": "As Large Language Models (LLMs) become increasingly integrated into daily routines, understanding how users interact with these systems is crucial for effective human-AI collaboration. This work investigates keystroke dynamics as a behavioral measure of user mental effort and perceived output usefulness in human-LLM interaction. We conducted a user study (N = 36) to examine how task difficulty (easy vs. hard) and device type (desktop vs. mobile) influence typing behavior and workload (NASA-TLX) during interactions. Our results indicate that hard tasks led to significantly more keystrokes, slower typing, increased pauses, and higher self-reported workload. Device type had weaker effects, with mobile use slightly reducing input length and typing speed. While keystrokes captured differences in cognitive effort, they did not predict perceived LLM output usefulness. These findings highlight the potential of keystroke dynamics as real-time indicators of cognitive effort during LLM prompting, while also showing their limitations in capturing perceived collaboration success.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "KW"
+ },
+ "2611.31025": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Token Pruning Needs a Protected Sink Token: Coherent Spatial Aggregation in Vision Transformers",
+  "abstract": "Vision Transformers (ViTs) are a predominant architecture for computer vision, with token reduction emerging as a popular paradigm to improve their efficiency. Prior work compares reduction algorithms, but not how models respond to them, nor how their response changes with model depth. We propose Monte Carlo Token Pruning (MCTP), which estimates each token's impact on the prediction when tokens are explicitly removed during the forward pass. Applying MCTP to recent pretrained models, we observe that most, such as DINOv3, maintain a similar ranking of token importance at every depth (high Coherent Aggregation), while SigLIP 2 does not. This coherence requires predictions to survive pruning, which depends on keeping high-norm \"sink\" tokens: prefix tokens are kept by design, while prefix-free SigLIP 2 forms them on patch tokens, which pruning may remove. We show that in removing DINOv3's prefix tokens, its predictions and coherence collapse, while protecting only 5 tokens for SigLIP 2 cuts the token impact outside the object's bounding box by up to 62%. Beyond this, MCTP offers a post-hoc method to evaluate how a pretrained ViT responds to pruning, and suggests that token reduction methods should keep \"sinks\".",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.31021": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Parsing Visual Latents for Multimodal Spatial Reasoning",
+  "abstract": "Spatial reasoning across multiple views requires inferring the 3D relations between objects and the camera from 2D observations, which depends on cross-view correspondence and scene geometry that vision-language models (VLMs) do not reliably extract. Pretrained vision encoders already capture this information in their latent features, with CLIP linking objects to image regions, DINOv3 matching semantics across views, and VGGT encoding multi-view geometry. However, VLMs do not benefit from these features when we present them directly in context as grayscale feature images. We therefore propose LatentParse, a training-free framework that parses latent features into explicit spatial evidence for VLMs. In LatentParse, an analyst VLM probes the features of all three encoders with predefined tools that locate objects, track them across views, and measure motion between views. It then distills the results into a concise text report, which is provided together with the images to the VLM to answer the question. We evaluate LatentParse on MMSI-Bench, MV-RoboBench and SPAR-Bench, where it improves all five VLMs over the photo-only baseline by 0.7-2.4 percentage points on average. On MMSI-Bench, it raises Qwen3.8-27B from 34.4% to 39.5%, with the largest improvements of 19.2 percentage points on the camera-related questions. These results suggest that latent features become useful for spatial reasoning once they are parsed into relation evidence, without training. Code is available at https://github.com/Harvard-AI-and-Robotics-Lab/LatentParse.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.30725": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Co-speech Gesture Attribute Annotation with 3D Human Mesh Recovery",
+  "abstract": "Co-speech gestures convey meaning alongside speech, but annotating their physical attributes in video is labour-intensive. We propose two approaches to automate annotation of ten gesture attributes using human mesh recovery (HMR), which estimates a full 3D body skeleton from a single video frame: AI-assisted geometrical rules and a graph convolutional network (SL-GCN). Both use pose estimates from SAM 3D Body, evaluated on 2,020 gestures from the GESRes dataset. For physically defined attributes such as height, arm swivel and movement speed, both methods achieve agreement with expert annotation comparable to that between human annotators. For attributes whose annotation requires higher-level multimodal contextual inference, performance remains lower. The rule-based approach requires substantially less annotated data, is fully transparent, and can be adapted to different annotation schemes, offering a practical and interpretable complement to data-driven methods",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:mesh"
+ },
+ "2611.30646": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Part-wise Certified State Estimation of Articulated Objects from Passive Stereo",
+  "abstract": "Robots in manufacturing often handle thin, hinged objects known from CAD models that change shape during the task, like folding cartons. Monitoring such tasks requires estimating the object's articulation state, its pose and the shape of any semi-deformable part. Learning-based estimators generalise across objects but lose precision while handling thin parts. Model-based fitting is precise but often needs accurate depth, a close initial estimate and a clean object mask. We present part-wise certification of an articulated object's state, estimated from passive stereo. Our estimator rivals the precision of the best model-based fitting method without using depth, a close initial estimate or a mask. We detect the corners that the CAD model defines in both stereo images and fit the articulated model to them. Geometric certificates, which we extend from rigid to articulated objects, then tell whether to trust each part, because the fit returns a state even for hidden parts. Certified estimates on unlabelled video become labels that improve sim-to-real transfer. On five of seven simulated objects, we locate the parts we certify three to five times more precisely than the strongest learned baseline on the same readings, given depth and true masks. On a real folding carton, our median corner error on the end panels is 2.1% of the carton's size, at least 40% lower than every learned baseline and also lower than a depth-based fit initialised near the true state.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:stereo"
+ },
+ "2611.30564": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Seeing Is Locating: Spatial Awareness and Geographic Bias in Decision Language Models",
+  "abstract": "Decision models, which output probability distributions over candidate labels instead of generating text, are increasingly used as classifiers and evaluators for inputs associated with real-world locations. However, it remains unclear whether they can leverage spatial context and whether their predictions are geographically biased. We introduce GeoDecisions, a multimodal benchmark for evaluating the spatial awareness and geographic bias of decision models. GeoDecisions comprises two tasks: (1) geo-aware image classification, and (2) location rating on objective and subjective topics. Evaluating six decision models against supervised task-specific models, we find that spatial awareness requires vision: textual coordinates alone provide insufficient context for classifying everyday photos and satellite images. We also find substantial geographic bias. On everyday photos, despite achieving higher accuracy, open-weight decision models exhibit more spatially clustered errors than supervised models. Moreover, across all five subjective topics, every decision model gives lower ratings to locations with lower socioeconomic conditions. Finally, we propose a training-free method that combines decision models with a location prior to improve their spatial awareness without substantially increasing performance bias. Our code is available at https://github.com/cruiseresearchgroup/GeoDecisions.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.30514": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "When Do Spatial Plans Help Text-to-Image Generation? Causal Control, System Utility, and Text Responsiveness",
+  "abstract": "A generator can follow a spatial plan, but the benefit of supplying that plan depends on what the model can already do from text. In a controlled study with 18 paired training seeds, correcting predicted positions and sizes improves spatial intersection-over-union by 0.030, yet direct text is non-inferior at matched training compute. In a pretrained generator, a fixed rule layout improves two-object task success over the same text-only adapter by 12.50 percentage points, mostly by separating objects that already appear in the correct order. We then ask whether a more precise instruction can achieve the same separation across conditioning paths. On 288 new task families, adding a minimum-gap instruction improves success by 37.15 points with the text-only adapter, by at most 0.69 points with widely spaced regions, and by 6.94 points with tightly spaced regions. Under tight regions, 230 of 288 baseline images have the correct objects and direction yet miss the required gap, ruling out a high baseline success rate as the sole explanation for the weak text response.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.30424": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Spatial-Zero: Self-Evolving Spatial Reasoning in Vision-Language Models from Zero Data",
+  "abstract": "Spatial reasoning requires a vision-language model~(VLM) to understand metric distances, three-dimensional relationships, and viewpoint-dependent geometry. Learning these capabilities typically requires externally curated training data. This paper introduces Spatial-Zero, a VLMs' training framework that can self-evolve through autonomous spatial exploration with zero data. Spatial-Zero addresses two key challenges in autonomous spatial exploration: reliably generating valid spatial interaction tasks and providing accurate supervision for learning from these tasks. Specifically, a proposer specifies object configurations and questions, and a Coder turns them into executable scene programs that produce multi-view images and explicit scene geometry. A Geometric Oracle checks spatial constraints, visibility, and answer uniqueness and derives ground-truth labels from executed geometry; these labels supervise the Solver and ground difficulty feedback, while validation outcomes guide subsequent task generation. Across six spatial reasoning benchmarks and three VLM backbones, Spatial-Zero yields consistent gains through iterative self-evolution. After three iterations, Qwen3.5-9B improves average accuracy by 3.23 percentage points; with Qwen3.5-4B, Spatial-Zero also outperforms existing VLM self-evolution methods. Our code is available at https://github.com/YutongLi2024/Spatial-Zero",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.30215": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Benchmarking Geospatial Foundation Models under Calibrated Label Errors",
+  "abstract": "Earth-observation labels from maps, older products or hurried annotation arrive misaligned, coarse, loosely outlined or incomplete. Geospatial foundation models (GFMs) are nevertheless benchmarked with labels taken as correct. A practitioner therefore cannot tell which encoder to choose when the labels are imperfect. We present a benchmark protocol for fine-tuning under such labels. Four spatially structured error types are calibrated to equal label mIoU and applied identically to every model and seed. Every contrast is paired and read against an equivalence margin of $\\pm 3$ points and a minimum detectable effect. We apply it to nine encoders, six decoder heads and ten datasets. In an exploratory reading at a matched learning rate the satellite-pretrained and web-pretrained DINOv3 encoders are equivalent within the margin on 8 of 9 datasets. Multispectral GFMs and an ImageNet ResNet-50 are equivalent within the margin on about half of them. Labels with random offsets cost the least at equal label quality. Under other decoder heads the verdicts mostly hold on FLAIR-2 and are decoder dependent on HLS Burn Scars. On four of five real label pairs the real label costs more than its matched simulated type. No choice of pretraining data makes an encoder consistently more robust, so the encoder is better chosen by its accuracy under imperfect labels.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.29421": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "A colour-marker tracker for pose estimation of slender surgical instruments: vision-language-model-guided adaptive colour calibration",
+  "abstract": "Slender surgical instruments need small, narrow markers for camera-based pose estimation. A colour-stripe marker fits this requirement, but its colours in the image drift from the design values with lighting, printing and camera settings. Because the colours can only be corrected after the marker has been found, methods that rely on the design colours face a circular problem. We propose vision-language-model (VLM)-based adaptive colour calibration and compare it with two rule-based methods, which re-measure the colours from detections made with the design colours: Initial colour update does so once after tracking starts, and Colour adaptation continuously during tracking. VLM guidance uses a fine-tuned VLM to find the markers without relying on the design colours and builds the colour profile from their pixels. Recall/F1 (%) for Initial colour update, Colour adaptation and VLM guidance were 92.0/95.7, 87.8/93.3 and 98.2/99.1 on 672 synthetic image pairs; 51.3/67.2, 48.8/65.0 and 83.8/87.0 on eight degraded laboratory videos; and 38.9/55.2, 19.7/29.7 and 100/100 on a surgical-robot (da Vinci) video with strongly shifted colours. In that video the rule-based methods never found the purple/cyan marker, whereas VLM guidance found all 234 markers with no false positives. In a simulation, the hue boundary between the two stripes moved by less than 0.1 pixel for exposure gains of 0.5-2.0, compared with 2.9-4.0 pixels for a boundary found with a fixed brightness threshold. When the degradation is mild, the rule-based methods, which need no training and no GPU, are sufficient. When the colours change greatly, the gain comes from a VLM-guided candidate search that does not rely on the design colours. Combining colour-stripe markers with adaptive colour calibration enables tracking of slender surgical instruments with small markers.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:pose estimation"
+ },
+ "2611.29341": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "MIMORPHEUS: Rethinking Cross-Modal Supervision for Human Pose Estimation from Radar Signals",
+  "abstract": "Deep learning has shown promise for estimating human pose with multiple-input multiple-output (MIMO) radar through walls. Building paired radar and pose datasets demands considerable time and manual effort, while large visual pose datasets provide no corresponding radar echoes. Physical simulation can supply synthetic signals, but requires expertise in scattering models and can leave a gap between simulated and real data. To address this challenge, we introduce MIMORPHEUS, a framework that generates radar echoes from 3D human poses through conditional diffusion. To prepare echo and pose representations, MIMO-VAE compresses the echoes according to their channel and fast time sample structure, while SkeleCoder learns pose features through contrastive alignment with echo features. These pose features then guide diffusion in the MIMO-VAE latent space, and the VAE decoder reconstructs echoes from the generated latents. Once trained, the generator augments radar data by producing different echoes for a recorded pose and supplies the radar modality for pose annotations in existing visual datasets. In data augmentation experiments, our method reduces MPJPE by 6.8%-11.2% across four radar pose estimators. Transfer experiments with three public pose datasets also show that visual pose annotations can supply useful radar training data. Code will be made publicly available on GitHub.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:pose estimation"
+ },
+ "2611.29330": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SKIA: Spatial-Knowledge Informed Attention for Robust Remote Photoplethysmography under Lower-Face Motion Artifacts",
+  "abstract": "Remote photoplethysmography (rPPG) enables contactless physiological monitoring from facial videos, but facial motion, particularly mouth and jaw movements during cognitive and communicative tasks, can severely degrade signal reconstruction. We present SKIA, a lightweight, mask-guided framework that suppresses motion-prone lower-face regions while preserving physiological cues from the forehead and cheeks. Using the UBFC-rPPG benchmark, we first investigate static lower-face suppression in the classical CHROM pipeline. Static masking improves waveform Pearson correlation from 0.3507 to 0.4166 (p < 0.001) and reduces heart-rate mean absolute error (MAE) from 33.50 to 23.44 bpm. Building on this finding, we introduce SKIA-Net, a compact spatiotemporal architecture that combines raw facial frames, statically masked representations, and temporal motion differences to reconstruct blood volume pulse (BVP) waveforms. The full model achieves a Pearson correlation of 0.7522 and a heart-rate MAE of 3.73 bpm on UBFC-rPPG, outperforming single-stream variants. Ablation studies show that the static mask provides complementary information to raw appearance and that static anatomical priors outperform the tested dynamic optical-flow-based masking strategy. These results suggest that spatially informed, temporally stable masking can improve motion-robust rPPG estimation. Code: https://github.com/lee-vtruong/SKIA-rPPG",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.29282": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "RadioWorld: Transferring World Models to Radio-Frequency Radiance Fields",
+  "abstract": "Electromagnetic (EM) wave propagation in the physical world constitutes a Radio-Frequency (RF) radiance field, providing rich information for 6G communication and sensing. However, existing neural RF field methods suffer from three fundamental limitations: (1) they predominantly rely on per-scene optimization and cannot generalize to unseen scenes; (2) they require costly reference RF measurements in each target scene; and (3) they degrade severely when extrapolating beyond the vicinity of reference measurements. To overcome these limitations, we present RadioWorld, a general framework that adapts a world model to synthesize RF radiance fields directly from physical scene geometry and transceiver locations, without requiring any reference RF measurements at inference. Specifically, RadioWorld couples two specialized modules within a dual-stream Mixture-of-Transformers (MoT) architecture: a Scene-Understanding Transformer that encodes 3D scene geometry and transceiver locations to extract environment-aware global EM propagation features, and a Field-Generation Transformer that attends to these features to synthesize the RF radiance field with the local query conditions. We also establish UrbanRF-Bench, a large-scale ray-traced benchmark spanning 657 urban scenes and 32,850 RF radiance fields across seven global cities. Extensive experiments demonstrate that RadioWorld significantly outperforms specialized baselines and accurately synthesizes RF fields at arbitrary locations in unseen cities. Code, datasets, and checkpoints will be released upon acceptance.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:radiance field"
+ },
+ "2611.29146": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "RVLM: Fewer Tokens, Better Resolution Scaling, Fine-Grained Spatial Grounding",
+  "abstract": "Vision-Language Models (VLMs) tokenize images using fixed spatial grids, so visual token count grows with pixel area rather than scene content. We propose to group neighboring patches based on their visual appearance, allowing tokens to represent coherent image regions rather than fixed spatial windows. We introduce RVLM, a VLM trained to use regions rather than patches as its visual units. Analyzing region construction for general-purpose VLMs, we find that regions must cover the full image, stay spatially connected during end-to-end training, and preserve fine structure such as small text, while semantic grouping adds little. RVLM therefore partitions images using training-free Felzenszwalb-Huttenlocher segmentation, assigns each ViT patch to a region, and pools patches within each region into a variable-length sequence of visual tokens. The patch-to-region assignment is retained to support spatially precise prediction through coarse-to-fine decoding. Across tasks spanning VQA, pointing, counting, segmentation, and depth estimation, RVLM matches or improves example-weighted task performance while using 21.5% fewer visual tokens than an identically trained patch baseline. The advantage grows with image resolution, reaching a 5.3-point gain while using 51.8% fewer visual tokens at the highest-resolution setting. The gains are largest on spatially demanding tasks, where prior token-reduction methods degrade most sharply. RVLM adds no model parameters and improves inference throughput by up to 35.9%. On unseen pathology and satellite images and on video benchmarks without any video training, RVLM performs on par with the patch baseline while using 2-3$\\times$ fewer visual tokens. These results establish regions as a scalable alternative to patch-based visual representations while preserving the spatial precision required for grounded prediction.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.28839": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Spatially Grounded Latent Lookahead for Vision-Language-Action Models",
+  "abstract": "Vision-language-action (VLA) models benefit from strong semantic representations that support object recognition and instruction understanding. However, precise manipulation also depends on resolving object locations and workspace relations, and on selecting actions with an estimate of how the scene will evolve. Existing geometry-aware methods make the current scene more explicit, while predictive methods model future observations or representations. Yet future information is often neither grounded in a control-relevant spatial state nor directly used to guide action generation. We introduce Spatially Grounded Latent Lookahead (SG-LL), which uses the grounded present as the reference for predicting an actionable near-future representation. A frozen spatial teacher first distills geometric priors into policy-connected spatial tokens. A current-conditioned bottleneck then learns a compact latent that captures future information relative to the present scene. This latent is predicted from the current policy context and initial Action Expert features, without access to future observations or the spatial teacher. Finally, zero-initialized residual fusion incorporates the predicted latent into the Action Expert to refine action generation. Experiments on LIBERO-Plus, CALVIN, and three real-world manipulation tasks demonstrate improvements over in both simulation and real-robot settings.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.28646": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "OrthoLatentCAD: Orthographic Spatial Latents for Hand-Drawn CAD Program Generation",
+  "abstract": "Freehand orthographic drawings capture early design intent, yet recovering executable sketch--extrude CAD programs from raster front, right, and top views remains challenging: noisy, dimension-free 2D layouts must be reconciled into an ordered construction history. We introduce Hand2CAD, a benchmark of 215K ABC-derived synthetic orthographic-drawing--CAD program pairs and 1,000 real three-view sets drawn by CAD-trained participants. Recovering CAD programs from orthographic drawings requires both cross-view geometric reasoning and alignment between visual features and program representations. We propose OrthoLatentCAD to address these two challenges. It fuses local geometry with global context on canonical planes, exchanges evidence between paired plane lines indexed by the same shared-axis coordinate, and maps the spatial representation to ordered program latents through queries inherited from a frozen CAD autoencoder. Across the evaluated one- to three-view configurations, OrthoLatentCAD outperforms protocol-matched baselines in procedural accuracy, compiled geometry, and CAD-kernel validity while benefiting from additional views. Without real-data fine-tuning, it also outperforms the baselines on held-out real drawings. We will release the dataset, code, and evaluation scripts.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial,hand"
+ },
+ "2611.28283": {
+  "day": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "HandXFM: Semantic-Structural Distillation for Hand Radiograph Foundation Models",
+  "abstract": "Hand radiographs support diverse clinical tasks, including skeletal maturity assessment, rheumatoid arthritis scoring, abnormality screening, and anatomical localization, yet existing models are typically trained separately for each task and dataset. We present HandXFM, a domain-specific foundation model that leverages cross-modality knowledge for comprehensive hand X-ray understanding. HandXFM distills semantic priors from BiomedCLIP and structural cues from a chest X-ray Vision Transformer (ViT) through a unified alignment framework, integrating complementary medical knowledge in an interpretable way. After pretraining, HandXFM can be adapted to a range of musculoskeletal tasks, including bone age estimation, SvH score prediction, abnormality detection, joint localization, bone segmentation, and visual question answering. It consistently outperforms task-specific and single-expert baselines, achieving up to 0.11 improvement in Pearson correlation coefficient (PCC) for bone age prediction and a 12\\% accuracy gain in abnormality classification. Moreover, HandXFM generalizes to unseen datasets and yields cross-attention maps linking clinical terms to anatomical regions. These results demonstrate that multi-expert distillation effectively unifies semantic and structural supervision within a single pretrained model, establishing HandXFM as an interpretable and generalizable foundation model for hand radiograph analysis.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.30963": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Foresight Forcing: Learning Spatial Foresight for Robotic Manipulation",
+  "abstract": "Robotic manipulation policies can improve action prediction by anticipating how objects move and how their spatial relationships change. World Action Models (WAMs) learn to predict future visual observations, but their training objectives typically leave the underlying 3D geometric transitions implicit. To alleviate this problem, we introduce Foresight Forcing ($\\mathcal{F}^{2}$), a WAM that learns a spatial transition representation from changes in a pretrained 3D feature space. During training, a frozen 3D foundation model extracts patch-wise feature differences from aligned current and future observations that provide dense supervision for geometry-aware feature transitions. We distill these targets into spatial transition queries, which are progressively refined from the current observation, language instruction, and proprioceptive state, and use them alongside current visual features to generate actions. At deployment, the policy predicts the queries without future observations or the 3D teacher. Experiments on LIBERO, LIBERO-Plus, and RoboTwin2.0 demonstrate strong manipulation performance and improved robustness, including 95.01% average success on RoboTwin2.0 Full. On six real-world manipulation tasks, $\\mathcal{F}^{2}$ achieves a mean task score of 85.8%.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.29874": {
+  "day": "2026-11-24",
+  "cat": "cs.CL",
+  "title": "Escriba-OCR: A 1B Vision-Language Model for Error-Preserving Transcription of Handwritten Portuguese Essays",
+  "abstract": "Feedback tools and research on learner writing need transcriptions of handwritten essays that keep exactly what the student wrote: misspellings, line breaks, struck-through words and insertions. Vision-language models (VLMs) read handwriting well, but they also tend to rewrite it into correct language. We measure this on BRESSAY, 1,000 handwritten Brazilian Portuguese essays, with a benchmark that adds error preservation, invented errors, edit-markup precision and recall and line structure to the character error rate (CER) and uses paired bootstrap confidence intervals. We restrict the study to open-weight models that schools can run on their own hardware. Of 22 open baselines, the best, Qwen3-VL 235B-A22B, reaches 5.6% CER on the 199 test pages; none reproduces the edit markup reliably, and every VLM replaces 39-78% of the words absent from a Portuguese dictionary with dictionary words. We fine-tune LightOnOCR-3-1B on the 647 training pages in 85 minutes on one GPU. The resulting Escriba-OCR-1B reaches 2.06% CER, 3.5 points below the best baseline (95% CI [-4.2, -2.9]); under the ICDAR 2024 competition metric it reaches 2.1% CER, below the best published page-level results (2.2-2.4%). It recovers 67% of insertions and 77% of illegible deletions, and reproduces the line structure of 97% of the pages, but still normalises 60% of likely misspellings. Three seeds agree within 0.04 CER points, and quantised to 4 bits the model runs on an ordinary CPU at about one minute per page. On 40 letters of another corpus it matches its base model (without that model's appended comments) but misreads unseen words more often; weight interpolation recovers half the gap. A teacher's review finds that 45% of the judgeable apparent corrections are errors in the BRESSAY ground truth, so dictionary-based scores likely understate preservation. We release the model, the benchmark code and the review data.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.29494": {
+  "day": "2026-11-24",
+  "cat": "cs.LG",
+  "title": "CoHABIT: Complementary Evaluation of Furniture Layouts through Spatial Rules and Household Routines",
+  "abstract": "We introduce CoHABIT, a framework for evaluating furniture layouts through complementary spatial rules and household routines. Static assessment captures geometric validity, ergonomic access, functional organization, and configurable design preferences, including Feng Shui. Dynamic assessment uses learned resident policies to simulate everyday activities, resource sharing, coordination, and individual burdens in multi-agent households. Controlled comparisons show how spatial criteria and household behavior reveal distinct aspects of layout quality, while resident profiles and scheduling influence furnishing rankings. Independent verification of household needs grounds dynamic comparisons in observed outcomes, enabling interpretable assessments of how furnished environments serve different households.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.28185": {
+  "day": "2026-11-24",
+  "cat": "cs.AI",
+  "title": "SAMA: Training-Free Consensus Ridge Tracking for Camera-Based Heart Rate on Five Public Datasets",
+  "abstract": "Remote photoplethysmography (rPPG) is usually benchmarked by one heart rate per video, a figure that hides the short windows in which a tele-consultation would actually read the pulse. We present SAMA, a training-free estimator that (i) forms a quality-weighted consensus of POS and CHROM chrominance spectra, (ii) discounts frequencies occupied by pulse-free references derived from the same frames (frame motion, skin-mask geometry and background brightness), (iii) follows the heart rate through time with a Viterbi ridge under a random-walk prior, and (iv) returns a track-filtered, amplitude-normalised waveform with a per-window confidence. No parameter is learned and no dataset-specific tuning is used. On 218 recordings from 111 participants in five public datasets (UBFC-rPPG, PURE, SUMS, M3PD and a two-participant subset of MMPD), all processed with the same fixed face box and scored with a re-implementation of the rPPG-Toolbox protocol, SAMA has the lowest mean absolute error (MAE) averaged over datasets at every protocol level: 4.40 against 5.13,bpm for POS per video, 4.80 against 5.43 on 30,s windows and 5.05 against 6.59 on 10,s windows. Pooled over participants, the bootstrap interval of its paired difference from POS excludes zero on 30,s and 10,s windows (Wilcoxon p=0.11 and 0.004) but not per video, and it does not beat POS on SUMS per video or on the MMPD subset. Withholding the 20\\% least confident windows lowers the pooled 10,s error from 4.06 to 2.33,bpm. We also show that the per-video protocol has a floor of 1.2--1.6,bpm on datasets where heart rate drifts, and that skin tone cannot be recovered from uncalibrated video, which motivates the instrumented, skin-tone-stratified collection we propose for the Indian population. The method does not surpass the best published neural networks on UBFC-rPPG; we report where it stands against them without re-running them.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:tracking"
+ },
+ "2611.29912": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "SuperNav-1.5: Structured Spatial Memory For Agentic Navigation Systems",
+  "abstract": "This paper addresses the challenge of scene-level memory design for efficient navigation across sessions and successive object goals. Recent methods commonly represent a scene using scene graphs or image--text records. However, dense scene-graph representations impose substantial reasoning and context overhead on multimodal large language models, while image--text records cannot be directly converted into executable geometric routes. To address these limitations, we propose SuperNav-1.5, an agentic navigation system equipped with a structured spatial memory constructed by the agent. The memory consists of an area-segmented occupancy map annotated with agent-maintained, map-grounded memory nodes. This map guides the agent toward unvisited areas and provides executable routes to known locations. For multi-session navigation, we introduce agent-guided relocalization, whereby the agent infers an area prior from current observations and stored memory records to constrain geometric matching and localize the robot within the stored map. Together, these designs enable efficient navigation across session and successive object goals. Experiments show that our method outperforms baselines on single-object, multi-object, and demand-driven navigation benchmarks, with particularly strong gains in path efficiency. Multi-session evaluation demonstrates that the constructed memory can be reused, while deployment on a real quadruped robot further shows the system's applicability.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.29748": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Performance Evaluation of Nonlinear Model Predictive and Sliding Mode Controllers on a 4-Cable Spatial CSPR in Simscape",
+  "abstract": "This paper offers a comprehensive comparative study between Nonlinear Model Predictive Control (NMPC) and Sliding Mode Control (SMC) applied to a spatial Cable-Suspended Parallel Robot (CSPR) actuated by four cables. The robot is modeled in two parallel ways: (i) via an analytical dynamic model with included cable elasticity and frictional losses, and (ii) in MATLAB Simscape Multibody, capturing realistic physical effects. Both controllers are implemented under identical reference trajectories, system constraints, and tuning strategies. Our results show that NMPC achieves superior tracking accuracy and stronger disturbance rejection compared to SMC, but at the cost of higher computational demand. Moreover, both controllers were tested on an analytical model of the robot and a Simscape model. The close agreement between the two, for both control schemes, confirms the accuracy of the analytical formulation and its consistency with the physics-based simulation. The study highlights the value of physics-based simulation as a complementary tool for validating advanced controllers under realistic conditions, and demonstrates that NMPC offers superior performance for the studied high-precision, constrained CSPR.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.28707": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "IRIS: Inverse Dynamics from Random Exploration with Eye-in-hand Sensing",
+  "abstract": "Imagine-then-execute methods offer a promising paradigm for video-based manipulation, where a video planner predicts future visual subgoals and an inverse dynamics model (IDM) grounds them into robot actions. Despite their promise, these methods remain limited by action grounding. First, the IDM is typically trained on limited task-specific demonstrations and can generalize poorly even when given oracle visual subgoals, indicating that action grounding remains a bottleneck beyond visual planning errors. Second, precise execution benefits from eye-in-hand observations, but eye-in-hand video planning is both hard to learn and hard to scale: the viewpoint moves with the robot, and such videos are scarce at internet scale. To overcome these challenges, we propose IRIS, a video-based manipulation framework that learns a highly generalizable, execution-aware IDM. First, IRIS scales action grounding by pretraining the IDM on task-agnostic random exploration data, which provides diverse visual state transitions paired with robot actions without human task annotation. Second, it extends the IDM with eye-in-hand sensing through a two-stage training scheme, without requiring eye-in-hand video planning. Extensive simulation and real-world experiments show that IRIS improves action grounding and data efficiency, enables more precise execution, and achieves competitive performance against state-of-the-art manipulation policies.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.28274": {
+  "day": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Neural Fidelity Calibration for Informative Sim-to-Real Adaptation",
+  "abstract": "Deep reinforcement learning (RL) can transfer agile robot skills from simulation to the real world, but closing the sim-to-real gap by domain randomization requires expert physics knowledge, and simulator calibration from real data typically targets a few hand-picked parameters. Even then, simulators miss real-world effects, and environments reconstructed from onboard perception inherit sensing errors that limit policy improvement. We propose Neural Fidelity Calibration (NFC), which uses conditional flow matching to calibrate simulator physical parameters and residual fidelity domains online during deployment. Residual fidelity captures sim-to-real dynamics discrepancies and perception-induced environment uncertainty. NFC operates in a latent space so that realistic environments can be sampled from the inferred posterior for real-to-sim policy fine-tuning. The framework is informative: the pretrained policy is fine-tuned only when an anomaly is detected, sequential NFC seeds its proposal from the simulation-pretrained estimator, and a hallucination policy modulates posterior uncertainty following optimism in the face of uncertainty. NFC attains the most accurate posteriors among established simulation-based inference methods on five robots with up to 39 physical parameters and a 128x128 residual terrain. On a wheeled robot with a broken wheel axle deployed on snow, mud, and wet grass, NFC raises success on rough terrain from 26% to 70% and reduces orientation jerk by 88%. Code and videos will be released upon publication.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:sim-to-real"
+ },
+ "2611.30131": {
+  "day": "2026-11-24",
+  "cat": "cs.AI",
+  "title": "iFeST: An Iterative Motion Correction Framework for Fetal Brain Diffusion MRI via Frequency-Spatial-Temporal Modeling",
+  "abstract": "Fetal brain diffusion magnetic resonance imaging (dMRI) is a pivotal non-invasive tool for assessing the development of brain connectivity and microstructure. However, the prolonged acquisition times and complex sampling requirements render dMRI highly susceptible to unpredictable fetal motion. Existing motion correction methods typically process each dMRI volume independently and focus on inter-slice motion. Such strategies fail to utilize the coherent information between dMRI volumes along different diffusion directions and lack the ability to restore the intra-slice corruption. To address these limitations, we proposed iFeST, an iterative framework that combines frequency (k-space), spatial, and temporal (inter-slice) modeling for fetal brain dMRI motion correction. At each iteration, iFeST integrates information across diffusion directions into fiber orientation distributions (FODs). These distributions encode local fiber orientations within each voxel and serve as microstructural priors for intra-slice restoration and inter-slice alignment in the next iteration. To train the framework, we developed a fetal brain dMRI motion simulator that synthesizes compound motion artifacts from FODs. Evaluation on simulated datasets demonstrated that iFeST outperformed four inter-slice networks in motion estimation and three intra-slice networks in image restoration. Further validation on a real-world dataset confirmed significantly better volume reconstruction and FOD estimation than conventional pipelines. Overall, iFeST provides a learning-based framework for fetal dMRI motion correction, restoring motion-corrupted data and improving microstructural reconstruction for downstream diagnostic applications.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.30436": {
+  "day": "2026-11-24",
+  "cat": "cs.NE",
+  "title": "MF-EDA: Joining Membership Functions to Adapt the Number of Distributions in Gaussian Estimation-of-Distribution Algorithms",
+  "abstract": "An estimation-of-distribution algorithm (EDA) usually samples from one Gaussian, whose peak sits where most selected individuals are. On a landscape with two funnels that is not where the best solutions are: the wider funnel supplies most of the selected individuals, and the deeper funnel, which holds the global optimum, is lost early. This paper builds the search distribution as a neuro-fuzzy system builds a model: from Gaussian membership functions joined by membership degrees. In every generation the proposed MF-EDA searches the principal directions of the selected individuals for the direction along which they are bimodal, describes them on that direction by one or two membership functions according to the Bayesian information criterion and a separation test, joins each membership function to a local Gaussian in the other directions, and samples from the normalised union. A membership function has height one whatever the number of individuals under it, so a detected funnel receives samples according to its width. A two-region selection model shows that sampling shares proportional to the head count, as in a Gaussian mixture, compound the early disadvantage of the deeper funnel, and that the union does not. With one membership function the algorithm is its single-Gaussian baseline; the steps cost no fitness evaluations but make a generation 8 to 17 times slower to compute. On 36 double-funnel settings the component raises the successful runs of a rank-weighted Gaussian EDA from 805 to 1712 of 1800. On the Lunacek double funnel in 30 dimensions it raises that EDA from 4 to 49 and AMaLGaM from 0 to 47 successes in 50 runs, while results on single-funnel functions and on ten multimodal BBOB functions do not change. Restarted CMA-ES remains cheaper in evaluations on the standard double funnel, and the component stops helping when the global funnel is much narrower than the other.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:gaussian"
+ },
+ "2611.29954": {
+  "day": "2026-11-24",
+  "cat": "cs.LG",
+  "title": "Yggdrasil: Tree-Routed Recurrent Experts for State Tracking and Fast CPU Inference",
+  "abstract": "Parallel-trainable recurrences such as Mamba, linear attention, and DeltaNet offer constant-cost streaming inference, but they suffer from two limitations: 1) they struggle to track discrete state, and 2) they read every parameter at every step, tying model capacity directly to CPU latency. We introduce Yggdrasil, a recurrent architecture that decouples capacity from per-step compute by looking up each layer's transition in a large, tree-routed bank of recurrent experts. Each router addresses its bank using the current token and the state of the layer below. We prove that this cross-layer context is necessary---a single token-indexed layer of non-expanding transitions with finitely many reachable states cannot perform conditional resets---while avoiding feedback from the layer's own past preserves parallel-scan training. Because each step traverses one tree path and reads a single expert per layer, active weights stay within a few hundred kilobytes in CPU L2 cache while the full bank resides in RAM. Among the parallel-trainable models we evaluate, Yggdrasil is the only one to solve all five state-tracking tasks. At matched active parameter counts, it achieves the lowest test bits on enwik8 (1.540 bpb) and the human genome hg38 (1.567 bpb), while stepping $3.0\\times$ and $3.3\\times$ faster on a single CPU core ($6.7\\,\\mu\\mathrm{s}$ and $5.8\\,\\mu\\mathrm{s}$) than the fastest streaming baseline, and delivering the highest GPU throughput of all models at batch 1024. On the Genomic Benchmarks, it is the strongest causal model at matched active parameters (86.0% mean accuracy).",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:tracking"
+ },
+ "2611.29381": {
+  "day": "2026-11-24",
+  "cat": "math.SP",
+  "title": "Gaussian Belief Propagation and Periodic Jacobi Matrices on Trees: Spectral Curve, Antibound Poles, and Fixed Points",
+  "abstract": "Diagonal Green functions of a periodic Jacobi operator on a universal covering tree satisfy the scalar Gaussian belief propagation covariance equations on the finite connected loopless base multigraph. At cycle rank at least two, the Green functions continue to simple antibound poles at both Perron values for arbitrary real potentials and nonzero real weights. This proves the conjecture of Christiansen, Simon and Zinchenko. For positive weights the pole result includes self-loops. On loopless graphs the lower pole is the walk-summability threshold. Each energy strictly between it and the spectral bottom has at least two fixed points with positive definite local beliefs. On a connected simple graph, some coefficients yield a compact component of positive solutions exactly when the graph contains two vertex-disjoint connected subgraphs of cycle rank at least two. The covariance curve is generically irreducible, with one sheet per edge subset with no vertex of degree one. For cycle rank at least two and generic real coefficients, the diagonal Green functions, infinite half-tree $m$-functions and the density-of-states Stieltjes transform all have this degree, answering a question of Avni, Breuer and Simon. Then all eigenvalues of the signed Jacobi matrices are antibound poles. Signed principal submatrices classify finite points with nonzero residue of $(\\sum_i V_i) dz$, where $V_i$ are the vertex variances. We give a genus formula. Near zero potentials and unit weights on $K_4$, independently varying the coefficients leaves the cover spectrum an interval. This refutes Avni, Breuer and Simon's conjecture on the density of parameters with all gaps open. In block models, generic irreducibility and a uniqueness criterion extend, and at uniform dimension $p$ the degree can exceed $L^p$ for scalar degree $L$. Part of the scalar theory is formally verified in Lean 4 with Mathlib.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:gaussian"
+ },
+ "2611.29315": {
+  "day": "2026-11-24",
+  "cat": "cs.SD",
+  "title": "SWIFT: A Handcrafted, Arithmetic-Minimal FPGA Engine for Real-Time Audio Deepfake Detection",
+  "abstract": "Generative voice cloning threatens voice-based authentication, yet current deepfake detectors rely on power-hungry, high-precision models unsuited to edge hardware. We present SWIFT (Streaming Whiten-Integer Forensic Trust-Engine), a handcrafted detector that works in the high-frequency noise domain where synthesis artifacts concentrate. A first-order integer high-pass residual drives nine families of fixed-point descriptors, among them integer lifting-wavelet cepstral quantiles, Mahalanobis anomaly distances, Poincar\\'e phase-space geometry, and phase jitter, fused by calibrated gradient-boosted trees and a sparse L1-regularised meta-learner. Under leakage-controlled nested cross-validation, with one shared preprocessing chain for real and fake audio, this reference model reaches accuracy of up to 99.86% and an Equal Error Rate (EER) as low as 0.03% across eight benchmarks. Its integer front-end and a fixed-point linear classifier run on the programmable logic of a PYNQ-Z2 (Zynq-7020) board, with a 7.85 microseconds per-frame datapath latency (127.4k frames/s) at 1.734 W and 11.2% LUT utilisation. Integer-only audio deepfake feature extraction is thus feasible at the edge without pretrained neural models or floating-point units.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:hand"
+ },
+ "2611.29265": {
+  "day": "2026-11-24",
+  "cat": "cs.LG",
+  "title": "On the Interplay between Backtracking and Latent Confidence Directions in Reasoning Models",
+  "abstract": "Reasoning models deliberate over multiple answer proposals, often resulting in excessively long traces due to backtracking, even when the correct answer has already been reached (Across three 32B models, ~87% of rollouts contain 1 unique answer yet still make ~8 answer proposals on average). Given this potentially \"decorative\" chain of thought (CoT) reasoning, can we look to the model internals to determine if the model will backtrack or commit to an answer proposal? Operating under the hypothesis that models maintain an internal representation of their uncertainty, we seek to extract this representation and characterize its relationship with backtracking behavior at answer proposals. By querying the model's verbalized confidence following answer proposals throughout a response trace, we extract a linear direction for latent confidence that separates high and low verbalized confidence. This direction can steer verbalized confidence as expected, but it surprisingly can also steer the next token probability of backtracking, performing on par with a linear direction extracted directly from backtracking examples. We then test the direction under progressively more realistic interventions. Steering continuously from a mid-trace answer proposal modulates response length (~-1.3k - ~+2.5k tokens) and the number of answer proposals (-4.18 - +4.75) in both directions, with minimal cost to accuracy. Applying the confidence direction from the start of generation, where proposal positions are unknown, still shortens traces at comparable accuracy, and its effect surfaces in the linguistic confidence of proposals. Overall, our study reveals the intricate interplay between a model's internal confidence and its proclivity to backtrack or commit to an answer.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:tracking"
+ },
+ "2611.29105": {
+  "day": "2026-11-24",
+  "cat": "cs.LO",
+  "title": "Spatial Ensemble Logic for Biomedical Imaging: Geometric Element Ensembles in Euclidean Space",
+  "abstract": "Ensemble Logic (EL) is a family of modal logics over metric monoids whose modal parameters are terms with quantified variables. We study its member over the Euclidian space, called Spatial Ensemble Logic (SEL), for biomedical images. Geometric element ensembles (GELs) represent atomic propositions by finite lists of effectively presented semi-algebraic sets, principally closed balls. Translation, dilation and erosion preserve individual balls up to emptiness in any dimension. Translation and dilation act element-wise, but element-wise erosion gives only an inner bound. For $k\\geq 2$, finite unions of balls are closed under neither intersection nor erosion. We therefore separate record representation from the evaluation domain. Our main result is a satisfaction-preserving translation over GELs into the first-order theory of real closed fields. It yields computable semi-algebraic satisfaction sets, decidable model checking and finite real algebraic evidence. For a fixed formula and dimension, model checking has polynomial data complexity under stated rationality and bounded-degree assumptions. Combined complexity is PSPACE-hard and in EXPSPACE. On the line, rational interval data admit linear-arithmetic evaluation with rational evidence, under rationality assumptions on the norm, query and evaluation point. For $k\\geq 2$, rational balls can force irrational witnesses. Lower and upper annotation bounds propagate through formulas. Synthesis of a ball ensemble is decidable within a prescribed budget of balls and undecidable without one. In a vascular use case, medial ball ensembles decide calibre and stenosis queries at stored centers by comparing stored numbers. We also examine how far evaluation can proceed element-wise when the union forming a support is deferred to the point of evaluation.",
+  "announce": "cross",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.30198": {
+  "day": "2026-11-24",
+  "cat": "eess.IV",
+  "title": "Geospatial foundation models and deep learning for climate resilience: a review of transfer, uncertainty and decision readiness",
+  "abstract": "Geospatial foundation models can reuse information learned from large Earth-observation archives, but their value for climate resilience depends on whether that information transfers to unfamiliar events, regions and observing conditions. This review connects advances in deep learning with the evidence needed for hazard monitoring and early warning. A descriptive audit of 137 full-text hazard-application studies is interpreted alongside a separate corpus of 37 model and benchmark records. Ninety-eight application studies reported an out-of-distribution experiment, whereas headline evaluations included held-out events in 31 studies, regions in 25 and sensors in only two. None of the ten studies coded for geospatial foundation-model fine-tuning used sensor holdout as a headline test. Uncertainty-related methods were recorded in 16 studies, including two with explicitly calibrated probabilistic output. These overlapping counts describe evaluation practice within the coded corpus, not a ranking of model families. We distinguish Earth-observation representation learning from atmospheric forecasting and examine how labels, observability, forecast lead time and decision requirements constrain their contribution across flood, wildfire, drought, heat, cryosphere and cascading-hazard applications. We then develop a decision-backward evaluation framework: define the action and information available when it must be taken, reproduce the relevant shift, retain a matched task-specific baseline, and report misses, false alarms, reliability and end-to-end latency. The framework turns transferability from a broad model claim into a testable requirement for climate adaptation and risk management.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial"
+ },
+ "2611.28905": {
+  "day": "2026-11-24",
+  "cat": "eess.IV",
+  "title": "Beyond the section plane: Robust 3D reconstruction of multiplex immunofluorescence exposes limitations of 2D spatial cell statistics",
+  "abstract": "Spatial analysis of the tumour microenvironment with multiplex immunofluorescence (mIF) typically relies on single thin tissue sections, which misrepresent the 3D tissue organisation and bias spatial cell statistics in ways that remain largely unquantified. We reconstruct 24 breast and lung tumour tissue microarray cores in 3D, each from 15-20 serial mIF sections, and compare spatial cell statistics in 3D with those from individual sections. Our pipeline combines affine pre-alignment with dense deformable refinement using RoMa v2, achieving a median target registration error of 1.79 $\\mu$m, well below nuclear size, which allows nuclei to be linked across sections. While cell-type proportions are preserved in 2D (Pearson corr. $r \\geq 0.99$), 3D analysis reveals up to 3.8 times shorter nearest-neighbour distances, 13-19% higher neighbourhood entropy, and 2-4 times more contacts per cell. Tissue composition can thus be reliably estimated from individual sections, whereas cell-cell interactions require volumetric analysis.",
+  "announce": "new",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "recall": "TITLE_EXTRA:spatial,3d reconstruction"
+ }
+}

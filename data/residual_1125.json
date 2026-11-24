@@ -1,0 +1,193 @@
+{
+ "mmdd": "1125",
+ "n_scanned": 899,
+ "n_flagged": 22,
+ "rate": 0.0245,
+ "by_track": {
+  "世界模型与仿真": 3,
+  "重建与SLAM": 4,
+  "内容生成": 7,
+  "化身与人体": 6,
+  "渲染与显示": 1,
+  "评估与数据集": 1
+ },
+ "flagged": [
+  {
+   "id": "2611.28136",
+   "n": 79,
+   "title": "ENGRAM: Reliability-Weighted Latent Fusion and Occlusion-Aware Layered Readout for Video World Models",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "相机轨迹条件化的视频世界模型，从单图生成3D一致的新视角序列，直接对应XR沉浸式视角合成管线"
+  },
+  {
+   "id": "2611.28591",
+   "n": 201,
+   "title": "CAR3T: Generalizable Calibration-Guided Reference-View Attention Reuse for Multi-View 3D Transformers",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "针对前馈式多视角三维重建的跨视角注意力复用与加速，直接服务三维重建管线。"
+  },
+  {
+   "id": "2611.28666",
+   "n": 225,
+   "title": "RecallWorld: Episodic Memory for Persistent Embodied Video World Models",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "面向具身视频世界模型的片段记忆，使智能体重访场景时保持几何与外观一致，属持久化世界模型。"
+  },
+  {
+   "id": "2611.28783",
+   "n": 260,
+   "title": "3DCodeFactory: Scaling Training Data for 3D Code Agents",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "为3D代码智能体构建可生成结构化、可交互三维场景的训练数据，属三维沉浸内容生成。"
+  },
+  {
+   "id": "2611.28815",
+   "n": 268,
+   "title": "ViTrust: Learning 3D Observation Trust for Deformable Physical World Models",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "从视觉观测学习可变形物体的物理世界模型，建模观测对物理参数辨识的影响以提升未来预测。"
+  },
+  {
+   "id": "2611.28922",
+   "n": 297,
+   "title": "PIAE: Physics-Informed Continuous Autoencoding for Compact 3D Human Motion",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "面向三维人体运动序列的物理感知连续自编码压缩，服务人体运动生成与驱动管线。"
+  },
+  {
+   "id": "2611.29165",
+   "n": 360,
+   "title": "Training-Free 3D Editing via Feature-Divergence Localization and Trajectory Correction",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "基于概率流模型的免训练三维资产编辑，实现局部结构修改并保持未编辑区域几何一致。"
+  },
+  {
+   "id": "2611.29389",
+   "n": 417,
+   "title": "PINE: Point, Instance and Normal Estimation in One-Step Diffusion Model",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "单步扩散联合估计逐像素点图、法向与实例，属单目几何重建核心组件。"
+  },
+  {
+   "id": "2611.29435",
+   "n": 426,
+   "title": "Ride on Anything: Contact-Coupled Monocular 4D Reconstruction of a Rider and Horse in Camera and World Frames",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "单目视频中人-马接触耦合 4D 网格重建，属动态人体体积捕捉管线。"
+  },
+  {
+   "id": "2611.29630",
+   "n": 473,
+   "title": "SuperFine3D: Efficient Global-Local Recursive Refinement for Extremely Detailed 3D Geometry Generation",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "由高分辨率图像生成极细节 3D 几何，面向 3D 资产生成。"
+  },
+  {
+   "id": "2611.29678",
+   "n": 480,
+   "title": "Ref2Light: From One Image to Interactive Glasses-Free 3D Characters",
+   "cat": "cs.CV",
+   "track": "渲染与显示",
+   "why": "面向光场裸眼 3D 显示的双目视差一致分层表示与实时姿态驱动。"
+  },
+  {
+   "id": "2611.29897",
+   "n": 538,
+   "title": "Motion Mamba 2.0: Autoregressive Diffusion Mamba for Long-Horizon Humanoid Control",
+   "cat": "cs.RO",
+   "track": "化身与人体",
+   "why": "长时程可控人体动作生成，直接服务交互式动画与数字人驱动。"
+  },
+  {
+   "id": "2611.29970",
+   "n": 557,
+   "title": "FASCIA: Seeing Beneath the Surface with Queryable, Personalized Anatomy in Any Pose",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "基于人体参数化骨架的个性化全身（含内部结构）建模与任意姿态驱动。"
+  },
+  {
+   "id": "2611.30013",
+   "n": 571,
+   "title": "3AGameFactory-Motion: Agentic Rigging and Reliable Complex Motion Generation for Diverse 3D Assets",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "面向多形态3D资产的骨骼绑定与复杂动作生成基准，直接服务虚拟化身/角色动画管线。"
+  },
+  {
+   "id": "2611.30176",
+   "n": 629,
+   "title": "OmniSenMo: A Unified Multisensory Language Model for Generalizable Human Motion Estimation, Understanding, and Prediction",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "多传感器统一的人体运动估计/理解/预测，属全身动捕与化身驱动的人体建模核心能力。"
+  },
+  {
+   "id": "2611.30219",
+   "n": 643,
+   "title": "RoomTokens: Masked Diffusion over Structured Tokens for Indoor Scene Synthesis",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "结构化token掩码扩散的3D室内场景合成，属可复用的沉浸式3D场景内容生成。"
+  },
+  {
+   "id": "2611.30345",
+   "n": 678,
+   "title": "SceneCast: Learning Indoor Scene Synthesis from Curated Synthetic Videos with LLM Reward",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "从合成视频与LLM奖励学习3D室内场景合成，属3D场景/沉浸式内容生成。"
+  },
+  {
+   "id": "2611.30472",
+   "n": 707,
+   "title": "Target-Part Preference Optimization for Part-Aware 3D Generation",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "部件感知的3D资产生成与偏好微调，服务XR 3D物体内容创作管线。"
+  },
+  {
+   "id": "2611.30741",
+   "n": 775,
+   "title": "Place-Revisit Consistency Evaluation of Reference Poses",
+   "cat": "cs.RO",
+   "track": "评估与数据集",
+   "why": "针对里程计与SLAM基准参考位姿的局部不一致性问题，属XR定位管线基准评测方法。"
+  },
+  {
+   "id": "2611.30769",
+   "n": 782,
+   "title": "Screening for nonrigidity in structure from motion using projected reprojection residuals",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "用投影重投影残差检测SfM静态假设失效，直接服务于三维重建管线的有效性筛查。"
+  },
+  {
+   "id": "2611.31143",
+   "n": 874,
+   "title": "Head Anything: Correspondence-Guided Joint Generation of 3D Heads from Few Images",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "多图对应引导联合生成三维人头模型，直接产出可用于虚拟化身的人头几何与外观。"
+  },
+  {
+   "id": "2611.31239",
+   "n": 898,
+   "title": "Lyris: Layout-Guided Long Video Generation with Persistent 3D Memory",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "以持久三维记忆生成长时相机可控场景漫游视频，服务沉浸式场景探索内容生成。"
+  }
+ ],
+ "note": "只报警清单：入馆须另行走全文抓取→评分→产物，本文件不改变 registry"
+}

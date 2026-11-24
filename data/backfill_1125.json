@@ -1,0 +1,56 @@
+{
+ "2511.20578": {
+  "cat": "cs.HC",
+  "title": "A User-customized and Untethered Electro-haptic Device for Immersive Human-Machine Interaction",
+  "abstract": "Haptic feedback is essential for human--machine interaction, as it bridges physical and digital experiences and enables immersive engagement with virtual environments. Current haptic devices are frequently tethered and lack portability and flexibility. They also have limited ability to deliver fine-grained, multi-dimensional feedback. To address these challenges, we present a flexible, ultra-thin, and user-customized electro-haptic device fabricated with soft materials and printable liquid metal ink. Its highly integrated and lightweight design minimizes interference with natural hand movements while maintaining reliable skin contact. By delivering finely controlled electrical stimulation through 15 electrodes, it can evoke a wide range of tactile sensations that cover diverse interaction scenarios.",
+  "announce": "replace",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "track": "触觉与多模态"
+ },
+ "2605.00389": {
+  "cat": "cs.HC",
+  "title": "Play and Learn: Gamified Feedback for Ultrasound-Guided Catheter Insertion Training in Virtual Reality",
+  "abstract": "VR is widely used in procedural medical training, but many simulators prioritize realism over formative feedback. We developed a gamified VR simulator for ultrasound-guided peripheral IV catheter insertion, using aligned visual and auditory feedback such as progress indicators, guidance, and rewards. In studies with novices (N=24) and clinicians (N=12), gamification reduced task time, improved usability, and lowered workload. Qualitative results showed clearer goals and greater confidence for novices, and improved pacing for experts. Overall, gamification can provide effective formative feedback in VR medical training.",
+  "announce": "replace",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "track": "系统与平台"
+ },
+ "2607.11627": {
+  "cat": "cs.GR",
+  "title": "IBPA: Real-time Free-form Manifold Mesh Reconstruction via Incremental Ball Pivoting with Integrated Hole Detection",
+  "abstract": "Both Remotely Operated underwater Vehicles (ROVs) and Autonomous Underwater Vehicles (AUVs) are frequently deployed to acquire geometric bathymetric data. However, it is often discovered post-survey that the acquired data coverage is incomplete. Given the high operational cost associated with underwater deployments, it is essential to incrementally visualize surface coverage in real-time to support informed decision-making by both the operators of ROVs and the AUVs during data collection. In addition, traditional incremental surface reconstruction methods, such as Digital Terrain Models (DTMs), are inherently limited in expressiveness: they represent surfaces as height fields, allows only one elevation value per $(x, y)$ coordinate and thus cannot capture overhangs or vertical structures. To overcome these limitations, we adapt the original Ball Pivoting Algorithm (BPA) into an incremental, real-time, and free-form surface reconstruction method, referred to as Incremental BPA (IBPA). Our method incrementally constructs an orientable, manifold mesh from streaming point cloud data without imposing assumptions regarding point cloud overlap or spatial distribution. Furthermore, we introduce a hole detection mechanism that identifies and highlights incomplete mesh regions. Compared to existing approaches, our method supports more complex surface topologies without prior structural assumptions. The source code of our reference implementation is available: https://github.com/Mauhing/Incremental-BPA",
+  "announce": "replace",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "track": "重建与SLAM"
+ },
+ "2608.04701": {
+  "cat": "cs.CV",
+  "title": "UniWorld-View: Large-Baseline View Synthesis via Video Diffusion Models",
+  "abstract": "Novel view synthesis from casually captured monocular images and videos offers a practical route to immersive content creation without dedicated multi-view capture. However, the limited viewpoint coverage of such inputs leaves scene geometry insufficiently constrained, restricting the ability of reconstruction-based methods, such as neural radiance fields (NeRF) and 3D Gaussian Splatting (3DGS), to render views far from the observed viewpoints. Generative approaches leverage learned visual priors to synthesize unobserved content, but maintaining geometric consistency and precise camera control remains challenging under large viewpoint changes. We present UniView, a unified framework for large-baseline novel view synthesis and scene generation from monocular images and videos. Central to our approach are an occlusion-aware point cloud renderer and a dual-branch conditioning mechanism. The renderer uses triple reprojection to identify and filter unreliable projections under large viewpoint changes. The conditioning mechanism integrates the resulting geometric guidance with source-view appearance within the video diffusion model, enabling precise camera control while preserving visual details and synthesizing unobserved content. To extend view synthesis to scene generation, we introduce a two-stage generation strategy that decouples viewpoint changes from temporal evolution. This strategy produces dense, synchronized multi-view videos that provide additional supervision for dynamic Gaussian Splatting, enabling more complete 4D generation from monocular observations. Extensive evaluations across static and dynamic scenes demonstrate the effectiveness of UniView in novel view synthesis and scene generation, combining precise camera control with geometric consistency and visual fidelity.",
+  "announce": "replace",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "track": "神经渲染"
+ },
+ "2608.28386": {
+  "cat": "cs.CV",
+  "title": "GraspHOI: Full-Body 3D Human-Object Reconstruction with Finger-Level Grasps from a Single In-the-Wild Image",
+  "abstract": "Existing monocular full-body 3D human-object interaction (HOI) methods do not combine category-agnostic object reconstruction with finger-level contact. Their hands may float off or sink into objects, breaking realism in AR/VR environments. We present GraspHOI, the first category-agnostic framework that reconstructs a full-body 3D HOI from a single image and jointly refines the arms and fingers so that the hands meet the reconstructed object surface. GraspHOI reconstructs the body, hands, and object separately with foundation models and places them in a shared metric camera frame through depth-based registration and silhouette alignment. Occlusion-aware contact correspondences seat the object against the hand, and contact-aware optimization refines shoulder, elbow, wrist, and finger rotations while anchoring the joints to the image. We find that with fingers capped near the image estimate, refining them alone is insufficient; freeing the arm removes most of the remaining hand-object gap, since in a full body the arm chain places the hand. In experiments on three datasets, GraspHOI yields more plausible hand-object contact than four baselines and better relative human-object placement than HDM and TeHOR.",
+  "announce": "replace",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "track": "化身与人体"
+ },
+ "2610.41373": {
+  "cat": "cs.CV",
+  "title": "Queryable Gaussian View Index: Retrieval, Localization, and Agentic View Search",
+  "abstract": "Given an existing 3D Gaussian scene and calibrated references, we seek camera poses and views that answer text, RGB, or image-and-instruction queries. RGB localization recovers a source camera; a target-view instruction can require a different camera while preserving the referenced scene content. Queryable Gaussian View Index (QGVI) supports these requests through a semantic view index that binds structured captions and observations to calibrated camera poses. QGVI-T retrieves indexed candidates with BM25. QGVI-A uses this interface and geometric source localization (QGVI-I) as tools, sharing candidate poses, observations, and query conditions marked satisfied, violated, or unknown. Unmet conditions guide camera proposals and rendered checks. Supported answers exit early; unresolved queries return insufficient evidence within a shared search budget. We construct a nine-scene benchmark, including city-scale environments, covering semantic view retrieval, RGB localization with out-of-map rejection, and image-conditioned target-view search. Under GPT assessment on the development cohort, QGVI-A returns confirmed correct views for 90.4\\% of target-view queries, compared with 26.8\\% for one-shot Retrieve + Select. This comparison evaluates complete policies with different information and call budgets; QGVI-A achieves higher coverage at lower answer precision. The benchmark separates semantic satisfaction, source-camera accuracy, and acceptance decisions.",
+  "announce": "replace",
+  "published_rss": "2026-11-24",
+  "in_registry": false,
+  "track": "神经渲染"
+ }
+}

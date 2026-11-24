@@ -1,0 +1,215 @@
+{
+ "run_date": "2026-11-25",
+ "run_type": "regular_batch_announcement_1124",
+ "announce_day": "2026-11-24",
+ "pull_day": "2026-11-25",
+ "registry_total_before": 1132,
+ "grades_before": {
+  "S": 18,
+  "A": 557,
+  "B": 427,
+  "C": 130
+ },
+ "notes_before": 768,
+ "daily_before": 77,
+ "moc_before": 64,
+ "announcement_group": {
+  "slots": 1285,
+  "unique": 1045,
+  "per_cat": {
+   "cs.CV": {
+    "declared": 494,
+    "got": 494
+   },
+   "cs.GR": {
+    "declared": 13,
+    "got": 13
+   },
+   "cs.HC": {
+    "declared": 61,
+    "got": 61
+   },
+   "cs.MM": {
+    "declared": 18,
+    "got": 18
+   },
+   "cs.RO": {
+    "declared": 191,
+    "got": 191
+   },
+   "cs.AI": {
+    "declared": 485,
+    "got": 485
+   },
+   "eess.IV": {
+    "declared": 23,
+    "got": 23
+   }
+  }
+ },
+ "recall": {
+  "rss_items": 1547,
+  "listing_coverage": "1045/1045（缺收 0）",
+  "kw_hits": 100,
+  "title_extra": 46,
+  "pool": 146,
+  "rejected_from_pool": 84,
+  "residual_scanned": 899,
+  "residual_flagged": 22,
+  "residual_rate": 0.0245,
+  "residual_adopted": 6,
+  "main_candidates": 68,
+  "residual_adopted_list": [
+   "2611.28136",
+   "2611.28666",
+   "2611.29389",
+   "2611.29678",
+   "2611.29897",
+   "2611.31143"
+  ],
+  "note": "残差采纳 6 篇全部走全文抓取与评分后入馆，未直接并入 registry"
+ },
+ "gate1": {
+  "max_jaccard": 0.263,
+  "pair": [
+   "2611.28802",
+   "arXiv:2609.23436"
+  ],
+  "threshold": 0.62,
+  "pass": true,
+  "note": "只对比追加前库内集合（不含本批两批）"
+ },
+ "gate2": {
+  "top10_tracks": {
+   "化身与人体": 3,
+   "空间计算与UI": 1,
+   "内容生成": 1,
+   "重建与SLAM": 2,
+   "神经渲染": 2,
+   "触觉与多模态": 1
+  },
+  "n_tracks": 6,
+  "pass": true,
+  "rescreen": "未触发（纯值 Top10 已覆盖 ≥5 赛道）",
+  "all_batch_tracks": 12
+ },
+ "gate3": {
+  "window_lo": "2026-10-26",
+  "window_hi": "2026-11-25",
+  "window_excludes_today": true,
+  "window_excludes_this_run_batches": true,
+  "this_run_batches_excluded": [
+   "2026-11-25",
+   "backfill-1125"
+  ],
+  "in_window": 514,
+  "top10_mean": 4.432,
+  "top10_lib": [
+   {
+    "id": "arXiv:2611.06817",
+    "date": "2026-11-06",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-06"
+   },
+   {
+    "id": "arXiv:2611.11169",
+    "date": "2026-11-11",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-11"
+   },
+   {
+    "id": "arXiv:2603.01178",
+    "date": "2026-11-14",
+    "value": 4.5,
+    "grade": "A",
+    "batch": "backfill-1114"
+   },
+   {
+    "id": "arXiv:2611.21143",
+    "date": "2026-11-18",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-18"
+   },
+   {
+    "id": "arXiv:2611.26625",
+    "date": "2026-11-21",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-21"
+   },
+   {
+    "id": "arXiv:2610.39399",
+    "date": "2026-10-31",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-10-31"
+   },
+   {
+    "id": "arXiv:2611.09458",
+    "date": "2026-11-10",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-11-10"
+   },
+   {
+    "id": "arXiv:2611.21479",
+    "date": "2026-11-18",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-11-18"
+   },
+   {
+    "id": "arXiv:2611.07902",
+    "date": "2026-11-07",
+    "value": 4.36,
+    "grade": "A",
+    "batch": "2026-11-07"
+   },
+   {
+    "id": "arXiv:2610.34263",
+    "date": "2026-10-28",
+    "value": 4.35,
+    "grade": "A",
+    "batch": "2026-10-28"
+   }
+  ],
+  "today_max": 4.21,
+  "margin": -0.222,
+  "heavy_day_raw": false,
+  "heavy_day": false,
+  "blockbuster": false,
+  "s_awarded": false,
+  "verdict": "non_blockbuster"
+ },
+ "top10": [
+  "2611.31140",
+  "2611.28649",
+  "2611.30597",
+  "2611.30461",
+  "2611.30802",
+  "2611.29236",
+  "2611.30572",
+  "2611.31156",
+  "2611.28520",
+  "2611.29163"
+ ],
+ "grades_main": {
+  "S": 0,
+  "A": 44,
+  "B": 22,
+  "C": 2
+ },
+ "grades_all": {
+  "S": 0,
+  "A": 46,
+  "B": 26,
+  "C": 2
+ },
+ "evidence": {
+  "FULL": 72,
+  "PARTIAL": 2
+ }
+}

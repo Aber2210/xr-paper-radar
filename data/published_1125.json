@@ -1,0 +1,446 @@
+{
+ "2611.28085": {
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "cat": "cs.CV",
+  "title": "UbiEnlight: User-Perception-Aware Real-Time Low-Light Video Enhancement on Mobile Devices and Smartglasses"
+ },
+ "2611.28802": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "Not All Directions Are Flat: Decomposed-Gradient Flatness for Sparse-View 3D Gaussian Splatting"
+ },
+ "2611.28792": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "ArgsWorld: Unifying 3DGS Scene Reconstruction, Generation and Extrapolation with Autoregressive Diffusion Transformer"
+ },
+ "2611.29059": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "Recurrent Point Transformer via Test-Time Training"
+ },
+ "2611.28111": {
+  "published": "2026-11-18",
+  "updated": "2026-11-18",
+  "cat": "cs.CV",
+  "title": "GC-GS: Optimizing 3D Gaussian Splatting with Gradient Conflict as a Geometry Signal"
+ },
+ "2611.28193": {
+  "published": "2026-11-20",
+  "updated": "2026-11-20",
+  "cat": "cs.CV",
+  "title": "FastD4RT: Training-Free Acceleration of Dynamic 4D Reconstruction and Tracking"
+ },
+ "2611.28056": {
+  "published": "2026-11-04",
+  "updated": "2026-11-04",
+  "cat": "eess.AS",
+  "title": "NAVIQUAL-XR: Finding the Sweet Spot of a Live Music Environment in Augmented Reality"
+ },
+ "2611.28027": {
+  "published": "2026-10-05",
+  "updated": "2026-10-05",
+  "cat": "cs.HC",
+  "title": "A No-Code Toolchain for Validating Wearable Motion Sensing Systems"
+ },
+ "2611.28520": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "VG3R: Video Generation Model for Feed-Forward 3D Reconstruction"
+ },
+ "2611.28665": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "Seeing Right, Writing Wrong: Where Short Chain-of-Thought Breaks Spatial VQA"
+ },
+ "2611.28939": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.RO",
+  "title": "T-Tac: A Soft and Thin Active Thermal Tactile Sensor for Robotic In-Grasp Material Identification"
+ },
+ "2611.28878": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "Eidetic Code World Model"
+ },
+ "2611.28020": {
+  "published": "2026-09-18",
+  "updated": "2026-09-18",
+  "cat": "cs.HC",
+  "title": "SoundFleXR: Selectively Constraining Axes of Audio Rendering Presentations"
+ },
+ "2611.28682": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "CHORD: Closed-loop Human-Object Rectified-flow Decomposition"
+ },
+ "2611.28913": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "From Dense to Sparse: Morton-Ordered Sparse Mapping for Efficient 3D Mesh Generation"
+ },
+ "2611.28649": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "S-Mind: Internalizing Multi-View Geometry for Spatial Intelligence"
+ },
+ "2611.28636": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "SemGuard: Semantics-Decoupled Watermarking for Gaussian Splatting"
+ },
+ "2611.29026": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "RAGA: Refreshable Animatable Gaussian Avatars from a Single Photo"
+ },
+ "2611.28979": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "AlignHand: Multi-View Hand Reconstruction from a Frozen Monocular Prior"
+ },
+ "2611.28673": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "ViewAgent3D: A Training-Free Multi-View Pipeline for 3D Scene Understanding"
+ },
+ "2611.28670": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "Learning Continuous Scene Depth Representations via Cross-Modal Gaussian Rendering"
+ },
+ "2611.28136": {
+  "published": "2026-11-19",
+  "updated": "2026-11-19",
+  "cat": "cs.CV",
+  "title": "ENGRAM: Reliability-Weighted Latent Fusion and Occlusion-Aware Layered Readout for Video World Models"
+ },
+ "2611.28090": {
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cat": "cs.CV",
+  "title": "Teacher-Guided Multimodal Dual Representation Reconstruction for Egocentric Human Activity Recognition"
+ },
+ "2611.28666": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "RecallWorld: Episodic Memory for Persistent Embodied Video World Models"
+ },
+ "2611.28793": {
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "cat": "cs.GR",
+  "title": "STAC++: Plug-and-Play Adaptive Spatio-Temporal Aware Cache Compression for Streaming 3D Reconstruction"
+ },
+ "2611.29647": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.HC",
+  "title": "Immersive Video Effects Persist Beyond Exposure: From Psychological Closeness to Self-Initiated Behaviour in a Two-Week Comparison with 2D Video"
+ },
+ "2611.29293": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "GALILEO: Geometric RoPE with Galilean Key Transport for Dynamic Scenes"
+ },
+ "2611.30173": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.RO",
+  "title": "Confidently Lost: Silent Failure and Edge Deployment of Dense Visual SLAM under Photon Starvation"
+ },
+ "2611.30166": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.RO",
+  "title": "Toward Open Room-Scale Scanning with Consumer LiDAR via Depth-Inertial Odometry"
+ },
+ "2611.29920": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Dynamic Gaussian Scene Reconstruction by Integrating Events and Structural Priors"
+ },
+ "2611.30042": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.AI",
+  "title": "SWAM: State-aware World Action Model for Multi-Agent 3D Environments"
+ },
+ "2611.30388": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "BASE: A Backend-Agnostic Streaming Embodiment Layer for Full-Duplex Conversational Avatars"
+ },
+ "2611.29236": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "Complementary Geometry in Gaussian Splatting"
+ },
+ "2611.29218": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "Ego-HMB: Human Motion Bridging from Egocentric Images via A Motion Bridge Diffusion Model"
+ },
+ "2611.29168": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "SpatialDuet: Bayesian task routing between a metric expert and a geometry expert for spatial intelligence"
+ },
+ "2611.29376": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.HC",
+  "title": "Chameleon: Exploring Risk Interpretation through Scene-Matched Textures in Virtual Reality"
+ },
+ "2611.29614": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "GravHMR: Coupling SLAM and Human Mesh Recovery in a Shared Gravity Frame"
+ },
+ "2611.30226": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.AI",
+  "title": "VeriWorld: A Verifiable Visual SWE-Bench for Spatial Reasoning in 3D Environments"
+ },
+ "2611.29678": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "Ref2Light: From One Image to Interactive Glasses-Free 3D Characters"
+ },
+ "2611.29163": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "Inclusive Hand Pose Estimation via Topology-Aware Distillation and Progressive Kinematic Reasoning"
+ },
+ "2611.29112": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "Bridging Blind Spots With Words: Decentralized Multi-View Spatial Reasoning via Language-Constrained Communication"
+ },
+ "2611.30102": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "LMnOP: Pruning 3D Gaussian Splatting via Leave-Many-Out Importance"
+ },
+ "2611.29897": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.RO",
+  "title": "Motion Mamba 2.0: Autoregressive Diffusion Mamba for Long-Horizon Humanoid Control"
+ },
+ "2611.30184": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.RO",
+  "title": "OmniSLAM: Evidence-Authorized Revision of Persistent Object Maps"
+ },
+ "2611.29838": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "Continuous-time 4D Reconstruction via Event-guided Latent Feature Interpolation"
+ },
+ "2611.29389": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "PINE: Point, Instance and Normal Estimation in One-Step Diffusion Model"
+ },
+ "2611.29693": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.CV",
+  "title": "HandiVid: A High-Quality Dataset for Hand-Driven Interactive Video Generation"
+ },
+ "2611.29240": {
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cat": "cs.RO",
+  "title": "Tacinf: A Unified Tactile Infrastructure for Robot Manipulation"
+ },
+ "2611.30012": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "FlexGaze: Weakly Supervised Gaze Estimation at Scale"
+ },
+ "2611.30351": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "NNS-GS: Non-Local Neural Scattering for Relightable Gaussian Splatting"
+ },
+ "2611.30629": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.MM",
+  "title": "Faster, Smaller, and Better-Looking: Fast-GSVC for 2D Gaussian Video Coding"
+ },
+ "2611.30572": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.RO",
+  "title": "VeriTouch: Verified Visuo-Tactile World Models that Improve Robot Policy Learning"
+ },
+ "2611.30461": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "LiveMirror: Real-Time Diffusion Virtual Try-On on a Consumer GPU and Its Self-Supervised Adaptation to Indian Ethnic Wear"
+ },
+ "2611.30898": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "World Models as Native Latent Action Models"
+ },
+ "2611.31156": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Tokens as Locality-Preserving Anchors: Scalable Novel View Synthesis with Target-Adaptive Token Routing"
+ },
+ "2611.31023": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "WildAnySplat: Feed-Forward 3D Gaussian Splatting in the Wild"
+ },
+ "2607.11627": {
+  "published": "2026-07-13",
+  "updated": "2026-11-22",
+  "cat": "cs.GR",
+  "title": "IBPA: Real-time Free-form Manifold Mesh Reconstruction via Incremental Ball Pivoting with Integrated Hole Detection"
+ },
+ "2611.30597": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "ViDiHand2: Unifying Video Diffusion Priors and Hand Geometry for 3D Hand Motion Reconstruction in the Wild"
+ },
+ "2605.00389": {
+  "published": "2026-05-01",
+  "updated": "2026-11-22",
+  "cat": "cs.HC",
+  "title": "Play and Learn: Gamified Feedback for Ultrasound-Guided Catheter Insertion Training in Virtual Reality"
+ },
+ "2610.41373": {
+  "published": "2026-10-30",
+  "updated": "2026-11-21",
+  "cat": "cs.CV",
+  "title": "Queryable Gaussian View Index: Retrieval, Localization, and Agentic View Search"
+ },
+ "2511.20578": {
+  "published": "2025-11-25",
+  "updated": "2026-11-23",
+  "cat": "cs.HC",
+  "title": "A User-customized and Untethered Electro-haptic Device for Immersive Human-Machine Interaction"
+ },
+ "2611.30802": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Go Far, Look Less: Active Multi-Room Reconstruction with Persistent Goals and Selective Views"
+ },
+ "2611.30734": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "EgoDepth-Bench: Benchmarking Metric Depth for Egocentric Manipulation"
+ },
+ "2611.30787": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "BridgeMVS: Bridging Multi-View Stereo and Monodepth via Bidirectional Dynamic Fusion"
+ },
+ "2611.30777": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "AvatarAnyone: Agentic Reconstruction of Mesh-Based Layered Avatars from YouTube Video"
+ },
+ "2611.31215": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.AI",
+  "title": "Seeking in Space: Benchmarking Purposeful Active Exploration of Vision-Language Models for Spatial Reasoning"
+ },
+ "2611.31143": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Head Anything: Correspondence-Guided Joint Generation of 3D Heads from Few Images"
+ },
+ "2608.28386": {
+  "published": "2026-08-28",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "GraspHOI: Full-Body 3D Human-Object Reconstruction with Finger-Level Grasps from a Single In-the-Wild Image"
+ },
+ "2608.04701": {
+  "published": "2026-08-05",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "UniWorld-View: Large-Baseline View Synthesis via Video Diffusion Models"
+ },
+ "2611.30392": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "LiquidGazeNet: Towards Event-Based Near-Eye Gaze Estimation under Low-Light Conditions"
+ },
+ "2611.30607": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Tri-DNO: Trilateral Diffusion Noise Optimization for 3D Human Object Interaction"
+ },
+ "2611.30552": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.HC",
+  "title": "An Experimental Apparatus for Embodied Conversational AI: A Simple Implementation Coupling a Commercial Voice AI with an Avatar"
+ },
+ "2611.31018": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.GR",
+  "title": "DiffSimp: Differentiable Mesh Simplification for Gradient-Based Low-Poly Modeling"
+ },
+ "2611.31140": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "HoloSplat: Real-Time Token Streaming for Feed-Forward Human Reconstruction"
+ }
+}
