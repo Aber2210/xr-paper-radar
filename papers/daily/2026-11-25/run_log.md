@@ -13,3 +13,12 @@
 - 第 7 步 Top10：实数 10 篇（4.21–3.92），全部 A；全批 A 46 / B 26 / C 2，0 S。
 - 第 8 步 产物：报告 2 + 笔记 72（C 级 2 篇不写）+ MOC 2 + 总索引刷新 + 7dim-table（主批/backfill 各 1）+ scored.md + run_log；registry 1,132 → **1,206**（备份 `papers/library/registry.jsonl.bak-20261125`）。易错点：`7dim-table.md` 表头必须保留 `arXiv` 列，否则前端批次卡表内计数为 0。
 - 第 9 步 发布：见下方发布记录（构建 → `node --check` → CDP 冒烟 → `check_release` → 提交 → 推送 → Pages 核验）。
+- 第 9 步 发布记录（实测）：
+  - 构建：`python scripts/build_frontend.py` → **`verified: {'papers': 1206, 'notes': 840, 'batches': 79}`**，与磁盘一致；`BATCH_LABELS` 补 `2026-11-25` 与 `backfill-1125` 两条中文标签。
+  - 语法：抽出 2 个 `<script>` 块（4,142,200 / 33,328 字符）逐个 `node --check` → 均 OK。
+  - 冒烟：`node scripts/smoke_hub.mjs` → **SMOKE: PASS**（papers/notes/batches 与磁盘一致、lastThree = 11-25/11-24/11-23、五标签渲染 4/2/2/3/1、排序 8 项单调性、隐藏与弹窗交互、`PAGE_ERRORS: none`、79 张批次卡）。
+  - 发布门：`python scripts/check_release.py` → **G1 PASS**（1206/840/79 == DATA）、**G2 PASS**（gates_1125 门③ 五字段齐）、**G3 PASS**（本批授予 S=False、backfill 记 S=0、本批泄漏 S=0）、**R OK**（899 判 22 = 2.5%）→ **VERDICT: PASS**，`--record` 已记账（`data/verdicts.jsonl` 共 5 批）。
+  - 渠道① **不可用**：ToolSearch 无 `workbuddy_sites_deploy`；`https://xr-paper-hub.app.workbuddy.host/` 与 `/index.html` 均 **403 / 3,174 bytes** → 按口径写「**渠道① 不可用（累计第 36 批挂账）**」，**未声称已发布**。
+  - 渠道② 成功：commit `80207fa` → 增量推送 `python scripts/push_to_github.py --incremental`（变更/新增 **140**、删除 0、未变 2,214）→ main **`9c94e831`**；`gh run list` → `deploy-pages.yml` run **45468795909 success（31 s）**。
+  - 线上核验：`https://aber2210.github.io/xr-paper-radar/` → **HTTP 200 / 6,533,825 bytes**、含 `const DATA`；LF 归一化 md5 **`f5a589aa2d1236da7e147e371f1fc254`** 与本地 `web/xr-paper-hub.html` **完全一致（MATCH）**。
+  - 附带发现（非本批引入）：`deploy-pages.yml` 的 **`schedule` 触发**在 11-24 05:41 的运行 **failure**，报 `No artifacts named "github-pages" were found for this workflow run` —— build job 只在 push 事件产出 artifact，定时触发时 deploy job 无产物可部署。**push 触发不受影响**（本批 success）。已登记为风险项，未在本批修改 workflow。

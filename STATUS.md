@@ -6,15 +6,15 @@
 > 3. 每条必须四要素：现象 / 影响 / 当前处置 / 触发条件或责任。
 > 4. 关闭的事项从 §1 移入 §2，保留编号，不删除（可追溯）。
 
-- **最后更新**：2026-11-24（每日批次：**11-23 周一公告批次** 主批 41 篇 + backfill 9 篇；24A/17B + 7A/2B，**非重磅日无 S**，门③ 4.27 < 4.432）
-- **当前库况**：registry 1132 / notes 768 / daily 77 ｜ 最新真实批次 2026-11-24（41 篇，24A/17B，无 S，门③ margin −0.162）｜ 11-24 卡片 count=41 / backfill 卡 count=9 ｜ 门③ 现算基线 **4.432**（窗口 [2026-10-25, 2026-11-24)，464 条入窗）
+- **最后更新**：2026-11-25（每日批次：**11-24 周二公告批次**（含 11-21/11-22 周末积压）主批 68 篇 + backfill 6 篇；44A/22B/2C + 2A/4B，**非重磅日无 S**，门③ 4.21 < 4.432 / margin −0.222）
+- **当前库况**：registry **1206** / notes **840** / daily **79** ｜ 最新真实批次 2026-11-25（68 篇，44A/22B/2C，无 S，门③ margin −0.222）｜ 11-25 卡片 count=68 / backfill-1125 卡 count=6 ｜ 门③ 现算基线 **4.432**（窗口 [2026-10-26, 2026-11-25)，514 条入窗）
 - **回滚点**：`v1.0-20261118`（本地 + 远端）
 
 ## 1. 未完成事项（Open）
 
 | ID | 现象 | 影响 | 当前处置 | 触发条件 / 责任 |
 |---|---|---|---|---|
-| O-1 | 渠道① `xr-paper-hub.app.workbuddy.host` 返回 403（3174 bytes） | 双渠道变单渠道 | 不修；报告如实写「渠道①不可用（第 N 批挂账）」，禁止声称已发布 | 托管侧重签后可恢复；累计 **35 批**（2026-10-21 ~ 11-24，按每日运行计含状态日） |
+| O-1 | 渠道① `xr-paper-hub.app.workbuddy.host` 返回 403（3174 bytes） | 双渠道变单渠道 | 不修；报告如实写「渠道①不可用（第 N 批挂账）」，禁止声称已发布 | 托管侧重签后可恢复；累计 **36 批**（2026-10-21 ~ 11-25，按每日运行计含状态日） |
 | O-2 | registry 内 65 行赛道非规范（63 行「—（非 XR）」+ `具身交互` 1 + `空间计算` 1） | 统计口径轻微失真 | **WONTFIX**：前端有 `#8a93a8` 兜底配色，改数据需动 65 行并重建前端 | 若将来做赛道重分类时一并处理 |
 | O-4 | `audit_gap_listing.py` 未并入「目标组 >500 条补页」逻辑 | 极端大日组可能少采 | **WONTFIX**（随 R-03 抽库一并放弃）；每日实例以 `audit_listing_1117.py` 为模板，含补采 | 若某日目标组 >500 且 declared≠got 时报错（守卫会 exit 2） |
 | O-5 | `send_automation_result` 在部分会话不可见 | 收尾汇报可能失败 | 观察项：不可见时改用 present_files + 报告正文 | 连续 2 次不可见则改指令 |
@@ -23,6 +23,8 @@
 | O-9 | 历史 `data/gates_*.json`（≤1117）缺 `window_excludes_*` 留痕字段 | 事后无法自证当时口径 | **grandfather 不回算**（与门③ 历史值政策一致） | 仅新批必须齐四字段 |
 | O-10 | `update_moc_<MMDD>.py` 等一次性锚点脚本，重跑即 `ANCHOR NOT FOUND` | 无法幂等重跑 | 已知限制，不修；重跑前用 `git show <批次前commit>` 还原 MOC | 需要重跑时按此办法 |
 | O-11 | Jev API 返回 **451**（法律原因不可用）；AnyJev 需本地 LLM，本机无 GPU | 决策模型路线受阻 | 搁置；已用现有模型做盲评基线（7/7 精确） | 若区域放开或有 GPU 再评估 |
+| O-12 | `fetch_fulltext.py` 缺「`chars < 8000` 且命中 landing 特征 → 强制 PARTIAL」守卫 | 证据等级会系统性虚高（ar5iv 摘要落地页被判 FULL） | **连续两批靠人眼抽看兜底**（11-24 的 2611.27633、11-25 的 2611.29647 / 2611.30012）| 下批必须落到脚本里；否则 TEC/EXP 断言不可信 |
+| O-13 | `deploy-pages.yml` 的 **`schedule` 触发**必失败：`No artifacts named "github-pages" were found` | 定时重部署不生效（push 触发正常） | 未改 workflow（本批如实登记）；build job 仅在 push 事件产出 artifact | 若需定时重部署，给 build job 加 `if: github.event_name != 'schedule'` 之外的补跑路径 |
 
 ## 2. 已关闭（保留编号，不删）
 
@@ -63,7 +65,7 @@
   3. 残差复核 rate（连续 3 日 >12% 上报）；
   4. 前端冒烟 + 线上 md5 核对。
   历史判决归档，不再重开；若确需 `PASS`，另起独立确认席（约 30 分钟，仅对当批断言复跑）。
-- **最近一批**：`2026-11-24` 判 **PASS**（G1 1132/768/77 三计数一致；G2 `gates_1124.json` 字段齐、险过四字段在；G3 无 S 泄漏、backfill 记 S=0；残差 rate 2.2%（8/371）；门③ 4.27 vs 4.432 → margin −0.162、非重磅日无 S）——见 `data/verdicts.jsonl`。上一批 `2026-11-21` 判 PASS（G1 1082/718/73；残差 rate 1.6%）；`2026-11-22` / `2026-11-23` 为状态日 WARN（R 项未执行，未补造）。
+- **最近一批**：`2026-11-25` 判 **PASS**（G1 **1206/840/79** 三计数一致；G2 `gates_1125.json` 字段齐、险过四字段在；G3 无 S 泄漏、backfill 记 S=0；残差 rate **2.45%（22/899）**；门③ 4.21 vs 4.432 → margin −0.222、非重磅日无 S；HoloSplat 4.21 达 S 线按 skill §8.6.3 记 A）——见 `data/verdicts.jsonl`（共 5 批）。上一批 `2026-11-24` 判 PASS（G1 1132/768/77；残差 2.2%）；`2026-11-22` / `2026-11-23` 为状态日 WARN（R 项未执行，未补造）。
 - **2026-11-22（周日状态日）**：`check_release.py` → **WARN**（G1 1082/718/**74** PASS、G2 `gates_1122.json` 字段齐 PASS、G3 无泄漏 PASS；R 项因状态日未生成 `residual_1122.json` 报「未执行」）。**WARN 不阻塞发布**，如实登记而非补造残差文件；未 `--record`（状态日无批次，沿用 11-13/11-16 状态日不记账惯例）。
 - **2026-11-23（周一凌晨状态日）**：`check_release.py` → **WARN**（G1 1082/718/**75** PASS、G2 `gates_1123.json` 字段齐 PASS、G3 无泄漏 PASS；R 项「未执行」= 状态日无 `nonxr_1123`，**未补造**）。四源一致：listing 7/7 最新公告日 11-20、缓存穿透与跨学科复验一致、API 前沿 11-19 + 三日区间各 0 篇、RSS `WROTE=0 OK_CATS=7/7`。**下一批（11-24 周二 02:30）才处理周末 11-21/11-22 提交积压**。
 
@@ -89,7 +91,22 @@
 
 ## 5. 每轮自检清单（收尾前逐条打勾）
 
-**2026-11-24（11-23 周一公告批次）**
+**2026-11-25（11-24 周二公告批次，含 11-21/11-22 周末积压）**
+
+- [x] `python scripts/check_release.py` → **PASS**（G1 **1206/840/79** ｜ G2 `gates_1125.json` 无缺、险过四字段齐 ｜ G3 本批授予S=False、backfill 记S=0、泄漏 0 ｜ R 残差 **2.5%**）；`--record` 已写入 `data/verdicts.jsonl`（共 **5** 批）
+- [x] `python scripts/check_audit_guard.py` 无违规（**28 份**脚本：守卫 10 / 基线豁免 18 / 违规 0；本日新增 `audit_listing_1125.py` 自带 `ok_cats<7 → exit 2` 且在任何 `json.dump(...missed...)` 之前，并传入第三参数窗口下界 2026-11-23）
+- [x] 对账 `audit_listing_1125.py` **7/7 分类 exit 0**：11-24 组 **1,285 槽位 / 1,045 唯一**（CV 494/GR 13/HC 61/MM 18/RO 191/AI 485/IV 23）；11-25 组 `declared=None`（未释放）；11-23 组复采逐分类 declared=got（506 槽位 / 404 唯一）；未入馆 363 篇摘要级 **363/363** 覆盖（0 篇缺摘要），命中 40 篇**全部**在上批处置集合 → **0 漏网**
+- [x] `data/gates_1125.json` 四字段齐全且布尔自洽（`today_max=4.21`、`heavy_day_raw=false`、`margin=-0.222`、`blockbuster=false`、`s_awarded=false`）+ `window_excludes_today/this_run_batches` 与 `this_run_batches_excluded` 留痕 + `window_lo/hi = 2026-10-26 / 2026-11-25`、`in_window=514`
+- [x] 残差复核：扫描 **899**、判 **22**（**2.45%**）、采纳 **6** → 主批 68；`verdicts.jsonl` 逐条 **899 行**（分母坑复现：先写满 899 行才得 2.45%，只写命中行会得 100%）
+- [x] 全文：74 篇串行 3 s/篇 → **72 L0/FULL + 2 L1/PARTIAL**（2611.29647 / 2611.30012 为 ar5iv 摘要落地页，手动改判并同步 `.txt` 头）；字符 4,581–312,858。**守卫仍未落地，见 O-12**
+- [x] 前端重建 `verified: {papers:1206, notes:840, batches:79}`；11-25 卡 `表内=68`（44A/22B/2C）、backfill-1125 卡 `表内=6`（2A/4B），均非 0（`7dim-table.md` 保留 `arXiv` 列）；`BATCH_LABELS` 补 2 条中文标签
+- [x] 前端冒烟 **PASS**：papersEqDisk / notesEqDisk / batchesEqDisk 全 true；5 标签渲染 4/2/2/3/1；排序 8 项单调性 + 隐藏开关（localStorage 落盘/复原）+ 弹层三组交互；`nCards=79`；lastThree 首卡 2026-11-25；`PAGE_ERRORS: none`
+- [x] 总索引刷新：状态注记追加 11-25、速查入口换「最新一期 MOC-2026-11-25 / 上一期 11-24 / 笔记 840 篇」、批次表加 2 行（2026-11-25、backfill-1125）、页尾加 2 个明细段、页首换 1,206（1,300 → 1,334 行）；自检「新增 2 行 ↔ 新增 2 段」通过（历史遗留 2 处不匹配为 2026-10-07 缺行与 backfill-2603-2609 行标签异名，已白名单）
+- [x] 交付前抽查 `title == id` / `len(title)<12`：新增 74 行 **0 命中**；新增档位 0 S / 46 A / 26 B / 2 C，与 gates/scored 一致
+- [x] 渠道② 已实推并核验：本地 commit **`80207fa`** → 增量推送（**140** 变更 / 2,214 未变 / 删除 0）→ 远端 main **`9c94e831`** → deploy run **`45468795909` success（31 s）**；线上 **HTTP 200 / 6,533,825 bytes**、含 `const DATA`、LF 归一化 md5 **`f5a589aa…`** 与本地**逐字节相等**
+- [x] 渠道① 不可用：ToolSearch 无 `workbuddy_sites_deploy`，`xr-paper-hub.app.workbuddy.host` 根与 `/index.html` 均 **403 / 3,174 bytes** → 报告与 run_log 均写「渠道①不可用（累计第 **36** 批挂账）」，**未声称已发布**
+
+**2026-11-24（上一批，留档）**
 
 - [x] `python scripts/check_release.py` → **PASS**（G1 1132/768/77 ｜ G2 `gates_1124.json` 无缺、险过四字段齐 ｜ G3 本批授予S=False、backfill 记S=0、泄漏 0 ｜ R 残差 2.2%）；`--record` 已写入 `data/verdicts.jsonl`（共 4 批）
 - [x] `python scripts/check_audit_guard.py` 无违规（**27 份**脚本：守卫 9 / 基线豁免 18 / 违规 0；本日新增 `audit_listing_1124.py` 自带 `ok_cats<7 → exit 2` 且在任何 `json.dump(...missed...)` 之前，并传入第三参数窗口下界 2026-11-20）
