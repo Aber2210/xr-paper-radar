@@ -23,7 +23,7 @@
 | O-9 | 历史 `data/gates_*.json`（≤1117）缺 `window_excludes_*` 留痕字段 | 事后无法自证当时口径 | **grandfather 不回算**（与门③ 历史值政策一致） | 仅新批必须齐四字段 |
 | O-10 | `update_moc_<MMDD>.py` 等一次性锚点脚本，重跑即 `ANCHOR NOT FOUND` | 无法幂等重跑 | 已知限制，不修；重跑前用 `git show <批次前commit>` 还原 MOC | 需要重跑时按此办法 |
 | O-11 | Jev API 返回 **451**（法律原因不可用）；AnyJev 需本地 LLM，本机无 GPU | 决策模型路线受阻 | 搁置；已用现有模型做盲评基线（7/7 精确） | 若区域放开或有 GPU 再评估 |
-| O-13 | `deploy-pages.yml` 的 **`schedule` 触发**必失败：`No artifacts named "github-pages" were found`；**11-26 追加观察**：push 触发亦偶发同款报错（Upload artifact success 但 deploy 读不到产物），`gh run rerun` 即恢复 | 定时重部署不生效；push 偶发空跑一次（约 30 s 后重跑可恢复） | 未改 workflow（如实登记）；遇 `No artifacts` 先 `gh run rerun <id>`，勿改产物或重复推送 | 若 schedule 需可重部署，给 build job 补 schedule 分支产出 artifact；push 连续两次同错则查 Actions 侧 incident |
+| O-13 | `deploy-pages.yml` 的 **`schedule` 触发**必失败：`No artifacts named "github-pages" were found`；**11-26 追加观察**：push 与 `workflow_dispatch` 亦会复现（本批 run `45682922667` / `45683161976` 连续 3 次 failure），而 `Upload artifact` 明确成功（Artifact ID `15054012962`、4,558,066 bytes），`deploy-pages` 侧 `Found 0 artifact(s)` | 定时重部署不生效；push 偶发空跑（run 1 rerun 即恢复，run 2 三次均失败） | 未改 workflow（如实登记）；遇 `No artifacts` 先 `gh run rerun <id>`，连续两次同错按平台 incident 处理、不改产物不重复推送 | 若 schedule 需可重部署，给 build job 补 schedule 分支；若 push 连续 3 次同错，等 GitHub status 恢复并补推一次空提交 |
 
 ## 2. 已关闭（保留编号，不删）
 
@@ -104,7 +104,7 @@
 - [x] 前端冒烟 **PASS**：`papersEqDisk / notesEqDisk / batchesEqDisk` 全 true；5 标签渲染 4/2/2/3/1；排序 8 项单调性 + 隐藏开关（localStorage 落盘/复原）+ 弹层三组交互；`nCards=81`；lastThree 首卡 2026-11-26；`PAGE_ERRORS: none`
 - [x] 总索引刷新：状态注记追加 11-26、速查入口换「最新一期 MOC-2026-11-26 / 上一期 11-25 / 笔记 896 篇」、批次表加 2 行、页尾加 2 个明细段、页首换 1,269（1,334 → 1,370 行）；自检「新增 2 行 ↔ 新增 2 段」通过（历史遗留 2 处不匹配仍为 2026-10-07 缺行与 backfill-2603-2609 异名，已白名单）
 - [x] 交付前抽查 `title == id` / `len(title)<12`：新增 63 行 0 命中；新增档位 S 3 / A 24 / B 29 / C 7，与 gates/scored 一致
-- [x] 渠道② 已实推并核验：本地 commit **`3779e92`** → 增量推送（**112** 变更 / 2,349 未变 / 删除 0）→ 远端 main **`7c5829c0`** → deploy run **`45682436410`** 首跑 failure（`No artifacts named "github-pages"`）、`gh run rerun` 后 **success**；线上 **HTTP 200 / 7,018,738 bytes**、含 `const DATA`、LF 归一化 md5 **`b88af674cce7deaa335707dc52c85ea6`** 与本地**逐字节相等**
+- [x] 渠道② 已实推并核验：本地 commit **`3779e92`** → 增量推送（**112** 变更 / 2,349 未变 / 删除 0）→ 远端 main **`7c5829c0`** → deploy run **`45682436410`** 首跑 failure（`No artifacts named "github-pages"`）、`gh run rerun` 后 **success**；线上 **HTTP 200 / 7,018,738 bytes**、含 `const DATA`、LF 归一化 md5 **`b88af674cce7deaa335707dc52c85ea6`** 与本地**逐字节相等**；收尾文档提交 `184d2b10`（仅 STATUS/报告/run_log，`web/` 无变更）的部署因 Actions 侧 `Found 0 artifact(s)` 连续失败（见 O-13），页面内容未受影响
 - [x] 渠道① 不可用：本会话 ToolSearch **无** `workbuddy_sites_deploy`，`xr-paper-hub.app.workbuddy.host` 仍 403 → 报告与 run_log 写「渠道①不可用（累计第 **37** 批挂账）」，**未声称已发布**
 
 
