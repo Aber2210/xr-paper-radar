@@ -42,7 +42,7 @@
 | C-10 | `check_release.py` G2 FAIL：`gates_2026-11-20.json` 口径字段写在顶层、文件名偏离 `gates_MMDD.json` 约定 | 该文件名在 `sorted(glob)` 中**永远排最后**，会遮蔽后续所有 `gates_MMDD.json`，使 G2/G3 静默空跑。修：字段收进 `gate3`（含 `window_lo/hi`、`in_window`、`top10_mean`、`top10_lib`），改名 `data/gates_1120.json`，`build_scored_1120.py` 落盘路径同步改 `gates_{MMDD}` → G2/G3 PASS | 11-20 |
 | C-11 | 残差复核（第 3.5 步，原 O-6）从未真跑 | 11-20 批首次执行：`residual_scan.py dump 1120` 扫描 434 条、判 12 条（2.8%）、逐条写 `verdicts_1120.py` 后 ingest，采纳 3 篇（2611.23417/23534/24193）；`data/residual_1120.json` + `data/verdicts.jsonl` 的 `residual_rate=0.0276` 双留痕，6 处产物均带「残差复核」行 | 11-20 |
 | C-12 | `latest_gates()` 按文件名排序取最后一个，遇到 `gates_YYYY-MM-DD.json` 会永久遮蔽后续 `gates_MMDD.json`（C-10 的根因之一） | 改为遍历全部 `gates_*.json`、按内容 `gate3.window_hi` 取最大；构造 `gates_2099-01-01.json`（window_hi=2099-01-01）验证会正确选中它，删除后回到 1120 | 11-20 |
-| C-13 | 状态日（0 新稿）的 gates 无 `today_max`/`margin`，`check_release` 会误判 G2 FAIL；运行方因此**两天没敢记账**，台账缺 11-22/11-23 | 新增状态日分支（`run_type=status_day` 或 `today_max is None`）：G2 只验窗口字段、G3 标注「本批无新稿」、R 记不适用，判决记 **N/A**（不是 PASS，避免把「没检查」写成「检查过」）；新增 `--batch YYYY-MM-DD` 补记，台账现 7 条完整 | 11-25 |
+| C-14 | 状态日（0 新稿）的 gates 无 `today_max`/`margin`，`check_release` 会误判 G2 FAIL；运行方因此**两天没敢记账**，台账缺 11-22/11-23 | 新增状态日分支（`run_type=status_day` 或 `today_max is None`）：G2 只验窗口字段、G3 标注「本批无新稿」、R 记不适用，判决记 **N/A**（不是 PASS，避免把「没检查」写成「检查过」）；新增 `--batch YYYY-MM-DD` 补记，台账现 7 条完整 | 11-25 |
 | C-13 | `MOC-总索引.md` 11-20 明细段缺失（批次表有行、正文无 `### 2026-11-20 新增` 段） | 总索引无法按批次查到该批 Top10 | 11-21 运行补齐该段（10 行 Top10 表 + 门③ 留痕 + 一行「本节为 11-20 运行遗漏、于 11-21 补齐」标注）；后续批次收尾增加「总索引明细段数 = 批次表行数」自检 | 已修；若再出现同类缺段，按此段标注补写 |
 
 ## 3. 关键红线（违反即视为回归）
