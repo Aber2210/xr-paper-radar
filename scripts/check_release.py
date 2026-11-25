@@ -35,8 +35,8 @@ def load_data_counts():
     return len(d["papers"]), len(d["notes"]), len(d["batches"])
 
 
-def latest_gates():
-    """返回 (路径, 批次日期 YYYY-MM-DD)。
+def latest_gates(batch=None):
+    """返回 (路径, 批次日期 YYYY-MM-DD)；传 batch（YYYY-MM-DD）可指定某一天，用于补记状态日。
 
     批次日**必须读文件内容里的 gate3.window_hi**：实际文件名是 gates_MMDD.json（如 gates_1119.json），
     早期版本用文件名正则只认 gates_YYYY-MM-DD.json，回退成 "1119"，导致下游 `batch` 与
@@ -48,7 +48,7 @@ def latest_gates():
     # 按**文件内容里的批次日**取最大，而不是按文件名排序取最后一个：
     # 2026-11-20 曾出现 `gates_2026-11-20.json`，字典序永远排最后，会遮蔽后续所有
     # `gates_MMDD.json`，让 G2/G3 静默跑在错的文件上（STATUS C-10）。
-    best = None
+    cand = []
     for p in files:
         d = None
         try:
@@ -59,15 +59,21 @@ def latest_gates():
         if not (isinstance(d, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d)):
             m = re.search(r"gates_(\d{2})(\d{2})\.json$", p)
             d = "2026-%s-%s" % m.groups() if m else None
-        if d and (best is None or d > best[1]):
-            best = (p, d)
-    return best if best else (sorted(files)[-1], None)
+        if d:
+            cand.append((p, d))
+    if batch:
+        for p, d in cand:
+            if d == batch:
+                return p, d
+        return None, batch
+    return max(cand, key=lambda x: x[1]) if cand else (sorted(files)[-1], None)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--record", action="store_true", help="把判决追加到 data/verdicts.jsonl（按批次幂等）")
+    ap.add_argument("--batch", help="指定批次日 YYYY-MM-DD（默认取最新），用于补记状态日")
     args = ap.parse_args()
     fails = []
 
@@ -83,22 +89,30 @@ def main():
         fails.append("G1 计数与前端 DATA 不一致")
 
     # G2
-    gp, gdate = latest_gates()
+    gp, gdate = latest_gates(args.batch)
     g3 = {}
+    status_day = False
     if gp is None:
         print("G2 留痕：未找到 data/gates_*.json → FAIL")
         fails.append("G2 缺 gates 文件")
     else:
         g = json.load(open(gp, encoding="utf-8"))
         g3 = g.get("gate3", {})
+        # 状态日（0 新稿）：门③ 无 today_max/margin，四字段天然不存在，不能按缺失判 FAIL
+        status_day = (g.get("run_type") == "status_day") or (g3.get("today_max") is None)
         miss = [k for k in GATE3_KEYS if k not in g3]
         # 2026-11-18 起引入险过口径，四字段随之一并要求
         has_caliber = all(k in g3 for k in CALIBER_KEYS)
         bad_caliber = [k for k in CALIBER_KEYS if k in g3 and k in ("heavy_day_raw", "blockbuster", "s_awarded")
                        and not isinstance(g3[k], bool)]
-        ok2 = not miss and (has_caliber or "blockbuster" not in g3) and not bad_caliber
-        print("G2 留痕：%s 缺 %s ｜ 险过四字段 %s → %s"
-              % (os.path.basename(gp), miss or "无", "齐" if has_caliber else "不适用/缺", "PASS" if ok2 else "FAIL"))
+        if status_day:
+            ok2 = not miss
+            print("G2 留痕：%s 状态日（0 新稿）→ 门③ 不适用，验窗口字段 %s → %s"
+                  % (os.path.basename(gp), "齐" if ok2 else ("缺 %s" % miss), "PASS" if ok2 else "FAIL"))
+        else:
+            ok2 = not miss and (has_caliber or "blockbuster" not in g3) and not bad_caliber
+            print("G2 留痕：%s 缺 %s ｜ 险过四字段 %s → %s"
+                  % (os.path.basename(gp), miss or "无", "齐" if has_caliber else "不适用/缺", "PASS" if ok2 else "FAIL"))
         if not ok2:
             fails.append("G2 %s 留痕不全" % os.path.basename(gp))
 
@@ -116,8 +130,9 @@ def main():
         this_batch = [r for r in rows if r.get("batch") in (gdate, "backfill-" + mmdd)]
     leaked = [r["id"] for r in this_batch if r.get("grade") == "S"] if eligible is False else []
     ok3 = not s_bf and not leaked
-    print("G3 档位：近年批 %d 行 ｜ 本批授予S=%s ｜ backfill记S=%d ｜ 本批泄漏S=%d → %s"
-          % (len(rows), eligible, len(s_bf), len(leaked), "PASS" if ok3 else "FAIL"))
+    print("G3 档位：近年批 %d 行 ｜ 本批授予S=%s ｜ backfill记S=%d ｜ 本批泄漏S=%d%s → %s"
+          % (len(rows), eligible, len(s_bf), len(leaked),
+             "（状态日，本批无新稿）" if status_day else "", "PASS" if ok3 else "FAIL"))
     if not ok3:
         fails.append("G3 档位自洽失败：backfill记S=%s 泄漏=%s" % ([r["id"] for r in s_bf], leaked))
 
@@ -132,7 +147,9 @@ def main():
 
     # R 残差复核（诊断项：不阻塞发布，超阈值记 WARN）
     warns, resid_rate = [], None
-    if gdate:
+    if status_day:
+        print("R 残差复核：状态日 0 新稿 → 不适用（无 nonxr 池可扫）")
+    elif gdate:
         rp = "data/residual_%s.json" % (gdate[5:7] + gdate[8:10])
         if os.path.exists(rp):
             rd = json.load(open(rp, encoding="utf-8"))
@@ -146,8 +163,8 @@ def main():
             print("R 残差复核：未见 data/residual_%s.json → 未执行" % (gdate[5:7] + gdate[8:10]))
             warns.append("第 3.5 步残差复核未执行")
 
-    # 判决：FAIL > WARN > PASS
-    level = "FAIL" if fails else ("WARN" if warns else "PASS")
+    # 判决：FAIL > WARN > N/A（状态日）> PASS
+    level = "FAIL" if fails else ("WARN" if warns else ("N/A" if status_day else "PASS"))
     for f in fails:
         print("ERROR:", f)
     for w in warns:
@@ -155,7 +172,7 @@ def main():
     print("VERDICT: %s%s" % (level, "" if level == "PASS" else " —— 见上方逐条原因"))
 
     if args.record:
-        rec = {"batch": gdate, "verdict": level,
+        rec = {"batch": gdate, "verdict": level, "status_day": status_day,
                "counts": {"papers": reg, "notes": notes, "batches": daily},
                "gate3": {k: g3.get(k) for k in ("top10_mean", "today_max", "margin", "blockbuster", "s_awarded")},
                "residual_rate": resid_rate, "reasons": fails + warns,
