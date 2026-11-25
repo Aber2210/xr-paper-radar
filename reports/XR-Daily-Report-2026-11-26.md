@@ -733,7 +733,8 @@ HiGS 把三个角色拆到不同粒度：以 8×8 渲染 tile 为光栅化单元
 
 - **残差率 1.52%**（上批 2.45%、再上批 1.63%），本批 8 条采纳集中在「世界模型与仿真 2 / 评估与数据集 2 / 重建与SLAM 2 / 内容生成 2」；另有 3 篇未被 flagged 但人工判定应收录（Xtream / BodyWeave / PRC4D），说明 `world model`、`4D reconstruction`、`garment` 三个表述仍是词表缺口，**下批评估是否把 `4d`、`garment` 纳入标题级扩展词**（按口径不得因单批自行扩表，需在残差连续 3 日 >12% 或人工复核确认后登记）。
 
-- **backfill 占比回升到 12.7%%（8/63）**：全部为 `replace` 再公告，首发跨度 2025-08-24 ~ 2026-10-08。其中 2605.00389 / 2604.03667 等早期稿件与当期工作相隔半年以上，已在笔记中保留首发日。
+- **backfill 占比回升到 12.7%（8/63）**：全部为 `replace` 再公告，首发跨度 2025-08-24 ~ 2026-10-08。其中 2605.00389 / 2604.03667 等早期稿件与当期工作相隔半年以上，已在笔记中保留首发日。
 
-- **渠道①（WorkBuddy 站点）历史挂账**：上批累计 36 批 403。本批按整改口径实测，若仍不可用则记「累计第 37 批挂账」，不影响 GitHub Pages 渠道与本地知识库。
+- **渠道①（WorkBuddy 站点）仍不可用**：本会话无 `workbuddy_sites_deploy` 工具，`https://xr-paper-hub.app.workbuddy.host/` 与 `/index.html` 实测均 **403 / 3,174 bytes** → 按口径记「**渠道① 不可用（累计第 37 批挂账）**」，未声称已发布。
+- **渠道②（GitHub Pages）已实推并核验**：commit `3779e92` → 远端 main `7c5829c0` → `deploy-pages.yml` run 45682436410 首跑 failure（`No artifacts named "github-pages"`，重跑 success）→ 线上 **HTTP 200 / 7,018,738 bytes**、含 `const DATA`，LF 归一化 md5 `b88af674cce7deaa335707dc52c85ea6` 与本地一致。
 

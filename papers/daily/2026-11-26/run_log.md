@@ -14,3 +14,14 @@
 - 第 7 步 Top10：实数 10 篇（4.57–3.85），3 S / 7 A；全批 S 3 / A 24 / B 29 / C 7。
 - 第 8 步 产物：报告 2 + 笔记 56（C 级 7 篇不写）+ MOC 2 + 总索引刷新 + 7dim-table（主批/backfill 各 1）+ scored.md + run_log；registry 1,206 → **1,269**（+63，备份 `registry.jsonl.bak-20261126`）。易错点：`7dim-table.md` 表头必须保留 `arXiv` 列，否则前端批次卡表内计数为 0。
 - 第 9 步 发布：见下方发布记录（构建 → `node --check` → CDP 冒烟 → `check_release` → 提交 → 推送 → Pages 核验）。
+
+## 发布记录（第 9 步）
+
+  - 构建：`python scripts/build_frontend.py` → **`verified: {'papers': 1269, 'notes': 896, 'batches': 81}`**，与磁盘一致；`BATCH_LABELS` 补 `2026-11-26` 与 `backfill-1126` 两条中文标签。
+  - 语法：抽出 2 个 `<script>` 块（4,445,820 / 33,328 字符）逐个 `node --check` → 均 OK。
+  - 冒烟：`node scripts/smoke_hub.mjs` → **SMOKE: PASS**（papers/notes/batches 与磁盘一致、lastThree = 11-26/11-25/11-24、五标签渲染 4/2/2/3/1、排序 8 项单调性、隐藏与弹窗交互、`PAGE_ERRORS: none`、81 张批次卡）。
+  - 发布门：`python scripts/check_release.py` → G1 PASS（1269/896/81 == DATA）、G2 PASS（`gates_1126` 门③ 四字段齐 + `window_excludes_*`）、G3 PASS（本批授予 S=True 且 blockbuster 自洽、backfill 记 S=0、泄漏 0）、R OK（527 判 8 = 1.5%）→ **VERDICT: PASS**。
+  - 渠道① **不可用**：本会话 ToolSearch 无 `workbuddy_sites_deploy`；`https://xr-paper-hub.app.workbuddy.host/` 与 `/index.html` 实测均 **403 / 3,174 bytes** → 按口径写「**渠道① 不可用（累计第 37 批挂账）**」，**未声称已发布**。
+  - 渠道② 成功：commit `3779e92` → `python scripts/push_to_github.py --incremental`（变更/新增 **112**、删除 0、未变 2,349）→ main **`7c5829c0`**；`gh run list` 首次 run **45682436410 failure**（`No artifacts named "github-pages"`：Upload artifact 步骤 success 但 deploy 读不到产物，属 Actions 侧瞬时问题），`gh run rerun` 后 **success**。
+  - 线上核验：`https://aber2210.github.io/xr-paper-radar/` → **HTTP 200 / 7,018,738 bytes**、含 `const DATA`；LF 归一化 md5 **`b88af674cce7deaa335707dc52c85ea6`** 与本地 `web/xr-paper-hub.html` **完全一致（MATCH）**。
+  - 复查 O-13：本批为 **push 触发**仍出现同款 `No artifacts` 报错（重跑即恢复），说明该报错不限于 `schedule` 触发；已在 `STATUS.md` 括注为「push 亦偶发、重跑可恢复」。
