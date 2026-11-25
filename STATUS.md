@@ -104,7 +104,7 @@
 - [x] 前端冒烟 **PASS**：`papersEqDisk / notesEqDisk / batchesEqDisk` 全 true；5 标签渲染 4/2/2/3/1；排序 8 项单调性 + 隐藏开关（localStorage 落盘/复原）+ 弹层三组交互；`nCards=81`；lastThree 首卡 2026-11-26；`PAGE_ERRORS: none`
 - [x] 总索引刷新：状态注记追加 11-26、速查入口换「最新一期 MOC-2026-11-26 / 上一期 11-25 / 笔记 896 篇」、批次表加 2 行、页尾加 2 个明细段、页首换 1,269（1,334 → 1,370 行）；自检「新增 2 行 ↔ 新增 2 段」通过（历史遗留 2 处不匹配仍为 2026-10-07 缺行与 backfill-2603-2609 异名，已白名单）
 - [x] 交付前抽查 `title == id` / `len(title)<12`：新增 63 行 0 命中；新增档位 S 3 / A 24 / B 29 / C 7，与 gates/scored 一致
-- [x] 渠道② 已实推并核验：本地 commit **`3779e92`** → 增量推送（**112** 变更 / 2,349 未变 / 删除 0）→ 远端 main **`7c5829c0`** → deploy run **`45682436410`** 首跑 failure（`No artifacts named "github-pages"`）、`gh run rerun` 后 **success**；线上 **HTTP 200 / 7,018,738 bytes**、含 `const DATA`、LF 归一化 md5 **`b88af674cce7deaa335707dc52c85ea6`** 与本地**逐字节相等**；收尾文档提交 `184d2b10`（仅 STATUS/报告/run_log，`web/` 无变更）的部署因 Actions 侧 `Found 0 artifact(s)` 连续失败（见 O-13），页面内容未受影响
+- [x] 渠道② 已实推并核验：本地 commit **`3779e92`** → 增量推送（**112** 变更 / 2,349 未变 / 删除 0）→ 远端 main **`7c5829c0`** → deploy run **`45682436410`** 首跑 failure（`No artifacts named "github-pages"`）、`gh run rerun` 后 **success**；线上 **HTTP 200 / 7,018,738 bytes**、含 `const DATA`、LF 归一化 md5 **`b88af674cce7deaa335707dc52c85ea6`** 与本地**逐字节相等**；收尾文档提交 `184d2b10` 的部署曾因 Actions 侧 `Found 0 artifact(s)` 连续 3 次失败（见 O-13），平台恢复后最终提交 **`97867606`** 的 run **`45683331850` success**，线上复验仍 200 且 md5 一致
 - [x] 渠道① 不可用：本会话 ToolSearch **无** `workbuddy_sites_deploy`，`xr-paper-hub.app.workbuddy.host` 仍 403 → 报告与 run_log 写「渠道①不可用（累计第 **37** 批挂账）」，**未声称已发布**
 
 
