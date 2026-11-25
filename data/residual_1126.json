@@ -1,0 +1,79 @@
+{
+ "mmdd": "1126",
+ "n_scanned": 527,
+ "n_flagged": 8,
+ "rate": 0.0152,
+ "by_track": {
+  "重建与SLAM": 2,
+  "评估与数据集": 2,
+  "世界模型与仿真": 2,
+  "内容生成": 2
+ },
+ "flagged": [
+  {
+   "id": "2611.31478",
+   "n": 64,
+   "title": "Which Way Is Up? Rotated Photos Silently Hurt Multi-View 3D Foundation Models",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "多视图3D基础模型对EXIF旋转静默失效，属相机位姿/几何重建的可靠性问题"
+  },
+  {
+   "id": "2611.31803",
+   "n": 155,
+   "title": "SceneMemBench: A Benchmark for Scene Memory in Interactive Video World Models",
+   "cat": "cs.CV",
+   "track": "评估与数据集",
+   "why": "交互式视频世界模型的情景记忆基准（跨视角场景恢复）"
+  },
+  {
+   "id": "2611.31944",
+   "n": 195,
+   "title": "DraftKV: Protecting Persistent Worlds through Hierarchical Streaming Retrieval",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "交互式世界模型的层次化流式检索，维持持久空间几何"
+  },
+  {
+   "id": "2611.32443",
+   "n": 354,
+   "title": "PVWander: 3D Memory-guided Panoramic Video Wandering with Path-Facing Canonicalization",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "全景视频漫游：3D记忆引导的360°场景一致生成"
+  },
+  {
+   "id": "2611.32491",
+   "n": 366,
+   "title": "X-3DComposer: Feed-Forward 3D Scene Composition with Any Assets from Any Views",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "前馈式3D场景合成：任意资产按布局组合为可编辑场景"
+  },
+  {
+   "id": "2611.32540",
+   "n": 382,
+   "title": "Smooth Essential-Manifold Residuals for View-Graph Calibration",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "视图图校准：本质流形残差联合估计相机内参"
+  },
+  {
+   "id": "2611.32727",
+   "n": 422,
+   "title": "Support2Sim: Visually Faithful Real2Sim with Stable Object Supports",
+   "cat": "cs.RO",
+   "track": "世界模型与仿真",
+   "why": "Real2Sim：单图重建带支撑关系的仿真就绪场景"
+  },
+  {
+   "id": "2611.33137",
+   "n": 522,
+   "title": "Physicl Scenes: An Artist-created 3D Dataset for Learning Perception and Action",
+   "cat": "cs.CV",
+   "track": "评估与数据集",
+   "why": "艺术家构建的6,499个3D场景数据集（几何+PBR材质+部件标注）"
+  }
+ ],
+ "note": "只报警清单：入馆须另行走全文抓取→评分→产物，本文件不改变 registry"
+}

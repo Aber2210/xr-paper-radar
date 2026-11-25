@@ -1,0 +1,361 @@
+[
+  {
+    "id": "2611.31428",
+    "title": "Enhancing Sparse-View Gaussian Splatting with Feed-Forward Priors via Spectral Fusion and Distillation",
+    "title_zh": "基于频域融合与蒸馏的稀疏视角 Gaussian Splatting 前馈先验增强",
+    "problem": "稀疏视角 3DGS 在训练视角附近清晰，但在输入未覆盖的远处区域质量急剧退化；feed-forward NVS 先验虽能跨场景重采样，却比 Gaussian 渲染慢 10 倍以上，并在 out-of-domain 场景产生高频伪影。在 Mip-NeRF 360 garden 的 12 视角设置上，LagerNVS 平均仅 21.20 dB，反而低于 StereoGS 的 21.38 dB，因此把先验直接当监督信号会失败。",
+    "method": "作者先在频域逐环测量两种渲染与 GT 的相关性，发现先验在低频更准、Gaussian 在高频更准，两条误差曲线只交叉一次。把融合写成频域加权和 C=w(f)P+(1-w(f))G，并按环给出最小二乘闭式解 w*(f)=Σ Re⟨Y-G, P-G⟩_f / Σ‖P-G‖_f²。测得的最优权重噪声大且需要 GT，因此用单参数一阶低通核 K(f)=1/(1+f/f0) 参数化，f0 为权重 0.5 的交叉频率，仅在 development set 上拟合一次。用该核生成 fused teacher：T=K(|f|)P+(1-K(|f|))G，并把直流项强制 K(0)=0 以避开先验的全局色偏。teacher 位姿在相邻输入相机间插值（t∼U[0.15,0.85]，slerp 旋转，加 0.1·d̄ 高斯扰动），采样 M=512 个位姿各渲染一次。最后把 teacher 图像与真实输入图像以 λr:λt=1:1 混合，用标准 3DGS 光度损失 ℓ=0.8ℓ1+0.2(1-SSIM) 继续优化 Gaussians 12k 步（不增密），teacher 项先减去逐通道均值以只监督结构。推理时只跑 Gaussian，前馈模型完全移除。",
+    "key_numbers": [
+      "Ours-Teacher 在 StereoGS/DropGaussian/FSGS 上平均提升 1.22/1.60/1.62 dB PSNR；蒸馏后 Ours-Distilled 仍提升 1.01/1.01/1.18 dB",
+      "StereoGS 全 42 设置均值由 23.15 dB/.754/.199 提升到 24.16 dB/.766/.184，渲染 917 FPS（基线 882 FPS），无额外 Gaussian",
+      "Ours-Teacher 33 FPS，Ours-Distilled 相对其快 28×，质量接近",
+      "一阶核拟合 R²=0.993（StereoGS）、0.989（DropGaussian）、0.991（FSGS），仅一个参数",
+      "拟合交叉频率 f0=0.041/0.062/0.077 cycles/pixel（StereoGS/DropGaussian/FSGS），方法越弱 f0 越大",
+      "蒸馏单场景约 3 分钟（Fern-3 2.5 min、Garden-12 2.9 min），仅增加 6%–8% 训练时间"
+    ],
+    "ablation": "对比 12 种核族：一阶核拟合最好且增益最大，Gaussian 模糊与硬截断丢弃先验过早，2–3 参数族仅多 0.004 R² 与 0.01 dB。去掉 teacher 仅用真图延长训练会因过拟合使 PSNR 下降，仅用 LagerNVS 当 teacher 则会把高频伪影学进 Gaussian；λr:λt 在 2:1 到 1:2 之间增益几乎不变。等预算对照（StereoGS 训 42k 步）只涨 0.14 dB，而蒸馏涨 1.01 dB，说明增益不来自更多迭代。",
+    "baselines": [
+      "StereoGS",
+      "DropGaussian",
+      "FSGS",
+      "LagerNVS",
+      "LVSM",
+      "DepthSplat",
+      "AnySplat",
+      "Difix3D+"
+    ],
+    "datasets": [
+      "LLFF：8 场景，3/6/9 输入视角",
+      "Mip-NeRF 360：9 场景，12/24 输入视角，合计 42 个 setting",
+      "两个不相交的 development set（各 5 个 setting）分别拟合 f0，42 个 setting 全部 held-out 于评估所用拟合",
+      "评测分辨率沿用各基线官方设置（LLFF 504×378，Mip-NeRF 360 室内约 390×260、室外约 630×415）"
+    ],
+    "novelty": "把「前馈先验 vs 稀疏 Gaussian」的取舍转化为频域可靠性问题，并用经典线性估计的相对可靠性给出可解释的一参数低通核（实测相对可靠性近似 1/f 律）。提出「融合成 teacher 再蒸馏回 Gaussian」的 plug-and-play 流程，推理期不引入任何额外网络，因而同时拿到先验的低频布局与 Gaussian 的高频细节。方法对先验模型与基座方法都通用，DepthSplat/AnySplat 这类弱先验会自动得到接近 0 的 f0 而基本不干预。",
+    "limitations": "有效性依赖「先验低频确实优于 Gaussian」这一前提：DepthSplat 与 AnySplat 拟合出的 f0 约 1e-4，teacher 反而带来 -0.02/-0.04 dB。基座模型训练极差时只能减轻而不能消除 artifacts（room-24 仍有 floaters）。f0 需按基座方法在 development set 上拟合一次，且蒸馏需约 3 分钟额外优化，不是零成本后处理。",
+    "trl_evidence": "在 RTX 5090 上以 917 FPS 实时渲染，蒸馏后仍是标准 3DGS 模型、不增加 Gaussian，可直接替换现有 XR/流式管线中的 Gaussian 渲染器。论文讨论了移动端与 foveated rendering 的部署路径，但未做端上实测。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "IMP=3：给出可插到任意稀疏视角 Gaussian 方法上的通用增强，实时性不受损，但属质量增强而非新能力。NOV=3：频域互补观察与一参数核有洞见，然而「融合+蒸馏」框架本身在生成先验正则化工作中已有类似形态。TEC=3：闭式解与单参数参数化干净、鲁棒性分析充分，但无新架构或新算子。EXP=4：42 个 setting、3 个基座、5 种先验、四类消融与等预算对照，覆盖面在同类工作中偏上。PER=4：917 FPS 且蒸馏仅 3 分钟，工程可用性好。TRL=3：保持实时渲染并讨论 XR 部署，但依赖离线蒸馏与预训练先验，未在真实设备验证。REP=3：有 project page，实现细节与超参较完整，未提及代码。"
+  },
+  {
+    "id": "2611.31435",
+    "title": "Tornado4D: Physics-Guided 4D Gaussian Reconstruction of a Laboratory Tornado from Sparse One-Sided Videos",
+    "title_zh": "Tornado4D：从稀疏单侧视频物理引导重建实验室龙卷风的 4D Gaussian",
+    "problem": "实验室烟雾龙卷风的时空 4D 重建严重欠约束：半透明使外观沿光线耦合、快速旋转破坏时序对应、单侧稀疏视角让大部分体积缺少直接监督，灵活模型可拟合观测却生成无支撑几何或违反物理的运动。逐帧 3DGS 丢失对应，通用变形场不编码风扇驱动的输运，生成视角则可能凭空编造半透明结构。",
+    "method": "流程分三阶段。Stage I 用 SAM 2 + VideoMaMa 做 alpha matting，按 F=clip((I-(1-A)⊙B)/max(A,ε)) 反解前景并构造黑背景目标 Y=A⊙F，遮挡像素不产生梯度。同时从玻璃罩几何（四壁进气缝、顶部风扇、干冰杯）手工对齐一个矩形仿真域，用 MAC 网格 + Stam 半拉格朗日投影 + BFECC 求解不可压流 ∂u/∂τ+(u·∇)u=-∇p+ν∇²u-λu，∇·u=0，得到冻结的定性输运场 u_CFD。Stage I 先在圆柱内均匀初始化 50k 各向同性 Gaussian 做静态优化，再仅优化 canonical 位置 {x_i,0} 与时间共享存活 logit h_i，通过可微平流 Φ_{0→t} 把 0–10 帧的多视角损失反传到第 0 帧，旋转把背面隐藏 Gaussian 转入被观测区域。Stage II 用速度残差 v_i,t(x)=u_CFD(x)+Δv_i,t 与自适应 RK2 子步积分，配合因果滑窗（37 个五帧窗口）与固定滞后截断反传，加入 λt·L_temp 与 λs·L_spatial 平滑，并让杯体上方圆盘上的新生粒子在出生前完全透明。Stage III 冻结几何与运动，用 Beer–Lambert 密度增益 α'=1-(1-α)^g 单参数校准整体亮度。",
+    "key_numbers": [
+      "held-out camera 7 上 PSNR 35.66 dB / SSIM 0.984 / LPIPS 0.020，对比逐帧 3DGS 29.72/0.970/0.040、4DGS 30.22/0.969/0.042",
+      "去掉 canonical refinement 降至 34.71 dB；再去掉 CFD 降至 34.16 dB",
+      "canonical refinement 贡献 +0.94 dB，CFD 输运在无 canonical 设置下贡献 +0.55 dB 且 SSIM 0.979→0.983",
+      "7 台相机经 COLMAP 注册，覆盖 39.2° 单侧弧；held-out 相机距最近训练相机 7.46°",
+      "重建 41 帧（t=0–40，30 FPS），粒子容量固定 100k，每帧 350 个新生候选",
+      "CFD 网格 80×144×80，约 1.5 分钟预计算；单张 RTX A6000 上三阶段训练约 2 小时"
+    ],
+    "ablation": "两个受控变体（去掉 canonical refinement；再去掉 CFD 并把基础速度置零）在所有指标上都劣于完整模型，且各变体共用同一套轨迹过滤与不透明度校准以排除亮度混淆。canonical refinement 的增益在序列开头最明显，因为此时因果重建上下文最少；CFD 的增益在无 canonical 设置下可直接归因于相干输运。定量只在单一 held-out 视角上做，旋转视角仅作定性一致性比较。",
+    "baselines": [
+      "3DGS（逐帧独立重建，30k 迭代）",
+      "4DGS（官方多视角初始化，3k coarse + 15k fine）",
+      "w/o canonical refinement",
+      "w/o canonical and CFD"
+    ],
+    "datasets": [
+      "Yang et al. 的实验室烟雾龙卷风同步多视角数据集，取 t=0–40 共 41 帧 @30 FPS",
+      "8 台相机中 7 台成功注册，6 台用于训练、camera 7 留出评测",
+      "1920×1080 全分辨率前景，SAM 2 遮挡掩码像素不计入 PSNR/SSIM/AlexNet-LPIPS"
+    ],
+    "novelty": "把「已知外力布局」变成可复用先验：从玻璃罩几何仿真出旋转主导的气流场并冻结，用可微平流让后续真实帧反向修正第 0 帧的隐藏几何，而不是依赖生成视角。第二阶段把 CFD 大尺度输运与逐粒子可学残差解耦，配合因果滑窗保留粒子对应，专门针对快速旋转的半透明流。第三阶段用一个 Beer–Lambert 增益闭式校准存活因子造成的人为变暗，属于针对该表示缺陷的定制修正。",
+    "limitations": "只重建并评测一条受控实验室序列，且没有时序 3D 真值，向真实龙卷风外场迁移仍是开放问题（尺度、边界与同步标定都不同）。所有相机都在同一侧，camera 7 的指标无法验证背面几何，圆柱支撑检验也不构成完整物理一致性。气流先验是定性、预计算且冻结的，图像损失无法修正其边界条件，且忽略浮力、热效应与烟雾-空气耦合。",
+    "trl_evidence": "单卡 A6000 约 2 小时完成 41 帧重建，属离线科研级 pipeline；无实时或交互式部署证据。价值主要在气象观测与流体反演的验证方法学，而非 XR 产品链路。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 2,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 2,
+      "PER": 2,
+      "TRL": 1,
+      "REP": 2
+    },
+    "scores_why": "IMP=2：面向单一物理现象的高保真重建，对 XR 通用渲染影响有限。NOV=3：几何导出 CFD 先验 + 可微平流修正 canonical 状态 + 残差运动三者组合有新意，但每个组件都能在流体重建文献中找到对应。TEC=3：多阶段系统耦合了 matting、CFD、可微渲染与生命周期管理，工程量扎实但缺乏新算法推导。EXP=2：仅一条序列、一个 held-out 视角、无 3D 真值，定量证据单薄。PER=2：两小时离线训练，无实时性。TRL=1：实验室原型。REP=2：未提及代码，关键超参给出但复现依赖私有预处理。"
+  },
+  {
+    "id": "2611.31482",
+    "title": "InterGS+: Inter-Frame Gaussian Splatting Compression with Geometry-Aware Transformer Prediction and Adaptive Residual Coding",
+    "title_zh": "InterGS+：几何感知 Transformer 预测与自适应残差编码的帧间 Gaussian Splatting 压缩",
+    "problem": "动态 3DGS 每帧都是无序、不规则的高维 Gaussian 集合（56 维属性：48 维 SH + 不透明度 + 3 尺度 + 4 元四元数），存储与传输开销巨大；而 Gaussian 原语跨帧不保持固定身份，无法像视频那样直接做运动补偿。已有的 lightweight KNN/双边预测没有利用高维 SH 的结构，非 SH 属性又在未经渲染激活的原始参数域上做残差，保留了与渲染无关的冗余。",
+    "method": "InterGS+ 是一个 post-hoc 帧间编解码器，GOP 首帧为 I 帧，后续 P 帧只参考前一重建帧。先用 G-PCC 编码当前帧量化几何并重建，再把参考帧几何用 Q_t(Q_{t-1}^{-1}(·)) 映射到当前帧量化格点，保证编解码端邻域一致。SH 先经固定全局 PCA 从 48 维降到 38 维（保留约 99.99% 方差，基与均值离线学习、全序列共享、不传输），预测与残差编码都在该域进行。预测端保留 InterGS-Lite 的 8 个 KNN 候选与几何亲和加权双边候选，另加一个轻量几何感知 SH transformer：取 K_T=32 个参考邻居，token 为 [38 维 SH-PCA; 3 维几何偏移]∈R^41 并按亲和度 a_ik 门控；PE-Block 在 token 与 attention logit 两级注入几何（邻居秩嵌入 ρ_k、几何偏移嵌入 φ_geo、多频 Fourier 特征 φ_F、成对相对位置偏置 φ_bias），单头注意力 + 64→128→64 GeLU FFN，仅 53,964 参数。每个 Gaussian 在 10 种 SH 模式与 9 种非 SH 模式间做自适应选择，打包成 90 个符号（≤7 bit）。残差按属性定制：SH 创新在 PCA 域按 3+35 分组做 42/8 中心 VQ 加标量细化；不透明度与尺度先过原生激活（sigmoid / exp）再做 gamma companding 后求差并均匀量化；旋转先做尺度-旋转联合规范化、四元数归一化与符号对齐，再用每帧 32 中心 VQ + 标量细化联合编码 4 维创新。码流用 7z/LZMA 无损压缩，解码端从重建参考重新生成预测。",
+    "key_numbers": [
+      "10 条 MPEG 动态序列平均 BD-rate 相对 G-PCC Amd.1 降低 45.48%、相对 InterGS-Lite 降低 7.78%；BD-PSNR 分别提升 9.98 dB 与 1.10 dB",
+      "相对 G-PCC 的最大降幅：Musical 67.08%、Makeup 66.59%、Trio 64.38%；训练未见过的 ManWithFruit-tracked 仍降 14.05%（+1.97 dB）",
+      "解码复杂度平均 0.049 ms/Gaussian（仅解码，不含渲染），学习推理只作用于 SH 且仅 53,964 参数",
+      "SH 从 48 维降到 38 维 PCA，保留约 99.99% 方差；24/28 维会引入高码率 PSNR 上限",
+      "最高码率点总码率 84.8–319.6 bits/Gaussian，对应 PSNR 47.3–64.9 dB"
+    ],
+    "ablation": "固定预测配置下比较残差编码：激活域 gamma companding 全程优于原始域，四元数旋转 VQ 在大部分工作区间带来额外增益。预测器分析显示 KNN/双边对非 SH 属性仍有效，而 SH 更受益于 transformer 与自适应混合：代表性帧上 transformer 对 71.43% 的 Gaussian 给出更低 SH 误差，双边在 28.57% 更优，支持逐 Gaussian 模式选择。",
+    "baselines": [
+      "G-PCC Amd.1（octree-raht 帧内编码）",
+      "InterGS-Lite（同为 post-hoc 帧间框架，含 VQ SH 残差）",
+      "原 InterGS（作者说明其已被 InterGS-Lite 覆盖，故未直接比较）"
+    ],
+    "datasets": [
+      "MPEG 动态 3DGS 序列 10 条，每条取连续 6 帧（0–5）",
+      "测试含半跟踪 Bartender/Cinema/Breakfast、其跟踪版本，以及 ManWithFruit-tracked、Trio、Makeup、Musical",
+      "SH 预测器仅在三条半跟踪序列的 15–30 帧上训练，其余 7 条完全未见；评测遵循 MPEG CTC"
+    ],
+    "novelty": "把 SH 的外观建模整体搬到共享 PCA 域，使预测、transformer 训练与残差 VQ 共用同一紧凑空间，且不需要序列级变换信令。首次在 Gaussian 压缩中把几何结构显式注入 attention（秩嵌入、偏移嵌入、Fourier、相对位置偏置），并保留逐 Gaussian 模式回退。非 SH 残差按属性的渲染语义定制（激活域 companding、四元数符号对齐与联合 VQ），比统一在参数域做差更能压掉与渲染无关的冗余。",
+    "limitations": "仍依赖前一重建帧的单参考因果结构，长时依赖与多参考预测留作未来工作，快速运动或遮挡切换时预测会失效。几何用 18-bit G-PCC 单独编码且占比不小（22.9–39.8 bpp），未与属性联合优化。消融多以 RD 曲线图呈现，缺少逐模块的完整 BD-rate 表；VQ 码本与 PCA 基为离线固定，跨内容适应性有限。",
+    "trl_evidence": "面向流式动态 3DGS 传输，解码 0.049 ms/Gaussian 且仅含 5.4 万参数的小 transformer，可在现有 G-PCC 码流框架内落地。评测直接采用 MPEG 通用测试条件，具备标准化对接的形态，但未给出端到端播放/带宽实测。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 3,
+      "PER": 4,
+      "TRL": 4,
+      "REP": 3
+    },
+    "scores_why": "IMP=3：把动态 3DGS 帧间压缩再推进 7.78% BD-rate，对 XR 流式传输有实际价值，但仍是同一框架内的增量化化。NOV=3：共享 PCA 域 + 几何感知 attention + 属性定制残差三处都合理且互补，缺少单项突破。TEC=3：设计细致（坐标对齐、模式打包、符号对齐），但模块均为已有技术的组合。EXP=3：10 条序列含 7 条未见内容，指标完整，消融偏薄、以图为主。PER=4：解码 0.049 ms/Gaussian、模型极小，具备实时流式条件。TRL=4：直接遵循 MPEG CTC、可嵌入标准编解码链路，工程落地路径清晰。REP=3：方法描述与超参充分，未提及开源。"
+  },
+  {
+    "id": "2611.31918",
+    "title": "HiGS: A Hierarchical Architecture for Fast Differentiable 3D Gaussian Splatting",
+    "title_zh": "HiGS：面向快速可微 3D Gaussian Splatting 的层次化架构",
+    "problem": "标准 3DGS 让同一个屏幕 tile 同时充当划分单元、光栅化单元与并行工作单元，三者对 tile 尺寸的偏好相互冲突：划分要大 tile 减少 (tile, Gaussian) 对，光栅化要小 tile 减少无效像素求值。结果是在 4K 下每帧要对数千万对做全局 radix sort，且帧时间由最密 tile 的尾部效应决定，而不是由该视角的实际工作量决定；训练侧反向传播的 atomic 竞争与 Adam 带宽成为主瓶颈（FP32 下每 Gaussian 708 字节优化器状态）。",
+    "method": "HiGS 把三个角色拆到不同粒度：以 8×8 渲染 tile 为光栅化单元，把 M=32 个相邻 tile 组成 64×32 像素的 macro-tile 作为划分与排序单元，再以「(macro-tile, batch)」为独立工作单元，每个 batch 至多 B_r=1024 个 Gaussian 并按深度排序。分箱时以 B_p=8192 为一批，在线程组本地存储维护每 macro-tile 的直方图（1080p 约 1000 项、4K 约 4000 项），用分层前缀和算出写偏移，再直接写入 (depth, Gaussian-id) 对；由于 segment 已隐含 tile 身份，排序键从 64-bit 复合键缩成 32-bit 纯深度，记录从 12 字节降到 8 字节。排序是六段无主机同步的流水：四级 block radix sort 按 segment 规模分档，超出最大档的 segment 先切成 8192 的 run 排序再用 merge path 归并。光栅化在每个单元内分两阶段：协同加载 batch 时用不透明度阈值椭圆对 M 个 tile 做重叠测试，得到 P×M 位矩阵后转置，使每个 tile 获得 P 位可见性掩码；随后 worker group 从共享 tile 队列动态认领 tile，经容量 2B_d 的调度缓冲以 B_d=64 为粒度排空到固定速率的混合核，并在每像素透过率饱和时一致投票提前退出。跨 batch 用前向 alpha 混合的结合性做合成：C=Σ F_i C_i，F_i=∏_{h<i}T_h，保持与 3DGS 完全一致的前到后精确合成。数值上以 Σ^{-1}=LL^T 的 Cholesky 因子替代 conic 系数避免抵消，位置相对 macro-tile 中心降到 FP16 避免溢出，SH 用 YCoCg + 非均匀量化压到 32 字节。训练复用同一批单元：合成阶段顺带产出每 batch 的 F_i 与后缀色 S_i=Σ_{h≥i}F_hC_h，反向单元只需本 batch 加这两个边界量即可独立求导；Adam 融进反向投影（每 Gaussian 一线程，梯度留在寄存器），参数除位置外存 FP16、两个矩存 BF16（708→360 字节）并采用随机舍入；对被视锥剔除的 SH 系数用稀疏在线学习的闭式惰性更新 Δθ=-ηmΦ/(√v+ε_AΦ/Ψ)，按 32 个 Gaussian 一组记录最后更新步。",
+    "key_numbers": [
+      "渲染 2756 FPS @1080p、1533 FPS @4K；相对 gsplat 快 5.1×/5.6×，相对近年优化光栅器快 1.5×–5.6×",
+      "负载不均的 120 个驾驶视角上快 6.8×–20.0×；最均衡到最不均衡视角间 HiGS 帧时间仅涨 1.6×，基线涨 3.0×–5.9×",
+      "重建比次快方法快 2.3×–3.0×、比 gsplat 快 5.9×–7.3×，显存比最省方案少 1.9×（Mip-NeRF 360：49.3 s / 2.02 GiB，gsplat 309.4 s / 3.87 GiB）",
+      "1080p 平均仅 1.51M、4K 2.21M 对，比 gsplat 的 16×16 不透明度感知包围盒少 2.7×/4.3×",
+      "深度排序 0.03–0.06 ms，gsplat 全局 radix sort 在 4K 为 0.44–1.10 ms；比通用分段排序快 4.6×–6.0×",
+      "训练 61.5 s vs 起始配置 194.4 s（3.2× 加速，显存少 34%），PSNR 差 0.01 dB"
+    ],
+    "ablation": "在 garden 上逐项叠加：空间有序存储 -9%、独立 Adam 配 BF16 矩 -23%、融合优化器 -27%（峰值显存 +0.20 GiB）、FP16 参数 -18%、延迟外观更新 -26%；最近舍入会掉 0.14/0.06 dB，随机舍入恢复到运行间波动内，完全去掉随机舍入则掉 0.37 dB。去掉空间有序存储训练慢 48%，其中 90% 的额外时间在反向，因为分组全剔除的前提被破坏。",
+    "baselines": [
+      "3DGS",
+      "gsplat",
+      "Faster-GS",
+      "SHARP-GS",
+      "FlashGS",
+      "TC-GS",
+      "Speedy-Splat",
+      "StopThePop"
+    ],
+    "datasets": [
+      "重建：Mip-NeRF 360 九场景 + Tanks and Temples 两场景 + Deep Blending 两场景，统一 30k 步、官方分辨率",
+      "渲染：Mip-NeRF 360 七个公开预训练模型的全部测试相机，1080p 与 4K，SH degree 3，1.2M–6.1M Gaussians",
+      "负载不均：PhysicalAI Autonomous Vehicles（NuRec 重建）六段共 120 个 1080p 驾驶视角，每模型 2.5M Gaussians",
+      "硬件：RTX PRO 6000 Blackwell + Ryzen 7 7800X3D"
+    ],
+    "novelty": "用一次分解同时解决排序规模、尾部效应与训练反向三个问题：macro-tile 分箱让排序变成互不相关的 segment 并把 tile 位从排序键中彻底移除，bounded batch 让任意稠密列表都能驻留片上存储。把「一个 batch 既是渲染单元也是反向求导单元」落实为可实现机制，合成阶段顺带留下的边界状态使 batch 间可完全独立求导，无需 per-tile 梯度缓存。优化器侧把 Adam 融进反向、状态降精度配随机舍入、并对被剔除的 SH 做闭式惰性更新，使显存流量随「视角看到多少」而非场景规模增长。",
+    "limitations": "并行性以显存和带宽为代价：每个 batch 都要预留并写出自己的输出，且即使被不透明前景完全遮挡仍会被光栅化，在「所有 Gaussian 都覆盖全屏」的退化场景下开销随遮挡层数线性增长。方法针对 commodity GPU 的 CUDA 实现，未覆盖移动/XR 端芯片，也未验证超过单卡显存的大场景。SH 打包与 FP16 路径引入约 55.6 dB 的重建一致性误差，虽在指标上不可见但非比特精确。",
+    "trl_evidence": "NVIDIA 出品，在 RTX PRO 6000 上以 2756 FPS@1080p 运行，属可直接进入产品渲染器的系统级实现；精确前到后合成保证与现有 3DGS 管线输出一致，迁移成本低。论文称发表后开源，当前未提供代码。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 4,
+      "NOV": 3,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 5,
+      "TRL": 4,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：渲染 1.5–5.6×、不均负载 6.8–20×、训练 2.3–3× 且显存减半，同时保持精确合成与同等画质，属系统能力级提升。NOV=3：macro-tile/batch/边界状态/惰性 Adam 各自都能在系统文献找到影子，新意在于把三者统一到同一工作单元。TEC=4：Cholesky 防抵消、随机舍入、闭式惰性更新与形式化误差分析都相当扎实，工程完成度高。EXP=4：13 场景重建 + 7 场景双分辨率渲染 + 120 个驾驶视角 + 逐组件消融，证据链完整。PER=5：2756 FPS@1080p、1533 FPS@4K，为本批最快。TRL=4：商品 GPU 上的完整实现、可直接替换光栅器，缺移动端验证。REP=3：附录给出伪代码与数据布局，代码尚未发布。"
+  },
+  {
+    "id": "2611.32202",
+    "title": "SplatTok: Data-Driven Compression of 3D Gaussian Splats with Scene-Level Tokens",
+    "title_zh": "SplatTok：以场景级 token 数据驱动压缩 3D Gaussian Splats",
+    "problem": "3DGS 场景动辄数百 MB 到 1 GB 以上，难以流式传输到头显或手机。per-scene 方法（HAC++、ContextGS 等）能到近百倍压缩，但需要训练图像、每场景几十分钟优化、每个目标码率重训，输出还常是非标准 splat 需要专用渲染器；post-training 与 feed-forward（FCGS）方法保持标准格式，却只有 10–45 倍压缩。此前没有方法能在「不要训练图像、不做 per-scene 表示训练、解码回标准 splat」三个约束下达到 per-scene 级压缩率。",
+    "method": "核心观点：一个 splat 只是场景的一种实现，不同原语排布可渲染出几乎相同的图像，因此可以在解码侧重合成。SplatTok 先把场景用 k-means 分成 A 个 anchor（数量正比于 N，每个 anchor 至多 K=640 个成员，边界处允许重叠），记录 anchor 位置 a_k 与中位半径 σ_k，位置用归一化偏移 (μ_i-a_k)/σ_k 表达。编码器把每个 Gaussian 的非位置属性嵌入，与 Fourier 编码的偏移合成 key-value token，再由 T=16 个共享 learnable query（按 log σ_k 平移）做 cross-attention，使任意成员数的 anchor 都压成固定 T 个 token；随后 12 层 transformer 前 4 层做 anchor 内自注意力、后 8 层在场景级与 anchor 内交替，全局层带 anchor 位置的 3D rotary position encoding。解码器用 M=160 个 query 对每个 anchor 的 token 做 cross-attention，经残差 MLP 回归 δ、log-scale、四元数、不透明度 logit 与 SH，位置 μ̂=a_k+σ_kδ；颜色在 BT.709 YCbCr 基下只在 luma 保留视角相关项、chroma 仅留 DC，损失 <0.1 dB。训练完全以渲染监督：L=(1-λ)MSE+λ(1-SSIM)，λ=0.2，不施加任何原语级损失、也不要求输入输出对应；在 9,101 个 DL3DV 场景上训 300 epoch，57.3M 参数，4×A100 约 6 天。存储时 token 按通道对称均匀量化到 b bit，用 rANS 编码，概率表按 (token 位置, 通道, 最近已编码 anchor 的符号粗分箱) 选取，表离线统计后固定、不传输；码率由 b 与 anchor 密度两个旋钮控制，同一模型覆盖所有码率。压缩时做量化感知的 latent search：冻结编解码器，仅对 Z 用 SGD 优化渲染损失，round 用 STE，目标是输入 splat 的渲染（无需训练图像），也可换成训练图像。",
+    "key_numbers": [
+      "Mip-NeRF 360：27.93 dB @7.46 MB，比 HAC++ 的 8.61 MB 高 0.46 dB；28.09 dB @10.89 MB，比 HAC++ 的 18.48 MB 高 0.49 dB",
+      "Tanks and Temples 高/低码率分别高 0.51/0.44 dB 且体积小 25%/34%；Deep Blending 高 0.18/0.15 dB、小 29%/40%",
+      "无训练图像时以 FCGS 高码率的 PSNR 为基准，文件小 4–6.5 倍；相对输入 splat 压缩约 75–110 倍，仅掉 0.1–0.3 dB",
+      "latent search 仅用 100 步即涨 3.7 dB，500 步收敛到 28.09 dB，而码字相对编码器输出只变 4%–10%",
+      "以输入 splat 渲染为目标时增益约 8 dB，等效消除编码器 84% 的平方误差，即至少 84% 误差属 amortization gap",
+      "解码 splat 含约 1.25× 输入 Gaussian 数，Garden 上 171 FPS（输入 184 FPS）；3.5M Gaussian 场景 latent search 672 s、编码 5.1 s、解码 0.44 s"
+    ],
+    "ablation": "去掉全局注意力（只在 anchor 内注意）使 encoder-only 的 DL3DV PSNR 掉 0.82 dB，search 后仍差 0.26 dB，证明场景级上下文不可替代。在连续 token 上搜索、最后才量化会在 Mip-NeRF 360 掉 0.33 dB@8bit、0.67 dB@6bit。熵编码按 token 位置选表比单一 histogram 省 11% 比特，再加邻居 anchor 上下文只多省 0.5%。随机初始化 token 后仅靠冻结解码器搜索只能到 21.44 dB（编码器初始化可到 26.51 dB），说明编码器负责把搜索放到好解附近。",
+    "baselines": [
+      "FCGS（low/high rate）",
+      "HAC++（low/high rate）",
+      "ContextGS",
+      "KISS-GS",
+      "FlexGaussian",
+      "LightGaussian",
+      "Reduced3DGS",
+      "MesonGS-FT"
+    ],
+    "datasets": [
+      "DL3DV：9,101 训练场景 + 173 held-out 测试场景",
+      "Mip-NeRF 360、Tanks and Temples、Deep Blending：按 3DGS 协议评测，splat 的 Gaussian 数最多为训练集 10 倍",
+      "输入 splat：Table 1 用 gsplat 训练的 vanilla 3DGS，Table 2 用 3DGS-MCMC（分别封顶 3.5M/1.75M/1M）",
+      "held-out 视角既不参与拟合输入 splat，也不作为 latent search 目标"
+    ],
+    "novelty": "把压缩从「编码给定的原语」改为「在学到的场景潜空间里找这个场景的码」，因此码长与原语数量解耦、解码器可自由生成更适合渲染的新原语集合。用 amortization gap 分析量化了 search 的作用（消掉 84% 平方误差、码只动 4–10%），为「短搜索即可逼近最优码」提供了可检验解释。单一模型跨数据集、跨码率、跨 anchor 密度复用，且输出是任何 3DGS 渲染器都能读的标准 splat，可与 compaction 方法串联。",
+    "limitations": "latent search 是最慢阶段：百万级 Gaussian 场景接近 3 分钟，350 万级到 672 s，远慢于单次前向。编码器全局注意力需大量显存（400 万 Gaussian 约 30 GB），大场景受限。统一 anchor 密度使精细区域与平坦区域分到同样比特，粗 anchor 时 SSIM/LPIPS 掉得比 PSNR 多；计数式概率表几乎没利用跨 anchor 依赖，留出学习熵模型的空间。",
+    "trl_evidence": "面向 splat 资产分发与流式加载：解码耗时远低于 1 秒、渲染帧率与原 splat 相当（171 vs 184 FPS），且输出标准格式可直接进现有渲染器。但编码端需分钟级搜索与 30 GB 级显存，属于服务端离线打包而非端上压缩。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 4,
+      "EXP": 4,
+      "PER": 2,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：在无训练图像、无 per-scene 训练、输出标准 splat 三约束下同时超过 HAC++ 与 FCGS 的体积-质量曲线，改变的是压缩范式而非单点指标。NOV=4：把编解码重构成「场景潜空间搜索 + 重合成」，并用 amortization gap 给出定量解释，思路少见。TEC=4：57.3M 参数、双码率派生、rANS 上下文设计与量化感知搜索配合完整。EXP=4：四个数据集、173 个测试场景、7 条未见序列、码率/密度/压缩输入三类控制齐全。PER=2：编码需数百秒与 30 GB 显存，是明显短板。TRL=3：解码侧已具备产品形态，编码侧仍是离线服务。REP=3：有 project page 与详尽超参，未提及代码。"
+  },
+  {
+    "id": "2611.32628",
+    "title": "Completion-Aware Compression for Progressive 3D Gaussian Splatting",
+    "title_zh": "面向渐进式 3D Gaussian Splatting 的完成感知压缩",
+    "problem": "渐进式投递不仅要求文件小，还要求字节到达途中的任意时刻都能渲染出可用的部分场景。现有分层/LOD 表示只能在下个编码单元完整到达时更新，粒度受预定义层边界限制；而已解码的 Gaussian 属性之后不会再被细化，因此「给早期记录多分比特以提高精度」会推迟后续 Gaussian 的到达，「少分比特以更早暴露内容」又会永久损失精度。仅按已解码数量或仅按属性误差分配比特，都无法刻画某个 Gaussian 在图像上的实际贡献。",
+    "method": "把表示准备与码率分配解耦。准备阶段联合学习 Gaussian 保留、SH 阶数（0–3，嵌套门控保证低阶先激活）、传输优先级 p_i 与尺度-不透明度修正（S+O）系数：用 sigmoid 软门 a_i(b)=σ(β(τ_b-p_i)) 在多个接收预算上近似离散包含，满足 Σ r̂_i a_i(b)=B_record(b)，顺序 π=argsort(p)，并在对数均匀采样的接收比例上以 log-MSE 加权、另加独立 Full 项。S+O 让未完全接收时的解码 Gaussian 按 m_i(q)=ln(L/q)/ln(L/C_i) 调整尺度与不透明度，z_i(q)=z̄_i+γtanh(m_i(q)η_i)，m_i(L)=0，从而在 Full 时自动退化。分配阶段固定 Θ，只优化量化步长 Δ 与熵上下文 c。目标函数 J(S)=(1-μ)E_b[D(S,min(q(b),L))]+μD(S,L)+R(L)，其中 p(b)=1/(b ln8) 使等对数接收区间等权、μ=1/2，R(L)=ln2[(1-μ)E_b min(q(b),L)+μL]。为刻画「完成时刻」本身的影响，固定各前缀渲染，用 E[D(Q)]=D_0+Σ(D_i-D_{i-1})F̄(C_i) 及其对 r_j 的导数，说明相同比特节省因跨过不同 cutoff 而图像收益不同。实际分配用 ideal 长度 -log2 P(s|ctx) 加实测/ideal 载荷比 κ 预测完成位置 Ĉ_i=C_i^0+κΣd_j，再用参考流上算出的 Gauss–Newton 度量 M、包含梯度 g_ki 与曲率 h_ki 组成 Φ=ΔD_attr+ΔR+C，completion cost C=(1-μ)Σ_k w_k Σ_i(g_ki δa_ki+½h_ki δa_ki²)。搜索按精度块再按上下文坐标做坐标下降，用 6 个 Gauss–Legendre 节点近似部分接收积分。解码端在字节块之间维持同一个因果算术解码器（区间、码寄存器、输入游标、自适应符号计数、空间预测上下文），记录一完成即可渲染，不回放先前字节。",
+    "key_numbers": [
+      "完整码流 7.2–7.3 MB，相对原始 3DGS PLY 压缩 62–88 倍；Mip-NeRF 360 上 7.28 MB vs 640.96 MB",
+      "接收一半（3.61–3.64 MB）时 PSNR 与原始 3DGS 差距在 0.51 dB 内，相当于少收 124–176 倍字节",
+      "匹配完整文件大小与相同已收字节下，completion-aware 分配比 attribute-only 在 1/8 处提升 0.48–1.43 dB，BD-rate 降低 8.47%–17.92%",
+      "相对 GoDe 提升 0.47–1.54 dB BD-PSNR、BD-rate 降低 68.74%–79.38%；相对 RDO-Gaussian 提升 0.29–1.19 dB、降低 36.86%–64.22%；相对 PCGS-L 提升 0.10–0.82 dB、降低 18.67%–34.81%",
+      "50 Mbps 模型下达到 24.8 dB 仅需 0.2 s，GoDe 0.7 s、RDO-Gaussian 1.7 s、PCGS-L 3.2 s、PCGS-H 22.2 s、ProGS 27.2 s",
+      "完成位置预测误差均值：精度改动 123.49 字节、上下文改动 25.52 字节（56 个编码配置、18 个搜索状态）"
+    ],
+    "ablation": "在共享准备表示、完整文件大小差 0.5% 内、部分字节完全一致的条件下，A+C 比 attribute-only 与 Count-aware 在三个数据集上都取得更高早期 PSNR 与更低 BD-rate，尽管 Count-aware 解码出更多 Gaussian，说明「完成度」与「精度」必须联合评估。用均匀/区间平均的完成成本替换图像敏感度后，1/8 处掉 0.51–1.56 dB；仅调顺序的 schedule 在早期也明显落后。交叉重建显示：只换已完成集合、关闭 S+O 时 PSNR 提升 1.89–3.91 dB，只换边界映射并开启 S+O 时 1/8 处提升 1.50–2.90 dB。",
+    "baselines": [
+      "GoDe",
+      "PCGS（High-rate / Low-rate）",
+      "ProGS",
+      "RDO-Gaussian"
+    ],
+    "datasets": [
+      "Mip-NeRF 360、Tanks & Temples、Deep Blending 共 13 个场景",
+      "原始 3DGS 作为未压缩 Full 参考；每个数据集用一套固定码率参数覆盖全部场景",
+      "公共区间 BD-PSNR/BD-rate 评测；部分接收与 Full 共用同一条码流"
+    ],
+    "novelty": "把渐进式 3DGS 的比特分配显式建模为「完成时刻 × 内容可用性」的联合优化，而不是只压缩属性或只排顺序：目标函数对接收过程积分，并用前缀成像的损失跃变刻画单个记录长度变化的下游影响。用参考流上的包含梯度与 Gauss–Newton 曲率近似「提前暴露某个 Gaussian」的图像收益，使分配无需对每个候选真正编码和渲染，把搜索成本压到可接受范围。单条因果码流 + 持久增量解码器，使任意字节预算都无需单独编码或事后细化属性。",
+    "limitations": "S+O 与优先级在准备阶段一次性固定，若实际带宽轨迹与训练时的对数均匀假设偏离较大，收益会衰减；目标用 log-MSE，导致 Full 处 SSIM/LPIPS 明显低于参考（如 0.800 vs 0.8264）。完成位置预测存在百字节量级误差，靠近 cutoff 时可能误判包含关系。方法只与四条基线在公共区间比较，未覆盖最新的 learned entropy 方案，也未做真实网络抖动下的端到端主观评测。",
+    "trl_evidence": "明确面向 50 Mbps 传输场景，给出「0.2 s 出现可用部分重建」的显示时延模型，并实现了跨字节块的持久增量解码，形态接近可部署的流式编解码器。但时延数字来自建模的字节到达叠加实测解码/渲染，非真实网络实测。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 3,
+      "PER": 3,
+      "TRL": 3,
+      "REP": 3
+    },
+    "scores_why": "IMP=3：为渐进式/流式 3DGS 提供了可用的比特分配准则，0.2 s 首帧对 XR 有实际意义，但整体仍在既有渐进编码框架内。NOV=3：完成感知目标与图像敏感度近似是清晰的新贡献，其余组件（S+O、因果算术编码、坐标下降）较常规。TEC=3：推导完整、近似有验证，但多处依赖一阶/二阶近似与手工设计的接收密度。EXP=3：13 场景、4 基线、BD 指标与多组对照，规模中等，缺少主观与真实网络实验。PER=3：增量解码开销小，但字节到画质的时延仍是模型推算。TRL=3：具备流式编解码器雏形，未做系统级集成。REP=3：附录详尽，未提及代码。"
+  },
+  {
+    "id": "2611.32735",
+    "title": "AnyPrune: Optimization-Free Pruning for Any Feedforward 3D Gaussian Splatting Pipeline",
+    "title_zh": "AnyPrune：面向任意前馈 3D Gaussian Splatting 管线的免优化剪枝",
+    "problem": "前馈 3DGS 一次前向即产出可实时渲染的 Gaussian，但冗余严重——像素对齐管线为每个视角每个像素预测一个或多个 Gaussian，视角一多数量与重叠重复急剧膨胀，显存与存储开销大幅上升，也阻碍端侧部署与传输。现有剪枝要么需要 per-scene 再优化（等于放弃单次前向的意义），要么只用 Gaussian 属性做启发式打分、不利用输入图像；还有方案与特定架构绑定，换管线就得重设计。",
+    "method": "AnyPrune 把前馈管线当黑盒：给定其输出的 N 个 Gaussian G、输入图像 I 与位姿 P，用一个 point transformer 一次前向同时输出精化后的场 G' 与逐 Gaussian 的 keep logit z∈R^N。骨干是 SplatFormer（PTv3 + 每属性一个 MLP 头），从 Objaverse 预训练权重初始化，输入先做等方比归一化到单位立方体，SH 只喂到 degree 1（degree 0 的场补零预测 degree 1，更高阶绕过网络）。关键改动有两处：一是渲染误差条件化——先用输入位姿渲染 G，计算有符号误差 E_v=Î_v-I_v，再把它「抬升」到 Gaussian 上，形成 4 维特征 f_i=[Σ w_vi(p)E_v(p)/max(Σw_vi(p),1e-6), log(1+Σw_vi(p))]，经小 MLP 后加到输入嵌入与每个头；二是 keep logit 头在 Speedy-Splat 的敏感度先验 S_i 上做对数域修正：z_i=log max(S_i,ε)-log r+h_i（r=0.0125，ε=1e-6），末层零初始化使训练起点就是强免优化判据。为抑制网络偶发的数百倍尺度位移，中心位移被平滑限制在最大尺度的 3 倍内。训练用软掩码 m_i=σ(z_i/τ)（τ=0.5）乘到精化后的不透明度上再渲染，损失 L=(1/|V|)Σ‖Î'-I‖₁/(3HW)+(λ/N)Σm_i；采样时取 2V 个连续帧，偶数位作输入、奇数位作 held-out，同时监督输入与留出视角以惩罚只删掉「离开输入视角才需要」的 Gaussian。调度为两段各 500 步（λ=0.033 → 0.0083，学习率线性衰减），对重剪枝敏感的管线再加第三段 500 步（冻结剪枝头、去掉稀疏项、在 [0.05,1] 随机三个保留比渲染）。推理时把软掩码换成硬选择，并按 γ(N)=min(1,(N0/N)^{1/3})、N0=100,352 缩放归一化空间里的残差，使其随平均间距 N^{-1/3} 收缩。",
+    "key_numbers": [
+      "保留 50% 时，跨 7 条管线、3 个数据集、2–32 视角平均比最佳对比方法高 1.8 dB PSNR",
+      "DL3DV 上 2–16 视角、保留 20–70% 的 112 个设置全部取得最佳 PSNR",
+      "1.6M Gaussian 的场在消费级 RTX 4060 Ti 上 5.3 s 剪完，峰值显存 7.3 GiB；比合并或再优化的方法都快",
+      "模型自选比例（z_i>0）平均保留 43%（2–16 视角，17%–85%），其中 27/28 设置 PSNR 优于未剪枝场，平均 +1.1 dB",
+      "对 NanoGS 在 YoNoSplat 上 20–90% 保留的 144 个设置中 143 个更好，平均高 0.7 dB；TokenGS 上相对其它方法领先约 2 dB，增益主要来自参数调整",
+      "单管线训练 20 分钟–5.9 小时（单张 A100）"
+    ],
+    "ablation": "去掉渲染误差条件化、或把 keep logit 直接从头预测都会明显变差（详见补充材料），因此采用「敏感度先验 + 学习偏移」；训练时与推理时同时施加残差缩放会让网络用更大原始残差抵消，反而在高视角数下降，故只在推理施加。管线自带剪枝关闭时结果变弱：48 个设置中 43 个最佳 PSNR、34 个最佳 LPIPS。第三段随机剪切训练改善重剪枝但会轻微损害高保留比，因此按管线选择性启用。",
+    "baselines": [
+      "RadSplat",
+      "Mini-Splatting",
+      "LightGaussian",
+      "Speedy-Splat",
+      "GaussianPOP",
+      "REFINE",
+      "provable coresets",
+      "RAP"
+    ],
+    "datasets": [
+      "训练：DL3DV-10K 生成的 Gaussian 场；测试：DL3DV 140 个测试场景",
+      "零样本迁移：RealEstate10K 前 50 个 clip 与 ACID，不重训",
+      "7 条前馈管线：YoNoSplat、ReSplat、TokenGS、Off The Grid、EcoSplat、F4Splat、AdaptiveSplat",
+      "评测分辨率 448×448，保留比 10%–90%（步长 10%），交替帧作输入/held-out"
+    ],
+    "novelty": "把「剪枝准则」从手工先验变成在冻结管线上短训练学到的模块，从而自动吸收该管线特有的冗余模式（像素对齐重复、token 近透明、视角重叠等），换管线只需重训而非重设计。首次把管线自身的渲染误差作为逐 Gaussian 特征抬升进网络，并用「敏感度先验 + 学习偏移」保证训练起点不退化为随机打分。模型还能从稀疏损失中自行给出场景相关的保留比例，省去人工设定阈值。",
+    "limitations": "每条管线都要单独训练一个模型（20 分钟–5.9 小时），跨管线不通用。保留比远低于模型自选比例时质量不如带运行时旋钮的 F4Splat，需要额外第三段训练才具竞争力。LPIPS 在 22/28 设置上略差于未剪枝场（仅用 L1 训练），且方法只在前馈输出上验证，尚未覆盖 per-scene 优化式 3DGS。",
+    "trl_evidence": "作为前馈管线的后处理模块，5.3 s/1.6M Gaussian、7.3 GiB 峰值显存在消费级 RTX 4060 Ti 上完成，能跟上「秒级出场景」的节奏，适合端侧部署前的压缩步骤。但每条管线需离线训练一次，尚无统一跨管线模型。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 3,
+      "NOV": 3,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 4,
+      "TRL": 3,
+      "REP": 2
+    },
+    "scores_why": "IMP=3：为任意前馈 3DGS 提供即插即用的压缩前置，1.8 dB 的提升有实用价值，但属工程增强。NOV=3：黑盒学习剪枝 + 自选比例 + 渲染误差抬升的组合有新意，单个组件均不新。TEC=3：残差缩放、有界位移、软掩码与三段调度都是有效但常规的工程手段。EXP=4：7 条管线 × 3 数据集 × 112+ 设置，并含零样本迁移与运行时对比，覆盖非常广。PER=4：1.6M Gaussian 5.3 s，能嵌入前馈流程。TRL=3：已有产品化前置模块形态，但需逐管线训练。REP=2：未提及代码，关键实现细节散落在补充材料。"
+  },
+  {
+    "id": "2611.33157",
+    "title": "PointX: Multi-View Consistent Intrinsics by Querying Surface Points",
+    "title_zh": "PointX：通过查询表面点获得多视角一致的本征属性",
+    "problem": "逆渲染要从图像恢复 albedo、roughness、metallicity、normal 与 irradiance，但分解本身有歧义，同一像素可有多种自洽解释。逐像素方法在每张图上独立消歧，导致同一表面点在各个视角得到不同分解：重打光会随视角闪烁、在一张图上的编辑传不到下一张、贴到重建上的材质出现接缝。绑定 3D 表示（per-scene 拟合或网络预测）虽能一致，但所有视角继承该表示的误差，且拟合需数分钟到数小时；多视角/视频网络只做跨视角注意力，仍逐视角独立解码，对应像素照样会分歧。",
+    "method": "PointX 把预测单元从像素换成 3D 表面点，直接学 (a,e,r,m,n)=f(p; I_1..I_N)。几何由冻结的 VGGT-Ω 一次前向给出每视角相机、深度与逐像素置信度，并把所有量重表达到对称的 mean-frame（原点为相机中心均值、前向为视线均值、水平/垂直正交化），使任何视角都不被特殊化；同时去掉 VGGT 的 camera token、所有视角共用同一组 register token，使 transformer 对视角顺序等变。多视角 transformer（VGGT-Ω 初始化后微调）做帧内与全局注意力交替，每像素额外拼入 10 个几何通道（6D Plücker 视线、VGGT-Ω 估计的 3D 点、该点的 log 置信度），经零初始化 patch embedding 加入，保证初始化时预训练特征不变。输出 1/16 分辨率特征，由 DPT 解码器上采样到全分辨率；token map 由「上采样特征线性投影」与「该像素 9×9 RGB 窗口线性投影」相加构成。给定查询点 p，用相机投影得到其在各视角的位置 x_v，并按 c_v=1/(1+δ_v/τ)、δ_v=‖X_v[x_v]-p‖/d_v（τ=1%）估计可见置信度，被遮挡或落在相机后方则 c_v=0。随后沿 track 做置信度加权平均 z=Σ w_v t_v[x_v]，w_v=c_v/Σc_u，这一步无任何可学参数。各属性由独立两层 MLP 从 z 解码一次（albedo/roughness/metallicity 过 sigmoid，irradiance 以 log(1+e) 表示后 softplus，normal 归一化到单位球），要出逐视角法向图时只需把 n 从 mean-frame 旋到该视角相机系。像素查询是特例 p=X_i[q]，track 也可来自稠密匹配器 RoMa-Ω，此时 c_v 再乘匹配置信度。训练只用像素查询，track 随机取自 GT 几何投影、VGGT-Ω 投影与 RoMa-Ω 三类，损失为 albedo/roughness/metallicity/log-irradiance 的 L1、法向余弦距离、以及 16×16 窗口上的多尺度梯度损失；不比较不同视角预测、也不用可见性标签，一致性由构造保证。",
+    "key_numbers": [
+      "ETH3D 逐视角一致性（RoMa-Ω track）：albedo RMSE_r 0.095、irradiance 0.146、normal 2.9°、roughness 0.136、metallicity 0.222；MVInverse 对应 0.161/0.318/9.6°/0.382/0.270，MVID-Ω 法向 6.8°",
+      "表面点内本征（Table 1）：InteriorVerse albedo PSNR 25.50 / 法向 5.2°、albedo 分歧 0.083 且按构造为 0；Hypersim 上 20.32 dB 与最强基线相当",
+      "单图 InteriorVerse：albedo 24.09 dB（MVID 23.54）、法向 6.3°（MVID 11.3°）、LPIPS 0.101",
+      "八图 InteriorVerse：albedo 25.13 dB、法向 5.7°、roughness RMSE 0.084、metallicity 0.077",
+      "消融去掉 pooling 后精度几乎不变（25.12 dB / 5.65°），但 ETH3D 分歧从 albedo 0.095 恶化到 0.141、法向从 2.91° 到 5.24°",
+      "8 张 512×336 图像的推理耗时：GT track 1.6 s、VGGT-Ω track 2.0 s、RoMa-Ω track 5.8 s（A100）"
+    ],
+    "ablation": "pooling 是「零精度代价换一致性」的关键：去掉后精度持平而分歧显著上升，因为每个像素各自解码。去掉输入几何通道后所有属性都变差且更不一致，法向受损最大——它表达在 mean-frame，模型必须从图像推断相机朝向，朝向一错整幅法向倾斜。把全局注意力限制在单视角内，单图精度不变但多图增益几乎消失、分歧变大，说明联合编码才把「更多视角」转成精度。置信度加权在三种 track 来源上都带来提升，投影 track 上收益最大（RoMa-Ω 自身置信度已滤掉多数遮挡）。",
+    "baselines": [
+      "Intrinsic Image Diffusion",
+      "RGB↔X",
+      "Marigold V2",
+      "DiffusionRenderer",
+      "V-RGBX",
+      "MVInverse",
+      "MVID / MVID-Ω",
+      "RGB↔X + GeoID"
+    ],
+    "datasets": [
+      "Hypersim、InteriorVerse：渲染场景，带 GT 本征与深度，每个场景最多 8 视角",
+      "MAW：真实室内照片，提供实测 albedo",
+      "ETH3D：真实照片 + 激光扫描几何，用于在精确对应处测一致性",
+      "训练：Hypersim/InteriorVerse + 三个内部数据集（1,400 个室内外场景）+ 100 万张由单图模型伪标注的真实照片"
+    ],
+    "novelty": "把「一致性」从损失项或后处理变成表示层面的必然结果：预测单元是表面点而非像素，沿 track 池化后再解码一次，因此同一点的跨视角分歧按构造为零，无需 consistency loss、无需融合逐视角预测、也无需 per-scene 优化。同一模型既可直接查询点云/网格（一次一 texel 即得可路径追踪的 PBR 资产），也可逐像素查询得到逐视角图，且精度随视角增加而提升。对几何与对应关系的质量是「免费受益」——换成更准的 track（如 RoMa-Ω）即可提升一致性而不重训。",
+    "limitations": "一致性上限由 track 质量决定：投影 track 受深度与相机误差影响，两视角像素反投影到的本就是相邻而非同一点，thin structure 边缘尤其明显；换成稠密匹配器虽更好但仍非精确。依赖冻结的 VGGT-Ω 提供几何，几何失败会直接传导到法向与池化权重；未处理动态场景与非朗伯/互反射。训练中大量使用伪标签真实照片，albedo 与 irradiance 的分解仍受单图先验影响。",
+    "trl_evidence": "Adobe Research 出品，8 张 512×336 图像在 A100 上 1.6–5.8 s 出全图本征，可直接把预测烘到网格 texel 上供路径追踪器重打光与物体插入，具备内容生产工具形态。但仍依赖离线重建几何，未做实时或移动端验证。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {
+      "IMP": 4,
+      "NOV": 4,
+      "TEC": 3,
+      "EXP": 4,
+      "PER": 3,
+      "TRL": 2,
+      "REP": 3
+    },
+    "scores_why": "IMP=4：把多视角本征一致性做成构造性质而非优化目标，直接解锁视角一致的重打光、编辑与贴图，对 XR 内容管线价值明确。NOV=4：预测单元从像素改为表面点是简洁而根本的视角转换，pooling 无可学参数、一致性零成本。TEC=3：架构本身很轻（池化 + 逐属性 MLP），主要依赖冻结的 VGGT-Ω 与 RoMa-Ω，技术贡献偏组合。EXP=4：四个数据集、三类实验（点本征/一致性/精度）+ 消融 + 重打光与编辑应用，证据充分。PER=3：秒级但非实时，且最慢路径 5.8 s。TRL=2：研究原型，未做端上或引擎集成。REP=3：有 project page 与详尽附录，未提及代码。"
+  }
+]

@@ -1,0 +1,285 @@
+[
+  {
+    "id": "2508.17255",
+    "title": "SEER-VAR: Semantic Egocentric Environment Reasoner for Vehicle Augmented Reality",
+    "title_zh": "SEER-VAR：面向车载增强现实的语义第一人称环境推理器",
+    "problem": "车载 AR 要在驾驶员第一人称画面里稳定锚定虚拟内容，但同一台单目相机同时看到车内（仪表台、方向盘、手）与车外（道路、车辆、行人）两个几何上不相干的三维域。现有单目 SLAM/AR 都隐式假设单一世界坐标系，单分支管线会向视觉上占优的一侧过拟合，导致另一个域漂移、锚定抖动。在自建 EgoSLAM-Drive 上，ORB-SLAM3 只能跟踪车内（RE 32.75 px）、sqrtVINS 只能跟踪车外（RE 85.23 px），没有方法能同时维持两侧几何一致。",
+    "method": "先由 Depth Anything V2 出深度、YOLOE26 出候选框、EdgeSAM 出语义掩膜，再以数据驱动的上下文判别器分离两个域：对深度图统计 256 bin 直方图 H(k)，取主峰 k1 与二次峰 k2=argmax (k-k1)^2·H(k)，在两者区间内取谷底 k_min 作为阈值，剔除动态物体掩膜后分别得到车内/车外二值掩膜，与 RGB 拼成两路 RGBA 流。若当前帧只检出单一域的代表物体，则跳过深度分裂直接送入对应分支（上下文检查把单上下文分支选择准确率从 49/150 提到 145/150）。随后 CASB 双分支各用掩膜约束的 SuperPoint 特征匹配、以 ORB-SLAM3 为后端，输出相对车内系与车外系的两条 6-DoF 轨迹 T_in、T_ext 及点云地图。GPT 推荐模块只在事件触发时调用，把两路视图与车辆状态 X 映射为覆盖层类别和图像空间锚定框（π: V_in,V_ext,X → L×b）。渲染时车内锚点按固定虚拟深度 z_a 反投影 P=z_a·K^{-1}[u,v,1]^T 得到，车外锚点取锚定框内地图点中心，再用 (T)^{-1} 变换到相机系并同步覆盖层朝向。全流程在 Jetson Orin NX 上 20 FPS，渲染超过 100 FPS。",
+    "key_numbers": [
+      "车内/车外 RE 13.74/17.63 px（ORB-SLAM3 车内 32.75、Dyna-SLAM 22.81、Context+ORB-SLAM3 车外 26.93）",
+      "ARE 1.85°/5.64°（Context+ORB-SLAM3 2.46°/6.29°，sqrtVINS 车外 48.33°）",
+      "ATE 0.054 m / 0.312 m（ORB-SLAM3 0.191 m，Context+ORB-SLAM3 车外 0.446 m）",
+      "去掉上下文检查后单上下文分支选择仅 49/150，完整方法 145/150",
+      "152 人用户实验：NASA-TLX 显著低于两种 AR-HUD 基线（最小差 11.47），SUS 显著更高（最小差 8.11）",
+      "EgoSLAM-Drive 共 71 段序列、1015–7338 帧、总计超过 80 分钟"
+    ],
+    "ablation": "去掉动态物体掩膜后车外 RE 升到 55.16 px、ATE 1.847 m；改用固定深度阈值直接失效（RE 66.53 px、ATE 4.53 m），说明在相对深度下自适应谷底阈值是必需的；用 bbox 替代分割掩膜仍能跟踪但精度下降（14.06/19.82 px）。",
+    "baselines": [
+      "ORB-SLAM3",
+      "Dyna-SLAM",
+      "MaskFusion",
+      "AirSLAM",
+      "MASt3R-SLAM",
+      "sqrtVINS",
+      "World-Anchored HUD (MIRAGE)",
+      "Screen-Fixed HUD"
+    ],
+    "datasets": [
+      "EgoSLAM-Drive（自建）：Meta ARIA 眼镜 RGB 1408×1408@20 FPS + 双 IMU，71 段序列，车内/车外双 6-DoF ArUco 真值，覆盖地下车库、露天停车场、城市街道、城际路与高速"
+    ],
+    "novelty": "把驾驶 AR 显式重述为双上下文第一人称感知问题，并用两套独立参考系分别跟踪，这是与所有单世界系 SLAM/AR 管线的本质差别。深度直方图双峰谷底做自适应域分离、以及把 LLM 推荐限制在事件触发以控时延，都是可复用的工程化设计。",
+    "limitations": "真值依赖路边 ArUco 板，车外评测只能覆盖城市街道与露天停车场等安全场景，隧道、高速等无标记场景无法量化。用户实验在驾驶模拟器 + HoloLens2 上完成，并非真实车内 ARIA 显示；GPT 模块虽低于 1 s 但非逐帧，遮挡与夜间鲁棒性未系统评估。",
+    "trl_evidence": "完整系统在 Jetson Orin NX 上以 20 FPS 运行（TensorRT FP16），并已公开数据集与代码，属实验室原型级端到端验证。",
+    "code": "有（https://github.com/laiyuzhi/EgoDrive）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 4, "NOV": 4, "TEC": 4, "EXP": 3, "PER": 4, "TRL": 3, "REP": 3 },
+    "scores_why": "IMP=4：双上下文锚定是车载 AR 的真实瓶颈，且首次给出可量化基准。NOV=4：双参考系 + 深度谷底分离 + 事件触发 LLM 的组合此前未见。TEC=4：DepthAnything/EdgeSAM/SuperPoint 全栈 TensorRT 化并跑到 20 FPS，工程量扎实。EXP=3：仅自建数据集，车外真值受 ArUco 布设限制，用户实验为模拟器。PER=4：在车内与车外两个域同时取得最低 RE/ARE/ATE，相对最强双分支基线仍有明确余量。TRL=3：边缘设备原型 + 开源，未在量产车或真实 HUD 上验证。REP=3：代码与数据开放，但评测协议尚待第三方独立复现。"
+  },
+  {
+    "id": "2512.12898",
+    "title": "Towards High-Fidelity Gaussian Splatting with Queried-Convolution Neural Networks",
+    "title_zh": "基于查询卷积神经网络的高保真 Gaussian Splatting",
+    "problem": "3DGS 训练快、可实时渲染，但重建保真度仍落后 Zip-NeRF 一类辐射场；作者把瓶颈定位到 3D 高斯内部的球谐颜色参数次优以及细结构难以表达。论文进一步证明仅靠增加高斯数量来降低 MSE，所需数量随误差指数增长，实践中 MCMC 从 4M 增到 7M 高斯验证集 PSNR 反而从 28.26 微降到 28.23。",
+    "method": "提出 Queried-Convolution（Qonvolution）：把低保真信号 f^low 与查询 q 的邻域按通道拼接后过卷积输出残差，再与低保真信号相加，f^θ(q_i)=f^low(q_i)+CNN(γ(q_N(i))⊕f^low_N(i))。理论部分给出特征图信息量递增（MLP(LF) → CNN(LF) → QNN）时最优期望误差单调不增，且 R*(φ3)=0（Theorem 4.1），并用 Corollary 1 给出高斯数量相对误差的指数下界。落到 3DGS 时 f^low 就是光栅化得到的 splatted 图像，QNN 每像素只需一次查询即可出残差图，避免 NeRF 式逐点采样，因此训练时间几乎不增。同一算子直接复用到 1D 回归、2D 回归与 2D 超分。",
+    "key_numbers": [
+      "Mip-NeRF 360：3DGS 27.67 → 27.96 dB；MCMC 28.26 → 28.58 dB，超过 Zip-NeRF 的 28.54 dB",
+      "PSNR_Edge：MCMC+QNN 26.45 dB vs MCMC 26.28、Zip-NeRF 26.34",
+      "MCMC+QNN 用 2.86 GPU-hours 达到 Zip-NeRF 保真度，后者需 32 GPU-hours，约 10× 训练加速",
+      "Deep Blending 29.50→29.67、Tanks & Temples 23.52→24.11、OMMO 29.03→29.37、Shelly 37.56→37.99、Syn-NeRF 34.83→35.36 dB",
+      "训练集 PSNR 30.11（3DGS 29.71、Fourier MLP 29.77），说明增益来自拟合能力而非过拟合"
+    ],
+    "ablation": "把 QNN 换成 vanilla/Fourier/hash-grid/Erf/Sinc/SIREN/FINER 等 MLP 变体，验证集均无提升（最好 27.79），SIREN 甚至崩到 14.49；改为给每个高斯加 32 维参数再 splat，训练集升到 31.23 但验证集掉到 27.42，呈典型过拟合。",
+    "baselines": [
+      "3DGS",
+      "MCMC (3DGS-MCMC)",
+      "Zip-NeRF",
+      "Mip-NeRF 360",
+      "Plenoxels",
+      "iNGP-Big",
+      "Mip-Splatting",
+      "FreGS"
+    ],
+    "datasets": [
+      "六个 NVS 数据集：Mip-NeRF 360（9 场景）、Tanks & Temples、Deep Blending、OMMO、Shelly、Syn-NeRF，指标 PSNR/SSIM/LPIPS 加边缘 PSNR",
+      "附加任务：1D 回归、2D 回归、2D 图像超分（与 CNN 对比）"
+    ],
+    "novelty": "把「邻域」与「查询」两种归纳偏置显式合成为一个算子，并给出可证伪的误差单调性定理与高斯数量指数下界，从理论上解释了为何堆基元不是提升保真度的正确方向。",
+    "limitations": "QNN 依赖邻域，无法用于 NeRF 那种单射线查询；残差网络在图像空间引入额外显存与渲染开销，且绝对增益多在 +0.3 dB 量级，属精修而非代际突破。方法面向静态场景与逐场景优化，未验证动态或大尺度场景。",
+    "trl_evidence": "可直接作为后处理头挂在现有 3DGS 训练管线上，作者给出 3DGS 与 MCMC 两个接入点与完整训练耗时对照，工程可落地性较好。",
+    "code": "未提及（仅项目页 https://abhi1kumar.github.io/qonvolution/）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 4, "NOV": 4, "TEC": 3, "EXP": 4, "PER": 4, "TRL": 2, "REP": 3 },
+    "scores_why": "IMP=4：以极低代价在保真度上超过 Zip-NeRF，对 3DGS 社区有直接指导意义。NOV=4：算子层面新抽象 + 两条理论结论，不是调参式改进。TEC=3：本质是图像空间残差 CNN，创新度中等，引入额外显存。EXP=4：六数据集四任务、含边缘保真度与多组替代方案对比，实验完整。PER=4：多数数据集稳定 +0.2~0.6 dB 且边缘指标同步提升。TRL=2：仅离线逐场景优化，未见实时或产品化路径。REP=3：结果可复现性强，但代码未明确开放。"
+  },
+  {
+    "id": "2601.22046",
+    "title": "PLANING: A Loosely Coupled Triangle-Gaussian Framework for Streaming 3D Reconstruction",
+    "title_zh": "PLANING：松耦合三角-高斯流式三维重建框架",
+    "problem": "单目图像序列的流式重建很难同时拿到高质量渲染与准确几何。3DGS 类流式方法缺少显式、紧凑、稳定的几何：高斯基元没有明确边界，优化又被外观主导，在稀疏观测或新视角下几何一致性差；只能靠堆大量基元补偿，带来结构冗余与算力开销（2DGS 在 ScanNet++ 需 16.1 分钟、41.5 万基元，PGSR 需 21.3 分钟、62.9 万基元）。",
+    "method": "核心是松耦合的三角-高斯混合表示：几何用可学习三角面元，每个三角形由三个可学习顶点 {p0,p1,p2} 参数化，在重心局部系内仅剩一个自由度 a，另加 δ（边缘锐度）与 σ（边界平滑）控制贡献函数 w(x̂)=Sigmoid(-σ log Σ_j exp(δ·dist(x̂,e_j)))·α，并用自研 CUDA 光栅器做前向排序、渲染深度图与法图。外观用锚定在三角形上的神经高斯（Scaffold-GS 式），位置 μ_g=o_g+μ_t，尺度与旋转由 MLP_s/MLP_q(f_t⊕f_g) 解码，每个三角形可挂不同数量的高斯。损失拆为 L_geo（MASt3R 深度/法向先验 + 不透明度熵）与 L_rgb，实现几何与外观解耦优化。流式框架由前端跟踪、后端回环 + 全局 BA、mapper 组成；新基元插入先经 LoG 光度滤波 P_a(u,v)=max(Φ(I)-Φ(Ĩ),0)，再过深度自适应空间滤波 V(d_i) 抑制冗余。后端位姿更新后用 ΔT=T_n T_o^{-1} 整体变换基元，保持位姿-模型一致。重建后可粗到细抽取平面，并导出可供仿真训练的紧凑几何。",
+    "key_numbers": [
+      "ScanNet++ 平面重建 Chamfer-L2 3.53（PGSR 3.87，降 18.52%），F-score 86.88，仅 61.6k 基元、5.5 分钟",
+      "ScanNetV2 平面 Ch-L2 5.68 vs ARTDECO 6.05，基元 56.1k vs 621.5k，耗时 2.1 min vs 2.2 min",
+      "渲染：ScanNetV2 PSNR 28.83 vs ARTDECO 28.44；VR-NeRF 32.59 vs 30.02；FAST-LIVO2 33.97 vs 32.86；KITTI 23.82 vs 22.99",
+      "摘要口径：比 ARTDECO 高 1.31 dB PSNR；ScanNetV2 场景 100 秒内完成，较 2DGS 快 5× 以上",
+      "稠密网格 ScanNetV2 Ch-L2 5.87 / F-score 59.93 vs PGSR 6.55 / 53.89"
+    ],
+    "ablation": "去掉三角改用 2D 高斯：Ch-L2 5.90、PSNR 28.44；去掉混合表示改纯无锚神经高斯：Ch-L2 6.06、PSNR 28.48 且基元涨到 621.5k；关掉空间滤波基元数增 200%（ScanNetV2）/245%（ScanNet++）；关掉全局地图更新 Ch-L2 退化到 6.20。",
+    "baselines": [
+      "2DGS",
+      "PGSR",
+      "MeshSplatting",
+      "ARTDECO",
+      "OnTheFly-NVS",
+      "S3PO-GS",
+      "MonoGS",
+      "PlanarSplatting"
+    ],
+    "datasets": [
+      "ScanNet++（20 场景）、ScanNetV2（10）、VR-NeRF（6）、FAST-LIVO2（4）、KITTI（8）、Waymo（8），共 56 个真实室内外场景",
+      "协议：每 8 帧留一帧评测，流式结束后再做 15k 全局优化，逐场景基线训 30k"
+    ],
+    "novelty": "在流式单目重建里把显式三角几何与神经高斯外观松耦合：三角作为结构锚点抑制漂移与冗余，外观梯度可反传微调几何但不与之冲突。方法顺势导出平面引导位姿优化与可直接用于 PPO 训练的仿真资产。",
+    "limitations": "神经高斯不适合半透明或透明物体，错误的外观梯度会反噬几何优化；框架只建表面，不显式处理天空与远景，室外易出现初始化不一致与外观退化。",
+    "trl_evidence": "已用于 2000 多张手机图像的室内大场景重建（GPU/CPU 动态换页），并在 Isaac Lab 中用 Unitree H1/A1 训练运动策略，接近可交付的资产生产工具。",
+    "code": "未提及（项目页 https://city-super.github.io/PLANING/）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 4, "NOV": 4, "TEC": 4, "EXP": 4, "PER": 4, "TRL": 3, "REP": 3 },
+    "scores_why": "IMP=4：几何与外观解耦直击流式重建的结构冗余痛点，且下游可用性明确。NOV=4：三角+神经高斯的松耦合与配套光栅器/初始化策略是系统性新设计。TEC=4：自研 CUDA 三角光栅器、边距解析计算与全局地图对齐，实现难度高。EXP=4：56 场景、三类任务（平面/网格/NVS）加三个下游应用，覆盖充分。PER=4：几何与渲染同时领先，且基元数与耗时大幅下降。TRL=3：已有大场景与仿真训练用例，但仍是研究原型。REP=3：项目页开放，代码未见明确说明。"
+  },
+  {
+    "id": "2604.03667",
+    "title": "Leveraging Gaze and Set-of-Mark in VLLMs for Human-Object Interaction Anticipation from Egocentric Videos",
+    "title_zh": "利用注视与 Set-of-Mark 提示提升 VLLM 的第一人称人-物交互预判",
+    "problem": "第一人称下的下一次人-物交互预判要从候选物体中挑出真正将被触碰的那个。HD-EPIC 把该任务做成 5 选 1 VQA，此前最佳仅 22.0%。VLLM 的两个短板很明确：视觉 grounding 弱（分不清候选描述指代哪个物体），以及缺少用户意图信号（不知道人此刻在看哪），在语义干扰项相近时几乎只能靠猜。",
+    "method": "四个模块串联。SoM 模块只在最后一帧上用 Semantic-SAM（α=0.05）叠加语义掩膜，刻意不加字母数字标签，因为答案只需输出物体名。Gaze 模块把最近 W=15 个真值 2D 注视点渲染为由红（最新）到蓝（最旧）渐变的连线圈，作为意图轨迹与 SoM 结果融合。Sampling 模块提出逆指数采样：末帧必选，其余帧按 p_i=exp(-λ(N_v-2-i))/Σ_j exp(-λ(N_v-2-j)) 抽样，λ∈[0,1]，λ=0 退化为均匀采样，λ=1/10 时把帧预算集中到交互前瞬间，最终 n=15 帧送入 VLLM。VLLM 模块在提示中显式说明「以最后一张带掩膜的帧为准、沿注视轨迹优先」，输出目标物体名。全流程 model-agnostic，可直接换底座模型。",
+    "key_numbers": [
+      "LLaVA-OneVision 7B：20.4% → 27.2%（+6.8）",
+      "Gemini 2.0 Flash：21.0%（HD-EPIC 官方基线）→ 27.5%（+6.5）",
+      "超过原榜首 Qwen2.5VL-Ricoh 的 22.0%，领先 5 个百分点以上",
+      "消融：只用 VLLM 为 18.4%–24.9%；只加 Gaze 最优 25.6%（λ=1）；SoM+Gaze 在 λ=1/10 达 27.2%",
+      "采样规模：n=15 最佳 27.2%，n=10 为 25.9%，n=30 掉到 23.7%"
+    ],
+    "ablation": "逐模块消融显示 SoM 与 Gaze 互补：近均匀采样时单模块即可提升（SoM 22.3%、Gaze 20.3%），但只有在 λ=1/10 附近两者合用才到 27.2%；帧数超过 15 后过采样反而有害，佐证「时间上堆帧不必然更好」。",
+    "baselines": [
+      "K-Net",
+      "T-CoT",
+      "LLaVA-OneVision 7B",
+      "Gemini 1.5 Pro (HD-EPIC baseline)",
+      "Qwen2.5VL-Ricoh",
+      "Gemini 2.0 Flash"
+    ],
+    "datasets": [
+      "HD-EPIC Gaze Interaction Anticipation 子集：1000 道 5 选 1 题，每题配 10 s 片段，片段在注视首次落到目标后 0.3 s 结束；干扰项从同段 2 分钟内被移动过的其他物体中随机采样"
+    ],
+    "novelty": "把 SoM 视觉提示与注视轨迹这两个正交信号同时喂给 VLLM，并用逆指数采样把有限帧预算压到交互前窗口；整套改造只在输入与提示层，零训练且跨模型可迁移。",
+    "limitations": "只在 HD-EPIC 厨房单一域验证，1000 题规模偏小；绝对准确率 27.5% 相对 20% 随机基线提升有限，任务本身远未解决。依赖真值 gaze，实际部署需可穿戴眼动仪；只预测名词，不含动词与接触时刻。",
+    "trl_evidence": "纯推理侧改造，无需训练即可挂到任意 VLLM 并能复用现成眼动数据；作者已声明开源，但未见真机辅助系统集成或延迟测量。",
+    "code": "有（论文声明已开源，正文未给出具体 URL）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 3, "NOV": 3, "TEC": 2, "EXP": 3, "PER": 3, "TRL": 2, "REP": 3 },
+    "scores_why": "IMP=3：交互预判对辅助系统有价值，但单基准单域、绝对精度仍低，影响面有限。NOV=3：SoM 与 gaze 轨迹的组合加逆指数采样是有想法的工程拼装，非新机制。TEC=2：无训练、无新网络，全部在提示与预处理层。EXP=3：两底座模型 + 完整模块/帧数/λ 消融，但只一个数据集。PER=3：相对各自基座 +6.5~6.8 点，幅度实在但绝对值不高。TRL=2：离线评测阶段，无系统集成。REP=3：代码声明开放，指标口径沿用官方基准，可复现性尚可。"
+  },
+  {
+    "id": "2605.12074",
+    "title": "BARISTA: A Multi-Task Egocentric Benchmark for Compositional Visual Understanding",
+    "title_zh": "BARISTA：面向组合式视觉理解的多任务第一人称基准",
+    "problem": "VLM 已成为具身系统的感知主干，需要同时具备定位、交互理解、关系解析与过程推理，但现有基准各测一块：EgoSchema/LongVideoBench 只看最终答案，VISOR 只有掩膜与接触关系，HD-EPIC 物体掩膜时间稀疏、显式关系仅限物体-固定物。结果是过程级任务失败时无法判断到底败在定位、交互理解、关系推理还是时序建模，诊断链路断裂。",
+    "method": "构建 185 段真实咖啡制作第一人称视频（全自动、胶囊、半自动手柄三类流程），以逐帧共注册场景图为核心：持久物体身份把掩膜、框、属性、类型化关系、手-物交互、活动与工序步骤串在同一帧上。标注走五阶段半自动流水线：CaRe-Ego 检测交互段并选关键帧（间隔不超过 500 帧）→ 人在 SAM 2 建议上稀疏标注并复用身份 → SAM 2/SAM 3 以多关键帧为条件双向传播并做段间重叠对齐 → 人工审校并合并跨段身份 → 段级补属性、有向关系与两级活动（动词+名词的细粒度活动与工序步骤）。所有基准题由场景图确定性派生，统一零样本提示与任务特定指标，覆盖短语 grounding、HOI 识别、指代描述、活动识别、关系抽取、时序 VQA 六项；另设 200 个 matched case，把同一次事件的定位、交互、关系、活动、活动转换逐级打分，用于跨层级失败归因。",
+    "key_numbers": [
+      "185 段视频、4.4 小时、469,201 标注帧；3.61M 实例掩膜（46 类）、4.33M 属性、2.48M 类型化关系（12 谓词）",
+      "2,424 个细粒度活动段（108 类）、1,305 个工序步骤（13 类）；每帧平均 7.63 个物体、5.3 条关系",
+      "标注质量：关键帧掩膜 IoU 0.940、传播帧 0.932，类别准确率 0.998，属性/关系/活动 F1 分别 0.998/0.999/0.989",
+      "短语 grounding mAP 跨模型 0.068（GPT-5.4 mini）–0.629（Gemini 4 Argon），专用模型 SAM 3 为 0.362",
+      "活动识别 25 选 1 为 0.631–0.952；关系抽取 F1 0.565–0.823；时序 VQA 均值 0.649–0.777；HOI F1 0.193–0.822（专用 CaRe-Ego 0.490）",
+      "grounding 的跨模型 mAP 跨度 0.07–0.53，远大于活动识别（0.63–0.78）与时序 VQA（0.65–0.70）；中等尺寸物体 mAP 相对大物体掉一半以上"
+    ],
+    "ablation": "无传统模块消融，改以 matched-case 诊断：200 个同事件案例显示 grounding/HOI/关系/指代构成 Kendall τ≥0.6 的一致能力簇，而时序 VQA 与之解耦（τ∈[-0.4,0]）；evidence-handoff 干预只让 grounding 最弱的 Gemma 4-31B 活动识别提升 6.5 个百分点，说明感知-过程错误的耦合是模型相关的。",
+    "baselines": [
+      "Gemini 3 Flash",
+      "GPT-5.4 mini",
+      "Gemini 4 Argon",
+      "Claude Opus 5.5",
+      "Gemma 4-31B",
+      "Qwen3.5-27B",
+      "CaRe-Ego",
+      "SAM 3"
+    ],
+    "datasets": [
+      "BARISTA 自建：185 段咖啡制作视频（Apple Vision Pro、RayBan Meta 3、Wayfarer 等异构设备，10 名录制者、14 个地点、15 台咖啡机），视频级 80/20 分层划分 148/37",
+      "评测子集：单帧任务 1000 例、活动识别 500 段（4 帧）、时序 VQA 300 段（6 帧，4 s 窗口）"
+    ],
+    "novelty": "首次把掩膜、框、属性、类型化关系、HOI、活动与工序步骤在同一帧、同一物体身份上共注册，使过程级失败可回溯到具体感知层；matched-case 协议把「同一事件上的跨层级共失败」变成可测量量。",
+    "limitations": "只覆盖室内咖啡制作单域、共 4.4 小时，且按任务相关实体密集标注而非全场景开放世界覆盖。活动识别用 25 选 1 会高估开集能力，部分指标依赖 LLM-as-judge（换家族判模型可保序但绝对值不可比），评测用固定子集以控成本。",
+    "trl_evidence": "视频、标注、提示、划分与评测代码已在 HuggingFace 发布，可直接用于微调与诊断，属可用的评测基础设施。",
+    "code": "有（https://huggingface.co/datasets/ramblr/BARISTA）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 4, "NOV": 3, "TEC": 3, "EXP": 5, "PER": 4, "TRL": 3, "REP": 4 },
+    "scores_why": "IMP=4：给具身 VLM 提供了可分解的失败诊断口径，填补过程级归因空白。NOV=3：共注册场景图与 matched-case 协议是扎实的方法学组合，单项技术无突破。TEC=3：半自动标注流水线工程量大但技术门槛中等。EXP=5：9 个模型、6 类任务、三种机型分层、跨判模型稳健性与 1200 例失败审计，实验密度罕见。PER=4：清晰给出 grounding 是主瓶颈、语义任务相对饱和的结论，且与人类/专用模型对照一致。TRL=3：数据与代码开放，可直接被社区使用。REP=4：标注质量有双人重标验证，协议与提示全公开。"
+  },
+  {
+    "id": "2605.20044",
+    "title": "OP2GS: Feature-Free Gaussian Splatting with Dual Opacity for 3D Instance Segmentation",
+    "title_zh": "OP2GS：面向三维实例分割的双不透明度无特征 Gaussian Splatting",
+    "problem": "3DGS 基元本身不带物体身份，零样本 3D 实例分割要么学逐高斯特征再聚类（渲染显存大，冻结资产上只能事后训练，SAM 掩膜下掉 1.3 AP），要么把 2D 掩膜按渲染权重硬抬到 3D（边界高斯与 floater 被误纳入，且整数标签无梯度无法修正）。根因是单一不透明度 σ 同时承担「成像贡献」与「掩膜贡献」两个角色，二者本不该一致。",
+    "method": "给每个高斯增加一个整数实例标签 l 和一个专用实例不透明度 σ*。实例占据图按 O_L(v)=min(1, Σ_{i:l_i=L} α*_i T_i) 渲染，其中 α*_i=σ*_i G_i(v)，但透射率 T_i 仍由外观 σ 计算，于是遮挡继承自外观、梯度只流向 σ*。训练-free 关联阶段借 MaskClustering 思路：以渲染权重 α_iT_i 至少 80% 落在掩膜内的高斯为「核心」，跨视角投影后按共视一致性从 0.9 逐步降到 0.7 迭代合并，再按权重份额 l_i=argmax_k S_ik/A_ik 投票抬升，σ* 初始化为 σ。随后用匈牙利匹配当前视图渲染实例图与 SAM 掩膜（IoU<0.3 丢弃），对选中标签算 BCE 占据损失 L_occ，总损失 L=L_rgb+0.1·L_occ，并对 T_i 停梯度以保护外观。标签不可微，故用超点过分割 + 区域生长（掩膜亲和 a_pq）+ 带符号图相关聚类（边权 w_pq=2(a_pq-0.5)+λ_l√(σ̄*_pσ̄*_q)s_pq，λ_l=0.5）做离散重分组，最后用多对一目标再训 σ* 并按 σ* 最低 10% 剪枝。读出时取标签一致且 σ*>0.1 的高斯集合，无需聚类也无需解码网络。",
+    "key_numbers": [
+      "ScanNet++ 50 验证场景：SAM 掩膜 AP 20.2 vs OpenSplat3D 19.2；EntitySeg 掩膜 AP 23.1 vs 18.3（+4.8）",
+      "ScanNet：mIoU 51.90 vs InstanceGaussian 50.30，mAcc@0.25 87.90 vs 80.25",
+      "Replica：mIoU 54.33 vs Gaga 46.21（+8.1），recall 61.24 vs 50.62",
+      "Messy Rooms 平均 PQ_scene 73.9 vs UniC-Lift 71.5，8 个场景中 6 个最优（含 500 物体走廊）",
+      "冻结 3DGS 资产上仅掉 0.3 AP（SAM）/0.4 AP（EntitySeg）；RGB PSNR 与纯 3DGS 相差在 0.04 dB 内",
+      "同真值掩膜上界 42.0 AP，优于 Gaussian Grouping 的 39.1，而每高斯只存 1 标量 + 1 整数"
+    ],
+    "ablation": "逐阶段累加：关联+抬升 11.9 AP → 加占据学习 13.2 → 加掩膜项重分组 17.4 → 加标签先验 19.4 → 加精修 20.2。双不透明度对比单不透明度，被提取物体的 PSNR 从 17.0/16.9 dB 提升到 22.0/22.5 dB，证明解耦确实把边界高斯与 floater 从掩膜里剥离而图像不变。",
+    "baselines": [
+      "OpenSplat3D",
+      "Gaussian Grouping",
+      "OpenGaussian",
+      "InstanceGaussian",
+      "Gaga",
+      "UniC-Lift",
+      "SAM3D",
+      "Segment3D"
+    ],
+    "datasets": [
+      "ScanNet++（50 验证场景，≤300 DSLR 帧/场景，官方 class-agnostic 与 class-aware 协议，掩膜来源 SAM ViT-H 与 EntitySeg）",
+      "ScanNet（10 场景，OpenGaussian 协议）、Replica（8 场景，Gaga 协议）、Messy Rooms（8 个合成场景，25–500 物体）"
+    ],
+    "novelty": "用「第二个不透明度」把掩膜渲染从成像渲染中解耦，改动极小（每高斯 1 标量 + 1 整数）却同时解决边界泄漏与冻结资产不可改两个问题，并配齐占据损失、离散重分组与无解码读出。",
+    "limitations": "标签仍是离散量，占据学习只能把高斯从错误物体上剔除而不能移到正确物体，必须靠重分组补救；效果强依赖 SAM 掩膜与位姿质量，货架上的密集小物体仍无法分开。仅适用于已知位姿的静态场景。",
+    "trl_evidence": "可直接在已训练甚至完全冻结的 3DGS 资产上运行，属资产后处理型工具，落地路径短；作者称代码将释放。",
+    "code": "未提及（作者称 Code will be released，未给 URL）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 3, "NOV": 4, "TEC": 3, "EXP": 4, "PER": 4, "TRL": 3, "REP": 3 },
+    "scores_why": "IMP=3：3DGS 资产化编辑需要实例身份，但任务面偏窄、增益多在 1–5 AP。NOV=4：双不透明度这个动机推导清楚、实现极简、还顺带解锁冻结资产，属优雅的小创新。TEC=3：主要靠表示改造与离散优化组合，无新网络或新渲染器。EXP=4：四个基准、两种掩膜源、冻结/联合双设定与真值上界，证据链完整。PER=4：多基准稳定领先，且上界实验证明表示容量本身更强。TRL=3：可作为插件用于既有资产管线。REP=3：协议沿用公开评测，代码尚未释放。"
+  },
+  {
+    "id": "2609.16610",
+    "title": "EgoPathBench: Evaluating Zero-Shot Egocentric Waypoint Decision-Making in Vision-Language Models",
+    "title_zh": "EgoPathBench：评估视觉语言模型的零样本第一人称 waypoint 决策",
+    "problem": "空间 QA 基准（SpatialVLM、VSI-Bench、3DSRBench 等）只问孤立的空间关系，无法说明模型能否把理解转成可执行动作序列；闭环 3D 导航基准又把单视图推理与建图、记忆、避障、重规划缠在一起，代价高且无法归因。缺的是「同一观测、同一动作词表」下，从局部可走性到完整具身路径的统一度量，尤其是机身间隙这类约束。",
+    "method": "每个样本给一张带编号候选 waypoint 的第一人称 RGB、一句自然语言目标、以及任务特定的可行性图 G，模型输出 JSON 候选集或有序路径。可行性图建在高度滤波的 2D 占据栅格上：Point 图不做足迹膨胀，Embodied/Intent 图按 0.6 m 机身直径外扩 0.30 m；边合法要求直线扫掠走廊无碰撞，终点须落入目标框附近的接受域（d_min+0.10 m）。五个任务递进：Point/Embodied Traversability 判可走点集；Point/Embodied Path 共享视图、目标与候选集，只在可行性图上不同；Intent Path 把显式物体名换成意图加视觉线索，必须先解指代再选具身路径。所有 waypoint、目标区与合法边都在生成语言之前锚定到注册的 3D 场景几何，参考路径只证明解存在、不要求模仿。指标含 VPR（整条路径合法）、SR（还需到达接受终点）与 SPL（相对最短合法参考的长度折扣）。训练侧另发布 EgoPath-SFT，把几何核验过的答案与 Spatial CoT 理由配对。",
+    "key_numbers": [
+      "规模：31,852 训练（EgoPath-SFT）/1,345 验证/1,111 基准题；基准含 146+146 可走性、309+309 路径、201 意图路径",
+      "十个零样本 VLM 最高 EgoPath Score 仅 35.6（GPT-6 Astra），其后 Gemini 3.1 Pro 28.3、GPT-5.5 27.3、Grok 4.3 Fast 1.4",
+      "同一视图同一目标：Point Path SR 41.7% → Embodied Path 10.0%、Intent Path 10.0%；其余九个模型 Embodied Path 均低于 3%（Intent 至多 4.0%）",
+      "Qwen3.5-4B 经 EgoPath-SFT 微调：EgoPath Score 3.9 → 38.9；Isaac Sim 闭环 0/50 → 10/50（+20 个百分点，95% CI 10–30）",
+      "诊断：合法首边率 96.4%/91.1%/88.8%，但其中 48.8%/90.7%/89.4% 含后续非法边；端点正确率仅 31.4%/5.9%/6.3%",
+      "人类仅凭 RGB 判断 40 条子路径可走性达 87.5%；同题人类参考 54.2 vs Astra 48.7"
+    ],
+    "ablation": "加显式停止指令后 Astra 的 goal hit 从 26.0% 升到 40.0%、SR 从 14.0% 升到 24.0%；局部探针显示它识别 96.9% 的合法边却只识别 35.6% 的非法边，且在 23/50 全边判断正确的题里仍有 18 条整路径失败，说明瓶颈在路径组合与间隙保持而非单点感知。",
+    "baselines": [
+      "GPT-6 Astra",
+      "Gemini 3.1 Pro",
+      "GPT-5.5",
+      "Claude Opus 4.8",
+      "MiniMax M3",
+      "Qwen 3.6",
+      "Llama 4 Maverick",
+      "Qwen3.5-4B + EgoPath-SFT"
+    ],
+    "datasets": [
+      "EgoPathBench：InternScenes 归一化的 3RScan/ScanNet/ARKitScenes/Matterport3D 室内资产，渲染第一人称视图，限单房间无楼梯场景",
+      "外部迁移：VSI-Bench Route Planning、SpatialEval-VTQA、3DSRBench；闭环：Isaac Sim 50 任务/25 场景，12 步决策上限"
+    ],
+    "novelty": "把「可行性」写进 3D 场景几何而非文字或 2D 像素，用 Point/Embodied 成对设计把「同一动作在不同机身约束下后果不同」变成可测量变量；Intent Path 再把指代解析与具身路径绑定。配套 SFT 集证明该能力可被注入小模型。",
+    "limitations": "场景限于单房间、无楼梯的合成渲染，waypoint 词表由构造固定，真实长程导航与动态障碍未覆盖。基准题量 1,111 偏小，SFT 的 CoT 文本由 GPT-5.5 生成，存在教师模型偏置与语言风格泄漏风险。",
+    "trl_evidence": "数据、提示与评测代码随论文释放并配在线排行榜，微调模型在 Isaac Sim 闭环与三个外部基准上均有增益，可直接作为评测与训练资源使用。",
+    "code": "有（论文提供 Project page / Dataset / Leaderboard 链接，正文未给出具体 URL）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 4, "NOV": 4, "TEC": 3, "EXP": 4, "PER": 4, "TRL": 3, "REP": 4 },
+    "scores_why": "IMP=4：把「局部可走」与「整条具身路径」的落差量化出来，对导航与具身 VLM 有直接诊断价值。NOV=4：3D 几何锚定的可行性图 + Point/Embodied 配对 + SFT 集，是基准层面的结构性创新。TEC=3：构造流水线与评测器工程量不小，但核心是数据与协议设计。EXP=4：十个零样本模型、五个任务、人类对照、局部探针、闭环仿真与三个外部迁移，证据充分。PER=4：同一条件下 41.7%→10.0% 的落差是强信号，且被多组控制实验加固。TRL=3：可直接用于评测与微调，但范围限于静态室内。REP=4：几何标签先于语言生成、有质量核对与排行榜，复现路径清晰。"
+  },
+  {
+    "id": "2610.11810",
+    "title": "Seek-and-View Reasoning for Multi-View Spatial Understanding",
+    "title_zh": "面向多视图空间理解的 Seek-and-View 推理",
+    "problem": "多视图空间推理受限于稀疏且固定的视角：VLM 只能在给定视图上做隐式跨视图对齐，语义推理强并不保证几何一致，把几何压成语言描述又会丢失细粒度空间信息，形成 geometry-to-language 瓶颈。于是模型在 MindCube 一类任务上远低于人类，且易产生幻觉式关系判断。",
+    "method": "提出 Seek-and-View 范式：先寻找一个让被问空间关系直接可见的视角，再在该视角上作答；Vantage 是其零训练、模型无关的两阶段实现。阶段一视角锚定推理：VLM 结合由 3DFM 位姿导出的重力对齐相机关系 c_cam，选出参考视图 v_r，识别 anchor 实体并建立语义方向框架（默认 v_r 前向为北），把问题中的方向关系解析为「观测需求」，再从 17 种相机动作（旋转/平移/混合）× 小中大三级幅度（如右转 30°/60°/90°）中选择 Δv=(π,μ)，同时生成分析上下文 c_ana 与解读指引 c_guide。阶段二几何锚定证据增强：用同一 3DFM（G3T）重建的点云 Z 与位姿 P，把 Δv 映射为相对 p_r 的 6-DoF 变换并重投影得到 v_s=R(Z, p_r⊕Δv)，再把 v_s、c_ana、c_guide 与原始视图一并送入 VLM 完成最终 VQA。合成视图只重排已观测像素，故是补充而非替代输入视图。",
+    "key_numbers": [
+      "六个 VLM × 六个基准、共 5,496 题，平均绝对提升 8.2%，全程零微调",
+      "GPT-5.4：MindCube-tiny 44.2% → 72.8%，总体 47.0% → 59.0%（+12.0）",
+      "Qwen3.6-27B：63.0% → 85.5%，总体 59.2% → 73.0%（+13.8）；Gemma-4-31B 总体 +10.6",
+      "小模型：Qwen3-VL-4B +7.1、Qwen3-VL-8B +3.8、InternVL3-8B +1.8",
+      "上下文消融：仅加 c_cam 为 30.5 → 加 v_s 33.9 → 加文本上下文 35.9 → v_s 加 c_ana/c_guide 达 38.8（总体 +8.3）"
+    ],
+    "ablation": "去掉问题分析（QA-skip）在 Qwen3-VL-4B 上反降到 43.8，说明选对观测需求是前提；用 6-DoF 数值位姿预测替代离散动作选择收益不稳（-0.2/-0.1），随机动作 -0.6、视图插值 -5.9，表明增益来自针对性选视角与结构化动作接口，而非「多给一张图」。",
+    "baselines": [
+      "pySpatial",
+      "Think3D",
+      "GCA (Qwen3-VL-235B-A22B-Thinking)",
+      "SenseNova-SI-1.5-InternVL3-8B"
+    ],
+    "datasets": [
+      "MindCube-tiny、MMSI-Bench（位置关系/属性）、SPAR-Bench、BLINK（Multi-view Reasoning）、OmniSpatial（Perspective Taking）、SPINBench（Dynamic Rotation/Translation），共 5,496 题，以静态真实场景为主"
+    ],
+    "novelty": "把「主动取景」本身当作中间推理目标，并用重力对齐 3DFM + 离散动作集把语义意图稳定落到几何变换；与 think-with-image 的缩放画线不同，它确实合成了原观测之外的新视角，且不改模型参数。",
+    "limitations": "合成视图只能重排已观测像素，未覆盖区域为空，因此无法回答完全缺观测支撑的关系；效果上限受 VLM 自身规划能力限制（小模型多错在分析与选视角），跨模型替换规划器虽有提升但仍有限。仅评估静态场景，未涉及动态或仿真环境。",
+    "trl_evidence": "零训练、模型无关，可直接套在任意 VLM + 3DFM 组合上；作者给出 1,200 条错误预测的失败分类与推理耗时对比，工程可得性高，但尚无系统级集成。",
+    "code": "未提及（项目页 https://seekandview2026.github.io）",
+    "venue": "arXiv preprint",
+    "scores": { "IMP": 4, "NOV": 4, "TEC": 3, "EXP": 5, "PER": 4, "TRL": 3, "REP": 3 },
+    "scores_why": "IMP=4：把「视角固定」识别为多视图空间推理的独立瓶颈，并给出可复用的拆解方式。NOV=4：Seek-and-View 作为范式抽象清晰，离散动作接口与重力对齐重投影是扎实的机制设计。TEC=3：依赖现成 3DFM 与点云重投影，技术组合为主，合成视图质量有限。EXP=5：6 个 VLM × 6 个基准、多组消融、跨模型组合与 1200 例失败审计，覆盖极广。PER=4：六个模型全部正向，平均 +8.2 点，且大模型上仍有 +12 以上增益。TRL=3：插件式可用，推理链多一步且依赖 3DFM，尚未系统集成。REP=3：协议沿用公开基准，项目页开放，代码未明确。"
+  }
+]

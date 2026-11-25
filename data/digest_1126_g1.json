@@ -1,0 +1,262 @@
+[
+  {
+    "id": "2611.31516",
+    "title": "InitFree-SfM: When Initialization-Free Bundle Adjustment Meets Learned Structure-from-Motion",
+    "title_zh": "InitFree-SfM：当无初始化 Bundle Adjustment 遇上学习式 Structure-from-Motion",
+    "problem": "现有 initialization-free BA（pOSE/expOSE/pOSE+rot）在 $\\mathbb{R}^{3\\times4}$ 松弛相机矩阵上最小化代理 Object Space Error，目标值降得很低却给不出准确重建：ETH3D 上 pOSE 的位姿 AUC@20° 仅 13.91%、AUC@5° 11.43%，后续 metric upgrade 也不稳定。根因是 OSE 只约束方向（landmark 必须落在观测视线上），对沿视线的位置没有任何约束，几何信息不足，优化收敛与重建精度之间存在系统性缺口。",
+    "method": "把 OSE 残差写成 $r^{\\mathrm{OSE}}_{ij}=P_{i,1:2}\\tilde{X}_j-(p_{i,3}^{\\top}\\tilde{X}_j)m_{ij}$，并加一项相对深度残差得到 depth-augmented OSE：$\\mathcal{L}_{\\mathrm{dOSE}}=\\sum_{(i,j)}c_{ij}\\|r^{\\mathrm{OSE}}_{ij}\\|_2^2+\\lambda_d\\sum_{(i,j)}c_{ij}\\rho\\left(q_{ij}^{\\top}y_{ij}/d_{ij}-1\\right)$，其中 $y_{ij}=R_iX_j+t_i$，$q_{ij}^{\\top}y_{ij}$ 是把 landmark 正交投影到观测射线后得到的深度，除以 $d_{ij}$ 使残差为相对量、$\\rho$ 为 Huber，$\\lambda_d=30$ 用 5%/25%/100% 三阶段 continuation 逐步加上。dOSE 保持可分结构，于是用 variable projection 闭式消去 landmark：$v^{*}(u)=G(u)^{\\dagger}z(u)$，以 Ruhe–Wedin 近似 $J_u^{*}=(I-J_vJ_v^{\\dagger})J_u$ 求位姿增量，并在 $SE(3)$ 上直接更新（大问题改用 Weber 等的 inverse-expansion 截断幂级数），因此完全不再需要 metric upgrade。前端用 MoGe-2 逐帧预测 metric depth 与内参；对每对图像把预测深度反投影成 3D 点集做 RANSAC 相似变换，再与本质矩阵给出的旋转交叉校验（$\\tau_R=15^{\\circ}$），只保留两者一致的对，随后把保留下来的对应拼成多视 track。最后做 joint metric refinement：给每帧一个深度尺度 $\\alpha_i$，联合最小化归一化重投影残差 $r^{\\mathrm{img}}_{ij}$、相对深度残差 $r^{\\mathrm{depth}}_{ij}$，以及相对旋转/平移/对数尺度残差 $r^{\\mathrm{rot}}_{kl},r^{\\mathrm{t}}_{kl},r^{\\mathrm{s}}_{kl}$，再加平滑 cheirality 罚与尺度正则，用 Levenberg–Marquardt（30 步 warm-up + 至多 120 步）求解。平移项先在 metric 形式下约束、后期切换为方向约束，以降低对单目深度绝对尺度误差的敏感性；所有相机位姿从随机初始化出发（旋转在 $SO(3)$ 均匀采样、平移零均值高斯 $\\sigma=0.5$）。",
+    "key_numbers": [
+      "ETH3D 位姿 AUC@20° 85.81%，GLOMAP(LoMa) 77.18%、pOSE 13.91%",
+      "LaMAR 位姿 AUC@20° 80.99%，GLOMAP(LoMa) 67.93%、pOSE 10.10%",
+      "低重叠 ETH3D Minimal 子集 AUC@20° 75.31%，专为该场景设计的 MP-SfM 为 76.55%，但运行时间显著更低",
+      "去掉 joint metric refinement：ETH3D AUC@20° 从 85.81% 跌到 31.99%",
+      "深度一致性过滤使 ETH3D AUC@20° 提升 10.30 个百分点（75.51%→85.81%）",
+      "三个随机种子 ETH3D AUC@20° 85.46±0.34、LaMAR 80.76±0.77"
+    ],
+    "ablation": "表 5 逐项消融：去掉 joint metric refinement 最致命（ETH3D AUC@20° 85.81%→31.99%），去掉 dOSE 只做 refinement 为 81.91%，去掉深度先验 78.84%，去掉几何先验 78.73%。App. C 显示 dOSE 在低重叠下仍带来 4.8–7.9（ETH3D）与 12.9–22.0（SMERF）个百分点增益。结论是精化阶段的几何约束才是精度主因，代理目标只提供额外增益。",
+    "baselines": ["pOSE", "GLOMAP (SP+LG / LoMa)", "COLMAP (SP+LG)", "VGGSfM", "VGGT + BA", "π3", "Depth Anything 3", "MP-SfM"],
+    "datasets": [
+      "ETH3D：25 个场景、每场景 ≤20 图，位姿 AUC@1°/5°/20°",
+      "LaMAR：45 个 20 图子集（CAB/HGE/LIN 各 15）",
+      "ETH3D 与 SMERF 低重叠子集（MP-SfM 协议，434 + 100 个子集，按 Minimal/≤5%/≤10%/≤30% 分组）"
+    ],
+    "novelty": "把 metric depth 贯穿对应过滤、初始化与精化三处，并给出 dOSE 这一最小改动（只加一项相对深度残差、保留 VarPro 可分性）。更关键的是结论层面的新意：仅靠几何约束的 joint refinement 从随机初始化就能得到可用重建，说明代理 OSE 目标并非精度主因，这直接挑战了此前 InitFree BA 以目标函数设计为中心的路线。",
+    "limitations": "强依赖已知相机标定，用 MoGe-2 估计内参时 LaMAR AUC@20° 从 80.99% 降到 63.44%；作者也把无标定重建与大场景扩展列为 future work。严格阈值仍弱于传统 SfM（ETH3D AUC@1° 44.40% vs COLMAP 57.88%），低重叠 SMERF 上落后 MP-SfM 更多。",
+    "trl_evidence": "有公开代码与项目页，单场景 20 图、VarPro ≤60 次 + LM ≤120 次迭代即可跑通；仍是逐场景离线优化，无实时或机载验证，作者称扩展到大图像集合尚未解决。",
+    "code": "有（https://github.com/simonwebertum/initfree-sfm）",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 4, "NOV": 4, "TEC": 4, "EXP": 4, "PER": 4, "TRL": 3, "REP": 4},
+    "scores_why": "IMP=4：把「OSE 目标下降≠重建准确」这一 InitFree BA 公认卡点用深度几何补齐，首次让 InitFree 管线在 AUC@20° 上超过 GLOMAP（85.81 vs 77.18、80.99 vs 67.93），属重要且完整；但 AUC@1° 仍落后 COLMAP 13 个百分点，未达能力级。NOV=4：dOSE 公式本身很朴素，真正的新意是把 metric depth 贯穿 track 过滤/初始化/精化，并用实验证明「几何约束优先于代理目标」；组件多为已有模块的组合。TEC=4：在 $SE(3)$ 上直接做 VarPro（RW2 投影 Jacobian + inverse-expansion），从根上移除不稳定的 metric upgrade，并处理单目深度尺度不一致与 cheirality，工程闭环完整。EXP=4：5 个基准、3 个种子、matcher 与 depth 模型替换、无标定实验，表 2 覆盖 434+100 个子集；但主表只报位姿 AUC，缺重建点云与深度误差指标。PER=4：AUC@20° 全面领先且在低重叠下接近专用方法，但严格阈值与 SMERF 上明显落后。TRL=3：有代码与项目页、可复现，仍为离线逐场景优化。REP=4：代码 + 公开数据集 + 明确超参（λ_d=30、τ_R=15°、初始化分布）。"
+  },
+  {
+    "id": "2611.31757",
+    "title": "Xtream: An Explicit Metric State for Large-Scale Streaming Reconstruction",
+    "title_zh": "Xtream：面向大规模流式重建的显式度量状态",
+    "problem": "3D foundation model 的跨视图注意力限制了可处理帧数，现有做法或按重叠窗口切块后做几何对齐，或用隐式 memory 递归更新，再叠加关键帧位姿图；但在纯单目下缺少 metric scale 可观测量，尺度漂移成为主要误差源，即使检测到闭环，局部优化也难以恢复全局一致性——表现为公里级序列 ATE 被尺度误差主导。",
+    "method": "输入图像流按窗口切分（$W=64$ 帧、重叠 $O=3$），冻结的 3DFM（DA3-Giant）对每个窗口一次性预测 up-to-scale 位姿 $\\bar{T}^k_q$、逐像素深度 $D^k_q$ 与置信度，并用 DINOv2 SALAD 描述子做图稠密化与闭环。核心是为每个窗口引入未知对数尺度比 $\\ell_k$，用重叠首帧的中位深度比 $r_k=\\mathrm{median}_{u}D^{k-1}_{o_k}(u)/D^{k}_{o_k}(u)$ 把相邻窗口串起来，对应因子 $e^{\\mathrm{s}}_k=\\ell_k-\\ell_{k-1}-\\log r_k$。视觉因子写成 $e^{\\mathrm{v}}_i=\\mathrm{Log}(\\Delta\\bar{T}^k_{i,i+1}\\,\\mathrm{diag}(R_{i,i+1},e^{-\\ell_k}p_{i,i+1}))$，噪声随 $e^{-\\ell_k}$ 缩放，使残差表达在 3DFM 单位下、对全局尺度不变、防止尺度塌缩。单目设定再给每个 $\\ell_k$ 加一个鲁棒一元因子 $e^{\\mathrm{m}}_k=\\rho((\\ell_k-\\log m_k)/\\sigma_k)$，其中 $m_k=\\mathrm{med}_f\\,\\mathrm{med}_u D^{\\mathrm{m}}_f(u)/\\mathrm{med}_u D^k_f(u)$ 是度量深度模型与窗口深度的中位比值，$\\sigma_k$ 取残差 $1.4826\\,\\mathrm{MAD}$ 的 3 倍，且只在该窗口相机中心散布超过中位深度 1% 时插入。有 IMU 时不加度量先验，改由预积分因子与 bias 随机游走因子使 $\\ell_k$ 可观，$\\ell_0$ 由 VI3 的无 GT 初始化播种。中期/长期闭环各占一次 3DFM 前向，并引入独立的环路尺度 $\\ell^{\\mathcal{L}}_{i,j}$，用 Umeyama 对齐窗口内位姿得到 $s^{\\mathcal{L}}_c$ 后约束 $\\ell_c-\\ell^{\\mathcal{L}}_{i,j}-\\log s^{\\mathcal{L}}_c$；闭环用 Student-$t$ 权重 $w_{i,j}=\\min(1,(\\nu+p)/(\\nu+d^2/\\lambda))$ 降权或剔除。后端为 LM 因子图，每来一个窗口只走一步、闭环与收尾迭代至多 100 次，按 5 窗口一块剪枝并只保留每窗口 $K=8$ 个关键帧。",
+    "key_numbers": [
+      "VBR 单目 ATE 5.40 m，AMB3R-SLAM 7.42 m、CLoSeR 11.15 m；单目惯性 3.06 m，FoundationVIO 9.59 m",
+      "Oxford Spires 单目 1.67 m（AMB3R-SLAM 2.32）；KITTI 9.79 m（AMB3R-SLAM 13.11、CLoSeR 12.79）",
+      "EuRoC 单目 0.07 m 略优于 AMB3R-SLAM 0.08 m；ScaRF 0.08 m 略逊于 AMB3R-SLAM 0.07 m",
+      "消融：VBR 上仅 3DFM 流式 72.0 m → 加图+度量先验 39.2 → 加共视环 38.1 → 加闭环 5.40（相对误差 0.16）",
+      "关键帧从全帧降到 8 个/窗口：后端时间 0.26×，Oxford SE(3) ATE 2.262→1.107 m",
+      "运行：单张 RTX 5090 上 KITTI 21.0 FPS、Oxford 10.8 FPS，峰值显存 12.5–15.4 GB"
+    ],
+    "ablation": "表 6/7 逐项加图、加度量先验、加共视环、加闭环，度量尺度建模与闭环是最大贡献（相对误差 1.00→0.63→0.16）；表 8 表明深度链路与度量先验互补（仅 prior 0.21、仅 depth 0.17、合用 0.15）；表 15 显示单目用「剔除」、单目惯性用「降权」门控最优。",
+    "baselines": ["DROID-SLAM", "DPV-SLAM++", "VGGT-Long", "VGGT-SLAM 2.0", "DA3-Streaming", "CLoSeR", "AMB3R-SLAM", "FoundationVIO"],
+    "datasets": [
+      "VBR：7 条序列，公里级，ATE RMSE（Sim(3)/SE(3) 对齐）",
+      "Oxford Spires（11 序列）、KITTI（11 序列）、EuRoC（11 序列）、ScaRF-SLAM（5 序列）",
+      "Oxford Spires 稠密重建：10 m 分段对齐 + ICP 的局部 F@5cm，与单次对齐的全局 F@5/10cm"
+    ],
+    "novelty": "把「尺度」从隐变量提升为一等状态：每个窗口一个对数尺度比、闭环再带一个独立环路尺度，并用度量深度先验或 IMU 因子给绝对锚点，从机制上阻断逐窗口 handover 误差的累加。相对 CLoSeR/AMB3R-SLAM 的 Sim(3)/SL(4) 位姿图，差别在于显式建模度量可观测量而非事后靠对齐吸收尺度。",
+    "limitations": "开销仍由 3DFM 窗口前向主导（占 wall time 46–82%），单张 5090 上只有 10–21 FPS，未见嵌入式或机载验证。单目度量尺度误差仍达 7.3–23.1%（EuRoC 最高），说明依赖度量深度模型质量；ScaRF/EuRoC 这类小场景上相对 AMB3R-SLAM 无优势。",
+    "trl_evidence": "完整在线系统：按原始帧率流式处理，最后一个窗口后仅剩 0.06–0.17 s 后端收尾，10–21 FPS、13–15 GB 显存可跑；附项目页与参数表（W=64/O=3/K=8、IMU 噪声 ×10 等），具备工程复用条件。",
+    "code": "有（https://ernestolozano.github.io/xtream，项目页）",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 4, "NOV": 4, "TEC": 4, "EXP": 5, "PER": 5, "TRL": 4, "REP": 3},
+    "scores_why": "IMP=4：直击「3DFM 流式重建被单目尺度漂移主导」这一公认瓶颈，在 VBR/Oxford/KITTI 三个公里级基准上把 ATE 相对最强并发工作再降约 25–28%（5.40 vs 7.42、1.67 vs 2.32、9.79 vs 13.11），属重要且工程完整，尚未到改写范式的能力级。NOV=4：per-window 对数尺度 + 独立环路尺度 + 度量先验的三层结构是清晰的新表述，且把 FoundationVIO 的相对尺度参数化推广到 3DFM 绝对先验、用点云而非部分轨迹做对齐；单点思路（尺度因子、因子图）并不全新。TEC=4：视觉残差在 3DFM 单位下表达以防尺度塌缩、环路尺度可消元、Student-t 门控与分块剪枝配合 LM，机制自洽且实现细节完备。EXP=5：5 个基准 × 单目/单目惯性两套配置，另有重建 F-score、尺度误差/漂移分解、关键帧策略、门控策略、换 LoGeR* 前端的交叉验证与逐组件运行时间，覆盖度罕见。PER=5：4/5 基准第一（ScaRF 0.08 vs 0.07 仅微差），且提升幅度一致而非单点侥幸。TRL=4：真机数据、在线流式、给出 FPS 与显存，属实时系统验证，但未上嵌入式。REP=3：有项目页，未见明确代码仓库链接，复现主要依赖论文参数表。"
+  },
+  {
+    "id": "2611.32025",
+    "title": "View Management with Gaussian Placement and Opacity Regularization for Online 3DGS",
+    "title_zh": "面向在线 3DGS 的视角管理、高斯放置与不透明度正则化",
+    "problem": "在线 3DGS-SLAM 沿用了传统 SLAM 的建图设计：只用为定位挑选的低重叠关键帧训练、用不确定的前端深度做几何正则。但 3DGS 地图有百万级参数、每个区域却只有少数视角，必然对稀疏输入过拟合，出现新视角退化与前方的 floater。在线预算下每加一个视角/高斯都要抢占同一次更新，因此不能靠「多给视角、多训几轮」解决。",
+    "method": "把问题拆成「控制模型复杂度」与「补足监督视角」两侧。初始化侧用边引导：对每个关键帧算有效深度像素上的灰度 Sobel 均值 $\\bar{g}_k$，取它在已有关键帧中的经验秩 $q_k$，令高斯数倍率 $m_k=\\min(1.5+2q_k,3.0)$，再用与梯度成正比的采样概率 $p_k(u)=(g_k(u)+0.1\\bar{g}_k)/\\sum_{u'}(g_k(u')+0.1\\bar{g}_k)$ 抽 $B_k$ 个像素并反投影，用秩而非绝对梯度幅值使跨场景更稳。视角侧做 view management：非关键帧按 $|\\mathcal{I}_t|\\le\\lfloor S(t)/\\kappa\\rfloor$（$\\kappa=16$）随已完成更新数逐步准入，其位姿由相邻关键帧插值再用稠密对应精化，监督信号是 RGB 与两关键帧深度在 5% 内一致处的 warp 深度。每轮 $n=12$ 次更新按 $n_{\\mathcal{R}}:n_{\\mathcal{K}}:n_{\\mathcal{I}}=1:1:2$ 分给「最近 $W=10$ 个关键帧 / 全部关键帧 / 准入的非关键帧」，使每组的权重恒为 $n_{\\mathcal{G}}/n$，不随地图增长被稀释。几何侧提出 SOR：沿每条光线按前到后累积权重 $w_{ri}=T_{ri}\\tilde{\\alpha}_{ri}$，取加权中位深度 $d_r^{*}$ 作为地图自生成的面参考，统计各高斯在 $z_{ri}<(1-\\rho)d_r^{*}$ 处的前向贡献 $f_i$，跨渲染累积 $F_i,V_i$ 得前向占比 $\\phi_i=F_i/V_i$，用 $\\omega_i=\\mathrm{clip}((\\phi_i-\\tau_0)/(\\tau_1-\\tau_0),0,1)$ 做渐入，并施加 $\\mathcal{L}_{\\mathrm{sor}}=\\frac{\\lambda}{P}\\sum_i\\alpha_i\\,\\mathrm{sg}(\\omega_i f_i/\\alpha_i)$；stop-gradient 使梯度只回流到该高斯自身的 opacity logit（$\\partial\\mathcal{L}_{\\mathrm{sor}}/\\partial s_i=\\frac{\\lambda}{P}\\omega_i f_i(1-\\alpha_i)$），从而压掉不一致的图元而不是让前面的高斯变不透明去遮挡它。整个 SOR 复用训练已渲染的缓冲，零额外渲染开销；总损失 $\\mathcal{L}_{\\mathrm{map}}=\\mathcal{L}_{\\mathrm{base}}+\\mathcal{L}_{\\mathrm{sor}}$。",
+    "key_numbers": [
+      "Aria 自采序列 PSNR 20.92 dB，HI-SLAM2 18.09、Photo-SLAM 17.10；LPIPS 0.463 vs 0.626",
+      "TUM RGB-D PSNR 14.30 dB（HI-SLAM2 13.49），5 cm 内深度占比 37.53% vs 33.78%",
+      "FAST-LIVO2 户外 PSNR 18.93 dB（HI-SLAM2 18.08），LPIPS 0.281 vs 0.456",
+      "边引导初始化：同量级高斯数下 SSIM 0.6335 vs 均匀 0.6200，LPIPS 0.4246 vs 0.4601（80.66k vs 80.89k）",
+      "去掉非关键帧组（8/4/0 分配）平均 PSNR 降 0.98 dB、LPIPS 升 0.0549",
+      "SOR 使 floater 比例 13.43%→12.52%（TUM）、1.23%→0.92%（UTMM），图像质量变化 ≤0.01 dB"
+    ],
+    "ablation": "表 2 在 8 条 UTMM 序列上固定高斯数比较初始化，边引导拿到最高 SSIM/LPIPS；表 3 说明组内按更新次数或信息增益打分都不如均匀采样；表 4 用 MonoGS/DNGaussian/SparseGS 替换几何处理，SOR 的 floater 比例最低；表 S5 显示 1:1:2 分配在 36 次比较中 LPIPS 全胜。",
+    "baselines": ["Photo-SLAM", "CaRtGS", "VIGS-SLAM", "HI-SLAM2", "Splat-SLAM", "MonoGS", "DNGaussian", "SparseGS"],
+    "datasets": [
+      "Aria 自采：11 条 65–243 s 序列，464×464，20/10 Hz，头戴自运动",
+      "TUM RGB-D：32 条用于主表（47 条中筛除），提供配准传感器深度",
+      "FAST-LIVO2：5 条户外序列，LiDAR 投影作稀疏参考深度",
+      "UTMM：8 条 RGB-IMU 序列，用于初始化与几何研究"
+    ],
+    "novelty": "把「在线 3DGS 地图的模型复杂度」当作一等约束：视角准入速率与更新分配由流式进度决定，高斯数量由图像细节的秩决定，floater 抑制改用地图像自累积的面参考而非前端深度。相对既有 3DGS-SLAM 只调插入密度或全局 opacity 惩罚，这套设计明确区分了「持续在前方贡献」与「偶尔被遮挡」的高斯。",
+    "limitations": "SOR 的面参考本身来自被前端深度牵着走的地图，当前端深度在多视角上系统性偏离时，地图把面放错、SOR 只压前方高斯，无法纠正该偏差，作者明确承认仍依赖前端深度精度。评估以建图为主、不评轨迹，且需要桌面级 RTX 5090 才能跑原生帧率。",
+    "trl_evidence": "与真实前端并发运行在原始时间戳（1×）下，更新不跨序列追加；单张 RTX 5090 上峰值显存 7.7–9.4 GiB、选图开销 0.015–0.032 ms/次（<0.1% 流时间），并已用于头戴 Aria 自采数据，属实时系统级验证。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 3, "NOV": 3, "TEC": 4, "EXP": 4, "PER": 4, "TRL": 4, "REP": 2},
+    "scores_why": "IMP=3：抓住「3DGS 地图参数远多于可用视角」这一真实症结，在三个数据集上把在线建图 PSNR 抬高 0.8–2.8 dB 并改善几何覆盖，属扎实增量；但只是把已有手段（多视角准入、边缘采样、opacity 抑制）系统化，未改变在线 3DGS 的能力边界。NOV=3：view management 的准入-分配与 SOR 的自参考面在中位深度上做判断，都是有创意的组合，但每一块都能在稀疏视角/continual mapping 文献里找到近亲。TEC=4：SOR 用加权中位深度定义面、用 stop-gradient 把梯度精确限制在自身 opacity，且零额外渲染，实现干净；1:1:2 分配有理论解释（避免组权重被地图规模稀释）。EXP=4：3 个主数据集 + UTMM，5 次重复、逐序列表、失败运行统计与显存/耗时，实验规范；但轨迹精度未评，且部分基线被削弱（禁用流后精化）。PER=4：PSNR/SSIM/LPIPS 三项在三个数据集全部第一，深度 5 cm 内占比最高，但 TUM 上 MAE 略逊 VIGS-SLAM/HI-SLAM2（0.572 vs 0.540），floater 降幅绝对值不大（13.4%→12.5%）。TRL=4：真机头戴数据、原生帧率在线、给出显存与单步开销。REP=2：无代码/项目页，虽附录参数详尽，复现仍需自建前端接口。"
+  },
+  {
+    "id": "2611.32198",
+    "title": "MoGe-4D: Efficient, Flexible, and Unified Dense Motion and Geometry",
+    "title_zh": "MoGe-4D：高效、灵活、统一的稠密运动与几何",
+    "problem": "从 RGB 视频重建动态场景要同时推理几何与跨视角运动，但现有路线要么把重建与跟踪拆成碎片化管线（几何分支 + 独立跟踪模块），要么像 D4RT 那样把 4D 预测写成时空 query 却逐点解码，稠密化后算力不可承受；同时监督稠密 4D query 需要任意帧间的连续 3D 对应，逐像素存轨迹的存储开销不可行。",
+    "method": "对有序 query $(i,j)$ 同时预测一对点图：$\\left(P^{\\mathrm{allo}}_{i\\to j},P^{\\mathrm{ego}}_{i\\to j}\\right)=\\left(P_{i\\to j,i},P_{i\\to j,j}\\right)$，即以源帧 $i$ 的像素网格为准，把同一批 3D 点分别表达在源相机与目标相机坐标系下。两者在理想情形只差一个刚体变换，但归纳偏置互补：allocentric 图锚在源视角，能保住离开目标视野的静态背景；egocentric 图锚在目标视角，能精确跟住大位移前景，因此单次 query 就同时给出动态几何与相对位姿。为解耦焦距与尺度，先预测 affine-invariant 点图，再按 $P^{\\mathrm{allo}}_{i\\to j}=\\alpha_i(\\hat{P}^{\\mathrm{allo}}_{i\\to j}+\\delta_i e_z)$、$P^{\\mathrm{ego}}_{i\\to j}=\\alpha_j(\\hat{P}^{\\mathrm{ego}}_{i\\to j}+\\delta_j e_z)$ 还原。效率来自 context–query 双编码器：context encoder（ViT，占总参数 90% 以上，粗 token 网格）对整段序列只跑一次并缓存多层特征，轻量 query encoder（ViT-B）按任意分辨率重编码源图，在 conditioned block 里把帧 $i$、$j$ 的桥接特征作为额外 key/value 注入，因此输出分辨率与 token 预算可在推理时自由调整而不重算 context。解码端卷积头出成对点图、切向、逐点不确定度与可见性/天空/动态掩码，MLP 头从特殊 context token 直接回归度量尺度与成对共视度。推理时先用 self-query 解出光轴偏移与焦距，再对每个 query 用不确定度与动态掩码加权的 Umeyama 从稠密 3D-3D 对应闭式求相对位姿，长序列只在高共视对上建稀疏位姿图同步全局位姿。世界系融合按 $P^{\\mathrm{world}}_{i\\to j}=(1-M^{\\mathrm{dyn}}_{i\\to j})R_i^{\\top}(P^{\\mathrm{allo}}_{i\\to j}-t_i)+M^{\\mathrm{dyn}}_{i\\to j}R_j^{\\top}(P^{\\mathrm{ego}}_{i\\to j}-t_j)$，用软掩码取长补短。训练上以 ROE 尺度-平移对齐后施加全局/局部点图损失、边缘损失、全局/局部运动损失（对相邻目标时刻的点图差分做约束）以及切向/不确定度/掩码/度量尺度/共视度辅助损失，并从短 clip、小 token 预算逐步扩到全量混合数据。配套 RigIDTrack 数据管线把动态网格面片先拟合刚性正则化的逐面仿射轨迹，再按相对运动一致性聚成约 3.2K 个 affine body（2.3M 动态面片压缩 700× 以上），逐帧存 RGB、深度、内参、外参、body ID 与每 body 仿射变换，任意帧的对应按 $E_kA_{b,j}A_{b,i}^{-1}E_i^{-1}$ 以 $O(1)$ 复原，存储只比 RGB-D 视频多约 15%。",
+    "key_numbers": [
+      "3D 跟踪全点 RelEPE：相机系 0.084 vs V-DPM 0.160（−47.5%）、世界系 0.077 vs 0.138（−44.2%）；世界系 AUC 72.65%→78.89%",
+      "遮挡精度 OA 88.75%，Open-D4RT 84.16%、Track4World 84.96%",
+      "多视图重建全局点 AUC@25 79.26% vs 同数据同初始化训练的 π3 73.41%，RD 0.079→0.063",
+      "度量尺度重建：|log s| 0.060 vs DA3 0.072，δ25 97.00% vs 89.34%",
+      "Oxford-Spires 500 帧单次前向零样本，比基线快 1.7–4.3×；50 帧全对跟踪 8.5 s vs Open-D4RT 81.7 s（约 10×）",
+      "消融：去掉桥接预对齐 全局点 AUC 71.17%→62.65%；改用 camera token 直接回归位姿 ATE 0.057→0.125、AUC 71.17%→54.11%"
+    ],
+    "ablation": "表 4 分别拆桥接预训练、query 自 KV、位姿求解方式与 token 预算：桥接预对齐与「用点图闭式求位姿而非回归 token」是两根主梁，后者在宽基线长序列上差距尤其大。图 10 还显示放大 context encoder 收益显著、放大 query encoder 只有微弱收益却带来约 2.5× 单 query 延迟，坐实了容量分配设计。",
+    "baselines": ["V-DPM", "4RC", "Track4World", "Any4D", "Open-D4RT", "TraceAnything", "St4RTrack", "VGGT-Ω"],
+    "datasets": [
+      "3D 跟踪：DynamicReplica、PointOdyssey、Syn4D、ADT、Panoptic Studio、RigIDTrack 测试集，32 帧 @5 fps，RelEPE/AUC25/OA",
+      "多视图重建：7-Scenes、Bonn、ETH3D、KITTI、Sintel、ScanNet，≤32 无位姿帧，深度/位姿/匹配/全局点",
+      "长时外推：Oxford-Spires 500 帧单次前向（训练 clip 仅 32 帧）"
+    ],
+    "novelty": "概念上把 4D 预测收敛成「一次 query 返回 allo/ego 成对点图」这一接口：几何、运动、相机位姿三者由同一组稠密坐标给出，位姿退化为闭式刚体对齐而不再黑箱回归，且不依赖 privileged reference frame，因此能零样本外推到 500 帧。相对 D4RT 的逐点 query 与 V-DPM 的单参考帧锚定，它同时解决了语义统一与稠密解码成本。",
+    "limitations": "物体边界与细结构仍是弱项，token 预算有限时卷积解码会平滑掉突变的 3D 过渡，产生 flying point 或丢掉只有几个像素的结构；作者也承认专用域（人脸捕捉、关节手）精度不足。序列更长时收益递减：V-JEPA 变体在 100 帧后退化，全局注意力随长度二次增长，作者明说数百帧的前向推理只是泛化探针而非可用部署模式。",
+    "trl_evidence": "官方称成果来自开源项目并给出项目页；在单张 A100 上以 518×336、32 帧测延迟，50 帧全对跟踪约 8.5 s，比 4RC 快约 4×，具备作为 4D 基础模型的工程可用性，但尚无实时或机器人闭环验证。",
+    "code": "有（https://microsoft.github.io/MoGe-4D，项目页）",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 5, "NOV": 4, "TEC": 5, "EXP": 5, "PER": 5, "TRL": 4, "REP": 4},
+    "scores_why": "IMP=5：把「稠密 4D 解码成本」这一 D4RT 遗留的公认卡点真正解开——跟踪 RelEPE 降 44–47%、世界系 AUC 提升 6 个点，同时几何精度追平 VGGT-Ω 级专用模型且更快，属于能力级推进。NOV=4：成对 allo/ego 点图 query、双编码器容量分离、仿射 body 压缩数据格式三项都是可命名的新构件，但底座（点图回归、Umeyama 位姿、query 接口）明显继承 DUSt3R/D4RT 谱系，是重要组合创新而非全新范式。TEC=5：context 只算一次、query 端任意分辨率解码，位姿走不确定度加权闭式对齐 + 稀疏位姿图，配合 RigIDTrack 把千万面片压成数千条轨迹并以 $O(1)$ 复原任意帧对应，系统设计完整且自洽。EXP=5：6 个跟踪基准 + 6 个重建基准 + 500 帧长时外推 + 3 种 context 骨干 + 3 个规模 + 4 种架构迁移 + 目标/掩码/预算消融 + 逐阶段运行时间，覆盖面在本批次中最全。PER=5：跟踪全部聚合指标第一（含遮挡精度），重建在全局点与匹配上超过所有统一 4D 方法、仅在 AUC25/δ25 上略逊 VGGT-Ω；度量尺度与深度误差全面领先。TRL=4：项目页 + 开源项目定位、A100 上给出端到端延迟与显存曲线，可工程化，但仍是离线片段推理。REP=4：有项目页与明确实验配置（500 context token / 900 map-query token），代码以项目页形式提供。"
+  },
+  {
+    "id": "2611.32231",
+    "title": "ST-SfM: Spatio-Temporal Structure-from-Motion for Initialising 4D Gaussian Splatting",
+    "title_zh": "ST-SfM：用于初始化 4D Gaussian Splatting 的时空 Structure-from-Motion",
+    "problem": "4DGS 等动态高斯方法都靠梯度下降精化图元并由启发式稠密化扩张，初始点分布因此很关键。静态场景有成熟答案（用 SfM 稀疏点云初始化），动态场景却没有标准做法：要么在相机锥内随机撒点，要么只用第 0 帧的 SfM/MVS 点云并在时间上均匀铺开。后者只描述一个瞬间，对「何时何处发生运动」完全无信息，导致动态区域初始化质量差、收敛慢。",
+    "method": "把每路视频视为 $(x,y,t)$ 体，分动静两支。动态支在体上做 3D DoG：$D_k=G_{\\sigma_{k+1}}*V_c-G_{\\sigma_k}*V_c$，$\\sigma\\in\\{0.5,1,1.6,2.4\\}$，在 $3\\times3\\times3$ 时空邻域与相邻尺度上取极值（$|D_k|\\ge0.05$），二次拟合得亚像素 $(x,y)$ 与亚帧 $t$，再用空间 Hessian 比值 $r=10$ 去掉边缘响应。为排除闪烁/噪声造成的伪响应，加运动门控：候选点 $5^3$ 立方体内的时间梯度能量占比必须满足 $\\rho=\\sum I_t^2/\\sum(I_x^2+I_y^2+I_t^2)\\ge0.15$。每个 STIP 用 HOG3D 描述（$3\\times3\\times3$ 网格、$4^3$ 体素、20 面体量化，540 维）。静态支完全在 2D 做：对每路取逐像素时间中位数图（把运动前景投掉），在其上跑 SIFT，再用 $9\\times9$ 零均值 patch 逐帧比对、灰度差 >12 记作变化，只有 ≤5% 帧变化的点才保留，从而剔除「大部分时间静止」的人或物。匹配顺序与常规 SfM 相反——先用标定几何筛候选：对称点-极线距离 $d_{\\mathrm{epi}}=\\max(d(x_b,F_{ab}\\tilde{x}_a),d(x_a,F_{ab}^{\\top}\\tilde{x}_b))$ 对静态点 ≤3 px、对 STIP ≤1 px，且 STIP 还要求 $|t_a-t_b|\\le1$ 帧；只在这些候选内再做 Lowe 比值（0.8/0.9）、描述子距离上限与互为最近邻。匹配用 union-find 拼 track，拒绝会让同一相机出现两个关键点的合并，动态 track 还拒绝跨度超过 1.5 帧的合并以阻止时间漂移。每条 track 做 n 视三角化：对所有视角对跑归一化坐标下的两视 DLT，用 MSAC（3 px）在全部视角上打分，取最优假设的内点做 n 视 DLT 重解，再 Gauss–Newton 精化并重分类内点，最后过四个滤波器（点有限、深度为正且在各内点相机场景界内并留 50% 余量、最大视角间夹角 ≥$2^{\\circ}$、内点 RMSE ≤2 px）。动态点取内点观测的亚帧时间均值 $t^{*}$。转成 4DGS 初始化时，静态点时间中心取序列中点、时间标准差取两倍时长（保证时间边缘全程 >0.97），空间尺度取静态点 3-NN 距离；动态点时间中心为 $t^{*}$、时间标准差 $\\max(\\sigma_t,\\Delta t_{\\mathrm{inl}},5\\ \\mathrm{frames})/\\mathrm{fps}$，空间尺度只在 $t^{*}\\pm3$ 帧内的动态点里取 3-NN，避免把同一物体在不同时刻的邻居连成针状高斯。",
+    "key_numbers": [
+      "N3DV 每场景重建 3.9 万–11.3 万个动态点，平均重投影误差 0.65–0.83 px，平均约 4 视角/点",
+      "检测约 5–6 s/相机（1352×1014×300 帧，4 GB 显存），匹配+三角化 2–20 s/场景",
+      "相对随机初始化，三个场景 PSNR 提升 +0.61、+0.64、+0.09 dB，且初始高斯数少 2.6–3.4×",
+      "相对首帧 COLMAP：SSIM 三场景全胜，PSNR 在 cook_spinach +0.13 dB、coffee_martini −0.12 dB、flame_steak −0.62 dB",
+      "最终模型比随机少 5%/11%/9% 高斯，比 COLMAP f0 少 7%/18%/13%",
+      "关掉 4DGS 的周期 opacity reset：30k PSNR 从 28.07 崩到 21.44 dB（SSIM .765、LPIPS .287）"
+    ],
+    "ablation": "表 4 在 coffee_martini 上变化单因素：$\\delta=0$ 只剩 4,298 个动态点（少 21×）而 30k PSNR 反而 28.33，$\\delta=2$ 与 $\\delta=1$ 相差 0.06 dB，说明现有 4DGS 优化并未充分利用动态点数量；仅静态支 28.32 dB、仅动态支 27.34 dB，两者相加落在波动范围内。作者据此指出瓶颈在 4DGS 优化器而非初始化。",
+    "baselines": ["Random（4DGS 默认）", "COLMAP f0（首帧稀疏点云）", "ST-SfM + COLMAP fill"],
+    "datasets": [
+      "N3DV：5 个场景（18–21 台同步相机、300 帧 30 fps、2704×2028，取半分辨率 1352×1014）",
+      "4DGS 初始化评测：coffee_martini / cook_spinach / flame_steak，留出 cam00，30k 迭代，PSNR/SSIM/LPIPS"
+    ],
+    "novelty": "首次把动作识别里的 space-time interest point 当作跨视角对应来用：在同步标定多相机下，同一瞬间的 STIP 就是一个可三角化的对应，三角化结果自带时间戳 $t^{*}$，正好对上 4D 高斯的时间中心。与常规 SfM 的「先描述子后几何」相反，它先用极线+时间去筛候选，使比值检验几乎冗余、阈值不敏感。",
+    "limitations": "假设输入已同步且已标定，作者明确说这限制了适用范围；依赖现成 4DGS 优化器，而消融显示该优化器无法充分利用更丰富的动态初始化，因此相对 COLMAP f0 的提升并不稳定（两个场景 PSNR 反而更低）。静态支在低纹理场景只得到 3–5k 点，覆盖明显不足。",
+    "trl_evidence": "检测在单张 RTX 5090 上约 6 s/相机、4 GB 显存，全流程秒级到十几秒，说明管线轻量；但只是离线初始化组件，无代码发布、无实时或产品级集成。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 2, "NOV": 3, "TEC": 3, "EXP": 2, "PER": 2, "TRL": 2, "REP": 3},
+    "scores_why": "IMP=2：提出了一条没人走过的动态初始化路径，也确实稳定超过随机初始化（+0.61/+0.64/+0.09 dB），但对照更常用的首帧 COLMAP 只在 1/3 场景的 PSNR 上胜出，整体属边际改进。NOV=3：把 STIP 当跨视角对应、用 $|\\Delta t|\\le1$ 与极线双重门控、以 union-find 保时序一致，这个组合在 4D 重建里是新的；但 STIP/HOG3D/n 视三角化都是成熟件。TEC=3：动静双支 + 冲突感知 track + 四滤波器三角化 + 时间戳/时间尺度映射写得完整，但没有解决与 4DGS 优化器的耦合问题。EXP=2：只有 N3DV 一个数据族（5 场景，4DGS 评测仅 3 场景），无跨数据集、无多前端验证，且消融显示自身组件影响小于优化器设置。PER=2：对随机稳定胜出，对 COLMAP f0 混合（PSNR 落后 0.12–0.62 dB），仅在 SSIM/模型紧凑度上占优。TRL=2：纯离线初始化实验，无代码。REP=3：无代码，但阈值、时序、耗时与失败分析交代充分，N3DV 公开，复现路径清晰。"
+  },
+  {
+    "id": "2611.32297",
+    "title": "MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners",
+    "title_zh": "MaskedVGGT：掩码多视图 Transformer 是可扩展的 3D 学习器",
+    "problem": "多视图前馈模型随规模增长很强，但依赖昂贵的几何标注（相机位姿、深度），标注成了数据扩展的瓶颈。现有 3D 自监督要么做跨视图补全（CroCo、MuM、Muskie），要么做新视角合成（RayZer、E-RayZer），通常把图像表征与跨视图交互一起从零学；VGGT-Ω 自己也承认其自监督路线仍必须先有监督预训练模型。结果既浪费了 2D 基础模型的持续进步，也没证明「无标注预训练能独立撑起 3D」。",
+    "method": "冻结预训练 2D 编码器（DINOv3）逐图独立编码得 patch token $\\mathcal{X}=\\{E_{\\phi}(I_i)\\}$，只训练新加的多视图聚合器 $A_{\\theta}$（VGGT-Ω 架构：帧内注意力与全局/register 注意力交替，含相机 token 与 register token）。预训练用掩码师生自蒸馏：教师 $A_{\\theta_{\\mathrm{teacher}}}$ 是学生的 EMA（$\\theta_{\\mathrm{teacher}}\\leftarrow\\mu_t\\theta_{\\mathrm{teacher}}+(1-\\mu_t)\\theta_{\\mathrm{student}}$），吃完整 token；学生吃非对称掩码后的 $\\mathcal{X}_{\\mathrm{mask}}$——每路以概率 $p_a=0.2$ 整帧作为可见 anchor（每场景至少 1 个），其余视角以 $\\rho=0.95$ 的比率把 patch 特征替换为可学习 mask token $e_m$。教师在掩码位置给出目标：取最后 $K=8$ 个 block 的特征做 LayerNorm 后平均 $y_{ip}=\\frac1K\\sum_{\\ell=L-K+1}^{L}\\mathrm{LN}(g^{\\ell}_{ip})$ 以免高幅层主导；再按 CAPI 的做法在线聚类，用 $M$ 个原型 $C$ 打分 $u_{ip}=C\\,y_{ip}/\\|y_{ip}\\|_2$，经 3 次 Sinkhorn–Knopp 得到平衡目标 $\\hat{q}_{ip}$；该平衡在每个 patch 位置上跨视角归一，专门防止学生靠空间坐标走捷径。$\\mathcal{L}_{\\mathrm{cluster}}$ 只更新原型 $C$（教师特征与目标都 detach），学生在掩码位置用线性头 $W$ 预测簇分配并最小化 $\\mathcal{L}_{\\mathrm{pred}}=-\\frac{1}{\\max(1,|\\mathcal{M}|)}\\sum_{(i,p)\\in\\mathcal{M}}\\hat{q}_{ip}^{\\top}\\log s_{ip}$，该损失更新学生聚合器、mask embedding 与预测头。预训练 60k 步只用 RGB，随后按 VGGT-Ω 的相机+深度监督微调 60k 步，总更新数与直接监督基线对齐，以保证比较公平。",
+    "key_numbers": [
+      "S 规模 DL3DV 位姿 AUC@30° 54.23% vs 直接监督 VGGT-Ω 35.89%，ETH3D 9.28% vs 4.15%",
+      "L 规模（1.144B）DL3DV 92.56% vs 91.32%，ETH3D 49.26% vs 40.66%，TUM-Dynamic 58.83% vs 37.41%",
+      "同为自监督：E-RayZer 46.87%、Muskie 42.68%、RayDer 42.95%（DL3DV AUC@30°），均低于 54.23%",
+      "下游 9 项指标全胜：MegaDepth EPE 32.85 vs Muskie 33.65，ScanNet-1500 PCK@3 37.69%",
+      "消融预测目标：簇标签 77.33% vs DINO 特征 71.65% vs RGB 像素 58.09%",
+      "追加无标注视频：+RE10K 使 DL3DV AUC +7.94、TUM-Dynamic +7.75 个百分点"
+    ],
+    "ablation": "表 7 系统扫了目标（RGB/DINO/EMA 特征/簇标签）、掩码策略（随机/tube/DINO 引导/非对称）、掩码率（25→95%）与 anchor 概率（5→30%），结论是「非对称掩码 + 95% 掩码率 + 簇标签」最优；表 2 另证明冻结编码器远优于放开（54.23 vs 28.29），且换任何 2D 编码器都掉点（PE-Spatial 22.26、MetaCLIP 25.32、MoCo v3 52.32）。",
+    "baselines": ["VGGT-Ω (scratch / DINOv3)", "Reliev3R", "AnySplat", "CroCo v2", "MuM", "Muskie", "E-RayZer", "RayDer"],
+    "datasets": [
+      "预训练：DL3DV；B 规模混合 10 源（含 TartanAir/ScanNet/CO3D/Waymo），L 规模再追加 10 源",
+      "重建评测：DL3DV、ETH3D、Sintel、TUM-Dynamic、DyCheck，10 视图，AUC@30°/AbsRel",
+      "下游：MegaDepth、ScanNet-1500、SAM 多视图实例分割（O-IoU/T-mIoU）"
+    ],
+    "novelty": "提出「分工」式 3D 预训练：图像表征完全交给冻结的 2D 基础模型，自监督信号只用来学跨视图交互。这与 CroCo/MuM（学编码器）、Muskie/E-RayZer（联合学）形成明确对照，并首次在同等更新数、同等架构下证明「无标注预训练 + 有监督微调」能超过单阶段监督训练，且该结论跨 4 种重建架构与 1B 参数成立。",
+    "limitations": "预训练仍要 16 张 A800 跑 20 天才能到 L 规模，成本高；收益随规模收窄（L 规模在 DL3DV 上仅 +1.24 个点，主要靠未见数据集拉开差距）。冻结编码器意味着上限被 2D 模型锁死（换弱编码器立刻掉到 22–25%），且对无视频先验的弱纹理/无序图像集不如视频预训练变体。",
+    "trl_evidence": "纯离线预训练方法，给出完整超参（$p_a$=0.2、$\\rho$=0.95、$K$=8、Sinkhorn 3 次）与两阶段更新预算，但算力门槛为 2×A800（S）到 16×A800×20 天（L），且无代码发布。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 4, "NOV": 4, "TEC": 4, "EXP": 5, "PER": 4, "TRL": 2, "REP": 2},
+    "scores_why": "IMP=4：回应了 VGGT-Ω 自己承认的开放问题（自监督能否脱离监督预训练），并用同等算力预算下全面胜出的证据给出答案，对 3D 基础模型的数据扩展路线有实质影响；但收益量级在 L 规模上收窄，尚未改写 SOTA 数字。NOV=4：把「冻结 2D 编码器、只学跨视图交互」提炼成可复用的预训练范式，配合非对称掩码 + 平衡簇目标，是有辨识度的配方；掩码蒸馏与 Sinkhorn 平衡本身来自 iBOT/CAPI。TEC=4：掩码施加在编码器之后（保留完整图像编码）、教师多层特征归一平均、按 patch 位置跨视角平衡，处处针对「学生走捷径/尺度失衡」的真实失效模式。EXP=5：3 个规模 × 4 种架构 × 20 个数据源，另有视频追加、预训练时长/阶段切分、目标/掩码/比率/anchor 四组消融与 9 项下游冻结评测，实验矩阵极完整。PER=4：三个规模六个指标全部领先，但 L 规模 DL3DV 仅 +1.24，属「拉开泛化差距」而非全面碾压。TRL=2：纯离线、需 16×A800×20 天，无代码。REP=2：无代码链接，仅靠论文复现。"
+  },
+  {
+    "id": "2611.32335",
+    "title": "GOLD-SLAM: Gaussian-splatting Omnidirectional LiDAR-Depth SLAM",
+    "title_zh": "GOLD-SLAM：高斯泼溅全向 LiDAR-深度 SLAM",
+    "problem": "全景相机单帧覆盖近整个球面视野，但其覆盖范围与 LiDAR 视场严重不匹配：ERP 图像上大片区域没有 LiDAR 深度支撑（盲区按立体角加权占比高），导致高斯难以初始化；同时 ERP 投影在球面上采样不均、两极拉伸剧烈，增量建图中已有高斯的高累积不透明度还会挡住新观测表面的插入，产生漂浮物。现有 LiDAR-视觉基准又多来自地面机器人或背包，缺 UAV 运动。",
+    "method": "统一球面几何：对点 $\\mu^C$ 定义半径 $R=\\|\\mu^C\\|_2$、经度 $\\varphi=\\mathrm{atan2}(x,z)$、纬度 $\\lambda=\\mathrm{atan2}(y,\\rho)$，ERP 投影为 $\\pi(\\mu^C)=[\\frac{W}{2\\pi}(\\varphi+\\pi),\\ H(\\frac12-\\frac{\\lambda}{\\pi})]$，反投影为 $\\mu^C=R\\,d(u,v)$，$d$ 为单位方位向量；高斯协方差经 $J_{\\pi}$ 投到 ERP 平面 $\\Sigma^{\\mathrm{img}}_g=J_{\\pi,g}\\Sigma^C_gJ_{\\pi,g}^{\\top}+\\epsilon I$，前端位姿更新与后端渲染共用同一套 Jacobian。前端沿用 FAST-LIVO2 的误差状态滤波，融合 IMU 传播、LiDAR scan-to-map 与全景视觉更新。为补 LiDAR 盲区，在盲区提取角点并用金字塔光流跟踪、前后向一致性剔除误匹配，视差足够时用历史方位射线三角化，得到切平面残差 $r_{ik}=B_{ik}(\\hat{d}_{ik}-d_{ik})$，按视差与历史位姿不确定性传播出 $\\Sigma_{r,i}$，汇总信息矩阵 $\\Lambda_V=\\sum_iH_i^{\\top}\\Sigma_{r,i}^{-1}H_i$，并用 $\\eta=\\min(1.4,\\ \\gamma/\\lambda_{\\max}(L^{\\top}\\Lambda_VL))$ 限制视觉相对信息量。LiDAR 有覆盖区域改用 Patch Brightness Uncertainty：把整块 patch 共享的增益/偏置扰动建模进残差协方差 $C_{\\mathrm{photo}}=\\sigma_n^2I+\\sigma_\\alpha^2i_{\\mathrm{ref}}i_{\\mathrm{ref}}^{\\top}+\\sigma_b^2\\mathbf{1}\\mathbf{1}^{\\top}$，白化残差与 Jacobian，避免把整体亮度变化误判成运动。建图侧每关键帧用 DAP 预测全景径向深度 $D_P$，以有效重叠区中位比值 $s$ 对齐到 LiDAR 深度 $D_L$，融合为 $D_F$（LiDAR 优先、盲区用 $sD_P$），采样 LiDAR 点与盲区最小有效深度像素反投影初始化高斯。DAEP 解决新表面插入：候选点满足 $A(u)<\\tau_\\alpha$ 或 $\\hat{D}(u)-d>\\max(\\delta_0,\\beta d)$ 才插入（后者允许在累积不透明度很高时仍接纳更近的观测），冲突插入用更高初始不透明度与尺度并按深度差加权 Adam 更新 $\\Delta\\theta_g=w_g\\Delta\\theta_g^{\\mathrm{Adam}}$；每轮再按关键帧深度一致性剪掉「不透明度高且中心明显在观测表面前方、且局部深度连续」的高斯。地图损失 $\\mathcal{L}_{\\mathrm{map}}=(1-\\lambda_s)\\mathcal{L}_{\\mathrm{RGB}}+\\lambda_s(1-\\mathrm{SSIM})+\\lambda_d\\mathcal{L}_{\\mathrm{depth}}$，深度项只在有效 LiDAR 像素上算径向误差，盲区靠多视光度监督补几何。",
+    "key_numbers": [
+      "相对全景基线 ODGS-SLAM / PanoGS-SLAM：平均 PSNR 提升 9.10 / 5.56 dB，Depth-L1 降低 71.9% / 83.9%",
+      "ATE：Hilti-Oxford 0.059 m（FAST-LIVO2 0.064）、M3DGR 0.344（0.346）、M2DGR 0.360、Oxford Spires 0.077（FAST-LIO2 0.075）",
+      "长走廊 Corridor02 端点漂移 0.274 m，FAST-LIVO2 为 1.319 m",
+      "WHOLE 弱几何 / 高动态组端点漂移相对 FAST-LIVO2 分别降低 34% / 43%",
+      "消融：去掉盲区视觉更新或 PBU，ATE 0.100→0.161 / 0.158 m，PSNR 25.42→23.08 / 24.92 dB",
+      "WHOLE 上 Depth-L1 比 Gaussian-LIC2 低 20–33%；Jetson Orin NX 在线运行，PSNR 仅降 5.80 dB"
+    ],
+    "ablation": "表 7 在 Hilti Exp18 上拆件：无 DAP（只用 LiDAR 初始化）PSNR 24.85 dB，仅 DAP（无实测深度监督）Depth-L1 0.450→1.223 m，去掉 DAEP 只留不透明度插入 PSNR 25.21、LPIPS 0.189→0.214。图 8 逐步裁掉 LiDAR 垂直视场：从 100% 降到 50% 只掉 0.33 dB 但 Depth-L1 0.242→0.390 m，完全无 LiDAR 支撑时 Depth-L1 达 9.797 m。",
+    "baselines": ["FAST-LIO2", "FAST-LIVO2", "Ground-Fusion++", "Gaussian-LIC2", "ODGS-SLAM", "PanoGS-SLAM"],
+    "datasets": [
+      "WHOLE（自建）：20 序列 UAV/手持，Insta360 X5 双鱼眼 ERP + MID360S LiDAR + IMU，覆盖 W/H/O/L/E 五类退化场景",
+      "Hilti-Oxford 2022（4 序列）、M3DGR（5 序列）、M2DGR（4 序列）、Oxford Spires（4 序列）：ATE、端点漂移",
+      "渲染与几何：共享 512×384 前视、97° 水平 FoV，PSNR/SSIM/LPIPS 与对 LiDAR 的 Depth-L1"
+    ],
+    "novelty": "把跟踪与建图都放进同一个球面域：位姿更新、协方差投影、渲染、深度一致性检查共用一套 ERP 几何，因此盲区视觉约束与高斯初始化能直接对接。相对 ODGS-SLAM/PanoGS-SLAM 只用 ERP 图像、无 LiDAR 度量约束，它把实测 LiDAR 深度当监督、把预测深度只用于盲区补洞；相对 Gaussian-LIC2 等透视系统，它用全景视野换来盲区与弱纹理下的位姿鲁棒性。",
+    "limitations": "渲染与深度只在共享前视 97° 区域评测，全景范围的定量证据较弱；建图开销明显高于 Gaussian-LIC2（600 帧 95.4–201.6 s，地图 0.50–1.41 M 高斯），说明全向覆盖的代价未消。前端仍依赖 LiDAR-IMU 标定与足够 LiDAR 几何，完全失去 LiDAR 时 Depth-L1 恶化到 9.8 m。",
+    "trl_evidence": "在定制 FanciSwarm Pro UAV 上真实采集 20 条序列，并在 Jetson Orin NX（16 GB）上实现在线运行（定位精度保持，PSNR 降 5.80 dB），含嵌入式配置附录与逐序列资源表，落地成熟度在本批次中较高。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 3, "NOV": 3, "TEC": 4, "EXP": 5, "PER": 4, "TRL": 4, "REP": 2},
+    "scores_why": "IMP=3：把全景 + LiDAR + IMU 的高斯 SLAM 真正做通，几何精度比两种全景基线高一个量级（Depth-L1 降 72–84%），定位也与最好的 LiDAR-视觉系统打平或略优；但本质是把已有模块（FAST-LIVO2 前端、Gaussian-LIC2 后端）迁到球面域并补盲区，属扎实增量。NOV=3：统一球面几何让前端与后端共享 Jacobian 是聪明的工程统一，盲区视觉约束 + PBU + DAEP 三者各有针对性，但都可视为对已知问题的定制修补。TEC=4：ERP 协方差投影、盲区三角化的信息矩阵限幅、PBU 的秩二协方差白化、DAEP 的深度冲突插入与剪枝，细节扎实且互相咬合。EXP=5：5 个数据集（含自建 20 序列）、定位/漂移/渲染/深度/开销/嵌入式六条评测线，外加 LiDAR 视场扫掠与六项组件消融，规模与系统性都足。PER=4：PSNR 与 Depth-L1 在几乎所有数据集第一，ATE 在 2/4 公开集第一、Oxford Spires 略逊 FAST-LIO2（0.077 vs 0.075），且基线被喂了它的融合深度仍落后。TRL=4：真 UAV 平台 + Jetson 嵌入式在线运行。REP=2：无代码，WHOLE 数据集是否开放未说明，复现需自建硬件栈。"
+  },
+  {
+    "id": "2611.32361",
+    "title": "Sub-Riemannian structure for Oriented Point Clouds",
+    "title_zh": "有向点云的次黎曼结构",
+    "problem": "点云网络与几何处理几乎都把局部性定义在欧氏空间：$k$NN 或半径球在 $\\mathbb{R}^3$ 里取邻居。当两块不同表面在空间上贴近（叠放的叶片、薄板、锐角折边）时，欧氏邻域会把它们混在一起，特征跨边界泄漏，去噪把折痕抹平、分割标签穿过薄结构。已有的补救（按法向加权的 bilateral、法向距离项、手工各向异性邻域）都是在欧氏候选集上做事后重加权，无法表达强各向异性。",
+    "method": "把每个采样点提升到位置-朝向空间 $\\mathbb{M}=\\mathbb{R}^3\\times\\mathbb{S}^2$，$g=(x,n)$，并只在水平分布 $\\Delta_{(x,n)}=\\{(\\dot{x},\\dot{n}):\\langle\\dot{x},n\\rangle=0\\}$ 上允许运动，度量取 $G_{(x,n)}((p,u),(q,v))=\\langle p,q\\rangle+w^2\\langle u,v\\rangle$——即只能沿切平面滑动、法向重定向要付代价 $w$，沿法向平移被禁止（这正是欧氏邻域「短路」的方向）。可以证明 $\\Delta=\\ker\\theta$ 且 $\\theta=\\langle\\dot{x},n\\rangle$ 是接触形式（$\\theta\\wedge(d\\theta)^2\\neq0$），$\\mathbb{M}\\cong SE(3)/SO(2)$ 是 5 维接触流形，$\\Delta$ 秩 4、step-2 括号生成，故任意两点可由水平路径连通（Chow–Rashevskii），代价是绕行。真实距离 $d_{CC}$ 是优化控制问题、无全局闭式解，于是用 Mitchell 定理取 $\\mathbb{H}^5$ 幂零化的度量切锥：先用 4 个刚体不变量 $\\|r\\|,\\alpha,\\zeta_P,\\zeta_Q$ 组合出 $\\zeta=\\frac12(\\zeta_P+\\zeta_Q)=\\langle r,\\frac{n_P+n_Q}{2}\\rangle$（法向偏移）与 $\\rho^2=\\|r\\|^2-\\zeta^2$（切向间距），令 $a^2=\\rho^2+w^2\\alpha^2$、$\\tau=w\\zeta$，则 Heisenberg 距离 $H(a^2,\\tau)=R^2\\phi^2=a^2\\left(\\frac{\\phi}{2\\sin(\\phi/2)}\\right)^2=\\frac{2|\\tau|\\phi^2}{\\phi-\\sin\\phi}$，其中 $\\phi$ 由等周方程 $\\frac{\\phi-\\sin\\phi}{1-\\cos\\phi}=\\frac{4|\\tau|}{a^2}$ 唯一确定；取 $\\ell_w^2=H(a^2,w\\zeta)$ 即得可计算的 contact score，$a\\to0$ 时 $\\ell_w^2\\to4\\pi w|\\zeta|$（纯法向偏移线性增长），并有双侧界 $\\max\\{a^2,2\\pi w|\\zeta|\\}\\le\\ell_w^2\\le a^2+4\\pi w|\\zeta|$，对无法向的输入取 $\\ell_w^{\\mathrm{proj}}=\\min_{s\\in\\{-1,1\\}}\\ell_w((x,n),(y,sm))$。该 score 是 $SE(3)$ 不变、对称、正定的半度量（一般不满足三角不等式），可直接替换 PointNet++ 的 grouping 机制，或作为核 $K_{ij}=\\exp[-\\ell_w^2/(2\\sigma^2)]$ 驱动扩散：用对称 Sinkhorn 迭代 $\\lambda_i\\leftarrow\\sqrt{\\lambda_i/\\sum_jK_{ij}m_j\\lambda_j}$ 得双随机化算子 $Q=\\Lambda K\\Lambda M$，再构造 $A=(Q-\\mathrm{diag}(Q\\mathbf{1}))/s$、$u(t)=\\exp(tA)u(0)$，因非对角元非负且对称，温度非负且总热量守恒。",
+    "key_numbers": [
+      "Pheno4D 茎叶分割 mIoU 0.835±0.023，欧氏 0.750±0.027、point-to-plane 0.790±0.011",
+      "FAUST 接触层测地误差 0.0568±0.0073，欧氏 0.0828±0.0110；整体 0.0121 vs 0.0137",
+      "使用真值有向法向时，接触层 0.0385±0.0050 vs 欧氏 0.0434±0.0085（差异落在一个标准差内）",
+      "核选择上，contact 邻域的平均 $|\\zeta|/\\|r\\|$ 为 0.0484，欧氏 0.0680、point-to-plane 0.0574",
+      "同轴双圆柱（间距 $\\delta=0.08R$）合成实验中，只有 contact score 正确分离两柱，LIN-$2\\pi$ 失败、LIN-$4\\pi$ 成功"
+    ],
+    "ablation": "表 1–3 用同一套不变量替换打分函数：EUC / BIL / PROD / PTP / LIN-$2\\pi$ / LIN-$4\\pi$ / QUAD / CONTACT。结果显示线性于 $|\\zeta|$ 是分离的关键（QUAD 与 PTP 只有二次惩罚，接触层提升有限），而 CONTACT 在弯曲表面上又优于线性近似 LIN（后者在叠层可分但在 bunny/dragon 上明显更差）。",
+    "baselines": ["Euclidean (EUC)", "Bilateral (BIL)", "Product metric (PROD)", "Point-to-plane (PTP)", "LIN-2π", "LIN-4π", "QUAD", "Sharp & Crane 点云 Laplacian"],
+    "datasets": [
+      "Pheno4D：126 个植物点云、14 株（玉米 7×7 天、番茄 7×11 天），16,384 点/云，茎/叶二分类，mIoU/accuracy",
+      "FAUST：100 个 6890 顶点人体网格，6890 类对应，归一化测地误差 + 接触层（385 点/网格）",
+      "合成平面/同轴圆柱/同心球（各 5000 点）+ Stanford bunny/dragon/三层叠片的热扩散对比"
+    ],
+    "novelty": "把接触次黎曼几何从 2D 图像的曲线提升搬到无结构有向点云上，并给出一个只用 4 个刚体不变量就能算的闭式 score——法向偏移的惩罚是「线性」而非二次，这是它能分离极薄结构、而 point-to-plane 类方法失效的根本原因。它不是给欧氏邻域加权重，而是换掉了定义邻域、排序与权重的整个形式。",
+    "limitations": "法向是输入，方法对法向噪声敏感（App. C 有合成验证但作者承认需深入研究）；权重 $w$ 是全局固定值，未做局部自适应或学习；采样过稀时偏离「局部近似」区间，Heisenberg 距离不再可靠。实验规模偏小（两个真实数据集、少量形状），且 score 只是半度量。",
+    "trl_evidence": "单张 RTX 6000 Ada 上完成全部实验，PointNet++ 训练 100 epoch、batch 8，属轻量可复现研究；无实时系统或产品级集成，代码承诺审稿后释放。",
+    "code": "未提及（正文称 Code will be made available after the review process）",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 3, "NOV": 4, "TEC": 4, "EXP": 3, "PER": 3, "TRL": 2, "REP": 3},
+    "scores_why": "IMP=3：换掉「欧氏即局部」这一默认假设，在薄结构分割（mIoU +8.5 点）与接触层对应（误差 −31%）上给出可测收益，并由命题保证泄漏边界，属扎实且有推广价值的方法学增量；但它只是 grouping 层的替换件，不改网络与任务范式。NOV=4：把接触次黎曼度量落到离散有向点云、用 $\\mathbb{H}^5$ 幂零化导出闭式 score、并证明 $\\ell_w^2$ 对法向偏移是线性下界（$\\max\\{a^2,2\\pi w|\\zeta|\\}$），这是概念上真正新的一步，与 PTP/bilateral 的二次惩罚有本质区别。TEC=4：从接触形式证明、Legendrian 性质、step-2 括号生成到非渐近等周界与泄漏半径推论，理论与可计算实现咬合紧密。EXP=3：合成 + Pheno4D + FAUST + 热扩散四条线，但规模小、只有 3 seeds、真实数据仅两个数据集。PER=3：分割与对应均稳定领先，但有向法向下优势落在一个标准差内，热扩散存在明显的短时偏差（早期差异需靠平滑初值才降到约 5%）。TRL=2：纯离线研究与开源承诺。REP=3：无代码，但协议、切分、超参与硬件均写明，公开数据集可复现。"
+  },
+  {
+    "id": "2611.32396",
+    "title": "PRC4D: Physical Relation-Constrained Persistent 4D Reconstruction",
+    "title_zh": "PRC4D：物理关系约束的持久 4D 重建",
+    "problem": "单目 4D 重建只能看到部分观测，物体被遮挡后的运动无从得知。4DPM 之类方法靠累积已观测几何并用局部空间接触与运动相似性外推被遮挡部分的运动，但把「短暂接触」或「一时同动」当成持续刚性耦合，会引入错误运动约束，反而扭曲物体间的相对位姿——问题不是要不要传播运动，而是判断哪些物理关系在整段序列里可靠。",
+    "method": "以 4DPM 的 primitive 重建为前端，得到各组件几何与观测关键帧位姿 $\\tilde{T}^t_i$，再在其上建时间物理关系图 $\\mathcal{G}=(\\mathcal{V},\\mathcal{E})$，边表示持续刚性耦合，目标是对父-子对满足 $(T^t_p)^{-1}T^t_c\\approx\\bar{T}_{pc}$。候选关系先由几何接触产生：用扩展 OBB 重叠挑候选，再在共同观测关键帧上用体素化表面度量「落在对方邻域内的表面体素比例」，并用时间滞回把噪声观测聚成连续接触区间。仅接触不够，还要运动一致：定义运动增量 $D^t_i=(U^t_i)^{-1}U^{t-1}_i$，对子 $i$ 到父 $j$ 取 $\\mathrm{Log}_{SE(3)}((D^t_j)^{-1}D^t_i)$ 的平移/旋转分量 $(\\tau^t_{ij},\\phi^t_{ij})$，用归一化差异 $\\epsilon^t_{ij}=\\max\\left(\\|\\tau^t_{ij}\\|/\\max(\\alpha s_i,b),\\ \\|\\phi^t_{ij}\\|/(2\\beta)\\right)$ 判定，且只在有可测运动的转移处评估（一起静止不构成证据）。最关键的一步是序列级持久性推理：检查「分离的固定接触片段」与「支持区间之外的独立运动」这类反证，并计算相对平移漂移 $d^t_{ij}=\\|p^t_{ij}-p^{\\mathrm{ref}}_{ij}\\|_2/s_i$（$p^{\\mathrm{ref}}$ 取最终支持区间前半的中位数），若区间一直延伸到最后一次共同观测且漂移持续，则判为违反刚性；缺失观测本身不算反证，因为遮挡不等于关系终止。成对检验之后再用图级一致性消歧：先由「运动证据足且无时间矛盾」的关系建立可信刚性组，其余候选与之比较，一致者并入或扩展、连接两个独立可信组的一律拒绝，冗余邻居支持下可保留有争议的关系。给定验证后的图，观测位姿做关系约束优化：以 $r_i(A,B)=S_i^{-1}q(A^{-1}B)$ 构造尺度归一化残差（$q$ 堆叠相对平移与 $SO(3)$ 对数），最小化 $\\sum_{i\\in\\mathcal{C}_t}\\mathcal{L}(\\sqrt{\\lambda_o}r_i(\\tilde{T}^t_i,T^t_i))+\\sum_{(p,c)\\in\\mathcal{E}_t}\\mathcal{L}(\\sqrt{\\lambda_r}r_c(\\bar{T}_{pc},(T^t_p)^{-1}T^t_c))$，$\\mathcal{L}$ 为逐元素 soft-$L_1$，父节点保持锚定。由于 4DPM 在组件各自的 gauge 里表示运动，需用锚点相对修正 $H^t_i=[\\hat{T}^t_i(\\hat{T}^{a_i}_i)^{-1}][\\tilde{T}^t_i(\\tilde{T}^{a_i}_i)^{-1}]^{-1}$ 把修正搬到原变换上，保证 $H^{a_i}_i=I$、不改变重建几何。遮挡时按图传播：对遮挡组件 $h$ 与其可见 driver $d$，用 $T^{t,*}_h=T^{t,*}_d(T^{a,*}_d)^{-1}T^{a,*}_h$ 把 driver 从共同锚点到当前的相对运动整体搬过去；关系只在最近一次共同观测仍支持刚性时保持激活，重新观测到矛盾即停止传播，重现后一律改用观测精化位姿。",
+    "key_numbers": [
+      "OmniGibson-Occlusion 平均 F-score 0.6092，4DPM 0.5864、D4RT 0.2809、π3 0.2406",
+      "Multi-Object 平均 F-score 0.8106，4DPM 0.7968、D4RT 0.6433、π3 0.4791",
+      "相对位姿误差 2.62 cm / 11.07°，4DPM 为 11.81 cm / 43.46°",
+      "关系推断 F1 0.9444、precision 0.9714，仅用 contact+motion 时为 0.8095 / 0.8947",
+      "加入时序验证使重建 F-score 从 0.4778 跳到 0.6036，再加图级一致性到 0.6092",
+      "消融：仅加位姿精化 0.5981，仅加图引导传播 0.6071，两者合用 0.6092"
+    ],
+    "ablation": "表 3 拆两个模块，图引导传播的贡献大于位姿精化，说明「用可信刚性关系做遮挡运动迁移」比事后修正位姿更有效；表 5 逐级加入时序验证与图级一致性，重建 F 从 0.4778→0.6036→0.6092、关系 F1 从 0.8095→0.8947→0.9444；表 4 对比时间 SE(3) 平滑（F 反而降到 0.5553）与 4DPM 原生分组（0.5668），证明平滑轨迹不等于正确场景。",
+    "baselines": ["4DPM", "D4RT", "π3（聚合 / last-view oracle）", "St4RTrack", "POMATO", "TraceAny", "Temporal SE(3) Smoothing", "4DPM Grouping"],
+    "datasets": [
+      "OmniGibson-Occlusion（自建）：6 序列（冰箱/抽屉/托盘/储物箱），遮挡全程有 GT 几何与运动，1 cm F-score + 相对位姿",
+      "Multi-Object（4DPM 发布）：7 序列、4 同步相机采集、单目输入，多视重建作伪 GT",
+      "HO3D（补充材料）：手-物交互序列"
+    ],
+    "novelty": "把「关系是否持久」而非「关系是否存在」当成核心问题：用序列级反证（分离接触片段、支持区间外的独立运动、末端持续漂移）加图级一致性，把瞬时接触/同动从刚性约束里剔出去，再用同一张图同时做观测位姿精化与遮挡运动传播。相比 4DPM 直接用局部接触与运动相似性外推，这是给外推加了可证伪的准入条件。",
+    "limitations": "收益依赖「能识别出持续刚性耦合」这一前提：MultiObj1 无变化、BallPush 反而退化（0.7986→0.7787），作者自己说它不是任意运动的通用正则。传播一旦没有有效 driver 就退化为不传播；关系推断的阈值（$\\alpha,b,\\beta$、漂移容差）较多，对遮挡时长与观测质量敏感。",
+    "trl_evidence": "单张 L40S 完成全部实验，基于 4DPM 前端与本方法后端，属离线逐序列后处理；无代码、无实时或机器人闭环验证，补充材料仅给出运行时分解。",
+    "code": "未提及",
+    "venue": "arXiv preprint",
+    "scores": {"IMP": 3, "NOV": 3, "TEC": 3, "EXP": 3, "PER": 3, "TRL": 2, "REP": 2},
+    "scores_why": "IMP=3：抓住了持久 4D 重建里「瞬时接触被误当刚性」的真实失效模式，在自建遮挡基准上把 F-score 从 0.5864 提到 0.6092、相对平移误差从 11.81 cm 压到 2.62 cm，属扎实增量；但提升幅度有限且并非普适。NOV=3：序列级持久性推理 + 图级一致性 + 同一图驱动精化与传播的组合是新的，但「用刚性关系约束多体」在 CARI4D/MoSca/HAT-4D 一线已有先例，本文主要是把「验证持久性」这一步补上。TEC=3：残差尺度归一化、gauge 一致的锚点修正、遮挡期关系激活与 driver 选择都考虑到了，但整体是在 4DPM 之上加后处理层，未触及前端重建。EXP=3：2 个主基准 + HO3D 补充，消融覆盖模块、图构建与替代方案，尚属充分；但场景数少（6+7），且无多种子/跨前端验证。PER=3：合成遮挡集 6/6 场景提升，真实集 5/7 提升、1 持平、1 退化，属有条件有效。TRL=2：离线后处理，无代码。REP=2：无代码，基准为自建且未见发布说明，复现需重建 4DPM 前端。"
+  }
+]

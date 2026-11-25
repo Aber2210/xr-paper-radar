@@ -110,10 +110,20 @@ def clean_html(html):
     return "\n".join(lines)
 
 
+LANDING_RE = re.compile(
+    r"(?im)^\s*(?:[IVXLC]+\.|\d+(?:\.\d+)*|[A-Z][A-Za-z ]{2,40})\.?\s+"
+    r"(Introduction|Related Work|Method|Methods|Approach|Experiment|Experiments|"
+    r"Results|Evaluation|Discussion|Conclusion)\b"
+)
+
+
 def grade_evidence(text):
+    """证据等级。O-12 守卫：ar5iv 摘要落地页常 4–6k 字符且含 References 标题，
+    旧阈值会误判 FULL。新增：<8000 字符且无正文一级章节标题 → PARTIAL。"""
     n = len(text)
     has_core = bool(SECTION_RE.search(text))
-    if n >= 4000 and has_core:
+    has_body = bool(LANDING_RE.search(text))
+    if n >= 4000 and has_core and not (n < 8000 and not has_body):
         return "FULL"
     if n >= 1000:
         return "PARTIAL"

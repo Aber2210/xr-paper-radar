@@ -1,0 +1,599 @@
+{
+ "prev_group": "2026-11-24",
+ "unadmitted": 977,
+ "with_abstract": 977,
+ "hits": {
+  "2606.28090": [
+   "KW",
+   "Typing Behavior in Human-LLM Interaction: Keystroke Dynamics Reveal Cognitive Effort During Prompting"
+  ],
+  "2611.27423": [
+   "KW",
+   "ADEPT: Adaptive Monocular Depth Estimation via Model-In-The-Loop Photometric Tuning with Capture Risk Prediction"
+  ],
+  "2611.27996": [
+   "KW",
+   "Participant-Independent Validation of Smartphone Video and Wearable Inertial Sensing for Coach-Rated Running-Form Classification"
+  ],
+  "2611.28129": [
+   "KW",
+   "Urban State Representation for Autonomous Mobility: A Survey of Multimodal Perception, Architectures, Datasets, and Benchmarks"
+  ],
+  "2611.28185": [
+   "TITLE_EXTRA:tracking",
+   "SAMA: Training-Free Consensus Ridge Tracking for Camera-Based Heart Rate on Five Public Datasets"
+  ],
+  "2611.28191": [
+   "KW",
+   "BReD: BEV Residual Diffusion for Feed-Forward Road Gaussian Reconstruction"
+  ],
+  "2611.28197": [
+   "KW",
+   "From Point Clouds to Engineering Models: Benchmarking Agentic 3D Reconstruction in the Built Environment"
+  ],
+  "2611.28274": [
+   "TITLE_EXTRA:sim-to-real",
+   "Neural Fidelity Calibration for Informative Sim-to-Real Adaptation"
+  ],
+  "2611.28283": [
+   "TITLE_EXTRA:hand",
+   "HandXFM: Semantic-Structural Distillation for Hand Radiograph Foundation Models"
+  ],
+  "2611.28402": [
+   "KW",
+   "Plan Big, Paint Small: Semantic-Aware Computation Allocation for Efficient Autoregressive Video Generation"
+  ],
+  "2611.28403": [
+   "KW",
+   "Occupancy Planar Patch: Incremental Probabilistic Bounded-Plane Reconstruction from LiDAR Data"
+  ],
+  "2611.28438": [
+   "KW",
+   "LoKiTO: Local Kinodynamic Trajectory Optimization for UAVs based on Memory-Efficient Neural Distance Fields"
+  ],
+  "2611.28521": [
+   "KW",
+   "Environment-Aware Probabilistic State Estimation of Continuum Robots from Planar Imaging"
+  ],
+  "2611.28545": [
+   "KW",
+   "Reconstruction-Guided Dual-Branch Learning for LiDAR Anomalous Object Detection"
+  ],
+  "2611.28646": [
+   "TITLE_EXTRA:spatial",
+   "OrthoLatentCAD: Orthographic Spatial Latents for Hand-Drawn CAD Program Generation"
+  ],
+  "2611.28675": [
+   "KW",
+   "Doing More with Less: Complex Manipulation with a Contact-Adaptive Robotic Hand"
+  ],
+  "2611.28697": [
+   "KW",
+   "Distilling Touch into Vision-Only Policies for Contact-Rich Manipulation"
+  ],
+  "2611.28706": [
+   "KW",
+   "SkillLens: An Interactive Human-LLM System for Diagnosing and Refining Agent Skills"
+  ],
+  "2611.28707": [
+   "TITLE_EXTRA:hand",
+   "IRIS: Inverse Dynamics from Random Exploration with Eye-in-hand Sensing"
+  ],
+  "2611.28752": [
+   "KW",
+   "VTLA-RL: Learning Visuotactile Policies for Load-Adaptive Grasping"
+  ],
+  "2611.28820": [
+   "KW",
+   "PointNeXt Adapter Improved Model for BIM Component Defect Association under Construction Images and Design Model Attributes"
+  ],
+  "2611.28839": [
+   "TITLE_EXTRA:spatial",
+   "Spatially Grounded Latent Lookahead for Vision-Language-Action Models"
+  ],
+  "2611.28901": [
+   "KW",
+   "Gaze Graphs: A Scene-Level Representation of Visual Attention in the Operating Room"
+  ],
+  "2611.28905": [
+   "TITLE_EXTRA:spatial",
+   "Beyond the section plane: Robust 3D reconstruction of multiplex immunofluorescence exposes limitations of 2D spatial cell statistics"
+  ],
+  "2611.29002": [
+   "KW",
+   "Demystifying Classifier-Free Guidance for Auto-Regressive Image Generation"
+  ],
+  "2611.29071": [
+   "KW",
+   "Projecting Beauty: Transferring Image Aesthetic Analysis onto 3D Heritage and Urban Scenes"
+  ],
+  "2611.29105": [
+   "TITLE_EXTRA:spatial",
+   "Spatial Ensemble Logic for Biomedical Imaging: Geometric Element Ensembles in Euclidean Space"
+  ],
+  "2611.29116": [
+   "KW",
+   "A Camera-Based Single-Volume, Monolithic Compton Camera"
+  ],
+  "2611.29146": [
+   "TITLE_EXTRA:spatial",
+   "RVLM: Fewer Tokens, Better Resolution Scaling, Fine-Grained Spatial Grounding"
+  ],
+  "2611.29148": [
+   "KW",
+   "ArborNet: Volume- and skeleton-aware completion of tree quantitative structure models from incomplete point clouds using anchor-conditioned graph learning"
+  ],
+  "2611.29194": [
+   "KW",
+   "Unleashing the Value of Raw Point Clouds for 3D Understanding with LLMs"
+  ],
+  "2611.29195": [
+   "KW",
+   "FunGrasp-Zero: Field-Conditioned Graph Attention Policy for Zero-Shot Cross-Embodiment Dexterous Functional Grasping"
+  ],
+  "2611.29206": [
+   "KW",
+   "DataRecycle: Trustworthy Distillation of Structured Data from Scattered Web Evidence"
+  ],
+  "2611.29213": [
+   "KW",
+   "PartPO: Part-Level Policy Optimization for Shape-to-Program Generation"
+  ],
+  "2611.29226": [
+   "KW",
+   "Tenlai-TTS 2.0: Continuous-Representation LLM-Based TTS System with End-to-End Training"
+  ],
+  "2611.29265": [
+   "TITLE_EXTRA:tracking",
+   "On the Interplay between Backtracking and Latent Confidence Directions in Reasoning Models"
+  ],
+  "2611.29279": [
+   "KW",
+   "A2I-VLA: A Two-Stage Vision-Language-Action model with Semantic-Physical Alignment and Integration"
+  ],
+  "2611.29282": [
+   "TITLE_EXTRA:radiance field",
+   "RadioWorld: Transferring World Models to Radio-Frequency Radiance Fields"
+  ],
+  "2611.29283": [
+   "KW",
+   "ARRANGE: Agentic Skills for Layering Vocals"
+  ],
+  "2611.29315": [
+   "TITLE_EXTRA:hand",
+   "SWIFT: A Handcrafted, Arithmetic-Minimal FPGA Engine for Real-Time Audio Deepfake Detection"
+  ],
+  "2611.29330": [
+   "TITLE_EXTRA:spatial",
+   "SKIA: Spatial-Knowledge Informed Attention for Robust Remote Photoplethysmography under Lower-Face Motion Artifacts"
+  ],
+  "2611.29341": [
+   "TITLE_EXTRA:pose estimation",
+   "MIMORPHEUS: Rethinking Cross-Modal Supervision for Human Pose Estimation from Radar Signals"
+  ],
+  "2611.29377": [
+   "KW",
+   "Contact Harness: Enabling VLM Agents to Perform Contact-Rich Manipulation"
+  ],
+  "2611.29381": [
+   "TITLE_EXTRA:gaussian",
+   "Gaussian Belief Propagation and Periodic Jacobi Matrices on Trees: Spectral Curve, Antibound Poles, and Fixed Points"
+  ],
+  "2611.29388": [
+   "KW",
+   "SpectralGS: Spectral Gaussian Splatting for Unsupervised Spectral Super-Resolution"
+  ],
+  "2611.29421": [
+   "TITLE_EXTRA:pose estimation",
+   "A colour-marker tracker for pose estimation of slender surgical instruments: vision-language-model-guided adaptive colour calibration"
+  ],
+  "2611.29494": [
+   "TITLE_EXTRA:spatial",
+   "CoHABIT: Complementary Evaluation of Furniture Layouts through Spatial Rules and Household Routines"
+  ],
+  "2611.29662": [
+   "KW",
+   "Grounded in Contact: Reducing Floating and Interpenetration Artifacts with Multimodal Skill-Effect Models"
+  ],
+  "2611.29748": [
+   "TITLE_EXTRA:spatial",
+   "Performance Evaluation of Nonlinear Model Predictive and Sliding Mode Controllers on a 4-Cable Spatial CSPR in Simscape"
+  ],
+  "2611.29850": [
+   "KW",
+   "Ego2Wrist: Bootstrapping Wrist-View Synthesis from Egocentric Video"
+  ],
+  "2611.29868": [
+   "KW",
+   "Arcadian: Open-Source Humanoid Ecosystem for Accessible and Customizable Research and Education"
+  ],
+  "2611.29874": [
+   "TITLE_EXTRA:hand",
+   "Escriba-OCR: A 1B Vision-Language Model for Error-Preserving Transcription of Handwritten Portuguese Essays"
+  ],
+  "2611.29912": [
+   "TITLE_EXTRA:spatial",
+   "SuperNav-1.5: Structured Spatial Memory For Agentic Navigation Systems"
+  ],
+  "2611.29954": [
+   "TITLE_EXTRA:tracking",
+   "Yggdrasil: Tree-Routed Recurrent Experts for State Tracking and Fast CPU Inference"
+  ],
+  "2611.29980": [
+   "KW",
+   "TeleMultiStream: An Integrated Robot Teleoperation System with Low-Latency Multi-Stream Video Feedback"
+  ],
+  "2611.30026": [
+   "KW",
+   "Design of a Compact Cable-driven 4-DoF Salamander Robotic Limb with Large Range of Motion and High Load Capacity"
+  ],
+  "2611.30040": [
+   "KW",
+   "Teaching How to Reason, Beyond What to Answer: Evidence-Faithful On-Policy Distillation for streaming video understanding"
+  ],
+  "2611.30055": [
+   "KW",
+   "Bi-Refine: Semantic Verification-Guided Progressive Refinement for Moment Retrieval"
+  ],
+  "2611.30131": [
+   "TITLE_EXTRA:spatial",
+   "iFeST: An Iterative Motion Correction Framework for Fetal Brain Diffusion MRI via Frequency-Spatial-Temporal Modeling"
+  ],
+  "2611.30198": [
+   "TITLE_EXTRA:spatial",
+   "Geospatial foundation models and deep learning for climate resilience: a review of transfer, uncertainty and decision readiness"
+  ],
+  "2611.30215": [
+   "TITLE_EXTRA:spatial",
+   "Benchmarking Geospatial Foundation Models under Calibrated Label Errors"
+  ],
+  "2611.30283": [
+   "KW",
+   "AdvMTO: Multimodal and Temporal Adversarial Object Attacks via 2D Gaussian Splatting for BEV-Based 3D Object Detection"
+  ],
+  "2611.30310": [
+   "KW",
+   "Seeing Together, Acting Apart: Shared Environmental Understanding for Multi-Robot Navigation"
+  ],
+  "2611.30424": [
+   "TITLE_EXTRA:spatial",
+   "Spatial-Zero: Self-Evolving Spatial Reasoning in Vision-Language Models from Zero Data"
+  ],
+  "2611.30436": [
+   "TITLE_EXTRA:gaussian",
+   "MF-EDA: Joining Membership Functions to Adapt the Number of Distributions in Gaussian Estimation-of-Distribution Algorithms"
+  ],
+  "2611.30471": [
+   "KW",
+   "Inclusion of obstacles in ground point classification in ALS data for terrain models used for analysis of vehicle traversability"
+  ],
+  "2611.30490": [
+   "KW",
+   "EgoStudy: How Does Scaling Egocentric Data Affect VLA and WAM Pretraining?"
+  ],
+  "2611.30495": [
+   "KW",
+   "DexDuet: Learning Contact-Preserving Bimanual Dexterity from Human Demonstrations"
+  ],
+  "2611.30514": [
+   "TITLE_EXTRA:spatial",
+   "When Do Spatial Plans Help Text-to-Image Generation? Causal Control, System Utility, and Text Responsiveness"
+  ],
+  "2611.30564": [
+   "TITLE_EXTRA:spatial",
+   "Seeing Is Locating: Spatial Awareness and Geographic Bias in Decision Language Models"
+  ],
+  "2611.30602": [
+   "KW",
+   "GSDet: Gaussian Splatting for Oriented Object Detection"
+  ],
+  "2611.30646": [
+   "TITLE_EXTRA:stereo",
+   "Part-wise Certified State Estimation of Articulated Objects from Passive Stereo"
+  ],
+  "2611.30658": [
+   "KW",
+   "Active Observation for Robust Visual Servoing in Robotic Manipulation"
+  ],
+  "2611.30720": [
+   "KW",
+   "Testing Quantized KV-Cache Maintenance: Encoding Layout and Historical Restoration"
+  ],
+  "2611.30725": [
+   "TITLE_EXTRA:mesh",
+   "Co-speech Gesture Attribute Annotation with 3D Human Mesh Recovery"
+  ],
+  "2611.30728": [
+   "KW",
+   "Same Seed, Different Picture? Deciding Early at Low Resolution for Seed-Faithful Few-Step Flow Sampling"
+  ],
+  "2611.30813": [
+   "KW",
+   "HIVE-Bench: Evaluating Patch-Level Visual Representations for Egocentric Robot Manipulation"
+  ],
+  "2611.30963": [
+   "TITLE_EXTRA:spatial",
+   "Foresight Forcing: Learning Spatial Foresight for Robotic Manipulation"
+  ],
+  "2611.31021": [
+   "TITLE_EXTRA:spatial",
+   "Parsing Visual Latents for Multimodal Spatial Reasoning"
+  ],
+  "2611.31022": [
+   "KW",
+   "OmniV-Bench: Can MLLMs Comprehend Immersive Spatio-temporal Scenes?"
+  ],
+  "2611.31025": [
+   "TITLE_EXTRA:spatial",
+   "Token Pruning Needs a Protected Sink Token: Coherent Spatial Aggregation in Vision Transformers"
+  ],
+  "2611.31128": [
+   "KW",
+   "CrownFusion: 3D Dental Crown Generation Using Geometry Images and Latent Diffusion"
+  ],
+  "2611.31129": [
+   "KW",
+   "FATCAT: Fault Injection Attacks Targeting Chip-level Alignment"
+  ],
+  "2611.31164": [
+   "KW",
+   "Analyzing and Improving FlowMap Distillation of Autoregressive Video Models"
+  ]
+ },
+ "disposition": {
+  "2606.28090": [
+   "pool"
+  ],
+  "2611.27423": [
+   "pool"
+  ],
+  "2611.27996": [
+   "pool"
+  ],
+  "2611.28129": [
+   "pool"
+  ],
+  "2611.28185": [
+   "pool"
+  ],
+  "2611.28191": [
+   "pool"
+  ],
+  "2611.28197": [
+   "pool"
+  ],
+  "2611.28274": [
+   "pool"
+  ],
+  "2611.28283": [
+   "pool"
+  ],
+  "2611.28402": [
+   "pool"
+  ],
+  "2611.28403": [
+   "pool"
+  ],
+  "2611.28438": [
+   "pool"
+  ],
+  "2611.28521": [
+   "pool"
+  ],
+  "2611.28545": [
+   "pool"
+  ],
+  "2611.28646": [
+   "pool"
+  ],
+  "2611.28675": [
+   "pool"
+  ],
+  "2611.28697": [
+   "pool"
+  ],
+  "2611.28706": [
+   "pool"
+  ],
+  "2611.28707": [
+   "pool"
+  ],
+  "2611.28752": [
+   "pool"
+  ],
+  "2611.28820": [
+   "pool"
+  ],
+  "2611.28839": [
+   "pool"
+  ],
+  "2611.28901": [
+   "pool"
+  ],
+  "2611.28905": [
+   "pool"
+  ],
+  "2611.29002": [
+   "pool"
+  ],
+  "2611.29071": [
+   "pool"
+  ],
+  "2611.29105": [
+   "pool"
+  ],
+  "2611.29116": [
+   "pool"
+  ],
+  "2611.29146": [
+   "pool"
+  ],
+  "2611.29148": [
+   "pool"
+  ],
+  "2611.29194": [
+   "pool"
+  ],
+  "2611.29195": [
+   "pool"
+  ],
+  "2611.29206": [
+   "pool"
+  ],
+  "2611.29213": [
+   "pool"
+  ],
+  "2611.29226": [
+   "pool"
+  ],
+  "2611.29265": [
+   "pool"
+  ],
+  "2611.29279": [
+   "pool"
+  ],
+  "2611.29282": [
+   "pool"
+  ],
+  "2611.29283": [
+   "pool"
+  ],
+  "2611.29315": [
+   "pool"
+  ],
+  "2611.29330": [
+   "pool"
+  ],
+  "2611.29341": [
+   "pool"
+  ],
+  "2611.29377": [
+   "pool"
+  ],
+  "2611.29381": [
+   "pool"
+  ],
+  "2611.29388": [
+   "pool"
+  ],
+  "2611.29421": [
+   "pool"
+  ],
+  "2611.29494": [
+   "pool"
+  ],
+  "2611.29662": [
+   "pool"
+  ],
+  "2611.29748": [
+   "pool"
+  ],
+  "2611.29850": [
+   "pool"
+  ],
+  "2611.29868": [
+   "pool"
+  ],
+  "2611.29874": [
+   "pool"
+  ],
+  "2611.29912": [
+   "pool"
+  ],
+  "2611.29954": [
+   "pool"
+  ],
+  "2611.29980": [
+   "pool"
+  ],
+  "2611.30026": [
+   "pool"
+  ],
+  "2611.30040": [
+   "pool"
+  ],
+  "2611.30055": [
+   "pool"
+  ],
+  "2611.30131": [
+   "pool"
+  ],
+  "2611.30198": [
+   "pool"
+  ],
+  "2611.30215": [
+   "pool"
+  ],
+  "2611.30283": [
+   "pool"
+  ],
+  "2611.30310": [
+   "pool"
+  ],
+  "2611.30424": [
+   "pool"
+  ],
+  "2611.30436": [
+   "pool"
+  ],
+  "2611.30471": [
+   "pool"
+  ],
+  "2611.30490": [
+   "pool"
+  ],
+  "2611.30495": [
+   "pool"
+  ],
+  "2611.30514": [
+   "pool"
+  ],
+  "2611.30564": [
+   "pool"
+  ],
+  "2611.30602": [
+   "pool"
+  ],
+  "2611.30646": [
+   "pool"
+  ],
+  "2611.30658": [
+   "pool"
+  ],
+  "2611.30720": [
+   "pool"
+  ],
+  "2611.30725": [
+   "pool"
+  ],
+  "2611.30728": [
+   "pool"
+  ],
+  "2611.30813": [
+   "pool"
+  ],
+  "2611.30963": [
+   "pool"
+  ],
+  "2611.31021": [
+   "pool"
+  ],
+  "2611.31022": [
+   "pool"
+  ],
+  "2611.31025": [
+   "pool"
+  ],
+  "2611.31128": [
+   "pool"
+  ],
+  "2611.31129": [
+   "pool"
+  ],
+  "2611.31164": [
+   "pool"
+  ]
+ },
+ "leak": {},
+ "leak_n": 0
+}

@@ -1,0 +1,380 @@
+{
+ "2611.31435": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Tornado4D: Physics-Guided 4D Gaussian Reconstruction of a Laboratory Tornado from Sparse One-Sided Videos"
+ },
+ "2611.32361": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Sub-Riemannian structure for Oriented Point Clouds"
+ },
+ "2611.32351": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "LookAnything: A Foundation Model for Holistic Gaze Following"
+ },
+ "2611.32297": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "MaskedVGGT: Masked Multi-View Transformers Are Scalable 3D Learners"
+ },
+ "2611.32202": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SplatTok: Data-Driven Compression of 3D Gaussian Splats with Scene-Level Tokens"
+ },
+ "2611.32198": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "MoGe-4D: Efficient, Flexible, and Unified Dense 4D Reconstruction and Tracking"
+ },
+ "2611.32476": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "ViTacLab: Physically Consistent Visuo-Tactile Simulation, Benchmarking, and Representation Learning for Robotic Manipulation"
+ },
+ "2611.32475": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "ROVO: Robust Rotation-Only Visual Odometry for UAVs at Low and Moderate Altitudes"
+ },
+ "2611.31482": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "eess.IV",
+  "title": "InterGS+: Inter-Frame Gaussian Splatting Compression with Geometry-Aware Transformer Prediction and Adaptive Residual Coding"
+ },
+ "2611.32335": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "GOLD-SLAM: Gaussian-splatting Omnidirectional LiDAR-Depth SLAM"
+ },
+ "2611.32231": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "ST-SfM: Spatio-Temporal Structure-from-Motion for Initialising 4D Gaussian Splatting"
+ },
+ "2611.32445": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "A Mesh to Remember: Persistent Appearance for Interactive Video Worlds"
+ },
+ "2611.31516": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "InitFree-SfM: When Initialization-Free Bundle Adjustment meets Learned Structure-from-Motion"
+ },
+ "2611.31428": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Enhancing Sparse-View Gaussian Splatting with Feed-Forward Priors via Spectral Fusion and Distillation"
+ },
+ "2611.32311": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SynAVID: A Synthetic Audio-Visual Immersive Dataset of Dynamic Scenes"
+ },
+ "2611.31950": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Beyond Rigid Hands: Deforming Skin into Contact-Consistent Hand Meshes"
+ },
+ "2611.31976": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "CodeHOI: Code with Agents for Physically Plausible 4D Hand-Object Interaction"
+ },
+ "2611.32025": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "View Management with Gaussian Placement and Opacity Regularization for Online 3DGS"
+ },
+ "2611.31836": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Gaze World Model"
+ },
+ "2611.31766": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "RoMo Hands: A Large Scale Richly Organized Text to Hand Motion Dataset"
+ },
+ "2611.31720": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "EventSSM: Causal Spatial-State Modelling for Asynchronous Events Event-Depth Estimation"
+ },
+ "2611.31919": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "DUALingo: A Dual-Hand Instruction-Guided Dataset for Affordance Grounding on 3D Objects"
+ },
+ "2611.32171": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Mind the Band: The Hidden Frequency Variable in Geometric RoPE"
+ },
+ "2611.31812": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Generalizable Feed-Forward 3D Hand-Object Reconstruction with Coarse-to-Fine Contact Estimation"
+ },
+ "2611.31918": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "HiGS: A Hierarchical Architecture for Fast Differentiable 3D Gaussian Splatting"
+ },
+ "2611.33157": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PointX: Multi-View Consistent Intrinsics by Querying Surface Points"
+ },
+ "2611.32628": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Completion-Aware Compression for Progressive 3D Gaussian Splatting"
+ },
+ "2611.32513": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "DiffAnchor: Anchor-Space Diffusion for Monocular 3D Hand Pose Estimation"
+ },
+ "2611.32584": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "An XR-Based System for Enhanced Spatial Awareness in Mobile Robot Teleoperation"
+ },
+ "2611.32523": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "AirLeg: A Robust and Accurate Self-Supervised Visual-Inertial-Leg SLAM System"
+ },
+ "2611.31478": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "Which Way Is Up? Rotated Photos Silently Hurt Multi-View 3D Foundation Models"
+ },
+ "2611.31944": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "DraftKV: Protecting Persistent Worlds through Hierarchical Streaming Retrieval"
+ },
+ "2611.33014": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Training Lightweight Gaze Models without Target Gaze Annotation: What Makes a Good Teacher?"
+ },
+ "2611.32996": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PAVE: Preference-Aligned Visual Egocentric Learning for the Blind and Low-Vision Users"
+ },
+ "2611.32396": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PRC4D: Physical Relation-Constrained Persistent 4D Reconstruction"
+ },
+ "2611.32932": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "HARI4D: Hand-Articulation Aware 4D Reconstruction of Human-Object Interaction"
+ },
+ "2611.32816": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SpatialArena: Where Do Geometric Foundation Models Stand?"
+ },
+ "2611.32732": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.NI",
+  "title": "FugaStream: Pipelined Live Volumetric Streaming towards Full Exploitation of Multi-views"
+ },
+ "2611.32621": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "ShapeQuest: Towards Granularity-Controlled Edit-Conditioned 3D Asset Retrieval"
+ },
+ "2611.31803": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SceneMemBench: A Benchmark for Scene Memory in Interactive Video World Models"
+ },
+ "2611.31757": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Xtream: An Explicit Metric State for Large-Scale Streaming Reconstruction"
+ },
+ "2611.32998": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "First-Hit Photoconsistency for Neural Surface Reconstruction"
+ },
+ "2611.32970": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "FocusAnchor: Zero-Shot Metric Depth by Anchoring a Depth Foundation Prior to Focus Cues"
+ },
+ "2611.32034": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "BodyWeave: Native Body-Conditioned 3D Garment Generation"
+ },
+ "2611.32482": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "COHERE4D: Training-Free Dense Surface Alignment for Coherent Metric 4D Human-Scene Reconstruction"
+ },
+ "2611.32883": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "3D Tracking Any Point with Events and Frames"
+ },
+ "2611.32876": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "MemHand: Memory-Enhanced World-Space Hand Motion Reconstruction from Egocentric Videos"
+ },
+ "2611.32735": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "AnyPrune: Optimization-Free Pruning for Any Feedforward 3D Gaussian Splatting Pipeline"
+ },
+ "2611.33145": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Lost on Campus: Evaluating Embodied Spatial Reasoning of Vision-Language Models in the Wild"
+ },
+ "2611.32716": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SplatSeg3D: Efficient Zero-Shot 3D Segmentation via Point Cloud Surfelization and Splatting"
+ },
+ "2605.20044": {
+  "published": "2026-05-19",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "OP2GS: Feature-Free Gaussian Splatting with Dual Opacity for 3D Instance Segmentation"
+ },
+ "2605.12074": {
+  "published": "2026-05-12",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "BARISTA: A Multi-Task Egocentric Benchmark for Compositional Visual Understanding"
+ },
+ "2604.03667": {
+  "published": "2026-04-04",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Leveraging Gaze and Set-of-Mark in VLLMs for Human-Object Interaction Anticipation from Egocentric Videos"
+ },
+ "2601.22046": {
+  "published": "2026-01-29",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PLANING: A Loosely Coupled Triangle-Gaussian Framework for Streaming 3D Reconstruction"
+ },
+ "2611.32540": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Smooth Essential-Manifold Residuals for View-Graph Calibration"
+ },
+ "2611.32491": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "X-3DComposer: Feed-Forward 3D Scene Composition with Any Assets from Any Views"
+ },
+ "2611.32727": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.RO",
+  "title": "Support2Sim: Visually Faithful Real2Sim with Stable Object Supports"
+ },
+ "2609.16610": {
+  "published": "2026-09-15",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "EgoPathBench: Evaluating Zero-Shot Egocentric Waypoint Decision-Making in Vision-Language Models"
+ },
+ "2611.32443": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "PVWander: 3D Memory-guided Panoramic Video Wandering with Path-Facing Canonicalization"
+ },
+ "2610.11810": {
+  "published": "2026-10-08",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Seek-and-View Reasoning for Multi-View Spatial Understanding"
+ },
+ "2512.12898": {
+  "published": "2025-12-15",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Beyond Primitive Bloat: High-Fidelity Gaussian Splatting via Coordinate-Convolution Neural Network"
+ },
+ "2508.17255": {
+  "published": "2025-08-24",
+  "updated": "2026-11-23",
+  "cat": "cs.CV",
+  "title": "SEER-VAR: Semantic Egocentric Environment Reasoner for Vehicle Augmented Reality"
+ },
+ "2611.33137": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Physicl Scenes: An Artist-created 3D Dataset for Learning Perception and Action"
+ }
+}

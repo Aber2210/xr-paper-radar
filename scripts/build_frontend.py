@@ -90,7 +90,9 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "2026-11-24": "2026-11-24 · 11-23 周一公告批次（公告日≠拉取日；非重磅无 S——门③ 4.27 vs 4.432 margin −0.162，3 篇 4.27 达 S 线按 skill §8.6.3 记 A；11-21/11-22 周末 skipDays 无公告段；listing 506 槽位 / 404 篇唯一且 100% 被 RSS 639 条覆盖（缺收 0）→ 免 id_list；KW + 标题级补扫 75 → 剔 42 → 33 篇，残差复核 371 判 8（2.2%）采纳 8 篇 → 主批 41 篇，Top10 实数 10 篇覆盖 7 赛道（未重筛）；全文 49 L0/FULL + 1 L1/PARTIAL）",
                 "backfill-1124": "backfill · 11-23 公告 RSS 混入旧稿 v2 再公告（9 篇：WiTac 4.16 记 A / FIRE3D 3.93 / R3D 3.92 / GLUT 3.87 / PRISM-SLAM 3.78 / TailorGS 3.78 / MIR-Depth 3.73 / 本体感知膜 3.58 B / EgoPhys 3.58 B）",
                 "2026-11-25": "2026-11-25 · 11-24 周二公告批次（公告日≠拉取日；11-21/11-22 周末 skipDays 并入本批；非重磅无 S——门③ 4.21 vs 4.432 margin −0.222，HoloSplat 4.21 达 S 线按 skill §8.6.3 记 A；listing 1,285 槽位 / 1,045 篇唯一且 100% 被 RSS 1,547 条覆盖（缺收 0）→ 免 id_list；KW 100 + 标题级补扫 46 → 剔 84 → 62 篇，残差复核 899 判 22（2.45%）采纳 6 篇 → 主批 68 篇，Top10 实数 10 篇覆盖 6 赛道（未重筛）；全文 66 L0/FULL + 2 L1/PARTIAL）",
-                "backfill-1125": "backfill · 11-24 公告 RSS 混入旧稿 replace 再公告（6 篇：UniView 3.77 A / GraspHOI 3.70 A / 电触觉装置 3.48 B / 高斯视角索引 3.40 B / IBPA 3.30 B / VR 导管训练 3.23 B）"}
+                "backfill-1125": "backfill · 11-24 公告 RSS 混入旧稿 replace 再公告（6 篇：UniView 3.77 A / GraspHOI 3.70 A / 电触觉装置 3.48 B / 高斯视角索引 3.40 B / IBPA 3.30 B / VR 导管训练 3.23 B）",
+                "2026-11-26": "2026-11-26 · 11-25 周三公告批次（公告日≠拉取日；单日公告组无周末积压；重磅日授 3 个 S——门③ 4.57 vs 4.432、margin +0.138、blockbuster=true：MoGe-4D 4.57 / A Mesh to Remember 4.40 / AirLeg 4.38；listing 761 槽位 / 624 篇唯一且 100% 被 RSS 921 条覆盖（缺收 0）→ 免 id_list；KW 61 + 标题级补扫 36 → 剔 53 → 44 篇，残差复核 527 判 8（1.52%）采纳 8 + 通读补 3 → 主批 55 篇，Top10 实数 10 篇覆盖 5 赛道（未重筛）；全文 63 篇全 L0/FULL，O-12 守卫已入库）",
+                "backfill-1126": "backfill · 11-25 公告 RSS 混入旧稿 replace 再公告（8 篇：PLANING 3.85 A / Seek-and-View 3.85 A / EgoPathBench 3.77 A / BARISTA 3.72 A / SEER-VAR 3.70 A / QNN-GS 3.62 A / OP2GS 3.50 B / 注视+SoM 2.77 C）"}
 
 
 def read_text(p):
