@@ -344,8 +344,9 @@ A('- **门② 回补机制第二次在「重建与SLAM 独大」的批次上生�
   '若后续批次该赛道持续 >40%%，需要考虑在**排序阶段**引入赛道配额，而不是每次事后回补。\n')
 A('- **backfill 占比 12.7%%（8/63）**：全部为 `replace` 再公告，首发跨度 2025-09-20 ~ 2026-11-24。'
   '其中 2509.16476（GazeVLM，首发 2025-09-20）距今超过一年，已在笔记中显著标注首发日，避免被读成当期工作。\n')
-A('- **渠道①（WorkBuddy 站点）历史挂账**：上批累计 37 批。本批按整改口径实测，若仍不可用则记「累计第 38 批挂账」，'
-  '不影响 GitHub Pages 渠道与本地知识库。\n')
+A('- **渠道①（WorkBuddy 站点）仍不可用**：本会话 ToolSearch 无 `workbuddy_sites_deploy`，'
+  '`xr-paper-hub.app.workbuddy.host` 维持 403 → 按整改口径记「累计第 **38** 批挂账」，'
+  '**未声称已发布**；渠道②（GitHub Pages）已实推并核验，不影响本地知识库。\n')
 
 open('reports/XR-Daily-Report-%s.md' % DATE, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
 print('main report', len('\n'.join(L)))
@@ -532,6 +533,10 @@ r('- 第 7 步 Top10：实数 10 篇（4.35–4.00），全 A；全批 S %d / A 
 r('- 第 8 步 产物：报告 2 + 笔记 %d（C 级 5 篇不写）+ MOC 2 + 总索引刷新 + 7dim-table（主批/backfill 各 1）+ '
   'scored.md + run_log；registry 1,269 → **1,332**（+63，备份 `registry.jsonl.bak-20261127`）。'
   '易错点：`7dim-table.md` 表头必须保留 `arXiv` 列，否则前端批次卡表内计数为 0。' % (len(D) - GR['C']))
-r('- 第 9 步 发布：见下方发布记录（构建 → `node --check` → CDP 冒烟 → `check_release` → 提交 → 推送 → Pages 核验）。')
+r('- 第 9 步 发布：`check_release.py` PASS（--record 共 9 批）→ 前端重建（1332/954/83）→ 内联脚本 `node --check` 通过 → '
+  'CDP 冒烟 PASS → `git add -A && git commit`（本地 `4d5fa2e`）→ `push_to_github.py --incremental`'
+  '（127 变更 / 2,456 未变 / 删除 0）→ 远端 main `3d8cec6c` → deploy run `45882725875` success → '
+  '线上 HTTP 200、4,840,812 字符、含 `const DATA` 与 `2026-11-27`，与本地逐字节相等。'
+  '**渠道① `workbuddy_sites_deploy` 本会话不可用 → 累计第 38 批挂账（未声称已发布）。**')
 open('papers/daily/%s/run_log.md' % DATE, 'w', encoding='utf-8').write('\n'.join(RL) + '\n')
 print('run_log ok')

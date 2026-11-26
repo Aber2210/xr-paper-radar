@@ -1,6 +1,6 @@
 # 运行日志 · 2026-11-27
 
-- 02:30 起跑；跑前查 C: 盘剩余空间（未触发磁盘保护）。收尾实测 C: 11.21 GB / D: 212.00 GB。
+- 02:30 起跑；跑前查 C: 盘剩余空间（未触发磁盘保护）。收尾实测 C: 11.20 GB / D: 211.98 GB。
 - 第 1 步 对账：`scripts/audit_listing_1127.py`（PREV_DAY=11-25 / NEW_DAYS=11-26,11-27），7/7 分类成功、exit 0；2026-11-26 组 **695 槽位 / 569 唯一**；11-27 组 declared=None（未释放）；11-25 组复采 declared=got（cs.CV 302/302 含 skip=500 补 90、cs.AI 300/300 含补 48）。
 - 第 1 步补充 上一组复采：`scripts/missed_xr_1127.py` → 未入馆 **569** 篇、摘要覆盖 **569/569 = 1.0000**、命中 **53** 篇全部落在上批处置集合 → **0 漏网**。
 - 第 2 步 数据源：API 双主机探针 200（仅用于提交日核验）；RSS 7/7、**849 条**，WROTE=849 OK_CATS=7/7；listing 569/569 覆盖 → 免 id_list。
@@ -13,4 +13,4 @@
 - 第 6 步 三关：门① 0.127（2611.34810 vs arXiv:2609.22941）；门② 纯值 4 赛道 → 回补 1 次 → 5 赛道；门③ 4.35 vs 4.459，margin -0.109 → heavy_day_raw=false、blockbuster=false、s_awarded=false。
 - 第 7 步 Top10：实数 10 篇（4.35–4.00），全 A；全批 S 0 / A 44 / B 14 / C 5。
 - 第 8 步 产物：报告 2 + 笔记 58（C 级 5 篇不写）+ MOC 2 + 总索引刷新 + 7dim-table（主批/backfill 各 1）+ scored.md + run_log；registry 1,269 → **1,332**（+63，备份 `registry.jsonl.bak-20261127`）。易错点：`7dim-table.md` 表头必须保留 `arXiv` 列，否则前端批次卡表内计数为 0。
-- 第 9 步 发布：见下方发布记录（构建 → `node --check` → CDP 冒烟 → `check_release` → 提交 → 推送 → Pages 核验）。
+- 第 9 步 发布：`check_release.py` PASS（--record 共 9 批）→ 前端重建（1332/954/83）→ 内联脚本 `node --check` 通过 → CDP 冒烟 PASS → `git add -A && git commit`（本地 `4d5fa2e`）→ `push_to_github.py --incremental`（127 变更 / 2,456 未变 / 删除 0）→ 远端 main `3d8cec6c` → deploy run `45882725875` success → 线上 HTTP 200、4,840,812 字符、含 `const DATA` 与 `2026-11-27`，与本地逐字节相等。**渠道① `workbuddy_sites_deploy` 本会话不可用 → 累计第 38 批挂账（未声称已发布）。**
