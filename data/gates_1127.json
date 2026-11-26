@@ -1,0 +1,251 @@
+{
+ "run_date": "2026-11-27",
+ "run_type": "regular_batch_announcement_1126",
+ "announce_day": "2026-11-26",
+ "pull_day": "2026-11-27",
+ "registry_total_before": 1269,
+ "grades_before": {
+  "S": 21,
+  "A": 627,
+  "B": 482,
+  "C": 139
+ },
+ "notes_before": 896,
+ "daily_before": 81,
+ "moc_before": 68,
+ "announcement_group": {
+  "slots": 695,
+  "unique": 569,
+  "per_cat": {
+   "cs.CV": {
+    "declared": 288,
+    "got": 288
+   },
+   "cs.GR": {
+    "declared": 10,
+    "got": 10
+   },
+   "cs.HC": {
+    "declared": 20,
+    "got": 20
+   },
+   "cs.MM": {
+    "declared": 7,
+    "got": 7
+   },
+   "cs.RO": {
+    "declared": 109,
+    "got": 109
+   },
+   "cs.AI": {
+    "declared": 248,
+    "got": 248
+   },
+   "eess.IV": {
+    "declared": 13,
+    "got": 13
+   }
+  }
+ },
+ "recall": {
+  "rss_items": 849,
+  "listing_coverage": "569/569（缺收 0）",
+  "kw_hits": 67,
+  "title_extra": 25,
+  "pool": 92,
+  "rejected_from_pool": 49,
+  "residual_scanned": 525,
+  "residual_flagged": 30,
+  "residual_rate": 0.0571,
+  "residual_adopted": 12,
+  "main_candidates": 55,
+  "residual_adopted_list": [
+   "2611.33313",
+   "2611.33462",
+   "2611.33511",
+   "2611.33588",
+   "2611.33650",
+   "2611.33655",
+   "2611.33728",
+   "2611.34022",
+   "2611.34079",
+   "2611.34608",
+   "2611.34680",
+   "2611.34730"
+  ],
+  "prev_group_unregistered": 569,
+  "prev_group_leak_n": 0,
+  "note": "残差采纳 12 篇全部走全文抓取与评分后入馆，未直接并入 registry"
+ },
+ "gate1": {
+  "max_jaccard": 0.127,
+  "pair": [
+   "2611.34810",
+   "arXiv:2609.22941"
+  ],
+  "threshold": 0.62,
+  "pass": true,
+  "note": "只对比追加前库内集合（不含本批两批）"
+ },
+ "gate2": {
+  "top10_tracks": {
+   "重建与SLAM": 4,
+   "内容生成": 1,
+   "感知与认知": 2,
+   "神经渲染": 2,
+   "世界模型与仿真": 1
+  },
+  "n_tracks": 5,
+  "pass": true,
+  "pure_value_tracks": {
+   "重建与SLAM": 5,
+   "内容生成": 1,
+   "感知与认知": 2,
+   "神经渲染": 2
+  },
+  "rescreen": "2611.34932(4.01,重建与SLAM) 出 / 2611.33467(4.00,世界模型与仿真) 入",
+  "rescreen_ops": [
+   {
+    "drop": "2611.34932",
+    "drop_track": "重建与SLAM",
+    "drop_value": 4.01,
+    "add": "2611.33467",
+    "add_track": "世界模型与仿真",
+    "add_value": 4.0
+   }
+  ],
+  "top10_ids": [
+   "2611.34480",
+   "2611.34944",
+   "2611.34489",
+   "2611.33650",
+   "2611.33760",
+   "2611.34476",
+   "2611.34128",
+   "2611.34223",
+   "2611.34939",
+   "2611.33467"
+  ],
+  "note": "回补只影响 Top10 名额，被剔篇仍入馆写笔记并保留原档位",
+  "all_batch_tracks": 10
+ },
+ "gate3": {
+  "window_lo": "2026-10-28",
+  "window_hi": "2026-11-27",
+  "window_excludes_today": true,
+  "window_excludes_this_run_batches": true,
+  "this_run_batches_excluded": [
+   "2026-11-27",
+   "backfill-1127"
+  ],
+  "in_window": 626,
+  "top10_mean": 4.459,
+  "top10_lib": [
+   {
+    "id": "arXiv:2611.06817",
+    "date": "2026-11-06",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-06"
+   },
+   {
+    "id": "arXiv:2611.11169",
+    "date": "2026-11-11",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-11"
+   },
+   {
+    "id": "arXiv:2611.32198",
+    "date": "2026-11-26",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-26"
+   },
+   {
+    "id": "arXiv:2603.01178",
+    "date": "2026-11-14",
+    "value": 4.5,
+    "grade": "A",
+    "batch": "backfill-1114"
+   },
+   {
+    "id": "arXiv:2611.21143",
+    "date": "2026-11-18",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-18"
+   },
+   {
+    "id": "arXiv:2611.26625",
+    "date": "2026-11-21",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-21"
+   },
+   {
+    "id": "arXiv:2611.32445",
+    "date": "2026-11-26",
+    "value": 4.4,
+    "grade": "S",
+    "batch": "2026-11-26"
+   },
+   {
+    "id": "arXiv:2611.32523",
+    "date": "2026-11-26",
+    "value": 4.38,
+    "grade": "S",
+    "batch": "2026-11-26"
+   },
+   {
+    "id": "arXiv:2610.39399",
+    "date": "2026-10-31",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-10-31"
+   },
+   {
+    "id": "arXiv:2611.09458",
+    "date": "2026-11-10",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-11-10"
+   }
+  ],
+  "today_max": 4.35,
+  "margin": -0.109,
+  "heavy_day_raw": false,
+  "heavy_day": false,
+  "blockbuster": false,
+  "s_awarded": false,
+  "verdict": "non_blockbuster"
+ },
+ "top10": [
+  "2611.34480",
+  "2611.34944",
+  "2611.34489",
+  "2611.33650",
+  "2611.33760",
+  "2611.34476",
+  "2611.34128",
+  "2611.34223",
+  "2611.34939",
+  "2611.33467"
+ ],
+ "grades_main": {
+  "S": 0,
+  "A": 37,
+  "B": 13,
+  "C": 5
+ },
+ "grades_all": {
+  "S": 0,
+  "A": 44,
+  "B": 14,
+  "C": 5
+ },
+ "evidence": {
+  "FULL": 62,
+  "PARTIAL": 1
+ }
+}

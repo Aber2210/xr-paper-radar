@@ -1,0 +1,360 @@
+[
+ {
+  "id": "2611.31822",
+  "title": "G0.7: Scaling Up a Fast World Action Model with Long Context",
+  "title_zh": "G0.7：用长上下文扩展快速世界动作模型",
+  "problem": "世界动作模型（WAM）把预训练视频生成器改造成机器人策略，但部署时有三处硬伤：每个控制步都要先生成未来帧，单个 16 步 action chunk 的 IDM 推理要 457 ms（BF16 eager，单卡 RTX 5090），闭环会被拖停；多数策略只看 1–2 帧最近观测，在部分可观测与长程任务上没有记忆；公开 WAM 预训练语料相对视觉多样性需求仍偏小。RMBench 这类依赖记忆的基准上，单帧基线成功率低于 12%，说明上下文长度而非模型容量是瓶颈。",
+  "method": "沿用双专家 WAM：language expert 在每一层对共享的 vision/action expert 做条件注入，后者在因果 video VAE latent、本体状态与 16 步 action chunk 上工作，action 与 video 的频率比为 4:1，用标准 video-action 联合 conditional flow matching 训练，并对干净历史 latent 施加 chunk-causal attention。长上下文：预训练即按多 chunk 序列自回归，序列长度 K 可变并按 rank 平衡 batch 以均衡算力，配合随机 positional chunk offset 让 RoPE 外推到更长 rollout；推理时用滑窗 KV cache 只存真实相机观测的干净 latent，窗口可扩到 5 分钟，无需额外 memory 模块。双模推理：teacher-forcing 阶段对每个样本做随机 attention mask（$p_{IDM}=0.5$），action token 要么看当前 chunk 的未来视频 latent（IDM 路径），要么只看历史与当前观测（Fast 路径），视频预测始终有监督；推理时 Fast 模式从缓存上下文用 5 步直接去噪 16 步 chunk，FP8 下单 chunk 60 ms，并可直接接 real-time chunking（RTC）在当前 chunk 执行时去噪下一块。数据：机器人遥操作（Galaxea R1 Pro/Lite、DROID、RoboMIND、BridgeData）加第一视角人类 ego 视频，遥操作按整段/子目标/原子动作三级语言标注并做运动质量过滤；人类视频用 3D 手部姿态提取，把手腕 6-DoF 位姿对齐到 R1 夹爪的 TCP 约定（+Z 沿手指）并加五个指尖 3D 位置，作为额外 embodiment 与机器人数据共享同一视频-动作目标。",
+  "key_numbers": [
+    "五个公开仿真基准均值 70.8，OpenWAM 43.9、G0.5 39.2、π0.5 33.9",
+    "RMBench 86.2%，单帧基线均低于 12%",
+    "RoboTwin 2.0 79.4% 对 OpenWAM 69.0%；VLABench 63.3% 对 58.9%",
+    "LIBERO w. OOD 83.5%（π0.5 76.9%），其中 LIBERO-Plus 92.5% 对 85.7%、LIBERO-Para 88.3% 对 71.4%",
+    "RoboDojo 41.46，最强基线 G0.5 为 18.95",
+    "零样本 pick-and-place：R1 Pro 12/25=48%，R1 Lite 27/50=54%；去掉 ego 数据的 G0.7-Robot 在 R1 Lite 仅 6/50=12%",
+    "Fast 模式 60 ms 每个 16 步 chunk（FP8，单卡 RTX 5090），比 IDM 快 7.6×；BF16 eager 下 156 ms 对 457 ms（2.9×）",
+    "In-context learning：shell game 93.3% ID / 80.0% OOD，sorting by example 93.3% / 66.7%；加 ICL mid-training 后合并 96.7% / 93.3%",
+    "真实后训练 7 个任务平均任务进度 86.9%（G0.5 64.3%、π0.5 41.7%、OpenWAM 18.6%）"
+  ],
+  "ablation": "无逐组件消融，替代证据是三个同架构、仅预训练数据不同的 checkpoint 做数据 scaling：仿真五套均值 56.2（G0.7-20%）→66.6（G0.7-Robot）→70.8（G0.7），真实后训练进度 81.0%→85.9%→86.9%；零样本 R1 Lite 由 12% 升到 54%，ICL 的 OOD 由 50.0% 升到 73.3%，加 ICL mid-training 再升到 93.3%。作者据此把「机器人数据提升同分布熟练度、ego 视频解锁 OOD」拆开归因，但 Fast 与 IDM 的等价性只有四点曲线对比，没有单因素控制。",
+  "baselines": [
+    "π0.5",
+    "OpenWAM",
+    "G0.5",
+    "Dream-1",
+    "Long-WAM"
+  ],
+  "datasets": [
+    "LIBERO 与 LIBERO-Plus / LIBERO-Pro / LIBERO-Para（取四者均值为 LIBERO w. OOD）",
+    "RoboTwin 2.0（clean-to-random 双臂）",
+    "VLABench",
+    "RMBench",
+    "RoboDojo（42 任务）",
+    "Galaxea R1 Pro / R1 Lite 真机零样本与后训练任务（折箱、柠檬茶、装袋、四类工具使用）",
+    "预训练：Galaxea 遥操作、DROID、RoboMIND、BridgeData 与人类 ego 视频"
+  ],
+  "novelty": "相对 Fast-WAM（单帧观测、benchmark 级小规模研究），G0.7 把「测试时不必生成视频」这一结论推到工业规模：上下文从单帧扩到 5 分钟滑窗 KV 并写进预训练，同一份权重同时支持 Fast 与 IDM 两条推理路径，且把人类 ego 视频用 TCP 对齐的末端执行器动作表示并入同一联合目标。相对 Long-WAM 等靠 memory 模块或长上下文工程的路线，它不引入额外记忆头，只靠滑窗干净 latent 就获得回合记忆与视频示例式 ICL。",
+  "limitations": "这是工业报告而非受控研究：没有 Fast/IDM 的单因素消融、没有上下文长度（1 帧 / 1 分钟 / 5 分钟）的受控对比，长上下文收益与数据规模收益混在一起。预训练语料、模型权重与推理栈均闭源，外部无法复核 70.8 与 86.9% 这些数字；ego 视频依赖 3D 手部追踪，作者承认手部追踪噪声大的片段只用于视频预测。真实后训练每任务约 5 小时数据、少样本工具仅 20 次示范，任务数与 trial 数都偏少，且 RoboDojo 绝对分只有 41.46，说明长程任务仍远未解决。",
+  "trl_evidence": "已在 Galaxea R1 Pro 与 R1 Lite 两条真机产品线上做零样本部署与后训练，Fast 模式 60 ms/16-step chunk（FP8、单卡 RTX 5090）并接入 RTC 实现无停顿连续执行，属于真机在线系统；但模型、数据与代码均未开放，也无第三方复现。",
+  "code": "未提及（仅项目页 galaxea-ai.com/model-g07.html）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 5,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 5,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP=5：WAM 的测试时视频生成延迟与短观测历史是公认卡点，直接决定闭环能否跑。NOV=4：长上下文写进预训练、单权重双模推理、ego 视频 TCP 对齐三点合起来是架构级改动，但仍在 Fast-WAM 路线内。TEC=4：方法、数据管线与推理优化完整，缺逐组件消融与理论分析。EXP=5：五套仿真基准 + 三种真机设置 + 五个基线，覆盖零样本、ICL 与后训练。PER=5：仿真均值 70.8 对 43.9（+61%），RMBench 86.2 对 <12，RoboDojo 翻倍。TRL=4：真机在线部署并接入 RTC，但闭源。REP=3：细节较充分、有项目页，无代码与权重。"
+ },
+ {
+  "id": "2611.33313",
+  "title": "Multisensory Hybrid TV",
+  "title_zh": "多感官混合电视：基于 MPEG-V 与 HbbTV 的端到端多感官混合广播/宽带电视方案",
+  "problem": "传统电视媒体内容只包含视听流，而多感官媒体（mulsemedia）通过环境光、振动、气味、风、温度等感官效应刺激其他感官，以提升观看的真实感与沉浸感。摘要指出这类体验缺一套端到端的混合（广播/宽带）分发与同步消费方案，因而难以在真实 HbbTV 部署中复现。作者在符合 HbbTV 的端到端平台上实现原型，并用 106 名不同背景的参与者做主观评测。",
+  "method": "方案以 MPEG-V 描述感官效应元数据、以 HbbTV 作为混合广播/宽带应用承载：视频流与感官效应元数据分别分发，在终端由 HbbTV 应用解析 MPEG-V 元数据并在播放时间轴上同步触发感官设备，从而复现一个 mulsemedia 混合电视服务。原型覆盖端到端链路（内容侧元数据生成、分发、终端同步消费），并在此原型上完成主观评测与验证。摘要未给出同步误差、设备清单、渲染管线与阈值等实现细节。",
+  "key_numbers": [
+    "主观评测参与人数：106 名不同背景的参与者（端到端 HbbTV 合规原型，MPEG-V 感官效应）"
+  ],
+  "ablation": "无独立消融。替代证据是 106 人主观评测的整体享受度、真实感、沉浸感、感知同步与 QoE 提升，以及按学历、性别的分组分析（学历越高满意度越低、性别间感官接受度偏好不同、真实感与沉浸感提升并未转化为等额付费意愿）。",
+  "baselines": [
+    "无基线对比：摘要仅报告自建原型的主观评测结果"
+  ],
+  "datasets": [
+    "自建端到端 HbbTV 合规 mulsemedia 混合电视原型平台",
+    "106 名参与者的主观评测（无公开数据集）"
+  ],
+  "novelty": "相对以往多在实验室单机或纯 VoD 场景验证的 mulsemedia 工作，这里把 MPEG-V 感官效应元数据与 HbbTV 的广播/宽带混合分发结合起来，做成端到端可运行的服务原型，并把主观 QoE 与商业接受度（付费意愿）放在同一次 106 人评测里分析。",
+  "limitations": "证据等级 PARTIAL，未获取完整正文，以下为摘要级评估。摘要未给出任何与基线或前作的客观指标对比（同步误差、QoE 分值、设备延迟均缺），106 人评测只有定性结论。作者自述的发现之一是真实感与沉浸感提升并不带来等额付费意愿，这直接指向商业落地障碍；此外评测在单一自制原型与受控环境下完成，缺少跨网络条件与跨终端的鲁棒性证据。",
+  "trl_evidence": "原型已在 HbbTV 合规的端到端平台上跑通，包含视频流与感官效应元数据的分发与同步消费，属于可演示的系统原型；摘要未提及产品化、运营商试点或开源。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 2,
+   "NOV": 2,
+   "TEC": 2,
+   "EXP": 3,
+   "PER": 2,
+   "TRL": 3,
+   "REP": 2
+  },
+  "scores_why": "IMP=2：多感官电视是真实但边缘的工程问题，不影响主流视觉/机器人研究路线。NOV=2：把 MPEG-V 与 HbbTV 组合成端到端原型属集成式增量，无新表示或新算法。TEC=2：仅有摘要级证据，方法为标准化集成，未见关键机制与误差分析。EXP=3：106 人大样本主观实验，但单一原型、无基线。PER=2：无任何相对基线的量化提升。TRL=3：端到端 HbbTV 原型可运行、可演示。REP=2：证据 PARTIAL，且未提及代码或数据。"
+ },
+ {
+  "id": "2611.33374",
+  "title": "VersionGS: Compact and Motion-Robust Dynamic Gaussian Splatting via Versioned Gaussians",
+  "title_zh": "VersionGS：基于版本化高斯的紧凑且抗运动动态高斯泼溅",
+  "problem": "现有动态 3DGS 要么把每个高斯的随时间变化建模成光滑函数（deformation field、time-conditioned Gaussian、keyframe 轨迹），要么在帧间做受约束的更新（逐帧变换、量化残差、稀疏控制点）。作者观察到两者在快速运动下显著退化：在 DanceNet3D 的舞蹈序列上，最高运动帧相对最低运动帧 PSNR 下降 1.1–4.0 dB；在 Technicolor 的 painter 上基线最多掉 3.1 dB。同时动态表示要用于流式传输，TAD-GS 在 DanceNet3D 需 0.702 MB/帧、Technicolor 1.678 MB/帧，码率与质量难以同时兼顾。",
+  "method": "核心是把「每帧高斯状态」直接存下来，运动估计只用于引导重建。版本字典：一个 GOP 的 T 帧由 K 个完整高斯版本组成的字典 $D={g_j}$ 表示，每帧只记录激活的版本索引集 $A_t$，同一版本在各帧属性完全一致，播放时解码一次 GOP 字典再按 mask 索引即可用标准 3DGS 光栅化。选择性顺序构建：用 MCMC-3DGS 初始化 GOP 首帧，之后每帧依次做四步，每步都只在多视图损失 ℓ̄（0.8·L1 + 0.2·(1−SSIM)，黑/白双背景确定性判定）下降时才提交——(1) motion initialization：多视图稠密光流（DIS）在投影高斯中心采样，加权最小二乘得每高斯 3D 位移，空间分组后每组优化单一刚体平移，若细分降低 ℓ̄ 就继续分裂；(2) evidence-guided refinement：只对 motion selector（被移动过）与 image-change selector（贡献落在变化像素上，用 per-camera 参考图累积慢变化，类似 conditional replenishment）选中的高斯优化中心、尺度、旋转、不透明度与 DC 颜色，高阶 SH 固定；(3) residual recovery：两遍短程精化，挑贡献落在高误差像素上的高斯，第一遍试探可消除的误差，剩余高误差区交给第二遍；(4) validated births：在变化与误差持续的区域用多视图 plane-sweep 深度提出候选新高斯，需通过留出视角检查并按估计存储代价做率失真判定才接受。GOP 级压缩：用 GaussianPOP 的 leave-one-out 分数 $s_j$ 剪枝，并对落在运动像素上的分数加权（$β=32$）以免先删掉只活几帧的运动高斯；再按 PLAS 排到 2D 网格、量化成属性图、高阶 SH 向量量化、WebP 无损压缩、T-bit 帧掩码算术编码；最后做 encoding-aware adaptation：固定 mask 与网格布局，用 STE 模拟量化并加 TV 正则联合微调全部 T 帧。调 $ρ$（保留比例）只需重跑剪枝/适配/编码，不必重建字典。",
+  "key_numbers": [
+    "DanceNet3D 前景 PSNR 25.70 dB（ρ=0.35），最佳基线 TAD-GS 22.36 dB、QUEEN 22.93 dB，提升 2.7 dB",
+    "DanceNet3D 最高运动五分位相对最低五分位 PSNR 下降 <0.3 dB，基线下降 1.1–4.0 dB",
+    "N3DV 存储 0.060 MB/帧 对 TAD-GS 0.962（6.0×），PSNR 32.42 对 32.34",
+    "Technicolor ρ=1 时 PSNR 33.66 对 TAD-GS 33.56，存储 0.297 对 1.678 MB/帧（5.7×）",
+    "播放 596 FPS（DanceNet3D，ρ=0.35，单卡 H100），解码 0.85 ms/帧；全数据集每帧解码 <1.2 ms",
+    "浏览器全分辨率：iPhone 17 上 61–76 FPS，MacBook Air M2 上 108–148 FPS（ρ=0.35）",
+    "时序一致性 tLP×100：DanceNet3D 0.69 对 TAD-GS 4.82、D-FCGS 6.55",
+    "整条流水线把原始逐帧 float32 表示压缩 580×/850×/74×（flame steak/painter/big kicks）"
+  ],
+  "ablation": "表 4 逐项消融（flame steak / painter / big kicks，ρ=1）：允许对所有继承高斯做无限制精化会把存储抬到 5.1×/9.6×（0.161→0.817、0.218→2.100 MB/帧），PSNR 最多只涨 0.25 dB；去掉 motion initialization 省存储但 PSNR 掉 1.17/1.55/0.35 dB，且作者指出顺序构建阶段的跟踪失败无法在 GOP 适配阶段挽回；去掉 validated births 在 painter 掉 0.91 dB（新增图元不足字典 1% 却关键）；GOP 从 60 增到 120 省 10–20% 存储、代价 ≤0.33 dB，减到 30 反而多 18–38% 且无稳定增益。表 3 拆解压缩来源：版本共享在 flame steak/painter 省 9.3×/14.1×，编码各帧单独存需 10×/15×，联合编码仍需 3.1×/4.4×/1.2×，剪枝到 ρ=0.35 再降 62–64%。表 10 扫描运动权重：$β=32$ 相对 $β=1$ 在运动像素上最多 +1.0 dB，最差 10% 帧损失 0.50 dB 对 0.60 dB，$β=128$ 过惩罚背景反而掉 0.3 dB。",
+  "baselines": [
+    "Ex4DGS",
+    "4DGS",
+    "MoRGS",
+    "D-FCGS",
+    "StreamSTGS",
+    "QUEEN",
+    "TAD-GS",
+    "3DGStream（tLP 对比）"
+  ],
+  "datasets": [
+    "N3DV（6 个场景，18–21 相机，30 fps）",
+    "Technicolor（4 个光场视频，4×4 相机阵列，半分辨率）",
+    "DanceNet3D（4 段快舞，28–29 相机，person mask 评估）"
+  ],
+  "novelty": "相对 deformation / space-time / 帧间残差三条路线，VersionGS 不建模高斯的随时间变化，而是显式存每帧状态并做去重：不变的高斯只贡献一次引用，变化的追加为新版本。这样「更快的运动」换来的代价是存储而不是画质，把质量与运动速度解耦；配合 GOP 级剪枝，码率可在不重建字典的前提下连续调节，这是 TAD-GS、QUEEN 等需要重训的方法做不到的。",
+  "limitations": "没有连续时间插值，作者自述快速运动表面仍会出现细微高频闪烁、独立 GOP 边界有可见跳变（N3DV 部分白天场景可见）。顺序构建只在相邻帧间复用版本，物体离开后又回到旧位姿会新建版本而非匹配历史状态；整体质量对首帧 MCMC 重建敏感。构建一个 60 帧 GOP 需 3–8 GPU 小时，播放要等整个 GOP 字典解码完才能开始。作者试过把版本存成前驱残差（省 17% 码率），但解码显存 2.1–2.4×、单条损坏记录会连带 8–25 条错误、有损编码下 PSNR 损失从 1.1–1.3 dB 放大到 3.1–4.4 dB，因此未采用。",
+  "trl_evidence": "已把 JavaScript/WebAssembly 解码器接进 PlayCanvas SuperSplat 查看器，在 iPhone 17 与 MacBook Air M2 的 Chrome 上做全分辨率实时播放（ρ=0.35 时 60+ / 100+ FPS），解码只需每 60 帧解一次 WebP 图与算术编码掩码，渲染退化为索引收集 + 标准 3DGS 光栅化，工程完成度接近可用产品；但构建仍是 3–8 GPU 小时的离线流程。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：动态 3DGS 的码率与快运动退化是流式自由视点视频的真实卡点，但只在动态重建子领域内。NOV=4：版本字典 + 选择性顺序构建是明显的新表示，把质量问题转成存储问题。TEC=4：方法完整、消融充分、给出闭性与不重叠论证式的实验证据，但缺理论保证。EXP=4：三个数据集 14 个场景、七个基线、统一评测脚本，规模充分。PER=4：前景 PSNR +2.7 dB（约 +12%），同码率下最高 +6.0 dB，存储降 5.7–6.0×。TRL=4：浏览器实时播放已跑通于手机与笔记本，但训练离线且未开源。REP=3：细节非常充分、含补充材料，无代码链接。"
+ },
+ {
+  "id": "2611.33382",
+  "title": "ArtTet: Watertight Part Meshes of Articulated Objects from Rigid-Body Rules and Partitioned Marching Tetrahedra",
+  "title_zh": "ArtTet：由刚体规则与分区 Marching Tetrahedra 生成铰接物体的水密部件网格",
+  "problem": "从多视角观测重建铰接物体需要同时得到部件归属、关节与表面几何，但 mesh splatting 把物体当成一个场景，只提取一张全局表面，无法把不同部件的三角形分开，导出的网格分层、自交且布满孔洞；Gaussian 类方法输出基元或隐式场，需要 TSDF 融合或 marching cubes 后处理，容易合并相邻部件、丢薄结构。量化上，TSDF 融合的部件网格有 9.12% 的边落在边界上，ArtGS 与 REArtGS++ 为 2.09% 与 2.41%；ArtGS 在 Articulate-100 上的关节轴角误差为 11.02°。三个耦合难点是关节附近运动弱、接触处归属不确定、薄件观测不全。",
+  "method": "输入两姿态的 posed RGB-D 与运动部件数 K，不使用部件掩码与关节标注，输出每部件一张闭合三角网格加一个旋转或平移关节。P 阶段（关节与归属推断）：把两状态深度反投影融合成点集，多体初始化用 spectral clustering、k-means、共运动聚类各两种子生成多组分组，每组交替做「按运动最近分配标签 → 最近邻配对 → 加权 SVD 拟合刚体运动（剔除最大 20% 距离）」，取残差最低者；关节运动写成枢轴形式 $T_k^η(x)=R_k^η(x−p_k)+p_k+ηd_ku_k$，$R_k^η=exp(ηθ_k[u_k]_×)$。动态约束用对称残差 $r_k$（前向中值距离 + 反向覆盖率中值）判型：纯平移能解释到 $r_k(I,t̄_k)≤1.3·r_k(R_k,b_k)$ 则判平移。几何约束认为真实铰链贴着它所带动的部件：轴到部件距离 $a_k>0.5$（按包围盒对角线归一化）或转角小于 $13.5°$ 且平移在 $κ'=1.1$ 内可解释，则改判平移。精化交替最小化带 Huber 的对称能量与归属修复，再做第二次几何判定（仍小于 5° 则改平移），此后关节固定。随后拟合带部件概率的三角形场（MeshSplatting 风格，加 $L_π$ 保持标签）。D 阶段：把两状态深度反投影、按三角形模型最近顶点赋部件并映射回 canonical frame，体素合并后做 Delaunay 四面体化；用「相机到观测点的线段只穿过空空间」计票 $f(τ)$，最小化 $E_cut(o)=Σc_τ(o_τ)+βΣA_{ττ'}[o_τ≠o_{τ'}]$，该能量子模，用 s-t 最小割精确求解，再用 α-expansion 给内部四面体分部件标签；把每个运动部件在 $η∈{1/4,1/2,3/4}$ 处摆姿，扫过的他部件内部四面体若接触则归该运动部件，否则判外部。C 阶段：每个部件在共享四面体网格上拥有自己的 SDF $φ_k$，定义排他场 $ψ_k(g)=max(φ_k(g), φ_k(g)−min_{j≠k}φ_j(g))$，只在 $φ_k<0$ 且比所有其他部件更靠内时为负，因而两部件只能沿缝合面相接、不会互相穿插；用可微 marching tetrahedra 提取零等值面（顶点位置对 $ψ_k$ 可微），渲染时按关节摆姿后光栅化；损失为 rgb + 轮廓 + 逆深度 + 融合 TSDF 目标（未见侧按宽度 Δ 的壳封闭）+ DMTet 符号损失 + 拉普拉斯 + 扫掠碰撞项。",
+  "key_numbers": [
+    "Articulate-100 全部 100 个物体：关节轴角误差 7.78°，ArtGS 11.02°、REArtGS++ 13.10°",
+    "轴位置误差 0.18（0.1 m 单位），ArtGS 0.90、REArtGS++ 0.67；部件运动误差 2.26°/m 对 8.17、7.67",
+    "CD-s 20.40 mm 对最好基线 22.72；CD-m 65.14 mm 对 108.92",
+    "部件网格开边界边占比 0.00%（仅两个单 cell 导出孔），TSDF 融合 9.12%、restricted Delaunay 6.22%",
+    "287 个关节中类型判错 25 个，ArtGS 30 个、REArtGS++ 42 个",
+    "SplArt 真实捕获 9 段：轴角 5.29°、轴距 0.62、运动 2.71，对最好基线 14.58° / 2.28 / 13.11",
+    "四部件档位差距最大：轴角 8.16° 对 17.47°，CD-m 42.30 对 107.61 mm"
+  ],
+  "ablation": "关节与归属（表 2，同一初始化、重建前）：完整精化把轴角从 9.12° 降到 7.76°；去掉对称能量 8.28°、去掉归属修复 8.15°、去掉第二次几何判定 8.86°，即三项各贡献 0.4–1.1°。网格（表 3，同一部件与关节）：TSDF 融合 CD-s 24.91、边界 9.12%；restricted Delaunay CD-m 最低 60.67 但 50.00% 边非流形、仅 33.40% 朝向一致；只做分区 CD-s 22.85、边界 0.11%；分区 marching tetrahedra 20.40 / 65.14 / 0.00% / 流形 99.99%，CD-m 比 TSDF 高 1.8 mm。",
+  "baselines": [
+    "ArtGS",
+    "REArtGS++",
+    "TSDF 融合（网格提取对照）",
+    "Restricted Delaunay（MeshSplatting 步骤的自适应版本）"
+  ],
+  "datasets": [
+    "Articulate-100（100 个 PartNet-Mobility 物体，16 类，2 到 6+ 部件，两状态 RGB-D）",
+    "SplArt（9 段真实捕获，单运动部件，无传感器深度）"
+  ],
+  "novelty": "相对 ArtGS / REArtGS++ 这类「基元 + TSDF 后处理」，ArtTet 把部件归属从运动推断出来（刚体规则判定关节类型与标签修复，无需掩码），再把空间显式划分成每部件一个 cell，用互斥 SDF 保证网格闭合且不重叠；相对 ArtMesh（直接重建三角网格但要部件掩码），它完全无掩码且不需要 remeshing 或 TSDF 融合。",
+  "limitations": "方法假设刚体部件：归属来自配准，若两个相邻抽屉在配准阶段被合并，后续无法拆开，只能当一个部件运动。任何视角都没看到的背面按固定宽度 Δ 的壳封闭，因此厚部件背面会偏薄，作者把「让图像推动部件边界、用对称性先验补未见面」列为未来工作。实验上真实数据只有 9 段单运动部件捕获，且关节真值为手工标注；Articulate-100 的两三部件档位轴角仍略逊 REArtGS++（4.40° 对 3.92°）。",
+  "trl_evidence": "离线两状态多视角重建，输出可直接进仿真与机器人管线；无实时性、无在线系统、无代码或产品化证据。作者报告在单机多卡上训练（附录给硬件），但未给重建耗时。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：铰接物体的部件级水密网格是机器人/仿真资产的真实缺口，但属于被局部解决过的问题。NOV=4：刚体规则推归属 + 分区 marching tetrahedra 的互斥场是明显新架构，闭性与不重叠有构造性论证。TEC=4：方法链完整、含两条定理式论证与两层消融，但归因偏粗。EXP=4：100 物体 + 9 段真实捕获 + 四个对照，规模充分但真实场景单一。PER=5：运动误差降 70%、CD-m 降 40%、边界边 9.12%→0.00%。TRL=2：纯离线重建，无代码。REP=3：细节与附录充分，无开源链接。"
+ },
+ {
+  "id": "2611.33387",
+  "title": "Synchronizing Cameras via 3D Object Relationships",
+  "title_zh": "通过三维物体关系同步相机",
+  "problem": "多相机视频的时间同步通常依赖像素级证据：跨视角点对应、或与动态辐射场/3D 高斯联合估计偏移。但动态场景里携带时间信息的恰恰是运动区域，其快速运动与频繁遮挡使跨视角匹配很不可靠。现有最好方法 VisualSync 在 EgoHumans 上平均偏移误差 122.1 ms、CMU Panoptic 112.6 ms、3D-POP 114.7 ms，Sync-NeRF 在 CMU 与 3D-POP 上平均误差都超过 900 ms。此外基于人体姿态的方法只适用于人。",
+  "method": "核心假设：物体之间的三维关系（如两人间距离、球的速度）在所有视角下只差一个尺度，因此可在每个相机内独立测量后互相对齐。线索：由物体三维中心 $p_{i,o}(t)$ 算位移 $Δp$、速度 $v$、物体对距离 $q_{ab}$，另用 CoTracker3 的点轨迹平均位移幅值作为 2D 运动线索兜底。尺度不变性：若各相机深度只差常数尺度 $α_i$，则 $v_{i,o}(t)≈(α_i/α_j)v_j,o(t+θ_i−θ_j)$，距离同理，故用 Pearson 相关而非直接比数值。身份与三维位置：把每个相机的首/中/末帧一次性交给 VLM（GPT-5.4），要求输出覆盖所有相机的 JSON 物体描述列表（如 man in a pink checkered shirt）；再用 SAM 3 以文本提示分割跟踪、用 Video Depth Anything 的度量深度取掩码中值反投影得质心。同描述多实例（如鸽群）用「到其他物体的距离排序向量」$h_{i,a}(t)$，在候选偏移 $d∈[−50,50]$ 帧上匈牙利匹配并联合搜索偏移。求解：按 3D 运动、物体间距离、2D 运动三组，先对每条 3D 线索按 3 倍 MAD 截断，相关值过 atanh 后取去 10% 的截尾均值，再对三组分数在候选偏移上标准化为 z-score，按 $S=z_mot+z_dist+0.25·z_2d$ 取峰得成对偏移；全局用 Cauchy 损失、以 $w_ij=max(S_ij,0)$ 加权、θ₁=0，加权最小二乘初始化后 IRLS 至多 10 次。",
+  "key_numbers": [
+    "EgoHumans 全局平均/中位偏移误差 44.5 / 15.0 ms，VisualSync 122.1 / 46.6 ms",
+    "CMU Panoptic 11.1 / 0.0 ms（VisualSync 112.6 / 41.5）；3D-POP 1.7 / 0.0 ms（114.7 / 77.8）",
+    "UDBD 8.7 / 0.0 ms（VisualSync 20.2 / 5.9，Sync-NeRF 0.4 / 0.2）",
+    "同身份成对比较：平均误差 246.2 ms 对 SeSyn-Net 511.1 ms，A@100 45.8 对 8.1，A@500 70.3 对 31.1",
+    "线索消融（EgoHumans 平均）：仅 3D 位移 333.1 ms、加 3D 速度 178.3 ms、加物体间距离 147.7 ms、四类全用 44.5 ms",
+    "去掉「把佩戴者放在自中心相机原点」后 EgoHumans 平均误差 71.1 ms（中位 5.0），成对误差 307.0 ms"
+  ],
+  "ablation": "表 3 按线索组合消融：单一线索都会在至少一个数据集上失败，四类线索全用时四个数据集平均误差均最低（例如 CMU 由 377.6→11.1 ms）。去掉佩戴者建模（w/o wearer）EgoHumans 从 44.5 升到 71.1 ms，说明自中心相机看不到佩戴者时把其置于相机中心是必要先验。另有实例匹配偏移、VLM 身份、置信权重与 Cauchy 损失的消融在正文与补充材料。",
+  "baselines": [
+    "VisualSync",
+    "Sync-NeRF",
+    "Uni4D（VisualSync 的同步适配）",
+    "MASt3R（VisualSync 的同步适配）",
+    "SeSyn-Net"
+  ],
+  "datasets": [
+    "EgoHumans（7 场景，11–22 相机，其中 25 个自中心相机）",
+    "CMU Panoptic（4 场景 × 15 相机）",
+    "3D-POP（4 场景 × 4 相机）",
+    "UDBD（3 场景 × 14 相机，合成）"
+  ],
+  "novelty": "不做跨视点像素/点匹配，而是回到「物体是相机全局推理的可靠线索」这一传统思路并用基础模型现代化：身份由 VLM 一次性跨相机给出、分割跟踪交给 SAM 3、三维位置交给单目视频深度，再把物体间三维距离与速度的时间曲线做相关对齐。相对 VisualSync 只把物体用于限制点匹配，这里物体关系本身就是线索；相对姿态类方法只适用人，这里任何能用短描述命名的类别都行。",
+  "limitations": "假设相机已标定（用真值内参）、所有相机同帧率、偏移为整数帧，作者自述离散框架无法给亚帧精度也不能跨帧率。整条链路由现成基础模型驱动，误差受 GPT-5.4 / SAM 3 / 深度估计支配；依赖场景中有可命名的运动物体，物体太少或描述无法区分实例时只能靠匈牙利匹配兜底。评测的「未同步」是人工裁剪合成，裁剪方式与 VisualSync 不完全相同（作者自己报告了五个种子的标准差）。",
+  "trl_evidence": "纯离线后处理管线，四个公开数据集验证，无真机在线部署；推理需调用商用 VLM（GPT-5.4）与多个大模型，存在调用成本、时延与可重复性问题。作者未给运行时间，只在附录讨论 runtime。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：多视频同步是动态重建链路里真实但局部的工程问题。NOV=4：用物体间三维关系 + VLM 身份替代像素匹配，是明确的思路切换与新线索设计。TEC=4：公式、匹配求解与三组线索融合都写清，消融到位，但无理论保证。EXP=4：四个数据集（含 114 相机级规模）+ 五个基线 + 五个随机种子。PER=5：三个真实数据集误差降 64%–98%，UDBD 也优于 VisualSync。TRL=2：离线、依赖商用 API，无代码。REP=3：细节与补充材料充分，无开源链接。"
+ },
+ {
+  "id": "2611.33462",
+  "title": "FoamSurf: A Voronoi-Surfel Representation for Differentiable Rendering",
+  "title_zh": "FoamSurf：面向可微渲染的 Voronoi-Surfel 表示",
+  "problem": "散射介质中的场景同时包含实体表面（海床、岩石）与半透明介质（水、雾、烟），两者在同一像素里混合，把表面与介质分开重建是欠定问题。现有 Gaussian 类方法虽然能出真实感图像，但表面单独渲染时仍能看到介质的痕迹；神经场分离更准却训练慢、难编辑；两类方法都只在相机射线上求值介质，反射与折射路径上的介质效应没有建模，导致无法可靠恢复表面、无法独立编辑、也无法一致地渲染插入物体。量化上 SeaThru-NeRF 的分离分数只有 0.762（JAX）/0.851（Nerfstudio），WaterSplatting 0.624，Plenodium 0.505。",
+  "method": "混合表示：表面用平面 Gaussian surfel（中心、四元数、切向尺度、不透明度、形状指数 κ 的广义高斯核、RGB 球谐），介质用空间填充的 Voronoi cell（每个 cell 有 site 与逐通道的吸收 $σ^A$、散射 $σ^B$、水色 B，点归属于最近 site 的 cell，参数在该 cell 内为常数，外层 cell 无界），从而介质完全独立于表面占据空间。渲染：用 OptiX 对平面多边形代理求交得到精确交点，用 Delaunay 邻域间 bisector 平面做 Voronoi 遍历，把两类事件按距离合并成段序列 $0=τ_0<…<τ_M=t_far$；对每段算 $a_m=exp(−σ^A_j ℓ_m)$、$b_m=exp(−σ^B_j ℓ_m)$，维护两套介质透射率 $T^A$、$T^B$ 与共享的 surfel 透射率 $T^G$，前向后合成 $S←S+T^G T^B B_j(1−b_m)$、$D←D+T^G α_m T^A c_m$，该递推对「均匀水如何切分成 cell」不变。方向散射：只用 Henyey-Greenstein 相位增益 γ(d) 乘 backscatter（学习光方向与逐通道各向异性），介质参数仍与方向无关；相机模型用 PPISP 建模曝光/颜色/暗角/响应，新视角的曝光与颜色由邻近训练相机插值。分离先验（无需掩码）：不透明度二值化；按当前 surfel 不透明度选射线施加 coverage（$A>η_cov$ 时压 $1−A$）与 clearing（$A<η_clr$ 时压 $A$），防止 haze surfel；在 surfel 足够不透明的射线上用 chroma 先验把 backscatter 拉向水色、用 overlap 项惩罚表面深度附近介质不透明度；对 Delaunay 邻居做平滑，并把远离 surfel 的 free-water cell 拉向更远 cell 的中值参数，避免靠近相机的介质充当逐图亮度校正。训练损失为图像 + 多视图深度（虚拟视角穿过两组件追踪，深度只用 surfel 命中）+ 正则 + 各先验项；初始 surfel 来自 SfM 点、cell site 环绕点与相机，致密化/剪枝沿用 3DGS 但用衰减补偿梯度，避免水抑制远处表面的精化。插入物体：命中距离 $t_o$ 处终止当前段，$L=D+γS+T^G(t_o)T^A(t_o)L_o$，$L_o$ 递归追踪反射与折射，反射/折射射线从其所在 cell 出发继续穿越 surfel 与水。",
+  "key_numbers": [
+    "SeaThru-NeRF 四场景均值 PSNR 30.75（WaterSplatting+PPISP 30.71、Plenodium 30.68、Zip-NeRF 29.62），SSIM .929",
+    "分离分数 0.901（SeaThru-NeRF Nerfstudio 0.851、WaterSplatting 0.624、Plenodium 0.505、SeaSplat 0.545）",
+    "120 FPS（RTX 4090），训练 28.7 min，模型 159 MB（WaterSplatting+PPISP 164 FPS / 7.4 min / 243 MB）",
+    "硬雾恢复 PSNR 16.81（WaterSplatting 15.46、Plenodium 15.29、SeaSplat 10.44）",
+    "开放水面上的 surfel 不透明度 0.005（分离分数接近理想 1 的一半以上来自此项）",
+    "消融：去掉介质 −1.73 dB 且分离降到 0.506；去掉相机模型 −1.48 dB；去掉分离先验分离 0.883、水面不透明度 0.030",
+    "有损 WebP 只压旋转与中心低字节可省 14–15% 字节，PSNR 变动 ≤0.21 dB"
+  ],
+  "ablation": "表 3 在 SeaThru-NeRF 上逐项替换：仅 surfel（无介质）PSNR −1.73 dB、分离 0.506；用均匀介质替代 Voronoi cell −0.23 dB、水面不透明度 0.214、分离 0.857；去掉分离先验 −0.23 dB、水面不透明度 0.030、分离 0.883；去掉方向散射 −0.12 dB、分离不变；去掉相机模型 −1.48 dB（分离反而略升 0.910）；相机模型保留但不做新视角插值 −0.53 dB；去掉多视图深度项 −0.45 dB（分离 0.921）。可见图像质量主要靠相机模型与介质建模，分离质量主要靠 cell 表示与分离先验，两者可分别归因。",
+  "baselines": [
+    "SeaThru-NeRF（JAX 与 Nerfstudio 两版）",
+    "Zip-NeRF",
+    "3DGS",
+    "RadFoam",
+    "SeaSplat",
+    "WaterSplatting（含 +PPISP）",
+    "Plenodium",
+    "OceanSplat"
+  ],
+  "datasets": [
+    "SeaThru-NeRF 数据集（4 个真实水下场景）",
+    "Lego 与 Ficus 合成场景（各 3 团体积云，表面/介质分别有真值）",
+    "Foggy Garden（易/难两档合成雾，附清晰参考图）"
+  ],
+  "novelty": "相对 SeaThru-NeRF / WaterSplatting 把介质写成沿射线方向相关或图像空间参数、相对 Plenodium 用球谐参数化介质，FoamSurf 首次把介质做成空间 Voronoi 单元、表面做成 surfel，并用同一个可微光线追踪器在任意路径（含反射、折射与插入网格）上合成两者；分离先验不需要分割掩码，且因为两组基元可被追踪器单独渲染，编辑与风格迁移可以只作用于其中一个。",
+  "limitations": "作者自述恢复出的水只复现外观而非光学属性：系数是单次散射模型的宽带量，每个 cell 只有一个常数值，无法表达多次散射或光谱依赖。分离在暗缝与远处海床仍覆盖不足；方法依赖已知位姿与内参，需要 28.7 min 级训练且不能实时增删 cell。评测的分离分数依赖 SAM 掩码（仅用于评估），而 OceanSplat 只报了作者自测数值、无 FPS，横向比较不完整。",
+  "trl_evidence": "单卡 RTX 4090 上 120 FPS 实时渲染、训练约 29 min，支持训练后不重训的编辑、去介质、风格迁移与网格插入，工程完成度高；有项目页与演示视频，但未声明代码开源，也不是产品化系统。",
+  "code": "项目页 grzegorzwilczynski.com/foamsurf（正文未声明代码开源）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：散射介质下的表面-介质解耦是水下/雾天重建的真实问题，但影响面小于通用动态重建。NOV=4：Voronoi 单元表示介质 + surfel 表示表面 + 单一混合追踪器（含二次射线）是明显新架构。TEC=4：表示、递推合成、先验与消融都完整，缺理论分析与多次散射建模。EXP=4：3 类数据（真实水下、合成云、雾）加八个基线。PER=3：PSNR 与最强基线持平（30.75 对 30.71），分离 0.901 对 0.851（约 +6%），硬雾 +9%。TRL=3：实时可跑的原型，未开源。REP=3：项目页与大量补充细节，无代码。"
+ },
+ {
+  "id": "2611.33465",
+  "title": "OrdiHand-GS: Ordinal-Guided Tracking and Hand-Refined Gaussian Avatars for Digital Signers",
+  "title_zh": "OrdiHand-GS：面向数字手语者的序数引导跟踪与手部精化高斯化身",
+  "problem": "数字手语化身靠动画虚拟人传达手语，手势、位置与双手相对前后关系承载词汇与语法信息，因此手部错误对聋人观众极其显眼。单手交叉时有两个失效点：其一，单目 expressive-human 跟踪存在前后序歧义，两只手都能满足同一组 2D 关键点；在 How2Sign 的 365 个已标注重叠手帧上，原始 EHM 拟合在 93.2% 的帧里把右手腕放在前面，腕序 balanced accuracy 仅 49.8%（等于随机），而人工判定左手在前有 252 例。其二，即使几何修正，神经渲染出的手部外观仍然模糊，interaction crop 的 LPIPS 停在 0.319 附近。",
+  "method": "两部分解耦处理。C1 序数引导的 EHM 精化：冻结的 Video Depth Anything 给出相对深度 $d_t$（越大越近），对每只手由关键点构造膨胀凸包并去掉两包交集，得互不重叠支撑区 $S_L,S_R$，计算 $δ_t=(med_{S_L}d_t−med_{S_R}d_t)/(P95−P5)$；当支撑太小、分母近零或 $|δ_t|$ 低于阈值时深度线索弃权，否则以 $s_d=sign(δ_t)$、$c_d=min(1,|δ_t|/κ_d)$ 投票。外观尺寸线索用 $r_t=log(A_L/A_R)$ 给出 $s_a$、$c_a$，融合 $v_t=c_d s_d+c_a s_a$，$s_t=sign(v_t)$、$c_t=min(1,|v_t|)$（冲突则权重下降，正好抵消则不施加惩罚）。约束施加在每只手 MANO 关联顶点的视空间深度中值 $z_{h,t}$ 上：$L_ord=Σ_t c_t[m+s_t(z_{L,t}−z_{R,t})]_+/Σ_t c_t$，$L_fit=L_EHM+λ_ord L_ord$，取 $m=0.03$、$λ_ord=100$，用基线 EHM 优化器续跑 240 步（手部姿态学习率 $10^{-4}$），梯度经 SMPL-X 参数化回传，因此是跟踪阶段精化而非孤立的手部姿态修正。C2 手部 UV 高斯残差：源重建网络给出冻结的 UV 特征图 F 与网格绑定高斯的局部位置 $p_i$，3 层卷积头（221,571 参数，末层零初始化）预测三维位置残差，经连续手部归属权重 $w_i=Σ_k b_{ik}h(v_{ik})$（h 为 1 表示 MANO 手部顶点）调制后 $p'_i=p_i+w_i[f_φ(F)]_i$，残差在绑定三角形局部系中施加，只动手部高斯；backbone、解码器与神经精化器全冻结。渲染损失为全图 $ℓ_img=L1+0.05·LPIPS$、0.25 倍的头部 crop 项与两手 crop 的 $ℓ_hand$（含 0.1·L1、0.005·LPIPS、0.01·(1−SSIM)），训练 40,000 次残差更新；同一残差 checkpoint 不加训练地用于原始跟踪与融合跟踪，从而构成 2×2 因子评测。",
+  "key_numbers": [
+    "腕序准确率 32.9% → 77.3%，balanced accuracy 48.9% → 76.9%（同一预算的 matched control 对比，修正 184 例、新增 22 例）",
+    "代价：手部重投影误差 +0.39 px，臂链旋转约 +1.6°",
+    "随机符号 placebo 只涨 9.3 个百分点（BA 48.6%），无实质增益",
+    "interaction crop：LPIPS 0.3174（C0）→ 0.3065（仅跟踪 C1）→ 0.3155（仅残差 C2）→ 0.3047（C3），PSNR 16.91 → 17.35",
+    "与 GUAVA 比较：hand crop LPIPS 0.3236 对 0.3454，interaction crop 0.3026 对 0.3190，PSNR 17.60 对 16.95",
+    "标注集：365 个重叠手帧来自 171 个 How2Sign clip（重叠 ≥0.30，隐藏重复标注 κ=0.91）"
+  ],
+  "ablation": "表 2 跟踪臂：local VDA hook 44.4%、VDA hinge 67.1%、local hook + VDA hinge 71.0%、只用尺寸 hinge 73.7%、随机符号 42.2%、重叠门控 77.0%、时间平滑 77.8%，完整融合 77.3%（BA 76.9%）。表 3 为 2×2 因子：跟踪阶段贡献大部分交互渲染增益（C0→C1 的 LPIPS 0.3174→0.3065），残差只带来较小额外收益（C2 0.3155），且二者没有协同（C3 0.3047）。",
+  "baselines": [
+    "GUAVA",
+    "EVA",
+    "ExAvatar",
+    "GaussianAvatar",
+    "SplattingAvatar",
+    "SeSyn-Net"
+  ],
+  "datasets": [
+    "How2Sign（184 个测试 clip；365 个重叠手标注帧来自 171 个 clip）",
+    "Re:InterHand（40 帧、665 个指-手与指-指关系，用于检查局部线索正确率）"
+  ],
+  "novelty": "相对 GUAVA、SignSplat 等手语化身工作，它们不约束双手前后序、只在像素层面优化；OrdiHand-GS 把序数深度证据做成「手级中值深度 hinge」并塞回 EHM 优化器（而非单独改手部姿态或加局部关键点 margin），保证满足约束时整条臂链一起动；再用 ownership-gated 的 UV 位置残差只精化手部高斯，backbone 与渲染器冻结，从而能把「跟踪错了」与「渲染糊了」两类误差分开归因。",
+  "limitations": "中值深度统计既不强制刚体运动也不处理接触与穿模；相机与共享身份参数也参与更新，因此无法隔离出纯姿态机制。残差只改 UV 局部位置且不受保留正则约束，并与新增的手部 SSIM 项一起评测，收益难以完全归因。标注来自单一标注者，How2Sign 无 3D 真值，轮廓 IoU 与手-身穿插未测；ordinal 线索本身也会引入新的顺序错误（22 例）。训练与评测按视频而非按手语者划分，渲染只在标注的交互帧上评估，跨 backbone 迁移与真实手语可读性未验证。",
+  "trl_evidence": "研究型离线原型：基于 GUAVA + SMPL-X/MANO，残差头训练 40,000 步（约 10 万帧的训练划分），无实时性或部署报告；有项目页展示，但未声明代码与权重。",
+  "code": "项目页 mmxmichelle.github.io/OrdiHand-GS（正文未声明代码开源）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：双手前后序歧义与手部渲染是手语化身的实际痛点，但受众窄。NOV=3：序数线索 + 手级 hinge + 归属门控残差是对已有路线的实质改进，非新范式。TEC=4：明确的两阶段方法、显式公式与 matched control / placebo / 2×2 因子设计，实验纪律强，但机制有耦合。EXP=3：主评测只有 How2Sign 一个数据集（365 帧），Re:InterHand 仅作线索检查。PER=4：腕序 32.9%→77.3%（+135%），但渲染 LPIPS 仅 0.3174→0.3047（约 4%）。TRL=2：离线原型，无代码。REP=3：项目页与详细附录，无开源。"
+ },
+ {
+  "id": "2611.33467",
+  "title": "SplatWAM: Splatting World Action Models for Real-Time 3D Imagination",
+  "title_zh": "SplatWAM：用于实时三维想象的高斯泼溅世界动作模型",
+  "problem": "主流世界模型在像素或潜空间预测未来，无法直接表示三维场景演化：要得到可探索的世界状态还需第二阶段 feed-forward splatting 或逐场景 lifting，每个新视角都要再采样一次，且常依赖数十亿参数、上千 GPU 训练的模型。这类视图依赖也损害控制，像素策略在相机偏移下会退化；多视图监督只把额外视角用于训练表示，而不是作为被预测的状态，几何一致性只能「学出来」而不能「被强制」。结果是生成的独立视角在几何、遮挡与视差上互相矛盾，长 rollout 下误差累积，视频模型还会出现穿桌、把手与窗户合并等几何不可能。",
+  "method": "把状态定义为 N 个显式高斯 $s_t=(x_{t,1},…,x_{t,N})$，$x_{t,i}=(μ_i,q_i,ς_i,α_i,c_i)∈R^{14}$，任意相机由可微光栅化器渲染。Tokenizer SplatWAM-T：VGGT backbone 编码无位姿上下文视图为 patch token，拼接 N 个学习 query，经自注意力与线性头把每个 query 解成一个高斯（canonical frame 锚定第一上下文视图），query 跨场景与时间共享，因此固定索引不依赖物理对应，token 数与分辨率、视图数解耦；损失为光度（L2 + LPIPS）+ 几何（从 backbone 蒸馏深度与法线，深度按中值比 ρ_v 对齐未知尺度）+ 正则（alpha 覆盖、各向异性、协方差有效秩，抑制针状退化）。动力学 SplatWAM-D：用 diffusion forcing 对每帧独立采样噪声等级 τ，$z_t=τ_t s̃_t+(1−τ_t)ε_t$，因果 transformer 以 $f_θ(z,τ,d,a)$ 做 x-prediction，目标为 shortcut forcing（Dreamer 4 的 flow-matching + 一致性项，一次大步匹配两小步），另加渲染损失 $L_render=‖R(ŝ_T,π^v)−R(s_T,π^v)‖^2$，总目标 $L_dyn=L_SF+λ_render L_render$。高斯专属建模三改：每个 token 索引用训练集平均位置算固定正弦 3D 位置编码（弥补索引无空间含义）；协方差改用 log-Euclidean 6 维坐标 $ν_i=vech(logΣ_i−logΣ̄)$，渲染时 $Σ_i=exp(logΣ̄+vech^{-1}(ν_i))$ 保证正定，消除四元数符号与近各向同性时的歧义；渲染监督补足几何、尺度与不透明度。推理时每帧从噪声出发用 $K=1/d_t$ 步 shortcut 去噪，观测帧以最高信号级 τ=1−d_min 干净输入，生成帧在作为下一步条件前重新加噪到 τ_ctx；超窗 rollout 只保留最近 T−1 帧（T−1 阶 Markov）。策略 SplatWAM-P：在 D 的干净状态通道上加 agent token，逐层与当前帧 world token 交叉注意、自身历史因果注意、读目标 token（OGBench 为目标状态高斯 token，LIBERO 为冻结 CLIP 文本编码的逐 token 输出），非对称 mask 阻止 world token 看 agent/goal 以保持动力学任务无关；用 flow-matching 头输出 k 步 action chunk，$L_π=E‖u_θ(a^η,η|s,G)−(a−ε)‖^2$，联合训练 $L_joint=L_π+L_SF$，并观察到暴露历史动作会导致 copycat，故策略通道使用学到的 null action token。",
+  "key_numbers": [
+    "OGBench Scene 新视角 PSNR 23.37（H=16）/ 23.02（H=32），输入视角 24.57 / 24.15，端到端 83.9 FPS（单卡 RTX 5090）",
+    "新视角渲染比视频世界模型快 12×（约 80 FPS），PSNR 最高高 2.0 dB；iVideoGPT 新视角 PSNR 19.13、Cosmos3-Edge 21.82、GWM 9.18",
+    "高斯 token 与像素输入的同架构策略对比：OGBench 平均 63.4% 对 49.3%（最高 +24.8 个百分点），LIBERO 平均 65.3% 对 63.0%",
+    "LIBERO（无机器人预训练）平均 92.3%（约 1B 参数），WorldVLA（约 7B）79.1%、OpenVLA（约 7B）76.5%、OpenVLA-OFT 91.9%",
+    "OGBench Scene 总体成功率 52%（LPWM 40%、HIQL 49%）；Unlock-and-Lock 67% 对 LPWM 6%",
+    "Tokenizer 用 2K 高斯达 AbsRel 0.055、法线误差 37.9°，AnySplat 用约 370K 高斯为 0.059 / 42.5°",
+    "消融去掉渲染损失：输入视角 PSNR 24.57→23.17（H=16），新视角 23.37→22.31"
+  ],
+  "ablation": "表 5 消融：去掉渲染监督退化最大（新视角 23.37→22.31 dB，FVD 181→221），说明纯参数空间回归不足；去掉 log-cov 重参数化 PSNR/SSIM 小降（23.37→23.28）但输入视角 FVD 略好；去掉 3D 位置编码对最终指标影响很小，却使收敛慢约三分之一。附录 C.4 另报：联合训练会降低 rollout 质量（梯度干扰，与 VLA 中观察一致），屏蔽动作头梯度能保住预测质量但拖慢策略学习，把 $L_render$ 加回联合目标可缓解且不牺牲成功率。",
+  "baselines": [
+    "iVideoGPT",
+    "Cosmos3-Edge",
+    "GWM",
+    "LPWM",
+    "HIQL",
+    "GCBC / GCIQL / GCIVL",
+    "pixelSplat",
+    "MVSplat",
+    "AnySplat",
+    "C3G",
+    "Diffusion Policy",
+    "WorldVLA / OpenVLA / OpenVLA-OFT / Octo"
+  ],
+  "datasets": [
+    "OGBench（Scene 与 Cube play 数据；Scene、Cube-Single/Double/Triple 四个任务套件，5 个官方任务）",
+    "LIBERO（Spatial / Object / Goal / Long；tokenizer 在四套上预训练，Long 留作分布外迁移）",
+    "OGBench 回放渲染的 9 相机弧（5 个上下文视角 + 4 个留出视角）"
+  ],
+  "novelty": "相对潜空间 3D 世界模型（GWM、structured 4D latent）需要解码器、需要 posed RGB-D，SplatWAM 直接在固定预算高斯状态上做生成式动力学：没有解码器，状态本身可被任意视角光栅化，因而跨视角几何一致性是构造性保证而非学出来的；同一批 N 个高斯还被策略直接读取，预测与控制共享一个 backbone。相对 4DGS 系谱，它是 feed-forward 且带生成先验，不是逐场景优化重建已观测运动。",
+  "limitations": "H=32 已超出训练窗口，PSNR 出现缓降（23.37→23.02），长程 rollout 仍受自回归误差影响；作者承认动作边缘化仍是限制，训练数据稀少的 cube pushing 对所有模型都最难。全部实验在仿真 benchmark 上完成，没有真实机器人验证，80 FPS 是单卡 batch size 1 的离线 rollout 速度。状态用固定 2K 高斯预算，细节受容量限制；作者把置换等变动力学（把高斯视为无序集合）与可编辑语义属性列为未来工作。",
+  "trl_evidence": "单卡 RTX 5090 上约 80 FPS 的闭环级 rollout（batch 1），模型约 1B 参数，具备消费级 GPU 部署形态；但只做仿真评测，无真机在线系统，代码与 checkpoint 仅承诺发布。",
+  "code": "承诺开源（正文写 Code and checkpoints will be released，未给链接）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：世界模型的状态是否几何一致、能否任意视角渲染，是规划与控制的真实瓶颈。NOV=4：在高斯状态上直接做生成式动力学并让策略共享同一状态，是明显新架构，但仍在世界动作模型范式内。TEC=4：三层组件 + 高斯专属建模 + 两级消融完整，缺理论分析。EXP=4：两个基准、八个任务套件、十余个基线，但全是仿真。PER=5：12× 渲染加速、新视角 PSNR 高 2.0 dB、高斯 token 策略最高 +24.8 个百分点、LIBERO 92.3 超 7B 基线。TRL=3：单卡实时可跑的原型，无真机无开源。REP=3：细节充分并承诺发布代码。"
+ }
+]

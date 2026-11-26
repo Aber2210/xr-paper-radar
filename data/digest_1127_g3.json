@@ -1,0 +1,362 @@
+[
+ {
+  "id": "2611.33511",
+  "title": "ArtLang-4D: Articulation-Aware Dynamic Language Fields from Monocular Videos",
+  "title_zh": "ArtLang-4D：单目视频驱动的关节感知动态语言场",
+  "problem": "描述关节物体的语言往往在讲「状态」——被拉到最外的抽屉、开了一半的门——但现有 3D 语言场给每个点挂一个固定特征，无法区分同一部件的不同状态；4D 语言场改用视频时间 $t$ 作条件，而视频时间没有运动学含义、用户也无法设定。于是语义检索与关节执行之间缺少一个共享坐标：能说出「哪个部件」却说不清「哪个开合度」，也无法把检索结果直接变成可执行的关节位移。作者在 Articulate-100 上以语言控制基线作对照，ArtLang（双端多视角输入）的 LM-A 为 65.97 mm，同输入基线 VideoArtGS 的部件运动误差 7.78、可动部件 Chamfer 151.36 mm，说明「看得懂」与「动得准」都还差得远。",
+  "method": "把物体表示为规范三角形场（canonical triangle field, A-Geo），每个三角形是无连接的 splatting 基元，用带符号距离定义足迹 $\\alpha_T(p)=o_T(p)(\\max(0,\\mathrm{sd}_T(p)/\\mathrm{sd}_T^{\\max}))^{\\sigma}$ 并前到后 alpha 合成。部件身份 A-Part 由不含 $t$ 的 HexPlane（$xy,xz,yz$ 三平面、4 级分辨率 64/128/256/512）在三角形质心解码后 softmax 得 $\\mathbf{w}_T$，因此三角形在任何状态下都属于同一部件。关节 A-Joint 为每个可动部件一个 typed screw joint $(\\boldsymbol{\\omega}_k,\\mathbf{v}_k,\\mathbf{p}_k,r_k,s_k)$，$R_k(t)=\\exp(t r_k[\\boldsymbol{\\omega}_k]_\\times)$、$b_k(t)=\\mathbf{p}_k-R_k(t)\\mathbf{p}_k+t s_k\\mathbf{v}_k$，顶点按 $x(t)=\\sum_k w_{T,k}(R_k(t)x+b_k(t))$ 运动。关节先从 3D 部件观测无初始化发现：对每帧每部件腐蚀 mask、剔除深度不连续像素后反投影得点集，用 Cauchy 核 $\\rho_\\sigma$ 的对应损失拟合，$\\sigma$ 从 $0.07\\ell$ 几何退火到 $0.0035\\ell$，6 个起点、自由拟合 3000 步 + 类型锁定再 2000 步，类型判定用 margin $m=0.1$ 比较旋转/平移假设。随后与场联合训练，损失为 $\\mathcal{L}_{\\mathrm{rgb}}+0.2\\mathcal{L}_{\\mathrm{depth}}+0.5\\mathcal{L}_{\\mathrm{occ}}+0.05\\mathcal{L}_{\\mathrm{part}}+\\mathcal{L}_{\\mathrm{corr}}+\\mathcal{L}_{\\mathrm{reg}}$，并在训练后若 $E_k^{\\mathrm{trained}}>1.25E_k^{\\mathrm{disc}}$ 则回退到发现解（joint guard）。语言侧用 GPT-4o 对比两端渲染图生成带 $t$ 标签的比较级 caption bank（5 个桶、五级短语如 pulled out the least → the furthest），经 FG-CLIP2 编码后再做白化 PCA 投到 $d=24$ 维；每三角形特征由 $f_T(t)=n(\\hat{f}_T+\\delta([\\hat{f}_T;\\gamma(t)]))$ 随状态调制，$\\gamma(t)$ 为傅里叶编码。查询时对所有部件与 11 点状态网格求 $\\arg\\max_{k,t}\\frac{1}{|\\mathcal{T}_k|}\\sum_T\\langle f(x_T,t),e(s)\\rangle$，返回 $(k^\\star,t^\\star)$ 并只驱动该部件，部件名用融合语言原型、图像质心与关节类型的 Hungarian 匹配确定。单物体单卡 A800 约 2 小时。",
+  "key_numbers": [
+   "关节轴角误差：3.30°（Articulate-100，ArtLang 4.85°、VideoArtGS 15.70°）",
+   "部件运动误差：0.35（ArtLang 2.32、VideoArtGS 7.78）",
+   "可动部件 Chamfer 距离：14.64 mm（VideoArtGS 151.36 mm、ArtLang 20.98 mm）",
+   "状态检索准确率 State Acc：0.975（去掉状态条件后退到 0.141）",
+   "自由查询（部件与状态同时正确）：64.2%（静态语言场 19.4%）",
+   "语言指令运动误差 LM-A：51.26 mm（ArtLang 65.97 mm）"
+  ],
+  "ablation": "Table 2 三项：把 screw joint 换成 $(x,t)$ 自由变形场后轴角 3.30°→25.79°、CD-m 14.64→343.13 mm、LM-A 51.26→234.82 mm，而 State Acc 保持 0.975，说明状态检索本身不检验运动是否正确；去掉状态 caption 与 $t$ 条件残差后 State Acc 0.975→0.141，命名类指标基本不变（LSE-A 0.906、LSP-A 0.735）；去掉命名中的关节类型项 LM-A 51.26→52.49 mm，仅按投影位置命名进一步升到 53.55 mm。",
+  "baselines": [
+   "VideoArtGS",
+   "ArtLang",
+   "Articulate-Anything",
+   "FAMOS (v2/f2/v4)",
+   "Occam's LGS",
+   "4D-LangSplat"
+  ],
+  "datasets": [
+   "Articulate-100",
+   "PartNet-Mobility",
+   "iTACO real phone captures (Record3D)"
+  ],
+  "novelty": "相对 4D LangSplat / 4D-LangSplat 以视频时间为条件，这里改用有运动学含义、用户可设定的关节状态 $t$ 来索引语言场，使「检索状态」与「执行状态」共用同一坐标；相对 ArtLang 的静态语义场加双端多视角输入，这里从单目视频学习状态相关特征，并让状态本身可被文本检索。关键设计是部件身份与 $t$ 解耦、而语言特征与 $t$ 耦合，从而同时拿到持久部件身份与状态可分辨性。",
+  "limitations": "假设每个部件只有一个自由度、且需要两个观测端态，更长交互视频未处理；真实捕获（iTACO iPhone RGB-D）没有真值，只能定性说明；相似重复部件仍是主要失败模式（8 抽屉的桌子只有 6 个拿到正确名字，命令可能驱动邻近抽屉）；整条流程依赖 GPT-4o 生成 caption 与 SAM3/PartSAM 分割，上游错误会直接进入语言监督。",
+  "trl_evidence": "单张 A800 上每物体约 2 小时（发现+两段几何+语言阶段），属离线重建；在 iTACO 的真实手机 RGB-D 视频上跑通了同一管线（位姿与度量深度来自 iTACO 预处理），但只有两个物体、无定量指标；没有在线/机器人闭环或产品化证据。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：语言→关节状态的可执行接地是具身交互的真实瓶颈，但只覆盖单自由度关节物体。NOV=4：用关节状态而非视频时间索引语言场、并让检索结果直接成为关节配置，是明确的新架构而非组合增量。TEC=4：几何、关节发现、语言调制、查询执行四段齐全且有逐项消融与超参表，但无理论保证。EXP=4：100 个物体、3 个主基线 + FAMOS + 两个语言场、合成与真实捕获均有，但真实部分无真值。PER=4：部件运动误差降约 85%、CD-m 降 90%，多数指标远超 30%。TRL=2：离线单物体两小时、无在线系统。REP=3：无代码，但附录给出全部超参与协议，细节充分。"
+ },
+ {
+  "id": "2611.33565",
+  "title": "EgoCARBS: Egocentric Video Meets Active Acoustics for Kitchen Action Understanding",
+  "title_zh": "EgoCARBS：第一视角视频结合主动声学的厨房动作理解数据集与基准",
+  "problem": "头戴相机记录的是「看哪里」而不是「身体在做什么」：在标注的 1 秒窗口中，53% 没有任何自我中心帧出现手，另有 28% 只有部分帧出现，手臂动作直接落在视野外。外中心相机能补回这部分上下文，但必须在每个活动场所安装，换到新被试的新厨房就不再有用（新被试上 ego 58.7% 加 exo 反而 −6.5 点）。可穿戴已有的被动音频与 IMU 只覆盖动作的一部分：麦克风只在动作发声时有用，IMU 只测佩戴的那只手腕。缺的是一种随身穿戴、在相机看不到手且动作无声时仍能感知手、臂与近处物体的模态。",
+  "method": "把可穿戴设备的扬声器与麦克风变成短程声呐。发射 FMCW 线性 chirp（手表 18–21 kHz、80 次/秒、48 kHz 采样；眼镜 21.5–24.5 kHz、83.3 次/秒、50 kHz 采样，两传感器用不重叠频段与不同重复率避免互相留固定图样）；带通后与发射 chirp 互相关得回波帧 $p_n[k]=\\sum_m r[nN+k+m]s[m]$，取解析信号 $h_n=p_n+j\\mathcal{H}\\{p_n\\}$ 的包络，逐帧堆叠成 echo profile（距离×时间的回波强度图），再用相邻包络差 $D_n[k]=|h_n[k]|-|h_{n-1}[k]|$ 抵消静态反射。单 lag 对应 $c/(2f_s)$（手表 3.6 mm、眼镜 3.4 mm），距离分辨率 $c/(2B)=5.7$ cm，有效量程约 1 m，模型只读直达路径之后 200 个 lag（约 0.7 m）。手表侧被动音频为 16 kHz、64 带 log-mel（0.6 s 窗、30 ms 步长），IMU 重采样到 50 Hz。三设备共享 MacBook Pro 时钟，手表用时钟心跳加开场拍手定偏移，眼镜每 30 s 用厨房自身声音对齐并拟合线性漂移（残差 0.9–10.7 ms rms，中位 2.8 ms）。基准模型为每模态一个分类器再等权融合校准对数概率：视频用冻结 VideoMAE+CLIP 特征，音频用 SAMoSA/AST，AA 用 FastViT-T8 在 12.9 h 动捕语料上预训练（先预测全身姿态），IMU 用同语料预训练的 1D CNN，融合权重不随组合调整。",
+  "key_numbers": [
+   "数据规模：15 名被试、11.4 小时、4,019 条 verb–noun 动作标注（5.9 条/分钟，时长中位 2.4 s）",
+   "已见被试 verb top-5：70.7%→76.5%（+5.8），exo 参考 73.8%（+3.1）",
+   "新被试 verb top-5：58.7%→68.9%（+10.3），exo 为 −6.5 点",
+   "仅手表主动声学、无相机无音频无 IMU：65.2%（已见）/ 62.8%（新被试），ego 视频为 70.7% / 58.7%",
+   "无手可见窗口（占 53%）增益 +2.7，全部帧可见手时 +0.9（已见被试）",
+   "叠加到 LaViLa：+3.1（已见）/ +3.4（新被试）verb top-5"
+  ],
+  "ablation": "无独立消融（数据集/基准论文，无新模型）。替代证据有三类：把每个窗口的 AA 输出替换为同一被试另一时刻的回声后，所有含 AA 的设置 macro F1 下降、ego+watch AA 甚至低于仅 ego，说明增益绑定「动作时刻」而不是「人/厨房」；逐模态叠加与「仅可穿戴无相机」对照分离出 AA 的独立贡献；两个划分（已见折 / 15 折留一被试）× 四个任务（窗口识别、trimmed 识别、检测、预期）给出稳定性。",
+  "baselines": [
+   "VideoMAE + CLIP",
+   "Omnivore",
+   "ImageBind",
+   "EgoVLP",
+   "LaViLa",
+   "TIM",
+   "SSAST",
+   "SAMoSA + AST",
+   "DeepConvLSTM"
+  ],
+  "datasets": [
+   "EgoCARBS（15 个家庭厨房）",
+   "EPIC-Kitchens-100 协议与名词类",
+   "12.9 小时动捕预训练语料"
+  ],
+  "novelty": "据作者所述是首个把可穿戴主动声学与自我中心、外中心视频配对的公开数据集，也是首个在真实家庭环境（非实验室）采集的可穿戴主动声学数据。相对 ActSonic（视频只用来给回声打标签）与 EchoGuide（回声只用来触发相机），这里回声与视频首次作为同一模型的两路输入、监督同一套 verb–noun 动作；同时把「眼镜 + 手表」两种最常戴形态都做成主动声学传感器。",
+  "limitations": "15 名被试各只有 1 个厨房，新被试划分同时换了人和房间，无法分离人物与场景的泛化；外中心参考只有一台相机、用冻结特征与等权融合，作者承认这会把参考线下限压低；基线是离线 1 s 窗口的 late fusion，不是因果、联合训练的模型；稀有动词（wipe、press、shake、move）F1 仍在 10% 左右，trimmed 动作与预期任务远未解决。",
+  "trl_evidence": "用现成 Samsung Galaxy Watch7（Wear OS 应用，关闭系统音频处理）加自绘 nRF52840 声学板卡，在 15 个真实家庭厨房无脚本采集；被试佩戴舒适度中位 4/5，13/15 表示听不到 chirp；尚无产品化或长期部署数据。",
+  "code": "承诺发布去标识化数据、采集与标注工具、基准代码与预训练模型（项目页 saif-mahmud.github.io/projects/ego-carbs），暂无仓库链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 3,
+   "EXP": 5,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=3：解决「相机看不到手」这一真实工程缺口，但属多模态感知的局部补强而非领域卡点。NOV=4：首次把可穿戴主动声学与 ego/exo 视频放进同一模型与同一套标注，属新数据模态配对。TEC=3：传感管线与同步方案扎实，但没有新模型，方法主体是系统集成。EXP=5：15 人真实厨房、两个划分、四个任务、九类基线、1000 次重采样的置信区间。PER=3：verb top-5 提升 5.8–10.3 点（相对 8–17%），且稀有类仍差。TRL=4：现成消费级手表 + 自绘板卡在野采集，非实验室原型。REP=4：明确承诺数据、工具、代码与权重，项目页可查。"
+ },
+ {
+  "id": "2611.33581",
+  "title": "Evaluating Strategies for Multimodal Bidirectional Interactions between Pedestrians and AVs",
+  "title_zh": "评估行人与自动驾驶车辆之间多模态双向交互的策略",
+  "problem": "自动驾驶车辆与弱势道路使用者（VRU）共享空间时，驾驶员的视线、点头、手势等线索消失，行人无法确认车辆是否注意到自己、是否理解自己的请求。现有工作绝大多数只做 AV→行人的外部人机界面（eHMI、投影、灯带、显示屏），而 VRU→AV 的主动表达、以及「请求是否被识别/接受」的回执很少被系统研究；Tran 等人的综述覆盖 31 项 AV–行人研究，多数仍停留在 VR 或 Wizard-of-Oz 受控实验。缺的是一个完整闭环：车辆表达状态与意图、行人用语音/手势表达高层意图、系统回报识别结果与车辆是否接受。",
+  "method": "四阶段研究：文献综合 → N=124 在线问卷 → 交互环路实现 → 可行性评测。交互设计给出六个 AR 反馈候选（I1 蓝色「YIELDING TO CROSS」文字、I2 红色「VEHICLE APPROACHING」警告、I3 路面方向箭头、I4/I5 绿/红虚拟红绿灯、I6 车端锚定的投射斑马线）、五条高层语音指令（Stop / Proceed / Avoid obstacle / Slow down / Wait for pedestrians，统一以「Car, …」作寻址词）、九种手势（G1–G9，含 Stop、Emergency Stop、T-Pose 等）。原型用 Microsoft HoloLens 2 作 AR 端、Raspberry Pi 5 作随身计算、PIXKIT 2.0 作实体自动驾驶平台，消息层用 CAM/VAM 描述道路使用者状态、DENM 承载交互请求与响应；语音链为 WhisperLive（Faster-Whisper + Silero VAD）转写 + Rasa DIET（400 epochs，fallback 置信度阈值 0.8）意图识别；手势链用 MRTK3 的 26 关节手部跟踪，先判静态手型、再用 DTW 对动态手势做非线性时间对齐匹配模板，识别后清空缓冲避免重复触发。问卷对每个候选做 7 点 Likert 清晰度/适用性评分和排序，统计用 Friedman + Kendall's W，事后 Wilcoxon 符号秩 + Holm 校正；语音—手势配对用卡方拟合优度与二项检验（机会水平 1/9）。",
+  "key_numbers": [
+   "问卷样本：N=124（30 女 / 94 男），76% 为 20–24 岁，技术亲和度 ATI 均值 4.23（SD 0.75），Cronbach α=0.80",
+   "AR 清晰度：方向箭头 I3 M=5.73、车辆接近 I2 M=5.70（Friedman χ²(5)=76.08，p<.001，Kendall W=.12）",
+   "手势适用性：Stop(G8) M=5.87、首选率 42.7%、进前三 80.6%（χ²(8)=398.52，W=.41）",
+   "语音适用性：Slow Down(C4) M=5.27、Stop(C1) M=5.20；排序中 Stop 被 67.7% 排第一",
+   "语音—手势语义配对：316/372=84.9%（Stop 86.3%、Proceed 88.7%、Slow Down 79.8%）",
+   "时延与识别：车—人 AR 反馈 81.53±8.36 ms（ITS-G5 点对点）；端到端意图识别本地 365.63 ms、基础设施辅助 440.04 ms；WER 2.9% vs 7.0%（加噪 3.4% vs 8.0%）"
+  ],
+  "ablation": "无独立消融（HCI 用户研究 + 系统演示）。替代证据是三种模态各自的组内 Friedman 比较与 Holm 事后检验、两处计算位置（本地 Whisper-Base vs 基础设施 Whisper-Turbo）在时延与 WER 上的对照（揭示「更快但更易错」与「更慢但更准」的权衡），以及一次 ATCLI 平台的户外端到端演示。",
+  "baselines": [
+   "Directional Arrow (I3)",
+   "Vehicle Approaching (I2)",
+   "Stop gesture (G8)",
+   "Slow Down (C4)（同族候选互比，无算法基线）"
+  ],
+  "datasets": [
+   "在线问卷（N=124，以葡萄牙语语境为主）",
+   "ATCLI 户外试验场（HoloLens 2 + PIXKIT 2.0）"
+  ],
+  "novelty": "相对只评估 AV→行人信号或单一输入模态的工作，这里把 AR 反馈、语音、手势放进同一个闭环并联合评测；相对 VR/Wizard-of-Oz 研究，首次用实体自动驾驶平台在户外完成「行人请求—车端安全校验—AR 回执」全链路，并给出每一段的时延与识别率拆解。设计结论也具体：优先表达运动意图、把语音限制在意图层、手势只作确认信号、红绿灯符号需按道路使用者角色适配。",
+  "limitations": "样本以 20–24 岁、葡萄牙语、男性为主（94 男 / 30 女），作者明确说不能代表总体；只有一次户外演示，没有重复测量、真实交通流或多行人多车场景；语音—手势配对页复用了与评分页不同的编号顺序，部分「误配」可能是界面造成的方法学伪影；未测长时间误触发与多 VRU 冲突指令；手势识别只有模板匹配，无规模化的泛化评估。",
+  "trl_evidence": "在葡萄牙 ATCLI 平台用 HoloLens 2 + Raspberry Pi 5 与 PIXKIT 2.0 实车完成户外闭环并公开演示视频；时延（81.53 ms / 365.63 ms / 440.04 ms）与 WER 均为硬件实测；但属一次性可行性验证，无产品化、无车队或长期运营数据。",
+  "code": "未提及（依赖开源 hl2ss、WhisperLive、Rasa、MRTK3）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 2,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：双向可理解性是 AV 混行落地的真实问题，但本文解决的是交互设计层面。NOV=3：AR+语音+手势的闭环组合此前未被联合评测，属已有路线的实质推进。TEC=3：系统链路完整、统计方法规范，但核心是问卷与演示，无算法贡献与消融。EXP=3：N=124 的单文化问卷 + 单次户外演示，缺多场景重复。PER=2：无 SOTA 对比，只有候选间相对偏好与可行性指标。TRL=3：真机户外演示但一次性、无产品化。REP=3：无代码数据，但时延、WER、统计细节披露充分。"
+ },
+ {
+  "id": "2611.33588",
+  "title": "SEEL: Towards End-to-End 3D Sign Generation with Language Models",
+  "title_zh": "SEEL：面向端到端 3D 手语生成的语言模型框架",
+  "problem": "3D 手语生成（SLG）的主流做法是「动作 tokenizer + 语言模型」两阶段：tokenizer 只按重建误差单独训练后冻结，生成器只学去匹配 one-hot 参考 token，两个目标并不一致，重建保真度高并不等于生成质量高。直接把两段接成端到端、用 straight-through estimator（STE）跨两个量化接口（编码器→生成器、生成器→解码器）回传梯度，会引入梯度偏差并导致 codebook collapse，这对依赖手指精细动作的手语尤其致命。CSL-Daily 上两阶段强基线 MaDiS 的 DTW-JPE(All) 为 11.93、SiCLIP R@1 为 38.61，仍有明显空间。",
+  "method": "tokenizer 沿用 VQ-VAE（body/face、左手、右手三路并行，码本大小 96/192/192，EMA 更新），生成器用 masked diffusion LM（Qwen3-0.6B-Base 初始化）。REG（reconstruction-aware generation）解决 one-hot 监督过刚：每个 masked 位置构造小候选集 $\\mathcal{K}_t$（保留参考 token，另加 4:2:1 比例的生成器 top-$k$、编码器特征最近码字、随机码，共 8 个），把候选替换进上下文后用共享解码器解出动作，以 16 帧局部窗内 pelvis-relative 3D 关节误差 $d_t(k)$ 评分；误差超过参考 $d_t(c_t)$ 加 margin $\\delta=1.0$ mm 的候选被屏蔽，其余按 $q_t^G(k)=\\mathrm{softmax}(-d_t(k)/\\tau_G)$ 形成软目标，最小化 $\\mathcal{L}_{\\mathrm{reg}}=-\\frac{1}{|\\mathcal{S}|}\\sum_t\\sum_k \\mathrm{sg}(q_t^G(k))\\log p_t^G(k)$，只更新生成器。GET（generation-aware tokenization）解决编码器拿不到生成反馈：未 mask 位置把编码特征与码本的距离转成软分配 $q_t^E(k)$，得连续上下文嵌入 $\\bar{\\mathbf{e}}_t=\\sum_k q_t^E(k)\\,\\mathrm{sg}(\\mathbf{C}_k)$ 喂给冻结生成器；masked 位置用预测分布的期望码字 $\\tilde{\\mathbf{c}}_t=\\sum_k p_t^G(k)\\mathrm{sg}(\\mathbf{C}_k)$；拼成解码输入后由冻结解码器出 $\\tilde{\\mathbf{x}}$，用 $\\mathcal{L}_{\\mathrm{get}}=\\|\\tilde{\\mathbf{x}}-\\mathbf{x}\\|_1$ 只更新编码器，从而完全绕开 STE。总目标 $\\mathcal{L}_{\\mathrm{tok}}+\\mathcal{L}_{\\mathrm{ce}}+\\lambda_{\\mathrm{reg}}\\mathcal{L}_{\\mathrm{reg}}+\\lambda_{\\mathrm{get}}\\mathcal{L}_{\\mathrm{get}}$，前 5 个 epoch 三项权重为 0、再用 5 个 epoch 线性升到 1.0；$\\tau_G=1.0$、$\\tau_E=0.8$；随机初始化联合训练 150 epochs，batch 64/GPU，lr $2\\times10^{-4}$ 余弦衰减，2×H200；推理 25 步 unmasking，REG/GET 不进入推理图。",
+  "key_numbers": [
+   "CSL-Daily：DTW-JPE(All) 10.86（MaDiS 11.93）、SiCLIP R@1 41.84（38.61）",
+   "How2Sign：DTW-JPE(All) 10.93（MaDiS 12.59）、R@1 36.05（34.27）",
+   "Phoenix-2014T：DTW-JPE(All) 8.47（MaDiS 9.28）、R@1 62.46（57.94）",
+   "消融（CSL-Daily，全模型）：MPJPE 38.62、PPL_rec 140.17、PPL_gen 121.16（两阶段 43.54 / 87.84 / 68.90）",
+   "聋人专业手语者用户研究：平均 7.20（MaDiS 6.13、SignSparK 5.17，6 名 5 年以上 CSL 经验者）",
+   "训练配置：2×H200、150 epochs/数据集、码本 PPL 理论上限 152.4"
+  ],
+  "ablation": "Table 2 训练范式：两阶段 DTW-JPE 13.81 → 仅 REG 12.38（MPJPE 仍 43.54，PPL_gen 68.90→82.98）→ 仅 GET 11.73（MPJPE 40.19，PPL_rec 87.84→133.07）→ REG+GET 10.86（MPJPE 38.62，PPL_rec 140.17，PPL_gen 121.16）；naïve E2E + STE 反而全面退化（14.41 / 45.95 / 53.21）。Table 3 监督方式：STE 14.41 → 码本期望 13.42 → 普通 label smoothing 13.73 → motion-aware one-hot 13.04 → motion-aware soft target 12.38。另有候选来源组合与超参敏感性分析。",
+  "baselines": [
+   "MaDiS",
+   "SOKE (mBART)",
+   "SOKE (Qwen3)",
+   "SignSparK",
+   "T2S-GPT",
+   "S-MotionGPT",
+   "MoMask++",
+   "NSA"
+  ],
+  "datasets": [
+   "CSL-Daily",
+   "How2Sign",
+   "Phoenix-2014T"
+  ],
+  "novelty": "相对 SOKE / MaDiS 的「冻结 tokenizer + one-hot 监督」，这是首个 LM-based 3D SLG 的端到端训练框架：用「解码候选 token 的 3D 误差→软目标」替代索引匹配，用「码本连续期望」替代 STE 把生成误差回传编码器，两个机制都只在训练期生效、推理零开销。相较只回归单条解码动作的物理监督，这里显式让模型看到竞争码字之间的运动质量差异。",
+  "limitations": "训练成本高（2×H200、150 epochs/数据集），且需从随机初始化联合训练；只在 SMPL-X 姿态上评测，没有到视频渲染或真实 avatar 的端到端验证；用户研究仅 6 名 CSL 手语者、只覆盖中文手语；软目标依赖候选集大小（8）、margin 与两个温度等超参；论文未给出长句/罕见词的误差分解，绝对精度在复杂句上仍可能不足。",
+  "trl_evidence": "离线训练 + 25 步并行解掩码推理，作者强调 REG/GET 不增加推理延迟、不改变网络结构；但没有实时性测量、也没有接入 avatar 渲染或机器人控制的闭环实验。",
+  "code": "承诺开源代码与模型（\"Code and models will be released\"，项目页 2000zrl.github.io/seel），暂无仓库链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：tokenizer 与生成器目标错配是离散 token 生成范式的共性问题，手语只是最苛刻的检验场景。NOV=4：软目标由「解码后的 3D 误差」构造、梯度经码本期望绕开 STE，两条都是新监督机制而非调参。TEC=4：方法推导完整，消融覆盖训练范式、监督方式、候选来源与超参。EXP=4：三个语种基准 + 9 个基线 + 6 人专业手语者研究。PER=3：DTW-JPE 降 8.7%–13.2%，R@1 升 5%–8%，落在「明显但多小于 10%」档。TRL=2：离线训练与推理，无部署。REP=3：承诺开源且有项目页，但当前不可复现。"
+ },
+ {
+  "id": "2611.33591",
+  "title": "VivaWorld: Long-Horizon Video World Model with Compositional 3D Priors",
+  "title_zh": "VivaWorld：带组合式三维先验的长时程视频世界模型",
+  "problem": "长时程视频生成是交互式世界模型、具身智能与空间推理的基础，但缺少显式 3D 接地时会出现相机漂移、几何畸变与物体形变，单帧看着真实、连起来就崩。现有做法有两种都不够：用输入视角重建的点云作 3D memory，只能覆盖被观测区域，未观测区域没有可靠先验；相机表示（含 Plücker 射线）定义在全局坐标，误差随序列累积。实测中长视频段普遍退化——Lyra 2.0 的 RotErr 9.022、TransErr 0.098，Voyager 的 PSNR 从单段 18.60 掉到 8.62，AnyRecon 的相机评分从 94.75 掉到 27.37。",
+  "method": "构造组合式混合表示 $\\mathcal{W}_{\\mathrm{geo}}=\\{\\mathcal{P},\\mathcal{M}\\}$：背景用前馈重建的点云（Pi3 预测度量深度，ViPE 估位姿，按 chunk 反投影得局部点云再聚合），前景用生成式网格（SAM3 分割物体，RecGen 或 GPT-6 Astra 生成 mesh，再用带各向异性尺度的 ICP 配准 $T^k(\\mathbf{x})=R^kD^k\\mathbf{x}+\\mathbf{t}^k$ 对齐到观测点）。聚合多视角点云会产生悬浮碎片，作者提出 mesh-seeded connected-region filter：把点云与网格体素化，从网格占据体素做 BFS 洪泛，只保留可达体素内的点，从而删掉与配准网格不连通的成分。相机表示是组合式的：全局 Plücker 坐标 $\\mathbf{p}^{\\mathrm{scene}}_{t,u,v}=(\\mathbf{d}_{t,u,v},\\bar{\\mathbf{o}}_t\\times\\mathbf{d}_{t,u,v})$，$\\bar{\\mathbf{o}}_t=(\\mathbf{o}_t-\\mathbf{c}_{\\mathrm{scene}})/s_{\\mathrm{scene}}$；再对每个已配准网格中心 $\\mathbf{c}^k$ 加一路物体锚定 moment $\\mathbf{m}^k_{t,u,v}=\\frac{\\mathbf{o}_t-\\mathbf{c}^k}{s_{\\mathrm{scene}}}\\times\\mathbf{d}_{t,u,v}$，拼成 $\\mathbf{c}_{\\mathrm{cam}}\\in\\mathbb{R}^{T\\times(6+3N)\\times H\\times W}$。模型侧冻结 Wan 2.1-T2V-14B，在 VACE 上搭组合式控制适配器：点云与网格的 RGB-D 渲染分别过冻结 VAE 后拼接，mask 与相机嵌入过一个轻量时空卷积编码器，得到 $\\mathbf{z}_{\\mathrm{ctrl}}=[\\mathcal{E}_{\\mathrm{RGBD}}(I^{\\mathcal{P}})\\|\\mathcal{E}_{\\mathrm{RGBD}}(I^{\\mathcal{M}})\\|\\Phi_{\\mathrm{cam}}([\\mathbf{b}\\|\\mathbf{c}_{\\mathrm{cam}}])]$，patch 化后与视频 token 一一对齐，在冻结 DiT 的若干块注入残差，共享时间步与文本条件；只训适配器（3.05B）与相机编码器。长视频按 chunk 自回归生成，新生成帧回写更新点云，支持单图与稀疏多图输入。",
+  "key_numbers": [
+   "单 chunk：PSNR 21.24 / SSIM 0.570 / LPIPS 0.173（Lyra 2.0 20.01 / 0.528 / 0.227）",
+   "长视频（1,000 帧）：PSNR 13.92 / SSIM 0.376 / LPIPS 0.529，相机评分 79.51（Lyra 2.0 12.85 / 0.343 / 0.582 / 65.09）",
+   "长视频相机误差：RotErr 6.908、TransErr 0.060（Lyra 2.0 9.022 / 0.098，相对降 23.4% / 38.8%）",
+   "由生成视频重建三维：长视频 SSIM 0.447 / LPIPS 0.598（Lyra 2.0 0.423 / 0.658）",
+   "消融（长视频）：无引导 PSNR 10.03、Cam 3.17 → 仅点云 12.41 / 71.34 → 点云+高斯 13.60 / 79.95",
+   "评测规模：DL3DV-10K 20 个场景约 200 段 + Tanks and Temples，832×480，长视频取前 1,000 帧（T&T 240 帧）"
+  ],
+  "ablation": "Table 3 按引导信号累积：None（长视频 PSNR 10.03、Cam 3.17）→ 点云 PC（12.41、71.34）→ PC + Gaussian（13.60、79.95）→ PC + Mesh + 全局嵌入（单 chunk 20.49 / LPIPS 0.149）→ 完整模型（再加物体锚定嵌入与过滤），可见混合点云-网格引导与物体锚定相机通道各自带来增益；图 7 给出定性对照。",
+  "baselines": [
+   "Lyra 2.0",
+   "Gen3C",
+   "AnyRecon",
+   "Voyager",
+   "VerseCrafter",
+   "NeoVerse"
+  ],
+  "datasets": [
+   "DL3DV-10K",
+   "Tanks and Temples"
+  ],
+  "novelty": "相对只用重建点云当 3D memory 的方法，这里把「重建的保真」与「生成的完整」组合起来，让 360° 新视角都有几何依据；相对全局 Plücker 射线，加入以已配准网格为锚的 moment 通道，显式建模相机—物体相对运动，从而抑制长序列漂移；两者都通过轻量适配器注入冻结 14B 视频扩散模型，主干不需重训。",
+  "limitations": "依赖 14B 主干与一长串外部大模型（Pi3、ViPE、SAM3、RecGen / GPT-6 Astra），复现与算力门槛高，且上游位姿/深度/配准误差会传导到生成（附录有误差分析）；通道数随物体数线性增长；没有开源；具身应用仅作展示，未给机器人闭环的定量指标；长视频仍取前 1,000 帧，超长序列的漂移未被彻底消除。",
+  "trl_evidence": "NVIDIA 研究系统：冻结 Wan 2.1-14B，仅训 3.05B 适配器，单机离线推理，832×480、1,000 帧级长视频；有人形机器人场景的应用演示，但没有在线控制延迟、成功率等部署指标。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=4：长时程几何一致性与相机漂移是世界模型的真实瓶颈，但只针对静态场景重建式生成。NOV=4：重建+生成的组合 3D 先验与物体锚定相机嵌入都是明确的新表示。TEC=4：管线完整、含过滤算法与逐项消融，但大量依赖现成模型、无理论分析。EXP=4：两个数据集、六个基线、单段与千帧长视频、下游 3DGS 重建四类评测。PER=4：长视频平移误差降 38.8%、旋转误差降 23.4%，PSNR 提升约 8%。TRL=2：离线研究系统、无开源。REP=2：无代码，关键数据整理细节放在附录且部分依赖未公开模型。"
+ },
+ {
+  "id": "2611.33650",
+  "title": "Linear-time Online Visual Geometry Transformer with Hybrid Architecture",
+  "title_zh": "LinearVGGT：混合架构的线性时间在线视觉几何 Transformer",
+  "problem": "VGGT、π³ 一类 3D 重建模型能从多视图直接回归相机、深度与点图，但全局注意力对视觉 token 数是二次复杂度；StreamVGGT 等因果注意力模型把历史 token 全部缓存，单帧成本随流长线性增长（256 帧流上仅 3.2 FPS）。另一侧，CUT3R、TTT3R 用固定大小状态换恒定成本，却逐渐遗忘早期几何——稠密流评测里 400 帧时误差升到 0.129 / 0.159。于是形成一个明确取舍：注意力类准确但越来越慢，循环类恒定但会忘。核心问题是能否在每帧近乎恒定成本下保住因果注意力的精度。",
+  "method": "保留 StreamVGGT 的图像编码器、帧内注意力与预测头，只改跨帧层：每 4 层中 3 层替换为 Mamba2 mixer，$H_i=e^{\\Delta_i a}H_{i-1}+\\Delta_i\\mathbf{x}_i\\mathbf{b}_i^{\\top}$、$\\mathbf{y}_i=H_i\\mathbf{c}_i$，展开后等价于权重随距离指数衰减的因果线性注意力，每帧 $\\mathcal{O}(N)$、状态大小与流长无关。剩下每第 4 层是 register-guided 稀疏注意力，做两级选择：帧级用 register token 的注意力质量给历史帧打分 $\\pi_{t,s}=\\frac{1}{HR}\\sum_h\\sum_i\\sum_j\\mathrm{softmax}_{(s',j')}(\\frac{1}{\\sqrt{d}}\\mathbf{q}^h_{t,i}{}^{\\top}\\mathbf{k}^h_{s',j'})_{(s,j)}$，新帧只 attend 到 $\\mathcal{S}_t=\\{0,t\\}\\cup\\mathrm{top}\\text{-}k_{1\\le s<t}\\pi_{t,s}$（第 0 帧固定锚定世界坐标）；token 级用一个轻量 indexer 在每帧只保留该帧自身最关注的少量 patch token。路由复用注意力层本来就要算的 query/key，不增参数。训练走三阶段蒸馏（MOHAWK 思路）：先从教师的注意力权重初始化，①对齐注意力矩阵、②对齐层输出、③端到端同时对学生预测与 GT 深度/相机/点图优化，先更新新层再更新除图像编码器外的所有层；总计 59 小时单卡、1.2M 帧。推理侧把每帧固定形状部分捕获为 CUDA graph 并融合小 kernel 以压掉启动开销。",
+  "key_numbers": [
+   "单帧延迟：平均 27 ms，1,024 帧流内基本恒定；比 StreamVGGT 平均快 12×",
+   "7-Scenes 稀疏视图：Acc 0.066（StreamVGGT 0.129，降 49%）、FPS 38.8（3.2）",
+   "NRGBD：Acc 0.078 / Comp 0.067 / NC 0.859（StreamVGGT 0.084 / 0.079 / 0.861）",
+   "视频深度 AbsRel：KITTI 0.093（StreamVGGT 0.173）、Bonn 0.052（0.059）、Sintel 0.317（0.323，基本持平）",
+   "训练成本：59 小时单卡 + 1.2M 帧，仅为 StreamVGGT 学习 VGGT 的 9% GPU 小时、31% 帧",
+   "对比 LingBot-Map：快 2.5×、显存少 2.7×（Acc 0.066 vs 0.040）"
+  ],
+  "ablation": "Table 4 逐项移除/替换组件（去稀疏注意力改全注意力、去 Mamba2 改循环、去三阶段蒸馏直接训练等），在稠密视图下报 Acc 均值与中位数并给出定性图；结论是 Mamba2 提供效率、稀疏注意力补长程召回、蒸馏提供可训性，三者缺一都会在精度或速度上明显退化。附录 F 另扫描选中帧数与保留 token 比例两个敏感超参。",
+  "baselines": [
+   "StreamVGGT",
+   "OVGGT",
+   "CUT3R",
+   "TTT3R",
+   "LingBot-Map",
+   "ZipMap",
+   "VGGT",
+   "π³",
+   "FastVGGT",
+   "GoToHunt"
+  ],
+  "datasets": [
+   "7-Scenes",
+   "NRGBD",
+   "Sintel",
+   "Bonn",
+   "KITTI",
+   "ScanNet/CO3Dv2/MegaDepth/Waymo 等 14 个训练集"
+  ],
+  "novelty": "把混合语言模型（多数 Mamba2 层 + 少数全注意力层）的配方首次系统迁移到流式 3D 几何，并用 register token 实现「先选帧、再选 token」的两级稀疏注意力，把长程记忆压到常数成本；同时给出视觉几何专用的三阶段蒸馏流程，使架构改造的代价从「从头训」降到教师训练成本的 9%。",
+  "limitations": "长流仍有缓慢退化（稠密流 50→400 帧 Acc 0.014→0.046），不如 LingBot-Map 平稳，精度也略逊（0.066 vs 0.040）；依赖 StreamVGGT 教师与三阶段蒸馏，换 backbone 需重做整套流程；实验中 k 帧、token 保留比例是固定超参，缺少自适应；评测以离线回放数据集为主，尚未接入真实 SLAM 闭环或移动端。",
+  "trl_evidence": "代码已开源（github.com/UNITES-Lab/linear-vggt）；单卡 27 ms/帧、可处理 1,024 帧流并保持近恒定延迟，具备实时 SLAM 前端的时延条件；但目前是研究原型，无机器人或产品级部署。",
+  "code": "已开源 github.com/UNITES-Lab/linear-vggt",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：流式重建的二次成本是 SLAM 落地的真实卡点，本文给出可用的恒定成本替代。NOV=4：Mamba2 与 register 引导两级稀疏注意力的组合、以及配套三阶段蒸馏，都是针对视觉几何的新设计。TEC=5：架构、蒸馏、CUDA 级推理优化齐备，含组件消融与超参敏感性。EXP=4：2 个重建集 + 3 个深度集 + 5 个 backbone 迁移 + 3 类任务，覆盖充分。PER=4：比教师快 12×、精度误差降 49%，比最强在线模型快 2.5× 且显存省 2.7×。TRL=4：开源 + 实时级延迟，但仍是研究原型。REP=4：代码公开、协议清晰。"
+ },
+ {
+  "id": "2611.33655",
+  "title": "Recall4D: Forgetting, Not Misalignment, Limits Long-Horizon Feed-Forward 4D Reconstruction",
+  "title_zh": "Recall4D：限制长时程前馈 4D 重建的是遗忘，而不是错位",
+  "problem": "前馈 4D 跟踪器能在短视频上一次性回归相机、深度与点轨迹，但把窗口串起来处理长视频就会退化：PointOdyssey 上 Point4D 的生存率随视频变长急剧下降。通常的解释是窗口间 Sim(3) 配准漂移（实测平均旋转差 1.2°、尺度差 3.4%），于是自然的补救是更好的对齐或回环。作者用 oracle 实验证伪了这条路径：把每个窗口间变换换成真值位姿后，EPE 仍是 1.568，与基线的 1.569 无差别；真正的误差来源是「遗忘」——静态点离开视野后仍被反复从看不到它的窗口重新预测，静态点 EPE 从可见时的 1.25 升到 400 帧未见后的 2.30，静态点出框时的 EPE 高达 1.799。",
+  "method": "训练无关框架，冻结 backbone（Point4D），不动网络权重。①持久世界状态：用现成分割模型取首帧前景 mask，mask 外的查询视为静态，$\\mathcal{B}=\\{i:M_1(\\mathbf{u}_i)=0\\}$，每点维护 $s_i=(\\hat{\\mathbf{x}}_i,n_i)$；可见性用「存储的世界坐标」而非最新预测投影判断，$\\mathbf{p}_i^t=R_t^{\\top}(\\hat{\\mathbf{x}}_i-\\mathbf{c}_t)$，$v_i^t=\\mathbb{I}[(\\mathbf{p}_i^t)_z>0\\land\\pi(K_t\\mathbf{p}_i^t)\\in\\Omega]$；每个窗口在 $m=4$ 个均匀关键帧上，对可见点以其存储位置作 3D query 解码得世界坐标观测 $\\mathbf{x}_i^{\\tau}=G_k^{-1}(\\mathcal{D}(\\mathcal{E}(C_k),G_k(\\hat{\\mathbf{x}}_i),\\phi_i)_\\tau)$，再做 running mean 融合 $\\hat{\\mathbf{x}}_i\\leftarrow(n_i\\hat{\\mathbf{x}}_i+\\mathbf{x}_i^{\\tau})/(n_i+1)$；不可见点保持原值，每帧输出直接取状态，从而既省掉对已见几何的重复解码，又避免把新噪声写回已恢复的几何。②稀疏锚点 + 几何蒙皮：每个前景实例用 FPS 选 $A_o\\le32$ 个代表锚点（实际 24–32）由冻结解码器跟踪；每个查询取同实例 $H=6$ 个最近锚点，权重 $w_{ij}=\\exp[-(d_{ij}/\\lambda_i)^2]/\\sum_{\\ell}\\exp[-(d_{i\\ell}/\\lambda_i)^2]$、$\\lambda_i=2\\min_\\ell d_{i\\ell}$，输出 $\\mathbf{y}_i^t=\\bar{\\mathbf{x}}_i^{(k)}+\\sum_j w_{ij}(\\mathbf{a}_j^t-\\bar{\\mathbf{a}}_j^{(k)})$；窗口 $L=48$、重叠 8（步长 40），窗口间用剔除前景后的 trimmed Sim(3) 配准，前景 mask 由 SAM 3.1 给出。",
+  "key_numbers": [
+   "仅保留未见点最后位置（不改模型）：PointOdyssey EPE 1.569→1.168（−26%），SR 0.193→0.260",
+   "Recall4D（1,000 帧）：EPE 0.889（−43%），静态点出框 EPE 1.799→0.433（−76%）",
+   "2,000 帧：EPE 4.634、SR 0.362、264 s（Point4D 5.334 / 0.178 / 2,019 s，快 7.6×）",
+   "500 帧：EPE 0.836、74.9 s（Point4D 0.979 / 582.1 s）",
+   "2,000 帧约 4.4 分钟完成，峰值显存 <25 GiB",
+   "对照：GT 位姿对齐 EPE 1.568 vs 基线 1.569（0%，证伪配准漂移假说）"
+  ],
+  "ablation": "Table 4 在 PointOdyssey val（500 帧）上把组件逐项加到链式 Point4D 上（持久状态、锚点蒙皮、锚点数），报 EPE / EPE_dyn / APD / SR；Table 1 的诊断性消融更关键：基线 1.569 → GT 位姿对齐 1.568（0%）→ hold unseen 1.168（−26%）→ GT 位姿 + hold 1.173 → GT 可见性 hold 1.043（−33%）→ 完整 Recall4D 0.889（−43%），把「对齐」与「记忆」的贡献彻底分离。",
+  "baselines": [
+   "Point4D",
+   "TrackEverything (sparse/dense)",
+   "SpatialTrackerV2",
+   "V-DPM",
+   "4RC",
+   "Any4D",
+   "TraceAnything",
+   "Track4World"
+  ],
+  "datasets": [
+   "PointOdyssey",
+   "Dynamic Replica",
+   "真实视频（附录定性）"
+  ],
+  "novelty": "相对把长视频退化归因于配准漂移并加回环/更好对齐的路线，本文用 oracle 对齐实验证伪该假设，指出「遗忘已观测几何」是主因；再用零训练、零参数的「持久状态 + 少量锚点蒙皮」同时提升精度与速度——不是造新跟踪器，而是修好现有跟踪器的记忆与冗余。诊断本身比方法更具迁移价值：同一插件在 5 个 backbone、3 类任务上都成立。",
+  "limitations": "1,500 帧之后所有方法绝对误差仍很高（EPE>4.5），训练无关插件无法修正 backbone 本身的运动预测误差；静态/动态划分依赖首帧分割 mask，之后进入画面的前景不会被建立状态；可见性只判视锥内、不处理遮挡；评测以合成 PointOdyssey 为主，真实视频仅有定性结果。",
+  "trl_evidence": "训练无关、可直接套在现有 tracker 上，单张 H100（显存限 40 GB）上 2,000 帧 264 s、峰值 <25 GiB，具备长视频离线处理的实用性；有项目页与定性视频，但无机器人/在线部署，也无代码仓库。",
+  "code": "未提及代码仓库；项目页 kincin.github.io/Recall4D",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：长时程 4D 跟踪退化是 4D 重建与 SLAM 的真实瓶颈，且本文纠正了社区的错误归因。NOV=4：以 oracle 实验确立「遗忘」为主导失效模式，并用持久状态 + 锚点蒙皮给出零训练解法。TEC=3：方法简洁清晰、有组件消融，但无理论分析与误差界。EXP=4：2 个长序列基准 + 8 个基线 + 5 个 backbone + 3 类任务迁移。PER=4：2,000 帧 EPE 降 13%、1,000 帧降 43%，同时快 7.6×。TRL=3：可直接插到现有管线、有项目页，但无开源与在线系统。REP=3：细节与协议充分、项目页可查，代码未给。"
+ },
+ {
+  "id": "2611.33698",
+  "title": "Efficient Scene-Distribution-Aware Second-Order Optimization for 3D Gaussian Splatting",
+  "title_zh": "面向三维高斯泼溅的高效场景分布感知二阶优化",
+  "problem": "3DGS 的优化以单视图为单位更新数万次：在 Mip-NeRF 360 上，Adam 从稀疏 SfM 点云训 30,000 次需 7.6 分钟，从稠密预训练模型微调 10,000 次也要 6.8 分钟；而前馈管线预测高斯后还要 1,000–3,000 次精修，训练慢直接拖住整条链路。二阶方法能用更少次更新达到同等质量，LM-RS 用 64 视图 × 300 次更新就能逼近 30,000 次 Adam 的 PSNR，但 300 次二阶更新要 8.2 分钟，比 Adam 还慢。原因有二：按 K-Means 独立选视图会让两个几乎重复的视角进入同一批，浪费场景覆盖；每次更新对每个视图单独跑一遍累积，预条件子还要从第一个高斯重算 alpha 合成。",
+  "method": "保留 LM-RS 的采样 LM 框架（残差采样、matrix-free PCG、对角预条件、阻尼、自动步长），并补上 3 阶球谐系数一起优化。①Scene-Distributional View Sampling：沿相机轨迹均匀放置每批视图，若某视图与已选视图重叠则替换为邻近、较不相似的视图，所有批次在优化前一次性确定——只用位姿、无额外渲染或反传，目标是让每批的相机位置与朝向分布更接近全体训练视图，降低 $\\hat{\\boldsymbol{J}}^{\\top}\\hat{\\boldsymbol{J}}$ 中重复行的冗余。②Tile-Grouped Multi-View Accumulation：把多个视图的采样 tile 打包进统一布局，一次累积就为整批视图构建 $\\hat{\\boldsymbol{J}}$，避免逐视图单独 pass。③Bucket-Prefix Jacobi Preconditioning：渲染时按射线把若干高斯处的透射率与累积颜色缓存下来，预条件子计算从这些前缀并行起步，而不是从第一个高斯重新合成。三项都不改更新规则，只改「选哪些视图」和「怎么执行」。所有对比固定同一组高斯、只更新参数，因此差异来自优化而非密度控制。",
+  "key_numbers": [
+   "SfM 初始化（Mip-NeRF 360，13 场景）：PSNR 25.800、198.1 s（LM-RS₆₄ 25.632 / 492.9 s；3DGS-Adam 25.698 / 457.5 s）",
+   "3DGS checkpoint 微调（50 步、9 场景 5 seed）：PSNR 27.9097、177.9 s（LM-RS₆₄ 27.8093 / 370.0 s）",
+   "Taming-3DGS checkpoint：PSNR 28.1823、134.9 s（LM-RS₆₄ 28.0256 / 333.7 s）",
+   "3DGS-MCMC checkpoint：PSNR 28.4893、219.9 s（LM-RS₆₄ 28.3325 / 499.4 s）",
+   "消融（Tanks&Temples，300 步）：PSNR 23.481→23.742，时间 255.2→113.9 s（2.24×）",
+   "峰值显存 50.16 GB（Bonsai，64 视图批，50 步微调）"
+  ],
+  "ablation": "Table 5 在 Tanks&Temples 的 train、truck 两场景累积加组件：LM-RS₆₄ 基线 23.481 / 255.2 s（1.00×）→ +SDS 23.739 / 245.5 s（1.04×，主要提 PSNR）→ +SDS+TG 23.742 / 144.6 s（1.76×，时间降 40%+）→ +SDS+TG+BP 23.742 / 113.9 s（2.24×，再降 20%）。Table 2 单独比较视图选择策略（随机 / K-Means / 本文）的 Coverage Distance 与 PSNR，本文覆盖距离最低且 PSNR 最高。",
+  "baselines": [
+   "LM-RS (64 views, degree-3 SH)",
+   "3DGS-LM (16×4)",
+   "3DGS-Adam (30k / 10k)",
+   "3DGS²-TR（相关工作对照）"
+  ],
+  "datasets": [
+   "Mip-NeRF 360",
+   "Tanks&Temples",
+   "Deep Blending"
+  ],
+  "novelty": "相对 LM-RS，本文把「每批视图冗余」与「逐视图重复累积 / 重算预条件」识别为两个独立开销，并分别用位姿层面的去冗余采样、以及与更新规则完全解耦的两项实现优化来解决；相对 3DGS-LM、3DGS²、TurboGS 等拆分系统或分参数求解的做法，这里保留全耦合系统与 3 阶 SH，使二阶更新既准又快。",
+  "limitations": "多视图批训练的内在显存开销无法消除：每个视图有独立的可见序、透射率与累积颜色，Bonsai 上 64 视图批峰值已达 50 GB，作者自述这是限制消费级硬件批大小的主因；精度增益很小（PSNR 约 +0.17 dB），主要收益是速度，属工程优化而非质量突破；固定高斯集合，未与 densification 联合；3DGS-LM 被迫用 16×4 子集以避免 OOM，比较不完全对等。",
+  "trl_evidence": "单张 RTX PRO 6000 Blackwell 上的原型实现，与标准 3DGS 训练/微调流程兼容（可从 SfM 点云或四种预训练 checkpoint 起）；无代码、未与 feed-forward 精修管线做端到端集成，也无产品化证据。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：3DGS 训练慢是有价值的工程问题，但已有大量加速工作，非卡脖子。NOV=3：三项改进都是对 LM-RS 的实质优化，缺少新范式。TEC=4：三项组件与更新规则解耦、消融干净，含显存与时间分解。EXP=4：3 个数据集 13 个场景、3 类基线、4 种 checkpoint × 5 seed。PER=3：质量仅 +0.17 dB（<10%），速度 2.2–2.5× 但质量维度提升微弱。TRL=2：离线单卡原型、无开源。REP=2：无代码，关键实现细节（tile 打包布局、前缀缓存粒度）描述偏简。"
+ }
+]

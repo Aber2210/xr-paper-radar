@@ -1,0 +1,381 @@
+[
+ {
+  "id": "2611.33728",
+  "title": "Asset4D-Bench: Benchmarking Coding Agents for Editable 3D and 4D Reconstruction",
+  "title_zh": "Asset4D-Bench：面向可编辑 3D 与 4D 重建的编码智能体基准",
+  "problem": "让编码智能体从图像/视频写出可编辑的 Blender 程序，难点不在「物体动到哪」，而在「动的同时关系是否成立」：一辆小车可以严格沿参考轨迹运动，而货物始终悬在车厢上方。现有基准各测一半——Code4Scene 查场景编辑后的引擎状态、PhySimCode 查物理参数、Video2World 查能否执行任务、4DCodeBench 查动态过程可执行性——但没有在同一份被独立重开的工程里同时给几何、运动、关系分别记分。作者据此构建 114 个条件、四个 track 的基准，并在 24 个 from-scratch 任务上发现：两个模型都能在 14 个任务上拿满 dynamics 分，其中 Sol 有 3 个、Astra 有 8 个 relations 得 0 分。",
+  "method": "任务定义为 $p_{i,a,m}=\\mathcal{M}_m(O_i,\\mathcal{A}_{i,a},q_{i,a})$：给定观测 $O_i$、起始资产包 $\\mathcal{A}_{i,a}$ 与指令，智能体输出可被重开的 Blender 工程。四个 track 分别是图像编辑、full-asset 视频、partial-asset 视频（30 对共享参考/目标/评分卡，仅资产包不同）与独立挑选的 from-scratch。准入分 $A=40\\sum_g w_g f_g+40\\sum_g w_g v_g+5\\sum_{j=1}^{4}k_j$，要求 $A\\geq 80$ 且四项二元检查全过（如 MV02V/F 得 89.14）。评测端由 Blender adapter 在 $t=\\mathrm{PTS}\\times\\mathrm{timebase}$ 处重开工程、读帧与子帧状态，按维度预算把分数分到语义组与准则：$b_\\ell=W_d/(|\\mathcal{G}_d||\\mathcal{L}_g|)$。单条准则的得分率是分段线性函数 $q(e;\\tau)=\\max(0,\\min(1,(3\\tau-e)/(2\\tau)))$，误差 $\\le\\tau$ 满分、$2\\tau$ 半分、$\\ge 3\\tau$ 零分，二元谓词只给 0/1。图像编辑的保真度为 $B=T+P+C$（目标 60、保持 25、相机 15），并要求严重变换失败时用 $\\rho_g=2\\min_{\\ell\\in\\mathcal{F}_g}q_\\ell$ 压制目标分。证据不确定时分数以区间传播：未知证据贡献 $[0,b_\\ell]$，加权覆盖率 $\\kappa=\\sum b_\\ell z_\\ell/\\sum b_\\ell$；只有区间坍缩且证据确定才发布单一分数。严格完成另需 $B^-\\geq 80$、$\\kappa\\geq 0.95$ 与全部关键准则满分。以 IN02 为例，货箱轨迹占 8.75 分（33 个公开采样点、$\\tau=0.06$），两条各 12.5 分的关系准则用 192 个源状态检查「释放先于接触」与「全程保持支撑」。",
+  "key_numbers": [
+   "条件总数：114 个（图像编辑 / full-asset 视频 / partial-asset 视频 / from-scratch 四个 track），归档分数 228 条",
+   "图像编辑均值：Sol 72.36、Astra 75.09（满分 100）",
+   "full-asset 视频均值：Sol 13.00、Astra 21.79；partial-asset：Sol 30.58、Astra 21.58",
+   "from-scratch（Z24）恢复保真度均值：Sol 66.29、Astra 59.78；中位数 75.00 / 71.67",
+   "关系项贡献：Sol 与 Astra 的 6.50 分均值差中 5.15 分来自 relations",
+   "关系全零比例：在 dynamics 满分的 14 个任务中，Sol 3/14、Astra 8/14 的 relations 为 0",
+   "视频条目零分：120 条中 46 条为 0，其中 44 条是原始执行失败、2 条是实测场景分",
+   "准入阈值：$A\\geq 80$ 且 4 项检查全过；MV02V/F 的准入分为 89.14"
+  ],
+  "ablation": "无独立消融（基准论文，不提出可拆模块）。替代证据有三类：其一，剔除任一提交需要源码修复的样本后剩 17 对 Z24，均值差 5.51 分、其中 4.33 分来自 relations；其二，逐任务留一法的差值区间为 4.61–7.87 分；其三，在 9 个 HM 条件上修正坐标系后，两模型的实测零分从 8 个降到 1 个，说明部分「失败」来自坐标约定而非模型能力。作者还给出 Q08 作者对照：支撑误差 40 mm 对 $3\\tau=24$ mm，虽得 87.5 分且覆盖率满分，仍在关键项失分而未通过严格完成。",
+  "baselines": [
+   "GPT-6.1-Sol（xhigh reasoning effort）",
+   "GPT-6-Astra（xhigh reasoning effort）",
+   "Code4Scene（同表按输入/产物/证据维度定位对比）",
+   "PhySimCode（同表定位对比）",
+   "4DCodeBench（同表定位对比）"
+  ],
+  "datasets": [
+   "Asset4D-Bench（114 条件、30 对 full/partial 参考、24 个 from-scratch 任务）",
+   "Kubric 渲染的 Blender 原生场景（合成参考与私有源状态）"
+  ],
+  "novelty": "相对 BlenderGym（只评对给定场景的编辑）、4DCodeBench（只评动态过程可执行）、VibePrevisBench（渲染代理 + 原生检查），Asset4D 把几何、运动、关系拆成独立预算，并在同一份被独立重开的工程里按原始事件时刻测量，因此能区分「终点对但过程错」。配对 full/partial 起始资产让「同一参考、不同可恢复量」成为受控变量；版本化评分卡 + 证据覆盖率区间则把「测不出」与「测出错」分开，避免未知证据被当成零分。",
+  "limitations": "作者自述：归档运行之间执行与恢复策略不一致，因此不能把 full/partial 的均值差解释为起始资产效应的因果估计；评测只覆盖规定的回放，不测交互式玩法、反事实物理或迭代反馈收益；包围盒、基网格顶点与事件谓词不能证明力、任意隐藏状态或用户编辑后的行为。我们另看出：只有两个模型配置，且归档未记录统一的评审模型、人工评分人数与一致性，跨模型排名可比性有限；30 对资产对的 60 个 model-by-reference 组合中只有 41 个绑定了同一批输入。",
+  "trl_evidence": "属于离线评测基础设施：智能体在受控工作区生成工程，评测端独立执行、保存、重开并测量，无在线服务或产品化描述。归档的 228 条分数包含原始交付结果与多个版本的重测，恢复策略（动画 API 兼容、源码规范化、沿用已存场景）被逐条记录。",
+  "code": "未提及（正文无代码或数据链接）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 2,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：可编辑 4D 重建中「轨迹对、关系错」是真实且此前无基准度量的缺口，但受众限于 coding agent + 3D 生成交叉领域。NOV=4：首次把几何/运动/关系分预算并绑定同一可重开工程，配对起始资产与区间化证据覆盖属新评测范式。TEC=4：准入分、预算分配、得分率、区间传播、严格完成构成完整可复现的测量体系，但无理论证明也无可拆模块消融。EXP=3：114 条件、228 分数规模足够，但仅两个模型配置、缺评审信度统计。PER=2：非方法型论文，无相对 SOTA 提升，只给出 6.50 分差距的加性归因。TRL=2：纯离线归档评测，无在线系统。REP=3：协议与容差写得细，但无代码/数据链接。"
+ },
+ {
+  "id": "2611.33731",
+  "title": "RoboJackVR: Turning Robot Tasks into VR Games for Scalable Demonstration Collection",
+  "title_zh": "RoboJackVR：把机器人任务改造成 VR 游戏以规模化采集示范",
+  "problem": "扩大机器人示范数据需要更多参与者和更多任务，但遥操作门槛与逐任务适配成本同时卡住两侧：DROID 靠多机构协作仍受硬件与人力约束，XR 方案常依赖外部仿真主机，任务换一个就要重写交互与成功判定。作者把已有任务库（LIBERO、SO101-Nexus）当游戏内容，问「玩的时候采的数据能不能训 policy」。在 LIBERO-90 的 66 个任务上，仅用 VR 数据训 ACT 得 69.6%（held-out）与 68.2%（official），而 40 条/任务的标准仿真示范是 76.6% 与 73.5%；把 VR 数据加到 25% 标准数据上则从 58.2%/54.8% 提到 66.6%/69.2%。",
+  "method": "系统是独立 VR 游戏：Unity 负责 XR 输入与呈现，机器人控制、MuJoCo 动力学与任务评测编译为 Android/ARM64 原生库，直接在 Quest 头显上跑，采集时不需要外部 PC 或仿真服务器。集成边界由三层组成：task contract 声明资产、控制与重置接口、初始状态来源、成功条件与记录语义；task adapter 实现控制器、重置与成功判定；game configuration 单独指定教学文案、技能参数与关卡位置；shared bindings 复用准备、派发、结果投递与 episode 收尾。一局战斗中，技能即任务挑战，一次技能执行是一个 attempt group；对目标 $k$ 的 $N$ 次尝试分配整数预算 $B_k$，第 $j$ 次伤害为 $d_{j,k}=\\min(H_{j,k},y_j b_{j,k})$，失败不返还份额；冷却用计数器实现，首次结算置为 $c+1$，每个完整敌方回合减一。记录侧 Franka Direct 导出 20 Hz 观测与相邻观测间的 5 个 100 Hz 控制 tick：$\\mathcal{D}_e=((o_t,U_t,o_{t+1}))$。训练前把记录转成 20 Hz OSC 轨迹（robosuite 1.4.1 / MuJoCo 2.3.7）：恢复初始状态、按记录控制重建末端与夹爪参考、参考速度放慢 2 倍、夹爪开合时手臂暂停，转换执行失败的任务也保留；夹爪通道输出 $\\{-1,0,+1\\}$，初始指距 >0.04 m 记为开。ACT 带 130 任务 ID 输入、两路 $128\\times128$ RGB、9 维状态、100 步动作块，AdamW 学习率 $10^{-4}$、批 16、10 epoch、4 个种子取均值。",
+  "key_numbers": [
+   "任务目录：130 个 LIBERO + 4 个 SO101，均有默认战斗配置",
+   "预发布采集：106 个 LIBERO 任务、2141 条唯一 episode；学习评测用其中 66 个 LIBERO-90 任务、1310 条转换后示范（约 20 条/任务）",
+   "参与者：21 人",
+   "标准 100%（40 条/任务，335k updates）：held-out 76.6%、official 73.5%",
+   "仅 VR（约 20 条/任务，127k updates）：69.6% / 68.2%，为全标准臂的 91% / 93%",
+   "VR + 25% 标准（210k updates）：66.6% / 69.2%；纯 25% 标准：58.2% / 54.8%",
+   "等更新数对照（210k）：仅 VR 65.3% / 68.7%，25% 标准 54.8% / 55.8%",
+   "去掉夹爪层级转换的消融：official 9.7%、held-out 7.6%（同种子 20261012 下完整转换为 66.7% / 68.5%）"
+  ],
+  "ablation": "夹爪格式消融是主要一项：同一批 1310 条 VR episode、保留转换器的夹爪事件但不做 ±1 层级转换，official 掉到 9.7%、held-out 掉到 7.6%，而完整转换为 66.7%/68.5%（单种子）。另有等更新数对照（VR 65.3/68.7 对 25% 标准 54.8/55.8），说明增益不是「多训了 210k 步」；但作者也承认 VR 臂每任务 episode 数约为 25% 臂的两倍，数据量与训练量未完全解耦。",
+  "baselines": [
+   "Standard 100%（LIBERO 官方 40 条/任务仿真示范）",
+   "Standard 25%（10 条/任务）",
+   "Standard 25% + matched updates（210k）",
+   "VR only + matched updates（210k）"
+  ],
+  "datasets": [
+   "LIBERO-90（66 个有 VR 数据的任务，660 例 held-out 初始状态 / 330 例官方初始状态）",
+   "LIBERO（130 任务目录）",
+   "SO101-Nexus（4 个任务）"
+  ],
+  "novelty": "相对 RoboCade（把游戏嵌进真机遥操作并共训支撑任务）、Project Kitchen（裸手 VR 烹饪采集接触点）、RoboTurk/IRIS（遥操作或沉浸式交互基础设施），RoboJackVR 把「一次任务尝试」同时定义为战斗技能与示范单元，用 contract/adapter/config/binding 四层把游戏规则与任务语义解耦，从而换关卡不改控制与成功判定。相比只做采集工具的工作，它把「头显本地跑 MuJoCo」与「完整冒险游戏循环（技能选择、敌方回合、成长解锁）」接进同一条采集到训练的管线。",
+  "limitations": "作者自述：全部在仿真内、单一架构（ACT）、每臂 4 个种子；转换把参考放慢 2 倍并在夹爪动作时暂停手臂，使 VR 数据的执行时序与标准数据不同，不能当作纯「数据来源」对照；held-out 初始状态与 VR 布局的精确重叠无法排除（首帧最小像素差 1.47 对 1.55）。我们另看出：预发布阶段只有 21 名参与者，玩家技能水平与流失未建模；游戏机制（冷却、关卡解锁、战斗终止）会系统性改变任务比例与重复次数，采集分布不等于任务分布。",
+  "trl_evidence": "独立应用已在消费级 Quest 头显上运行 MuJoCo 与记录，21 名参与者完成真实采集，属于可用的预发布系统而非离线脚本；账号服务与上传走网络，图像生成、动作转换与策略训练仍在设备外。作者明确写的是 pre-release study，公开部署后再研究参与者多样性与真机迁移。",
+  "code": "未提及（正文无代码或数据发布链接）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：示范数据规模化是真实工程瓶颈，但本文只解决采集侧的一环，且限于仿真任务。NOV=3：游戏化采集与任务契约都有先例，实质新意在于四层集成接口 + 头显本地仿真 + 完整游戏循环的组合。TEC=3：系统描述完整、有伤害/冷却的形式化与导出 schema，但无理论分析，核心机制未逐项消融（只做了夹爪转换）。EXP=3：66 任务、4 种子、两套初始状态，但单仿真、单架构、21 人。PER=3：VR 仅达全标准 91%，对 25% 标准臂 +11.4/13.4 分属特定子集提升，且不是对 SOTA 的超越。TRL=4：头显上真实可跑、真人采集，接近可复现的在线系统；未产品化。REP=3：实现细节充分（超参、导出率、转换规则），但无开源。"
+ },
+ {
+  "id": "2611.33735",
+  "title": "JOVE-ICE: Intent-Guided Cloud–Edge–Device Collaboration for AI Glasses",
+  "title_zh": "JOVE-ICE：面向 AI 眼镜的意图引导云–边–端协同框架",
+  "problem": "AI 眼镜的算力、电量与网络远弱于手机，但用户要求会话级延迟；现有框架多在堆功能、且研究偏重视频类能力，对「简单但高频」的请求缺乏成本控制。作者采集真实眼镜请求后发现，设备控制类指令占交互的 30% 以上，这类请求本可在端侧闭环，却常被送进云端大模型。以固定路由（全部走 Tool-Augmented Subagent）为基线，SuperGlasses 上 TTFT 为 4.5251 s、E2E 6.6057 s、每样本 4575.8 token，WearVQA 上为 2.2942 s、3.2070 s、2641.0 token。",
+  "method": "把请求路由写成带质量约束的优化：$\\min\\mathbb{E}[T_{\\text{e2e}}(q,\\pi)]+\\lambda\\mathbb{E}[C_{\\text{token}}(q,\\pi)]$，约束 $Q(q,\\pi)\\geq Q_{\\text{base}}(q)-\\epsilon$，即允许极小质量损失换延迟与 token。三级级联按「能处理该请求的最省资源层」匹配：T1 在眼镜上跑 CNN 关键词唤醒（log-Mel 输入、6 个封闭触发词、保守阈值 $\\theta_{\\text{kws}}$，命中即本地执行、不出网）；T2 在配对手机上做 VAD + ASR，再对 11 条设备控制命令词典做确定性字符串匹配 $f_{\\text{match}}(T,\\mathcal{K})$，命中就直接经蓝牙回传指令；T3 在云端用三个独立分类器：MacBERT-base 的设备控制意图（12 类：11 命令 + OTHER，另带 slot head 抽取应用名/联系人/时间并做意图-槽位一致性校验）、XLM-R-base 的视觉需求二分类（$p_v(\\text{NEED\\_IMAGE}\\mid T)\\geq\\gamma$ 才抓帧）、MacBERT-large 的 SIMPLE/COMPLEX 二分类。会话管理用硬触发（显式终止词、意图突变）加软触发 $S=w_t\\Delta t_{\\text{inactive}}+w_d\\mathbb{I}_{\\text{off-body}}$，$S\\geq\\tau$ 即归档并新开会话，实验中 $w_t=1$、$w_d=60$、$\\tau=120$ s。三个 subagent（文本对话、多模态感知、工具增强）由意图组合激活，工具增强支路接入 skill/API/MCP/RPA；图像帧仅在 NEED_IMAGE 且设备有相机时按需上传。",
+  "key_numbers": [
+   "设备控制类请求占比：真实请求中 >30%",
+   "端侧直接消化：9.6% 的请求由 T1/T2 处理，延迟接近 0",
+   "T3 回流 T2：21.7% 的请求被云端设备控制分类器判给手机执行，中位延迟 43 ms、P99 74 ms",
+   "SuperGlasses：TTFT 4.5251 s → 3.9065 s（约 -13%），E2E 6.6057 s → 6.1277 s（-7.2%），token 4575.8 → 3897.4（-14.8%），准确率 45.46% → 42.49%",
+   "WearVQA：TTFT 2.2942 s → 1.9946 s，E2E 3.2070 s → 2.8711 s（-10.5%），token 2641.0 → 2334.8（-11.6%），准确率 51.88% → 50.52%",
+   "WearVox 五任务均值：任务分 48.96 → 51.25，TTFT -15.2%，E2E -14.5%，token -11.3%",
+   "意图分类器并行开销：12.375–13.228 ms/请求（三个数据集）",
+   "会话边界（199 轮）：Split 精确率 94.29%、召回 97.06%、F1 95.65%；Continue 99.39% / 98.79% / 99.09%"
+  ],
+  "ablation": "无独立消融。替代证据是三组分解统计：路由分布与分层 TTFT（T1/T2 近零延迟、T3 内 21.7% 回流 T2 的 43 ms 中位延迟）、三个分类器的 GPU 运行时间表、以及会话管理的混淆矩阵（33/1 与 2/163）。这些说明了各层的开销与判定质量，但没有逐组件移除实验，因此无法量化级联、会话管理、subagent 编排各自对端到端指标的贡献。",
+  "baselines": [
+   "Fixed Route（FR）on SuperGlasses：准确率 45.46%、TTFT 4.5251 s、E2E 6.6057 s、4575.8 token",
+   "Fixed Route（FR）on WearVQA：51.88%、2.2942 s、3.2070 s、2641.0 token",
+   "Fixed Route（FR）on WearVox：均值 48.96、TTFT 6.7518 s、E2E 10.5670 s、9513.8 token"
+  ],
+  "datasets": [
+   "SuperGlasses（2422 条图像–问题–答案）",
+   "WearVQA（2500 条第一视角 VQA）",
+   "WearVox（5 个音频任务；文本评测用 4260 条有参考转写的子集）",
+   "CascadeEval（428 条真实眼镜请求，来自 W1/L1/S1 三种形态）",
+   "Session Management Dataset（199 轮人工标注，Split 34 轮 / Continue 165 轮）"
+  ],
+  "novelty": "相对 VisionClaw（手机主要做数据流、计算仍集中在设备与云）与「意图感知的语义 agent 通信」（意图只用于决定传输什么），JOVE-ICE 把意图当作跨三层的路由信号：封闭词表 + 模板匹配 + 神经分类的级联决定「在哪算」，再由意图组合决定「谁来算」（三个 subagent + 会话管理）。它的形式化把「避免不必要的跨层传输与过度推理」写成带质量下界的延迟/token 联合目标，而不是单纯把任务卸载到边缘。",
+  "limitations": "作者自述的代价是准确率下降 2.97 与 1.36 个百分点，原因是隐含视觉问题被判成非视觉（如「仙人掌为什么形状不同」未取图），回答缺少视觉证据。我们另看出：端到端只对比一个基线 FR，且 FR 全部走最重的工具增强支路，属于偏弱对照；正文宣称降低带宽与能耗，但只报 token 与延迟，没有功耗或上行字节实测；CascadeEval 仅 428 条、来自自家三种机型，分布代表性有限；云端三分类器与 27B 模型仍需 2×RTX4090 与 2×A100，端侧省下的只是「不必调用」，并非把能力搬上眼镜。",
+  "trl_evidence": "在 W1（纯音频）、L1（带显示）、S1（带相机）三种真实形态上回放 428 条真实请求，传输层原型用 WebSocket、生产拟用 WebRTC，说明已过纸面设计阶段；但推理仍在 2×RTX4090（分类器）与 2×A100（Qwen3.8-27B）上，属实验室原型而非量产。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：眼镜端算力/带宽约束是真实部署问题，但「按意图分层路由」属有价值工程问题，非领域卡脖子。NOV=3：三级级联与 subagent 编排均为已有组件的实质组合，新意在把意图同时用于层级与执行体选择。TEC=3：系统与公式清楚、有分层统计与会话混淆矩阵，但无组件消融、无理论保证。EXP=3：三个公开基准 + 两个私有集，但端到端仅一个基线，真实请求规模仅 428 条。PER=3：TTFT 约 -13%、token -11%~-15%，但 E2E 仅 -7.2%~-10.5% 且准确率下降，属特定指标上的有限收益。TRL=4：三种真实机型上跑通、真实请求回放，接近在线原型。REP=2：无代码，模型与提示细节对外不可复现。"
+ },
+ {
+  "id": "2611.33760",
+  "title": "GlassGround: GUI Grounding Beyond Native Screenshots with Egocentric Wearable Vision",
+  "title_zh": "GlassGround：超越原生截图的穿戴第一视角 GUI 定位基准",
+  "problem": "智能眼镜助手只能用相机看手机屏幕，拿不到截图与界面状态；此时界面在画面中占比小、带透视畸变，还叠加反光、摩尔纹与显示屏–相机成像效应。现有 GUI grounding 基准几乎都在原生截图上评测，而相机拍屏数据集（如 PC-Restore）只服务图像复原，不做指令条件定位。作者用同一 GUI 状态、同一指令、同一目标配对截图与穿戴相机观测后发现：十个开源模型平均从 94.8% 掉到 48.5%，单模型跌幅 36.1–56.2 个百分点，闭源三模型跌幅 26.9–67.1 个百分点。",
+  "method": "任务写成三元组 $(s,q,e)$，观测 $I$ 给出实例 $(I,q,y)$，模型只看 $I$ 与 $q$、输出点 $\\hat{p}$，落在目标多边形 $y$ 内即正确。构造上把同一张截图全屏显示在原手机上，用 4 台穿戴设备（Aria Gen 1、Aria Gen 2、Quest 3、Galaxy XR）× 4 种光照（Indoor-Dark / Indoor-Lamp / Outdoor-Shade / Outdoor-Sun）拍 $K=16$ 次，得到 clean 与 physical 的配对，差异只来自观测过程（observation shift）。任务只在 clean 截图上建：OmniParser + OCR 提候选、打 Set-of-Mark 标号、Claude Fable 5.1 逐候选判断并写指令（不预测框），再由人工逐条核验目标有效性与框精度。物理侧真值用 YOLO11n-pose 检屏幕四角（人工逐帧修正）估单应 $H_k$，把 clean 目标框投到相机图：$c_j^{(k)}=\\pi(H_k\\tilde{c}_j)$，保留为多边形以维持透视几何；交叉复核带来的精度变化不超过 0.16 pp。分析路径构造三级中间观测：Resized（缩放到与目标面积一致）、Warped（用单应投到屏幕上、保留真实背景）、Rectified（逆单应拉正、保留相机像素），从而把「像素来源」与「呈现方式」分开。PairDistill 用冻结教师看 clean 图、LoRA 学生看 physical 图，按目标区域面积加权池化视觉 token：$\\operatorname{Pool}_R(F)=\\sum_j w_j\\mathbf{f}_j$，$w_j=|R\\cap\\Omega_j|/\\sum_k|R\\cap\\Omega_k|$，减去全图均值得 $\\mathbf{z}_c,\\mathbf{z}_p$；损失 $\\mathcal{L}_{\\mathrm{PD}}=\\mathcal{L}_{\\mathrm{SFT}}(I_p,q,a)+\\lambda(1-\\cos(\\mathbf{z}_p,\\mathbf{z}_c))$，$\\lambda=1$，$\\lambda=0$ 即纯坐标监督。训练数据独立于基准，来自 AMEX 的 Android 截图在手机上显示后用固定支架重拍，4636 对图、76224 个目标、4 种设备–光照组合；LoRA 同时作用于语言模型与视觉编码器（含 patch merger），按 WiSE-FT 做 $\\alpha=0.5$ 权重插值，3 个种子。",
+  "key_numbers": [
+   "基准规模：536 个 GUI 状态、102 个应用（iOS 303 / Android 233）、3250 个任务、8576 张物理图、52000 个任务–观测实例",
+   "开源模型均值：Clean 94.8% → Physical 48.5%（Resized 85.4%、Warped 77.7%）",
+   "Warped→Physical 落差 29.2 pp，远大于 Clean→Resized 的 9.4 pp 与 Resized→Warped 的 7.7 pp",
+   "像素来源改变带来 29.2–31.7 pp 落差，呈现方式改变只带来 14.7–17.1 pp",
+   "ReGround：Physical 48.5% → 59.4%；自动矫正单次调用 63.0%，接近 Oracle 63.1%",
+   "PairDistill：UI-Venus-2-9B 55.13 → 64.48（+9.4），MAI-UI-8B 45.80 → 57.96（+12.2）",
+   "PairDistill + ReGround：69.62% / 64.36%；自动矫正下 69.7% / 65.2%",
+   "消融：纯 SFT 60.49 / 53.44，加目标对齐再 +3.6 / +3.7；尺度增强仅 0.4–1.3 pp"
+  ],
+  "ablation": "Table 2 逐项拆开：Base 55.13/45.80 → SFT 60.49/53.44（证明配对可复用截图标注）→ SFT+Aug 61.83/54.30 → PD 64.07/57.17 → PD+Aug 64.48/57.96，说明目标对齐贡献 2.7–3.7 pp、尺度增强贡献 0.4–1.3 pp。推理侧另做 ReGround 与矫正的对照：ReGround 把 Physical 提到 59.4% 但几乎不缩小 Warped→Physical 落差（29.2 vs 30.5 pp），说明局部放大解决的是尺度而非成像；矫正只降 31.7 pp 的像素来源落差中的一部分。跨域上，未见设备（Aria Gen 2、Galaxy XR）62.4→71.0 与 49.5→63.4，12 种训练中未见的设备–光照组合增益 8.3/11.8 pp，iOS 增益 8.9/12.1 pp。",
+  "baselines": [
+   "MAI-UI-8B",
+   "UI-Venus-2-9B",
+   "GUI-Owl-1.5-8B / 32B",
+   "KV-Ground-8B",
+   "UI-Mate-27B",
+   "Holo3.1-35B-A3B",
+   "Indeed-UI-32B",
+   "Muse Glimmer-30B",
+   "Qwen3.8-27B",
+   "Claude Sonnet 5.5",
+   "GPT-6 Luna",
+   "Jev 1.14"
+  ],
+  "datasets": [
+   "GlassGround（3250 任务 / 8576 物理图 / 52000 实例，iOS + Android）",
+   "AMEX（PairDistill 训练数据来源，Android 截图重拍）"
+  ],
+  "novelty": "相对 ScreenSpot / ScreenSpot-Pro / OSWorld-G 等只看数字截图或渲染界面的基准，GlassGround 首次把「同一状态、同一指令、同一目标」在原生截图与真实穿戴相机观测间配对，使观测方式成为唯一变量，并用 Resized/Warped/Rectified 三级中间观测把落差归因到像素来源（29.2–31.7 pp）而非呈现方式（14.7–17.1 pp）。PairDistill 相对 ReMoDiffuse 式「检索示例」或纯坐标 SFT 的新意在于：用干净视图的目标级表征监督物理视图的对应表征，推理时不需要截图，属于跨视图目标对齐蒸馏而非输入增强。",
+  "limitations": "作者自述：只评静态单步定位，不覆盖完整交互序列；只测手机屏幕，其他物理显示未验证；Warped→Physical 的落差无法归因到具体成像因素（模糊、反光、ISP），留待后续。我们另看出：训练数据来自固定支架的 Android 重拍，与基准的自然手持分布仍有域差；闭源模型只在 500 clean + 8000 physical 的子集上评测，与开源全量结果不可直接横比；最好结果 69.6% 距 clean 的 94.8% 仍差 25 pp，方法只是缩小而非弥合落差；基准构建依赖 Claude Fable 5.1 生成指令，虽有全人工复核，指令风格可能带模型偏好。",
+  "trl_evidence": "在四台真实穿戴设备（Aria Gen 1/2、Quest 3、Galaxy XR）与四种光照下完成采集，附录给出 live headset 原型与演示视频，说明已跑通端到端链路；但定位模型仍是 8B–35B 级 VLM，未给端侧延迟或功耗，属研究原型。",
+  "code": "已开源 github.com/yunnw/GlassGround（数据集与代码）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 5
+  },
+  "scores_why": "IMP=4：穿戴助手的「看得见却点不准」是真实且此前无基准度量的瓶颈，影响 GUI agent 从截图走向物理世界。NOV=4：配对式观测偏移基准 + 三级中间观测归因 + 目标对齐跨视图蒸馏，构成明显的新评测与适配范式。TEC=4：构造、真值迁移、控制变量、统计可靠性都完整，但适配方法本身较简洁、缺理论分析。EXP=5：3250 任务 / 52000 实例 / 4 设备 × 4 光照 / 13 个模型 / 2 个骨干 × 3 种子 / 跨设备跨系统泛化，规模与基线充分。PER=4：绝对 +9.4 与 +12.2 pp（相对约 +17% 与 +27%），叠加 ReGround 到 69.6%，属 10–30% 档。TRL=3：有真机采集与头显原型、代码开源，但仍是离线基准与实验室模型。REP=5：代码 + 数据集公开、评测协议与实现细节完整。"
+ },
+ {
+  "id": "2611.33779",
+  "title": "DuoWM: Integrating Dual 6-DoF Visual Flows into Action-Conditioned Drone World Model",
+  "title_zh": "DuoWM：把双 6-DoF 视觉流注入动作条件无人机世界模型",
+  "problem": "动作条件视频世界模型要从首帧与相机轨迹生成未来观测，但相机指令与画面动态常对不上，且多数运动表征只覆盖 3-DoF 平移，无法表达完整 6-DoF 刚体变换；已有方法又多依赖首帧引导向后续帧传播，缺少逐帧的精确控制。在 Sekai-game-drone 上，此前最强的 Captain Safari 的 FVD 为 69.8325、AUC@30 仅 0.5003、AUC@15 0.3088；真实域 FVD 231.6737、LPIPS 0.1594，说明「按指令飞到该看的视角」仍是瓶颈。",
+  "method": "给定首帧 $I_0$、文本 $y$ 与目标相机轨迹（$C_t\\in\\mathrm{SE}(3)$、内参 $K_t$），生成 121 帧视频。Action flow 把相机指令画进每一目标帧：相对位姿 $C_{t\\to j}=C_t^{-1}C_j=[R_{t,j}\\ \\mathbf{d}_{t,j};\\ 0\\ 1]$，取中心与三个局部轴端点 $\\mathbf{q}\\in\\{0,\\ell e_1,\\ell e_2,\\ell e_3\\}$，投影 $\\mathbf{p}_{t,j}(\\mathbf{q})=\\pi(K_t[\\mathbf{d}_{t,j}+R_{t,j}\\mathbf{q}])$；中心固定 50 像素半径，灰度按对数深度 $g(z)=220-140\\gamma(z)$ 编码远近（$z_{\\text{near}}$/$z_{\\text{far}}$ 取参考深度 5%/99.5% 分位），RGB 三色分别表示 $x/y/z$ 轴，远时段的标记先画以保证近端可见。Object flow 把首帧几何前向泼溅到目标视角：MoSE3 预测深度 $D_0$，以每域标定的尺度 $s_d$ 得 $\\bar{D}_0$，投影 $\\mathbf{p}_t=\\pi(K_t[I_3\\ 0]C_t^{-1}C_0[\\bar{D}_0(\\mathbf{p})K_0^{-1}\\tilde{\\mathbf{p}};1])$，用深度缓冲取最近点，得到 warp 图 $W_t$ 与覆盖掩码 $M_t$；再由 MoSE3 追踪表面锚点，按局部 $R^{\\text{loc}}_{t,k},\\mathbf{d}^{\\text{loc}}_{t,k}$ 变换位置与坐标架，在重建相机下投影并叠加彩色轴与短拖尾。Transform-aware pretraining 先把训练帧的标记像素替换为几何轴 $I_t^{\\text{geo}}=(1-B_t)\\odot I_t+B_t\\odot\\Gamma_t$ 重建 300 步，再切回无标记 RGB 训练（game 5 epoch / real 2 epoch），Object flow 在预训练期不含拖尾。注入方式为通道拼接：$H^{(0)}=P_\\theta([z_\\sigma;c_0;z_A;z_O;m])+\\mathcal{A}_{\\text{cam}}(r)$，两路流各 48 通道、加 1 通道掩码共 197 通道，保留原 Plücker 射线相机适配器与文本 cross-attention；只训新增投影列与 rank-32 LoRA，VAE/文本编码器/相机适配器冻结，目标为 flow matching $\\mathcal{L}=\\mathbb{E}[w(\\sigma)\\mathrm{MSE}(v_\\theta,v^\\star)]$，$v^\\star=\\epsilon-z$。",
+  "key_numbers": [
+   "Sekai-game-drone：FVD 65.9881（Captain Safari 69.8325）、LPIPS 0.2593（0.2606）、MEt3R 0.2994（0.3000）",
+   "Sekai-game-drone 轨迹：AUC@30 0.5719（0.5003，+14.3%）、AUC@15 0.3747（0.3088，+21.3%）、CosSim 0.3595（0.3325）",
+   "Sekai-real-drone：FVD 191.7696（231.6737，-17.2%）、LPIPS 0.1250（0.1594，-21.6%）",
+   "Sekai-real-drone 轨迹：AUC@30 0.5409（0.5218）、AUC@15 0.3709（0.3521）、CosSim 0.3110（0.2675）",
+   "数据规模：game 5118 训练 / 474 测试视频；real 4368 / 402；121 帧、1280×704、24 FPS",
+   "相对 Wan2.2-Control-Camera：game FVD 75.6100 → 65.9881（-12.7%）",
+   "预训练收益：game FVD 70.3296 → 65.9881（-6.2%），real -5.1%，real MEt3R -3.9%"
+  ],
+  "ablation": "Table 3 分四块。组件：完整 65.9881/0.5719 → 去预训练 70.3296/0.5537 → 再去 Object flow 76.0832/0.5324 → 再去 Action flow 75.6100/0.5116，说明 Action flow 主要抬 CosSim（0.3199→0.3550）与 AUC@30（+4.1%），Object flow 再降 FVD 7.6% 并抬两个 AUC。预训练：完整相对无预训练降 FVD 6.2%、MEt3R 0.3017→0.2994，real 域 FVD -5.1%、AUC@30/15/CosSim +3.1%/5.7%/3.2%；但在 60 步短预算下单 RGB epoch 时，去预训练反而在 LPIPS、AUC@15、CosSim 上略好，作者据此说「只有完整日程才把几何先验转成全指标增益」。warp 方式：WorldWarp（每视频 500 步高斯拟合）FVD 94.1659 对前向泼溅 89.5135，AUC@30 0.4190 对 0.4720。预训练表征：轴 89.5135 优于 RGB 96.6638 与纯轨迹 103.7779。",
+  "baselines": [
+   "Wan2.2-5B base",
+   "Wan2.2-Control-Camera",
+   "Real-CamI2V",
+   "CameraCtrl",
+   "MotionCtrl",
+   "Captain Safari"
+  ],
+  "datasets": [
+   "Sekai-game-drone（5118 训练 / 474 测试）",
+   "Sekai-real-drone（4368 训练 / 402 测试）"
+  ],
+  "novelty": "相对 EnerVerse-AC（只把末端位置与朝向轴画成动作图）、PoseTraj（把投影 3D 框当临时监督再撤掉）、DualCamCtrl（双分支生成 RGB 与深度），DuoWM 的两路流分工明确：Action flow 负责「相机该在哪」，Object flow 负责「首帧表面在该视角下怎么变」，后者把 MoSE3 的稠密 SE(3) 估计变成可被生成器读取的外观+局部轴条件。预训练的新意在于轴标记不是临时监督而是持续条件，与 RGB 训练阶段共享同一几何语义，因此外观与刚体运动的对应关系被显式建立。",
+  "limitations": "作者自述：只做 121 帧开环生成，长时程自回归与与飞行策略的闭环交互留作未来工作。我们另看出：Object flow 依赖 MoSE3 的单目深度与位姿，且每域尺度 $s_d$ 需用训练视频的 Huber 重投影误差标定、假设域内平移单位一致，跨域或尺度漂移会直接污染条件；game 域 FVD 仅比 Captain Safari 低 5.5%，提升主要集中在轨迹指标，视觉质量优势有限；短预训练预算下多个指标反而变差，说明增益对日程敏感；无代码，复现依赖 Wan2.2-Fun-5B 与 MoSE3 的具体版本。",
+  "trl_evidence": "离线基准评测：在 474/402 条测试视频上与五个基线同协议比较，生成 121 帧 24 FPS 片段，无真机飞行或闭环控制验证。作者提到缓存文本/视频/图像与两路流 latent 以缩短训练、降低显存，属工程优化而非部署证据；未给推理延迟或机载可行性。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=4：动作条件世界模型里「指令与画面对齐、支持完整 6-DoF」是真实瓶颈，直接影响无人机策略训练环境，但影响面限于 aerial world model。NOV=4：双流条件 + 把局部 SE(3) 轴作为持续条件而非临时监督，是对 EnerVerse-AC/PoseTraj 的明显架构推进。TEC=4：方法链条完整（流构造、标定、注入、两阶段训练），有四组消融，但无理论保证。EXP=4：两个域、六项指标、六个基线，规模充分但仅两个数据集。PER=4：AUC@30 +14.3%、FVD -17.2%、LPIPS -21.6%，落在 10–30% 档；game 域 FVD 仅 -5.5%。TRL=2：离线生成、开环、无真机或闭环。REP=2：无代码，依赖多个外部模型与域内标定，复现门槛高。"
+ },
+ {
+  "id": "2611.33796",
+  "title": "SprintGS: Eliminating Redundancy for Fast 3D Gaussian Splatting Training",
+  "title_zh": "SprintGS：消除冗余以加速 3D 高斯泼溅训练",
+  "problem": "3DGS 渲染是实时的，但逐场景优化仍要几十秒到几分钟，用户在现场想立刻检查刚拍的场景仍得等。FastGS 已把时间压到几分钟（13 场景均值 172 s），可作者剖析后发现紧凑模型里仍有两块浪费：光栅化占训练时间 64%（反向传播单独占 41%），且损失按像素计算、不随高斯数缩小，其占比从 4% 升到 23%。也就是说，模型越紧凑，损失与 kernel 启动等固定开销越突出。",
+  "method": "在 FastGS 之上做四处削减。F-A scheduled tile culling：把固定阈值 $\\epsilon=1/255$ 换成随训练变化的 $\\tau(t)$，按 $d_i^2\\leq\\delta_i(\\tau)=\\max(2\\ln(o_i/\\tau),0.15\\delta_i^{\\text{full}})$ 决定高斯进哪些 tile，下界 0.15 防止不透明度重置后高斯落不到任何 tile 而拿不到梯度；日程为 $\\tau_c\\to\\epsilon$ 的分段函数，前 $T-2\\Delta$ 步保持 $\\tau_c=0.1$，随后 $\\Delta=T/10$ 内按 logistic 在 log 尺度下降，最后 $\\Delta$ 步固定 $\\epsilon$，测试时始终用精确足迹，故只影响训练。F-B convergence-aware pruning：在致密化期间每 $K=500$ 步（从 3000 步起、跳过不透明度重置后的 K 步）剪掉 $\\mathcal{P}=\\{i\\mid o_i<\\theta_o\\ \\wedge\\ v_i\\leq Q_q(v)\\}$，$v_i$ 是位置梯度二阶矩（Adam 第二动量）之和、$\\theta_o=0.1$、$q=0.5$；下次克隆/分裂时把 $\\lfloor\\rho|\\mathcal{P}|\\rfloor$ 个预算（$\\rho=0.4$）转给高误差但未过梯度阈值的高斯。F-C shuffle-efficient backward：splat-parallel 反向里每步只在线程间传 $T_i$ 与标量 $s_i=\\mathbf{r}_i\\cdot\\mathbf{g}$ 两个值（原为 9 个），$\\mathbf{g},T_{\\text{fin}},i_{\\text{last}}$ 从共享内存读；由 $\\partial L/\\partial\\alpha_i=T_i(\\mathbf{c}_i\\cdot\\mathbf{g})-\\mathbf{r}_i\\cdot\\mathbf{g}/(1-\\alpha_i)$ 代数改写为 $s_i=s_{i-1}-\\alpha_iT_i(\\mathbf{c}_i\\cdot\\mathbf{g})$、$\\partial L/\\partial\\alpha_i=T_i(\\mathbf{c}_i\\cdot\\mathbf{g})-s_i/(1-\\alpha_i)$。F-D fused loss：因 $\\partial L/\\partial\\ell_p=1/M$ 为常数，图像梯度只依赖前后向都可见的渲染图与真值，故在前向用三个 kernel 直接算 $L$ 与 $\\partial L/\\partial\\mathbf{C}$，省掉 loss map、mean reduction、常量梯度图与全部损失反向 kernel。F-E 移植 Faster-GS 的四项实现优化并扩展两项：融合激活并把梯度直接交给优化器、单次 kernel 完成全参数 Adam、在反向 kernel 内累计致密化统计、异步训练循环（每 500 步才读一次 loss）。",
+  "key_numbers": [
+   "13 场景均值：SprintGS-Base 80 s 对 FastGS-Base 172 s，加速 2.15×，PSNR 27.38 对 27.31 dB",
+   "高质量档：SprintGS-Big 156 s 对 FastGS-Big 283 s，加速 1.81×，PSNR 27.78 dB（全表最高）",
+   "DL3DV-10K 1K 子集：141.8 s → 63.3 s（>2×），PSNR 28.51 对 28.42，LPIPS 0.182 对 0.184",
+   "时间构成：光栅化 64%、反向 41%、损失 23%（FastGS 中损失占比由 4% 升至 23%）",
+   "逐项移除代价：w/o F-A +12%、w/o F-B +2%、w/o F-C +23%、w/o F-D +31%、w/o F-E1 +14%、F-E2 +5%、F-E3 +8%、F-E4 +6%",
+   "与其他方法组合：Taming-3DGS 345→125 s（2.76×）、DashGaussian 334→193 s（1.73×）、SkipGS 161→76 s（2.12×）",
+   "动态场景 Neu3D：804→637 s（1.26×），PSNR 30.83→31.36（+0.53 dB）"
+  ],
+  "ablation": "Table 4 逐项移除并给出相对完整模型的耗时增量：F-D 最大（+31%），其次 F-C（+23%）、F-E1（+14%）、F-A（+12%），F-B 只 +2% 但把高斯数从 0.317M 增到 0.337M、PSNR 从 27.38 降到 27.29，说明它的价值在质量–规模权衡而非速度。F-A 单独移除时 PSNR 略升（27.39 对 27.38），对应粗足迹丢弃小贡献带来的轻微偏差。补充材料还做累计消融（按顺序叠加）与 τ_c 敏感性、warp/预训练式对比；跨任务上动态场景加速较小（1.26×），作者归因于 Deformable-3DGS 的形变 MLP 未被改动。",
+  "baselines": [
+   "3DGS",
+   "FastGS-Base / FastGS-Big",
+   "Faster-GS",
+   "Taming-3DGS",
+   "DashGaussian",
+   "SkipGS",
+   "Speedy-Splat",
+   "Turbo-GS",
+   "Mini-Splatting / Mini-Splatting2",
+   "ShorterSplatting",
+   "QuadBox",
+   "gsplat"
+  ],
+  "datasets": [
+   "Mip-NeRF 360（9 场景）",
+   "Tanks & Temples（train、truck）",
+   "Deep Blending（playroom、drjohnson）",
+   "DL3DV-10K 1K 子集（1000 场景）",
+   "Neural 3D Video（Neu3D，6 场景，动态）",
+   "LLFF（稀疏视角）"
+  ],
+  "novelty": "相对 FastGS（固定收缩足迹 $\\beta=0.5/0.7$、每 3000 步才剪一次、9 值 shuffle）与 Faster-GS（只做 kernel 级融合），SprintGS 的新意有三点：把 tile 足迹做成随训练退火的日程并在末期恢复精确足迹，从「近似渲染」变成「只改训练」；把损失的梯度搬到前向，利用 $\\partial L/\\partial\\ell_p$ 为常数这一结构消掉整条损失反向链；把每步 shuffle 从 9 值压到 2 值且保持代数等价。三者都作用在 3DGS 系列共用的步骤上，因此能外挂到 Taming-3DGS/DashGaussian/SkipGS。",
+  "limitations": "作者自述：F-A 的粗足迹会在训练中引入偏差（移除后 PSNR 略高），依赖末期恢复精确足迹；动态场景加速有限，因为形变 MLP 未优化。我们另看出：$\\tau_c,\\theta_o,q,K,\\rho$ 五个超参在正文只给单组取值（0.1/0.1/0.5/500/0.4），敏感性放在补充材料，跨数据集是否需逐场景调参不明；时间只在单张 RTX 3090 Ti 上以 5 次均值测，未报方差与不同 GPU 的绝对加速；全部增益是系统级工程优化，不改变收敛性或重建上限。",
+  "trl_evidence": "可直接替换现有训练器：在 RTX 3090 Ti 上以 wall-clock（含 CUDA 同步，排除数据加载与评测）测量，30k 迭代、base/big 两档配置继承 FastGS 全部超参，并已在 Taming-3DGS、DashGaussian、SkipGS、Deformable-3DGS、PGSR 等公开代码上验证可组合性。尚无产品化或端侧部署描述。",
+  "code": "未提及（仅说明基线均用官方代码与作者推荐设置复现）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：训练慢是 3DGS 落地的真实工程痛点，但属可被局部解决的效率问题，不改变能力边界。NOV=3：三项冗余消除各有针对性（日程退火足迹、收敛感知剪枝、9→2 shuffle），是对 FastGS 路线的实质改进而非新范式；把损失梯度搬前向较巧。TEC=4：四个组件 + 四项实现优化均有公式与等价性说明，消融逐项给出耗时归因。EXP=5：13 场景三数据集 + DL3DV 1000 场景 + 动态/稀疏/表面三类扩展 + 12 个基线 + 5 次重复。PER=5：2.15×（172→80 s）与 1.81× 加速远超 30%，且 PSNR 不降反升。TRL=3：可直接跑通并组合，但无开源、无产品化。REP=3：实现与超参写得足够复现，代码未发布。"
+ },
+ {
+  "id": "2611.33819",
+  "title": "MMotion: Collaborative Cross-Scale Memory for Text-to-Motion Generation",
+  "title_zh": "MMotion：面向文本驱动动作生成的跨尺度协同记忆",
+  "problem": "文本到动作生成要么靠示例检索（ReMoDiffuse、MoRAG），要么靠长上下文（InfiniMotion），很少同时回答「生成什么动作、该怎么演化、如何与已生成历史一致」。多数方法只用文本条件与当前样本的瞬态隐状态，既无法复用跨样本的动作模式，也没有对已生成内容的结构化记录，于是容易漏掉动作细节、产生不自然过渡或逐渐偏离语义。以 MoScale（S=18）为基线，HumanML3D 上 R@1 0.540、FID 0.046、MM-Dist 2.830；MotionHiFlow 为 0.563 / 0.032 / 2.691，提升空间集中在语义对齐与分布保真度。",
+  "method": "把生成过程按尺度 $s$ 与尺度内相对位置 $p_{s,n}$ 索引：next-scale 自回归用原生由粗到细层级，扩散则把 $N$ 步反向去噪按时间切成三段（$s\\in\\{0.3,0.6,1.0\\}$）。语义记忆为每个尺度单独建库 $\\mathcal{B}_s^{\\text{sem}}=\\{(\\mathbf{k}_{s,i}^{\\text{sem}},\\mathbf{v}_{s,i}^{\\text{sem}})\\}$，查询 $\\mathbf{q}_{s,n}^{\\text{sem}}=\\mathcal{Q}_{\\text{sem}}(\\mathbf{e},s,p_{s,n})$，取 top-$K$ 后按 $w_{s,n,i}^{\\text{sem}}=\\text{softmax}(\\cos(\\mathbf{q},\\mathbf{k})/\\tau)$ 加权求和得 $\\mathbf{m}_{s,n}^{\\text{sem}}$，实现「粗尺度给整体动作、细尺度给局部细节」。动力学记忆用因果可得的隐状态差分 $\\mathbf{v}_{s,n}=\\mathbf{z}_{s,n}-\\mathbf{z}_{s,n-1}$、$\\mathbf{a}_{s,n}=\\mathbf{v}_{s,n}-\\mathbf{v}_{s,n-1}$（作者强调这只是隐空间变化、不是物理速度/加速度），由预测器 $\\mathcal{D}$ 输出当前动力学 $\\mathbf{d}$、下一步变化 $\\hat{\\mathbf{v}},\\hat{\\mathbf{a}}$ 与置信度 $c$，再以语义特征为条件检索转移模式，避免选到「平滑但不符合动作」的转移，最后用 GRU 沿尺度传播 $\\mathbf{u}_{s,n}^{\\text{dyn}}=\\text{GRU}(\\mathbf{q}_{s,n}^{\\text{dyn}},\\mathbf{u}_{s^{-},n}^{\\text{dyn}})$。工作记忆为样本内缓冲 $\\mathcal{C}_{s,n}=\\{\\mathbf{o},\\mathbf{h},\\mathbf{z}\\}_{\\prec(s,n)}$，经 reader 压缩后用门控 $\\mathbf{g}=\\sigma(\\mathcal{F}_{\\text{work}}(\\mathbf{h},\\mathbf{m}^{\\text{sem}},\\mathbf{u}^{\\text{dyn}},\\mathbf{m}^{\\text{work}}))$ 调节。三路融合后经残差头给有界修正：$\\Delta\\hat{\\mathbf{h}}=\\rho\\tanh(W_o\\mathbf{j})$，$\\Delta\\mathbf{h}=\\Delta\\hat{\\mathbf{h}}\\min(1,\\tau_{\\max}\\|\\mathbf{h}\\|_2/\\|\\Delta\\hat{\\mathbf{h}}\\|_2)$，$\\tau_{\\max}=0.05$ 即最多改动隐状态范数的 5%。训练加信任域蒸馏 $\\mathcal{L}_{\\text{trust}}=\\max(0,D_{\\mathrm{KL}}(\\pi_{\\text{base}}^T\\|\\pi_{\\text{mem}}^T)-\\epsilon)$（$T=2$），总目标为原生生成损失加语义/动力学/工作/协同四项辅助损失。三阶段训练：A 冻结主干、关残差、各记忆单独学；B 逐步开启残差与教师监督；C 才开最后几层 LoRA（更小学习率）。检索 top-8、温度 0.06，主干冻结只训记忆模块 5 epoch。",
+  "key_numbers": [
+   "HumanML3D + MotionHiFlow：R@1 0.572（基线 0.563）、FID 0.025（0.032）、MM-Dist 2.675（2.691）、R@3 0.844（0.843）",
+   "HumanML3D + MoScale（S=18）：R@1 0.554（0.540）、FID 0.044（0.046）、MM-Dist 2.794（2.830）、R@2 0.743（0.727）",
+   "KIT-ML + MotionHiFlow：R@1 0.528（0.482）、MM-Dist 2.540（2.552）、FID 0.137（0.135，略差）",
+   "KIT-ML + MoScale：R@1 0.467（0.442）、但 FID 0.455（0.173）、MM-Dist 2.760（2.717），Top-2/3 未提升",
+   "消融（HumanML3D/MoScale）：C0 全关 54.569 → C1 语义 55.043 → C2 语义+动力学 55.323 → 完整 55.409（R@1，%）",
+   "对应 FID：C0 0.04588 → 完整 0.04440；打乱语义关联后 R@1 55.065、FID 0.04986",
+   "检索数量：K=8 时 R@1 最高且 FID 最低（0.04440），K=2/4/16 分别为 0.04878/0.04822/0.04539"
+  ],
+  "ablation": "Table 3 四组：(a) 只注入粗尺度或只注入细尺度都不如全尺度，全尺度在 FID（0.04440）、MM-Dist（2.79426）、Top-2/3 上最好，说明记忆要贯穿层级；(b) $K$ 从 2 到 16，$K=8$ 取得最佳 R@1 与 FID 的平衡；(c) 打乱语义关联（R@1 55.065、FID 0.04986）与去掉动力学检索（55.086、0.04912）都明显变差，证明增益来自「对得上的记忆」而非多一路残差特征；工作记忆的均值聚合或无修正版本只在个别指标上略好，整体权衡不如完整设计；(d) 逐步叠加显示语义先提对齐、动力学再提 Top-1/2 与 MM-Dist、工作记忆补齐 Top-1/3、FID 与 MM-Dist。",
+  "baselines": [
+   "MoScale（S=4 / S=18）",
+   "MotionHiFlow",
+   "MoMask",
+   "MMM",
+   "BAMM",
+   "MoGenTS",
+   "ReMoDiffuse",
+   "MotionDiffuse",
+   "EnergyMoGen",
+   "IRG-MotionLLM",
+   "DiverseMotion",
+   "Light-T2M"
+  ],
+  "datasets": [
+   "HumanML3D（22 关节、20 FPS）",
+   "KIT-ML（21 关节、12.5 FPS）"
+  ],
+  "novelty": "相对 ReMoDiffuse（只检索文本–动作示例）、MoRAG（部位感知的多源检索）、InfiniMotion（只保留长时上下文），MMotion 把语义、动力学、历史三种记忆放进同一生成过程，并让它们顺序条件化：语义决定「检索什么转移」，语义+动力学再决定「历史里哪段有用」。相对 MoScale/MotionHiFlow 的隐式前缀记忆，它是显式的、可插拔的，且用有界残差（≤5% 范数）加信任域蒸馏保证不改坏预训练先验，因此同一套模块能同时挂在离散自回归与连续 flow matching 上。",
+  "limitations": "作者自述：KIT-ML 上 MoScale 的 Top-2/3 与 MM-Dist 未一致提升，作者归因于离散多尺度解码中检索信息与早期 token 决策竞争；增益在部分指标上非单调。我们另看出：HumanML3D 上 R@1 仅 +1.6% 相对提升，主要卖点是 FID；KIT-ML 上 MotionHiFlow 的 FID 反而从 0.135 升到 0.137，MoScale 的 FID 从 0.173 恶化到 0.455，说明记忆注入对分布保真度并非稳定正收益；每步都要做三路检索与 GRU 传播，推理开销未报告；只在两个数据集、两个主干上验证，无代码。",
+  "trl_evidence": "离线研究：主干冻结、只训记忆模块 5 epoch，推理时移除教师分支，属于对已有预训练生成器的轻量适配；未给延迟、显存或端侧部署数据，也未做用户研究。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：文本–动作对齐与长程一致性是真实问题，但记忆机制属该领域内的局部改进，影响面小于重建/定位类工作。NOV=3：三类记忆与顺序条件化是已有检索/上下文路线的实质组合，有界残差 + 信任域蒸馏是可复用的新约束，但非新范式。TEC=4：模块、公式、损失、三阶段训练写得完整，四组消融覆盖注入尺度、检索数、内部机制与增量贡献。EXP=3：两个标准数据集、两个主干，规模常规，且缺推理开销与用户研究。PER=3：HumanML3D 上 FID -22%、R@1 +1.6%，KIT 上部分指标负增长，属特定子集收益。TRL=2：离线适配，无部署或延迟证据。REP=2：无代码，记忆库构建与协同损失权重未给全。"
+ },
+ {
+  "id": "2611.33824",
+  "title": "Revisiting Monocular In-Hand Object Scanning: Dataset, Pose Estimation, and Surface Reconstruction",
+  "title_zh": "重访单目手持物体扫描：数据集、位姿估计与表面重建",
+  "problem": "用普通手机做手持物体扫描（IHOS）能让非专家完成 3D 数字化，但现有研究被数据卡住：HOPE、HO3D 本是给机器人操作与 6DoF 位姿估计用的，分辨率低（1080p/480p）、物体几何简单、还要求「紧握」——手永久遮住部分表面，重建必然不完整。换成自然「把玩」（toying）后，动态手遮挡又让 SfM 失效：帧间基线太小会深度估错、轨迹漂移，采样太稀又匹配不足、SfM 提前终止。3D 基础模型在此也不灵，VGGT 的 F1 仅 19.74、CD 138.22，MASt3R-SfM 为 23.06 / 114.85。",
+  "method": "先建数据：ToysRU 含 40 个几何复杂的摆件，用手机拍 4K UHD（3840×2160）60 fps、约 30 秒（约 1800 帧），单手举机、另一手把玩；真值由转台多视角摄影测量 + KIRI Engine 生成网格，归一化到单位尺度、ICP 对齐后评几何。方法分两步。CamStitch 先用手部实例分割模型与 SAM2 分割并跟踪手、前景物体与背景，只在目标物体像素上跑 SfM；针对「小基线 vs 匹配不足」的两难，改为在按固定间隔（本文取 5 帧，30 s/60 fps/两圈 720° 下约 2° 角位移）均匀采样的子序列上并行跑 SfM，得到多条子轨迹与点云；再用 Umeyama 估相似变换 $\\mathbf{T}=(\\mathbf{R},\\mathbf{t},s)$ 逐对拼接——关键观察是单对跨子序列帧匹配虽少，但多对跨序列帧的 2D 匹配加上子序列内 SfM 给出的 2D–3D 对应，合起来足以形成大量 3D 对应；全部拼完后做全局 Bundle Adjustment 精化位姿与点云。OA-2DGS 在此轨迹上重建着色表面：以前景掩码为目标不透明度 $\\mathbf{A}$，以手部掩码的补集为逐像素权重 $\\mathbf{W}$（手区为 0），损失为 $\\mathcal{L}_c=(1-\\lambda)(\\|\\mathbf{W}\\odot(\\hat{\\mathbf{I}}-\\mathbf{I})\\|_1+\\|\\mathbf{W}\\odot(\\hat{\\mathbf{A}}-\\mathbf{A})\\|_1)+\\lambda\\mathcal{L}_{\\text{D-SSIM}}(\\mathbf{W}\\odot\\hat{\\mathbf{I}},\\mathbf{W}\\odot\\mathbf{I})$，$\\lambda=0.2$，另加 2DGS 原有的法向–深度一致性正则，最后 Marching Cubes 提面。完整管线称 Castoags。",
+  "key_numbers": [
+   "数据集：40 个摆件、4K UHD 60 fps、每段约 30 秒（约 1800 帧），真值由 KIRI Engine 摄影测量生成",
+   "ToysRU 主结果：Castoags acc 94.23 / compl 93.39 / F1 93.80 / CD 0.74 / PSNR 17.68 / SSIM 0.75 / LPIPS 0.29，耗时 0.5 h",
+   "次优 Color-NeuS：82.88 / 80.67 / 81.75 / CD 2.24 / PSNR 14.16 / SSIM 0.65 / LPIPS 0.39，耗时 12 h",
+   "3D 基础模型直出：VGGT F1 19.74（CD 138.22）、MASt3R-SfM 23.06（114.85）、MapAnything 35.52（97.07）、MAtCha 31.49（137.35）、Dynhor 28.46（45.81）、ForeHOI 28.51（57.14）",
+   "SfM 消融：naive SfM F1 1.46 / CD 6.86k / 6.0 h → 仅前景 95.47 / 0.50 / 2.0 h → CamStitch 97.90 / 0.36 / 0.3 h",
+   "IHO 位姿：mRE 1.11→0.54 px、ATE 0.48→0.10 m、RPE$_r$ 0.45→0.10°、RPE$_t$ 1.80→1.73 m，耗时 3.25→0.44 h",
+   "OA-2DGS 消融：无 A/W 时 F1 56.71 / CD 114.59 → 加 A 63.99 / 1.86 → 加 A+W 96.31 / 0.63"
+  ],
+  "ablation": "SfM 侧三档对照最能说明问题：原始全帧跑 COLMAP 六小时才终止且 F1 仅 1.46；只保留前景像素后 F1 跳到 95.47 但仍要 2 小时；CamStitch 把位姿估计压到 0.3 小时、F1 97.90。表面侧逐项加：vanilla 2DGS 在掩码后仍有大量 floaters（F1 56.71、CD 114.59），只加不透明度损失 $\\mathbf{A}$ 能去大部分漂浮物但手遮区出现凹陷伪影（63.99 / 1.86），再加逐像素权重 $\\mathbf{W}$ 才得到干净完整表面（96.31 / 0.63）。补采样间隔分析显示管线对间隔不敏感。",
+  "baselines": [
+   "Delaunay（COLMAP 点云 + 三角化）",
+   "Poisson（screened Poisson 表面重建）",
+   "Color-NeuS",
+   "VGGT + OA-2DGS",
+   "MASt3R-SfM + OA-2DGS",
+   "MapAnything + OA-2DGS",
+   "MAtCha",
+   "Dynhor（作者用 GPT-5.2 + TRELLIS 复现）",
+   "ForeHOI"
+  ],
+  "datasets": [
+   "ToysRU（40 个摆件，4K 60 fps 手持视频）",
+   "IHO（4 段视频，带真值相机位姿）"
+  ],
+  "novelty": "相对 HOD/IHO 的小规模或紧握设定，ToysRU 是首个「4K、自然把玩、非日常定制物体、手持拍摄、且带摄影测量真值」的 IHOS 基准，直接改变了任务难度分布。方法上不是把 SfM 换个特征，而是先解释它为何失败（小基线与长程匹配不足的固有矛盾），再用「子序列并行 + 多对帧 3D 对应 + Umeyama 拼接 + 全局 BA」绕开矛盾；OA-2DGS 相对原 2DGS 的新意是把「前景不透明度」作为显式监督、并用权重把手部像素从损失里剔除，而不是把手当透明区一并优化掉。",
+  "limitations": "作者自述：ToysRU 因单段视频超 300 MB、40 个物体合计逾 11 GB 而未随论文发布，只提供代码；评测限于手机屏幕/摆件，未验证其他物体类别。我们另看出：管线前置依赖手部分割与 SAM2 跟踪质量，分割失败会直接污染 SfM 与不透明度监督；2DGS 仍假设静态场景，把玩中的物体相对运动靠「只取前景 + 掩码手」规避，而非显式建模；PSNR 17.68 的着色保真度仍偏低（反照率渲染下），不足以支撑高保真贴图；Dynhor 为复现版本（原模型已弃用），对比不完全等价。",
+  "trl_evidence": "单物体全流程 0.5 h（4090 + i7-13700），比次优的 12 h 快约 24 倍，已具备「拍完当场重建」的实用性；代码随补充材料提供并附 readme 与 requirements，数据集因体积未公开。属研究原型，未见产品化或移动端部署。",
+  "code": "代码随补充材料提供，项目页 github.io/ToysRus；数据集因 11 GB 体积未随附",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：单目手持扫描是 3D 数字化民主化的真实瓶颈，动态手遮挡下的位姿估计长期无解，但应用面偏物件级重建。NOV=4：数据集填补「4K + 自然把玩 + 定制物体」空白，CamStitch 从失败机理出发绕开 SfM 两难，OA-2DGS 用前景不透明度 + 手部掩码权重解决动态遮挡，均明显超出组合式增量。TEC=4：管线完整、两条消融链清晰、有跨数据集位姿验证，但无理论分析。EXP=4：40 物体新集 + IHO，9 个基线覆盖传统/隐式/前馈/基础模型四类。PER=4：F1 +12.05 pp（相对 +14.7%）、CD 降 67%、耗时降 24 倍，主指标落在 10–30% 档。TRL=3：0.5 h 可跑通、代码随附，但数据集未公开、未上移动端。REP=3：代码可得、协议详细，数据缺失拉低可复现性。"
+ }
+]

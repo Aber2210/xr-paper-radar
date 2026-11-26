@@ -1,0 +1,74 @@
+{
+ "2509.16476": {
+  "cat": "cs.CV",
+  "title": "GazeVLM: Gaze-Guided Foveated Inference for Efficient Vision-Language Models",
+  "abstract": "Vision-language models (VLMs) achieve remarkable multimodal performance but introduce substantial computational cost due to the large number of visual tokens. Existing approaches typically rely on token pruning, sparse attention, or additional control modules, often introducing accuracy-efficiency trade-offs. This paper presents GazeVLM, a training-free framework that leverages human gaze as a natural guidance signal for efficient inference. GazeVLM allocates computation to gaze-relevant regions through a gaze-guided region-of-interest (ROI) representation and an optional two-scale design that preserves global context. We also construct GazeVLM-VQA, to the best of our knowledge, the first real-world wearable-gaze visual question answering (VQA) dataset specifically constructed for VLM inference, containing reference images, human gaze traces, and gaze-aligned question-answer pairs. Experiments on the GazeVLM-VQA benchmark demonstrate that GazeVLM improves both answer quality and efficiency across Qwen2.5-VL-3B/7B and Qwen3-VL-8B models. It reduces visual tokens by up to 84.2%, prefill FLOPs by up to 92.8%, and achieves up to 11.6 times prefill speedup, while improving answer-match accuracy by up to 8.6 percentage points (pp). These results show that aligning VLM computation with human visual attention provides a promising path toward efficient VLM inference. We publicly release the GazeVLM-VQA dataset (https://drive.google.com/drive/folders/1mdi-GezeIkmege3segUQCnvnK6P-skaw?usp=sharing).",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "交互与输入"
+ },
+ "2602.00671": {
+  "cat": "cs.CV",
+  "title": "HPC: Hierarchical Point-based Latent Representation for Streaming Dynamic Gaussian Splatting Compression",
+  "abstract": "While dynamic Gaussian Splatting has driven significant advances in free-viewpoint video, maintaining its rendering quality with a small memory footprint for efficient streaming transmission still presents an ongoing challenge. Existing streaming dynamic Gaussian Splatting compression methods typically leverage a latent representation to drive the neural network for predicting Gaussian residuals between frames. Their core latent representations can be categorized into structured grid-based and unstructured point-based paradigms. However, the former incurs significant parameter redundancy by inevitably modeling unoccupied space, while the latter suffers from limited compactness as it fails to exploit local correlations. To relieve these limitations, we propose HPC, a novel streaming dynamic Gaussian Splatting compression framework. It employs a hierarchical point-based latent representation that operates on a per-Gaussian basis to avoid parameter redundancy in unoccupied space. Guided by a tailored aggregation scheme, these latent points achieve high compactness with low spatial redundancy. To improve compression efficiency, we further undertake the first investigation to compress neural networks for streaming dynamic Gaussian Splatting through mining and exploiting the inter-frame correlation of parameters. Combined with latent compression, this forms a fully end-to-end compression framework. Comprehensive experimental evaluations demonstrate that HPC substantially outperforms state-of-the-art methods. It achieves a storage reduction of 67% against its baseline while maintaining high reconstruction fidelity.",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "神经渲染"
+ },
+ "2605.05876": {
+  "cat": "cs.GR",
+  "title": "3DSS: 3D Surface Splatting for Inverse Rendering",
+  "abstract": "We present 3D Surface Splatting (3DSS), the first differentiable surface splatting renderer for physically-based inverse rendering from multi-view images. Our central insight is that surface separation, which groups the surfels covering a pixel by the surface they sample, can be formulated with the reconstruction kernels themselves: two surfels sample the same surface when their kernels overlap in depth. Compositing each resulting surface layer with a coverage opacity derived from its accumulated Elliptical Weighted Average (EWA) weight yields anti-aliased silhouettes and informative visibility gradients at sparsely covered edges. With forward microfacet shading under co-optimized HDR environment lighting, 3DSS jointly recovers shape, spatially-varying BRDF, and illumination, and its oriented surfels convert directly into meshes by oriented-point surface reconstruction. On the real-world Stanford-ORB and the TensoIR Synthetic benchmarks, 3DSS outperforms state-of-the-art mesh-based and major comparable implicit and Gaussian-based methods in novel view synthesis and relighting, with geometry on par with the strongest baselines.",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "神经渲染"
+ },
+ "2605.16582": {
+  "cat": "cs.CV",
+  "title": "ArtMesh: Part-Aware Articulated Mesh Fields with Motion-Consistent Dynamics",
+  "abstract": "We present ArtMesh, a mesh-native method for reconstructing articulated objects explicitly as connected triangle meshes with per-part rigid motion from multi-view observations in start and end states. Existing 3D Gaussian Splatting pipelines for articulated reconstruction inherit the unstructured point-based geometry of their splatting base, which provides no surface topology for reasoning about part boundaries or enforcing motion consistency along the object's connectivity. ArtMesh instead builds on a mesh-based differentiable rendering backbone, enabling part-aware dynamics to act directly on the structured topology. To make the topology compatible with articulation, we introduce part-aware restricted Delaunay remeshing, producing connected submeshes whose triangles do not cross semantic part boundaries. The dynamic mesh field then optimizes articulation using bidirectional Vertex-wise Motion Consistency on transported mesh vertices and Pixel-wise Motion Consistency on rendered images. We introduce Articulate-100, a new benchmark of 100 articulated objects spanning 16 PartNet-Mobility categories. On this benchmark, given ground-truth part masks, ArtMesh achieves the best aggregate joint-axis estimation and part-level geometric reconstruction among prior 3DGS-based pipelines, with the largest gains on objects with many movable parts.",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "重建与SLAM"
+ },
+ "2606.11390": {
+  "cat": "cs.CV",
+  "title": "Large-Scale Gaussian Splatting with a Multi-GPU PyTorch Backend",
+  "abstract": "arXiv:2606.11390v2 Announce Type: replace-cross Abstract: Gaussian splatting methods have become increasingly popular for neural reconstruction of the real world. However, they are often limited in scale and resolution due to compute and memory constraints. We present a multi-GPU Gaussian splatting approach that scales reconstruction to higher resolutions and larger scenes while abstracting away the code complexity typically associated with distributing a model. We demonstrate city-scale reconstructions with street-level detail consisting of over 1 billion Gaussian splats. To accomplish this, we propose a PyTorch backend that distributes parameters and operators across GPUs via CUDA unified memory, with optional NVLink support. Because distribution occurs at the operator level, the model code requires no explicit cross-device communication. More broadly, the backend exposes multiple GPUs as an aggregate asynchronous PyTorch device and supports a broad set of PyTorch operators enabling the distribution of general PyTorch workloads.",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "系统与平台"
+ },
+ "2608.29269": {
+  "cat": "cs.CV",
+  "title": "LightFuse: Relightable Interactive Gaussian Scene Reconstruction via Multi-Scan Fusion and 2D Gaussian Ray Tracing",
+  "abstract": "Relightable interactive scene reconstruction aims to build an editable 3D model from scans of different object arrangements, so that novel layouts can be rendered under novel illumination. However, Gaussian-splatting-based methods bake illumination into appearance and thus cannot jointly reconstruct scans captured under different lighting, while existing multi-illumination inverse rendering methods struggle to handle scenes whose geometry changes across captures. We present LightFuse, a 2D Gaussian inverse rendering framework that bridges this gap by extending interactive scene reconstruction with explicit material-illumination decomposition and physically based relighting. LightFuse fuses observations across states to reconstruct a shared background and movable objects. Since geometry optimized by splatting alone is ill-suited for ray-tracing-based inverse rendering, it then performs ray-tracing-oriented geometry refinement to obtain more complete and consistent surfaces. Because rearrangement leaves materials unchanged, we jointly optimize a shared set of materials across all scans under varying illumination, with differentiable one-bounce ray tracing disentangling them from the per-scan environment lighting. Experiments on novel-state relighting of synthetic scenes and novel-state synthesis of captured real scenes show that LightFuse outperforms interactive reconstruction and adapted inverse rendering baselines, improving novel-state relighting PSNR by 6.01 dB over the strongest baseline and achieving the highest PSNR on captured scenes. Project page: https://zhn202.github.io/LightFuse/ .",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "神经渲染"
+ },
+ "2611.26380": {
+  "cat": "cs.CV",
+  "title": "EgoCaptioner: Towards Comprehensive and Fine-Grained Egocentric Video Captioning",
+  "abstract": "Egocentric video captioning requires fine-grained detail and accurate timing, yet current multimodal large language models (MLLMs) often miss brief actions, confuse their order, or misinterpret the wearer's motion. Existing caption formats also offer limited support for combining detailed narration with precise timing. We present EgoCaptioner, which pairs a video-level overview of the setting, participants, and the wearer's overall activity with timed steps whose narration adapts to varying perceptual demands and marks key moments at specific timestamps. We develop a coarse-to-fine annotation pipeline that establishes event structure before expanding step descriptions, yielding 50,000 training examples from eight egocentric video sources. Complementary rewards assess factual accuracy and coverage, measure step-level temporal alignment, and penalize fragmented or redundant narration, guiding caption refinement through Group Relative Policy Optimization (GRPO). To improve the reliability of factual supervision, we supplement caption references with pose-derived motion facts when sensor data are available. Across five egocentric benchmarks, EgoCaptioner achieves leading performance among evaluated open-source models in caption quality, caption-conditioned question answering, and temporal alignment. It also surpasses Gemini 3.1 Pro on PhysCapBench and all evaluated proprietary baselines on Minerva-Ego under the caption-to-QA protocol. Ablations support the complementary roles of factual and temporal rewards and show that coarse-to-fine annotation provides more effective supervision than single-pass annotation.",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "感知与认知"
+ },
+ "2611.31822": {
+  "cat": "cs.CV",
+  "title": "G0.7: Scaling Up a Fast World Action Model with Long Context",
+  "abstract": "World action models (WAMs) adapt pretrained video generators for robot control by jointly predicting future camera frames and actions, transferring physical priors learned from video into manipulation policies. However, generating future frames before every action makes test-time inference too slow for closed-loop control, while most existing policies remain restricted to short observation histories. Building on Fast-WAM, which showed that video prediction shapes policy representations during training so that future frame synthesis can be skipped at deployment, we present G0.7, a generalist world action model scaled along two axes: extending the context window from a single observation to up to five minutes of history, and scaling pretraining to a large-scale corpus of robot teleoperation and human egocentric (ego) video. Across public simulation suites and real-robot deployments, direct action decoding (Fast mode) matches imagine-then-act (IDM) inference from the same checkpoint while running in 60 ms per 16-step action chunk on a single RTX 5090 (7.6x faster than IDM) and supporting pause-free real-time chunking. Performance scales consistently with pretraining data, with human ego video driving the largest gains in out-of-distribution generalization: G0.7 achieves a 70.8 mean score across five simulation benchmark suites, 48% and 54% zero-shot pick-and-place success on Galaxea R1 Pro and R1 Lite, 96.7% in-distribution and 93.3% out-of-distribution success on video-conditioned in-context learning tasks, and 86.9% mean task progress across seven real-world post-training tasks including multi-minute box folding, drink preparation, and product bagging. Project page: https://www.galaxea-ai.com/model-g07.html",
+  "announce": "replace",
+  "published_rss": "2026-11-26",
+  "in_registry": false,
+  "track": "世界模型与仿真"
+ }
+}

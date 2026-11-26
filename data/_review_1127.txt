@@ -1,0 +1,367 @@
+[1] 2611.28905 | eess.IV | cross | TITLE_EXTRA:spatial, | pub=2026-11-26
+  T: Beyond the section plane: Robust 3D reconstruction of multiplex immunofluorescence exposes limitations of 2D spatial cell statistics
+  A: Spatial analysis of the tumour microenvironment with multiplex immunofluorescence (mIF) typically relies on single thin tissue sections, which misrepresent the 3D tissue organisation and bias spatial cell statistics in ways that remain largely unquantified. We reconstruct 24 breast and lung tumour tissue microarray cores in 3D, each from 15-20 serial mIF sections, and compare spatial cell statistics in 3D with those 
+
+[2] 2611.30173 | cs.RO | cross | KW | pub=2026-11-26
+  T: Confidently Lost: Silent Failure and Edge Deployment of Dense Visual SLAM under Photon Starvation
+  A: Dense visual SLAM built on learned two-view geometry is evaluated in good light; in low light it fails silently. Two frames of 9-level quantized noise, no scene at all, give MASt3R-SLAM's network a cross-view geometric self-consistency of 0.936; a real dark frame pair gives 0.935. Starved of structure, the network invents the same geometry for both views and the system trusts the agreement: on a dark sequence it cons
+
+[3] 2611.33303 | cs.AI | new | TITLE_EXTRA:depth | pub=2026-11-26
+  T: Certify What You Plant: Shortcut-Free Proof Depth in Logical Reasoning Data
+  A: Procedurally generated logic problems are used to both evaluate and train reasoning in language models. Their difficulty is usually set by planting a proof, that is, by sampling a proof of the desired depth and stating its premises as the problem. However, a planted proof is only one possible proof. A problem can also have shorter proofs, or several unrelated ones, and its stated depth then overstates what solving it
+
+[4] 2611.33352 | cs.RO | new | TITLE_EXTRA:depth | pub=2026-11-26
+  T: Why Does Sensor Depth Fail Learned Manipulation Policies? Finding the Failure Mode with ACT
+  A: Learned manipulation policies, from task-specific imitation policies to vision-language-action (VLA) models, rely primarily on RGB images. While some studies report gains from sensor depth, others avoid depth cameras because of measurement noise. Depth cameras introduce both noise and missing depth values (holes), whose relative effects remain unclear. In this study, we calibrate a sensor model using a real wrist-mou
+
+[5] 2611.33374 | cs.CV | new | KW | pub=2026-11-26
+  T: VersionGS: Compact and Motion-Robust Dynamic Gaussian Splatting via Versioned Gaussians
+  A: Recent dynamic Gaussian splatting methods encode temporal change, either as smooth functions of time or as constrained updates between frames. We observe that their reconstruction quality degrades significantly under fast motion. In challenging dance sequences, their PSNR drops by 1.1-4.0 dB on high-motion frames compared to low-motion frames. To overcome this limitation, we propose VersionGS, a method that directly 
+
+[6] 2611.33380 | cs.RO | new | KW | pub=2026-11-26
+  T: FOCI: Trajectory Optimization on Gaussian Splats for Gaussian Robots
+  A: 3D Gaussian Splatting (3DGS) has recently gained popularity as a faster alternative to Neural Radiance Fields (NeRFs) in 3D reconstruction and view synthesis methods. Leveraging the spatial information encoded in 3DGS, this work proposes FOCI (Field Overlap Collision Integral), an algorithm that is able to optimize trajectories directly on the Gaussians themselves. FOCI leverages a novel and interpretable collision f
+
+[7] 2611.33382 | cs.CV | new | KW | pub=2026-11-26
+  T: ArtTet: Watertight Part Meshes of Articulated Objects from Rigid-Body Rules and Partitioned Marching Tetrahedra
+  A: We present ArtTet, a method that reconstructs an articulated object from multi-view observations of two articulation states and outputs one watertight mesh per rigid part together with the joints that move them. Mesh splatting gives explicit triangles, but it treats the object as one scene. It extracts a single global surface and cannot keep the triangles of different parts apart; the mesh it exports is layered, self
+
+[8] 2611.33387 | cs.CV | new | KW | pub=2026-11-26
+  T: Synchronizing Cameras via 3D Object Relationships
+  A: In this paper, we synchronize multiple videos of the same dynamic event through object relationships. Driven by dynamic reconstruction and novel view synthesis, many recent synchronization methods rely on pixel-level evidence, such as point correspondences across views or the photometric losses of a reconstructed scene. In dynamic scenes, however, fast motion and occlusions make the moving regions that carry much of 
+
+[9] 2611.33390 | cs.RO | new | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: RoboARC: Physical Puzzles for Robotic Manipulation under Spatial Constraints
+  A: Many hard manipulation tasks come down to a spatial constraint that only a few motions satisfy, such as passing a part through a gap barely wider than itself or separating two interlocked parts. These motions depend on the exact geometry of each scene, so demonstrations and skills recorded elsewhere rarely transfer. We therefore ask: when manipulation hinges on spatial constraints, can robots reason out the right mot
+
+[10] 2611.33428 | cs.CL | cross | TITLE_EXTRA:hand | pub=2026-11-26
+  T: When the Knowledge Runs Out: A Part-Level Pilot Evaluation of How Language Models Handle Partially Covered Questions
+  A: Assistants that answer from supplied reference material often receive material that covers some parts of a user's question and not others. Existing evaluations of insufficient context mostly score one answer per question, and often treat partially sufficient context as simply insufficient. We describe a small, open evaluation that scores each part of a three-part question separately, with a verdict for parts that are
+
+[11] 2611.33460 | cs.LG | cross | TITLE_EXTRA:tracking | pub=2026-11-26
+  T: Fast Muscle-Driven Whole-Body Motion Tracking with a Differentiable World Model
+  A: Tracking motion capture with a whole-body musculoskeletal model means coordinating hundreds of muscles through contact, and current controllers take hours to days of GPU time to train, so every tuning decision is expensive. SuperMimic trains a tracking policy by backpropagating through the rollouts of a learned world model. We extend it to MS-Human-700 (700 muscles) and MyoFullBody (354 muscles), with MuJoCo's activa
+
+[12] 2611.33465 | cs.CV | new | KW | pub=2026-11-26
+  T: OrdiHand-GS: Ordinal-Guided Tracking and Hand-Refined Gaussian Avatars for Digital Signers
+  A: Digital signers, also known as signing avatars, convey sign language through animated virtual humans, where visual fidelity and linguistic intelligibility hinge primarily on the hands. When one hand crosses over the other, two failure modes dominate. First, monocular expressive-human tracking suffers from ordinal depth ambiguity: either hand can satisfy the same 2D landmarks, and the baseline tracker orders wrists at
+
+[13] 2611.33467 | cs.CV | new | KW | pub=2026-11-26
+  T: SplatWAM: Splatting World Action Models for Real-Time 3D Imagination
+  A: World models typically predict future observations in pixel or latent space, limiting their ability to directly represent true 3D scene evolution. We present SplatWAM (Splatting World Action Model), a generative world model that learns action-conditioned dynamics directly over compact 3D Gaussian primitives. A tokenizer SplatWAM-T first encodes a variable number of unposed views into a fixed budget of Gaussian tokens
+
+[14] 2611.33498 | cs.CV | new | KW | pub=2026-11-26
+  T: A 3D Simulator for Passive SPAD Imaging
+  A: Passive single-photon avalanche diode (SPAD) cameras provide short-exposure observations for low-light perception, but collecting task annotations for these sensors remains difficult, and annotated datasets are scarce. We present a 3D simulation pipeline that generates realistic photon detections together with camera-motion and semantic labels, enabling perception models to be trained on synthetic SPAD observations a
+
+[15] 2611.33565 | cs.CV | cross | KW | pub=2026-11-26
+  T: EgoCARBS: Egocentric Video Meets Active Acoustics for Kitchen Action Understanding
+  A: Egocentric video records what a person looks at, but often misses what their body does: the hands leave the frame, and arm motion goes unseen. An exocentric camera recovers this context, but it must be installed wherever the activity happens. Active acoustic sensing can recover it from the wearables themselves: a device's speaker emits inaudible chirps, and its microphone senses the motion of the hands, arms, and nea
+
+[16] 2611.33567 | cs.CV | new | KW | pub=2026-11-26
+  T: ProPolar: Progressive Polar Decomposition for Implicit Neural Representations
+  A: Implicit neural representations (INRs) capture global low-frequency structure during the early stage of training and then refine localized high-frequency details, afterwards. However, standard optimizers are agnostic to the coarse-to-fine learning behavior of INRs. Such optimizers accumulate a gradient matrix in momentum buffer and retain components misaligned with the dominant low-frequency directions in the early s
+
+[17] 2611.33579 | cs.RO | new | KW | pub=2026-11-26
+  T: DexEngine: Scaling Human Demonstrations into Physically Executable Whole-Robot Data
+  A: A growing body of recent work addresses the retargeting of human hand-object demonstrations to robotic hands. To train whole-robot policies, however, the retargeted motions must be kinematically feasible and physically executable, and be produced efficiently at scale. We present DexEngine, a simulation pipeline that turns human manipulation data into train-ready, physically executable arm-hand trajectories. DexEngine
+
+[18] 2611.33581 | cs.HC | new | KW | pub=2026-11-26
+  T: Evaluating Strategies for Multimodal Bidirectional Interactions between Pedestrians and AVs
+  A: Autonomous Vehicles (AVs) share spaces with Vulnerable Road Users (VRUs) in encounters where driver cues are absent. This can leave people uncertain whether the vehicle has noticed them and understood their request. Existing research has studied how AVs communicate with pedestrians through external human-machine interfaces. This work investigates bidirectional multimodal VRU-AV interactions combining Augmented Realit
+
+[19] 2611.33591 | cs.CV | new | KW | pub=2026-11-26
+  T: VivaWorld: Long-Horizon Video World Model With Compositional 3D Priors
+  A: Long-horizon video generation is key to interactive world modeling, physical intelligence, and spatial reasoning, yet maintaining geometric consistency and accurate camera control remains challenging without 3D grounding. We introduce \textbf{VivaWorld}, a framework for generating geometry- and view-consistent long videos from an image. We first construct a compositional hybrid 3D representation that combines reconst
+
+[20] 2611.33698 | cs.CV | new | KW | pub=2026-11-26
+  T: Efficient Scene-Distribution-Aware Second-Order Optimization for 3D Gaussian Splatting
+  A: 3D Gaussian Splatting (3DGS) optimization updates the Gaussian parameters one training view at a time, tens of thousands of times. Unlike such single-view updates, multi-view batches reduce dependence on individual training views, and second-order optimization reduces the number of updates with larger, structured parameter changes. Because fewer updates leave fewer chances to correct a change that fits only the views
+
+[21] 2611.33705 | cs.RO | new | KW | pub=2026-11-26
+  T: Lab2Sim: Agentic Generation of Interactive Laboratory Equipment from Operation Videos
+  A: Generating laboratory assets that faithfully reproduce the appearance, structure, and joint motions of real equipment remains challenging. Existing asset generation methods struggle to directly generate simulation assets for all equipment observed in operation videos and to faithfully reproduce the appearance, joint motions, and internal cavities of the real equipment. To address the challenge, we present Lab2Sim, an
+
+[22] 2611.33731 | cs.RO | cross | KW | pub=2026-11-26
+  T: RoboJackVR: Turning Robot Tasks into VR Games for Scalable Demonstration Collection
+  A: Scaling robot demonstration datasets requires collection systems that accommodate more participants and diverse tasks, yet teleoperation barriers and task-adaptation effort limit this expansion. We present RoboJackVR, a standalone virtual reality (VR) game in which players manipulate simulated robots to execute combat skills and contribute demonstrations. MuJoCo simulation and demonstration recording run locally on t
+
+[23] 2611.33735 | cs.AI | new | KW | pub=2026-11-26
+  T: JOVE ICE: Intent Guided Cloud Edge Device Collaboration for AI Glasses
+  A: Recent advances in large language models (LLMs) and LLM based agents have expanded the capabilities of AI glasses, enabling egocentric visual question answering, memory retrieval, and proactive assistance. These applications involve diverse inputs, including speech, images, and video, and range from simple device control to complex visual reasoning, posing challenges for efficient computation and communication. While
+
+[24] 2611.33760 | cs.CV | cross | KW | pub=2026-11-26
+  T: GlassGround: GUI Grounding Beyond Native Screenshots with Egocentric Wearable Vision
+  A: Wearable assistants must localize interface elements from camera observations when direct screenshot access is unavailable, yet existing GUI grounding benchmarks primarily evaluate native screenshots. We introduce GlassGround, a new benchmark that pairs native screenshots with wearable camera observations while holding GUI states, instructions, and targets fixed. GlassGround contains 3,250 tasks across Android and iO
+
+[25] 2611.33761 | cs.CV | new | KW | pub=2026-11-26
+  T: ScanAR: Parallel Row-Scan Decoding for Efficient Image Generation in Unified Autoregressive Models
+  A: Unified multimodal autoregressive (AR) models represent text and images in one token sequence and generate all modalities with a shared next-token prediction head. Their image generation, however, decodes an $H\times W$ visual grid token by token in raster order, which takes $HW$ sequential steps and dominates inference time. Existing acceleration methods for visual AR generation either change the tokenizer, the pred
+
+[26] 2611.33779 | cs.CV | new | KW | pub=2026-11-26
+  T: DuoWM:Integrating Dual 6-DoF Visual Flows into Action-Conditioned Drone World Model
+  A: Action-conditioned video world models generate future observations from an initial frame and a camera trajectory, but often fail to align camera commands with visual dynamics or represent full 6-DoF scene transformations. We present DuoWM, a first-person drone video world model with two complementary visual conditions. Action flow projects future camera positions and orientations into each target frame, while Object 
+
+[27] 2611.33792 | cs.CV | new | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: Spatial Transcriptomics Prediction from Histology via Topology-Informed Graph Attention and Gene-Semantics Conditioning
+  A: Spatial transcriptomics (ST) profiles gene expression with spatial context but remains costly, motivating models that infer expression from H&E images. Existing approaches face three key limitations: (i) a single patch embedding is often insufficient: morphologically similar regions can exhibit distinct expression due to spatial context, while naive neighborhood aggregation can over-smooth boundaries; (ii) convention
+
+[28] 2611.33796 | cs.CV | new | KW | pub=2026-11-26
+  T: SprintGS: Eliminating Redundancy for Fast 3D Gaussian Splatting Training
+  A: 3D Gaussian Splatting (3DGS) renders photorealistic novel views in real time, but its per-scene training (optimization) remains slow. Recent fast training methods such as FastGS shorten training to a few minutes by reducing the number of Gaussians. Profiling FastGS, we find two costs that remain even in its compact model. First, rasterization is still the largest cost, and redundant work remains in it. Second, the lo
+
+[29] 2611.33819 | cs.CV | new | KW | pub=2026-11-26
+  T: MMotion: Collaborative Cross-Scale Memory for Text-to-Motion Generation
+  A: Text-to-motion generation aims to synthesize realistic human motions from natural-language descriptions, enabling applications in animation, virtual avatars, and embodied agents. Despite recent progress, existing methods either retrieve motion exemplars or retain long-range context, but rarely exploit memory to jointly reason about semantics, dynamics, and generation history. In this paper, we propose MMotion, a coll
+
+[30] 2611.33824 | cs.CV | cross | KW | pub=2026-11-26
+  T: Revisiting Monocular In-Hand Object Scanning: Dataset, Pose Estimation, and Surface Reconstruction
+  A: In-Hand Object Scanning (IHOS) from monocular video captured by a commodity smartphone holds immense potential to democratize 3D digitization for non-expert users, facilitating applications in digital archiving, augmented reality, and custom fabrication. Yet, IHOS remains largely understudied due to a lack of realistic datasets and systematic benchmarks. To bridge this gap, we introduce ToysRUs, a high-quality datase
+
+[31] 2611.33826 | cs.CV | new | TITLE_EXTRA:depth | pub=2026-11-26
+  T: MotionODE: Enhancing Autoregressive Text-to-Motion Generation with Continuous-Depth Modeling
+  A: Autoregressive text-to-motion generation requires local motion predictions to reconcile cross-temporal textual requirements with the available motion context. While existing methods primarily improve motion representations and generation order, the internal formation of conditioned motion representations remains less explored. We introduce MotionODE, a continuous-depth post-training framework that refines hidden-stat
+
+[32] 2611.33865 | cs.RO | cross | TITLE_EXTRA:hand | pub=2026-11-26
+  T: Measuring the Value of One Shared Image at Robot Handoffs in Vision-and-Language Navigation
+  A: When the lead robot cannot continue, what should it send the teammate that must finish the route? We replay a frozen receiver at each contact under alternative messages. Across 3,920 autonomous departures in 106 environments, adding the view before the lead's last action block to its executed actions raised success by 7.51 percentage points (pp) per RxR handoff and 8.54 pp per SAGE handoff. Per departure the gains we
+
+[33] 2611.33905 | cs.CV | new | KW | pub=2026-11-26
+  T: Tortho-Gaussian++: Suppressing Geometric Drift and Floaters for Robust Gravity-Aligned TDOM Generation in Large-Scale Aerial Scenes
+  A: 3D Gaussian Splatting (3DGS) has demonstrated remarkable performance in aerial scene reconstruction, motivating its recent extension to true digital orthophoto maps (TDOMs) generation. We propose Tortho-Gaussian++, a novel 3DGS training framework that suppresses geometric drift and floaters and automatically prunes unreliable peripheral regions, coupled with a robust gravity-aligned TDOM rendering solution. First, we
+
+[34] 2611.33918 | cs.GR | new | KW | pub=2026-11-26
+  T: M\"obiuString: Structured String Art via Optimizing Generatrices on the M\"obius Strip
+  A: String art is a worldwide handicraft that mimics an image with straight strings stretched between boundary pins. Existing image-driven methods primarily optimize individual strings for reconstruction fidelity, leaving the global organization of the strings weakly controlled.In this paper, we introduce the generatrix on the M\"obius strip of unordered boundary-point pairs to formalize families of strings with finite g
+
+[35] 2611.33919 | cs.CL | cross | KW | pub=2026-11-26
+  T: DiCALM: Converting Autoregressive Convolution-Attention Language Models into Discrete Diffusion Language Models
+  A: Existing methods for adapting autoregressive (AR) language models to diffusion generation focus mainly on full-attention architectures. More efficient hybrid architectures remain underexplored. We introduce DiCALM, a recipe for converting the hybrid convolution-attention models of the LFM2 family (LFM2 and LFM2.5) from AR to masked-diffusion generation. DiCALM progressively extends LFM2's causal gated convolution so 
+
+[36] 2611.33920 | cs.CV | new | KW | pub=2026-11-26
+  T: UPP-Gauss: Ultrasound Propagation Physics-informed Gaussian Splatting for B-mode Novel-View Synthesis
+  A: Accurate novel-view synthesis of B-mode ultrasound images requires modeling acoustic propagation through tissue and the resulting appearance variations across probe poses. We propose Ultrasound Propagation Physics-informed Gaussian Splatting (UPP-Gauss), which integrates these acoustic interactions into an explicit Gaussian representation. UPP-Gauss constructs acoustic maps by sampling three 3D Gaussian fields using 
+
+[37] 2611.33934 | cs.CV | new | TITLE_EXTRA:tracking | pub=2026-11-26
+  T: Towards 360$^\circ$ Embodied UAV Tracking Without Turning
+  A: Conventional embodied UAV tracking couples target observability with heading control because targets may leave the field of view of forward-facing cameras. We investigate a complementary paradigm that uses full-spherical perception to follow designated targets without active heading adjustment. To support this setting, we introduce 360UAV-ETrack, a simulation benchmark comprising 2,652 sequences, over 1.73 million sy
+
+[38] 2611.33990 | cs.CV | new | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: geo-eval-harness: An Evaluation Harness for Geospatial Foundation Models
+  A: Geospatial foundation model (GFM) research papers are plagued by inconsistent evaluation settings (e.g., different pre-processing and probes), making it difficult to separate performance from evaluation choices. We propose geo-eval-harness}, an open-source framework for controlled model comparisons. We use this harness to evaluate 100 GFMs and general vision models on 6 classification and 14 segmentation datasets, us
+
+[39] 2611.33991 | cs.RO | cross | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: QK-Bench: Benchmarking Quantitative Kinematic Understanding for Dynamic Spatial Intelligence
+  A: Spatial intelligence concerns both scene structure and its temporal evolution. Yet a semantically correct description can conceal a quantitative error: recognizing that objects are approaching does not determine their closing speed or whether they will meet. Such errors are critical in collision avoidance, trajectory tracking, and reactive grasping, where actions depend on motion magnitude, timing, and relative geome
+
+[40] 2611.34005 | cs.CV | new | TITLE_EXTRA:mesh | pub=2026-11-26
+  T: ScaleCurve: From Constant Scale to Consistent Motion for World-Space Human Mesh Recovery
+  A: World-space human mesh recovery can lose spatial consistency even when camera-space body estimates are accurate. A single sequence-wide scale resolves global scale ambiguity but cannot correct local scale distortion along a reconstructed camera path. We present ScaleCurve, a framework that estimates time-varying metric corrections from human-ground geometry. We construct scale observations by comparing predicted foot
+
+[41] 2611.34021 | cs.CV | new | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: Rethinking Unsupervised Cross-Modal Homography Estimation:Spatially Aware Representations and Geometric Consistency Learning
+  A: Unsupervised cross-modal homography estimation is challenging because appearance differences obscure shared geometric structures. Separating modality transfer from homography estimation helps reduce these differences, but accurate alignment still requires effective geometric representations and consistency constraints on the two subtasks. We propose GeoCo (Geometry-Aware and Consistency-Constrained Homography Estimat
+
+[42] 2611.34027 | cs.CV | new | KW | pub=2026-11-26
+  T: ContextHands: Completing Hand Motion with Learned Context and Joint-Specific Body Kinematics
+  A: Detailed hand motion contributes to the realism and expressiveness of generated human motion. Completing these details from body motion and language requires connecting the context of an action to the articulation of the hands. We introduce ContextHands, which completes hand motion from an observed body sequence and text descriptions assigned to hands and time intervals. Our approach learns probabilistic hand feature
+
+[43] 2611.34046 | cs.RO | cross | KW | pub=2026-11-26
+  T: End-to-End Image-Goal Navigation for Agile Quadrotors via Recurrent State Distillation
+  A: Image-goal navigation asks a robot to reach the viewpoint of a target photograph without a map or goal pose. In three dimensions, this requires not only recognizing the goal but also estimating 3D displacement and generating continuous control actions to approach and settle at the target view. This is difficult because the same visual difference between current and goal image can require very different actions depend
+
+[44] 2611.34053 | cs.RO | new | KW | pub=2026-11-26
+  T: xFORM: Accelerating Fixed-Lag LiDAR Odometry with Exact Factor Compression
+  A: Light Detection and Ranging (LiDAR) sensors are increasingly popular for state estimation because of their precision, long range, and high measurement rate. Unfortunately, LiDAR Odometry (LO) systems incur substantial computational cost when processing large point clouds, particularly those that jointly refine a window of scan poses. While our prior LO work FORM is real-time, the costs of feature extraction, correspo
+
+[45] 2611.34062 | cs.CV | new | KW | pub=2026-11-26
+  T: Surf-Style: Surface-Based Scene Stylization
+  A: Consistent and controllable 3D stylization is critical for visual computing applications such as immersive visualization, augmented and virtual reality content creation, and artistic scene rendering. While 2D image stylization has advanced significantly, extending these methods to 3D remains challenging due to the need for cross-view consistency, where stylized renderings must align across all viewpoints. Applying 2D
+
+[46] 2611.34084 | cs.CV | new | TITLE_EXTRA:tracking | pub=2026-11-26
+  T: TaCo: Rethinking Correlation for Visual Tracking on Edge Devices
+  A: Lightweight trackers have replaced cross-correlation with attention, and on low-power edge hardware they pay for it, since memory-bound softmax, normalization and reshaping operators of attention cost far more time than their arithmetic suggests. Benchmarking efficient trackers on an edge Neural Processing Unit (NPU) and an Arm CPU under one numerically validated protocol, we find that correlation trackers are the fa
+
+[47] 2611.34108 | cs.CV | new | KW | pub=2026-11-26
+  T: Detectable by Design: Learning a Continuous 3D Saliency Field from 2D Detector Responses
+  A: The 3D points kept in a map decide whether a camera can be localized against it, and this choice matters more as the map becomes sparser. Existing 3D keypoint detectors usually define saliency by semantics, repeatability, reconstruction or descriptor matchability. None of these definitions asks whether a point will actually be detected in an image, and as a result most of the points they select are not detected again
+
+[48] 2611.34126 | cs.CV | new | KW | pub=2026-11-26
+  T: Out of Sight, Not Out of Clues: Can Video LLMs Guess from Partial Evidence?
+  A: In real-world applications like egocentric recording, visual accessibility, and surveillance review, visual evidence for Video Large Language Models (Video LLMs) is often only partially captured. A reliable model should match its response to the evidence: answering when sufficient, guessing from visible clues when partial, and abstaining when absent. Yet existing benchmarks enforce a binary answerable-or-unanswerable
+
+[49] 2611.34128 | cs.CV | cross | KW | pub=2026-11-26
+  T: FoundSurface: Feedforward Ray-Based 3D Scene Surface Reconstruction from Unposed Images
+  A: Accurate 3D surface reconstruction from unposed images remains a fundamental challenge in computer vision. Recent feed-forward pointmap methods eliminate the need for camera poses but inherently produce discrete, sparse representations. In this paper, we present a generalizable pipeline that directly recovers continuous, high-fidelity 3D surfaces from unposed images by seamlessly integrating pointmap- and ray-based r
+
+[50] 2611.34133 | cs.HC | new | KW | pub=2026-11-26
+  T: Somatic Alignment: Scaffolding Non-Visible Inner Body Sensations in and beyond Vocal Pedagogy
+  A: Inner bodily sensations inform expressive musical performance but can be difficult to interpret and communicate. Through two separate workshops with five singing learners and four senior voice teachers, we investigate breath control in vocal pedagogy. Participants reported difficulty interpreting bodily sensations (Opacity of Inner Sensations) and translating awareness into intended adjustments (Disconnected Regulati
+
+[51] 2611.34141 | cs.CV | new | KW | pub=2026-11-26
+  T: Spe3DUp: Faithful Trajectory Distillation for Fast Image-to-3D Generation
+  A: Recent 3D generative models can produce high-quality meshes with complex structures and fine geometric details, with broad applications in games, film, and digital design. However, high-quality generation typically relies on long multi-step sampling processes that repeatedly evaluate large networks, leading to long inference times. At the same time, reference-driven tasks such as game-asset reconstruction and product
+
+[52] 2611.34155 | cs.CV | new | KW | pub=2026-11-26
+  T: OceanFix: Reference-Guided Diffusion for Sparse-View Underwater 3D Reconstruction
+  A: Recent advances in Gaussian splatting have enabled efficient underwater reconstruction, but sparse observations, light attenuation, and backscatter still leave scene regions underconstrained and cause novel-view artifacts. We present OceanFix, a reference-guided framework for sparse-view underwater 3D reconstruction that combines diffusion-based view repair with Gaussian scene refinement. Our repair model follows a t
+
+[53] 2611.34223 | cs.CV | cross | KW | pub=2026-11-26
+  T: AnyCam4D: Ray-Based 4D Gaussian Rendering for Arbitrary Camera Models
+  A: Real cameras are not pinholes, yet most dynamic Gaussian splatting assumes they are. Footage is therefore undistorted first, losing field of view or detail, especially with wide-angle and fisheye cameras. Static Gaussian splatting has largely solved this with ray-based rendering, which suits any camera. Native 4D Gaussians, which model motion in space-time, cannot use it directly: each Gaussian's orientation and size
+
+[54] 2611.34224 | cs.CV | new | KW | pub=2026-11-26
+  T: EgoMyo: Physical Hand State Estimation from Egocentric Video and Wrist Electromyography
+  A: Physical hand interaction depends on configuration, contact, and force, yet nearly identical appearances can conceal different contact states and exerted forces. We therefore formulate physical hand state estimation from egocentric video and wrist surface electromyography (sEMG), combining visual geometry with neuromuscular evidence to jointly recover these coupled components. To support this task, we introduce EgoMy
+
+[55] 2611.34226 | cs.CV | new | TITLE_EXTRA:gaussian | pub=2026-11-26
+  T: LiveRelight: Sub-Second Global Illumination Editing for Gaussian Interiors
+  A: Relighting reconstructed 3D scenes remains challenging due to the complex nature of light transport: slow or approximate visual feedback restricts the editor's ability to fine-tune the results to satisfaction. We present a hybrid relighting approach that enables interactive, high-fidelity updates of direct and indirect indoor illumination without per-edit optimization. Our approach permits the editor to make a wide r
+
+[56] 2611.34240 | cs.CV | new | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: Analemma $\infty$: A Temporal Benchmark for Geospatial Foundation Models
+  A: Satellite time series capture how land surfaces change over time. Pixel-wise temporal foundation models read a year of satellite observations per pixel, yet public benchmarks lack a temporal axis or subsample it to a few dates. We introduce Analemma, a temporal benchmark of six datasets that carry every 10 and 20 m Sentinel-2 band and a time series spanning a growing season, completed where their releases omit geomet
+
+[57] 2611.34257 | cs.RO | new | KW | pub=2026-11-26
+  T: CamAct: Learning Robotic Manipulation from In-the-Wild Videos via Camera Motion
+  A: Vision-Language-Action (VLA) models benefit from large, diverse datasets for robotic manipulation, yet collecting robot demonstrations remains costly. Recent work has explored egocentric videos as a source of supervision, primarily drawing on demonstrations of human-object interaction. We show that in-the-wild videos can improve robotic manipulation even when they contain no demonstrations of object manipulation. Spe
+
+[58] 2611.34298 | cs.LG | cross | KW | pub=2026-11-26
+  T: RAP: Radial-Angular Random Projection for Hyperbolic Representations
+  A: Random projection is a basic compression primitive for Euclidean representation learning, with the Johnson--Lindenstrauss lemma giving a target dimension $k=O(\varepsilon^{-2}\log n)$ independent of the ambient dimension. As hyperbolic representations gain increasing attention in modern Transformers, vision-language models, and large language models, the same need for oblivious dimensionality reduction arises, but no
+
+[59] 2611.34319 | cs.CV | new | TITLE_EXTRA:mesh | pub=2026-11-26
+  T: PostMesh: Self-Rewarded Preference Post-Training for Flow-Based Artist Mesh Generation
+  A: Artistic mesh generators turn a dense 3D object into an artist mesh: a compact, quad-dominant mesh that is easy to edit. Most of current models are auto-regressive methods which decode a mesh token by token, take tens to hundreds of seconds per mesh. Diffusion- and flow-based generators are much faster, but their meshes still fall short of artist quality. To our knowledge, PostMesh is the first post-training method f
+
+[60] 2611.34330 | cs.IR | cross | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: RecField: Embedding Recommendations into Spatial Movie Organization as Affordances for Serendipitous Encounters
+  A: Research on serendipity-oriented recommender systems has focused on algorithms that recommend unexpected yet useful items. However, serendipity is increasingly viewed as a user experience shaped by both algorithmic outputs and system features. This study positions recommendations not as the primary goal users pursue but as an environmental affordance that creates opportunities for discovery during other activities. W
+
+[61] 2611.34347 | cs.CV | new | KW | pub=2026-11-26
+  T: AIRIS: Benchmarking Social Embodied Intelligence in Egocentric Streaming Videos
+  A: Embodied agents operating around people must not only recognize social cues, but also decide when the available evidence is sufficient, whether to intervene, and how to respond without violating social norms. Existing benchmarks typically evaluate these abilities in isolation or with access to completed videos, obscuring where an online social decision fails. We introduce AIRIS, a causal streaming benchmark that form
+
+[62] 2611.34370 | cs.CV | new | TITLE_EXTRA:tracking | pub=2026-11-26
+  T: MoCA4D: Monocular 3D Bounding Box Lifting and Tracking with Camera and Object Motion
+  A: Monocular 3D bounding box tracking must account for both object motion and changes in camera viewpoint. Framewise box lifting with temporal filtering leaves these motion components implicit, while static-scene fusion assumes stationary objects. We introduce MoCA4D, a framework for 3D box lifting and tracking from monocular video, associated 2D box prompts, and camera intrinsics. An observation branch estimates per-fr
+
+[63] 2611.34393 | cs.CV | new | KW | pub=2026-11-26
+  T: Plausible Is Not Proven: Testing Failure Explanations in Monocular Depth Estimation
+  A: Failure analyses of monocular depth models often name a cause for each error, such as an occluding boundary, a thin object or a reflective surface, but such labels are rarely tested. We present the Vision Error Observatory (VEO), an audit that finds regions failing the $\delta_1$ criterion on sensor-measured pixels, labels each with a likely cause or abstains, and then subjects the labels to four tests: agreement wit
+
+[64] 2611.34414 | cs.CV | new | KW | pub=2026-11-26
+  T: SemProxy: Semantic 3D Proxies for Controllable Agentic 3D Modeling
+  A: Coding agents are increasingly capable of generating 3D models, yet enabling users to effectively control the modeling process remains challenging. Existing workflows rely primarily on text prompts and reference images, which often struggle to convey precise spatial intentions and require iterative corrections. We introduce SemProxy, a lightweight intermediate representation that bridges intuitive human interaction a
+
+[65] 2611.34428 | cs.RO | new | KW | pub=2026-11-26
+  T: Calibration of Neuromusculoskeletal Models Using Differentiable Physics: Recommendations for Improving Model Accuracy
+  A: Differentiable physics has shown potential to usher in a new paradigm in human neuromusculoskeletal (NMS) model calibration. Early results from pioneering works have demonstrated that auto-differentiable NMS models can greatly reduce NMS model calibration time while achieving comparable accuracy compared to traditional calibration methods. The efficient gradient-based optimizers have enabled calibration of increasing
+
+[66] 2611.34453 | cs.RO | new | KW | pub=2026-11-26
+  T: DynaRC: Dynamics-Robust 4-D Radar Relocalization with Rate-Adaptive Sequence Matching
+  A: Four-dimensional millimeter-wave radar measures radial velocity within a single scan and remains resilient under adverse weather and visibility. Yet sparse directional returns, moving objects and occlusion make place matching ambiguous. We propose DynaRC, a dynamics-robust framework encompassing single-frame retrieval and sequence relocalization. Doppler evidence separates static returns and masks motion-affected cel
+
+[67] 2611.34461 | cs.CV | new | KW | pub=2026-11-26
+  T: SceneDesigner++: A Unified 9-DoF Pose Control Framework for T2I and T2V Generation
+  A: Precise 9-DoF pose control is essential for visual content generation, enabling users to specify object location, size, and orientation in 3D space. However, existing methods typically focus on either text-to-image (T2I) or text-to-video (T2V) generation, with limitations in pose controllability and temporal coherence. We present SceneDesigner++, a unified framework for 9-DoF pose control across both T2I and T2V gene
+
+[68] 2611.34466 | cs.AI | new | KW | pub=2026-11-26
+  T: EgoUseBench: Benchmarking Computer-Use Agents under Evolving First-Person Contexts
+  A: AI wearables, such as smart glasses, extend the context available to agents beyond digital environments to users' physical surroundings. With these devices, computer tasks can originate from users' ongoing activities rather than solely from explicit instructions. Through first-person observations, agents can identify objects and activities relevant to user requests and ground digital tasks in the surrounding context.
+
+[69] 2611.34476 | cs.CV | new | KW | pub=2026-11-26
+  T: TACC: Target-Aware Carrier Compression for Dense-Context Novel View Synthesis
+  A: Recent feed-forward approaches mark a paradigm shift in novel view synthesis by eliminating the reliance on per-scene optimization, directly inferring 3D representations from input views. However, their reliance on global scene-token context incurs substantial memory and latency overhead, constraining their ability to handle increasingly dense source-view contexts. Compressing source representations offers an intuiti
+
+[70] 2611.34478 | cs.CV | new | KW | pub=2026-11-26
+  T: Feed-Forward Adaptive Gaussian Splatting for Interactive Medical Volume Rendering
+  A: Path-traced rendering shows CT and MR volumes with realistic lighting, but it restarts after every change of view, clipping plane or transfer function (TF), the map from voxel intensity to colour and opacity, which limits the frame rate. Feed-forward Gaussian splatting models such as RenderFM predict the Gaussians directly from the volume instead of fitting them to each scan, and are fast. RenderFM, however, handles 
+
+[71] 2611.34480 | cs.CV | new | KW | pub=2026-11-26
+  T: ProManO: Beyond Sim(3) for Metric Upgrade of Feed-Forward Geometry with Visual-Inertial Anchors
+  A: Upgrading feed-forward geometry to metric scale with visual-inertial odometry (VIO) raises the question of which correction should align dense feed-forward prediction with sparse metric VIO anchors. Existing methods use either a similarity transformation, which cannot represent depth-dependent distortion, or a projective transformation, which alters pre-calibrated intrinsics. We prove that the transformations compati
+
+[72] 2611.34489 | cs.CV | new | KW | pub=2026-11-26
+  T: Who Is Ego? Scaling Cross-View Camera Wearer Identification and Segmentation beyond Humans
+  A: A first-person (ego) image reveals what a camera sees, but not who or what carries it. Given a synchronized third-person (exo) image, camera wearer identification asks who is ego: which candidate carries the ego camera? We extend this task beyond humans to robots, vehicles, animals, and drones, and broaden its spatial scope (where is ego) from selecting a provided candidate mask to wearer segmentation with absence pr
+
+[73] 2611.34549 | cs.CV | new | KW | pub=2026-11-26
+  T: CADENCE: Sensor-GroundedWorld-Consistent Gaussian SLAM for Collaborative Mobile Reconstruction
+  A: Collaborative reconstruction with consumer phones promises faster and more complete indoor maps. However, heterogeneous devices introduce degraded observations and unreliable cross-device associations, so a single poor contributor or incorrect match can corrupt the shared Gaussian map. To address this, we propose \textbf{CADENCE}, a collaborative Gaussian simultaneous localization and mapping (SLAM) system that separ
+
+[74] 2611.34569 | cs.RO | new | TITLE_EXTRA:sim-to-r | pub=2026-11-26
+  T: Riding the Wave: Sim-to-Real Humanoid Control on Elastic Terrain
+  A: Humanoid robots on deformable elastic terrains face a surface whose position and motion are coupled in space and time: deflection and rebound persist between contacts, and load at one foothold alters the support at others, so training must capture how each contact changes the support that follows. We present RIPPLE (Robust Interaction via Proprioceptive Policies on Large-deformation Elastic terrain), a simulation-to-
+
+[75] 2611.34586 | cs.RO | new | TITLE_EXTRA:affine | pub=2026-11-26
+  T: Geometric Acceleration Obstacles: Physical Boundary Structure and Affine Safety Certificates
+  A: Safe robot navigation in dynamic environments requires collision avoidance that respects motion constraints while remaining computationally efficient. Conventional velocity-obstacle (VO) methods characterize collision-inducing motions in velocity space. Although some formulations account for acceleration-limited velocity transitions, their collision constraints remain tied to specific velocity-tracking models. Accele
+
+[76] 2611.34607 | physics.optics | cross | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: Blind spatially varying PSF estimation for fluorescence microscopy
+  A: Optical aberrations degrade fluorescence microscopy images and measuring the underlying point spread function (PSF) often requires dedicated acquisitions or isolated emitters. Here we introduce DeepBlur, a neural network that estimates spatially varying two-dimensional PSFs directly from single images of biological structures. Trained entirely on physical simulations spanning aberrations, illumination and noise, it a
+
+[77] 2611.34658 | cs.RO | new | TITLE_EXTRA:spatial | pub=2026-11-26
+  T: FeaXDrive2: Body-Scene Spatial Grounding for Feasibility-Aware Generative Driving
+  A: Generative driving planners may produce trajectories that appear feasible at their reference points but violate environmental constraints over the full vehicle body. We propose FeaXDrive2, an end-to-end generative planning framework that enhances vehicle-embodied spatial feasibility (VESF) through body-scene spatial grounding. The proposed method constructs spatial queries from actual vehicle-body corners and dynamic
+
+[78] 2611.34670 | cs.RO | new | KW | pub=2026-11-26
+  T: Autonomous Ergodic Robotic Palpation for Elastic Mapping of Curved Soft Tissues
+  A: Autonomous robotic palpation offers repeatable, quantitative estimates of tissue properties for stiff inclusion localization. However, existing methods often rely on prior mesh models or planar surface assumptions that do not generalize to complex human anatomy. We propose an ergodic palpation framework that operates directly on curved soft surfaces using point cloud data. Central to our approach is the Laplace--Belt
+
+[79] 2611.34750 | cs.RO | cross | KW | pub=2026-11-26
+  T: SOLVE: Sparse, Ordered Keyposes Make LLM Agents Versatile and Efficient Robot Manipulator
+  A: LLM agents have made remarkable progress in robot manipulation, yet they suffer from expensive inference, dense step-by-step control, and tool bottlenecks. We introduce SOLVE, a training-free, versatile and efficient agent policy: a multimodal LLM agent writes a sparse, ordered sequence of 6-DoF end-effector keyposes per call, observes the result, and writes the next, while a motion planner interpolates between them.
+
+[80] 2611.34810 | cs.CV | new | KW | pub=2026-11-26
+  T: WorldExpand: Building Coherent 3D Worlds via Sparse Joint Panoramic Expansion
+  A: Constructing complete 3D worlds from a single panorama is challenging because large portions of the scene remain unobserved. Existing panoramic-video methods expand spatial coverage through dense sequential generation, but neighboring frames contain substantial redundancy, long trajectories accumulate errors, and independently generated directions may be inconsistent. We present WorldExpand, which formulates single-p
+
+[81] 2611.34862 | cs.CV | new | KW | pub=2026-11-26
+  T: BOP-Refer: Benchmark for Monocular 3D and 2D Object Grounding
+  A: We introduce BOP-Refer, the first benchmark for monocular 3D and 2D grounding of everyday and industrial objects sourced from 9 diverse BOP datasets. We pair images from these datasets with VLM-generated and human-verified referring expressions, and derive accurate ground-truth 3D and 2D bounding boxes of the referred objects from their 3D models and 6DoF pose annotations. Our systematic evaluation of 17 frontier VLM
+
+[82] 2611.34894 | cs.CV | cross | TITLE_EXTRA:sim-to-r | pub=2026-11-26
+  T: What a Drop Reveals: Sim-to-Real Material Estimation for Deformable Objects from Video
+  A: How an object deforms when it hits the ground reveals what it is made of. From a single real video of a drop, we estimate a deformable object's density-normalized stiffness $E/\rho$, and its yield stress $\sigma_Y/\rho$ when the impact causes plastic deformation, with a feed-forward predictor trained only in simulation. Real videos carry no material labels, so such predictors are developed and validated on synthetic 
+
+[83] 2611.34914 | cs.RO | cross | KW | pub=2026-11-26
+  T: Cairn: Object-Centric 3D Trajectory Priors for Steering Frozen VLAs
+  A: Vision-language-action models (VLAs) are capable low-level controllers, but they tie where objects go to the layouts they were trained on: when objects are moved or obstacles block the way, they carry them to the wrong place or into collisions. Fine-tuning on new layouts needs robot data for each one and erodes skills the model already has. We introduce Cairn, which keeps the VLA frozen and steers it at test time alo
+
+[84] 2611.34925 | cs.RO | new | KW | pub=2026-11-26
+  T: One Ocean, Many Tasks: A Data-Grounded Simulation Suite and Benchmark for Marine Robotics
+  A: Simulation is essential for marine robotics, yet existing platforms often trade off between visually realistic worlds, high-throughput experimentation, and ocean-condition realism grounded in real data. We present OneOcean, a data-grounded simulation suite and benchmark built around a unified spatiotemporal ocean-environment product that harmonizes bathymetry with data-driven currents and tides, with optional polluti
+
+[85] 2611.34931 | cs.CV | new | KW | pub=2026-11-26
+  T: DynMF2: Rigid Motion Factorization by Expectation-Maximization for Monocular 4D Reconstruction and Motion Segmentation
+  A: A single casual video leaves a moving scene under-determined: a point seen once from each place can slide toward or away from the camera and still match every frame. We constrain the reconstruction with the structure of the motion itself. Building on DynMF, we model a scene's motion as a handful of SE(3) trajectories, each rigid, and let every point follow one of them alone, never a blend. DynMF2 computes this factor
+
+[86] 2611.34932 | cs.RO | new | KW | pub=2026-11-26
+  T: MERLoc: Robust Robot Localization in Dynamic Environments with Pose-Based Retrieval over 3D Gaussian Splatting References
+  A: Robots operating in previously mapped spaces must localize accurately despite moving people and rearranged objects. Most localization pipelines match the query against a sparse set of captured reference images retrieved by appearance, which is brittle under scene change and repeating structures. We present MERLoc, which turns a single metric 3D Gaussian Splatting scan into a dense Functional Reference Memory. Referen
+
+[87] 2611.34936 | cs.RO | new | KW | pub=2026-11-26
+  T: DexLink: Synthesizing Dexterous Behaviors from Chained Hand-object Poses
+  A: Synthesizing diverse dexterous manipulation policies is challenging: existing simulation-based approaches rely on human demonstrations which are difficult to scale, or use generic reward functions, which provide limited control over the hand-object interactions. We propose DexLink, which addresses these limitations by synthesizing diverse dexterous behaviors from sparse, reusable hand-object interaction templates. Gi
+
+[88] 2611.34939 | cs.CV | cross | KW | pub=2026-11-26
+  T: A Mesh for Every Moment
+  A: We present MEMO (a Mesh for Every MOment), a method that reconstructs the geometry of complete dynamic scenes, captured by multiple synchronized cameras, and extracts a mesh at every frame. Existing dynamic Gaussian splatting methods either model appearance alone or target isolated objects segmented by foreground masks, and all of them recover meshes by TSDF fusion or Poisson reconstruction, whose fixed grids limit t
+
+[89] 2611.34940 | cs.CV | new | KW | pub=2026-11-26
+  T: LuxAvatar: Real-Time Relightable Head Avatars via Causal Neural Shading of 3D Intrinsic Proxies
+  A: We present LuxAvatar, a feed-forward framework for real-time head avatar animation and relighting from a single portrait. To achieve both 3D controllability and complex facial light transport, we factorize avatar synthesis into an animatable 3D intrinsic Gaussian proxy and a causal autoregressive neural shader. This proxy disentangles canonical geometry and reflectance attributes, rapidly rasterizing deformed Gaussia
+
+[90] 2611.34943 | cs.CV | new | KW | pub=2026-11-26
+  T: Tracking Any Point with Agentic Visual Reasoning
+  A: A general-purpose Vision-Language Model (VLM) has surpassed expert vision models in many domains such as object detection and video recognition. However, point correspondence is known to be challenging for VLMs since it goes beyond object-level recognition: it requires pixel-level localization of the same physical surface point across observations, even when appearance changes or the point disappears and later reappe
+
+[91] 2611.34944 | cs.CV | new | KW | pub=2026-11-26
+  T: AnyCam: Anything Can Represent Camera for Video Generation
+  A: Camera-controlled video generation re-renders a video along a target camera trajectory, yet moving the camera around an object, the most natural way to change the viewpoint of an object-centric scene, remains difficult. Existing methods condition either on camera parameters, which are scale-ambiguous in monocular video, or on explicit geometry such as warped point clouds or depth, which breaks down under large viewpo
+
+[92] 2611.34945 | cs.HC | new | KW | pub=2026-11-26
+  T: MidasTUI: Instant Tangible User Interfaces for Wearable Displays using Everyday Objects
+  A: While wearable displays can bring digital workspaces anywhere, interaction remains limited by mid-air gestures that lack tactile feedback and induce fatigue, or controllers that are cumbersome to carry. We present MidasTUI, a system that instantly transforms arbitrary everyday objects into opportunistic tangible user interfaces through brief interaction demonstrations. For example, a user can slide an earbud case acr

@@ -92,7 +92,9 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "2026-11-25": "2026-11-25 · 11-24 周二公告批次（公告日≠拉取日；11-21/11-22 周末 skipDays 并入本批；非重磅无 S——门③ 4.21 vs 4.432 margin −0.222，HoloSplat 4.21 达 S 线按 skill §8.6.3 记 A；listing 1,285 槽位 / 1,045 篇唯一且 100% 被 RSS 1,547 条覆盖（缺收 0）→ 免 id_list；KW 100 + 标题级补扫 46 → 剔 84 → 62 篇，残差复核 899 判 22（2.45%）采纳 6 篇 → 主批 68 篇，Top10 实数 10 篇覆盖 6 赛道（未重筛）；全文 66 L0/FULL + 2 L1/PARTIAL）",
                 "backfill-1125": "backfill · 11-24 公告 RSS 混入旧稿 replace 再公告（6 篇：UniView 3.77 A / GraspHOI 3.70 A / 电触觉装置 3.48 B / 高斯视角索引 3.40 B / IBPA 3.30 B / VR 导管训练 3.23 B）",
                 "2026-11-26": "2026-11-26 · 11-25 周三公告批次（公告日≠拉取日；单日公告组无周末积压；重磅日授 3 个 S——门③ 4.57 vs 4.432、margin +0.138、blockbuster=true：MoGe-4D 4.57 / A Mesh to Remember 4.40 / AirLeg 4.38；listing 761 槽位 / 624 篇唯一且 100% 被 RSS 921 条覆盖（缺收 0）→ 免 id_list；KW 61 + 标题级补扫 36 → 剔 53 → 44 篇，残差复核 527 判 8（1.52%）采纳 8 + 通读补 3 → 主批 55 篇，Top10 实数 10 篇覆盖 5 赛道（未重筛）；全文 63 篇全 L0/FULL，O-12 守卫已入库）",
-                "backfill-1126": "backfill · 11-25 公告 RSS 混入旧稿 replace 再公告（8 篇：PLANING 3.85 A / Seek-and-View 3.85 A / EgoPathBench 3.77 A / BARISTA 3.72 A / SEER-VAR 3.70 A / QNN-GS 3.62 A / OP2GS 3.50 B / 注视+SoM 2.77 C）"}
+                "backfill-1126": "backfill · 11-25 公告 RSS 混入旧稿 replace 再公告（8 篇：PLANING 3.85 A / Seek-and-View 3.85 A / EgoPathBench 3.77 A / BARISTA 3.72 A / SEER-VAR 3.70 A / QNN-GS 3.62 A / OP2GS 3.50 B / 注视+SoM 2.77 C）",
+                "2026-11-27": "2026-11-27 · 11-26 周四公告批次（公告日≠拉取日；单日公告组；非重磅日无 S——门③ 4.35 vs 4.459、margin −0.109、blockbuster=false，ProManO 4.35 / AnyCam 4.35 / Who Is Ego 4.20 达 S 线按校准关记 A；listing 695 槽位 / 569 篇唯一且 100% 被 RSS 849 条覆盖（缺收 0）→ 免 id_list；KW 67 + 标题级补扫 25 → 剔 49（含 1 篇库内 cross 再公告 2611.30173）→ 43 篇，残差复核 525 判 30（5.71%）采纳 12 → 主批 55 篇，Top10 实数 10 篇覆盖 5 赛道（门② 回补一次）；全文 62 L0/FULL + 1 L1/PARTIAL）",
+                "backfill-1127": "backfill · 11-26 公告 RSS 混入旧稿 replace 再公告（8 篇：G0.7 4.43 A / HPC 4.22 A / ArtMesh 4.15 A / torch-dgx 4.00 A / 3DSS 3.85 A / EgoCaptioner 3.72 A / LightFuse 3.62 A / GazeVLM 3.55 B）"}
 
 
 def read_text(p):

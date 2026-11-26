@@ -1,0 +1,390 @@
+[
+ {
+  "id": "2611.34141",
+  "title": "Faithful Trajectory Distillation for Fast Image-to-3D Generation",
+  "title_zh": "保真轨迹蒸馏：面向快速图生 3D 生成的采样压缩",
+  "problem": "原生 3D 生成模型能产出结构复杂、细节丰富的网格，但高质量结果依赖长多步采样、反复前向大网络：以 Hunyuan3D-2.1 加 UltraShape 的两段式管线为例，教师端粗生成与精化各用 50 步并在每步做 CFG，端到端耗时 576.6 s（含未优化解码与串行后处理）。而游戏资产复刻、产品数字化这类参考驱动任务要求生成几何忠实还原输入图中的具体对象——比例、部件布局不能变，视觉上好看但改了角色体型或机械件位置就不可用。已有的少步蒸馏（DMD 等）在 10 步粗生成上 Chamfer 距离（×10³）升到 28.7、F@0.01 掉到 0.419，输入保真度（silhouette IoU 0.729、ULIP-2 0.210）明显退于教师（15.3 / 0.596 / 0.844 / 0.237）。因此加速必须在压缩采样计算的同时保住模型对参考输入的几何响应。",
+  "method": "把两段式管线按阶段索引 $k\\in\\{c,r\\}$，条件分别为 $\\mathbf{c}^c=I$、$\\mathbf{c}^r=(I,\\mathcal{M}^c)$，噪声到数据的时间约定为 $\\mathbf{x}_t^k=(1-t)\\bm{\\epsilon}+t\\mathbf{z}^k$。FTD 分两步：先做 guidance distillation，把 CFG 的双分支折进单个条件模型，学生从教师初始化、以 MSE 回归引导速度 $\\mathcal{L}_{\\mathrm{cfg}}^k=\\mathbb{E}[\\lambda^k(t)\\|\\bm{v}_\\psi^k-\\bm{v}_\\phi^{k,\\mathrm{cfg}}\\|_2^2]$，其中速度回归取 $\\lambda^c(t)=1$、精化取 $\\lambda^r(t)=(1-t)^2$（对应精化端回归干净隐变量 $\\hat{\\mathbf{z}}=\\mathbf{x}_t+(1-t)\\bm{v}$），教师全程冻结。再在冻结的引导模型上做 interval compression：对区间 $[a,b]$，教师从 $\\mathbf{x}_a^k$ 出发走 $m$ 个 Euler 子步得 $\\mathbf{x}_m^{k,T}$，学生用一次前向跨完整区间 $\\mathbf{x}_b^{k,S}=\\mathbf{x}_a^k+(b-a)\\bm{v}_\\theta^k(\\mathbf{x}_a^k,a,\\mathbf{c}^k)$，损失 $\\mathcal{L}_{\\mathrm{traj}}^k=\\|\\mathbf{x}_b^{k,S}-\\mathrm{sg}(\\mathbf{x}_m^{k,T})\\|_2^2$ 直接监督端点，教师-学生共享同一起始隐变量与条件，精化端连粗几何也相同，因此学生学到的是教师对具体输入的累积更新。解码侧：粗几何沿用 FlashVDM 的分层 query；高分辨率精化用 cross-resolution field reuse（先用上一分辨率场定位表面单元，仅在潜在表面附近查询解码器、其余插值），再用 critical-region recomputation 修正插值造成的符号与连接错误——重算含近表面不一致的原始 query 批次并复用其已选 attention key/value，最后补算剩余变号边端点。网格侧把 QEM 简化按空间分区并行，面预算按输入面数比例分配并留出余量，各分区独立简化并保护分界，最后拼接做一次全局 QEM 到目标面数。",
+  "key_numbers": [
+   "端到端延迟：437.7 s → 74.5 s（5.87×）；相对未优化教师 576.6 s 累计 7.74×（NVIDIA L20）",
+   "DiT 采样加速：粗生成 10.0×、精化 19.9×，合计 18.88×",
+   "完整级联 Chamfer（×10³）：15.2（教师 15.7，DMD 29.1）；F@0.01 0.583（教师 0.575，DMD 0.413）",
+   "粗生成 10 步：CD 15.4、F@0.01 0.589、Normal 0.752（教师 50 步为 15.3 / 0.596 / 0.751，DMD 28.7 / 0.419 / 0.718）",
+   "输入保真：silhouette IoU 0.837、ULIP-2 0.232（教师 0.839 / 0.233，DMD 0.725 / 0.195）",
+   "固定教师粗几何的精化：CD 15.4（教师 15.7，DMD 15.9），ULIP-2 0.235（DMD 0.213）",
+   "精化解码配置：原始场评估 25.6 s → 仅算子优化 14.1 s → 加场复用 11.1 s → 加重算 12.3 s，表面偏差 6.59→1.52（×10⁻⁴）",
+   "并行网格简化：16 workers 下 53.2 s → 7.8 s（6.8×），与串行输出的平均法向一致性 0.973",
+   "训练成本：FTD 约 1,300 A800 GPU-hours，DMD 主 checkpoint 约 570"
+  ],
+  "ablation": "解码侧做了逐项拆解（Table 4）：仅算子优化把场评估从 25.6 s 降到 14.1 s；场复用再降到 11.1 s，但把表面偏差从 0.55 推到 6.59（×10⁻⁴）；临界区重算只多花 1.2 s（12.3 s）就把平均表面偏差降约 77%。加速解码与原解码在 CD（0.0356）、F@0.01（0.2620 vs 0.2621）、NC（0.5835）、HD95（0.1140）上几乎完全一致。训练预算实验是对蒸馏必要性的旁证：把 DMD 续训到累计 1,400 GPU-hours（略超 FTD 的 1,300），完整级联 CD 反而从 29.1 恶化到 46.9，而固定教师粗几何的精化几乎不变（15.9→15.8），说明粗生成阶段的结构误差无法靠加预算弥补。",
+  "baselines": [
+   "Teacher 管线（Hunyuan3D-2.1 + UltraShape，50/50 步 + CFG）",
+   "DMD（10 步粗生成 / 5 步精化）",
+   "原始（未加速）几何解码器与串行 QEM 简化（系统级对照）"
+  ],
+  "datasets": [
+   "未命名内部测试集（论文称 same test set，数据与训练细节在附录）",
+   "Hunyuan3D-2.1 粗生成器",
+   "UltraShape 精化器"
+  ],
+  "novelty": "相对渐进蒸馏（Salimans & Ho）与引导蒸馏（Meng et al.）在图像域的用法，这里把二者组合成 FTD 并首次系统性地施于粗到细 3D 生成的两个阶段，关键在于「成对轨迹监督」——教师与学生共享同一输入图像、同一起始隐变量与同一粗几何，使压缩后的学生复现的是教师对该输入的响应而不只是分布。相对 FlashVDM / MDT-dist 只压采样，这里同时处理采样之后成为瓶颈的解码与网格后处理，并把「输入保真」而非单纯视觉质量作为蒸馏的约束目标。",
+  "limitations": "评测只在一个管线（Hunyuan3D-2.1 + UltraShape）和作者自建的测试集上做，未给数据集名称与规模，跨骨干、跨类别的泛化未验证；基线仅 DMD 与教师两条，缺少与 LCM、InstaFlow、ADD/LADD 等少步方法的对比，因此「FTD 优于其他蒸馏路线」证据偏薄。质量上仍是「接近教师」而非超越：级联 CD 15.2 vs 15.7、ULIP-2 0.232 vs 0.233，端到端 7.7× 中大部分来自共用解码与后处理优化，纯蒸馏只贡献 5.9×。训练成本约为 DMD 的 2.3 倍，算力受限场景不划算；区间划分、教师子步数、两阶段训练/推理网格都放在附录，正文无法判断对步数配置的敏感性。",
+  "trl_evidence": "在单张 NVIDIA L20 上测实时延（437.7 s → 74.5 s），属离线批量生成的推理侧优化，没有在线服务、机器人闭环或产品化证据；依赖两个第三方生成模型，作者未给出部署形态。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 2,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：3D 生成推理慢是真实工程问题，但已有大量少步蒸馏工作，属有价值的局部问题而非领域卡点。NOV=3：引导蒸馏加区间端点回归是已有路线的组合，新意在于用到粗到细两阶段并强调输入保真，属实质改进。TEC=3：两阶段蒸馏与三项解码/后处理优化写得清楚、有解码消融，但缺少对区间选择与步数的敏感性分析，也无理论论证。EXP=2：只有一条管线与一个未具名测试集，基线仅 DMD 与教师，属单一设置。PER=4：端到端 7.7×、DiT 18.88×，质量与教师几乎持平，效率提升远超 30%。TRL=2：单卡离线推理优化，无在线系统与部署证据。REP=2：无代码，数据集与关键训练配置在附录且正文未给规模。",
+  "_w": 2.85
+ },
+ {
+  "id": "2611.34155",
+  "title": "OceanFix: Reference-Guided Diffusion for Sparse-View Underwater 3D Reconstruction",
+  "title_zh": "OceanFix：参考引导扩散的稀疏视角水下三维重建",
+  "problem": "水下稀疏视角重建同时受三重约束：视角少导致几何欠约束、波长相关的光衰减与背散射把外观与介质耦合在一起，因而在新视角出现伪影与细节丢失。现有路线各自只解一半——SeaThru-NeRF、WaterSplatting、SeaSplat 把介质写进场景建模，却不解决观测不足；RegNeRF、FSGS、DNGaussian 用几何/深度正则补稀疏视角，却不建模介质。把 Difix3D+ 这类「渲染-修复-蒸馏」直接搬到水下也不行：参考特征与目标视角在空间上不对齐，且修复像素对不同颜色通道的监督可靠性不等。实测在 SeaThru-NeRF 的 5 视角设置下，SeaSplat 为 23.14 dB / 0.7274 SSIM / FID 39.11，微调后的 Difix3D+ 也只有 22.90 dB / FID 23.12。",
+  "method": "给定带位姿的水下观测 $\\mathcal{O}=\\{(I_i,K_i,P_i)\\}$，重建高斯参数 $\\theta$ 与介质参数 $\\phi$，渲染 $\\widetilde{I}_t=\\mathcal{R}(\\theta,\\phi;\\pi_t)$。修复器以预训练单步 Difix 为骨干，输入渲染图、参考观测 $I_r$、参考辅助图（轴向深度 $D_r$、累积物体不透明度 $A_r$、介质贡献 $B_r$、介质占比 $f_r$）与两台相机，输出保持水下外观的修复图 $\\hat{I}_t$。第一阶段做介质外观适配：在四个 U-Net down-block 上加 reference router，目标特征作 query、参考 RGB 特征与介质描述子 $b_r=[B_r,f_r]$ 作 key，注意力为 $p_{ij}=\\mathrm{softmax}_j(q_i^\\top k_j/\\sqrt{d_h}+\\log\\rho_j)$，支撑权重 $\\rho_j=f_{r,j}v_{r,j}^{\\mathrm{image}}$ 屏蔽无支撑 token，检索到的描述子按最大支撑缩放后经零初始化残差与 sigmoid 门注入；损失 $\\mathcal{L}_{\\mathrm{RGB}}=\\mathcal{L}_2+\\lambda_P\\mathcal{L}_{\\mathrm{LPIPS}}+\\lambda_G\\mathcal{L}_{\\mathrm{Gram}}$，$\\lambda_P=1$，$\\lambda_G$ 在全局第 2000 步由 0 切到 1。第二阶段冻结全部外观参数，只训四个 geometry adapter：用相对位姿 $(R_{tr},t_{tr})=P_t^{-1}P_r$ 把参考像素按 $X_r=D_r(u_r)K_r^{-1}\\tilde{u}_r$、$u_t=\\pi(K_t(R_{tr}X_r+t_{tr}))$ 投到目标视角，前向 z-buffer 保留最近有效投影，支撑权重 $m_t=A_r(1-f_r)$；adapter 融合对齐后的参考特征、目标特征、相对相机嵌入、投影深度与支撑图，并以 $m_t$ 加权注入残差。几何监督用冻结的 Depth Anything V2 Large 估计修复图与训练目标的相对逆深度，标准化后取支撑加权 Smooth L1，$\\mathcal{L}_{\\mathrm{stage2}}=\\mathcal{L}_{\\mathrm{RGB}}+0.05\\mathcal{L}_{\\mathrm{depth}}$；推理时既不需要目标视角深度也不需要深度估计器。蒸馏侧把修复视图按「几何修复需求 × 通道可观测性」加权回灌：几何需求由归一化 alpha 贡献下相机空间高斯深度的相对离散度 $s(p)=\\sigma_z/\\mu_z$ 给出 $G(p)=s/(s+s_0)$；可观测性 $K_c(p)=A(p)T_c(p)$ 为通道透射率乘累积不透明度；权重 $w_{p,c}=(1+G K_c^2)/Z$ 归一化到均值 1，保留监督下限。场景损失为 $\\mathcal{L}_{\\mathrm{scene}}=\\mathcal{L}_{\\mathrm{obs}}+\\lambda_1\\mathcal{L}_{1,w}+\\lambda_S\\mathcal{L}_{\\mathrm{SSIM}}$，修复器在迭代中冻结，伪视图与权重周期性刷新。训练对由 SeaSplat 构造：三/五视角重建 30,000 迭代、12k/16k/20k 欠拟合 checkpoint、位姿聚类互补重建三种退化方式，每数据集四个 leave-one-scene-out 折。",
+  "key_numbers": [
+   "NUSR 5 视角：PSNR 23.23、SSIM 0.7326、LPIPS 0.2283、FID 25.81（SeaSplat 23.14 / 0.7274 / 0.2296 / 39.11）",
+   "NUSR 3 视角：PSNR 20.67、FID 30.79（SeaSplat 20.27 / 44.89；Difix3D+† 19.01 / 33.38）",
+   "SeaThru-NeRF 5 视角：PSNR 23.21、SSIM 0.7659、LPIPS 0.2274、FID 22.96（Difix3D+† 22.90 / 0.7316 / 0.2409 / 23.12）",
+   "SeaThru-NeRF 3 视角：PSNR 19.86、SSIM 0.6387（Difix3D+† 19.82 / 0.6125）",
+   "BVI-Coral 零样本（5% 输入）：PSNR 18.56、FID 18.80（SeaSplat 18.43 / 23.25）",
+   "跨渲染器鲁棒性（SeaThru-NeRF 5 视角）：3DGS 21.30→21.99 dB、LPIPS 0.3376→0.2833；WaterSplatting 22.70→22.79 dB",
+   "修复加蒸馏分解（IUI3-RedSea，5 视角）：输入 21.69/0.7344/41.64 → 仅直接修复 23.57/0.7575/17.16 → 仅蒸馏 21.93/0.7491/40.98 → 蒸馏加修复 23.64/0.7579/16.40"
+  ],
+  "ablation": "组件消融在 SeaThru-NeRF 的 Panama 场景、5 视角下做：去掉 RGB 参考降到 21.98 dB / LPIPS 0.2728，去掉介质特征 22.07 / 0.2613，去掉几何引导 22.69 / 0.2597，完整模型 22.756 / 0.7439 / 0.2551，其中 RGB 参考贡献最大。蒸馏权重较温和：均匀权重 22.741 / 0.2557、仅几何权重 22.746 / 0.2556，完整 22.756 / 0.2551，即加权只带来约 0.01 dB 与 0.0006 LPIPS 的改进。修复与蒸馏的互补性用 Table 1 单独验证：仅修复把 PSNR 从 21.69 提到 23.57、FID 从 41.64 降到 17.16；仅蒸馏后修复前的场景渲染为 21.93 / 0.7491 / 40.98，说明修复监督确实进入了 3D 表示；两者相加最好（23.64 / 0.7579 / 16.40）。",
+  "baselines": [
+   "Zip-NeRF",
+   "SeaThru-NeRF",
+   "3D Gaussian Splatting",
+   "SeaSplat",
+   "WaterSplatting",
+   "Difix3D+",
+   "Difix3D+（水下微调）"
+  ],
+  "datasets": [
+   "NUSR（3 / 5 视角）",
+   "SeaThru-NeRF（3 / 5 视角）",
+   "BVI-Coral（5% 帧，零样本）"
+  ],
+  "novelty": "相对 Difix3D+ 的通用「渲染-修复-蒸馏」：一是把修复模型拆成两阶段训练，先适配水下介质外观、再冻结外观只学位姿对齐的几何 adapter，使参考特征在空间上真正对齐目标视角且推理不需要目标深度；二是蒸馏权重不再均匀，而由深度离散度刻画的几何修复需求与通道透射率刻画的可观测性共同决定，把监督集中到「需要修且看得见」的区域。相对 SeaThru-NeRF / WaterSplatting 这类只建模介质的路线，这里补的是稀疏视角下的观测不足；相对 RegNeRF / DNGaussian 这类只做几何正则的路线，这里补的是介质耦合。",
+  "limitations": "增益幅度本身有限：NUSR 5 视角 PSNR 只比 SeaSplat 高 0.09 dB（23.23 vs 23.14），SeaThru-NeRF 5 视角高 0.83 dB，主要收益体现在 FID（39.11→25.81）；蒸馏加权项在消融中仅值 0.01 dB，说明「介质感知加权」这一卖点的实证支撑偏弱。零样本 BVI-Coral 上 PSNR/SSIM 提升仅 0.13 dB / 0.0011，属边缘改进。评测全是静态水下场景的渲染指标，没有几何精度（Chamfer/深度误差）与真实机器人下游任务；每个数据集只取四个场景、每场景单一 3/5 视角配置，未见多随机种子或视角选择的方差。方法依赖 SeaSplat 提供参考深度与介质描述子、依赖 Depth Anything V2 做相对深度监督，上游误差会传导；作者在文末声明使用 ChatGPT/Codex 辅助写作、跑实验代码与结果分析。",
+  "trl_evidence": "全部为离线实验：先在 SeaSplat 上重建、再冻结修复器做渲染-修复-蒸馏迭代，指标为 PSNR/SSIM/LPIPS/FID，无实时性、算力或延迟报告；没有真机水下平台、在线闭环或产品化证据。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：稀疏视角加介质耦合是水下重建的真实缺口，但属细分场景的局部问题，非通用卡点。NOV=3：外观/几何两阶段拆分与介质感知加权是在 Difix3D+ 路线上的实质改造，不是新范式。TEC=3：方法公式与训练流程完整、有组件消融，但没有理论分析，且关键加权项收益极小未被进一步解释。EXP=4：三个数据集、两种视角数、七个基线，另加跨渲染器与零样本迁移。PER=3：FID 降约 34% 但 PSNR 仅升 0.09 到 0.83 dB，属明显但小于 10% 且集中在子指标。TRL=2：纯离线渲染评测，无实时或在线系统。REP=2：无代码，训练对构造与超参虽在正文但可复现性仍不足。",
+  "_w": 3.0
+ },
+ {
+  "id": "2611.34223",
+  "title": "AnyCam4D: Ray-Based 4D Gaussian Rendering for Arbitrary Camera Models",
+  "title_zh": "AnyCam4D：面向任意相机模型的基于光线的 4D 高斯渲染",
+  "problem": "真实相机不是针孔，但绝大多数动态高斯泼溅都假定是：先把素材去畸变，于是丢视场或丢分辨率——170° 鱼眼若保留 150° 视场，中心每轴采样粗 3.4 倍；若保留中心分辨率只剩 95°；超过 180° 根本不存在对应的针孔图像。静态高斯泼溅已用 ray-based 渲染解决（3DGRT、3DGUT、3DGEER），但原生 4D 高斯用不了：4DGS 在时刻 $\\tau$ 绘制的 3D 高斯来自对 4D 协方差的条件化，只得到协方差 $\\Sigma_{3D}$，拿不到 UT 与光线求值所需的旋转与尺度。朴素恢复不可靠：特征分解的梯度含 $1/(\\lambda_i-\\lambda_j)$，在各向同性初始化处发散；fp32 下由 $\\Sigma_{xyz}-\\Sigma_{xyz,t}\\Sigma_{xyz,t}^\\top/\\sigma_t^2$ 相减得到的薄轴被舍入吃掉，方差甚至可为负，检查点里条件数达 $7\\mathrm{e}8$。",
+  "method": "核心是「对协方差的平方根做条件化」而不是对协方差本身。4D 高斯存有 $M=RS$、$\\Sigma_{4D}=MM^\\top$；把 $M$ 分块为 $(M_{xyz};\\ m^\\top)$，则 $N=M_{xyz}(I-\\hat{m}\\hat{m}^\\top)$ 精确满足 $\\Sigma_{3D}=NN^\\top$，且 $N$ 存的是轴长而非方差，薄轴在最长轴 $1\\mathrm{e}{-4}$ 时仍高于 fp32 舍入三位。$N$ 为 $3\\times4$ 无逆，故令 $A=(N^\\top;\\sqrt{\\varepsilon_c}I)\\in\\mathbb{R}^{7\\times3}$、$A=QU$，取 $L=U^\\top$ 得下三角且 $LL^\\top=\\Sigma_{3D}+\\varepsilon_c I$（$\\varepsilon_c=1\\mathrm{e}{-6}$ 为最细轴下限），即不显式构造协方差的 Cholesky 因子，只存 6 个数。$L$ 全程替代旋转与尺度：sigma point 变为 $\\mathcal{X}_{\\pm i}=\\mu_{3D}\\pm\\sqrt{3}[L]_i$（$\\lambda=0$）；像素光线只保留原点前方 $\\ell\\ge0$，闭式峰距 $\\ell^\\star=\\max(0,-(L^{-1}d)^\\top L^{-1}p/\\lVert L^{-1}d\\rVert^2)$、$D^2=\\lVert L^{-1}(p+\\ell^\\star d)\\rVert^2$；$L^{-1}$ 不显式求，用前代逐行解，每个高斯每次渲染算一次 $L$ 供其所有光线复用。远距离数值稳定化：先把光线原点移到离中心最近点 $p\\leftarrow p-(p^\\top d)d$（$D^2$、梯度与 clamp 不变），轴比 100 到 1000 时 $D^2$ 误差降 100 到 2000 倍。梯度 $\\partial D^2/\\partial\\mu_{3D}=-2w$、$\\partial D^2/\\partial L=-2\\,\\mathrm{tril}(wr^\\top)$，其中 $r=L^{-1}(p+\\ell^\\star d)$、$w=L^{-\\top}r$，再经 QR 与条件式闭式回传到 4D 旋转与尺度。外观上把 4D spherindrical harmonic 换成方向无关的时间项：$\\mathbf{c}(d,\\tau)=\\sum_k Y_k(d)\\mathbf{a}_k+\\sum_{f=1}^{4}(\\mathbf{b}_f\\cos\\omega_f+\\mathbf{b}'_f\\sin\\omega_f)$，$\\omega_f=\\pi f(\\tau-\\mu_t)$，3 阶时颜色参数由 144 降到 72、内存省 45%。把静态高斯的梯度致密化与 Selective Adam 移植到 4D：致密化触发量在参数空间算 $\\lVert\\partial\\mathcal{L}/\\partial\\mu_{xyz}\\rVert$ 并按相机到 $\\mu_{3D}(\\tau)$ 的距离缩放、只在时间门放行的视角上平均；Selective Adam 只更新当前 $\\tau$ 可见的高斯，使其在时间上空闲时段参数与动量冻结。因为每个像素只以「一条光线加一个时刻」进入光栅器，滚动快门（每行独立 $\\tau_r$ 与位姿，$L$ 与时间无关故只需条件化与分解一次）、景深（把孔径模糊盘二阶矩作为横向协方差附加到剪切后的因子再 QR，K=8 次通过）、色差（每通道按该波长放大率各投一条光线）都可直接在渲染时加上，无需新基元或重训。训练沿用 4DGS 日程：30k 步、每步 4 次渲染、L1 加 0.2 D-SSIM，三个种子。",
+  "key_numbers": [
+   "合成 170° 鱼眼：在原图上训练比去畸变训练在共享目标上高 3.0 到 8.1 dB（Dynopsis KB，保留 150° 视场时 +8.05 dB）",
+   "Dynopsis KB 去畸变目标：EWA 26.85 dB / LPIPS .065 → AnyCam4D 32.60 / .030（+5.75 dB）",
+   "合成鱼眼留出相机旋转 60 到 80°：对路径追踪真值领先 6.2 dB（种子范围 5.7 到 6.5）",
+   "DyNeRF（BC 镜头，49° 视场）：34.23 dB / LPIPS .068（EWA 34.05 / .070；4DGS 报告 33.49）",
+   "DeepView（KB 鱼眼，75°）：28.45 / .083（EWA 27.97 / .102）",
+   "训练步成本：渲染加反向为 EWA 的 1.06 到 1.13 倍，仅渲染 1.39 到 1.47 倍；每高斯内存差在 3% 以内",
+   "fp32 数值：QR 路线下距离 $D^2$ 偏差超过 1% 与超过 100% 的高斯数均为 0（从 $\\Sigma_{3D}$ 直接 Cholesky 为 474 到 4467 与 6 到 88）",
+   "原生镜头训练的非有限梯度：49 次运行中 4 次降到 72 次运行中 0 次",
+   "光线限制在原点前方：去畸变 Dynopsis KB 上 +1.8 dB"
+  ],
+  "ablation": "Table 2 把「原生训练」与「投影方式」分开：差值 $\\Delta$ 为同为去畸变目标时 AnyCam4D 减 EWA（渲染器差异），$\\Delta_{nat}$ 为原生训练减去畸变训练，$\\Delta_{proj}$ 为同为原图目标时 AnyCam4D 减经镜头 Jacobian 的 EWA。结果：BC 镜头上二者基本打平（DyNeRF +0.52 dB 属原生训练收益，SelfCap -0.15 dB 在 0.5 dB 打平阈值内），增益集中在极宽视场——Dynopsis KB 上渲染器差异 +5.75 dB、原生训练 +8.05 dB；给 EWA 配上原生镜头 Jacobian 后差距缩到 0.68 dB，说明大部分来自去畸变的分辨率与视场权衡而非渲染器本身。Table 3 是纯数值消融：从 $\\Sigma_{3D}$ 出发无论用逆、特征分解还是 Cholesky 都有数百到数千个高斯距离偏差超过 1%，从 $N$ 出发走 $NN^\\top$ 再 Cholesky 降到 1 到 414 个，QR 路线为 0。5.4 节的旋转探针是另一类消融：固定场景旋转留出相机 0 到 80°，精确渲染器必须复现自身未旋转渲染（29 到 58 dB），EWA 在 60 到 80° 掉到 12 到 35 dB，其中屏幕空间膨胀（固定像素模糊、角度上可变）贡献 20% 到 50% 的下降。",
+  "baselines": [
+   "EWA（作者在同一 gsplat 基础上重实现，共享标定与初始化）",
+   "EWA_nat（把 EWA 换成原生镜头 Jacobian 的消融基线）",
+   "4DGS",
+   "4DGaussians",
+   "STGS",
+   "FreeTimeGS",
+   "Ex4DGS",
+   "K-Planes",
+   "HyperReel"
+  ],
+  "datasets": [
+   "DyNeRF（3 个 300 帧场景，20 训练相机，1352×1014）",
+   "SelfCap（FreeTimeGS 的 6 个 60 帧片段，最高 1920×1080）",
+   "DeepView（flames / truck / welder，KB 鱼眼，44 相机 1280×960）",
+   "Dynopsis（自建路径追踪合成场景，288 帧，BC 与 170° KB 两种镜头）"
+  ],
+  "novelty": "相对 3DGUT / 3DGRT / 3DGEER 这些静态场景的任意相机渲染器，本文第一次让原生 4D 高斯（协方差含完整时空块）也能走光线求值，关键是把「条件化后再分解」换成「条件化协方差的平方根」——这一步同时解决可微性（各向同性处不再除零）与 fp32 数值（薄轴不再被相减吃掉），并用 QR 得到 6 参数的三角因子替代旋转加尺度。相对 4D-GRT（变形场 3D 高斯加光线追踪、但只在针孔图上训练），这里直接在原始畸变素材上训练，且在同数据上给出与 EWA 的受控对比。副产物是滚动快门、景深、色差变成渲染时选项而非新基元或逐镜头推导。",
+  "limitations": "所有采集装置都是静态多相机阵列，作者自述这是最大的适用范围限制：正因每点始终以相同入射角被同一批相机看到，EWA 的线性化误差可以被训练吸收，所以 BC 镜头上二者打平；换成运动相机后误差无法被吸收，作者预期增益更大但未验证。相机效应（滚动快门、景深、色差）只是渲染时近似，未参与训练，运动相机还需按行训练。相机平面裁剪把镜头限制在 180° 以内。快速运动仍弱：Dynopsis KB 上运动像素 17 到 22 dB、静止像素 30 到 36 dB。部分持平也可能来自训练而非精确投影（静态装置让模型适配了固有入射角）。作者声明使用 Claude Code 作为编码与实验、图表、写作辅助代理。",
+  "trl_evidence": "有项目页（sascha-kirch.github.io/anycam4d）与视频演示，实现了针孔、Brown-Conrady、等距与 Kannala-Brandt 四类镜头，并在四个真实多视视频数据集上训练；但仍是离线训练加离线渲染的研究原型，无实时帧率、无嵌入式或车载部署、无产品化证据。",
+  "code": "未明确给出代码仓库；仅提供项目页 sascha-kirch.github.io/anycam4d",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：动态高斯泼溅假定针孔导致广角与鱼眼素材必须去畸变，是真实且被长期绕过的能力缺口，作者也证明 EWA 在偏离采集视角时确实失效。NOV=4：对 4D 协方差平方根做条件化、以三角因子替代旋转尺度并配光线最近点求值，是新的表示与数值方案，非组合增量。TEC=5：推导、闭式梯度、fp32 误差分析、消融与旋转探针齐全，理论与系统闭环。EXP=5：四个数据集、九类基线、三种子、合成路径追踪真值，另加 60 到 80° 旋转外推实验。PER=4：鱼眼场景 +3.0 到 8.1 dB、旋转场景 +6.2 dB，但 BC 镜头多数只是打平，故未到 5。TRL=2：离线训练与渲染，无在线系统。REP=3：有项目页与大量附录细节，但未给代码链接。",
+  "_w": 4.07
+ },
+ {
+  "id": "2611.34224",
+  "title": "EgoMyo: Physical Hand State Estimation from Egocentric Video and Wrist Electromyography",
+  "title_zh": "EgoMyo：融合第一视角视频与腕部肌电的手部物理状态估计",
+  "problem": "手部交互的真实状态由三部分耦合构成：运动学（构型）、接触（在哪里碰）、交互力（压多大力）。但近乎相同的外观可以对应无接触、轻触或用力按压，视觉只能看到外部表现；腕部表面肌电（sEMG）能感知神经肌肉驱动、其激活随发力增长，却缺场景上下文且跨场次漂移。已有组合都是片面的：PiMForce 以外部捕获的姿态为条件从 sEMG 估压、ForceBand 让 sEMG 管力、视频管动作、EMGFormer 只用两模态做姿态，没有人联合估计三者。基准层面也缺数据——现有数据集最多覆盖其中一部分（Tab. 1），且没有重复佩戴（repeated donning）来度量 sEMG 变异。",
+  "method": "把整个物理手部状态放在 MANO 网格面上：$S_t=\\{M_t,c_t,f_t\\}$，$M_t=\\mathcal{M}(\\theta_t,\\beta_t)$，每个顶点 $v$ 带法向力 $f_t(v)\\ge0$ 与接触标签 $c_t(v)\\in\\{0,1\\}$，并按七个手部区域聚合出 $F_{t,r}=\\sum_{v\\in r}f_t(v)$、$C_{t,r}=\\max_{v\\in r}c_t(v)$。模型 $\\hat{S}_t=\\Phi(V_{t-W_V:t},E_{t-W_E:t})$。先做三项受控分析确立设计：单模态对比显示 sEMG 单独 MPJPE 12.40 mm（视觉 7.39 mm）、接触 F1 0.706（视觉 0.843），但在接触区上力估计更准（5.33 vs 6.35 N），给定真值接触后总力误差 5.62 vs 7.31 N；加 sEMG 后各区接触 F1 提升 1.2 到 7.6 点、力 MAE 降 1.01 到 7.34 N，且绝对增益与视觉误差的秩相关为 1.00（接触）与 0.93（力）；把预测幅值放到真值接触上，总力误差由 5.25 降到 4.48 N，而原始幅值在 88.7% 的帧里把超过 0.1 N 放到非接触区。MyoBridge 据此分三段：粒度匹配编码（GME）——冻结 WiLoR 视觉编码器给 patch token $Z^v_t$，18 通道 sEMG 用因果卷积 stem 加残差 TCN 加通道嵌入得 $Z^e_t=\\mathrm{LN}(\\mathrm{Mean}_\\tau[X^e_t+f_{\\mathrm{TCN}}(X^e_t)]+B_{\\mathrm{ch}})$，sEMG 编码器先在训练窗口上用对称 InfoNCE（温度 0.07，同 trial 窗口互不为负）对齐冻结视觉特征；两路 token 交给 MoT 共享注意力、各保留独立 FFN。区域门控融合（RGF）——把两路 token 均值拼接经 MLP 得七个区域状态加一个全局状态 $H^{(0)}_t$，再为每个状态产生 sEMG 残差 $E_{t,r}$ 与自身标量门 $g_{t,r}=\\sigma(f_{\\mathrm{gate}}(h^{(0)}_{t,r}))$，$\\tilde{h}_{t,r}=h^{(0)}_{t,r}+g_{t,r}E_{t,r}$，并做 $h=0.9\\tilde{h}+0.1\\mathrm{LN}(\\tilde{h})$ 的温和拉平。区域到表面解码（RSD）——运动学头回归 $(\\hat{\\theta}_t,\\hat{\\beta}_t)$ 得网格与关节；每个顶点以 $q_{t,v}=e_v+h_{t,r(v)}+\\mathrm{PE}(\\hat{M}_t(v))$ 为 query、在 $[Z^v_t;Z^e_t;H_t]$ 上注意力得 $z_{t,v}$；接触支撑力场先由区域接触门控幅值 $\\hat{F}_{t,r}=\\hat{C}_{t,r}\\,\\mathrm{softplus}(D_m(h_{t,r}))$，再在区域内按 $\\hat{f}_t(v)=\\hat{F}_{t,r(v)}\\hat{p}_t(v)$、$\\hat{p}_t(v)=\\tilde{c}_t(v)e^{s_t(v)}/\\sum_{u\\in r}\\tilde{c}_t(u)e^{s_t(u)}$ 分配，推理时低于接触阈值的顶点力严格为 0（训练用软概率）。损失用同方差不确定性加权 $\\mathcal{L}=\\sum_{k\\in\\{M,c,F,p\\}}(\\frac{1}{2\\sigma_k^2}\\mathcal{L}_k+\\log\\sigma_k)$，网格与区域力用 $\\ell_1$、接触用 Dice、区域内力分布用交叉熵，把「压多大力」与「压在哪」分开监督。骨干为冻结 ViT-H/16，可训练任务参数 9.41 M，B200 上 20 轮对齐加 20 轮任务训练、AdamW $5\\times10^{-4}$、batch 256。",
+  "key_numbers": [
+   "Cross-trial：MPJPE 3.26 mm、PVE 3.30 mm、区域接触 F1 0.95、区域力 MAE 0.86 N、表面接触 F1 0.88（最强基线 HBridge 5.42 / 5.36 / 0.94 / 1.06 / 0.87；视觉-only WiLoR 6.16 mm）",
+   "相对最强基线的降幅：MPJPE 降 39.8%、区域力 MAE 降 18.5%",
+   "Cross-session：MPJPE 5.35 mm（MoT 10.69），相对最佳融合基线提升 49.9%",
+   "Cross-subject：MPJPE 7.84 mm（MoT 14.41），提升 45.6%",
+   "数据集规模：5.75M 视频帧、33,989 trials、50 名被试（100 只手）、53.3 小时、34 种接触构型、两次独立佩戴",
+   "单模态对比：sEMG 单独 MPJPE 12.40 mm / 接触 F1 0.706 / 接触区力 5.33 N；视觉 7.39 mm / 0.843 / 6.35 N；给定真值接触后总力误差 sEMG 5.62 N、视觉 7.31 N",
+   "力泄漏：原始幅值在 88.7% 帧把超过 0.1 N 放到非接触区，限制到预测接触后降到 12.7%",
+   "计算成本：可训练 9.41 M 参数、0.712 GFLOPs、0.0284 ms/帧（不含视觉编码）",
+   "sEMG 窗长：100 到 750 ms 使力 MAE 降 6.4%，接触 F1 变动小于 1%；窗移到 [−1000,−750] ms 使力 MAE 升 29.4%，用帧后信号升 12.5%"
+  ],
+  "ablation": "Cross-trial 逐模块（Tab. 5）：去 sEMG 使区域力 MAE 0.86 升到 1.93 N、接触 F1 0.95 降到 0.88、MPJPE 升 76%；去视频使 MPJPE 升到 12.70 mm（最大退化），说明视觉是空间骨架；去 GME（两路独立）使 MPJPE 增 0.57 mm；去 RGF（无门控残差）力 MAE 1.02 N；把 RSD 换成直接力头力 MAE 1.09 N。时序侧（Tab. 6，120 个测试 trial）：MyoBridge 姿态相关 0.882、抖动 1.224、接触 F1 0.857（基线 0.736）、力相关 0.964、起始误差 105 ms，七项领先。损失景观（Fig. 6）在滤波归一化方向上扰动：只有 MyoBridge 低于最佳基线（1.88 vs 4.04 N），且在 0.4 步长内保持；0.1 步长只使其误差变 0.06 N。",
+  "baselines": [
+   "HaMeR",
+   "WiLoR",
+   "OpenTouch",
+   "EgoTouch",
+   "EgoTactile",
+   "EgoPressure",
+   "NeuroPose",
+   "vemg2pose",
+   "EMGFormer",
+   "MoT (Mixture-of-Transformers)",
+   "HBridge"
+  ],
+  "datasets": [
+   "EgoMyo（自建：50 人 / 100 手 / 33,989 trials / 5.75M 帧 / 53.3 小时）",
+   "Sensel Morph 桌面压力面（力与接触真值来源）",
+   "MANO 网格加 HBR Engine / SeqHand / WiLoR 标注管线"
+  ],
+  "novelty": "相对 emg2pose、EgoEMG 这类只给姿态或只给肌电的数据集，EgoMyo 是第一个把第一视角视频与腕部 sEMG 同裸手姿态、接触、法向力对齐的基准，且用「压力图配准到重建手网格」绕开了手套或手戴传感器对自然接触的破坏，并用两次独立佩戴量化 sEMG 变异。相对 EMGFormer / HBridge 这类整手级融合，MyoBridge 把「手部区域」作为融合单位：每个区域用自己的门吸收 sEMG 残差，力只落在预测接触顶点上并按区域幅值求和，把接触-力耦合写进解码结构而不是靠后处理。",
+  "limitations": "作者自述覆盖范围窄：只有裸手按压平面，抓握、曲面物体与切向力都未覆盖；跨佩戴与跨用户的 sEMG 漂移仍是开放问题（cross-session MPJPE 5.35、cross-subject 7.84 mm，明显高于 cross-trial 的 3.26）。力的真值依赖 Sensel SDK 换算、未对参考载荷做独立标定，绝对值带 SDK 转换误差；另有一名被试因未标定峰值力超出 1.5 IQR 被剔除。指标上顶点力 MAE 0.29 N 仍略逊 HBridge 的 0.28 N，说明「区域内如何分配」尚未解决——区域准确不等于表面力场准确。数据采集需要四台环绕相机加同步硬件加压力面，属实验室装置，离可穿戴日常采集有距离。",
+  "trl_evidence": "实验室级采集系统：固定被试侧第一视角相机加四台环绕相机加 Sensel Morph 压力面，硬件同步、软件时间戳对齐；推理侧只需冻结 ViT-H/16 与 9.41 M 参数任务头（0.0284 ms/帧），但没有任何在线机器人闭环、可穿戴产品化或真实部署证据。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：接触与力在视觉下弱可观测是具身交互的真实瓶颈，本文用肌电补足并给出可测的基准，但限于裸手平面按压。NOV=4：首个视频加腕部 sEMG 加裸手姿态、接触、力的联合基准，加上区域门控融合与接触支撑力场，属新任务定义加新架构。TEC=4：三项受控分析直接推导出三条设计约束，方法公式与四段损失完整，消融与时序、景观分析齐备，但无理论保证。EXP=5：50 人、5.75M 帧、三种划分、11 个基线、时序与扰动实验。PER=4：MPJPE 降 39.8%、力 MAE 降 18.5%，跨场次与跨被试进一步扩大到 45% 到 50%。TRL=2：实验室采集装置，离线训练与推理。REP=3：未给代码链接，但采集协议、标注与超参披露充分。",
+  "_w": 3.92
+ },
+ {
+  "id": "2611.34226",
+  "title": "LiveRelight: Sub-Second Global Illumination Editing for Gaussian Interiors",
+  "title_zh": "LiveRelight：高斯室内场景的亚秒级全局光照编辑",
+  "problem": "从单光照条件下的多视图像重建出的 3D 高斯场景只能重现采集时的光照；要重新打光，基于物理的逆渲染必须对每次编辑从零求解多次弹射光传输，代价高到无法交互。在 540×360、1024 spp 的设置下，EAG-PT 单次编辑需 134.5 到 184.4 s 才能看到第一帧；预计算「每盏灯的响应」虽可线性重组，但那份解把反射率与光源空间构型一起编码进去，改材质或挪灯就失效。因此编辑器拿不到近实时反馈，只能盲调。",
+  "method": "关键取舍是预计算「几何光交换」而不是「光照响应」，从而在编辑回路里保留一个廉价的传输求解。场景用 EAG-PT 从线性辐射度图像重建为有朝向的 2D 高斯（中心、切向尺度、法线、不透明度、采集辐射度、albedo、emissive 权重），假定 Lambertian 且发光体不反射。直接光在高斯上做 next-event estimation：每像素沿主射线 alpha 合成深度、albedo 与朝向相机的着色法线（累积不透明度到 0.95 前截断）得到接收点 $\\mathbf{x}$，抽 $M=8$ 个发光高斯样本，估计 $\\hat{\\mathbf{L}}_d(\\mathbf{x})=\\frac{\\boldsymbol{\\rho}(\\mathbf{x})}{\\pi M}\\odot\\sum_m\\frac{\\boldsymbol{\\ell}_{i_m}\\alpha_{i_m}(\\mathbf{y}_m)V g_{i_m}}{p_{i_m}q_{i_m}}$，几何因子 $g_i$ 为两侧余弦与距离平方之比，阴影透射率 $V$ 沿线段累乘 $\\prod(1-\\alpha_i)$；按 $p_i\\propto\\bar{\\ell}_iA_i$（$A_i=2\\pi o_is_{i1}s_{i2}$）与 $q_i=\\gamma_i/2\\pi s_{i1}s_{i2}$ 采样使 $\\alpha_i/q_i=A_i$ 解析抵消高斯衰减，再用 OptiX HDR 去噪。间接光交给代理网格上的稀疏 radiosity：TSDF 融合渲染期望深度后抽取一次三角网格（属性感知简化，保材质边界），三角面从深度一致的 albedo 投影得反射率；用 hemicube（64 分辨率）在质心间积分可见立体角得稀疏 form factor 矩阵 $F$，令 $T_\\rho Z=\\boldsymbol{\\rho}^M\\odot(FZ)$，解 $B=E+T_\\rho B$、保留 $B_{\\mathrm{ind}}=\\sum_{b=2}^{K}T_\\rho^bE$（$K=8$，因为高斯那一支已供发射与一次反射）。投影 $P\\in\\mathbb{R}^{N_G\\times N_T}$ 把三角面辐射度映射回高斯：借助可微高斯渲染器缓存每次命中的合成权重 $w_h=\\alpha_h\\prod_{h'<h}(1-\\alpha_{h'})$，构造 $[W_v\\mathbf{f}]_r=\\sum_h w_h\\mathbf{f}_{i(h)}$ 与 $[S_vz]_r=\\sum_{h\\in\\mathcal{H}^{\\mathrm{valid}}}w_hz_{t(h)}$，以投影拟合损失加 capture 约束、循环一致与先验正则联合优化，行做 softmax 归一保常量辐射度，拟合一次不需逐编辑优化。合成 $I_v=S^e_v+(1-w^e_v)\\odot[\\mathcal{D}(\\hat{\\mathbf{L}}_{d,v})+W^{\\mathrm{ind}}_vPB_{\\mathrm{ind}}]$。单面发光体是另一处关键：EAG-PT 把发光高斯当双面，光会从吊灯背面打到天花板，材质恢复只能靠压暗附近 albedo 补偿；本文在恢复 albedo 之前先用「多数训练相机中心位于发光侧」的符号投票 $\\mathrm{sign}[\\mathbf{n}_i^\\top(\\mathbf{x}_v-\\boldsymbol{\\mu}_i)]$ 定向每个发光高斯（必要时翻转法线与第二切向，保持足迹），背面保不透明度但不发光。编辑侧：发光体与 albedo 编辑只改 $\\boldsymbol{\\ell}_i$ 与 $\\boldsymbol{\\rho}_i,\\boldsymbol{\\rho}^M$，复用同一 $F$ 与 $P$ 重解；灯具几何编辑是 $\\mathrm{Sim}(3)$ 相似变换直接作用在高斯装配上（$\\boldsymbol{\\mu}'=\\mathbf{p}_f+aR(\\boldsymbol{\\mu}-\\mathbf{p}_f)+\\mathbf{t}$、尺度乘 $a$、切向帧乘 $R$），不做重拟合，再用 emitter re-injection 在临时追踪场景里打约 $10^6$ 条光线重算该灯具的一次反射注入，保留其余发射体的一次反射 $d_{\\neg f}=T_\\rho E_{\\neg f}$，得 $B'_{\\mathrm{ind}}=\\sum_{b=1}^{K-1}T_\\rho^b(d_{\\neg f}+\\hat{d}'_f)$。",
+  "key_numbers": [
+   "Kitchen Relit 1：35.95 dB / SSIM 0.983 / 0.244 s（EAG-PT 28.08 / 0.955 / 147.2 s）",
+   "Living room Relit 2：33.22 dB（EAG-PT 22.48），+10.74 dB，为本表最大差距",
+   "八个合成重打光条件平均：较路径追踪基线 +5 dB PSNR，编辑延迟最多降三个数量级",
+   "Bitterli-Kitchen Relit：30.78 dB / 0.153 s（EAG-PT 28.89 / 183.5 s）；Bitterli-Livingroom 32.51 / 0.149 s（29.23 / 160.9 s）",
+   "真实场景首次合成：FIPT-Classroom 0.40 到 0.47 s、FIPT-Conference 0.36 到 0.52 s",
+   "消融（Kitchen Relit 1/2/3）：仅发射加 NEE 22.02 / 21.72 / 20.26 dB；仅 radiosity 32.84 / 35.52 / 35.96 dB；完整 35.95 / 36.99 / 36.96 dB",
+   "代理网格预算：100k 三角面降 0.12 到 0.44 dB、编辑时间 0.17 到 0.23 s；400k 不提升质量但时间升到 0.41 到 0.49 s",
+   "投影拟合：拟合 $P$ 比最近质心分配高 0.37 到 0.79 dB、比未拟合初值高 0.20 到 0.65 dB",
+   "预计算开销：200k 代理的 $F$ 需 9 到 11 min、压缩后 3.4 到 4.1 GB、显存 6.5 到 8.1 GiB、载入约 20 s；抽网格加拟合 $P$ 需 26 到 31 min",
+   "高分辨率：1080×720 延迟 0.38 到 0.53 s、1620×1080 为 0.65 到 0.99 s（EAG-PT 同期每视图路径追踪 654 到 723 s 与 1445 到 1607 s）"
+  ],
+  "ablation": "Table 2 在 Kitchen 上逐项拆：把高斯那一支换成投影后的前两阶 radiosity 损失 1.00 到 3.11 dB（省 55 到 97 ms），完全去掉间接光损失 14 到 17 dB，说明直接光与间接光两支不可互相替代；代理网格减半到 100k 只掉 0.12 到 0.44 dB 但时间降到 0.17 到 0.23 s，加到 400k 质量不升、时间反升；投影 $P$ 的拟合在三种条件下每项指标都最好；给 EAG-PT 也配上单面发光后，其渲染时间基本不变但仍比本文低 0.21 到 3.20 dB，说明单面化本身有价值但不足以补齐差距。八阶截断在合成条件上保留约 99% 的间接功率。",
+  "baselines": [
+   "EAG-PT（主基线，按作者约定 1024 spp、7 次弹射重路径追踪）",
+   "EAG-PT 加单面发光（对照组）",
+   "RadiosityGS（作者判断不适用，仅讨论）",
+   "Hu et al.（前向渲染，仅讨论）",
+   "LuxRemix / AEGIR（未公开重打光代码，仅讨论）"
+  ],
+  "datasets": [
+   "Kitchen（自建合成，450 视角，含吊灯、射灯、柜内发光体）",
+   "Living room（自建合成，450 视角，三种目标光照）",
+   "Bitterli-Kitchen",
+   "Bitterli-Livingroom",
+   "FIPT-Classroom（真实捕获，仅定性）",
+   "FIPT-Conference（真实捕获，仅定性）"
+  ],
+  "novelty": "相对 LuxRemix 这类「预计算每盏灯的贡献再线性重组」，本文预计算的是与发射、反射率解耦的几何交换算子，因此改发光强度、改 albedo、甚至移动灯具都能进入一次新的稀疏求解而不必重算传输——这是把经典 two-pass radiosity 的「视角无关解加视角相关渲染」搬到高斯重建上的新组合。相对 RadiosityGS 直接在半透明高斯面元上解 radiosity、Hu et al. 依赖屏幕空间复用，这里用不透明代理网格承担高阶间接光、用「在 alpha 合成图像形成下拟合的稀疏投影」把解搬回高斯，正是为了跨过「面求解器认几何面元、高斯成像按视角混合」这一域差。相对生成式重打光（SyncLight、LightBridge），这里支持指定灯具几何变化与 albedo 变化并同步更新阴影与色溢。",
+  "limitations": "作者列出的限制很实在：假定 Lambertian 与「发光面直接可见」，隐藏光源需要更丰富的表示，插入光源需要给定几何与发光；光源指派依赖人工 fixture mask 与发光面面积；代理网格离散化限制间接精度；$P$ 无法修正缺失几何或传输误差，分数发光覆盖时合成式只是近似；预计算与存储随表面交互数增长。编辑范围也有限：改动接收体几何或不透明度会使传输矩阵失效；emitter re-injection 只更新被编辑灯具到接收体的可见性，其他发射体之间与接收体之间的可见性、以及移动后灯具外壳上的间接光都不更新；几何编辑只覆盖缩放与平移。保真度还受 EAG-PT 的单次弹射入射光估计影响，对采集光照条件敏感。真实场景（FIPT）只有定性结果，无参考图。",
+  "trl_evidence": "单张 RTX 4090 上实现交互式编辑：编辑后首帧小于 0.5 s、后续帧 0.05 到 0.12 s（8 到 22 FPS，540×360），并给出 1080×720 与 1620×1080 的延迟；在两组真实室内捕获上跑通发光、材质、插入灯具编辑。属可用的研究原型，作者称源码与数据将公开，但尚无商用产品或插件形态。",
+  "code": "承诺开源（source code and data will be made publicly available），未给链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：每次编辑重跑路径追踪让重打光无法交互，是逆渲染落地的真实卡点，但解法只覆盖室内静态 Lambertian 场景。NOV=4：把预计算几何交换而非光照响应用于高斯重建，并用 alpha 合成下拟合的稀疏投影跨越网格与高斯的域差，是明确的新组合与新算子。TEC=4：直接光 NEE、radiosity、投影、单面发光、灯具注入五段都给出公式与实现，消融逐项覆盖，但无收敛性证明。EXP=4：两个自建合成场景加两个 Bitterli 加两个真实捕获、多光照条件、逐条件路径追踪真值。PER=5：平均 +5 dB、最大 +10.74 dB，延迟降 2 到 3 个数量级，远超 30%。TRL=3：可交互原型、有真实捕获，但未产品化。REP=3：承诺开源但无仓库，附录披露充分。",
+  "_w": 4.0
+ },
+ {
+  "id": "2611.34319",
+  "title": "PostMesh: Self-Rewarded Preference Post-Training for Flow-Based Artist Mesh Generation",
+  "title_zh": "PostMesh：基于自奖励偏好的流式艺术家网格生成后训练",
+  "problem": "艺术家网格（artist mesh）是紧凑、四边形为主、按边环布局的网格，便于编辑、绑定与展 UV，但只能手工制作、昂贵。自动生成目前以自回归（AR）为主——MeshAnything、MeshAnything V2、Mesh Silksong、FastMesh 逐 token 解码，每个网格需 26.98 到 471.84 s。扩散与流式生成器（PolyDiff、TriFlow、MeshFlow）一次并行出全部隐变量，MeshFlow 只需 2.17 s，但网格质量不达标：长而薄的三角形、碎片化部件，这些缺陷只存在于解码后的网格里，flow-matching 损失根本看不到。AR 侧的进展主要来自基于 token 似然的偏好优化或 RL（DeepMesh、Mesh-RFT、QuadGPT、Mesh-Pro），但流式模型没有可用的 token 似然，且其输出经过冻结、不可微的解码器，因此此前无人对扩散或流式艺术家网格生成器做过后训练。",
+  "method": "以 MeshFlow 为基座：MeshVAE 把艺术家网格编码为逐顶点隐变量 $z_0$，rectified-flow transformer 在 $z_\\sigma=(1-\\sigma)z_0+\\sigma\\epsilon$ 上预测 $\\epsilon-z_0$，条件 $c$ 为稠密输入网格的表面采样，冻结解码器把 $z_0$ 还原为顶点、边与 3-clique 面。训练完全自举：对每个稠密输入采一组 16 个样本，逐个解码并由「艺术家网格奖励」打分，门控算法选出一个胜者与若干加权败者，用偏好损失只更新 LoRA 适配器，下一轮换新输入。奖励分两类。形状一致性（对稠密输入渲染与输出渲染比较，固定视角、按包围盒对角线归一）：silhouette IoU $|S_O\\cap S_I|/|S_O\\cup S_I|$ 抓缺失或多余部件，深度 $L_1=\\frac{1}{|S_O\\cap S_I|}\\sum_p|d_O(p)-d_I(p)|$ 抓表面内凹外凸——两者都只看渲染，因此不偏向任何三角化方式。结构项：先把相邻三角对合成为四边形（共面 10° 内、并集为凸四边形且四角在 45° 到 135°），贪心按最小角降序；quad strip 分数 $\\mathrm{QS}=\\frac{1}{|\\mathcal{Q}|}|\\{q\\in\\pi:\\pi\\ \\text{成环或}\\ |\\pi|\\ge4\\}|$ 衡量四边形是否延续成边环；tessellation 用 Mesh-RFT 的 $\\mathrm{TS}=0.4\\tau_1+0.2\\tau_2+0.3\\tau_3+0.1\\tau_4$（四边形占比、直角分数、对边等长、邻面相似）；sliver 项按面积占比惩罚最小角小于 5° 的针状三角形；valence 项惩罚度数不大于 2 或不小于 10 的顶点占比；tiny/stray 项分别用 $\\log(1+n_{\\mathrm{tiny}})$ 与碎块面积占比；再加面数界 $r_{fc}=\\mathrm{clip}(1-|\\log_2(F/F_t)|/b,0,1)$ 防止策略靠减面上分或照抄稠密输入。总奖励为九项加权和（权重和为 1）。门控算法把相对同组不可信的样本判为失败（Chamfer 或 Hausdorff 远高于组中位数、翻转面或小碎块多于同组、真实部件数明显偏少、解码失败），失败样本一律权重 1 计为败者；通过门控但比胜者低半个组标准差的也计为败者，其权重为与胜者的奖励差除以组内最大差。若胜者在保真度、覆盖率、面数或居中上劣于某败者，则丢弃该对，避免教模型牺牲这些性质。偏好损失把去噪误差当似然代理：$\\ell_\\theta(z_0)=\\frac{1}{|z_0|}\\lVert v_\\theta(z_\\sigma,\\sigma,c)-(\\epsilon-z_0)\\rVert^2$，同一输入内胜者与所有败者共享同一 $(\\epsilon,\\sigma)$；边际相对冻结参考模型计算 $d_j=(\\ell_\\theta(w)-\\ell_{\\mathrm{ref}}(w))-(\\ell_\\theta(l_j)-\\ell_{\\mathrm{ref}}(l_j))$，只保留「微调真正带来的改善」；多负样本损失 $\\mathcal{L}_{\\mathrm{DPO}}=\\sum_j\\omega_j\\phi(d_j)/\\sum_j\\omega_j$，软损失为 $\\phi(d)=\\mathrm{softplus}(\\frac{\\beta}{2}d)$；再加 RPO 项 $\\mathcal{L}=\\mathcal{L}_{\\mathrm{DPO}}+\\gamma\\ell_\\theta(w)$ 防止两边误差一起升。训练数据为 Objaverse 中不超过 100k 面的对象，两轮自训练、每轮 1000 迭代与 1000 个对象，只训 LoRA。",
+  "key_numbers": [
+   "Quad strip 分数 QS：0.804（MeshFlow 0.466、MeshAnything 0.756、MeshAnything V2 0.776、Mesh Silksong 0.790、FastMesh 0.035）",
+   "Tessellation 分数 TS：0.706（MeshFlow 0.575、Mesh Silksong 0.708、MeshAnything 0.746）",
+   "缺陷面占比 DFF：0.121（MeshFlow 0.206、MeshAnything 0.319、Mesh Silksong 0.090）",
+   "Chamfer 距离 CD：2.697（MeshFlow 2.760、MeshAnything 5.055、Mesh Silksong 2.981）；Hausdorff HD 6.089（MeshFlow 6.169）",
+   "碎片化 Frag.：0.647（MeshFlow 0.743、MeshAnything 0.317、Mesh Silksong 0.533）",
+   "速度：2.53 s 每网格（MeshFlow 2.17 s；AR 基线 26.98 到 471.84 s，单张 L40S）",
+   "面数：728（MeshFlow 609、MeshAnything 439、Mesh Silksong 2344、FastMesh 12490）",
+   "盲测 VLM 偏好：对 FastMesh 92.5%、MeshAnything 82.5%、MeshFlow 80.0%、MeshAnything V2 72.5%、Mesh Silksong 62.5%（60 个独立对象、双向呈现）",
+   "细分与拓扑侧效应：Loop 细分两级后翻转与自交面约减半，非流形边不到一半"
+  ],
+  "ablation": "Table 2 在 200 个独立对象上逐项移除：完整设置 QS 0.746 / TS 0.672 / DFF 0.111 / Frag. 0.663；去掉 tessellation 加 sliver 加 valence 损失最多（QS 降 0.201、TS 降 0.066、DFF 升 0.033）；去掉 strip 加 tessellation 次之（QS 降 0.142、TS 降 0.044）；去掉 silhouette 为 QS 降 0.055、TS 降 0.020；去掉 depth 为 QS 降 0.097、TS 降 0.033；去掉 tiny/stray 使 DFF 升 0.039。替换后训练目标：仅对胜者做 SFT 损失 QS 0.206、RAFT 损失 0.323、Flow-GRPO 损失 0.298，说明收益来自偏好优化而非「只挑好样本再模仿」。作者也承认 DPO-only（无 RPO 项）一次训练结果不确定，RPO 的收益尚未确立。",
+  "baselines": [
+   "MeshFlow（基座模型）",
+   "MeshAnything",
+   "MeshAnything V2",
+   "Mesh Silksong",
+   "FastMesh V4K",
+   "RAFT / SFT-only / Flow-GRPO（后训练目标对照）"
+  ],
+  "datasets": [
+   "Objaverse（训练 2,000 对象池，不超过 100k 面）",
+   "Objaverse 测试集 300 个稠密对象（带对应艺术家网格）",
+   "Objaverse 消融集 200 个独立对象"
+  ],
+  "novelty": "相对 Mesh-RFT、DeepMesh、QuadGPT 这些在 AR 模型上做 token 级 DPO 或 RL 的工作，本文第一次在「流式加冻结不可微解码器」的艺术家网格生成器上做后训练，用去噪误差作为似然代理绕开没有 token 概率的问题，并用相对冻结参考的边际消除「本来就容易」的样本。相对把奖励当过滤器再 SFT（RAFT）或用 GRPO，这里的多负样本加权偏好把一组 16 个样本的信号都用上。奖励设计上，形状一致性只通过渲染比较（不偏好任何三角化），结构项则用四边形条带与环和 tessellation 度量「边环是否延续」，避免了只数四边形比例的漏洞。",
+  "limitations": "作者自述：艺术家网格没有统一标准，不同艺术家偏好不同，奖励不是金标准；评测本身主观，自动指标与 VLM 评审都不能完全代表艺术家判断。实际数据上，碎片化仍明显劣于 AR 基线（0.647 vs MeshAnything 0.317），说明 tiny/stray 项只缓解未解决；ECD 8.123 也差于 Mesh Silksong（5.654）与 FastMesh（5.736），作者归因于面数只有其三分之一到十七分之一。奖励项与 QS/TS/DFF 指标部分重叠，虽用 Loop 细分、非流形边、UV 展开做了旁证，仍不足以完全排除「优化了指标」；VLM 评审用 Claude Opus 5.5 代替专业艺术家，作者明确说真人研究代价过高。",
+  "trl_evidence": "单张 L40S 上 2.53 s 每网格，接近基座 MeshFlow 的 2.17 s，比 AR 方法快一到一点五个数量级；训练只需两轮各 1000 迭代的 LoRA 微调。属离线研究原型，无产品集成、无艺术家生产流程验证（真人研究被明确省略）。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：艺术家网格的拓扑质量是资产管线的真实需求，但影响面限于 3D 内容制作，不是通用卡点。NOV=4：首个面向流式艺术家网格生成器的无真值后训练，奖励设计与多负样本流偏好优化都是新机制。TEC=4：九项奖励、门控规则、似然代理与 RPO 项都给出定义，消融覆盖奖励项与替代目标，但 RPO 收益作者自认不成立。EXP=4：300 测试对象加 200 消融对象、五个基线、盲测 VLM 偏好与三项非奖励指标旁证。PER=4：QS 0.804 对 0.466（提升 72%）、TS 0.706 对 0.575，但 CD 几乎持平、碎片化仍落后。TRL=2：离线 LoRA 后训练，无产品化。REP=2：无代码，关键超参放在附录且部分结论不确定。",
+  "_w": 3.5
+ },
+ {
+  "id": "2611.34347",
+  "title": "AIRIS: Benchmarking Social Embodied Intelligence in Egocentric Streaming Videos",
+  "title_zh": "AIRIS：第一视角流式视频中的社会具身智能基准",
+  "problem": "在人身边工作的具身智能体不仅要识别社交线索，还要判断「证据是否已经足够」「该不该介入」「怎么回应才不违礼」。现有基准把这些能力分开测，或用已经看完的完整视频测，因而看不出在线社会决策究竟在哪一步失败：StreamingBench、OVO-Bench 只测流式感知与主动响应，EgoSocial、SIV-Bench 只测社会线索与意图理解，EgoNormia、RobotEQ 只测规范合规，没有人在同一批片段、同一套时间锚点上把四段串起来。结果是「看得懂」与「做得对」之间的落差无法定位。",
+  "method": "把社会具身智能形式化为第一视角流上的在线决策链 A-I-R-I。片段 $S=\\{o_t\\}_{t=0}^{T_{\\max}}$，$o_t=(v_t,a_t)$ 只含第一视角 RGB 与声学信号（全模态模型给原始音频，普通 VLM 给时间对齐的 ASR）；查询时刻 $\\tau$ 只能看因果前缀 $O_{\\le\\tau}=\\{o_t\\mid t\\le\\tau\\}$。四个时间锚点：$T_0$ 线索起始、$T_1$ 意图可判定起点（人类专家能无歧义确定对方意图的最早时刻）、$T_2$ 自身响应起始、$T_3$ 交互结束。四层任务共用片段与锚点但分别计分：Attention 要求先在第一视角里定位交互对象、再解析其注视与指向目标、手势、姿态与情绪；Intention 先判断目标在 $O_{\\le\\tau}$ 下是否已可支撑，$\\tau<T_1$ 时正确答案是「证据不足」，$\\tau\\ge T_1$ 才需给出目标与支撑证据；Reaction 先做介入决策（行动、沟通、继续观察、不介入），仅在需要介入时再给动作域与具体子动作；Interaction 在 $\\tau\\ge T_3$ 后评估任务完成度、相互理解、空间礼仪、体态、沟通礼仪与是否违规。全部为闭集多选以便客观复现。指标上先算四层 micro 分数取无权均值 $\\mathrm{Overall}=\\frac14(S_{\\mathrm{Att}}+S_{\\mathrm{Int}}+S_{\\mathrm{Rea}}+S_{\\mathrm{Inter}})$；针对 Intention 另设 Intent Anticipation Score：$t_f$ 为首个不小于 $T_1$ 的查询时刻、$p$ 为模型开始稳定正确的最早时刻，$m=\\mathrm{clip}((T_2-p)/(T_2-t_f),0,1)$，再乘 $(1-\\mathrm{FCR})$，其中 FCR 是 $T_1$ 之前过早给出具体意图而非弃权的查询比例，IAS 为事件级取宏平均；Reaction 除分层得分外给 Engage 宏 F1 与要求介入、动作域、子动作、言语功能同时对的 Joint-EM；Interaction 报 Compliance 与以「存在违规」为正类的 Violation。构建走六层人机协同管线：关键词检索、专有 VLM 按第一视角、时间连续、视听质量、内容适宜、交互有效五项筛、人工复核、VLM 提议片段边界加人工修订、Attention 全人工标注（两人复核）、Intention/Reaction/Interaction 由强 VLM 与两名标注员各自提议再由专家组裁决、模板生成候选题、专家逐题审查（保留、修订或删除证据不足、选项歧义、答案不唯一、时间上下文不一致或未来信息泄漏的题）。",
+  "key_numbers": [
+   "规模：8,000 题、357 个第一视角片段、276 个源视频、10.91 小时；片段 3.0 到 767.3 s、均值 110.0 s；平均 22.4 题每片段、11.46 采样帧每题",
+   "结构：四层各 2,000 题（完全平衡）、36 个能力维度、11 类交互情境、230 个细粒度子场景；单选用 63.1%、多选 25.6%、框选 6.4%、是否用 5.0%；87.7% 为流式触发、41.1% 含语音上下文",
+   "最强总分：Gemini-3.7-Flash 0.726，其中 Attention 0.936、Intention 0.569、Reaction 0.638、Interaction 0.760",
+   "IAS 上限：Gemini-3.7-Flash 仅 0.237，多数模型接近 0.1",
+   "Reaction 单项最强：HY-Embodied-VLM-1.0 0.688；但 Joint-EM 仅 0.028，全 45 个模型无一超过 0.147",
+   "提前承诺率 FCR（$\\tau<T_1$）：类平均 0.26 到 0.51，个体从 Phi-4-Multimodal 0.08 到 GLM-5.3-Flash 0.64；Gemini-3.7-Flash 为 42%",
+   "Interaction：Qwen3-VL-32B-Instruct 合规 0.923、违规检测 0.589，为该项最高",
+   "显式推理：Qwen3.6-27B 与 no-think 打平（0.1 点），Qwen3.6-35B 降 6.4 点，Qwen3-Omni 仅升 2.9 点；含「however/wait/reconsider」修订标记的轨迹（约 77%）掉 27 到 30 点准确率"
+  ],
+  "ablation": "无模型消融（基准论文）。替代证据是分层诊断本身：把 Overall 拆成四层后可见注意力到意图到反应到交互的能力断层（通用 VLM 在 Attention 0.936、专业具身模型在 Reaction 0.688），以及把 Reaction 从分层得分换成 Joint-EM 后排名重排（0.688 降到 0.028、0.655 降到 0.064、0.643 降到 0.056），说明「单项对」与「串起来对」是两种能力。另有 think 与 no-think 对照（同输入、thinking-aware 重新解析）作为测试时计算的消融，结论是显式推理在需要克制的列（I-Online、Interaction 合规）一致变差。",
+  "baselines": [
+   "Gemini-3.7-Flash / Gemini-3.1-Pro / GPT-5.6-Sol / Doubao-seed-2.0-lite（闭源）",
+   "Qwen3.6-35B-A3B / GLM-5.3-Flash / Gemma-4-31B-IT / InternVL3 系列 / LLaVA-OneVision-7B 等（开源通用）",
+   "HY-Embodied-VLM-1.0 / RynnBrain / VeBrain / RoboBrain2.0 / MiMo-Embodied 等（具身）",
+   "JoyAI-VL-Interaction / AURA-8B / StreamingVLM / Flash-VStream / VITA-1.5（流式视频）",
+   "Qwen2.5-Omni / Qwen3-Omni / OmniVinci / Phi-4-Multimodal（全模态）"
+  ],
+  "datasets": [
+   "AIRIS（8,000 题 / 357 片段 / 276 源视频 / 10.91 小时）",
+   "11 类情境：Market Commerce 1,324 题、Store Retail 1,055、Work & Professional Services 1,052、Social Encounters 976 等",
+   "网络公开第一视角视频（检索后经 VLM 筛选与人工复核）"
+  ],
+  "novelty": "相对 StreamingBench / OVO-Bench 只测流式感知与是否该响应，这里把社会交互拆成四个有依赖的阶段并要求在同一片段、同一组 $T_0$ 到 $T_3$ 锚点上分别作答，使阶段间落差可诊断。相对 EgoSocial / SIV-Bench 只做被动社会理解、EgoNormia / RobotEQ 只做规范判定，这里首次把「证据是否充足」变成可评分的对象：$T_1$ 之前「证据不足」是唯一正确答案，并用 IAS（提前稳定正确的时间余量乘不过早承诺）与 FCR 同时惩罚「抢答」与「不动」。这也是首个在因果前缀与完整视频两种设定下都覆盖四层的基准。",
+  "limitations": "作为基准而非方法，它不提供改进模型的方案，因此「怎么才能做到」仍是开放的。数据来自网络公开视频，虽经 VLM 筛选与人工复核，但场景分布偏向市场、零售、服务业等可检索到的情境，家庭私密场景与多人快速交替的对话覆盖偏少；片段平均 110 s、只取 11.46 帧每题，长时程证据累积的评测粒度有限。$T_1$ 是「专家判定可无歧义确定意图」的时刻，本身带主观性，跨标注者的边界一致性未在正文给出量化。评测全为闭集多选，难以区分「答对」与「因选项设计而蒙对」；45 个模型均为零样本，未做提示词或解码策略的敏感性分析。作者也承认未来需扩展到 robot-in-the-loop 与开放式生成。",
+  "trl_evidence": "已公开 GitHub（github.com/AIRIS-bench/AIRIS）与项目页（airis-bench.github.io），提供 8,000 题评测集与评测脚本；但只是离线基准，不含在线推理系统、机器人闭环或产品化组件。",
+  "code": "已开源 github.com/AIRIS-bench/AIRIS（项目页 airis-bench.github.io）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 3,
+   "EXP": 5,
+   "PER": 2,
+   "TRL": 3,
+   "REP": 4
+  },
+  "scores_why": "IMP=3：在线社会决策的评测缺口真实存在且阻碍具身落地，但这是评测层问题，不直接解决能力。NOV=4：A-I-R-I 时间锚定链与 IAS、FCR 把「何时该等」变成可评分量，是新的任务形式化而非组合。TEC=3：构建管线与指标定义严谨、有人工复核，但无算法贡献，锚点主观性未量化。EXP=5：45 个模型、8,000 题、357 片段、五类模型族、think 与 no-think 对照。PER=2：无自提方法，故无相对 SOTA 提升；基准结论本身是「所有模型都失败」（Joint-EM 低于 0.147）。TRL=3：代码与数据公开、可直接跑，但是离线基准。REP=4：GitHub 与项目页可查。",
+  "_w": 3.42
+ },
+ {
+  "id": "2611.34414",
+  "title": "SemProxy: Semantic 3D Proxies for Controllable Agentic 3D Modeling",
+  "title_zh": "SemProxy：面向可控智能体三维建模的语义三维代理",
+  "problem": "编码智能体（Claude Code、Codex 等）已能通过几何与建模 API 写代码生成 3D 模型，但用户很难控制过程：现有输入只有文本与参考图，文本难以表达精确的空间意图（部件尺寸、相对布置），图像又常因遮挡而歧义，于是需要反复追加提示。论文举的例子是给书桌显示器增高架改一个深度，就要多一轮对话才能说清；定量上，Codex 在纯文本加图像下建场景的 Chamfer 距离（×10³）为 7.8、难物体 5.6，Claude Code 场景 9.7、DeepSeek 场景 10.5。反过来，把网格或点云这类稠密 3D 直接交给现成编码智能体也不行——用户难以编辑，智能体也无法直接读懂。",
+  "method": "提出「语义 3D 代理」：$\\mathcal{P}=\\{p_k\\}_{k=1}^K$，每个元素把语义（文本标签，可带自由描述）与空间（显式 3D 几何的精确数值）绑在一起，并满足两条要求——3D-native（用户在 3D 里直接摆放拖拽，而非用文字描述）与 agent-native（能无损序列化为结构化文本、也能渲染成图像，因而无需编码器或微调）。实例化为带标签的有向包围盒 $p_k=(\\ell_k,\\mathbf{c}_k,\\mathbf{s}_k,\\mathbf{R}_k)$，序列化为 JSON 列表（obb_proxy.json）、同时存为每个盒子一个立方体的 Blender 场景（bbox.blend，按标签命名），换一种代理形式只需替换这两个文件。代理不必完整：用户可只标自己关心的部件或场景物体，其余交给文本与图像。工作区只有 inputs/（prompt.txt、image_N.png 及可选 image_N.txt 说明「从这张图取什么」、obb_proxy.json、bbox.blend）与 outputs/（脚本、渲染、最终模型）；智能体的任务提示要求同时满足文本、图像与盒子的联合期望，并明确盒子是近似参考而非精确目标。方法只固定输入端：用哪个编码智能体、怎么建几何都开放，本文统一用 Blender Python API，评测三个现成智能体（Codex 配 GPT-6.1 Sol、Claude Code 配 Claude Opus 5.5、开源 DeepSeek Harness 配 V4.1 Flash），单次会话上限 120 min。界面 ProxyStudio 负责把 3D 盒子编辑器、文本框与图像卡写成 inputs/、拉起智能体、并在同一视口叠加显示 outputs/。代理可由智能体起草：读文本与图像写盒子到 outputs/、用渲染自检，用户审阅修改后接受，接受的盒子移入 inputs/ 后与手摆盒子完全同权。",
+  "key_numbers": [
+   "Codex 简单物体 Chamfer（×10³）：5.6 降到 4.1；难物体 5.6 降到 2.5；场景 7.8 降到 3.2",
+   "Claude Code：简单 5.5 降到 3.3、难 5.6 降到 2.6、场景 9.7 降到 3.9",
+   "DeepSeek：简单 6.7 降到 4.9、难 6.5 降到 3.8、场景 10.5 降到 3.8",
+   "三智能体平均：Chamfer 改善 47%、DINOv3 相似度 +2%、Uni3D 相似度 +1.5%",
+   "成本（Codex，分钟每次）：简单 4.2 到 4.1、难 4.2 到 4.1、场景 4.2 到 4.1；输出 token 7.2k 到 6.7k；DeepSeek 时间 36.6 到 34.6 min、输出 243k 到 217k",
+   "用户偏好：32 名参与者、535 份回答中 67.5% 选择带语义 3D 代理的模型",
+   "噪声鲁棒性：10% 位置与尺度扰动加 5° 旋转后仍接近 GT 代理结果、常为次优；30% 噪声时 DINOv3 与 Uni3D 相似度跌破纯文本加图像基线",
+   "代理编码对比（15 样本子集，三智能体平均）：完整代理 CD 3.2；仅渲染 4.7；文本模板 5.7；LLM 撰写文本 5.9；纯文本加图 7.0"
+  ],
+  "ablation": "四组对照。其一，纯文本加图像与加 GT 盒子是主消融，三种智能体、三个难度层上 CD 全面下降、相似度全面上升，且增益随难度增大（难物体与场景最大）。其二，让智能体自己起草盒子的设置几乎全面落后于 GT 代理，多半只比纯文本加图像略好甚至更差，原因是起草者面对的仍是同一份缺失 3D 信息的输入，遮挡处的齿轮、电视柜朝向等错误会被后续放大——这反向证明增益来自「用户提供的 3D 信息」而非「先规划一步」的提示。其三，噪声消融：10% 与 20% 扰动仍接近 GT 代理，30% 时跌破纯文本加图像基线，说明代理承载的 3D 结构一旦被破坏反而成为冲突信息。其四，编码消融：把同一代理换成仅渲染、文本模板、LLM 文本，均不如「JSON 加 Blender 场景」，其中仅渲染最好（4.7），说明图像比纯文本更能保住 3D 信息、半透明盒子渲染部分缓解了遮挡。",
+  "baselines": [
+   "Text + Images（纯文本加三张 GT 渲染参考图）",
+   "w/ Semantic 3D Proxy（GT 盒子，主对照）",
+   "w/ Bootstrapped Proxy（智能体自起草）",
+   "w/ Noised Proxy（10% 扰动）",
+   "Render-only / Text-template / Text-LLM（代理编码替代）"
+  ],
+  "datasets": [
+   "PartVerse（40 个物体：20 简单 3 到 6 部件、20 难 10 到 19 部件，Cap3D caption）",
+   "MIDI 测试划分（20 个室内房间，源自 3D-FRONT，3 到 7 个物体，3D-FUTURE 类目加 3D-GRAND 描述）",
+   "GT 网格三视图渲染作为参考图"
+  ],
+  "novelty": "相对以文本与图像为唯一条件的编码智能体工作流（3DCodeBench、3DHarnessBench、ShapeCraft 等），这里把「带标签的 3D 包围盒」作为用户可编辑、且能无损序列化为文本与渲染为图像的条件通道，直接喂给未经修改的现成智能体——不需要新编码器、不需要微调、不扩展建模 API。相对 ControlRoom3D 这类用语义代理房间去条件化 3D 生成模型的做法，这里的代理不是给生成模型，而是给通用编码智能体读；相对 SpaceControl、HandMade、Prox-E 需要专门生成器或专门 VLM 读取器，这里只依赖「能读文件、能驱动建模工具」这一最小假设。",
+  "limitations": "作者自述两点：定量实验用 GT 网格与 GT 盒子代替用户手摆的代理，因为目前没有大规模「用户摆放 3D 盒子」的数据集，构建成本很高；SemProxy 面向的是创作型工作流（建模新资产，本身没有真值），恰是它最该发挥作用的场景却无法用参考指标打分。从实验看还有别的缺口：只用 Blender Python API 一个后端，未验证 CAD 或程序化建模 API；自起草代理全面失败说明「减少用户负担」这一动机在无额外 3D 信息时不成立；30% 噪声即跌破基线，代理质量的下限没有刻画；用户研究规模小（偏好 32 人、实作 7 人），且参与者 3D 经验从零到丰富不等，未按经验分层报告。场景任务只有 20 个房间、每样本一次 trial，方差未知。作者另有附录讨论冲突输入、纹理风格与曲面形状的失败情形。",
+  "trl_evidence": "有可运行的 ProxyStudio 界面（3D 盒子编辑、文本、图像卡、智能体启动、同视口叠加输出），在三个现成智能体与 Blender 后端上跑通物体与场景任务，并做了 7 人实作研究；但属研究原型，未打包分发、无产品化与工程化延迟或并发指标。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 3,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：智能体建模的可控性是新兴且真实的交互问题，但影响面限于创作工具，不构成领域卡点。NOV=3：把带标签包围盒作为 agent-native 条件通道是清晰的思路，但「用粗代理约束生成」在 3D 生成里已有大量先例，属实质改进而非新范式。TEC=3：表示、工作区协议、起草流程与界面都完整，且有四组对照，但核心是系统与交互设计，无算法层面的技术深度。EXP=4：三个智能体乘三个难度层乘四种设置，加 32 人偏好与 7 人实作研究、噪声与编码消融。PER=4：平均 Chamfer 改善 47%、偏好率 67.5%，远超 30%。TRL=3：可运行界面与真实用户研究，但未产品化。REP=2：无代码与数据发布说明，GT 代理替代用户代理也削弱可复现性。",
+  "_w": 3.23
+ }
+]

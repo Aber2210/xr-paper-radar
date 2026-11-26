@@ -1,0 +1,362 @@
+[
+ {
+  "id": "2509.16476",
+  "title": "GazeVLM: Gaze-Guided Foveated Inference for Efficient Vision-Language Models",
+  "title_zh": "GazeVLM：以注视引导中央凹式推理的高效视觉语言模型",
+  "problem": "VLM 把高分辨率图像编码成上千个视觉 token，prefill 成为主要延迟来源：Qwen2.5-VL-3B 在 4032×3024 输入上产生 15.55k 视觉 token、106.5 TFLOPs、单帧 3.20 s（A100），而任务真正相关的往往只是视野中很小一块。AR/VR 设备已普遍集成眼动模块，却没人把实测注视当作推理期的算力分配信号；现有 token 剪枝、稀疏注意力与额外控制模块都带精度-效率折衷，还需要训练。作者同时指出缺少「真实佩戴式眼动 + VQA」的评测集：已有 gaze-VQA 数据多来自实验室或既有图像库，而非真实传感链路。",
+  "method": "GazeVLM 是 training-free、plug-and-play 的两段式流程。第一步把原始 gaze trace 投影到图像平面并用高斯核平滑成注意图 $G\\in[0,1]^{H\\times W}$，$\\sum_{x,y}G(x,y)=1$；第二步按 gaze mass 降序排列像素 $\\pi_1,\\ldots,\\pi_{HW}$，取最小前缀使累计质量达到 $\\rho$：$k^\\star=\\min\\{k:\\sum_{j=1}^{k}G(\\pi_j)\\ge\\rho\\}$，该集合的轴对齐包围盒 $B=(x_0,y_0,x_1,y_1)$ 给出 ROI 裁剪 $I_r=I[B]$。可选 Gaze-2SCALE 分支把原图降采样为全局视图 $I_g$（模拟周边视觉），与 $I_r$（模拟中央凹）一起过同一编码器，再与文本查询拼接 $X=\\mathcal{P}(\\{I_g,I_r\\},T)$。两种模式都不修改 VLM 权重、不训练任何模块，唯一超参是保留的 gaze mass 比例 $\\rho$：主表取 0.5，VOILA-COCO 交叉验证取 0.3，敏感性实验扫 0.05–0.60。裁剪后 ROI 以原始分辨率送入编码器，因此同一 token 预算下 ROI 的像素密度远高于整图降采样。",
+  "key_numbers": [
+   "Qwen2.5-VL-3B：答案匹配率 73.54%→82.03%，视觉 token 15.55k→2.46k（−84.2%），prefill FLOPs 106.5T→7.7T，延迟 3.20 s→0.45 s（7.1×）（GazeVLM-VQA，ρ=0.5）",
+   "Qwen2.5-VL-7B：75.63%→78.69%（Gaze-ROI）/77.99%（Gaze-2SCALE），延迟 3.76 s→0.54 s（7.0×）",
+   "Qwen3-VL-8B：80.78%→83.70%，视觉 token 11.84k→1.88k，FLOPs 156.1T→14.7T，延迟 3.60 s→0.31 s（11.6×）",
+   "VOILA-COCO（ρ=0.3，Qwen2.5-VL-3B）：GPT-4o 评分 3.98→4.45（ROI）/4.51（2SCALE），视觉 token 64→15.6",
+   "同预算对比：Gaze-ROI 比 DOWNSAMPLE 高 15.32/9.19/8.49 pp（3B/7B/8B）",
+   "ρ 敏感性：0.05→0.30 时 3B 从 44.6% 升到 74.8%，ρ=0.30 时 FLOPs 仍比整图低 96.6%",
+   "数据集规模：268 张 4032×3024 参考图、718 个 QA、12 类场景，5 类问题（空间推理 31.75%、属性 23.82%、OCR 22.84%、存在性 15.18%、语义 6.41%）"
+  ],
+  "ablation": "无可训练模块可消融，但提供了四组替代证据：(1) 同视觉预算下与 CENTER/RANDOM/DOWNSAMPLE/SALIENCY(DeepGaze IIE) 对比，Gaze-ROI 全模型最优，且 SALIENCY 反而低于 DOWNSAMPLE，说明任务无关显著性无法定位问题所需证据，增益来自问题对齐的注视而非单纯裁剪。(2) $\\rho$ 扫描：质量在 0.30–0.50 饱和，0.60 时 3B 两种模式均下降，原因是低密度或远离的注视样本把无关背景拉进 ROI。(3) Gaze-2SCALE 相对 Gaze-ROI 仅 +0.14/+0.28/−0.70 pp，全局上下文收益不稳定。(4) 跨数据集 VOILA-COCO 上 2SCALE 稳定优于 ROI（4.45→4.51、5.84→5.95），FLOPs 仍比整图低 30.2%/31.3%。",
+  "baselines": [
+   "BASE（整图全分辨率推理）",
+   "CENTER（中心裁剪）",
+   "RANDOM（随机裁剪）",
+   "DOWNSAMPLE（整图降采样）",
+   "SALIENCY（DeepGaze IIE 显著性 ROI）"
+  ],
+  "datasets": [
+   "GazeVLM-VQA（自建，Pupil Labs Neon 佩戴式眼动仪）",
+   "VOILA-COCO"
+  ],
+  "novelty": "相对 token 剪枝/稀疏注意力这类在模型内部改算子的路线，GazeVLM 把人体生理信号放到输入端：用实测注视决定裁剪哪块、给多少像素密度，完全不动模型权重。相对 VOILA 这类把注视当训练监督的工作，它把 gaze 用在推理期的算力分配上，并配套第一个真实佩戴式眼动的 VQA 基准。Gaze-2SCALE 把中央凹/周边视觉的两尺度结构显式做进输入拼接，是相对单 ROI 裁剪的架构性补充。",
+  "limitations": "GazeVLM-VQA 只有 268 张图、718 个 QA，且由单一被试佩戴 Pupil Labs Neon 采集（正文用单数 the participant），跨被试、跨设备泛化未测；准确率用 normalized exact-match，对开放式回答偏严。表 II 中 Gaze-2SCALE 的视觉 token 数与 Gaze-ROI 完全相同（2.46k / 1.88k），与「再加一张全局图」的叙述不一致，作者仅以「额外开销至多 0.01 s」解释，缺少 token 账目。方法强依赖眼动标定质量，注视漂移或眨眼噪声会直接放大/缩小 ROI，论文未给噪声鲁棒性实验。",
+  "trl_evidence": "训练无关，套在现成 Qwen2.5-VL-3B/7B、Qwen3-VL-8B 上即可生效；延迟在单卡 A100-SXM4-40GB 上实测（3.20 s→0.31–0.46 s）。未在 AR/VR 头显或边缘 SoC 上验证，也没有功耗与端到端吞吐数据。",
+  "code": "未提及代码；声明 public release GazeVLM-VQA 数据集，但正文未给链接或 DOI",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 3,
+   "EXP": 3,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：VLM 视觉 prefill 延迟是 AR/VR 落地的真实卡点，但属被局部解决的效率问题。NOV=4：把实测注视作为 foveated 推理的分配信号并配首个佩戴式眼动 VQA 集，路线新，方法本身很轻。TEC=3：无训练无理论，核心只是前缀选择加两尺度拼接，消融以替代对比为主。EXP=3：三个 Qwen 模型、两个数据集，但自建集仅 268 图/718 QA 且单被试。PER=4：token 降 84.2%、延迟 11.6×、精度 +8.6 pp，但精度增益建立在小样本自建集上，跨数据集只有 GPT 评分小幅提升。TRL=3：训练无关、A100 上可复现，未上设备。REP=3：流程简单可复现、数据集声明公开，但无代码链接。"
+ },
+ {
+  "id": "2602.00671",
+  "title": "HPC: Hierarchical Point-based Latent Representation for Streaming Dynamic Gaussian Splatting Compression",
+  "title_zh": "HPC：面向流式动态高斯泼溅压缩的层次化点式隐表示",
+  "problem": "流式自由视点视频要求逐帧传动态 3DGS，但码率仍高到无法实用：N3DV 上 3DGStream 需 7780 KB/帧、4DGC 500 KB/帧、iFVC 63–99 KB/帧、QUEEN 680–750 KB/帧，按 30 FPS 播放对应数十到数百 Mbps。现有 latent 表示分两派：结构化网格（hash-grid、tri-plane）为未占据空间付参数代价，只能降分辨率或容忍哈希冲突；点式（QUEEN）把 latent 贴到每个高斯上避免空洞浪费，却按孤立点建模、忽略邻域相关，且只有单一尺度，对非均匀分布的高斯欠拟合。另一个被忽视的问题是所有在线方法都把逐帧网络参数按 32-bit 浮点原样传输，既浪费码率又让 latent 与网络的位率分配失衡。",
+  "method": "HPC 以最新解码的 Neural Gaussian $\\mathcal{NG}_{t-1}$ 为参考，先建层次化点式 latent：从最细尺度 $X^0_{t-1}=X_{t-1}$ 出发，用网格采样递归下采样 $X^{r}_{t-1}=\\lfloor X^{r-1}_{t-1}/\\epsilon^{r}+0.5\\rfloor\\cdot\\epsilon^{r}$（$L=3$ 尺度，相邻尺度点数比 0.2，每尺度 16 通道），每个位置挂一个可学习 embedding $E^r_t$，解码后与固定位置组成 $Z^r_t=(X^r_{t-1},\\hat{E}^r_t)$。紧凑化靠两级聚合：Inner-scale Latent Aggregation（ILA）对每个点做 $k=4$ 的 kNN，用相对位置过 MLP 预测逐邻居权重并 softmax 归一，加权融合邻居 embedding 后再过 MLP，各尺度共享参数、kNN 每帧只建一次；Cross-scale Latent Aggregation（CLA）从粗到细把粗尺度 embedding 复制上采样并与细尺度原生 latent 拼接递归融合。聚合后的 latent 进预测头输出形变参数：特征残差 $\\Delta F_t$、锚点平移 $T^X_t$、全局旋转 $R^X_t$、偏移残差 $\\Delta o_t$，按 $F_t=F_{t-1}+\\Delta F_t$、$X_t=X_{t-1}+T^X_t$、$o_t=R^X_t(o_{t-1}+\\Delta o_t)$ 更新，尺度因子 $l$ 保持不变。压缩端对 latent 用 STE 做失真前向、加 $\\mathcal{U}(-1/2,1/2)$ 噪声做可微熵估计，配 factorized 熵模型与算术编码，每帧传一对全局 min/max。网络参数端引入 GOP 结构（$T_{GOP}=5$）抑制误差传播：I-frame 对每个参数张量独立做 8-bit 量化并用以高斯分布参数化的 network-free 熵模型；P-frame 用逐层可学习缩放 $\\eta_t$ 加逐参数残差 $\\Delta P_t$，联合量化区间避免裁剪，重建为 $\\hat{P}_t=\\eta_t\\hat{P}_{t-1}+\\Delta \\hat{P}_t$。总目标 $\\mathcal{L}=\\mathcal{L}_D+\\lambda\\mathcal{L}_R$，$\\mathcal{L}_D$ 为 $\\mathcal{L}_1+\\lambda_{SSIM}\\mathcal{L}_{SSIM}$，$\\lambda\\in\\{0.048,0.032,0.016,0.002\\}$ 给四个 RD 工作点，后续帧每帧训练 500 次迭代。",
+  "key_numbers": [
+   "N3DV：HPC-h PSNR 32.36 dB / SSIM 0.955 / 39 KB 每帧，对比 iFVC-h 32.35 dB / 0.953 / 99 KB、4DGC 31.58 dB / 0.943 / 500 KB、3DGStream 31.69 dB / 0.948 / 7780 KB",
+   "N3DV：HPC-l 31.91 dB / 23 KB 每帧，为在线方法中最低存储",
+   "BD-BR（对 iFVC）：N3DV −64.9%、Meet Room −70.7%、平均 −67.8%；关闭网络参数压缩（w/o NNC）时平均 −28.0%",
+   "Meet Room：HPC-h 32.57 dB / SSIM 0.961 / 28 KB，HPC-l 31.71 dB / SSIM 0.957 / 18 KB",
+   "消融（相对完整模型码率增幅）：w/o NNC +131.5%、w/o ILA +22.3%、w/o CLA +26.3%（N3DV/MeetRoom 平均）",
+   "latent 表示对比（N3DV，tri-plane 为锚点）：hash-grid −6.7%、层次化点 −21.8% BD-BR",
+   "网络量化位深（Meet Room 最高码率点）：32-bit 32.62 dB / 59 KB，8-bit 32.57 dB / 26 KB（latent 16 KB + 网络 10 KB），4-bit 训练发散至 7.31 dB",
+   "时序编码：参数相关 0.78，经验熵 6.06→4.45 bits/参数（−26.54%）；GOP=5 时量化误差间隙 0.067→0.125 dB，GOP=20 增量间隙 1.899 dB",
+   "复杂度（RTX 3090，两数据集均值）：总编码 60.94 s/帧、解码 0.22 s/帧、渲染 140 FPS"
+  ],
+  "ablation": "三组消融各自定量：网络参数压缩贡献最大，关掉后平均码率涨 131.5%（Meet Room 达 +175.7%）；ILA 与 CLA 分别贡献 22.3% 与 26.3%，说明邻域聚合与跨尺度融合都是必要项。latent 表示形态对比中，层次化点相对 tri-plane 降 21.8% BD-BR，hash-grid 仅 6.7%，支持「为未占据空间付费」是网格法主要损失的论点。网络压缩内部再拆三步：仅 8-bit 量化为 $M_0$，加熵约束（$M_1$）−6.6%，再加时序参考残差（$M_2$）−14.6%。GOP 长度与位深的敏感性也给了：4-bit 直接发散，8-bit 是拐点。",
+  "baselines": [
+   "iFVC（主锚点，同初始帧重训）",
+   "4DGC / 4DGCPro",
+   "QUEEN",
+   "3DGStream",
+   "HiCoM / ReCon-GS / ComGS",
+   "D-FCGS / StreamSTGS",
+   "离线方法 STG、GIFStream、Ex4DGS、MEGA、4DGV（仅作参考点）"
+  ],
+  "datasets": [
+   "N3DV（21 相机，2704×2028，30 FPS）",
+   "Meet Room（13 相机，1280×720，30 FPS）"
+  ],
+  "novelty": "相对网格类 latent（iFVC 的 binary tri-plane、3DGStream 的 hash-grid），HPC 把 latent 完全建在高斯位置上，不给空空间付参数，再用 ILA/CLA 把「点式表示缺局部相关」这个已知短板补上，算是把点式与网格式的优点做了结构级合并。相对 QUEEN 这类同为点式的方法，多了多尺度感受野与邻域/跨尺度聚合。最关键的新意在于把逐帧网络参数也纳入端到端码率优化：这是流式动态 GS 压缩里此前被显式跳过的一项，配上 GOP 与时序残差编码，让 latent 与网络两侧位率可以联合分配。",
+  "limitations": "编码端仍远非实时：总编码 60.94 s/帧（训练 60.61 s），比 iFVC 的 10.32 s/帧慢约 6 倍，只适合离线或近线打包，与「流式传输」的实时编码需求有落差。评测只用两个室内多相机数据集，缺少大尺度室外与长序列；重建保真度被作者承认强烈依赖初始帧（HAC）质量，跨数据集比较时初始帧不一致会污染结论。GOP 固定为 5，作者自己指出内容自适应 GOP 留作未来工作；P-frame 递归预测的误差传播只在小 GOP 下被压住。",
+  "trl_evidence": "有完整编解码实现（torchac 算术编码），在 RTX 3090 上给出逐阶段耗时：解码 0.22 s/帧、渲染 140 FPS，可支撑接收端实时播放，但发送端 60.94 s/帧说明尚不能做直播级在线编码。码率 4.32–9.36 Mbps（30 FPS）已落入可传输区间。",
+  "code": "已开源 github.com/USTC-iVC-3D-Group/HPC（正文给出链接）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 4,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：动态 GS 的存储/码率是流式 FVV 的真瓶颈，但属被持续攻坚中的问题。NOV=4：层次化点式 latent 加首个把逐帧网络参数纳入端到端码率优化的方案，属明显新架构而非新范式。TEC=5：表示、聚合、熵模型、GOP、RD 目标齐备，消融逐项定量且给出失败边界（4-bit 发散、GOP=20 崩）。EXP=4：两个数据集、10+ 在线基线加 5 个离线参考点，但数据集偏少且都是室内。PER=5：同质量下 BD-BR −67.8%，远超 30% 档。TRL=3：解码可实时、编码 60.94 s/帧，属可复现原型。REP=4：代码已开源。"
+ },
+ {
+  "id": "2605.05876",
+  "title": "3DSS: 3D Surface Splatting for Inverse Rendering",
+  "title_zh": "3DSS：用于逆渲染的三维表面泼溅",
+  "problem": "从多视角图像联合恢复形状、SVBRDF 与光照的可微逆渲染被两类表示夹住。mesh/DMTet 路线（NVDiffRec）受固定拓扑与网格分辨率限制：512×512 训练约 1 小时、1024×1024 近 2 小时，加密四面体网格会迅速放大顶点自由度并引入退化三角形、自交与断裂连通性。体渲染路线（NeRF、3DGS 系）把法线、材质按 alpha 混合，对单位方向量语义不清，混合出的材质也不对应任何真实表面。经典 EWA surface splatting 天然是表面采样，却几乎都是单层：每像素只重建最前表面，可见性不连续处无法正确抗锯齿，轮廓处也给不出可用梯度，因此此前只用于形状拟合/去噪，未被用于基于物理的逆渲染。",
+  "method": "3DSS 用无结构 oriented surfel 集合表示场景，每个 surfel 携带中心 $\\mathbf{c}$、两个切向量 $\\mathbf{t}_u,\\mathbf{t}_v$（编码朝向与各向异性缩放，法线 $\\mathbf{n}=\\mathbf{t}_u\\times\\mathbf{t}_v/\\|\\mathbf{t}_u\\times\\mathbf{t}_v\\|$）、albedo $\\boldsymbol{\\rho}$、metallic $m$、roughness $r$，刻意不设可学习不透明度。光栅化用 Weyrich 的 T-matrix：$\\mathbf{T}=\\mathbf{PS}$ 把局部单位球映到 clip space，包围盒、深度跨度 $\\varepsilon_z=\\sqrt{\\mathbf{t}^{\\prime 2}_{u,z}+\\mathbf{t}^{\\prime 2}_{v,z}}\\cdot r_{cut}$、射线求交都化成 T 矩阵行上的代数运算；每像素视线与 surfel 平面求交得局部坐标 $(u,v)$，$\\rho^2=u^2+v^2$，超出 $r_{cut}$ 丢弃，核权重 $w=\\exp(-\\tfrac{1}{2}\\rho^2)$（省略 $1/2\\pi$ 归一化，交给 Shepard 归一）。表面分离改为区间合并：每个 surfel 带深度区间 $[z_{start},z_{end}]$，按 $z_{start}$ 基数排序后把重叠区间并成任意多层，单趟光栅化即可支持每像素多个表面层。合成不用 learnable opacity，而是由层内累计 EWA 权重导出覆盖率 $\\alpha$，再按 over 算子从前往后合成，因此轮廓抗锯齿与稀疏覆盖边缘的可见性梯度都来自重建核本身。抗锯齿用 object-space MIP 滤波（AA-2DGS 的切平面 Jacobian 方案），并提出 center-precomputed 近似，把逐像素 Jacobian 摊销掉。着色是 forward shading：先对每个 surfel 做 split-sum IBL 与各向同性 GGX 微表面求值，再进光栅化，避免在混合后反推材质与法线。自适应密度控制用 density-aware splitting（比较 surfel 尺度与局部采样间距，而非固定场景比例）与来自 T 矩阵反向的屏幕空间绝对梯度累积（避免 2DGS 投影梯度在大面片上互相抵消）。损失为 $\\mathcal{L}_1+\\lambda_{SSIM}\\mathcal{L}_{SSIM}$ 加深度凝聚正则、kNN 法线一致性正则与轮廓 IoU 正则；网格导出走 Screened Poisson（octree 11）。",
+  "key_numbers": [
+   "Stanford-ORB 新视角合成：PSNR-H 31.73 dB / PSNR-L 40.73 dB / SSIM 0.991 / LPIPS 0.010，对比 RTR-GS 30.10 / 39.17 / 0.985 / 0.021、NVDiffRec 21.94 / 28.44 / 0.969 / 0.030",
+   "新光照重打光：PSNR-H 23.22 dB / PSNR-L 30.44 dB / SSIM 0.974 / LPIPS 0.025，对比 NVDiffRec 22.91 / 29.72 / 0.963 / 0.039、InvRender 23.76 / 30.83 / 0.970 / 0.046",
+   "几何：Depth SI-MSE 0.31、Normal cosine 0.06、Chamfer 0.43（×10⁻³），对比 NVDiffRec 0.31 / 0.06 / 0.62",
+   "训练成本（RTX A6000，512×512，30k 迭代）：约 20 分钟，NVDiffRec 约 1 小时；1024×1024 为约 30 分钟 vs 近 2 小时",
+   "光栅化吞吐：512×512 / 50K surfels 约 900 fps，2048×2048 / 2M surfels 仍达 100 fps，均高于 60 fps 交互阈值",
+   "固定几何验证（1M surfels，仅学材质与光照）：Depth 0.06、Normal 0.00、Chamfer 0.01，NVS PSNR-L 37.49 / SSIM 0.988",
+   "消融（7 个 object–scene 对，约 100K surfels）：无 densification 重打光 PSNR-H 23.56 vs 完整 24.32；全局尺度阈值 23.58；投影 3D 梯度 23.97"
+  ],
+  "ablation": "两组消融分工明确。渲染基础件（区间分组、MIP 滤波、覆盖率边缘抗锯齿）用点采样物体做受控可视化验证，因为缺任一项渲染结果直接错误，数值消融意义有限。优化侧在 7 个 object–scene 对上定量且把收敛后的 surfel 数校准到约 100K 以排除容量差异：无 densification 时全指标下降（重打光 23.56 vs 24.32 dB），说明自适应细化是跳出初始点云分辨率上限的必要项；2DGS 的投影 3D 梯度 23.97 dB、3DGS 的全局尺度阈值 23.58 dB，分别因大面片梯度抵消与局部过/欠分裂而落后。损失项各自的作用相反相成：去 $\\mathcal{L}_{cons}$ 使点云沿视线变厚（重打光 24.01 dB）；去 $\\mathcal{L}_{nc}$ 的 NVS 反而最高（33.13 dB）但重打光降到 24.17 dB，是典型的过拟合视角外观；去 $\\mathcal{L}_{sil}$ 使 NVS 掉到 32.32 dB。球面初始化在多项指标上优于 Depth Anything 初始化（24.60 / 31.64 dB），作者归因于不继承单目深度的偏置。",
+  "baselines": [
+   "NVDiffRec（mesh + DMTet 主基线）",
+   "IDR（SDF 表面重建）",
+   "InvRender / NeRFactor / NeRD / TensoIR / PhySG / Neural-PIL",
+   "GS-IR / R3DG / GShader / RTR-GS / 3DGS-DR（3DGS 逆渲染）",
+   "NeRF / NeRO"
+  ],
+  "datasets": [
+   "Stanford-ORB（合成物体，多光照）",
+   "点采样 Stanford Bunny（吞吐基准）"
+  ],
+  "novelty": "相对 DSS（Yifan et al.）把可见性不连续处理在单个 primitives 层面、并用 $O(K)$ 的可见性翻转近似梯度，3DSS 把不连续处理在重建表面层层面，用层内累计 EWA 权重直接导出覆盖率，从而在稀疏覆盖边缘拿到有信息的梯度。相对 2DGS/mesh 光栅器，它换掉渲染模型而非几何原语：surfel 没有可学习不透明度，像素覆盖由重建核集体决定，合成走 over 而非 alpha 混合，使法线与材质在混合前就被求值。区间合并式多层分离替代经典 extended z-buffering 的二/三元深度测试，是这套渲染模型的使能件。",
+  "limitations": "作者自述三点：split-sum IBL 加各向同性 GGX 只有单次反弹、无互反射/投影阴影/接触暗化/焦散，也不处理掠射角 Fresnel；简化着色会把光照误差烘进几何（点云无连通性，只靠两条软正则约束），弱光证据区可能出现局部不连续；区间分组的表面判定是几何代理，退化构型会误分层。实验侧只有 Stanford-ORB 一个基准（7 对做消融），真实场景与户外大尺度未测；固定几何实验用 1M surfels 而完整优化约 100K，两者差距部分来自采样密度而非方法本身，作者也承认这一点。",
+  "trl_evidence": "纯 PyTorch/CUDA 研究级渲染器，完整优化 30k 迭代约 20 分钟（A6000），光栅化 900 fps 但 IBL 着色与环境图 MIP 仍在 PyTorch 中，全管线吞吐明显低于该上限（作者称融合成专用 CUDA kernel 可接近）。无产品化或在线系统证据。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 5,
+   "EXP": 3,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：可微表面渲染的可见性梯度与表面分离是逆渲染的真问题，但已有 mesh/体渲染两条成熟路线竞争。NOV=4：首个面向 PBR 逆渲染的可微 surface splatting，覆盖率合成与区间分层是明确的新架构。TEC=5：从 T 矩阵推导、核归一、多层合成到 MIP 近似与四类正则齐备，消融按渲染件与优化件分开做。EXP=3：只有 Stanford-ORB 一个基准，消融仅 7 对，真实场景缺失。PER=4：NVS 全面领先（PSNR-L 40.73 vs 28.44），重打光 SSIM/LPIPS 最优但 PSNR 仅小幅领先 InvRender 一类方法。TRL=3：20 分钟训练、900 fps 光栅化，属可复现原型。REP=3：无代码，但实现细节（附录含 kernel 与反传）足够复现。"
+ },
+ {
+  "id": "2605.16582",
+  "title": "ArtMesh: Part-Aware Articulated Mesh Fields with Motion-Consistent Dynamics",
+  "title_zh": "ArtMesh：带运动一致动力学的部件感知铰接网格场",
+  "problem": "从图像重建铰接物体要同时给出部件级几何、各活动件的关节运动，以及下游可直接消费的显式表面资产。隐式路线（PARIS 等）渲染好，但优化的是体场，网格只能事后等值面提取，关节处边界与拓扑被抹平。3DGS 路线（ArtGS、GaussianArt、ReArtGS++）继承无结构点式几何，没有三角形连通性也没有显式部件边界，只能靠 TSDF 融合补网格，关节处一个跨越抽屉缝的错误连接会同时毁掉几何与运动估计；其监督也弱：图像损失只间接约束关节轴，2D 特征匹配、canonical 高斯匹配在弱纹理家具上不可靠。评测侧同样缺位：多数铰接基准只有两个部件（如 PARIS），部件数一多，拓扑、部件分离与运动一致性才真正吃紧的区间没人测。",
+  "method": "ArtMesh 用两个关节状态 $t_1,t_2$ 的多视角 RGB-D 重建一对部件感知三角网格加每部件刚体运动。网格场 $\\mathcal{M}(t)=(V(t),F(t))$ 的每个顶点存位置 $x_i$、SH 颜色 $c_i$、不透明度 $\\sigma_i$ 与 $K+1$ 类部件 logits $s_i$（1 个静态基座 + $K$ 个活动件），$w_i=\\mathrm{softmax}(s_i)$ 在重建后期硬化为 $p_i=\\arg\\max_k w_{i,k}$，据此把顶点分成 $V_k(t)$。关键一步是 part-aware restricted Delaunay remeshing：先丢弃顶点跨部件的面 $F_k(t)=\\{f=(i,j,l):p_i=p_j=p_l=k\\}$，再在每个部件内部独立跑 rDel，$F^\\star_k(t)=\\mathrm{rDel}(V_k(t),F_k(t))$，最终拓扑取并集，于是每个活动件是一块连通子网格、没有任何跨部件三角形，刚体变换不会剪切拓扑。关节场给每个部件前向刚体 $(R^+_k,P^+_k,T^+_k)$，$g^+_k(x)=R^+_k(x-P^+_k)+P^+_k+T^+_k$；反向运动不做独立学习，取解析逆 $g^-_k(y)=(R^+_k)^\\top(y-b^+_k)$，保证双向自洽（revolute 时 $T^+=0$，prismatic 时 $R^+=I$）。监督是双向运动一致性：vertex-wise 项把顶点按所属部件搬运到另一状态，只在同部件子网格 $F^\\star_{p_i}(t_2)$ 内找最近三角形，用重心坐标插值目标位置/颜色/不透明度并回归（含有效性掩码 $\\eta_i$）；pixel-wise 项把搬运后的网格从目标状态相机渲染，与真实图像做 $\\mathcal{L}_1$+SSIM。总目标 $\\mathcal{L}_{motion}=\\lambda_{VMC}(\\mathcal{L}^{1\\to2}_{vtx}+\\mathcal{L}^{2\\to1}_{vtx})+\\lambda_{PMC}(\\mathcal{L}^{1\\to2}_{pix}+\\mathcal{L}^{2\\to1}_{pix})$。训练分两阶段：先优化顶点位置/辐射/不透明度/部件 logits，硬化后做 per-part rDel，再短训一轮固定拓扑精修；关节阶段冻结几何，只优化刚体参数，用 RGB 与 vertex-wise 一致性监督。部件掩码缺失时用作者微调的 PArtSAM（基于 PartSAM，加入跨状态位移与可动性两通道，零初始化首层）预测。",
+  "key_numbers": [
+   "Articulate-100（给 GT 部件掩码）：Axis Ang 3.49°、Axis Pos 0.03（0.1 m）、Part Motion 3.64、CD-s 18.98 mm、CD-m 15.01 mm，五项聚合全部最优",
+   "CD-m 相对最强基线改善 +42.44 mm（15.01 vs 57.45/58.66 mm），2/3/4-5/6+ 部件分桶增益分别 +19.27/+29.57/+35.23/+27.69 mm",
+   "多部件退化：6+ 部件桶 Axis Ang 6.90°，对比 GaussianArt 33.05°、ArtGS 14.37°、ReArtGS++ 22.02°",
+   "无 GT 掩码（Ours-PArtSAM）：Axis Ang 12.26°、CD-m 60.69 mm，2 部件仍与 GT 掩码档持平",
+   "PARIS 合成集：Axis Ang 0.68°、Axis Pos 0.02、Part Motion 0.54、CD-s 19.59 mm、CD-m 12.44 mm；真实集 2.37° / 0.07 / 0.66 / 27.25 / 50.84",
+   "消融（Articulate-100）：去反向传播最伤，Axis Ang 3.49→10.79°、CD-m 15.01→29.06 mm；去顶点颜色一致性 6.02°、去顶点不透明度一致性 6.87°、用全局 Delaunay 7.10°",
+   "网格质量：自穿透深度 SPD 0.0224（占包围盒对角线比例），Gaussian 类基线无直接网格（N/A，需 TSDF 提取）"
+  ],
+  "ablation": "四项组件消融各自定位：去掉反向监督损失最大（Axis Ang 10.79°、CD-m 29.06 mm），说明双向一致性是让运动场自洽的主因；去掉顶点颜色一致性 6.02°、去掉顶点不透明度一致性 6.87°，两者都在弱纹理件上放大误差，后者主要影响「哪些三角形一起动」的判别；把 per-part rDel 换成全局 Delaunay 得 7.10° 与 19.30 mm，且 CD-s 反而略好（18.58 vs 18.98 mm），印证其作用是阻止一致性损失把顶点拉过关节而非提升静态几何。附录另给：去掉 remesh 后的 recovery 阶段 Axis Ang 升到 9.00°，去掉 pixel-wise 损失升到 46.64°，换成 Gaussian 主干超过 49° 且 CD-m 翻倍。",
+  "baselines": [
+   "ArtGS",
+   "GaussianArt",
+   "ReArtGS++",
+   "DigitalTwinArt / Part2GS / SplArt（附录扩展对比）",
+   "PARIS（隐式基线，作为设定参照）"
+  ],
+  "datasets": [
+   "Articulate-100（自建，100 个物体、16 个 PartNet-Mobility 类别）",
+   "PARIS（10 合成 + 2 真实）",
+   "SplArt 真机采集 9 段（附录）"
+  ],
+  "novelty": "相对 ArtGS/GaussianArt 这类在无结构高斯上做铰接的工作，ArtMesh 把几何、拓扑与关节绑成互相约束的一体：per-part rDel 让每个活动件成为真正连通、无跨部件面的刚体网格，训练用的表面就是导出用的表面，不需要事后 TSDF。相对 PARIS 这类隐式路线，关节直接在三角网格顶点与渲染像素两个层面被监督，反向运动取解析逆而非另学一张网络。相对最接近的 StructureGS（加部件有向包围盒与接触约束），它给出的是可导出的连通拓扑而非结构化先验。附带贡献是 Articulate-100：100 个物体、16 类、部件数从 2 到 6+，把「多部件才吃紧」的区间显式测出来。",
+  "limitations": "输入被限定为两个离散关节状态，连续关节角度、多状态序列与运动轨迹都未覆盖，prismatic/revolute 之外的关节类型（如螺旋、球窝复合）未处理。部件数 $K$ 需预先给定，主要数字依赖 GT 部件掩码；用 PArtSAM 时 3–5 部件桶的 Axis Ang 反超 ArtGS（19.79° vs 15.42°），说明分割噪声会直接污染运动估计。Articulate-100 由 PartNet-Mobility 物体渲染而来，真实采集只有 SplArt 的 9 段与 PARIS 的 2 个真实物体，泛化证据偏薄；每个物体都要跑两阶段优化，不是前馈推理。",
+  "trl_evidence": "输出可直接导出 URDF 供仿真使用（附录给了仿真应用），在 9 段真实 SplArt 采集上恢复出全部正确关节类型，具备数字孪生/机器人仿真的接口形态。但仍是逐物体离线优化、依赖多视角 RGB-D 与部件数先验，没有实时或在线证据。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 5,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：铰接物体的部件级几何加关节估计是机器人/AR 数字孪生的真卡点，但已有 PARIS、ArtGS 等多条路线。NOV=4：网格原生 + per-part restricted Delaunay + 双向运动一致性，是明显新架构而非组合增量。TEC=4：方法闭环、消融到组件级并给网格质量指标，但无理论分析与收敛性讨论。EXP=5：自建 100 物体 16 类基准 + PARIS 合成/真实 + 9 段真机采集 + 多基线多桶报告。PER=5：CD-m 15.01 vs 57.45 mm，改善逾 70%，远超 30% 档。TRL=3：可导出 URDF、真机采集验证，但逐物体离线优化。REP=3：无代码，附录训练细节较全。"
+ },
+ {
+  "id": "2606.11390",
+  "title": "Large-Scale Gaussian Splatting with a Multi-GPU PyTorch Backend",
+  "title_zh": "基于多 GPU PyTorch 后端的大规模高斯泼溅",
+  "problem": "3DGS 的重建规模与分辨率被单卡显存卡死：高分辨率航拍或多相机阵列下，参数量与每视角投影参数很快超过一张 A100。现有多卡方案各有代价：gsplat 里的 Grendel-GS 只分发 3D 高斯参数，每个视角的投影参数必须整块留在一张卡上，在 8×A100、最小支持 batch $B=8$ 时只要 132M 高斯就 OOM；域分解（分块重建再缝）引入与 GPU 数成正比的边界开销；DTensor 这类通用方案要求事先显式声明每个张量的 sharding 与复制，改造成本高。结果是「十亿级高斯 + 街景细节」这类重建在公开系统上做不到。",
+  "method": "torch-dgx 是一个多 GPU PyTorch 后端：注册新的 dispatch key kDGX 与设备名 dgx，用 CUDA unified memory 把多卡拼成统一虚拟地址空间（可选 NVLink 做高吞吐 all-to-all），因此 device=dgx 的张量可被任意卡寻址，算子自动派发到多卡实现。为避免 host 同步开销，作者实现了 stream-ordered 的完全异步 unified-memory 分配器，分配与执行都不阻塞主机。分布发生在算子内部、沿各算子天然的并行轴：有的按张量元素切、有的按行切，且可依运行期输入变化，模型代码因此不需要任何显式通信或 sharding 注解；反向传播或用专用多卡 kernel，或经 PyTorch autograd 分解。落到 GS：球谐求值与投影按高斯切分，每卡处理一个不相交的高斯区间并对所有相机求值，反向用卡内 atomic 累加各相机的梯度贡献；高斯-瓦片求交、深度排序、光栅化按全宽 tile 行切分输出像素，统一内存让本卡能读到别的卡上的投影高斯；一个投影高斯可能命中多卡 tile，于是各卡先在本地梯度缓冲（stacked grids）累加，再走 reduce-scatter 汇总并回送给高斯所属卡，避免系统级 atomic。前向与反向保持同一划分以复用数据驻留；图像损失按光栅化的 tile 归属计算。与 gsplat 的关键差别是支持 $B$ 与 $N$ 独立：既不是单视角铺满所有卡（$B=1$），也不强制一卡一视角（$B=N$），因此单个视角也能用上聚合显存。",
+  "key_numbers": [
+   "十亿级压力测试：城市尺度重建超过 1 billion splats，是 Grendel-GS 已报告最大规模（40M）的 25 倍以上",
+   "Gettysburg：268M splats、153 张 7088×5314 航拍、13 平方公里，8×A100、$B=1$、400 epochs、3.086 h，PSNR 27.450 dB / SSIM 0.8734",
+   "对照：gsplat 的 Grendel-GS 在 8×A100、$B=8$ 下 132M 高斯即 OOM",
+   "$B=N$ 平均加速（相对各自单卡）：2/4/8 卡为 1.68×/2.50×/3.15×，峰值 3.60×；gsplat 为 1.77×/3.33×/6.30×，峰值 7.30×",
+   "$B=1$ 平均加速：2/4/8 卡为 1.44×/1.85×/2.18×",
+   "单卡上 dgx 后端相对 PyTorch 原生 CUDA 后端的平均速度为 98.5%，PSNR/SSIM/高斯数基本一致",
+   "batch 从 1 增到 8 使七场景平均 PSNR 降 0.051 dB、SSIM 降 0.0001（room 场景 gsplat 从 31.463 dB 掉到 29.671 dB）",
+   "Morton 排序带来 5–10% 性能提升"
+  ],
+  "ablation": "无传统意义上的模块消融，替代证据是三类控制实验：(1) 单卡上 dgx 与原生 CUDA 后端逐场景对齐（高斯数、PSNR、SSIM 近似，速度 98.5%），把「分布式实现本身引入的精度/速度损失」压到可忽略；(2) 算子微基准覆盖 N∈{1,2,4,8} 与 K∈{2^26,2^28,2^30}，显示小规模下并行度不足、随规模增长趋于线性，界定了后端的适用区间；(3) 两种 batch 语义（$B=N$ 与 $B=1$）分别扫描，说明「单视角也能吃满显存」是容量来源，而不仅是数据并行。(4) Morton 排序对比给出 5–10% 的排序策略收益。",
+  "baselines": [
+   "gsplat（含 Grendel-GS 实现）",
+   "PyTorch 原生 CUDA 后端（单卡等价性对照）",
+   "Grendel-GS（原论文 40M/16 卡规模参照）",
+   "域分解类方法（3DGStream 之外的 scalable GS 分块路线，作为定性对照）"
+  ],
+  "datasets": [
+   "Mip-NeRF 360（7 个场景，全分辨率）",
+   "Gettysburg 航拍（153 张 7088×5314，13 km²）",
+   "城市尺度十亿级高斯重建",
+   "Stanford Bunny（算子/吞吐微基准）"
+  ],
+  "novelty": "相对数据并行/张量并行/流水并行这类与模型强耦合的方案，torch-dgx 把分布下沉到算子：模型代码只改一个 device 参数，不动通信与 sharding，这是系统抽象层面的新做法。相对 Grendel-GS 的逐高斯逐像素并行，它的关键差别是把「每视角投影参数」也分布出去，因此单视角可用聚合显存，容量上限从 132M 推到 1B 以上。相对 unified-memory 溢写到主存的方案（借助 host 内存扩容），它是聚合多卡显存与算力、把主机内存参与降到最低。",
+  "limitations": "加速比明显不如 gsplat 的 $B=N$ 路线（8 卡 3.15× vs 6.30×），作者自己也承认小规模/多卡时并行度不足；真正的卖点是容量而非吞吐。统一内存的页迁移与 reduce-scatter 让性能对张量规模、NVLink 拓扑敏感，只有在 NVLink 全互联的 A100/H100 上测过，PCIe 或跨节点未验证。十亿级重建按 8×A100→8×H100→4×B200 分段渐进训练，属于工程可行性演示而非可复现的单一配置；评测只有重建 PSNR/SSIM 与时间，缺少渲染端时延、多卡扩展效率曲线与故障恢复。",
+  "trl_evidence": "在真实 8×A100 / 8×H100 / 4×B200 硬件上跑通十亿级高斯训练与分布式前向渲染，作者已把 torch-dgx 与所测算子开源，具备工程落地形态。但仍是研究原型：无产品化封装、无 PCIe/云环境的鲁棒性数据，容错与弹性伸缩未涉及。",
+  "code": "已开源（正文声明 open-sourced torch-dgx 及其评测算子，未给仓库链接）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：显存墙是大规模 GS 的真瓶颈，但属系统层可绕过的问题。NOV=4：把分布下沉到算子、以统一内存把多卡暴露成单个异步设备，是新的系统抽象。TEC=4：算子实现、异步分配器、反向 reduce-scatter 与三类控制实验完整，但缺形式化分析与失效模式讨论。EXP=4：Mip-NeRF 360 七场景 × 四种卡数 × 两种 batch 语义，加城市尺度与算子微基准，覆盖充分但数据集类型单一。PER=4：容量 25× 于既有最大规模，但同卡数加速仅 3.15×、明显低于 gsplat 的 6.30×。TRL=4：已在 A100/H100/B200 真机跑通并开源。REP=4：代码开源，无顶会与数据集发布。"
+ },
+ {
+  "id": "2608.29269",
+  "title": "LightFuse: Relightable Interactive Gaussian Scene Reconstruction via Multi-Scan Fusion and 2D Gaussian Ray Tracing",
+  "title_zh": "LightFuse：多扫描融合与二维高斯光线追踪的可重打光交互式场景重建",
+  "problem": "交互式场景重建要从不同物体摆位的多次扫描中建出可编辑 3D 模型，使新布局能在新光照下渲染。现有 GS 路线（IGFuse、RecurGS、LTGS）把外观直接从图像优化进高斯，材质与光照纠缠在一起，导致两种失败：不同状态的外观被烘进同一份共享表示，产生光度不一致；新布局下烘死的阴影、高光与间接光跟着物体走，物理上不成立。逆渲染路线（IRGS、ReCap、GauUpdate）能做材质-光照分解，却假设所有拍摄共享同一份静态几何，无法关联「同一表面在不同状态、不同位置、不同光照下被观测」这件事。量化差距很明显：新状态重打光下 IGFuse 只有 14.88 dB、ReCap 15.39 dB、IRGS 19.88 dB。",
+  "method": "LightFuse 用 2D Gaussian surfel 表示共享背景 $\\mathcal{B}$ 与 $M$ 个可动物体 $\\mathcal{O}_o$，每个 surfel 存 $(\\mu_i,\\mathbf{q}_i,\\mathbf{s}_i,\\alpha_i,\\mathbf{a}_i,m_i,r_i,\\mathbf{f}_i)$：前三项是几何，后三项是 PBR 材质，$\\mathbf{f}_i$ 只是逆渲染前的辅助 splatting 颜色。几何与材质跨所有状态共享，状态 $k$ 之间只差物体刚体变换 $\\mathcal{T}_{k,o}$ 与环境图 $E_k$（$256\\times128$ HDR），即 $\\mathcal{S}_k=(\\mathcal{B}\\cup\\bigcup_o\\mathcal{T}_{k,o}(\\mathcal{O}_o),E_k)$。第一阶段在参考状态用 RGB 加几何监督重建，用 SAM 3 掩码与 GaussianCut 分出背景与物体，把参考状态的物体位姿定为 canonical frame，再估其他状态的 $\\mathcal{T}_{k,o}$。跨状态补全只借几何证据：把每个组件在每个状态的每个视角渲染出来，凡渲染深度落后观测深度超过 $\\tau_D$ 的像素 $\\mathcal{H}=\\{p:\\hat{D}(p)-D^*(p)>\\tau_D\\}$ 视为被遮挡，用观测深度与法线反投影成新 surfel、经 $\\mathcal{T}^{-1}_{k,o}$ 回到 canonical frame，颜色先填 $\\mathbf{f}_i$。第二阶段做面向光线追踪的几何优化：surfel 作为有限支撑的有向求交原语，有效不透明度 $\\tilde{\\alpha}_j=\\alpha_j\\exp(-\\tfrac{1}{2}\\|\\boldsymbol{\\xi}_j\\|^2)$ 截断在 0.99，按平面交点深度排序后前向合成 $T_j=\\prod_{\\ell<j}(1-\\tilde{\\alpha}_\\ell)$、$w_j=T_j\\tilde{\\alpha}_j$，同一套权重同时给出位置/深度/法线/材质的合成值，保证几何与材质对齐；再加覆盖率正则 $\\mathcal{L}_\\alpha$（补洞）与尺度正则 $\\mathcal{L}_s$（限制 surfel 尺寸，避免补洞后虚假遮挡自由空间射线），然后用追踪器本身做 refinement。第三阶段固定几何，做多状态逆渲染：可微单次反弹路径追踪，每条路径一次 NEE 环境采样加一次 BSDF 续接并用 MIS 合并，至多一次二次命中加四次环境采样，共享材质与逐状态 $E_k$ 联合优化，spp 从 8 逐步升到 16（第 7500 迭代）与 32（第 12000 迭代），共 15000 次迭代、每次从一张图采 16384 像素。编辑时对目标刚体变换重跑追踪，阴影与互反射随新布局重算。",
+  "key_numbers": [
+   "新状态重打光（4 个合成场景 × 11 张未见环境图）：PSNR 25.89 dB / SSIM 0.873，比最强基线 IRGS 高 6.01 dB 与 0.131 SSIM",
+   "同设定下 IGFuse 14.88 dB / 0.714、ReCap 15.39 dB / 0.713、IRGS 19.88 dB / 0.742",
+   "真实场景新状态合成（Captured 1/2）：PSNR 24.35 dB 最高，比 ReCap 高 1.55 dB，但 SSIM 0.821 低于 ReCap 的 0.903",
+   "几何消融（4 合成场景）：AO MAE 0.0434→0.0272（加跨状态补全），PSNR 23.28→24.21 dB；再加 $\\mathcal{L}_s$ 到 25.51 dB，最后光线追踪 refinement 到 25.90 dB / SSIM 0.875，法线 MAE 降到 1.695°",
+   "逆渲染消融（固定几何）：去间接光 25.90→22.54 dB，去 MIS 降到 19.86 dB",
+   "采样策略：固定 32 spp 25.97 dB / 3.01 h，渐进 8→16→32 为 25.90 dB / 1.59 h，固定 8 spp 25.66 dB / 1.08 h",
+   "环境图规模 256×128，逆渲染 15000 迭代、每次 16384 像素，单卡 RTX 4090"
+  ],
+  "ablation": "两组消融分离得比较干净。几何侧按累积顺序加件：跨状态补全贡献最大（AO 0.0434→0.0272、PSNR +0.93 dB），因为参考状态被物体挡住的背景与接触面只能靠其他摆位补；单加 $\\mathcal{L}_\\alpha$ 反而三项指标都变差（AO 0.0360、PSNR 24.02），因为它靠放大 surfel 补洞、制造虚假遮挡，随后 $\\mathcal{L}_s$ 把尺度压住才转为净收益（PSNR +1.49 dB 到 25.51）；光线追踪 refinement 再把法线误差压到 1.695°，并给出最优 PSNR/SSIM。逆渲染侧：去间接项掉 3.36 dB、去 MIS 掉 6.04 dB，说明二次反弹与多重重要性采样都是必要件；spp 调度则是质量-成本折衷，渐进策略只比 32 spp 低 0.07 dB 却省一半时间。",
+  "baselines": [
+   "IGFuse（交互式多扫描融合）",
+   "ReCap（跨环境共享材质的逆渲染）",
+   "IRGS（2D 高斯光线追踪逆渲染）",
+   "NVDiffRec 类 split-sum 逆渲染（作为方法参照）"
+  ],
+  "datasets": [
+   "4 个 Blender 合成场景（Bedroom / Playroom / Livingroom / Kitchen，各 3 个训练状态 + 1 个留出布局 × 11 张未见环境图）",
+   "2 个真实采集场景（Captured 1/2）"
+  ],
+  "novelty": "相对 IGFuse/RecurGS 这类「融合但不分解」的交互式重建，LightFuse 把材质与光照从外观里拆出来，且共享材质、逐状态环境图，编辑后重算可见性与光传输。相对 IRGS/ReCap 这类逆渲染，它允许几何在不同扫描间被重排：同一份 surfel 材质被多个状态的不同光照共同约束，这既是补全几何的证据，也是缓解材质-光照歧义的约束。面向追踪的几何正则（覆盖 + 尺度）与 refinement 是针对「splatting 优化出的表面在追踪下漏光/虚遮挡」这一具体缺陷设计的。",
+  "limitations": "只有单次反弹，长路径全局光照、焦散、透射与镜面链都无法忠实恢复；追踪与优化仍昂贵（逆渲染 1.59 h），所谓 interactive 指的是可重排可编辑，不是实时帧率。几何分解依赖多视角掩码与 GaussianCut，分割错误会经冻结几何直接传到材质与光照，作者列为第一条局限。真实场景只有 2 个、且因真实光照无 GT 只评合成不评重打光；真实场景 SSIM 还低于 ReCap，作者归因于蒙特卡洛噪声与去噪模糊，但这意味着在解析着色基线面前感知质量并未全面占优。",
+  "trl_evidence": "单卡 RTX 4090 可跑完整流程，输出支持物体重排、材质编辑与重打光，追踪端用 OptiX 去噪，形态接近可用于虚拟布景/仿真的离线工具。但没有实时或在线证据，也没有与引擎/仿真器的集成测试。",
+  "code": "未给代码仓库，仅有项目主页 zhn202.github.io/LightFuse",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：可重打光的交互式重建对 MR/机器人仿真有实际价值，但属被局部攻坚的问题。NOV=4：首个把多扫描重排融合与逐状态光照分解接起来的框架，思路明确且非简单拼接。TEC=4：三阶段流程、追踪器、双正则与 MIS 均完整，消融到组件级，但无理论保证。EXP=3：4 合成 + 2 真实场景，基线只有 3 个且均被改写适配，规模偏小。PER=4：重打光 PSNR +6.01 dB（相对 +30%）显著，但真实场景 SSIM 低于 ReCap。TRL=2：离线优化 1.59 h、单次反弹，无实时或集成证据。REP=3：仅项目主页，细节在附录。"
+ },
+ {
+  "id": "2611.26380",
+  "title": "EgoCaptioner: Towards Comprehensive and Fine-Grained Egocentric Video Captioning",
+  "title_zh": "EgoCaptioner：面向全面细粒度第一视角视频描述",
+  "problem": "第一视角视频的描述需要同时满足细节与时间定位，而现成 MLLM 常漏掉短暂动作、弄错顺序、误解佩戴者自身的运动（身体只部分可见，只能从场景变化反推行进方向，头部运动与身体运动不一致时会误导）。格式上也有硬缺口：密集段落说不清每个动作何时开始结束，带时间戳的描述又往往一句话概括一个事件。数字上差距很大：Qwen3.5-9B 主干在 PhysCapBench 只有 51.24，Gemini 3.8 Flash 为 82.77；EgoTempo 准确率 21.60，EgoHome 上 PSJ 仅 46.90。现有第一视角描述器还偏向手-物操作，导航与社交类活动覆盖不足。",
+  "method": "EgoCaptioner 把描述拆成两层：video-level overview 交代地点、环境、光线/时间/天气、佩戴者与其他参与者、相关物体及其相对位置、以及整体在做什么与目的；steps 则把视频切成互不重叠的事件，每个事件再切成有序 step 并给起止时间，关键瞬间写成 At [t] 加一句发生了什么。两层结构支撑三个任务：全视频描述、仅 overview、以及 event-conditioned（指令给事件名但不给时间，模型需先定位再描述）。数据侧用 coarse-to-fine 标注流水线造 50000 条训练样本，覆盖 8 个第一视角来源：结构阶段由 Gemini-3.1-Pro 写 overview、Seed2.1 pro 切事件边界与类型并给 step 提纲；细节阶段 Gemini 按事件类型的叙述侧重（manip / locomote / social / attend 四类各有强调项）把提纲扩成带时间戳的 step 与关键瞬间，事件裁剪窗口前后各留至多 1 s 上下文，超过 30 s 的视频按 30 s 分片、0.5 s 重叠后再合并时间线；最后 Seed2.1 pro 对完整视频复核动作、时间与事件间一致性并就地修正。有位姿/轨迹记录的片段按 MotionScript 转成离散 motion facts，作为独立于参考描述的额外事实。训练先做 SFT（全视频/overview/事件条件三类等比例混合，视频至多 120 s），再用 GRPO 强化：事实奖励是判官给出的精确率与召回率的 F1（含位姿派生的运动事实），时间奖励按时间 IoU 贪心匹配预测与参考 step，风格奖励惩罚被判为碎片化或冗余的 step，overview 则用内容奖励加格式奖励；另有格式与有效性检查。",
+  "key_numbers": [
+   "PhysCapBench Overall 78.84，主干 Qwen3.5-9B 为 51.24（+27.6），高于 Gemini 3.1 Pro 的 75.06，低于 Gemini 3.8 Flash 的 82.77",
+   "EgoTempo 准确率 38.40（主干 21.60，+16.8 pp），Score 2.066",
+   "EgoHome 步分割 PSJ 75.51，为主干 46.90 的 +28.6，开源模型中第一",
+   "Minerva-Ego（caption-to-QA）Acc 18.57，主干 0.00，Gemini 3.1 Pro 4.29",
+   "EgoMe-Overview：BLEU-4 4.03 / METEOR 20.40 / ROUGE-L 23.59；EgoMe-Steps：METEOR 12.26 / SODA-c 8.04 / SODA-d 56.38",
+   "SFT 数据规模：10k 时 PSJ 67.79、25k 68.63、50k 71.63（SODA-d 42.20→53.25）",
+   "奖励消融：去事实奖励 PSJ 67.97、去时间奖励 66.81、去风格奖励 73.22，完整 75.51",
+   "标注流程对比（同数据量）：单遍标注 PSJ 62.89、EgoTempo 26.60、Minerva 7.14；coarse-to-fine 为 71.63 / 36.40 / 18.57"
+  ],
+  "ablation": "三组消融互相独立。训练阶段与规模：SFT 单独就把 PSJ 从 46.90 拉到 71.63，10k 已恢复大部分增益（67.79），说明格式与标注质量比数据量更关键；GRPO 再加约 4 个点。奖励设计：去时间奖励 PSJ 掉到 66.81（低于纯 SFT），但 METEOR 反而略升，证明内容分高并不产生对齐时间戳；去风格奖励 PSJ 73.22、SODA-d 55.23，说明碎片化/冗余惩罚对时间线质量有实质贡献；去事实奖励 PSJ 67.97。标注流程：把 coarse-to-fine 换成同数据量的单遍标注，PSJ 62.89、EgoTempo 26.60、Minerva 7.14，细节型 QA 掉近 10 点、Minerva 直接减半，说明先定事件结构再逐事件描述比一次读完整段更有效。",
+  "baselines": [
+   "Gemini 3.1 Pro / Gemini 3.8 Flash / GPT-6-Astra（闭源）",
+   "Qwen3-VL-8B-Instruct / Qwen3-VL-8B-Thinking / Qwen3.5-9B / Qwen3.8-27B",
+   "CapRL-Video-4B / Tarsier2-7B / TimeLens-8B / Molmo2-8B / AVoCaDO",
+   "EgoThinker / EgoGPT（第一视角专用）"
+  ],
+  "datasets": [
+   "EgoMe（Overview / Steps）",
+   "EgoHome Subtask",
+   "PhysCapBench",
+   "EgoTempo",
+   "Minerva-Ego",
+   "训练数据 8 源：Ego4D Goal-Step、EgoHOD、Sekai、EgoVid-5M、EgoSuite-Open100K(EgoPro)、HumanPlus-1000、RekaDaily-10k、EgoLife"
+  ],
+  "novelty": "相对通用描述器（覆盖场景但不绑定佩戴者动作）与第一视角专用描述器（短叙述或只做手-物操作），它把「视频级 overview + 带起止时间的 step + At [t] 关键瞬间」定义成统一输出格式，并用三个任务把定位与描述绑在一起。相对单遍标注，coarse-to-fine 让事件结构先于细节确定，这是数据侧的主要新意。强化侧把事实、时间、风格三类奖励分开设计，其中位姿派生的运动事实是与参考描述独立的证据源，缓解了「用模型判模型」的循环。",
+  "limitations": "训练标注完全由 Gemini-3.1-Pro 与 Seed2.1 pro 生成、再由 Seed2.1 pro 复核，同族模型自审会继承系统性偏差；判官打分的奖励同样依赖模型评审，存在奖励黑客风险。评测里 caption-to-QA 用 Gemini 3.8 Flash 答题并判分，答案质量受该模型能力上限约束。五个基准中三个（EgoMe、EgoHome、PhysCapBench）为官方指标，另两个（Minerva-Ego、EgoTempo）是作者改造的协议，跨论文可比性有限；结论主要相对开源模型，仍落后 Gemini 3.8 Flash（82.77 vs 78.84）。训练视频限 120 s，长视频一致性未验证。",
+  "trl_evidence": "给出 Homepage / Code / Model 三类资源入口，模型为 9B 级可直接推理，50000 条 SFT 数据来自公开第一视角数据集，具备复现与二次开发条件。但推理成本、吞吐与端侧可行性未报告，也无产品化或在线服务证据。",
+  "code": "已开源（正文 resource 区给出 Homepage / Code / Model，未在正文写出具体 URL）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：带时间定位的细粒度第一视角描述是具身智能记忆与机器人预训练数据的真瓶颈。NOV=3：格式、标注流水线与 GRPO 奖励都是已有路线的实质改进，无新范式。TEC=4：任务定义、数据流水线、三奖励训练与逐项消融完整，但无方法层面的理论或架构创新。EXP=4：五个基准、十余个基线含闭源 SOTA，消融覆盖数据规模/奖励/标注流程。PER=4：PhysCapBench +27.6、EgoTempo +16.8 pp，相对提升显著，但绝对仍低于 Gemini 3.8 Flash。TRL=3：模型与代码开放、9B 可推理，无部署证据。REP=4：代码与模型公开。"
+ },
+ {
+  "id": "2611.30173",
+  "title": "Confidently Lost: Silent Failure and Edge Deployment of Dense Visual SLAM under Photon Starvation",
+  "title_zh": "自信地迷失：光子饥饿下稠密视觉 SLAM 的静默失效与边缘部署",
+  "problem": "基于学习式双视图几何的稠密 SLAM 只在光照良好时被评测，暗光下会静默失效。MASt3R-SLAM 用几何自洽性验证匹配：一个像素经网络跨视图 pointmap 搬运后必须落在另一视图自身 pointmap 的 10 cm 内。黑暗中两个预测变得虚假一致——两帧 9 级量化噪声（根本没有场景）给出 0.936 的自洽度，真实暗帧对是 0.935——于是系统信任这种一致。实测 sofa_dark_1：1605 帧只产出 7 个关键帧、报告 14.6 FPS、0 次重定位尝试、0 条因子图边被拒，最终存下一张空重建，而 >95% 被接受的对应违反真值极线几何。更棘手的是同一个统计量被两个子系统朝相反方向读：关键帧规则在它低于 0.333 时触发，重定位在它高于 0.300 时接受，于是关键帧饿死与重定位疯狂接受同时发生。",
+  "method": "论文是机制分析 + 零成本检测器 + 补救对比，不是新 SLAM 算法。它先定位置信度进入系统的位置：对关键帧对 $(i,j)$，主干一次前向给出四个 pointmap $X^{ii},X^{jj},X^{ji},X^{ij}$ 与逐像素置信度，匹配置信 $Q_{i\\to j}=\\sqrt{Q^{ii}[\\mathrm{idx}_{i\\to j}]Q^{ji}}$ 与 $\\tau_Q$（出厂 1.5）比较；几何匹配有效性 $g$ 定义为自洽像素比例——把视图 $j$ 的像素经 $X^{ji}$ 搬运、用 Gauss–Newton 投到视图 $i$ 的射线上，收敛在图内且落在 $X^{ii}$ 对应像素 $\\mathrm{dist\\_thresh}=0.1$ 内即算通过，描述子只在之后精修像素、不影响 $g$，因此 $g$ 位于所有门控的上游，是「网络两个几何预测彼此同意」的统计量。后验的 match fraction $m$ 是 $g$ 的掩码再与 $Q>\\tau_Q$ 相交。关键帧测试读 $\\min(m_k,u_f)$ 并在低于 0.333 时建帧，重定位在 $m$ 高于 0.300 时接受候选。作者在因子图建边处加只读诊断（环境变量开启），逐次记录 $Q,g,m$ 分布、边的提出/拒绝数与调用者标签；并发现 local_opt.window_size 被读取却从未使用，边只增不淘汰，暗光下每次重定位尝试都加边，在关键帧 273 处吃满 15.5 GiB 显存，于是补上该参数隐含的滑窗（任一端点在窗内则边保留）。补救侧做三件事的对照：把 Dark3R 的 LoRA 适配器离线 merge 成可直接替换的 checkpoint（1017 个张量中 288 个不同，预测头逐位相同）；用权重插值做「剂量」 $W(s)=W_{\\mathrm{stock}}+s\\Delta$，$s\\in[0,1]$ 在 SLAM 启动前一次性构建；以及阈值重调与增强前端。检测器直接用关键帧对基线上的 $g$：健康带与退化带按相机标定，报警后一次性把在线模型切到适配权重。",
+  "key_numbers": [
+   "可用轨迹数（≥50 关键帧且 Sim(3) 收敛）：stock 1/6 → +Dark3R 5/6（ETH3D 六个暗序列，未调参）",
+   "stock 最好门控（$\\tau_Q$ 自调）也只有 2/6；把两个 match-fraction 阈值同时抬到 0.80 可达 5/6，且 4/6 序列 ATE 低于适配模型",
+   "sofa_dark_1：1605 帧、7 个关键帧、14.6 FPS、0 次重定位、0 条边被拒，存下空重建；适配臂 201 个关键帧、ATE 1.32 m",
+   "自洽度分带（24 次运行网格）：stock 退化 0.821–0.929（n=5）、stock 健康 0.369–0.611（n=5）、适配后 0.328–0.451（n=10），无重叠",
+   "无场景噪声对：9 级量化噪声给 stock 0.936，真实暗帧对 0.935；适配模型在噪声对上读 0.104",
+   "对应正确性（40 帧基线，>5 px 偏离极线即错）：暗光下 stock 97–100%、适配 96–99%，亮光下 0.0–1.5%；同批像素随机置换为 97–98%",
+   "检测器在 66 条带标签运行上 AUROC 0.95；阈值 0.65 时 11 条失败中命中 9 条、55 条正常全部不误报（均为 in-sample）",
+   "plant_dark 重定位：543 次尝试接受 497 次，拒绝其提出边的 21.5%；适配后同处 $m$ 降到 0.0065，97.5% 候选被拒",
+   "增强前端 DarkIR-m（31× 亮度提升）0/6 可用，$g$ 反而读到 0.887–0.948，为全文最高",
+   "日照税：raw 亮场景逐帧轨迹 ATE 0.421 vs stock 0.178（+137%），随剂量 $s$ 单调上升",
+   "边缘部署（Jetson AGX Orin，四足机器人载荷）：功耗 36.5–39.3 W，live 显存 6.91–9.12 GB，经验律 live ≈ 3.57 GB + 6.54 MB × 关键帧缓冲 + 至多约 2.2 GB 地图增长"
+  ],
+  "ablation": "作者用「单门控干预」把两种症状拆开：只动关键帧阈值时饿死症状变化（7→49 个关键帧），只动重定位阈值时抖动症状变化，证明两者共享同一统计量而非各自独立故障。接受半径消融最能说明问题：把 dist_thresh 减半到 5 cm 仍静默（7/6 个关键帧、$g$ 0.86/0.85）；到 2 cm 时计数变健康（71/53 个关键帧、$g$ 0.46/0.50、0/4 次重定位），但 ATE 仍是 1.24/1.28 m（约 3×4 m 房间），即半径只决定哪些对应通过自洽检查、不决定它们是否正确。部件级消融：只 merge encoder 块能把 sofa_dark_1 的关键帧从 7 拉到 68 但 $g$ 仍 0.79，只 merge decoder 块完全无法跟踪，只有完整 merge 同时改变关键帧行为与 $g$。剂量扫描给出三段式：亮光下完整 merge 从不最优，中等暗度下部分剂量在 8/8 对上 ATE 优于完整 merge，极暗下完整 merge 在 3/3 上最优。另有明确负结果：bfloat16 推理在暗光下失去置信度排序（chapel 仅 1/500 帧，1319 次重定位），fp16 保持 500/500。",
+  "baselines": [
+   "stock MASt3R-SLAM（出厂配置）",
+   "stock + 阈值重调（$\\tau_Q$ 网格与 match-fraction 0.80）",
+   "stock + DarkIR-m 增强前端",
+   "stock + Dark3R LoRA 适配权重（含部分剂量）",
+   "kidnap_dark 等对照序列（非退化失败）"
+  ],
+  "datasets": [
+   "ETH3D-SLAM 暗序列（einstein_dark、plant_dark、kidnap_dark、sofa_dark_1/2/3，281–2035 帧，Vicon 真值）",
+   "Dark3R raw 场景（9 档曝光 × 5 种剂量，45 次运行）",
+   "合成曝光阶梯（泊松 + 读出噪声）",
+   "四足机器人（Spot）机载 8-bit 相机四条路线（约 24 m，1190–1300 帧/趟）"
+  ],
+  "novelty": "相对把暗光 SLAM 失败当作「跟丢」的既有认知，它指出这是置信度的制造而非丧失：网络在无结构输入上自洽，系统因此更信任错误几何。相对 Dark3R 这类离线暗光适配，它首次把适配放进因果 SLAM 回路，并证明适配只是「撤回对错误几何的置信」，不是「找到正确几何」——这条区分此前没人测过。检测器的新意在于零成本：$g$ 是系统本来就在算的量，只需在因子图调用处读一次，无需真值、无需额外计算；同时指出它不能认证地图正确性、健康带随相机而变，避免把它当银弹。",
+  "limitations": "作者自述：$g$ 不认证几何（merged/sofa_dark_1 读 0.371 却有 97% 错误对应、1.32 m ATE）；证据只在关键帧对出现，静默运行仅 2–6 次读数、首次读数要等到 5.6–10.5 s，逐帧版本被短基线主导；健康带按相机标定、工作点在 66 条样本上是 in-sample；只在 8-bit ETH3D 静默退化区间有效，对合成噪声、bfloat16 置信度崩塌、raw 输入与压扁地图均失效。范围上只研究一个系统、报警动作只跑了一次、光照在单次运行内恒定，恢复过程未测；机器人侧只做回放不做事前部署，里程计是参考而非真值。",
+  "trl_evidence": "整套栈（两套权重、进程内后端、滑窗因子图、检测器日志）跑在四足机器人载荷的 Jetson AGX Orin 上，回放机载相机录制的四条路线，给出功耗 36.5–39.3 W、live 显存与显存增长经验律，并估出 Orin NX 约 128 关键帧的上限。作者明确称这是 scope test 而非 deployment：回放、非实时、里程计仅作参考。",
+  "code": "承诺开源（正文称 Code and the merge recipe will be released；merged checkpoint 因基座权重为 CC BY-NC-SA 无法发布）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：暗光下学习式稠密 SLAM 的静默失效是安全相关的真问题，但结论目前绑定单一系统。NOV=4：把「制造置信」这一机制讲清并给出零成本检测器，是新的问题刻画，不是新算法。TEC=4：单门控干预、剂量扫描、噪声对与 121 次运行的分析很严谨，但方法侧只有插值与阈值，缺形式化。EXP=5：6 条 ETH3D 暗序列 + raw 多曝光 + 合成阶梯 + 四足机器人四条路线实机回放。PER=3：可用率 1/6→5/6 很醒目，但精度未改善（仍米级误差），价值在可靠性诊断而非性能。TRL=3：机载硬件跑通但为回放、非在线部署。REP=3：承诺开源代码与合并配方，权重无法发布。"
+ }
+]

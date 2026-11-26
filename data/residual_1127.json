@@ -1,0 +1,259 @@
+{
+ "mmdd": "1127",
+ "n_scanned": 525,
+ "n_flagged": 30,
+ "rate": 0.0571,
+ "by_track": {
+  "化身与人体": 6,
+  "触觉与多模态": 1,
+  "世界模型与仿真": 5,
+  "重建与SLAM": 8,
+  "神经渲染": 3,
+  "内容生成": 3,
+  "评估与数据集": 2,
+  "感知与认知": 2
+ },
+ "flagged": [
+  {
+   "id": "2611.33296",
+   "n": 42,
+   "title": "CoSMo: A Compact Spectral Space of Body Motion in Video",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "CoSMo 身体运动的紧凑谱空间表示，可编辑/迁移/插值"
+  },
+  {
+   "id": "2611.33313",
+   "n": 47,
+   "title": "Multisensory Hybrid TV",
+   "cat": "cs.MM",
+   "track": "触觉与多模态",
+   "why": "mulsemedia 多感官电视：环境光/振动/气味/风，沉浸式内容消费"
+  },
+  {
+   "id": "2611.33378",
+   "n": 62,
+   "title": "DreamTour: Layout Steering for Training-Free World Exploration",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "DreamTour 单图相机轨迹巡游生成，训练无关的相机控制"
+  },
+  {
+   "id": "2611.33403",
+   "n": 73,
+   "title": "ArtKit: Motion-Driven Re-Segmentation and Link Re-Generation for Articulated Objects from RGB-D Video",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "ArtKit 从 RGB-D 视频重建铰接物体部件与运动学树"
+  },
+  {
+   "id": "2611.33462",
+   "n": 88,
+   "title": "FoamSurf: A Voronoi-Surfel Representation for Differentiable Rendering",
+   "cat": "cs.CV",
+   "track": "神经渲染",
+   "why": "FoamSurf 散射介质中表面+介质联合可微渲染"
+  },
+  {
+   "id": "2611.33505",
+   "n": 99,
+   "title": "Representing and Animating Piano-Hinged Solids as Non-Manifold Cell Complexes: The Magic Photo Cube",
+   "cat": "cs.GR",
+   "track": "内容生成",
+   "why": "钢琴铰固体表示为非流形胞复形并驱动动画"
+  },
+  {
+   "id": "2611.33511",
+   "n": 101,
+   "title": "ArtLang-4D: Articulation-Aware Dynamic Language Fields from Monocular Videos",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "ArtLang-4D 铰接状态感知的单目 4D 语言场"
+  },
+  {
+   "id": "2611.33588",
+   "n": 117,
+   "title": "SEEL: Towards End-to-End 3D Sign Generation with Language Models",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "SEEL 端到端 3D 手语生成"
+  },
+  {
+   "id": "2611.33650",
+   "n": 131,
+   "title": "Linear-Time Online Visual Geometry Transformer with Hybrid Architecture",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "线性时间在线视觉几何 Transformer（VGGT 系流式化）"
+  },
+  {
+   "id": "2611.33655",
+   "n": 133,
+   "title": "Recall4D: Forgetting, Not Misalignment, Limits Long-Horizon Feed-Forward 4D Reconstruction",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "Recall4D 前馈 4D 重建长序列误差归因于遗忘"
+  },
+  {
+   "id": "2611.33728",
+   "n": 158,
+   "title": "Asset4D-Bench: Benchmarking Coding Agents for Editable 3D and 4D Reconstruction",
+   "cat": "cs.AI",
+   "track": "评估与数据集",
+   "why": "Asset4D-Bench 可编辑 3D/4D 重建基准"
+  },
+  {
+   "id": "2611.33734",
+   "n": 160,
+   "title": "DualCast: Dual-Image Conditioned Diffusion Transformers for Digital Human E-Commerce Video Generation",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "DualCast 双图条件数字人电商视频生成"
+  },
+  {
+   "id": "2611.33818",
+   "n": 195,
+   "title": "Spectral Optimal Transport for Dynamics-Aware Sign Language Generation",
+   "cat": "cs.AI",
+   "track": "化身与人体",
+   "why": "谱最优传输的动力学感知手语生成"
+  },
+  {
+   "id": "2611.33885",
+   "n": 220,
+   "title": "LayoutRecall: Preserving Appearance in Multi-Round 3D Layout-Controlled Image Editing",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "LayoutRecall 多轮 3D 布局控制图像编辑的外观保持"
+  },
+  {
+   "id": "2611.33948",
+   "n": 247,
+   "title": "Where to Approximate: Understanding and Accelerating Looped Multi-View Reconstruction",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "循环式多视角重建的近似位置选择与加速"
+  },
+  {
+   "id": "2611.33964",
+   "n": 253,
+   "title": "Embodied-VGGT: Preserving Reliable Local Geometry for Long-Sequence Reconstruction",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "Embodied-VGGT 长序列重建的局部几何保持"
+  },
+  {
+   "id": "2611.34022",
+   "n": 272,
+   "title": "MoSk: A Unified Motion-Skeleton Foundation Model for Human Motion Understanding and Generation",
+   "cat": "cs.CV",
+   "track": "化身与人体",
+   "why": "MoSk 统一运动-骨架基础模型"
+  },
+  {
+   "id": "2611.34064",
+   "n": 282,
+   "title": "SPARC: Geometry-Guided Attention Pruning for Long-Horizon Camera-Controlled Video Generation",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "SPARC 几何引导注意力剪枝的相机可控长视频生成"
+  },
+  {
+   "id": "2611.34067",
+   "n": 283,
+   "title": "When to Respond, Where to Ground: Streaming 3D Affordance Grounding",
+   "cat": "cs.CV",
+   "track": "感知与认知",
+   "why": "流式 RGB-D 三维可供性 grounding（何时答/何处指）"
+  },
+  {
+   "id": "2611.34079",
+   "n": 287,
+   "title": "WorldBridge: Bridging Scattered Views for Coherent 3D World Generation",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "WorldBridge 稀疏视角拼合为连贯 3D 世界"
+  },
+  {
+   "id": "2611.34139",
+   "n": 310,
+   "title": "An Image Detectability Field as a Viewpoint Utility for 2D-3D Localization in Sparse Maps",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "图像可检测场作为稀疏地图 2D-3D 定位的视点效用"
+  },
+  {
+   "id": "2611.34284",
+   "n": 351,
+   "title": "ReMeDi: Single-Image PBR Material Estimation via Reparameterization between Metal and Dielectric Hypotheses",
+   "cat": "cs.CV",
+   "track": "神经渲染",
+   "why": "ReMeDi 单图 PBR 材质估计（金属/介电重参数化）"
+  },
+  {
+   "id": "2611.34457",
+   "n": 390,
+   "title": "ProxyGenBench: Benchmarking Proxy-Guided Video Generation",
+   "cat": "cs.CV",
+   "track": "评估与数据集",
+   "why": "ProxyGenBench 3D blockout 代理引导视频生成基准"
+  },
+  {
+   "id": "2611.34519",
+   "n": 402,
+   "title": "AGLR: Attribute-Guided Latent Refinement for Fine-Grained Humanoid Motion Generation and Editing",
+   "cat": "cs.RO",
+   "track": "化身与人体",
+   "why": "AGLR 属性引导的细粒度人体运动生成与编辑"
+  },
+  {
+   "id": "2611.34608",
+   "n": 428,
+   "title": "DuCo: Exploiting Dual Cross-Layer Consistency for Sparse Geometric Attention",
+   "cat": "cs.CV",
+   "track": "重建与SLAM",
+   "why": "DuCo 几何基础模型的跨层一致稀疏注意力"
+  },
+  {
+   "id": "2611.34680",
+   "n": 452,
+   "title": "Neural Rendering Compiler: Generative Video Models as Programmable Renderers",
+   "cat": "cs.CV",
+   "track": "神经渲染",
+   "why": "Neural Rendering Compiler 把生成式视频模型当可编程渲染器"
+  },
+  {
+   "id": "2611.34693",
+   "n": 455,
+   "title": "ShowNow: Fine-Grained Speculative Streaming for Responsive World Models",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "ShowNow 细粒度投机流式生成，降低交互世界模型响应延迟"
+  },
+  {
+   "id": "2611.34730",
+   "n": 464,
+   "title": "WorldInteract: Controllable Streaming Video Generation for Multi-Material Interactions",
+   "cat": "cs.CV",
+   "track": "世界模型与仿真",
+   "why": "WorldInteract 多材质交互的可控流式视频世界模型"
+  },
+  {
+   "id": "2611.34783",
+   "n": 481,
+   "title": "SceneDesigner3D: Agentic Evolutionary Search for Principled Rearrangement of 3D Indoor Scenes",
+   "cat": "cs.CV",
+   "track": "内容生成",
+   "why": "SceneDesigner3D 智能体进化搜索的 3D 室内场景重排"
+  },
+  {
+   "id": "2611.34877",
+   "n": 505,
+   "title": "Towards Closing the Performance Gap in Cross-Modal Place Recognition",
+   "cat": "cs.CV",
+   "track": "感知与认知",
+   "why": "跨模态地点识别缩小与视觉地点识别的差距"
+  }
+ ],
+ "note": "只报警清单：入馆须另行走全文抓取→评分→产物，本文件不改变 registry"
+}

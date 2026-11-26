@@ -1,0 +1,386 @@
+{
+ "2611.33374": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "VersionGS: Compact and Motion-Robust Dynamic Gaussian Splatting via Versioned Gaussians"
+ },
+ "2611.33731": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.RO",
+  "title": "RoboJackVR: Turning Robot Tasks into VR Games for Scalable Demonstration Collection"
+ },
+ "2611.33698": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Efficient Scene-Distribution-Aware Second-Order Optimization for 3D Gaussian Splatting"
+ },
+ "2611.34062": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Surf-Style: Surface-Based Scene Stylization"
+ },
+ "2611.30173": {
+  "published": "2026-11-23",
+  "updated": "2026-11-23",
+  "cat": "cs.RO",
+  "title": "Confidently Lost: Silent Failure and Edge Deployment of Dense Visual SLAM under Photon Starvation"
+ },
+ "2611.34005": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "ScaleCurve: From Constant Scale to Consistent Motion for World-Space Human Mesh Recovery"
+ },
+ "2611.33819": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "MMotion: Collaborative Cross-Scale Memory for Text-to-Motion Generation"
+ },
+ "2611.33760": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "GlassGround: GUI Grounding Beyond Native Screenshots with Egocentric Wearable Vision"
+ },
+ "2611.33826": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "MotionODE: Enhancing Autoregressive Text-to-Motion Generation with Continuous-Depth Modeling"
+ },
+ "2611.34141": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Spe3DUp: Faithful Trajectory Distillation for Fast Image-to-3D Generation"
+ },
+ "2611.34128": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "FoundSurface: Feedforward Ray-Based 3D Scene Surface Reconstruction from Unposed Images"
+ },
+ "2611.33581": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.HC",
+  "title": "Evaluating Strategies for Multimodal Bidirectional Interactions between Pedestrians and AVs"
+ },
+ "2611.33565": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "EgoCARBS: Egocentric Video Meets Active Acoustics for Kitchen Action Understanding"
+ },
+ "2611.33465": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "OrdiHand-GS: Ordinal-Guided Tracking and Hand-Refined Gaussian Avatars for Digital Signers"
+ },
+ "2611.33387": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "Synchronizing Cameras via 3D Object Relationships"
+ },
+ "2611.33467": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "SplatWAM: Splatting World Action Models for Real-Time 3D Imagination"
+ },
+ "2611.33382": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "ArtTet: Watertight Part Meshes of Articulated Objects from Rigid-Body Rules and Partitioned Marching Tetrahedra"
+ },
+ "2611.33735": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.AI",
+  "title": "JOVE ICE: Intent Guided Cloud Edge Device Collaboration for AI Glasses"
+ },
+ "2611.33591": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "VivaWorld: Long-Horizon Video World Model With Compositional 3D Priors"
+ },
+ "2611.33796": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "SprintGS: Eliminating Redundancy for Fast 3D Gaussian Splatting Training"
+ },
+ "2611.33779": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "DuoWM:Integrating Dual 6-DoF Visual Flows into Action-Conditioned Drone World Model"
+ },
+ "2611.34155": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "OceanFix: Reference-Guided Diffusion for Sparse-View Underwater 3D Reconstruction"
+ },
+ "2611.34108": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Detectable by Design: Learning a Continuous 3D Saliency Field from 2D Detector Responses"
+ },
+ "2611.34027": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "ContextHands: Completing Hand Motion with Learned Context and Joint-Specific Body Kinematics"
+ },
+ "2611.33824": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Revisiting Monocular In-Hand Object Scanning: Dataset, Pose Estimation, and Surface Reconstruction"
+ },
+ "2611.34226": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "LiveRelight: Sub-Second Global Illumination Editing for Gaussian Interiors"
+ },
+ "2611.34224": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "EgoMyo: Physical Hand State Estimation from Egocentric Video and Wrist Electromyography"
+ },
+ "2611.34945": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.HC",
+  "title": "MidasTUI: Instant Tangible User Interfaces for Wearable Displays using Everyday Objects"
+ },
+ "2611.34939": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "A Mesh for Every Moment"
+ },
+ "2611.34931": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "DynMF2: Rigid Motion Factorization by Expectation-Maximization for Monocular 4D Reconstruction and Motion Segmentation"
+ },
+ "2611.34489": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Who Is Ego? Scaling Cross-View Camera Wearer Identification and Segmentation beyond Humans"
+ },
+ "2611.34480": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "ProManO: Beyond Sim(3) for Metric Upgrade of Feed-Forward Geometry with Visual-Inertial Anchors"
+ },
+ "2611.34466": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.AI",
+  "title": "EgoUseBench: Benchmarking Computer-Use Agents under Evolving First-Person Contexts"
+ },
+ "2611.34461": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "SceneDesigner++: A Unified 9-DoF Pose Control Framework for T2I and T2V Generation"
+ },
+ "2611.34932": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.RO",
+  "title": "MERLoc: Robust Robot Localization in Dynamic Environments with Pose-Based Retrieval over 3D Gaussian Splatting References"
+ },
+ "2602.00671": {
+  "published": "2026-01-31",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "HPC: Hierarchical Point-based Latent Representation for Streaming Dynamic Gaussian Splatting Compression"
+ },
+ "2605.16582": {
+  "published": "2026-05-15",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "ArtMesh: Part-Aware Articulated Mesh Fields with Motion-Consistent Dynamics"
+ },
+ "2605.05876": {
+  "published": "2026-05-07",
+  "updated": "2026-11-24",
+  "cat": "cs.GR",
+  "title": "3DSS: 3D Surface Splatting for Inverse Rendering"
+ },
+ "2608.29269": {
+  "published": "2026-08-29",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "LightFuse: Relightable Interactive Gaussian Scene Reconstruction via Multi-Scan Fusion and 2D Gaussian Ray Tracing"
+ },
+ "2611.34347": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "AIRIS: Benchmarking Social Embodied Intelligence in Egocentric Streaming Videos"
+ },
+ "2611.34944": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "AnyCam: Anything Can Represent Camera for Video Generation"
+ },
+ "2606.11390": {
+  "published": "2026-06-09",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Large-Scale Gaussian Splatting with a Multi-GPU PyTorch Backend"
+ },
+ "2611.34223": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "AnyCam4D: Ray-Based 4D Gaussian Rendering for Arbitrary Camera Models"
+ },
+ "2611.34940": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "LuxAvatar: Real-Time Relightable Head Avatars via Causal Neural Shading of 3D Intrinsic Proxies"
+ },
+ "2611.34319": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "PostMesh: Self-Rewarded Preference Post-Training for Flow-Based Artist Mesh Generation"
+ },
+ "2611.34414": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "SemProxy: Semantic 3D Proxies for Controllable Agentic 3D Modeling"
+ },
+ "2611.34549": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "CADENCE: Sensor-GroundedWorld-Consistent Gaussian SLAM for Collaborative Mobile Reconstruction"
+ },
+ "2611.34476": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "TACC: Target-Aware Carrier Compression for Dense-Context Novel View Synthesis"
+ },
+ "2611.34810": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "WorldExpand: Building Coherent 3D Worlds via Sparse Joint Panoramic Expansion"
+ },
+ "2509.16476": {
+  "published": "2025-09-20",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "GazeVLM: Gaze-Guided Foveated Inference for Efficient Vision-Language Models"
+ },
+ "2611.33728": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.AI",
+  "title": "Asset4D-Bench: Benchmarking Coding Agents for Editable 3D and 4D Reconstruction"
+ },
+ "2611.34680": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Neural Rendering Compiler: Generative Video Models as Programmable Renderers"
+ },
+ "2611.34608": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "DuCo: Exploiting Dual Cross-Layer Consistency for Sparse Geometric Attention"
+ },
+ "2611.33588": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "SEEL: Towards End-to-End 3D Sign Generation with Language Models"
+ },
+ "2611.33655": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Recall4D: Forgetting, Not Misalignment, Limits Long-Horizon Feed-Forward 4D Reconstruction"
+ },
+ "2611.31822": {
+  "published": "2026-11-24",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "G0.7: Scaling Up a Fast World Action Model with Long Context"
+ },
+ "2611.34730": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "WorldInteract: Controllable Streaming Video Generation for Multi-Material Interactions"
+ },
+ "2611.33650": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "Linear-Time Online Visual Geometry Transformer with Hybrid Architecture"
+ },
+ "2611.33511": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "ArtLang-4D: Articulation-Aware Dynamic Language Fields from Monocular Videos"
+ },
+ "2611.33313": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.MM",
+  "title": "Multisensory Hybrid TV"
+ },
+ "2611.26380": {
+  "published": "2026-11-19",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "EgoCaptioner: Towards Comprehensive and Fine-Grained Egocentric Video Captioning"
+ },
+ "2611.33462": {
+  "published": "2026-11-24",
+  "updated": "2026-11-24",
+  "cat": "cs.CV",
+  "title": "FoamSurf: A Voronoi-Surfel Representation for Differentiable Rendering"
+ },
+ "2611.34022": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "MoSk: A Unified Motion-Skeleton Foundation Model for Human Motion Understanding and Generation"
+ },
+ "2611.34079": {
+  "published": "2026-11-25",
+  "updated": "2026-11-25",
+  "cat": "cs.CV",
+  "title": "WorldBridge: Bridging Scattered Views for Coherent 3D World Generation"
+ }
+}

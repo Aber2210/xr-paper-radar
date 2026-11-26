@@ -1,0 +1,274 @@
+{
+ "prev_day": "2026-11-25",
+ "unregistered": 569,
+ "no_abstract": [],
+ "hits": [
+  {
+   "id": "2611.31292",
+   "title": "Hidden Clues in WM-811K: Uncovering the Spatial Signals Behind Wafer M",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31397",
+   "title": "CoRe: Jointly Learning Contextual Representations for Understanding an",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31452",
+   "title": "Ground, Guide, Act: Improving VLA Spatial Generalization with Multimod",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31475",
+   "title": "SpatialCraft: Evolving Procedural Intelligence from Experience and Ski",
+   "cat": "cs.AI"
+  },
+  {
+   "id": "2611.31535",
+   "title": "Hi3R-VLA: Grounding Semantics and Actions in 3D",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31588",
+   "title": "One Phase Is Enough: Sim-to-Real Transfer with Direct Visual Reinforce",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.31651",
+   "title": "Anchoring VAE Fine-Tuning to Its Latent Diffusion Prior",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31658",
+   "title": "Collision Rendering: GPU-Accelerated Trajectory Planning on Sparse Vox",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.31667",
+   "title": "Exteroceptive Sensor Faults in Autonomous Vehicles: A Cross-Modal Taxo",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.31731",
+   "title": "Geo-SMILE: Statistical Model-Agnostic Interpretability with Local Expl",
+   "cat": "cs.AI"
+  },
+  {
+   "id": "2611.31735",
+   "title": "BEARING: Who Is Talking to Whom? Grounding Acoustic Direction in Visio",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31782",
+   "title": "Many Senses, One World: Learning Hierarchical Multimodal World Represe",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.31822",
+   "title": "G0.7: Scaling Up a Fast World Action Model with Long Context",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31843",
+   "title": "Co-DRIS: Physics-Informed Predictive Belief and Variable-Impedance Lea",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.31844",
+   "title": "BendGS: Observation-Conditioned Gaussian Self-Modeling for Continuum R",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31922",
+   "title": "TANDEM: Temporal Anchor Densification With Reliability-Aware Memory fo",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31924",
+   "title": "Decompose, Verify, Evolve: Physically Grounded Shape Decomposition",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.31925",
+   "title": "Learning When a Robot Should Ask For Help: Adaptive Intervention Reque",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.31977",
+   "title": "Distill to Loop: Turning Pretrained Diffusion Transformers into Looped",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32011",
+   "title": "Distractors are the Real Enemy: Visual Distraction Adversarial Perturb",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32042",
+   "title": "Instant LiDAR: Feed-Forward Gaussian Reconstruction for LiDAR Simulati",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32094",
+   "title": "Clinical3D-Bench: Evaluating and Improving Spatial Intelligence of Mul",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32098",
+   "title": "ActiveBridge: Scaling Active Prior for Robots through Egocentric Perce",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.32101",
+   "title": "Ego2Real: Learning Bimanual Dexterous Manipulation from Egocentric Vis",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.32140",
+   "title": "LiteSTAR: Low-Rank Channel Modulation for Temporally Consistent CVD Vi",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32185",
+   "title": "OVOK: A Recursive Self-Improving Agentic Framework for Video-Based Art",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32211",
+   "title": "ArEssays: Towards Robust Arabic Handwritten Text Understanding in Educ",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32214",
+   "title": "EvoSearch: Self-Evolving Active Perception for Wide-Area Geospatial Se",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32232",
+   "title": "MYSTIQUE: Few-Shot Facial Identity Transfer with Performance Preservat",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32260",
+   "title": "EgoLoAF: Learning Humanoid Loco-Manipulation from Egocentric Demonstra",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.32285",
+   "title": "SofaSpace: A Benchmark for Executable Visual Spatial Reasoning in Cont",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32343",
+   "title": "Part-Set Prototypes for Explainable Mountain Gazelles Sex Classificati",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32409",
+   "title": "Delay-Tolerant Formation Tracking for Multi-AGV Systems via Reference-",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.32472",
+   "title": "STAR: Counterfactual Dual-World Rollouts and Spatial Target Adaptive R",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32500",
+   "title": "CalibTrack: Exploring Learned Heteroscedastic Covariance for Robust Mu",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32536",
+   "title": "RSReasoner: Reformulating and Auditing Geospatial Reasoning Segmentati",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32548",
+   "title": "SetCon: Setup-Conditioned IMU-Language Learning from 3D Human Motion",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32582",
+   "title": "Design, Control, and Teleoperation of a Dexterous Robotic Hand with So",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.32588",
+   "title": "CoReQ: Condition-Aware Cross-Modal Repair and Quality-Guided Robust Co",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32696",
+   "title": "RestPose: Canonicalization for Open Object Pose Estimation",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32705",
+   "title": "Knocked Off Course: Tracing Uncommanded Motion from Perception to Acti",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32718",
+   "title": "Seeing to Drive on a Single Board: Attention-Free Depth for Onboard Ro",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32728",
+   "title": "Diving Deeper into Dense Keypoint Localization in Object Pose Estimati",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32835",
+   "title": "Aqua2CAD : Observation-Guided Point Cloud Correction and Completion fo",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32846",
+   "title": "DOPER: Deep Object Pose Estimation Revisited",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32863",
+   "title": "CityRecast: Suppressing Persistent Artifacts in Generative Satellite 3",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32896",
+   "title": "DualSpec: Spectral Reconstruction with Optimized Stereo Cameras",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32900",
+   "title": "Motion Conditioned World Modeling for Embodied Visual Tracking",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32937",
+   "title": "Self-Sensing Compliant Anthropomorphic Hand for Speed-Dictated Shared ",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.32941",
+   "title": "ProX-MAD: Aggregating Spatial Context into Representative Proxies for ",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.32944",
+   "title": "DynaMimic: A Physics-Informed World Model for Humanoid Motion Tracking",
+   "cat": "cs.RO"
+  },
+  {
+   "id": "2611.33143",
+   "title": "ROAM-Bench: Evaluating Embodied Active Spatial Intelligence through Ev",
+   "cat": "cs.CV"
+  },
+  {
+   "id": "2611.33144",
+   "title": "PyRUA-Dex: Learning Programmatic Policies for Dexterous Bimanual Manip",
+   "cat": "cs.RO"
+  }
+ ],
+ "leak": [],
+ "leak_n": 0
+}

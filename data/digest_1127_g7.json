@@ -1,0 +1,410 @@
+[
+ {
+  "id": "2611.34461",
+  "title": "SceneDesigner++: A Unified 9-DoF Pose Control Framework for T2I and T2V Generation",
+  "title_zh": "SceneDesigner++：面向 T2I 与 T2V 生成的统一 9 自由度位姿控制框架",
+  "problem": "现有位姿可控生成方法要么只做 text-to-image（T2I）要么只做 text-to-video（T2V），在朝向可控性与时序一致性上均有缺口：2D/3D BBox 条件无法编码物体朝向，隐式位姿嵌入（IPE）缺乏空间感知。以同骨干对比为例，T2I 上 3D BBox 的 Rot.Err 为 1.10、IPE 为 0.58，而目标是同时把位置、尺寸、朝向压到更低。T2V 侧把 CNOCS map 逐帧直接喂入虽能定位，却会产生僵硬、刚体式的运动，w/o Rel. 设置的用户运动连贯性评分仅 6.2。核心矛盾是：帧级空间定位与帧间运动建模未被解耦，且缺少带 9D 位姿标注的视频监督。",
+  "method": "以 Wan-T2V-1.3B 为冻结骨干，将 9D 位姿 $\\mathcal{P}=(\\mathbf{l},\\mathbf{s},\\mathbf{r})$ 的时序序列作为条件。绝对位姿编码把 CNOCS map 序列经 MLP $\\Phi^{\\text{cnocs}}_{\\theta}$ 投影后与噪声潜变量 $\\hat{\\mathbf{z}}$ 通道拼接，再由 $\\Phi^{\\text{proj}}_{\\theta}$ 映射回骨干输入空间，替代原版 ControlNet 式分支以省显存。相对位姿编码 VPRoPE 把帧间位姿写进 RoPE：VPRoPE-G 用相机到物体的 $\\mathbf{T}_{\\text{c2o}}$ 构造分块旋转矩阵，使注意力分数依赖 $\\mathbf{T}^{m}_{\\text{c2o}}(\\mathbf{T}^{n}_{\\text{c2o}})^{-1}$；VPRoPE-L 进一步取 CNOCS 逐像素归一化坐标的方向角 $\\phi^{(a)}=\\operatorname{atan2}(\\sqrt{\\|\\mathbf{v}\\|^2-(\\mathbf{v}^{\\top}\\mathbf{e}_a)^2},\\mathbf{v}^{\\top}\\mathbf{e}_a)$，离散化为位置索引后保留 RoPE 的多频结构。两者以 $f_{\\text{final}}=f_{\\text{RoPE-3D}}+\\lambda_{\\theta}\\mathbb{I}_{\\text{obj}}f_{\\text{global/local}}$ 融合，$\\lambda_{\\theta}$ 初始化为 0，仅作用于物体 token。每个注意力头引入可学习正交变换 $\\mathbf{H}_{\\theta,h}=\\exp(0.5(\\mathbf{W}_{\\theta,h}-\\mathbf{W}^{\\top}_{\\theta,h}))$，在保持特征范数的同时让不同头捕捉互补几何关系。训练分两阶段：Stage I 只在 T2I 数据上优化绝对编码参数（6K 迭代），损失为 flow matching 加区域损失 $\\gamma\\mathcal{L}_{\\text{region}}$，$\\gamma=0.3$；Stage II 注入 VPRoPE，仅优化新增参数并使用 T2V 数据（12K 迭代）。推理时可外接独立训练的 UCPE 相机控制模块，实现物体与相机运动的分离或联合控制。",
+  "key_numbers": [
+   "T2I 位姿误差：Trans.Err 0.06、Size.Err 0.19、Rot.Err 0.24（T2IVPoseEval，Ours）",
+   "T2I 位姿误差：Trans.Err 0.09、Size.Err 0.28、Rot.Err 1.10（3D BBox 基线）",
+   "T2V 位姿与运动：Trans.Err 0.08、Rot.Err 0.29、US_pos 8.5、US_mot 8.1（Ours + VPRoPE-L）",
+   "T2V 去掉相对编码：Trans.Err 0.11、Rot.Err 0.35、US_mot 6.2（w/o Rel.）",
+   "数据集规模：新增 16,561 张图像与 31,540 段视频（ObjectPose9D++）",
+   "评测规模：255 个 T2I 与 326 个 T2V 测试用例，40 名用户参与主观评测（T2IVPoseEval）",
+   "消融：去掉正交约束后 FVD 由 297.9 恶化到 584.7（T2V）",
+   "消融：头共享正交变换使 Trans.Err/Size.Err/Rot.Err 由 0.08/0.27/0.29 变为 0.14/0.32/0.36"
+  ],
+  "ablation": "在 VPRoPE-L 上逐项消融：去掉区域损失 $\\mathcal{L}_{\\text{region}}$ 后 T2V 的 Trans.Err/Size.Err/Rot.Err 从 0.08/0.27/0.29 退化到 0.13/0.29/0.38，FVD 从 297.9 降到 278.4（数值更低但位姿更差，说明区域监督主要保值位姿）；把头级正交变换换成全头共享，误差升至 0.14/0.32/0.36、FVD 295.6；去掉正交参数化后位姿略降但生成质量显著恶化，FVD 达 584.7。三者共同说明「区域监督 + 头级子空间 + 正交约束」各自承担不同职责。",
+  "baselines": [
+   "2D BBox（同一 Wan 骨干，输入级条件）",
+   "3D BBox（投影有向立方体为二值掩码）",
+   "IPE（隐式位姿嵌入 + LoRA）",
+   "w/o Rel.（仅绝对位姿编码）",
+   "Ours + VPRoPE-G"
+  ],
+  "datasets": [
+   "ObjectPose9D++",
+   "T2IVPoseEval",
+   "MS-COCO",
+   "Objectron",
+   "PFERD",
+   "CARLA",
+   "SpatialVID"
+  ],
+  "novelty": "相对作者前作 SceneDesigner（仅 T2I、ControlNet 式重分支），本文把 9D 位姿控制统一到 T2I 与 T2V，并用输入级拼接替换重分支。相对 3DTrajMaster、Free-Form Motion Control 等，新意在于把「帧级绝对定位」与「帧间相对运动」显式拆成两套编码：CNOCS 序列负责前者，VPRoPE 把相对位姿写进 RoPE 的旋转矩阵负责后者。VPRoPE-L 用逐像素方向角保留多频结构，加上头级正交变换，是相对普通 RoPE 与全局位姿广播的实质性架构改动。",
+  "limitations": "作者自述 image-to-video（I2V）能力受底层预训练模型的图像条件能力限制，尚未展开。实验只在自建 T2IVPoseEval 上做同骨干对比，缺少与 3DTrajMaster、CineMaster 等异构系统的直接数值比较，泛化性证据偏内部。绝对位姿依赖 CNOCS 的立方体代理，对非刚体、细长或严重遮挡物体可能失真；VPRoPE 仅在物体 mask 内生效，mask 估计误差会直接传导。训练数据含大量合成与内部数据，复现门槛较高。",
+  "trl_evidence": "系统建立在公开的 Wan-T2V-1.3B 权重上，属于离线研究原型，未 reported 实时性或端侧部署。论文给出项目页（henghuiding.com/SceneDesigner++/）与定性视频结果，但未说明推理延迟、显存或产品化集成。数据中相当部分为内部采集，外部无法完整复现训练集。",
+  "code": "未提及代码链接，仅给出项目主页",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：3D 位姿可控生成是视频/图像生成的现实瓶颈，但非 SLAM 级卡脖子问题。NOV=4：绝对 CNOCS + 相对 VPRoPE 的双编码与头级正交变换是明显新架构。TEC=4：公式、两阶段训练与三组消融完整，但缺理论保证。EXP=4：自建 581 个测试用例、40 人用户研究、多类同骨干基线，但仅一个基准、无跨系统对比。PER=4：Rot.Err 0.24 对 1.10、US_mot 8.1 对 6.2 提升显著，属 10–30% 档。TRL=3：公开骨干上的可复现原型，离线生成。REP=3：有项目页与充分细节，但未开源代码与数据。"
+ },
+ {
+  "id": "2611.34466",
+  "title": "EgoUseBench: Benchmarking Computer-Use Agents under Evolving First-Person Contexts",
+  "title_zh": "EgoUseBench：在演化第一人称上下文下评测计算机使用智能体",
+  "problem": "智能眼镜等第一人称设备让计算机任务可以源自用户正在进行的物理活动，但第一人称观测受佩戴者视角限制，证据不完整且会随新画面前后变化，智能体必须修订对场景与意图的理解并判断此前操作是否仍有效。现有基准要么只给显式指令（Computer-Use），要么在執行前一次性提供预录第一人称视频（Offline Ego Use），无法评测执行中的流式更新。作者为此提出 Online Ego Use，并发现六个先进模型在该设定下平均成功率为 63.4%，比 Computer-Use 的 86.1% 低 26.3%，说明「边看边改」远未解决。",
+  "method": "构建 693 个可执行任务：293 个 Online Ego Use（其中 200 个单机制任务、93 个组合任务）、200 个 Offline、200 个 Computer-Use，三者共享网站与最终目标以便配对比较。环境是 Amazon、YouTube、Google Maps 的本地仿真站点，支持搜索、加购、收藏，检索用 BM25，每步只允许一个 JSON 动作。异步状态演化把第一人称观测、用户需求、网站状态拆成三个独立演化量：观测按回放时间表每决策步推进 8 秒源视频（1 fps 采样，通常 4 帧拼一图），需求按预定时间点到达，网站状态只随智能体动作变化。三类信息更新机制：Graft 改写需求（Refine/Augment/Replace/Drop），Refresh 用后到画面使早先选择失效（Replace）或仍有效（Retain），Clarify 让智能体主动提问并由人工审定的固定回复消解指代歧义（Position/Sequence/Variant）。形式化地把任务写成 $(x,\\mathcal{G}^{-})\\to(x,\\mathcal{G}^{+})$：网站状态 $x$ 不变而可接受目标集合随证据/需求改变；成功判定为 $\\mathbf{1}[\\exists g\\in\\mathcal{G}:N(x_T)=N(g)]$，归一化忽略展示顺序并把包装等价折算为需求单位。视觉历史有三种策略：Full、Compressed（隔帧保留，默认 0.5 fps）、Summarized（旧批次换成动作模型生成的文字摘要），开口批次与最近两批始终完整保留。每任务最多 20 步，组合任务 30 步；另设并发到达与唤醒到达两种交付模式。",
+  "key_numbers": [
+   "数据规模：74 小时以上真实第一人称录像，693 个任务（293 Online / 200 Offline / 200 Computer-Use）",
+   "设定差距：平均成功率 Online 63.4%、Offline 64.2%、Computer-Use 86.1%，Online 低 26.3%",
+   "模型范围：六个模型总体成功率 39.0%–87.0%，GPT-6.1 Terra 最高 87.0%，Kimi K2.6 最低 39.0%",
+   "Token 成本：Online 比 Offline 少 16.4%–38.0%",
+   "组合更新：93 个组合任务上 Gemini 77.4%、DeepSeek 40.9%",
+   "失败分析：604 条失败轨迹；Computer-Use 中 Linking 占失败 90.2%",
+   "失效时机：14.6% 的 Graft/Refresh 更新到达时，网站已满足初始请求但需为修订目标改动",
+   "任务质检：40 个分层抽样任务中双评审均接受者占 90%"
+  ],
+  "ablation": "无独立消融（基准论文），但有系统的控制变量替代证据：同一 200 任务上切换三种交互设定、同一批任务上比较 Arrival（Concurrent 89.8/73.5/44.9 对 Wake-up 81.6/53.1/29.6）、Retention（Full/Compressed/Summarized）与 Cue（Silent/Cued/Cued+facts）；另有 46 对任务做「更多需求更新是否更难」的合并/插入对照，发现插入中间请求在每种组合下不降低甚至提高成功率，说明难度并非单调由更新次数决定。",
+  "baselines": [
+   "GPT-6.1 Terra",
+   "Gemini 3.8 Flash",
+   "Doubao Seed 2.1 Pro",
+   "DeepSeek-V4.1-Flash",
+   "Kimi K2.6",
+   "qwen3.5-27b",
+   "UI-TARS-1.5-7B"
+  ],
+  "datasets": [
+   "EgoUseBench（Amazon/YouTube/Google Maps 本地仿真）",
+   "Ego2Web",
+   "CaptainCook4D",
+   "HD-EPIC",
+   "EgoOops",
+   "EgoLife",
+   "HoloAssist",
+   "EgoSchema"
+  ],
+  "novelty": "相对 Mind2Web、WebArena、OSWorld 等只看显式指令与数字反馈的 Computer-Use 基准，首次把「第一人称观测」作为任务证据源。相对 Ego2Web、EgoBench 这类离线第一人称基准，新意是把观测、需求、网站状态建成三个异步演化状态，并在执行中注入 Graft/Refresh/Clarify 三类更新，从而能测「新证据推翻旧选择」而非只测一次性 grounding。据作者所述是首个定义并系统评测 Online Ego Use 的工作。",
+  "limitations": "环境是三家网站的本地仿真而非真实互联网，商品/视频/地点目录受限，结论对开放网页的迁移性未知。Clarify 的回复是人工固定的，不随提问质量变化，因此只测「是否发问」不测追问能力。评分只看终止时网站状态，Refresh–Retain 任务无法从分数判断智能体是否真的用了后到画面。任务由少量标注者与 Coding Agent 构建，40 例质检虽达 90% 接受率，但 693 例的整体语义正确性仍有长尾风险。",
+  "trl_evidence": "属于评测基础设施而非可部署系统；网站、回放、动作接口均为本地可控实现，具备可重复运行条件。实验覆盖 6 个商用/开源模型与 1 个 7B 端侧模型，说明接口已能承接真实智能体。但论文未给出代码/数据下载地址，外部复现依赖后续释放。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 3,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：第一人称可穿戴设备上的计算机使用是快速起量的真实问题，但当前影响集中在评测层。NOV=4：提出 Ego Use 范式与三状态异步演化、三类更新机制，属新任务定义而非新算法。TEC=4：任务形式化、可接受集合验证、捷径检测与统计协议完整，但方法本身是基准。EXP=5：74 小时数据、693 任务、7 个模型、四种控制变量与 604 条失败轨迹分析，规模充分。PER=3：论文贡献是揭示 26.3% 的设定差距，不是相对 SOTA 的性能提升。TRL=3：可运行的本地评测环境，未产品化。REP=3：附录细节充分，但未给代码/数据链接。"
+ },
+ {
+  "id": "2611.34476",
+  "title": "TACC: Target-Aware Carrier Compression for Dense-Context Novel View Synthesis",
+  "title_zh": "TACC：面向稠密上下文新视角合成的目标感知载体压缩",
+  "problem": "前馈潜变量新视角合成（NVS）把 NVS 变成纯数据驱动问题，但渲染通路必须处理全部源视图 token，源视图变密时 token 预算线性膨胀、注意力和显存呈二次增长。RE10K 上 120 源视图时，冻结 Full Context 的有效帧率在 LagerNVS 上仅 2.99 FPS、在 LVSM 上仅 0.16 FPS，已无法实用。现成 token 压缩方法（ToMe、DivPrune）是目标无关的均匀压缩，无法按目标相机与各源视图的重叠/可见性分配预算；ZPressor 只做锚点视图聚合，缺少可复用的逐视图层级与精确配额。因此需要一种「给定目标相机、在固定解码器可见预算下按几何相关性分配证据」的压缩范式。",
+  "method": "给定 $V$ 个源视图表示 $X=\\{X_i\\}_{i=1}^{V}$、固定预算 $B=A\\cdot P$ 与源/目标相机射线 $R_s,R_t$，学习 $Z_t=\\operatorname{TACC}(X,R_s,R_t,B)$ 后交给冻结的 $\\mathcal{D}(Z_t,R_t)$ 渲染。离线阶段对每个源视图构建渐进 Carrier 层级 $H_i=G_{\\theta}(X_i)$：把 token 网格按长边中点递归二分，每个矩形区域保留离几何中心最近的原始 token 作为 anchor $a_R$，再用区域均值 $\\mu_R$、通道归一化方差 $v_R$、区域尺寸组成 $s_R$，通过 $c_R=a_R+\\sigma(g)W_o\\operatorname{SiLU}(\\operatorname{LN}(W_d d_R+\\phi_{\\theta}(s_R)))$ 生成区域 Carrier；叶节点退化为原 token。细化顺序按面积降序、同面积按边际增益 $\\Delta(R)=D(R)-D(R_L)-D(R_R)$ 降序，每次把一个区域换成两个子区域，使任意整数配额 $q\\in\\{1,\\dots,P\\}$ 都对应一个完整覆盖的前沿，且 $q=P$ 时精确还原 $X_i$。目标到达后做无参数分配：按 $r_i^t=\\langle \\hat{d}_i,\\hat{d}_t\\rangle-\\lambda_d\\delta(\\xi_i,\\xi_t)$ 排序（$\\lambda_d=0.1$，$\\xi$ 对 LagerNVS/LVSM/CLiFT 分别为中心射线 Plücker 矩、射线原点、c2w 相机中心），最高分视图拿满配额 $P$。其余视图用标准化相关度的 softmax 熵 $H^t$ 决定共享覆盖下限 $q^t_{\\text{floor}}=\\lfloor H^t B_{\\text{rem}}/|\\mathcal{S}_t|\\rfloor$，剩余预算按温度 $\\tau=0.8$ 的 softmax 与容量感知最大余数法取整，保证整数配额且总预算精确。训练只优化 Carrier 模块、骨干全冻结，用教师-学生蒸馏：教师为视图子采样但空间稠密的 $X^T$，损失 $\\mathcal{L}=\\mathcal{L}_{\\text{render}}+\\lambda_{\\text{distill}}\\mathcal{L}_{\\text{distill}}+\\lambda_{\\text{carrier}}\\mathcal{L}_{\\text{carrier}}$，其中渲染项含 $\\ell_1$、MSE 与图像梯度。",
+  "key_numbers": [
+   "有效帧率：120 源视图下比 Full Context 高 9.23×（LagerNVS）与 64×（LVSM）（RE10K）",
+   "重建质量：PSNR 27.3415 对 24.1568（DL3DV，80 视图，A=10，对 ZPressor）",
+   "跨数据集：PSNR 30.2044 对 27.9540（RE10K，80 视图，LagerNVS，对 ZPressor）",
+   "LVSM 骨干：PSNR 30.2851 对 27.8870（RE10K，80 视图，对 ZPressor）",
+   "显存：峰值从 12.77 GiB 降到 4.22 GiB，减少 66.96%（LVSM，120 视图）",
+   "延迟：解码器约 32 ms 对 227–334 ms（LagerNVS，80–120 视图）",
+   "CLiFT：PSNR 23.3425 对 21.8549（DL3DV，24 视图，对 Native），提升 1.49–1.83 dB",
+   "端到端摊销：100 个目标视图时 E2E FPS 提升 1.98×（LagerNVS，80 视图）"
+  ],
+  "ablation": "在 DL3DV/80 视图/A=10 下逐项拆解：完整 TACC 为 27.3415 dB，去掉学习型 Carrier、改用近似均匀空间下采样降到 25.1493 dB；把目标感知配额换成均匀配额降到 23.0085 dB（降幅最大，说明分配策略是主贡献）；只保留 anchor、不学区域残差降到 22.2410 dB；只选相关度最高的 A 个完整视图降到 21.6315 dB。额外对照显示：去掉 Top-1 满配额保护降 4.20 dB，去掉熵覆盖下限降 2.57 dB，去掉蒸馏损失平均降 0.56 dB。",
+  "baselines": [
+   "Full Context（冻结骨干，全部源 token）",
+   "ToMe（token merging）",
+   "DivPrune（多样性 token 剪枝）",
+   "ZPressor（锚点视图压缩）",
+   "CLiFT Native（重训练的原始压缩通路）"
+  ],
+  "datasets": [
+   "DL3DV-10K",
+   "RealEstate10K（RE10K）"
+  ],
+  "novelty": "相对 ToMe/DivPrune 这类目标无关的全局 token 削减，TACC 首次把「压缩预算如何在源视图间分配」显式建模为目标相机的函数，并给出可读任意整数配额的渐进层级，使配额分配是精确的而非启发式 top-k。相对 ZPressor 的锚点聚合与 CLiFT 的目标相关子集检索，新意在于逐视图可复用层级 + 源-目标几何相关性 + 熵自适应覆盖下限的组合，且完全冻结骨干、只训一个轻量 Carrier。",
+  "limitations": "作者在正文承认一次性源编码与 Carrier 构建有额外成本：80 视图需 3.13 s 构建、缓存 1.69 GiB，端到端在目标视图少于约 16 个时并不比 Full Context 快，需靠多目标摊销。方法假设源视图静态、目标相机已知，动态场景与在线流式新视图未验证。重建指标以 PSNR/SSIM/LPIPS 为主，缺少下游几何任务（位姿、深度）评估。质量仍随源视图增多而缓慢下降（DL3DV 27.34→26.47），并非完全无损。",
+  "trl_evidence": "在 NVIDIA A800 上以官方 LagerNVS、LVSM、CLiFT 权重实现，只训 Carrier，属可复现的研究原型；单目标延迟约 32 ms、目标视图多时接近实时。尚未见真机/端侧部署或产品化描述，跨数据集泛化是以冻结权重直接迁移验证的。作者表示计划释放实现与训练好的 Carrier 检查点。",
+  "code": "承诺开源（计划释放实现与 Carrier 权重），暂未给链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：稠密源视图下的显存/延迟是前馈 NVS 落地的真实瓶颈，但影响面小于 SLAM 尺度问题。NOV=4：目标感知配额 + 渐进 Carrier 层级 + 熵覆盖下限是明确的新压缩架构。TEC=4：方法闭环、配额可证精确、消融齐全，但缺理论误差界。EXP=5：3 个骨干、2 个数据集、6 档预算、80–120 视图与多种运行时分析。PER=4：PSNR 提升约 3 dB、帧率 9–64×，但质量提升未达 30% 档，速度提升远超。TRL=4：32 ms 级目标时延、可复用缓存，接近可部署原型但未上端侧。REP=3：复现细节充分且承诺开源，尚无仓库。"
+ },
+ {
+  "id": "2611.34480",
+  "title": "ProManO: Beyond Sim(3) for Metric Upgrade of Feed-Forward Geometry with Visual-Inertial Anchors",
+  "title_zh": "ProManO：超越 Sim(3)、以视觉惯性锚点实现前馈几何的度量升级",
+  "problem": "前馈 3D 基础模型能一次前向预测稠密多视图一致几何，但没有可靠度量尺度；VIO 提供度量位姿与稀疏结构，二者结合可得到稠密度量地图，难点在于「用哪种变换把稠密预测对齐到稀疏度量锚点」。现有做法要么用 Sim(3)，无法表达随深度变化的畸变；要么用 SL(4) 投影变换，其额外自由度会改变已标定内参。作者指出：标定后与内参相容的变换恰为 10 维流形，比 Sim(3) 多出的 3 个自由度决定无穷远平面位置，这些模式在图像中不可见，且任何相似对齐后残差仍随深度二次增长，导致远处锚点被当外点剔除。",
+  "method": "把前馈预测的残差建模为真实场景的未知投影变换，证明 $\\mathcal{M}_f=\\operatorname{Sim}(3)\\cdot\\mathcal{Q}_f$ 是 $PGL(4)$ 的 10 维浸入子流形，其中 $\\mathcal{Q}_f$ 是以相机中心 $\\mathbf{c}_f$ 为中心的 3 维 elation 群，$E_{\\mathbf{q}}$ 使逆深度发生加性平移 $\\rho'=\\rho+\\mathbf{q}^{\\top}\\mathbf{b}$；$q_3$ 是常见的逆深度平移，$q_1,q_2$ 使无穷远平面在图像内倾斜。系统分三层：视觉惯性前端在 VINS-Mono 上给每条 KLT 跟踪加可靠性先验，用高斯混合后验 $\\gamma^{\\text{trk}}_{lj}$ 加权滑窗重投影，再以固定位姿重三角化得到锚点 $\\mathbf{X}_h$ 及其协方差 $\\boldsymbol{\\Sigma}^s_h=(\\mathcal{I}_h+\\epsilon\\mathbf{I}_3)^{-1}+\\sigma_p^2\\mathbf{I}_3$，并沿射线拆出逆深度方差 $\\sigma^2_{\\rho,h}(f)$ 与横向协方差，使低视差锚点仍近似高斯。子图级优化对每帧点图与锚点赋不确定性，用 EM 估计相似变换 $\\mathbf{S}_c$，同时把 $\\mathbf{q}_c$ 边缘化掉以避免远处偏置污染相似解。全局阶段建立以 $(\\mathbf{S}_c,\\mathbf{q}_c)\\in\\operatorname{Sim}(3)\\times\\mathbb{R}^3$ 为状态的因子图，锚点因子与重叠/回环成对因子都进入混合模型，先以 Burer–Monteiro 分解 + Riemannian staircase 求解相似同步并用对偶证书验证全局最优；再用 $\\mathbf{H}_{\\mathbf{q}|\\mathbf{S}}=\\mathbf{H}_{\\mathbf{qq}}-\\mathbf{H}_{\\mathbf{qS}}\\mathbf{H}_{\\mathbf{SS}}^{-1}\\mathbf{H}_{\\mathbf{Sq}}$ 做可观测性门控，仅当 $\\lambda_{\\min}([(\\mathbf{H}_{\\mathbf{q}|\\mathbf{S}})^{-1}]_{cc}^{-1})\\ge\\tau_{\\text{obs}}$ 时才释放该子图的 $\\mathbf{q}_c$，否则保持 $\\mathbf{q}_c=\\mathbf{0}$。理论上保证目标值不劣于最优相似对齐；$\\mathbf{q}_c$ 被限制在保证逆深度为正的多面体 $\\mathcal{D}_c$ 内。",
+  "key_numbers": [
+   "EuRoC 重建：平均 F1 53.99%、CD 0.065 m（5 cm 阈值，Ours）",
+   "CID-SIMS 重建：平均 F1 45.24%、CD 0.179 m（5 cm 阈值）",
+   "Oxford Spires 重建：平均 F1 60.74%、CD 0.37 m（20 cm 阈值），比 Sim(3) 高 9.8 点",
+   "KITTI-360 重建：平均 F1 29.09%（20 cm 阈值）",
+   "定位 ATE：0.084 m（EuRoC）、0.268 m（CID-SIMS）、0.39 m（Oxford Spires）、4.58 m（KITTI-360）",
+   "相对 Sim(3)：四个数据集平均 F1 提升 4.1–9.8 点；相对 ScaRF-SLAM 变体提升 4.7–10.4 点",
+   "消融：各向同性锚点协方差损失 8.7（CID-SIMS）与 16.4（Oxford Spires）点 F1",
+   "消融：去掉 $\\mathbf{q}_c$ 损失 2.6 / 7.5 点，去掉可观测性门控损失 0.4 / 6.9 点"
+  ],
+  "ablation": "逐组件消融（CID-SIMS / Oxford Spires）：把沿射线协方差换成等迹各向同性，F1 掉 8.7 / 16.4 点，说明「方向不确定性」是 $\\mathbf{q}$ 可辨识的关键；子图优化不做 $\\mathbf{q}_c$ 边缘化掉 1.6 / 4.4 点；全局阶段令 $\\mathbf{q}_c=\\mathbf{0}$ 掉 2.6 / 7.5 点，而只估 $q_{c,3}$ 增益不足 1 点，证明主要收益来自 tilt 模式 $q_{c,1},q_{c,2}$；每帧独立 $\\mathbf{q}$ 反而低于 Sim(3) 基线，说明跨子图共享才可观测；去掉门控掉 0.4 / 6.9 点。",
+  "baselines": [
+   "LingBot-Map",
+   "LoGeR",
+   "AMB3R",
+   "MASt3R-SLAM",
+   "DA3 Streaming",
+   "ORB-SLAM3",
+   "OpenVINS",
+   "VINS-Mono",
+   "VINS-Fusion",
+   "Kimera-VIO",
+   "OKVIS2",
+   "DM-VIO",
+   "MASt3R-Fusion",
+   "Ours w/ Sim(3)",
+   "Ours w/ ScaRF-SLAM"
+  ],
+  "datasets": [
+   "EuRoC",
+   "CID-SIMS",
+   "Oxford Spires",
+   "KITTI-360",
+   "Replica（用于对照）"
+  ],
+  "novelty": "相对所有「按设计选模型」的既有做法（单目深度用 scale-shift、子图对齐用 Sim(3)、无标定用 SL(4)），本文首次从标定约束推导出内参相容变换恰为 Sim(3) 与无穷远平面 3 自由度的组合，把 scale-shift、Sim(3)、SL(4) 统一到同一族里。相对 VGGT-SLAM 2.0 保留 5 个标定模式，本方法明确排除它们。工程上把「沿射线锚点不确定性 + 可观测性门控 + 可认证相似同步」放进同一个 EM，是相对既有松耦合融合的新优化框架。",
+  "limitations": "作者自述假设前馈偏置在一次前向内以相机为中心且近似平稳，动态物体或大视角变化会破坏该假设；系统对前端 VIO 漂移敏感，锚点误差会传导到 $\\mathbf{q}$。可观测性门控意味着在纯平面、低视差或锚点质量差的子图上退化为 Sim(3)，此时收益有限。实验虽覆盖 28 个序列，但以室内小型场景与车载为主，缺无人机高速、鱼眼/卷帘等更极端配置。重建评测用最近邻 CD/F1，未评估法向或语义完整性。",
+  "trl_evidence": "完整系统在 RTX 4070 上单子图前馈 5.1 s、CPU 上局部+全局优化 0.9 s，属离线/近线性质，不是实时 SLAM。前端直接复用 VINS-Mono，后端与 DA3 权重均为公开组件，具备较强可复现性；论文给出项目页但未给代码。未见真机机器人闭环或产品化部署证据。",
+  "code": "未提及代码，仅有项目页 https://h0xg.github.io/ProManO/",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 5,
+   "TEC": 5,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：前馈几何的度量尺度与深度相关畸变是具身/重建落地的真实瓶颈。NOV=5：给出内参相容 10 维流形的证明并据此设计新校正族，属范式级贡献。TEC=5：定理、引理、不可见性与偏置命题、EM 单调更新、可认证同步与门控俱全，消融逐项对应。EXP=5：4 个数据集 28 个序列、13 个基线、定位+重建+消融三层证据。PER=4：F1 提升 4.1–9.8 点、Oxford +9.8 点，属 10–30% 档但非全面碾压。TRL=3：离线可复现原型，非实时。REP=3：细节与项目页充分，代码未开源。"
+ },
+ {
+  "id": "2611.34489",
+  "title": "Who Is Ego? Scaling Cross-View Camera Wearer Identification and Segmentation beyond Humans",
+  "title_zh": "谁是 Ego？将跨视角相机佩戴者识别与分割扩展到人类之外",
+  "problem": "给定同步的第一人称（ego）与第三人称（exo）图像，相机佩戴者识别要回答「谁是 ego」，但现有研究局限于人类、数据规模小、任务只到「在给定候选 mask 中选一个」。真实场景中佩戴者可能是机器人、车辆、动物或无人机：同型号机器人外观几乎相同，鸟与无人机在 exo 图中可能只占几个像素，外观匹配因此失效。作者把任务扩展为三轨：A 候选识别、B 无候选分割（含缺席预测）、C 互为相机定位，并构建 1.16M 对、12 类佩戴者、17 个域、111 个测试设定的 FindEgo-1M。基线最强 3D 模型在最难的未见佩戴者类（L3）上机会校正准确率仅 42.1，远不足以支撑应用。",
+  "method": "核心几何观察是「佩戴者就在相机所在处」：ego 相机在 exo 图中的投影即对极点（epipole），必然落在或紧邻佩戴者身上。设 $(R,\\mathbf{t})$ 把 exo 映射到 ego，则 ego 中心在 exo 坐标为 $\\mathbf{c}=-R^{\\top}\\mathbf{t}$，两个对极单位方向为 $\\mathbf{e}_{\\text{exo}}=\\mathbf{c}/\\|\\mathbf{c}\\|$、$\\mathbf{e}_{\\text{ego}}=\\mathbf{t}/\\|\\mathbf{t}\\|=-R\\mathbf{e}_{\\text{exo}}$。EgoRay-ZS 冻结 VGGT-$\\Omega$，一次前向得到相对位姿与点图；对每个候选 mask，计算其像素反投影射线与 $\\mathbf{e}_{\\text{exo}}$ 的角偏移，并用相机距离消除「同一射线上多个候选」的歧义，两项合成排序分数（角度项权重 $\\alpha=3$）。同一读出用于：对 SAM 3 的 proposal 排序得到分割、以角偏移阈值判定缺席、以相对位姿直接给出两相机的互视方向。EgoRay 进一步在 FindEgo-1M 上做位姿监督训练：只更新 VGGT-$\\Omega$ 的 rank-64 LoRA（占参数 1.65%），标签是相对位姿而非佩戴者身份；再做无标签测试时自适应，约束「ego 相机投影必须落在或贴近某个候选 mask 内」，每测试集跑 200 步，仅用 25 条无标签 query 即可保留约三分之二的增益。训练与自适应都不改变骨干主体，推理仍是一次前向加轻量读出。",
+  "key_numbers": [
+   "数据规模：1.16M 对 ego–exo 样本、12 类佩戴者、17 个域、111 个测试设定（FindEgo-1M）",
+   "TF2023 原始标签：EgoRay-ZS 78.0%，PEN 报告 52.9%（零样本、未用该数据训练）",
+   "主基准：EgoRay 机会校正准确率 87.1（seen）/ 77.7（unseen）",
+   "最难 L3：71.1 对最强竞争 3D 模型 42.1",
+   "对多模态 LLM：比 GPT-6 Astra 高 31.6 / 21.3 点（seen/unseen），比 Claude Opus 高 20.9 / 16.5 点",
+   "速度：EgoRay 摊销后 0.4 s/条，LLM 为 3.0–22.4 s/条",
+   "分割：gIoU@20 67.8、mIoU-P 70.7、Pr@0.5 80.6、VA 83.9（seen，EgoRay）",
+   "互定位：MA@5 74.5（seen）/ 50.7（unseen，Gold tier）",
+   "自适应成本：LoRA rank-64 仅占参数 1.65%，200 步/测试集"
+  ],
+  "ablation": "表 7 逐项累加（Gold tier）：仅 VGGT-$\\Omega$ 相机头 + 角偏移为 54.6/56.7（seen/unseen）；加入相机距离后 unseen +1.4 点；双向输入顺序再 +0.5 点（得到 EgoRay-ZS 60.7/58.6）；位姿监督训练（只用位姿标签）大幅提升到 85.3/71.1（+12.4）；加入佩戴者损失再 +1.6；测试时自适应 +5.5（unseen 78.2）；额外用同一时刻其他相机训练再 +1.1。MA@5 也随组件从 28.8 升到 55.3，但佩戴者损失会使 MA@5 从 55.3 降到 50.7，显示识别与定位目标存在张力。",
+  "baselines": [
+   "Largest mask（忽略 ego 图的规则基线）",
+   "DUSt3R",
+   "MASt3R",
+   "CUT3R",
+   "VGGT",
+   "Pi3X",
+   "MapAnything",
+   "Depth Anything 3",
+   "Reloc3r",
+   "RoMa + E",
+   "VGGT-$\\Omega$ dense tokens + PnP",
+   "PEN（TF2023 原报告）",
+   "Claude Opus / GPT-6 Astra 等多模态 LLM"
+  ],
+  "datasets": [
+   "FindEgo-1M",
+   "TF2023",
+   "TF2025",
+   "Ego-Exo4D",
+   "Harmony4D",
+   "7-Scenes",
+   "TUM"
+  ],
+  "novelty": "相对 PEN、MAF、EgoExoBench 等只做人类、只做候选选择的工作，本文把佩戴者识别扩展到机器人/车辆/动物/无人机，并把任务推到无候选分割、缺席预测与互定位。方法上首次把冻结前馈 3D 重建模型（VGGT-$\\Omega$）的位姿输出转成识别读出：用对极角偏移 + 相机距离排序，而不是外观/运动匹配，从而在同型号机器人、极小目标等外观失效场景仍可用。位姿监督 + 以候选 mask 为约束的无标签自适应，提供了不依赖佩戴者标签的训练信号。",
+  "limitations": "作者在附录承认：对极几何在 ego 与 exo 光心几乎共线、基线极短或纯旋转时退化；佩戴者若被完全遮挡或只占 1–2 像素，角偏移读出不稳。模拟数据虽提供精确几何，但真实感与真实镜头畸变仍有差距；真实集以人类与少量机器人/车辆为主，野生动物与无人机真实样本偏少。测试时自适应是 transductive 的，需要成组 query，在线单条流式场景的收益会下降。分割依赖 SAM 3 proposal 质量，Oracle 上限本身只有 79.8/75.6 gIoU/mIoU-P。",
+  "trl_evidence": "在 TF2023 与真实路边车辆、双臂机器人、四旋翼互相拍摄三组「未参与任何设计决策」的真实集上验证，分别达 81.1/93.6/89.5 准确率，说明跨真实设备可用。推理为单次冻结骨干前向 + 轻量读出，摊销 0.4 s/条，具备在线近实时潜力，但尚未见端侧或产品集成。数据、代码与模型承诺释放。",
+  "code": "承诺开源（data/code/models will be released），暂未给链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 5,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：可穿戴与多机器人系统的跨视角关联是真实需求，但当前应用面仍偏窄。NOV=5：把前馈 3D 位姿转成佩戴者识别读出，并同时扩展任务与佩戴者类型，属新范式。TEC=4：几何推导、零样本读出、位姿监督与自适应闭环完整，但核心是读出设计而非复杂系统。EXP=5：1.16M 对、111 设定、三种任务、十余个 3D 基线与 LLM 对比。PER=4：TF2023 78.0 对 52.9、L3 71.1 对 42.1，提升巨大但部分来自新任务/数据。TRL=3：研究原型，真实集验证但未产品化。REP=3：承诺释放数据代码模型，暂无仓库。"
+ },
+ {
+  "id": "2611.34549",
+  "title": "CADENCE: Sensor-Grounded World-Consistent Gaussian SLAM for Collaborative Mobile Reconstruction",
+  "title_zh": "CADENCE：面向协同移动重建的传感器 grounding、世界一致高斯 SLAM",
+  "problem": "多台消费级手机协同扫描可更快、更完整地重建室内场景，但设备异构会带来低质量观测与不可靠的跨设备关联，一个差贡献者或一次错匹配就能污染共享的高斯地图。现有协同高斯 SLAM（MAGiC-SLAM、CoMA-SLAM 等）主要按外观检索候选、再做几何/光度配准，把「找到同一地点」等同于「该观测的每种信息都可信」，缺少按模态判断可用性的机制。作者要解决的是把「找匹配」与「决定匹配上的哪些信息可以改图」拆开，并在手机上同时保证定位不被协同过程拖垮。",
+  "method": "每台手机独立做视觉惯性跟踪与局部高斯建图：稀疏特征跟踪优化预积分 IMU 预测，稠密深度配置对齐独立 surfel 模型，关键帧带位姿、图像、深度与质量进入有界后台队列；高斯子图用 $T_{W_aS_k}$ 定位，图优化只改这个变换而不重拟合子图。可靠性模块用 9 维线索 $\\mathbf{y}\\in[0,1]^9$（图像质量、运动、纹理、视角、深度、位姿等）组合出位姿/几何/外观/记忆四种置信度 $c^{\\mu}$，权限权重为 $w^{\\mu}=c^{\\mu}\\mathbf{1}[c^{\\mu}\\ge\\theta_{\\mu}]$，因此颜色差时仍可用深度贡献几何。建图损失 $\\mathcal{L}=\\sum_v[w^a_v((1-\\lambda)\\mathcal{E}^c_v+\\lambda(1-\\text{SSIM}_v))+w^g_v\\mathcal{E}^d_v]$，颜色项与深度项权重独立，传感器深度只在渲染无法解释处播种临时高斯，且需另一关键帧确认深度。传感器 grounding 的世界一致记忆（SG-WCM）把空间划成 5 m 立方区域，每区存 32 维 token、证据摘要与上限 8 个冻结 DINOv3 嵌入；查询向量 $\\mathbf{x}(o,r)\\in\\mathbb{R}^{95}$ 融合 token、区域相对位姿、质量、置信度、重力/气压证据、可用性掩码与嵌入相似度统计，两层 128 单元 ReLU 的感知机输出 logits 与增量，$\\mathbf{z}_r\\leftarrow\\operatorname{clip}(\\mathbf{z}_r+\\tanh\\boldsymbol{\\delta},-4,4)$。协同融合先由记忆给候选区域打分 $\\eta_{ok}=p^{\\text{corr}}(o,r_k)p^{\\text{floor}}(o,r_k)$（门槛 0.5），再由 BRIEF 互匹配 + 三点 RANSAC + PnP 做确定性几何验证（$\\tau_r=2$ px、$\\tau_d=0.10$ m），可选重力倾角、气压高差与历史对齐一致性检查；通过后按 $\\hat{T}_{W_aW_b}=T_{W_aB_i}\\hat{T}_{B_iB_j}T^{-1}_{W_bB_j}$ 对齐，并用逐模态权限分别控制位姿因子、几何合并、外观共享与记忆提交。跟踪隔离：位姿调用不访问高斯、不触发建图/记忆/验证/组网，队列满即丢弃，契约 $\\text{p95}_t(\\tau_t)\\le33.3$ ms。",
+  "key_numbers": [
+   "区域排序：AUROC 0.951–0.970，外观检索为 0.710–0.894（4 个未参与训练的 MP3D 房屋）",
+   "误关联：false-link rate 低于 0.5%（未见过的 Matterport3D 房屋）",
+   "退化鲁棒性：8 种退化下接收方平均 PSNR 损失从 2.66 dB 降到 1.05 dB（软置信加权）",
+   "低光同伴：消除 3.73 dB 的自视角 PSNR 损失，同时保留其深度",
+   "定位：12 段留出 iPhone 扫描全部跟踪成功，平均 ATE 6.98 cm",
+   "重建：CADENCE refined 在 TEST3 上 PSNR 24.04 dB、SSIM 0.850、LPIPS 0.213",
+   "Replica-8：ATE 0.26 m、PSNR 37.40 dB、SSIM 0.970（RGB-D+IMU 在线）",
+   "运行时：p95 位姿时间低于 33.3 ms（30 Hz 帧周期）"
+  ],
+  "ablation": "有分组消融：世界记忆从 A0（原始 DINOv3 相似度）到 A5rel 逐步加入学习视觉记忆、区域相对位姿、重力/高度/质量，记忆测试 AUROC 从 0.913 升到 0.946，其中区域相对位姿贡献最大（+0.043，95% 区间 +0.031–+0.053）；低重叠难对上 MP3D 从 0.926 升到 0.968、7-Scenes 从 0.815 升到 0.895。融合侧对比 guard 硬阈值与 soft 软加权：软加权把 8 种退化下的平均 PSNR 损失从 2.66 降到 1.05 dB，但会引入少量负迁移，故在线协作用 guard、离线分析用 soft。",
+  "baselines": [
+   "Solo（单机独立建图）",
+   "Photo-SLAM",
+   "GS-ICP SLAM",
+   "ORB-SLAM3",
+   "ARKit 平台轨迹",
+   "外观检索 / 原始 DINOv3 相似度（关联对照）",
+   "MAGiC-SLAM、CoMA-SLAM、GRAND-SLAM、MAGS-SLAM（外部参考值）"
+  ],
+  "datasets": [
+   "Matterport3D（8 个未训练房屋）",
+   "Replica-8",
+   "MA-Replica",
+   "ScanNet++（iPhone 图像、LiDAR 深度、IMU、ARKit 位姿）",
+   "7-Scenes",
+   "TUM"
+  ],
+  "novelty": "相对 MAGiC-SLAM、CoMA-SLAM 等「外观检索 + 几何配准 + 子图对齐」的流水线，CADENCE 把决策拆成三段：传感器 grounding 的区域记忆排序、确定性几何验证、逐模态权限更新。新意在两点：其一，候选区域排序不只用外观，而把相对位姿、重力、气压高度与观测质量一起编码进 95 维查询与可更新区域 token；其二，匹配通过后不是整包接收，而是分别决定位姿约束、几何、外观、记忆能否被改写，因此低光同伴的深度仍可用而其颜色被拒。",
+  "limitations": "作者在结论中承认系统假设场景静态、内参与外参已知、同伴合作；动态物体、严重非刚体或恶意节点会破坏验证与记忆。实验主要在 8 个 MP3D 房屋、Replica 与少量 iPhone 扫描上，跨建筑风格、跨楼层与长时回环的规模仍有限。手机端关闭了学习型可靠性上限（稀疏真值难以标注运动），端侧实际用的是启发式权限。协同收益依赖同伴重叠，独立探索或大尺度多楼层场景的增益未充分量化。",
+  "trl_evidence": "有原生 iPhone 应用：Bonjour 配对、TCP 交换证据包、Metal 加速算子并与 CPU 参考对齐；实测 p95 位姿时间低于 33.3 ms，满足 30 Hz。真实手机会话验证了双机协同与低跟踪延迟，属于少见的端侧可运行协同高斯 SLAM 原型。尚未见应用商店发布或商用授权说明，代码未开源。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：多设备协同建图的可靠性与负迁移是落地真问题，但受众小于单机 SLAM。NOV=4：传感器 grounding 区域记忆 + 逐模态权限 + 跟踪隔离是明显的新系统架构。TEC=4：模块、公式、阈值与端侧实现完整，但缺理论保证。EXP=4：MP3D 8 房、Replica、ScanNet++ 与 12 段真机扫描，基线充分但场景多样性有限。PER=4：false-link <0.5%、PSNR 损失减半、ATE 6.98 cm，提升显著。TRL=4：原生 iPhone 实时运行并真机验证。REP=3：附录细节充分，未开源。"
+ },
+ {
+  "id": "2611.34608",
+  "title": "DuCo: Exploiting Dual Cross-Layer Consistency for Sparse Geometric Attention",
+  "title_zh": "DuCo：利用双层跨层一致性实现稀疏几何注意力",
+  "problem": "稠密全局注意力是视觉几何基础模型捕捉跨视图几何的关键，但其复杂度随 token 数二次增长，长图像序列推理受限。现有稀疏注意力（SparseVGGT、SAF3R、AVGGT 等）只按注意力概率选条目、且逐层独立构造掩码，忽略了 value 表示的冗余与跨层可复用信息；高概率条目对应的 value 若高度相似，其贡献仍可被合并。以 VGGT 在 1000 帧为例，稠密推理 AUC@3 仅 10.78、显存 45.29 GiB；SparseVGGT 与 SAF3R 在该规模直接 OOM。因此需要同时利用「注意力分布跨层相似」与「value 冗余结构跨层局部变化」这两个性质来降复杂度。",
+  "method": "先量化两种跨层一致性：相邻全局注意力层的 top-20% 高概率条目高度重叠，且 value 聚类分配的变化主要发生在邻接簇之间（VGGT 在 7Scenes 上平均局部转移率 70.78%）。据此做无训练稀疏化。历史引导的注意力概率估计：上一层只算了稀疏条目集合 $\\mathcal{H}^{(\\ell-1)}_i$，先用区域均值 key 近似未观测 logits $\\bar{z}^{(\\ell-1)}_{ir}=\\mathbf{q}^{(\\ell-1)\\top}_i\\bar{\\mathbf{k}}^{(\\ell-1)}_r/\\sqrt{d}$，得到区域概率 $\\pi^{(\\ell-1)}_{ir}$ 与考虑未观测项的稠密概率估计 $\\tilde{p}^{(\\ell-1)}_{ij}$；再用当前层同划分的区域概率一致性 $\\beta^{(\\ell)}_i r=(\\min(\\pi^{(\\ell)}_i r,\\pi^{(\\ell-1)}_i r)/\\max(\\cdot))^{\\tau}$ 校准历史条目，未观测条目直接用当前区域均匀估计 $u^{(\\ell)}_{ij}$，归一化得 $\\hat{p}^{(\\ell)}_{ij}$。value 聚类局部精修：以上一层分配初始化 $a^{(\\ell,0)}_j=a^{(\\ell-1)}_j$，交替更新簇心与「仅在原簇及邻簇 $\\mathcal{N}^+$ 内按余弦重分配」，邻接关系只首层构建一次并复用。联合概率-价值稀疏：以簇为单位设四种表示状态 Drop（整簇丢弃）、Rep（只留代表）、History（保留已算条目+代表）、Exact（全保留），定义概率加权价值失真 $\\mathcal{L}_{iC}(s)$，在预算 $\\sum_C c_{iC}(s_{iC})\\le B_i$ 下最小化总失真；用共享资源价格 $\\lambda$ 把问题分解到各簇，$s^*_{iC}(\\lambda)=\\arg\\min[\\mathcal{L}_{iC}(s)+\\lambda c_{iC}(s)]$，二分搜索 $\\lambda$ 得到预算可行解，相邻 query 分组共享保留键集以摊薄开销。更新后的注意力信息与 value 簇继续传给下一层作为先验，全过程不训练、不改骨干。",
+  "key_numbers": [
+   "VGGT/ScanNet 1000 帧：AUC@3 10.94 对稠密 10.78，加速 5.26×，显存 53.74 GiB 对 45.29 GiB",
+   "VGGT 1000 帧点云：Chamfer Distance 0.279 对稠密 0.284，加速 5.26×",
+   "$\\pi^3$ 1000 帧：AUC@3 25.92 对 28.82，加速 5.51×，CD 0.396 对 0.398",
+   "VGGT-$\\Omega$ 1000 帧：AUC@3 10.00 对 10.10，加速 4.47×，显存 42.33 GiB 对 62.58 GiB",
+   "VGGT 500 帧：AUC@3 13.21 对 13.37，加速 4.53×",
+   "消融（7Scenes，128 视图）：完整 DuCo AUC@3 20.68、CD 0.137、耗时 2.69 s；稠密为 20.32/0.140/7.97 s",
+   "消融：仅区域概率 + Top-B 为 11.18 AUC@3；换历史概率升到 17.44",
+   "消融：全局聚类替换局部精修为 19.88 AUC@3、3.83 s"
+  ],
+  "ablation": "表 4 在 7Scenes/128 视图、相同名义预算下拆解：(a) 仅区域概率 + Top-B 为 11.18 AUC@3、0.158 CD；(b) 换成历史概率即升到 17.44/0.152，说明跨层注意力复用是主要增益；(c) 加入 value 聚类与 D/R/E 状态到 19.76/0.139；(d) 用全局聚类替代局部精修为 19.88/0.140 但耗时 3.83 s；(e) 完整 DuCo 再加 History 状态与局部精修达 20.68/0.137、2.69 s，超过稠密 20.32/0.140。即「历史概率」「value 状态」「局部聚类」三者各自有效，且局部精修同时降误差与延迟。",
+  "baselines": [
+   "VGGT（稠密）",
+   "FastVGGT",
+   "AVGGT",
+   "SparseVGGT",
+   "SAF3R",
+   "$\\pi^3$（稠密）",
+   "VGGT-$\\Omega$（稠密）"
+  ],
+  "datasets": [
+   "ScanNet",
+   "ScanNet50（稠密采样序列）",
+   "7-Scenes",
+   "ETH3D",
+   "NRGBD",
+   "DTU"
+  ],
+  "novelty": "相对 SparseVGGT、SAF3R、AVGGT 等只看注意力概率或逐层自适应稀疏度的方法，DuCo 首次把 value 冗余纳入稀疏化决策，并把「注意力分布跨层相似」与「value 聚类局部漂移」同时作为可传播先验。技术上用区域概率补全 softmax 未观测项、用一致性指数 $\\beta$ 校准历史概率、用邻簇局部重分配替代全局聚类，最后以概率加权价值失真在预算下联合选四种状态，这是一套新的无训练稀疏注意力构造，而非对既有 top-k 的调参。",
+  "limitations": "收益依赖跨层一致性假设：在层间分布变化剧烈或 value 冗余不明显的模型/数据上，历史先验会失真，论文只在三个几何骨干上验证。显存并非全面下降：VGGT 1000 帧由 45.29 升到 53.74 GiB、$\\pi^3$ 由 45.67 升到 48.96 GiB，说明掩码/簇结构有额外开销，长序列仍可能受显存限制。方法含 $\\tau$、簇数、预算、$\\lambda$ 搜索等多个超参，跨骨干需重新设定；评测集中于位姿 AUC 与 CD，缺下游 SLAM/重建任务验证。",
+  "trl_evidence": "无训练、可直接替换冻结骨干的全局注意力，属于易集成的推理加速件；在 A800 级 GPU 上以原生共享执行、同卡配对计时，1000 帧可达 4.47–5.51× 加速。尚未见端侧、实时 SLAM 或产品化集成，且部分配置显存反而上升。论文未给代码仓库。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 4,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：长序列全局注意力的二次复杂度是几何基础模型落地的真实瓶颈。NOV=4：把 value 冗余与跨层一致性联合进稀疏掩码构造，是明显新架构。TEC=4：两种先验、四状态优化与预算分解完整，消融对应清楚，但缺理论误差界。EXP=4：3 个骨干、5 个基准、100–1000 帧与稀疏视图设置，覆盖充分。PER=4：4.47–5.51× 加速且多数指标持平或更优，加速远超 30%，精度增益有限。TRL=4：即插即用推理加速，工程可用性高，但未端侧验证。REP=3：细节充分，未开源。"
+ },
+ {
+  "id": "2611.34680",
+  "title": "Neural Rendering Compiler: Generative Video Models as Programmable Renderers",
+  "title_zh": "神经渲染编译器：把生成式视频模型当作可编程渲染器",
+  "problem": "生成式视频模型正成为强渲染器，却缺少 Blender 或 HTML/CSS 引擎那样可预测的控制接口：其能力隐式来自训练，难以判断哪些语义要求能可靠执行，且不同模型、不同条件模式（T2V/I2V/R2V）能力分布不均。现有 prompt enhancer 与 agentic pipeline 会不加区分地改写全部指令，既可能破坏模型本已擅长的要求，也无法识别何时需要换成参考图、首帧或代理视频等替代执行策略。在 VComBench 上，原生 Wan 的要求满足率仅 46.8%、全要求联合成功率仅 8.4%，说明「多要求同时成立」是主要缺口。",
+  "method": "把冻结视频模型视作黑盒渲染后端，先离线探测再在线编译。任务形式化为 $x=(p,A,m_0)$，解析成模型无关中间表示 $z=\\operatorname{Parse}(x)$，其中每条语义要求 $r_i=(c_i,\\ell_i,e_i,\\theta_i)$ 记录控制类型、难度、原文 span 与可选参数；控制词表覆盖物体属性/计数、空间关系、事件、相机、外观、物理、视觉文本与参考条件，共 34 个语义控制维度。离线阶段在 T2V/I2V/R2V 三种模式下按难度分层探测，每条探针隔离一个目标要求，由视频裁判加任务专用测量打分，得到经验成功率 $\\hat{p}_d(c,\\ell,m)=s_d/n_d$，并标为 ok/weak/bad，未测为 unknown。在线编译查表得 $\\sigma_i$，按决策规则：ok 或 unknown 则 keep；weak/bad 且存在满足前置条件的补救集合 $\\mathcal{F}^{\\lambda}_i$ 则 intervene；否则 unresolved 并保留原文。干预分两类：定向改写（澄清主体绑定、计数、事件顺序、相机行为、空间关系、时序）与六种外部算子（参考图锚定外观、首帧编码计数/视觉文本、布局图指定空间位置、代理视频提供运动/时序/相机、镜头拼接等），允许在执行时切换条件模式（如 T2V 先构造首帧再转 I2V）。执行前对生成的条件做有效性校验，不合格则丢弃并回退到文本计划；若编译后输入未变则直接复用原生输出，所有生成模型保持冻结。",
+  "key_numbers": [
+   "VComBench 要求满足率：Wan 46.8% → 52.3%，H3 66.5% → 69.3%（NeurCo T+O）",
+   "全要求联合成功率：Wan 8.4% → 11.8%，H3 28.2% → 25.3%（后者下降）",
+   "Seedance 2.5：68.5% → 69.7%（NeurCo T），T+O 为 68.2%",
+   "与 TIDE 组合：H3 联合成功率 33.2% → 34.5%，Wan 要求满足 50.6% → 52.5%",
+   "基准规模：380 个组合任务、1,617 条计分要求、34 个语义控制维度",
+   "外部基准：VBench-2.0 取 17 个有效维度均值；Sci-VBench testmini 150 任务，H3 均值 2.668 → 2.724",
+   "模态细分：Seedance R2V 要求满足 66.1% → 69.9%，联合成功 20.7% → 28.9%",
+   "T2V 细分：Wan 54.3% → 62.9%，联合成功 14.1% → 20.0%"
+  ],
+  "ablation": "无参数级消融，但有配置级对照：T（仅定向改写）、O（仅外部算子）、T+O 三档在同一批任务上比较，结果显示 Wan/H3 上 T+O 最优（+5.5/+2.8 点），Seedance 上仅 T 最优（+1.2 点），说明算子收益依后端能力而异；与 TIDE 的四种组合进一步拆出「算子-only」稳定增益（H3/Wan/Seedance 分别 +0.5/+1.9/+0.8 点）与「额外改写并不总优于算子-only」的结论。按初始模态分层的表 2 也构成控制变量证据。",
+  "baselines": [
+   "Native（原始输入，不编译）",
+   "TIDE（可复用 prompt 优化规则）",
+   "TIDE + NeurCo (O)",
+   "TIDE + NeurCo (T)",
+   "TIDE + NeurCo (T+O)",
+   "NeurCo (T)",
+   "NeurCo (T+O)"
+  ],
+  "datasets": [
+   "VComBench（380 任务）",
+   "VBench / VBench++ / VBench-2.0",
+   "Sci-VBench testmini",
+   "PEBench、T2V-CompBench 等公开视频基准（任务来源）"
+  ],
+  "novelty": "相对 prompt enhancer（TIDE 等）只优化文字、相对 agentic pipeline 只做任务分解、相对控制条件模型只提供固定相机/运动接口，NeurCo 的新意是把「模型实际能可靠执行什么」变成可测量、可查表的能力手册，再据此逐条决定保留、改写或降级为外部条件。它不训练生成器、不引入统一控制接口，而是把每个后端的有效指令集当作经验发现的对象，这是编译器视角在生成式视频上的落地。",
+  "limitations": "能力手册是部署相关且探测成本高的：换 checkpoint、换推理配置都要重测，unknown 条目只能保守保留原文。编译依赖解析质量，VComBench 直接用标注 IR，真实用户 prompt 的解析误差未评估。收益幅度有限（2.8–5.5 点），且在 H3 上要求满足率上升同时联合成功率下降，说明干预会引入要求间干扰；算子带来的可控性提升还以牺牲照片级真实感为代价。多镜头、长时序与强物理约束仍未解决。",
+  "trl_evidence": "系统已在本地 MiniMax-H3、Wan 与托管 Seedance 2.5 三种真实后端上跑通，覆盖 T2V/I2V/R2V，并给出 VBench-2.0 与 Sci-VBench 外部评测，属于可直接使用的推理侧工具链。代码与项目页已公开（github.com/OpenRaiser/NeurCo），模型本身保持冻结、无需训练算力。尚未见产品化或大规模用户部署数据。",
+  "code": "已开源 https://github.com/OpenRaiser/NeurCo",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 3,
+   "TRL": 4,
+   "REP": 4
+  },
+  "scores_why": "IMP=3：生成视频的可编程控制有价值，但当前更偏工程接口问题而非领域卡脖子。NOV=4：能力手册 + 中间表示 + 条件降级的编译器框架是明显新架构。TEC=4：形式化、探测协议、决策规则与校验闭环完整，但无学习型组件与理论分析。EXP=5：3 个后端、3 类模态、380 任务/1617 要求，外加两个外部基准。PER=3：提升 2.8–5.5 点、<10%，且 H3 联合成功率反而下降。TRL=4：真实商用后端可用且代码开源，属可部署工具链。REP=4：代码与项目页公开。"
+ }
+]

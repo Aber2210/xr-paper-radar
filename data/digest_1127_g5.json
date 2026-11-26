@@ -1,0 +1,375 @@
+[
+ {
+  "id": "2611.33826",
+  "title": "MotionODE: Enhancing Autoregressive Text-to-Motion Generation with Continuous-Depth Modeling",
+  "title_zh": "MotionODE：用连续深度建模增强自回归文本到动作生成",
+  "problem": "自回归 text-to-motion 的局部预测目标无法直接覆盖整段动作的要求：单个 token 或 token 组必须服务于跨多个时间段的语义关系，局部预测准确并不保证动作顺序与阶段过渡连贯。现有工作主要在动作表示、条件机制与生成顺序（next-token、grouped-token、next-scale）上改进，而每次预测之前「条件化隐表示如何形成」几乎没有被讨论。以 HumanML3D 为例，LMR 的 R-Precision Top-1 只有 0.497（真值 0.511），MM-Dist 3.098（真值 2.974）；MoScale 的 Top-1 为 0.535、FID 0.048，对齐与分布质量都还有空间。",
+  "method": "将预训练生成器中选定的 self-attention / feed-forward 残差分支重解释为局部向量场：原更新 $\\mathbf{z}_{b+1}=\\mathbf{z}_b+f_{\\theta_b}(\\mathbf{z}_b;\\mathcal{C}_k)$ 被视为单位步长 Euler 更新，于是在归一化深度区间 $\\tau\\in[0,1]$ 上解初值问题 $\\mathrm{d}\\mathbf{z}/\\mathrm{d}\\tau=f_{\\theta_b}(\\mathbf{z}(\\tau);\\mathcal{C}_k)$，终态作为下一分支输入。积分用显式中点 RK2：$\\mathbf{k}_1=f(\\mathbf{z}^{(j)})$、$\\mathbf{k}_2=f(\\mathbf{z}^{(j)}+\\tfrac{h}{2}\\mathbf{k}_1)$、$\\mathbf{z}^{(j+1)}=\\mathbf{z}^{(j)}+h\\mathbf{k}_2$，$h=1/S$；$S=1$ 需 2 次分支评估、$S=2$ 需 4 次。可选 field correction 用有限差分方向导数修正继承的向量场：$g=f-\\alpha\\tau\\mathcal{D}_\\epsilon f$。由于预训练权重沿原离散轨迹优化，直接换积分器会查询到没见过的中间态并改变后续分支输入，作者提出 mixed one-step/two-step post-training：按 microbatch 奇偶交替 $S_m\\in\\{1,2\\}$，两条路径共享参数与积分区间，用 motion-token 交叉熵 $\\mathcal{L}_{CE}$ 监督，并可选冻结教师的预测分布 KL 蒸馏与归一化 Euler map 锚定 $\\mathcal{L}_{map}$，总目标 $\\mathcal{L}=\\mathcal{L}_{CE}+\\lambda_{KL}\\mathcal{L}_{KL}+\\lambda_{map}\\mathcal{L}_{map}$。只更新生成 Transformer，冻结 tokenizer、文本编码器与 BAMM 的 residual refiner。优化用 AdamW、有效 batch 64、峰值学习率 $10^{-5}$、weight decay $10^{-5}$、梯度裁剪 2.0，训练 6 epoch 共 2232 步，半 epoch warmup 后 cosine 衰减到 $10^{-6}$。推理固定步数（三个 backbone 均用单步 RK2），教师丢弃，CFG 分别为 3 / 5 / 1.5，MoScale 保留原生采样表 [1,2,5,10]。",
+  "key_numbers": [
+   "MoScale：R-Precision Top-1 0.535→0.548、Top-2 0.726→0.735、Top-3 0.817→0.826（HumanML3D，单步 RK2 推理）",
+   "MoScale：MM-Dist 2.836→2.795、Multimodality 9.509→9.690，但 FID 0.048→0.092、Diversity 2.919→2.932",
+   "LMR：Top-1 0.497→0.504、MM-Dist 3.098→3.066，代价是 FID 0.039→0.098",
+   "BAMM：Top-1 0.522→0.529、FID 0.052→0.051（唯一 FID 同时改善的 backbone）、Multimodality 1.782→1.831",
+   "消融（MoScale，20 次重复，CFG 3）：去掉 KL 蒸馏 FID 0.09190→0.11190；去掉 map anchor 与 field correction 组合 FID 0.08829"
+  ],
+  "ablation": "在 MoScale 上做单因素消融：KL 蒸馏贡献最稳定，去掉后 FID 由 0.09190 升到 0.11190、Multimodality 由 0.90905 降到 0.89622；map anchoring 作用较小且依赖配置，有 field correction 时保留它只让 Top-1/Top-3 略升而 FID 几乎不变。field correction 并非单调增益：单独去掉它反而得到更好的 Top-1 54.7839、FID 0.08908，说明与 map anchor 存在交互，二者不应视为可加改进。在匹配分支评估预算下，单步+修正（54.7551 / FID 0.09190）与两步控制（54.6576 / 0.08827）互有胜负，说明检索优势不是靠多算。训练步数配置上，混合步训练+单步推理的 FID 0.09190、Multimodality 0.90905 优于固定单步（0.11300 / 0.88848）与固定两步（0.11241 / 0.82794）。",
+  "baselines": [
+   "MoScale",
+   "BAMM",
+   "LMR (Discrete)",
+   "TM2T",
+   "T2M-GPT",
+   "AttT2M",
+   "ParCo"
+  ],
+  "datasets": [
+   "HumanML3D（22 关节、20 FPS）"
+  ],
+  "novelty": "相对 ODE Transformer 等把整个 Transformer 做连续深度参数化、需要重训的路线，MotionODE 只复用预训练残差分支作为局部向量场做 post-training，不改动作表示、文本条件接口、外层生成顺序与解码器，因此同一套方法可同时套在 next-token（BAMM）、next-scale（MoScale）与 LMR 上。相对「直接替换求解器」的朴素做法，它明确指出预训练离散轨迹与新积分路径不匹配，并用混合步训练加 KL/map 正则来适配，而不是指望更高阶积分自动变好。",
+  "limitations": "作者自述只在 HumanML3D 上评测，未验证更广动作域与更丰富的文本描述。对齐提升并不总转化为分布质量：LMR 的 FID 从 0.039 恶化到 0.098，Diversity 9.599→9.748 更远离真值，MoScale 的 FID 也从 0.048 升到 0.092。绝对增益很小（Top-1 提升 0.007–0.013），且论文只给分支评估次数而没有任何端到端时延或 FLOPs 实测；单数据集也意味着跨数据集泛化性未知。",
+  "trl_evidence": "纯离线 post-training，直接基于 LMR、BAMM、MoScale 三个公开预训练 checkpoint 微调，冻结 tokenizer 与文本编码器，无真机、在线系统或产品化证据；作者仅说明 $S=1$ 需两次、$S=2$ 需四次分支评估，未报告实际延迟。",
+  "code": "未提及",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 2,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：自回归动作生成的跨时段语义一致是真问题，但属局部改进而非卡脖子瓶颈。NOV=3：把残差分支当向量场并做混合步 post-training，是 ODE Transformer 思路在动作生成上的实质迁移与改造。TEC=4：方法、训练目标与四组消融完整，缺理论分析与效率实测。EXP=3：只有 HumanML3D 一个数据集，靠三个 backbone 撑覆盖。PER=2：Top-1 仅 +0.007~0.013，且 FID 在 LMR/MoScale 上明显变差，属微弱提升并有负结果。TRL=2：离线微调，无部署与延迟证据。REP=2：无代码、无项目页，仅正文超参与种子。",
+  "value": 2.85
+ },
+ {
+  "id": "2611.34005",
+  "title": "ScaleCurve: From Constant Scale to Consistent Motion for World-Space Human Mesh Recovery",
+  "title_zh": "ScaleCurve：从常数尺度到一致运动的世界坐标人体网格恢复",
+  "problem": "单目世界坐标 HMR 即便相机空间人体估计很准，也会因相机轨迹的尺度误差丢失空间一致性。主流标定假设整段序列只有一个尺度 $s$，即 $\\mathbf{t}_t=\\mathbf{t}_1+s(\\tilde{\\mathbf{t}}_t-\\tilde{\\mathbf{t}}_1)$，但单目重建存在局部尺度畸变，所需校正随路径变化，残差会累积成人体轨迹漂移。作者用 GT 相机构造常数尺度与时间变化尺度两种 oracle 对比，发现在 SLOPER4D 的长路径上常数尺度 oracle 仍留下可观的相机误差与人体轨迹漂移。现有最强基线 DuoMo 在 EMDB-2 上 W-MPJPE 171.6 mm、WA-MPJPE 67.6 mm，GVHMR 在 SLOPER4D 上 W-MPJPE 达 959.1 mm。",
+  "method": "输入单目视频，HMR backbone（默认 GVHMR）给出米制相机坐标人体，DROID-SLAM 给出任意尺度的关键帧点云 $\\tilde{\\mathcal{P}}_k$ 与相机外参 $\\{\\mathbf{R}_t,\\tilde{\\mathbf{t}}_t\\}$。第一步 Temporal Scale Calibration：每个关键帧取最低的候选脚部顶点作支撑代理，在其下方图像块内（剔除人体 mask 像素）用最小二乘拟合局部地面 $\\mathbf{n}_k^\\top\\mathbf{q}+d_k=0$，再由脚点单位射线 $\\mathbf{u}_k$ 求地平面交距 $\\ell_k=-d_k/(\\mathbf{n}_k^\\top\\mathbf{u}_k)$，得到尺度观测 $\\tilde{s}_k=\\|\\mathbf{X}^{foot}_k\\|/\\ell_k$，并丢弃射线近于平行平面的观测。第二步鲁棒时域优化：以 $\\Delta=1$ s 均匀布置 $M$ 个 log-scale 变量 $\\mathbf{x}$，关键帧用线性插值权重 $\\boldsymbol{\\alpha}_k$ 取值，令 $y_k=\\log\\tilde{s}_k-\\kappa$；用 Student-$t$ 似然的重尾给权 $w_k=(\\nu+1)/(\\nu\\sigma^2+r_k^2)$ 抑制大残差，再用随机游走先验 $\\frac{1}{2q\\Delta}\\sum_i(x_{i+1}-x_i)^2$ 耦合相邻变量，交替做 IRLS 直到收敛。第三步重积分相机：将尺度作用在平移增量上，$s_t=\\exp(\\mathbf{b}_t^\\top\\hat{\\mathbf{x}})$、$\\mathbf{t}_{t+1}=\\mathbf{t}_t+s_t(\\tilde{\\mathbf{t}}_{t+1}-\\tilde{\\mathbf{t}}_t)$，旋转 $\\mathbf{R}_t$ 不变，因此与 SLAM 任意平移原点无关。第四步 Camera-Consistent Motion Refinement：固定标定相机，用 PVA-Net 的 2D 关键点与 3D 速度/加速度、加 RAFT surface flow 构造 kp/flow/vel/acc 四类残差，Cauchy 鲁棒核加权，并加 $\\mathcal{R}_{img}+\\mathcal{R}_{anchor}+\\mathcal{R}_{smooth}$（前者按深度与关键点置信度给难解关节更紧的先验，$\\mathcal{R}_{anchor}$ 沿视线方向更松以允许深度纠正，后者惩罚世界坐标三阶差分）。为防精化改变整体尺度，约束 $\\mathbf{g}^\\top\\delta\\mathbf{p}=0$ 剔除与初始根位置成比例的更新分量，L-BFGS 最多 3000 次迭代。",
+  "key_numbers": [
+   "EMDB-2：W-MPJPE 154.3 mm（DuoMo 171.6，-10.1%），WA-MPJPE 57.3 mm（较最强基线 -15.2%）",
+   "EMDB-2：RTE 1.0%、MPJVE 0.3 m/s、MPJAE 5.4 m/s²、Jitter 5.7、FS 4.8 mm",
+   "SLOPER4D：W-MPJPE 446.8 mm 对 GVHMR 959.1 mm（-53.4%），WA-MPJPE 85.0 mm、RTE 1.5%",
+   "标定消融（SLOPER4D）：时变→常数尺度 W-MPJPE 446.83→708.12 mm、ATE 4.36→7.52 m",
+   "精化消融（SLOPER4D）：相对 camera-only，MPJVE 0.95→0.43 m/s（-54.7%）、MPJAE 26.01→7.12 m/s²（-72.6%）",
+   "运行时：全流程 1.25 FPS，预处理（SLAM/HMR/PVA/RAFT）占 98.84%，TSC 仅 0.12%、CMR 1.04%"
+  ],
+  "ablation": "在 SLOPER4D 上分两阶段拆解。标定侧：强制常数尺度 → 708.12 mm；改成对同一批 log-scale 观测做 1 s 高斯平滑 → 503.77 mm；Student-$t$ 换高斯似然 → 481.39 mm；去随机游走先验 → 522.37 mm；平面-射线观测换 below-foot cue → 473.09 mm；完整 446.83 mm，三项指标同时最低。精化侧：camera only 473.76 mm / MPJVE 0.95 / MPJAE 26.01；去 2D 图像对齐 465.22 / 0.44 / 7.10（主要影响放置）；去 3D 动力学匹配 455.04 / 0.48 / 7.41；去运动正则 494.97 / 0.68 / 14.90（比不精化还差）；完整 446.83 / 0.43 / 7.12。另在三个 HMR backbone 上验证兼容性：TRAM 999.45→489.00、Human3R 1345.14→870.27、GVHMR 959.08→446.83，W-MPJPE 降幅 35.3%–53.4%，backbone 全冻结。",
+  "baselines": [
+   "TRAM",
+   "GVHMR",
+   "PromptHMR-Vid",
+   "HAC",
+   "GENMO",
+   "JOSH 3",
+   "HumanBA",
+   "DuoMo",
+   "HTD-Refine"
+  ],
+  "datasets": [
+   "EMDB-2（全部 25 条序列）",
+   "SLOPER4D（6 条序列）",
+   "BEDLAM2.0（标定 $\\kappa,\\sigma,\\nu$ 的训练数据）"
+  ],
+  "novelty": "相对 HAC、TRAM、SynCHMR、WHAC 等「整段一个 metric scale」的标定，ScaleCurve 把尺度从全局常数改为随相机路径变化的曲线，并用 Student-$t$ 似然 + 随机游走先验的联合优化从人-地几何中稳健恢复，使校正能跟随真实尺度变化而不被观测噪声牵着走。相对已有诊断性研究只指出分段常数不稳定，它给出可落地的连续估计与轨迹增量重积分。精化阶段相对 HTD-Refine 的关键差别是相机固定、并在优化中显式去掉全局缩放分量，避免「改进姿态却改坏轨迹尺度」。",
+  "limitations": "作者承认依赖可用的地面几何与可靠的人体深度估计，持续误差仍会偏置尺度观测；标定只改尺度、保留相机旋转与位移方向，方向类误差无法纠正；初始化与运动线索不足时朝向误差会保留（Fig. 12 的失败例）。评测仅限单人序列，多人场景、户外大场景未涉及。全流程 1.25 FPS，预处理占 98.84%，属离线优化，不满足在线应用。",
+  "trl_evidence": "在 EMDB-2 与 SLOPER4D 两个真实数据集的真实拍摄序列上做完整离线流水线实验，单卡 RTX 6000 Ada 上 1.25 FPS；复用冻结的 DROID-SLAM、GVHMR、PVA-Net、RAFT 现成模型，属可复现原型，无在线系统与产品化证据。",
+  "code": "承诺开源（\"Code will be made publicly available\"），未给链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：世界坐标 HMR 的尺度漂移是公认真瓶颈，且直接决定轨迹可用性。NOV=4：把 metric scale 从全局常数改成时变曲线，并给出鲁棒时域估计与轨迹增量重积分，是明确的新问题形式化。TEC=4：观测构造、IRLS、精化约束与失败分析完整，缺理论保证。EXP=4：两个真实基准、三个 backbone、逐组件消融，覆盖较全但只有单人序列。PER=4：EMDB-2 上 -10.1%/-15.2%，SLOPER4D 上 -53.4%，落在 10–30% 及以上区间。TRL=3：可复现原型，离线且 1.25 FPS。REP=3：细节充分、承诺开源但无链接。",
+  "value": 3.85
+ },
+ {
+  "id": "2611.34022",
+  "title": "MoSk: A Unified Motion-Skeleton Foundation Model for Human Motion Understanding and Generation",
+  "title_zh": "MoSk：面向人体动作理解与生成的统一动作-骨架基础模型",
+  "problem": "人体动作缺一个可同时支撑理解与生成的基础模型：motion 数据集规模大（MotionMillion 595,422 clips / 819.6 h，RoMo 766,864 clips / 1,166.2 h）却几乎没有动作类别标注与识别协议；skeleton 数据集（NTU RGB+D 60/120、PKU-MMD II、ETRI-Activity3D）有标签与成熟评测协议，但规模小、动作集固定、采集环境受控。结果两条线各自训练专家模型：skeleton 自监督方法如 MAMP 在线性评测 NTU-60 X-View 上 89.1%，而生成模型的表示完全不复用。",
+  "method": "把两类数据统一到同一几何-时间格式：$\\mathbf{X}=\\mathcal{A}_k(S_k)\\in\\mathbb{R}^{T\\times J_k\\times 3}$，$T=64$ 帧，y 轴向上、地面 $y=0$、初始朝向 +z，但保留各数据集原有关节集 $J_k$。编码器是 ViT：每 $P_T=4$ 帧一个 patch，线性投影到 $C_e$；关键设计是 joint-name embedding——用冻结 CLIP 文本编码器分别编码关节解剖名（wrist、knee 等）与侧别（left/right/middle），经可训练投影后沿时间重复并加到 patch token 上，为不同关节定义提供共同解剖参照。掩码建模：先以 0.5 概率随机丢弃 0–40% 关节（全帧一致），再做 token 掩码，语义 tube 掩码（SLiM）与均匀随机掩码各半，总掩码率 90%；编码器只处理可见 token（MSA + 1D 时间 RoPE，FFN 用 SwiGLU）。解码器用「共享可学习 query 向量 + joint-name embedding」构成查询，经 cross-attention 从编码特征重建被掩码位置，线性头输出 patch。监督不是原始坐标而是帧间位移 $\\mathbf{Y}_{t,j}=\\mathbf{X}_{t+1,j}-\\mathbf{X}_{t,j}$，损失为运动能量 focal 加权的 MSE，只算被掩码位置。下游两条：动作识别用线性头 + stop-gradient（半监督/全微调时去掉 sg）；生成侧把 MoSk 当冻结教师，按 REPA 对齐生成 backbone 中间特征 $\\mathcal{L}_{REPA}=\\mathbb{E}[\\ell_{align}(\\mathrm{MLP}(h_\\theta(\\mathbf{X}_\\tau,\\tau,c)),\\mathbf{F})]$，总损失 $\\mathcal{L}=\\mathcal{L}_{flow}+\\lambda\\mathcal{L}_{REPA}$，$\\lambda=0.5$，只在训练期生效。网络为 24 层 ViT / 1024 维 / 16 头 + 4 层解码器 / 384 维 / 8 头，训练 75 epoch（93,750 步），AdamW lr $4\\times10^{-4}$、weight decay 0.05、bf16、梯度裁剪 3.0，batch 256，2×B200 约 12.8 h、单卡 23 GB。",
+  "key_numbers": [
+   "语料：1,465,105 clips / 2,175.4 h，3 种骨架格式（SMPL 22、KIT 21、Kinect v2 25 关节）",
+   "线性评测：NTU-60 X-Sub 88.5%、X-View 94.0%（SLiM 87.9/93.2），PKU-MMD II 69.4%（SOfA 67.1）",
+   "半监督 NTU-60 X-Sub：仅用 1% 训练数据 77.0%（AMR、Path-JEPA 均 72.2%），10% 时 91.4%",
+   "全微调：NTU-60 X-Sub 94.1 / X-View 98.7、NTU-120 X-Sub 90.3 / X-Set 92.4、NW-UCLA 97.2",
+   "未见格式线性评测：UT-Kinect 98.0%（SOfA 97.0）、Florence-3D 96.5%（SOfA 91.7，+4.8 点）",
+   "生成：MotionMillion 无条件 FID 71.71→61.96（-9.75）、文生动作 FID 32.19→28.36（-3.83）；RoMo 15.35→9.68（-5.67）"
+  ],
+  "ablation": "数据配比：骨架采样概率 $p_K=80\\%$ 在识别与生成间取平衡，纯骨架在 NTU-60/120/PKU 上 87.2/78.8/67.8，80% 混合为 88.5/81.1/69.4；纯 motion 生成 FID 最低但识别跌到 80.0/69.4。组件消融（MoSk-S，8 个基准平均）：编码器与解码器都带 anatomy+side embedding 为 82.7%，全不用 82.4%（增益有限但一致）；随机丢关节改善未见格式迁移；随机与语义 tube 掩码混采（82.1）优于任一单独（82.1 / 81.5）；把目标从原始坐标换成帧间位移贡献最大，平均 +5.9 点（76.8→82.7）。",
+  "baselines": [
+   "MAMP",
+   "SCD-Net",
+   "S-JEPA",
+   "MacDiff",
+   "USDRL",
+   "GFP",
+   "STARS",
+   "AMR",
+   "DiMoP",
+   "Path-JEPA",
+   "SLiM",
+   "SOfA",
+   "MotionJiT（无对齐）",
+   "MotionPiT（无对齐）"
+  ],
+  "datasets": [
+   "HumanML3D",
+   "KIT-ML",
+   "MotionMillion",
+   "RoMo",
+   "NTU RGB+D 60/120",
+   "PKU-MMD II",
+   "ETRI-Activity3D",
+   "NW-UCLA",
+   "MSR-Action3D",
+   "UT-Kinect",
+   "Florence-3D",
+   "SBU-Interaction"
+  ],
+  "novelty": "首个把 motion 与 skeleton 语料合成单一自监督语料的人体动作基础模型。相对 SOfA 只统一骨架格式，MoSk 用 joint-name embedding 同时进入编码器输入与解码器查询，把解剖语义变成跨格式的共同参照，使同一编码器既做跨格式识别（含 3D 训练、2D 17 关键点迁移）又当生成侧的表示教师。相对 MAMP/SLiM 等数据集专用专家，它用一个模型在多数识别协议上更好，并在 16 个生成设置里 15 个降低 FID。",
+  "limitations": "作者自述语料消融只比较 motion、skeleton 与二者合并，没有逐数据集（如 NTU、RoMo）拆分贡献，各数据集对理解与生成的作用仍不清楚。默认 MoSk-L 有 304M 参数，微调的计算与显存开销大，缩到 MoSk-S/M 会掉识别精度。生成收益不均：16 个设置中 15 个改善，KIT-ML 上部分指标变差，HumanML3D 增益很小（FID 0.052→0.046），说明强生成 backbone + 大数据集时对齐的边际收益有限。识别只用 joint 流，未融合 bone/motion 流，与全监督多流集成并非完全同条件比较。",
+  "trl_evidence": "2×B200 上约 12.8 h、单卡 23 GB 完成训练，属可复现的大规模离线预训练；下游生成只做训练期特征对齐、推理零额外开销，具备工程集成条件，但无在线系统、无产品化与延迟数据。",
+  "code": "未提及（有项目页 kaist-viclab.github.io/MoSk_site）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：动作理解与生成各练各的表示是真实且影响面大的问题，统一语料有明确价值。NOV=4：首个 motion-skeleton 基础模型，joint-name embedding 打通异构关节集是架构级新意。TEC=4：方法、掩码策略、双下游与消融完整，缺理论分析。EXP=5：8 个数据集、12 个基准、未见格式与 2D 迁移、两个生成 backbone，覆盖非常充分。PER=4：RoMo 无条件 FID -37%、MotionMillion -13.6%，识别 +1~5 点，属 10–30% 档。TRL=3：可复现大规模训练，无部署。REP=3：细节充分、有项目页，未见代码承诺。",
+  "value": 4.0
+ },
+ {
+  "id": "2611.34027",
+  "title": "ContextHands: Completing Hand Motion with Learned Context and Joint-Specific Body Kinematics",
+  "title_zh": "ContextHands：用学习到的上下文与关节级身体运动学补全手部动作",
+  "problem": "手部动作补全要由已观测的身体序列与「按手、按时间段分配」的文本描述生成腕与手指旋转，核心困难是身体动作不能唯一确定手：相似的手臂运动可对应不同手指构型，两只手也可能各自开合。OakInk2 提供了带手别-时间标注的操作描述，但现有方法要么分别训练 body→hand 与 text→hand 再融合（BOTH2Hands），要么在冻结的 body-hand 先验上挂语义适配器（Prior-First）。在该数据集上适配后的最强基线 MinMPJPE 为 25.725 mm（MLD）、FHD 0.805（HandX）、腕旋转误差 18.26°（MDM），细节仍明显不足。",
+  "method": "任务为建模 $p(H\\mid B,\\mathcal{T},A)$，其中 $H\\in\\mathbb{R}^{T\\times2\\times16\\times6}$ 是每手 1 个腕 + 15 个指关节的 6D 局部旋转（相对父关节，腕相对前臂），身体与腕位置固定，前向运动学得手部几何。Hand Context Encoder（HCE）：Transformer 身体编码器给逐帧每手特征，冻结 DistilBERT 的 token 特征经可训练 attention 聚合，按分配 $A$ 放到对应手与帧（无描述处置零），相加得上下文 $c$；再用条件变分形式 $p_\\phi(z\\mid c)$（对角高斯，每手一个 $z_h$ 跨该手所有帧共享），特征解码器把 $z$ 的投影加回 $c$ 并做跨手/跨时 attention 得 $U$。训练时另有后验 $q_\\psi(z\\mid c,H)$，先验与后验样本分别经同一解码器得 $U^p=D_\\eta(c,z^p)$、$U^q=D_\\eta(c,z^q)$，走同一生成器的两次前向。辅助手部预测给上下文特征直接目标：每手拟合固定 PCA 基，共享线性头从 $U^q$ 回归 16 个标准化系数，MSE 监督，梯度经解码器回流。Joint-Query Kinematic Encoder（JQKE）：逐帧空间 attention（带解剖关系偏置）+ 三支时间分支（短卷积、膨胀卷积、全序列 attention）门控融合得 $F_t$，再池化出 5 个解剖部位摘要 $P_t$ 与 3 个尺度摘要 $S_t$，组成 $E_t\\in\\mathbb{R}^{30\\times256}$（22 关节 + 5 部位 + 3 尺度，均加类型嵌入）；32 个手关节 query（关节与侧别身份 + 同侧腕/臂特征 + 全身摘要）经残差 cross-attention 读整个 bank（含对侧）得 $C_t\\in\\mathbb{R}^{32\\times256}$，只依赖 $B$，扩散采样前算一次。生成器：每关节一个 token，$U_{t,h}$ 投到该手 16 个 token，去噪块用残差 MLP 注入 $C_{t,j}$ 与扩散步，接时间与手内 self-attention，100 步 cosine 噪声表、DDPM 100 步反向，损失含经前向运动学的几何项。训练目标 $\\mathcal{L}=\\alpha\\mathcal{L}^p_{hand}+(1-\\alpha)\\mathcal{L}^q_{hand}+\\lambda_{rec}\\mathcal{L}_{coef}+\\beta\\bar{D}_{KL}(q_\\psi\\|p_\\phi)$，$\\alpha$ 用 virtual-update 的有限差分自适应（两次扰动权重的虚拟更新后恢复状态再做真实步）。",
+  "key_numbers": [
+   "OakInk2：MinMPJPE 22.809 mm（MLD 25.725、HandX 29.239），AvgMPJPE 30.711 mm（MLD 34.051）",
+   "腕旋转误差 16.93°（MLD 18.98°、BOTH2Hands 22.52°），FHD 0.276（HandX 0.805、MLD 1.226）",
+   "Diversity 9.043（GT 9.397，MDM 9.724），MModality 2.498（BOTH2Hands 2.337）",
+   "推理：150 帧序列 2.83 s（RTX 4090，不含冻结文本编码），快于 MDM、BOTH2Hands、HandX",
+   "数据：308 训练录像 / 3,842 clips、70 验证 / 728、157 测试 / 1,709；测试手-帧对中 51.69% 带描述"
+  ],
+  "ablation": "HCE 侧（均保留 JQKE）：去掉 HCE 直接对文本做 cross-attention → MinMPJPE 26.360 / FHD 1.508；去掉辅助手部损失 → 25.930 / 1.295；去掉 HCE 的身体输入 → 23.140 / 0.475；把变分换确定性 HCE → 25.577 / 1.127，四项都支持「学习到的概率上下文」而非直接文本对齐。JQKE 侧：把手内身体条件取平均共享 → 22.785 / 0.367（位置几乎不变但 FHD 变差，说明逐关节条件必要）；去掉对 summary token 的访问 → 23.266 / 0.554。训练策略：body-only 预训练后只训文本模块 25.331 / 0.991，全微调 24.697 / 0.697，均差于联合训练 22.809 / 0.276。自适应 $\\alpha$ 相对等权更贴近参考分布，但平均位置误差更高（见附录）。",
+  "baselines": [
+   "MDM",
+   "MLD",
+   "T2M-GPT",
+   "BOTH2Hands",
+   "HandX"
+  ],
+  "datasets": [
+   "OakInk2（30 FPS，clip ≤150 帧；308 训练 / 70 验证 / 157 测试录像）"
+  ],
+  "novelty": "相对 BOTH2Hands 的「body 与 text 两个生成器分别出结果再融合」，ContextHands 用单个扩散生成器同时接收「手内共享的概率上下文 $U$」与「逐关节身体条件 $C(B)$」，并用辅助手部预测给上下文特征一个直接学习目标，使上下文特征被生成任务塑形。相对 Prior-First 用含噪手状态导出的 kinematic query，它的关节 query 在去噪前只由观测身体算出，且身体/文本上下文与生成器从零联合训练，而不是在冻结先验上适配。",
+  "limitations": "作者承认需要完整身体序列与人工给定的手-时间分配，使用了未来帧，只能做离线补全。评测只覆盖 OakInk2 的双手物体操作，未验证其他活动类型与自由书写描述，也没有用户研究评估自然度与描述一致性。方法不建模物体几何与手-物接触，扩展到新物体能力受限；描述只覆盖 51.69% 的测试手-帧对，无描述区间的误差可能被身体先验掩盖。单数据集也让跨数据集泛化未知。",
+  "trl_evidence": "单卡 RTX 4090、24 h 训练预算内完成，150 帧推理 2.83 s，属离线研究原型；无真机、在线系统或产品化证据，作者承诺发布代码与预训练模型。",
+  "code": "承诺开源代码与预训练模型（\"We will release our code and pretrained models\"），未给链接",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 4,
+   "EXP": 3,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=3：手部细节是动作真实感的重要工程问题，但应用面窄于全身动作。NOV=3：双路条件 + 概率上下文 + 关节 query 是对 BOTH2Hands/Prior-First 的实质改进，非新范式。TEC=4：上下文编码、JQKE、扩散生成与训练目标齐全，消融到位，缺理论。EXP=3：只有 OakInk2 一个数据集。PER=4：FHD 0.276 对 0.805（-66%）、MinMPJPE -11%，提升明显。TRL=2：离线补全，2.83 s/150 帧。REP=3：细节充分、承诺开源。",
+  "value": 3.22
+ },
+ {
+  "id": "2611.34062",
+  "title": "Surf-Style: Surface-Based Scene Stylization",
+  "title_zh": "Surf-Style：基于表面的场景风格化",
+  "problem": "3D 场景风格化要求跨视角一致：同一表面点在不同视角的风格化外观必须相同，而把 2D 风格化逐帧套在渲染图上会随视角漂移。NeRF 类方法靠共享参数隐式约束，但体渲染下像素颜色由沿射线多采样点的积分决定，像素外观与可学习参数只是间接关系，风格容易溢出到无关区域，也难以只改用户指定的表面；用 grid 或 3D box 选区的可控方法只能轴对齐，越界修改明显，体素扩张式选择又缺表面感知。",
+  "method": "先用 NeRF2Mesh 从训练好的辐射场抽出三角网格 $M=(V,F)$，几何在风格化全程固定，并丢弃原 appearance grid $G$。把外观挂到网格顶点：每顶点一组视角无关 diffuse $\\mathbf{c}_d\\in\\mathbb{R}^3$（可优化）与视角相关 specular $\\mathbf{c}_s\\in\\mathbb{R}^3$（固定），自定义 shader 对包含查询点的三角形三顶点作重心插值得 $(\\mathbf{c}^x_d,\\mathbf{c}^x_s)$，最终颜色 $\\mathbf{c}=\\mathbf{c}^x_d+\\mathrm{Decoder}(\\mathbf{d},\\mathbf{c}^x_s)$，Decoder 沿用 NeRF2Mesh 的视角相关网络。训练只优化 $\\{\\mathbf{c}_d\\}$，损失沿用 ARF 的 NNFM：在 VGG-16 conv3 特征上逐像素取风格图最近邻，$\\mathcal{L}_{nnfm}=\\frac{1}{N}\\sum_{u,v}\\min_{\\hat u,\\hat v}\\mathcal{D}(\\mathcal{F}_{\\tilde I}(u,v),\\mathcal{F}_J(\\hat u,\\hat v))$，$\\mathcal{D}$ 为余弦距离，再加内容损失 $\\lambda\\mathcal{L}_2(\\mathcal{F}_{\\tilde I},\\mathcal{F}_I)$，$\\lambda=0.005$，每场景 1000 次迭代。对 NeRF-Synthetic 这类无背景单物体场景，命中表面的像素参与风格损失，未命中像素填风格图本身，使非表面特征与目标风格一致，从而只更新表面顶点的颜色。可控性来自表示本身：在网格编辑器里选面即可局部风格化，不同面片可绑定不同风格。",
+  "key_numbers": [
+   "NeRF-Synthetic GCC：Lego 0.017（ARF 0.029、Ref-NPR 0.021）、Chair 0.010（0.027 / 0.015）、Ship 0.010（0.015 / 0.016）",
+   "NeRF-Synthetic：Hotdog 0.008、Mic 0.013、Materials 0.020，但 Ficus 0.013 差于 Ref-NPR 0.010",
+   "LLFF GCC：Flower 0.006、Room 0.004、Fern 0.009（Ref-NPR 0.010），Leaves 0.014 差于 SNeRF 0.009",
+   "评测设置：NeRF-Synthetic 800×800，LLFF 下采样 4×，VGG-16 conv3，内容权重 0.005，每场景 1000 迭代"
+  ],
+  "ablation": "无独立消融。替代证据是逐场景跨方法比较（8 个合成场景 + 5 个 LLFF 场景）与不一致图可视化：平面区域优势最明显，Ficus 与 Leaves 与基线持平甚至更差，作者归因于网格提取质量而非风格化步骤。由于没有拆掉 diffuse/specular 分离、网格表示或 NNFM 的对照，无法定量归因各设计的作用。",
+  "baselines": [
+   "ARF",
+   "Ref-NPR",
+   "SNeRF"
+  ],
+  "datasets": [
+   "NeRF-Synthetic（8 个合成场景）",
+   "NeRF-LLFF（Fern、Flower、Horns、Leaves、Room）"
+  ],
+  "novelty": "相对 ARF、Ref-NPR、SNeRF 在体密度或网格外观场上做风格优化，Surf-Style 把可学习外观搬到显式网格顶点，使「一个顶点即一个表面元素」，同时得到跨视角一致与面级可控。相对用 2D mask 或体素扩张选区的可控方案，它可直接在网格编辑器选面，并支持同一场景内多风格分区（如 Flower 前景用 Rain Princess、背景用 The Great Wave）。",
+  "limitations": "定量评价只有 GCC 一个指标，没有风格相似度、PSNR/LPIPS 或用户研究，无法判断风格是否真的更贴近参考图。完全没有消融，无法归因到 diffuse/specular 分离、网格表示或 NNFM 损失。几何完全依赖 NeRF2Mesh 的网格质量，Ficus、Leaves 的持平被作者自己归因于此，且需先训练辐射场再抽网格，流程是两段式的。场景限于单物体或小场景，未验证大尺度室外与动态场景。",
+  "trl_evidence": "离线逐场景优化（每场景 1000 迭代），输入需先训练 NeRF 并抽网格，无实时渲染、无产品化，也未报告运行时间或显存。",
+  "code": "未提及",
+  "venue": "arXiv preprint（投稿 IEEE，未注明具体期刊/会议）",
+  "scores": {
+   "IMP": 3,
+   "NOV": 3,
+   "TEC": 2,
+   "EXP": 3,
+   "PER": 3,
+   "TRL": 2,
+   "REP": 2
+  },
+  "scores_why": "IMP=3：跨视角一致与区域可控是 3D 风格化的真问题，但属应用层工程问题。NOV=3：把外观从体网格搬到网格顶点并复用 NeRF2Mesh，是表示层的实质改进而非新范式。TEC=2：无消融、无理论、仅单一指标验证。EXP=3：两个数据集 13 个场景，但只有一个评测维度。PER=3：多数场景 GCC 低 20% 左右，Ficus/Leaves 反而更差。TRL=2：离线两段式流程。REP=2：无代码、无项目页、无逐组件证据。",
+  "value": 2.7
+ },
+ {
+  "id": "2611.34079",
+  "title": "WorldBridge: Bridging Scattered Views for Coherent 3D World Generation",
+  "title_zh": "WorldBridge：桥接散乱视角的连贯 3D 世界生成",
+  "problem": "从几乎没有视觉重叠的散乱参考图生成连贯、可探索的 3D 世界是长期难题：几何感知方法在无重叠时几乎失效，图像/视频生成方法能补出未见区域但跨视角几何不一致。现有 benchmark（RealEstate10K、DL3DV-10K）主要评有重叠参考的新视角合成，不覆盖低重叠与轨迹外参考。在自建的低重叠设定下，最强基线整体 PSNR 只有 16.13 dB（GLD），长序列上 PSNR 16.43 dB、AbsRel 0.454、ATE 1.748。",
+  "method": "以 GAE 的几何-外观共享 latent 为底座，训练 conditional flow matching：$\\mathcal{L}_{FM}=\\mathbb{E}_{\\mathbf{z}_0,\\epsilon,t}[w(t)\\|v_\\theta(\\mathbf{z}_t,t,c)-(\\epsilon-\\mathbf{z}_0)\\|^2]$，$\\mathbf{z}_t=(1-t)\\mathbf{z}_0+t\\epsilon$。条件分两路：scene encoder $E_{sc}$（LagerNVS 初始化后可训）把带位姿参考聚成全局 scene token $S$；reference encoder $E_{ref}$（DepthAnything v3，冻结）独立编码每张参考得 $\\mathbf{z}^{ref}_i$，保住单张观测的细粒度外观。camera-conditioned scene reader 用目标视角的逐 patch Plücker 射线 $r(P_i)$ 查询 $S$，得 $C_i=W_{sc}\\mathrm{LN}(\\mathrm{Resize}(R_{sc}(S,r(P_i))))$，与视角 latent 一起 patchify 后送 DiT；同时用低分辨率 RGB 监督 scene reader，$\\mathcal{L}_{sc}=\\sum_{(P,I)\\in\\mathcal{Q}}\\ell_{rgb}(\\hat I_{sc}(S,P),I)$，总损失 $\\mathcal{L}=\\mathcal{L}_{FM}+\\mathcal{L}_{sc}$。Temporal/spatial reference attention：参考分为沿目标轨迹、有时间位置的 $R_T$ 与有位姿但无时间位置的 $R_S$；temporal RoPE 只在注意力两端都属于 $\\mathcal{G}\\cup R_T$ 时施加（掩码 $m_{ij}=\\mathbf{1}[i\\in\\mathcal{G}\\cup R_T\\land j\\in\\mathcal{G}\\cup R_T]$），涉及 spatial 参考即省略，spatial RoPE 与基于 Plücker 射线的 SCoPE 相机编码对所有对保留，spatial 参考另加可学习 role embedding；训练时随机把部分 temporal 参考降级为 spatial，并以 0.5 概率丢弃 temporal 位置。Latent-reference consistency（LRC，即插即用）：用 MoGe-3 估每张参考的米制点图并前向投影到目标相机，剔除深度边界、用 z-buffer 解冲突，得伪图 $\\tilde I_j$ 与 mask；对预测的干净 latent 做一步梯度 $z_0^*=\\hat z_0-\\eta\\nabla_{\\hat z_0}\\mathcal{L}_{proj}$（RMS 归一化，相对步长 0.01），再按 $\\lambda_i(t)=0.1t+(0.5-0.1t)d_i$（$d_i$ 为到最近参考的归一化距离）混入估计噪声与新噪声继续去噪。训练：22k 视频片段、672×378、32 卡 10 epoch、batch 64、lr $5\\times10^{-5}\\to5\\times10^{-6}$；推理 50 步去噪、CFG 2、空文本提示。",
+  "key_numbers": [
+   "RealEstate10K：1-view PSNR 16.71 / SSIM 0.601（GAE 15.77 / 0.557），2-view 20.88 / 0.756（SEVA 18.47 / 0.648）",
+   "DL3DV-10K：1-view PSNR 17.48、2-view 21.33 dB（最佳基线 2-view 18.63）",
+   "WorldBridge-Short 整体：PSNR 18.35（GLD 16.13）、SSIM 0.604、LPIPS 0.333",
+   "WorldBridge-Long：PSNR 17.68（GLD 16.43）、AbsRel 0.345（0.454）、δ1 71.0（59.4）、ATE 0.657（GAE 1.508）",
+   "WorldBridge-Long：RPE_r 3.456、RPE_t 0.397、特征重投影 0.173、几何重投影 0.099、参考误差 0.200、美观分 5.248",
+   "WorldBridge-Agent：ATE 3.278 / 3.303（On/Off，AnyRecon 3.711 / 4.680），几何重投影 0.057 / 0.061",
+   "模型 0.94B 可训练参数、22k 片段、32 卡 10 epoch；50 步去噪、CFG 2；LRC 增加 18.3% 推理时间"
+  ],
+  "ablation": "在 Long / Agent 上单因素拆解：去掉全局场景分支 PSNR 17.68→16.61，Agent-Off 几何重投影误差 0.061→0.126（翻倍），说明全局上下文主要保结构；保留分支但去掉 RGB 监督 $\\mathcal{L}_{sc}$ → 17.18，且三种设置参考误差全部上升；训练时只用 temporal 参考 17.35、只用 spatial 参考 17.19，混合训练最好（Agent-Off 参考误差 0.344 对 0.391 / 0.368）；去掉推理期 LRC → 17.30，参考误差 0.361→0.344。整体看全局分支贡献结构一致性、参考混合贡献保真、LRC 贡献最后一段保真提升。",
+  "baselines": [
+   "SEVA",
+   "GAE",
+   "GLD",
+   "Gen3R",
+   "AnyRecon",
+   "3DRAE"
+  ],
+  "datasets": [
+   "RealEstate10K",
+   "DL3DV-10K",
+   "SpatialVID",
+   "WorldBridge-Short（100 段 5–15 s 真实片段）",
+   "WorldBridge-Long（20 段 20–60 s 视频）",
+   "WorldBridge-Agent（20 个合成场景，On/Off 各 20 例）"
+  ],
+  "novelty": "相对 SEVA/AnyRecon 等逐视角生成或 scene-query 方法，WorldBridge 把「全局场景上下文」与「单参考细粒度 latent」解耦为两条条件通路，并用选择性 temporal RoPE 让轨迹外参考不必被硬塞时间位置，从而同时保住全局连贯与局部保真。相对已有只评重叠参考的 benchmark，提出低重叠（大量参考对重叠 <1%）、长序列与 on/off-trajectory 三档评测；LRC 作为推理期即插即用模块，不改训练、不加参数。",
+  "limitations": "作者自述可能缺细粒度与结构几何；当目标视角与 spatial 参考几乎没有重叠时，参考提供的指导有限，生成质量下降。训练成本高（32 卡 10 epoch、0.94B 可训练参数），LRC 额外增加 18.3% 时延，长序列超出 41 视角需扩展 RoPE 或分段生成。benchmark 与模型都写明「接收后发布」，当前不可复现；Agent 子集为合成场景，与真实拍摄分布有差距；相机与一致性评测依赖 VGGT-Ω 估计，存在评测器耦合。",
+  "trl_evidence": "离线大模型推理（单卡 H200，41 帧、50 步去噪），有项目页与多场景应用演示（稀疏视角重建、位姿控布局、文本控未见区域、真实与风格图混合），但无在线系统或产品部署，权重与 benchmark 尚未发布。",
+  "code": "承诺接收后开源模型与 benchmark（\"We will release our benchmark as well as our model upon acceptance\"），另有项目页",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：从散乱低重叠参考生成连贯 3D 世界是当前热点且真实困难，但已有大量同期工作。NOV=4：全局/局部双路条件 + 选择性 temporal RoPE + 推理期 LRC + 三档 benchmark，组合层面的明确新意。TEC=4：方法、训练采样策略与逐组件消融完整，缺理论。EXP=5：两个公开 benchmark + 三个自建设定 + 六个基线，覆盖保真、几何、相机、一致性、美观。PER=4：ATE 0.657 对 1.508（-56%）、Short PSNR +2.2 dB、Long +1.25 dB，属 10–30% 以上。TRL=3：可运行演示但非产品，权重未放。REP=3：细节充分、承诺开源。",
+  "value": 4.0
+ },
+ {
+  "id": "2611.34108",
+  "title": "Detectable by Design: Learning a Continuous 3D Saliency Field from 2D Detector Responses",
+  "title_zh": "DetectField：从 2D 检测器响应学习连续 3D 显著性场",
+  "problem": "对着 3D 地图做相机定位时，地图保留哪些 3D 点直接决定能否定位成功，稀疏地图下每个不会被重检的点都少一次对应。但现有 3D 关键点检测器按语义、刚性运动可重复性、重建充分性或 3D 描述子可匹配性定义显著性，没有一个定义问「这个点在图像里会不会被 2D 检测器再次检出」。实验显示学到的 3D 关键点在物体上只有 11–15% 被重检，与均匀随机点的 13% 相当；真实室内场景上这些方法的定位成功率与随机采样相差 5.1 个点以内。",
+  "method": "把 3D 显著性直接定义为 image detectability：2D 检测器在表面点上的响应在可见视角集合上的聚合。学习连续场 $f_\\theta:\\mathbb{R}^3\\times\\mathcal{X}\\to[0,1]$，$(q,X)\\mapsto\\hat s(q\\mid X)$，只输入点云，任意 3D 位置可查询，关键点取局部极大。架构沿用 ConvONet：local-pooling PointNet 把点云加逐点曲率不变量编码成 32³/64³/128³ 三个特征体，各经三级 3D U-Net 细化；解码器输入为查询点的体素内坐标 $\\Delta q$（避免小数据下记忆绝对坐标）加最近输入点的几何特征，每个 block 三线性插值三个尺度特征后相加，末层输出 logit。逐查询几何特征：Harris-3D 响应可写成 $R_{H3D}\\approx4[(\\kappa_1\\kappa_2)^2-0.04(\\kappa_1^2+\\kappa_2^2)^2]$，因此取其原料——$\\|H\\|_F^2$、$(\\det H)^2$ 与邻域协方差表面变化率 $\\lambda_{min}/\\sum\\lambda$，各在 $k=16,32,64$ 邻域计算，共 9 通道，按形状内秩归一化到 (0,1]。关键点是这些特征同时送编码器与解码器：最细体素约 3.5 cm，而 32 邻域只跨约 1.8 cm，池化会把不变量变化平均掉，所以解码器侧走旁路。监督（物体）：128 个 Fibonacci 视角渲染，输入 2D 检测器的是几何编码图 $I=0.7n_z+0.3d_{01}$（$n_z$ 由单位法向算，$d_{01}$ 为按包围球归一化的深度），避免纹理触发响应；每视角取稠密 SuperPoint 响应，做镜像对称化（检测器对镜像不等变）与遮挡边界衰减，回投时在 9×9 邻域取最大、以 0.02 归一化深度判可见，跨视角取均值。监督（真实场景）：SceneFun3D 的 Faro 激光扫描建 Poisson 网格并切 crop，用渲染目标 + 每 crop 60 张真实照片的 SuperPoint 响应，两者按秩合并（观测点用照片秩、未观测点用渲染秩，再映射到渲染目标的值分布）。损失：目标为壳层 $t(q)=s(x_q)\\exp(-d_q^2/2\\sigma^2)$（$\\sigma=0.01$），$d_q>2\\sigma$ 的查询剔除；权重 $w(q)=\\min(n(x_q)/6,1)$ 让少视角点贡献更小；加权 BCE，不加峰值/稀疏正则。关键点提取为响应排序 + 半径 0.02 的贪心 3D NMS；场景模型在测试时对输入与三个随机旋转做秩平均。",
+  "key_numbers": [
+   "物体 hit rate：K=32 时 43.6%（Harris-3D 31.0），K=16 52.1%（35.7），K=8 61.3%（36.4）",
+   "物体定位成功：K=1024 53.4%（Harris-3D 50.9），K=256 50.0%（40.4），K=64 32.3%（18.0）",
+   "真实室内场景：5°/10 cm 成功 59.7%（Harris-3D 52.3，+7.4），严格 37.7%（31.3），宽松 75.3%（69.7）",
+   "真实场景 hit rate 42.1%（36.3）；K=80 时平移误差几何均值 0.76×、旋转 0.75× Harris-3D",
+   "未见 2D 检测器 D2-Net：K=64 24.0%（Harris-3D 13.8），K=256 38.5%（30.3），且高于 SuperPoint 烘焙目标 b4",
+   "稀疏地图（真实场景）：s=5 cm 32.7%（Harris-3D 29.0），s=10 cm 25.8%（22.5）"
+  ],
+  "ablation": "真实场景主阈值下：全模型 58.2；特征只送编码器、去掉旁路 54.2（-4.0）；完全不用几何特征 39.6（-18.6）；用 Harris-3D 响应替代不变量 56.4（-1.7，不显著），再配渲染目标则 52.9（-5.3）；把照片目标换回渲染目标 51.1（-7.1，去掉特征后最大损失）；在目标里加 Harris-3D 先验 58.8（+0.7，不显著）；测试时不做旋转平均 57.2（-1.0）；同设置 Harris-3D 基线 52.3。可见几何特征（尤其逐查询旁路）与照片监督是两大来源。",
+  "baselines": [
+   "Harris-3D",
+   "ISS",
+   "USIP",
+   "UKPGAN",
+   "D3Feat",
+   "SC3K",
+   "Key-Grid",
+   "FPS",
+   "Random",
+   "b4（监督上限）与 bref（oracle，内部对照）"
+  ],
+  "datasets": [
+   "ShapeNet（805 模型 / 11 类，66 个 held-out；稀疏实验另用 130 模型 / 15 类）",
+   "SceneFun3D（37 房间 / 321 crops；稀疏实验 8 房间 / 64 crops）"
+  ],
+  "novelty": "把 3D 关键点显著性从「几何/语义/描述子」改成可外部验证的「2D 检测器可检出性」，并用连续场实现，任意位置可查、支持稀疏地图。相对 B2-3D 回投语义特征，它回投检测器响应；相对 Harris-3D 的固定曲率函数，它把曲率不变量作为输入让网络学组合，并用逐查询旁路保住被体素池化抹掉的局部微分几何。D2-Net 交叉验证（在未见检测器下仍优于自己的监督目标 b4）说明它学到的不只是 SuperPoint 的位置记忆。",
+  "limitations": "作者承认继承监督检测器的偏好与缺陷（如对镜像不等变，需对称化）；物体监督来自渲染，可能反映网格镶嵌方式而非真实形状。只用一个 2D 检测器监督，换检测器训练与室外场景留给未来工作。评测全部在室内（ShapeNet / SceneFun3D），K 只覆盖 8–1024；定位管线固定用 SuperPoint 描述子 + EPnP/RANSAC，未与跨模态匹配器联合评估，也未报告运行时间与内存。",
+  "trl_evidence": "离线训练加离线定位基准，无在线系统或产品部署；推理只需点云、不需要图像，工程上可作为现有定位流程的替换模块，但论文未给时延与显存实测。",
+  "code": "未提及（提供 supplementary 与可复现细节，含随机种子与数据哈希）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 4,
+   "PER": 4,
+   "TRL": 2,
+   "REP": 3
+  },
+  "scores_why": "IMP=4：稀疏地图的 3D 点选择是视觉定位的真实瓶颈，直接影响成功率。NOV=4：把显著性重定义为图像可检出性并学成连续场，是清晰的新表述。TEC=4：架构、监督构造、闭式极限分析与逐组件消融齐全，但依赖已有 ConvONet/Harris 形式。EXP=4：物体与真实场景两类数据、多档预算、稀疏地图与未见检测器，覆盖面好但均为室内。PER=4：真实场景成功率 +7.4 点（相对 +14%），hit rate +5.8 点，稀疏地图仍领先。TRL=2：离线基准组件，无部署数据。REP=3：可复现细节充分但无代码链接。",
+  "value": 3.77
+ },
+ {
+  "id": "2611.34128",
+  "title": "FoundSurface: Feedforward Ray-Based 3D Scene Surface Reconstruction from Unposed Images",
+  "title_zh": "FoundSurface：从无位姿图像前馈式射线法重建 3D 场景表面",
+  "problem": "从无位姿图像重建精确 3D 表面仍是基础难题：NeRF/3DGS 依赖精确位姿且需逐场景优化、表面精度有限；DUSt3R/VGGT 类 pointmap 方法摆脱位姿，但输出本质上是离散稀疏点，缺连续高频细节；RayDF/RayletDF 类射线法能出连续高保真表面，却仍需精确位姿或稀疏点云作为输入。基线 VGGT 直接投影在 ScanNet++ 上 ADE 0.580 m、AbsRel 0.360，PriorDA 补洞后降到 0.198 m，仍与高保真表面有差距。",
+  "method": "四段式、从离散到连续。① 用预训练 VGGT 输出逐图像素对齐 pointmap $\\mathbf{P}_i$、位姿 $\\mathbf{T}_i$、内参 $\\mathbf{C}_i$，并取第 4/11/17/23 层 patch 特征经两层 MLP 融合为视觉 token $\\mathbf{F}_i$。② Query-view-centric selection：把所有输入 pointmap 按目标位姿投影并用 z-buffer 得伪深度 $\\mathbf{D}^{target}$，划成 surfel；候选视图 pointmap 同样划 surfel 投到目标视角，像素深度差 $<\\delta_{depth}$ 记一票，surfel 内正票比例超过 $\\tau_{vote}$ 记为匹配，按匹配 surfel 占比排序取 top-$k$，避免无关视角引入噪声。③ Coarse ray-surface regressor：以目标视角建局部坐标系，候选视图用相对变换 $\\mathbf{T}^{rel}_j=\\mathbf{T}_{target}^{-1}\\mathbf{T}_j$ 生成稠密 Plücker 射线图，卷积成 ray embedding $\\mathbf{m}_j$，与 $\\mathbf{F}_j$ 经 MLP 条件化得 $\\hat{\\mathbf{F}}_j$；目标射线 embedding 作 query、候选条件特征作 key/value 做 self-/cross-attention 交替的 Transformer，得到 $\\mathbf{F}^*_{target}$ 并解码为射线-表面距离图，表面点 $\\mathbf{p}=\\mathbf{p}_{target}+D\\cdot\\mathbf{r}$。这一步把离散点升级成连续粗表面并处理遮挡。④ Raylet-based refinement：把 pointmap 体素化并用 3D sparse convolution 建特征体，取稀疏卷积产生的 anchor 及其局部特征；对每个粗 raylet 找 $S$ 近邻 anchor，输入近邻特征均值、欧氏距离 $e_{n,s}$ 与单位方向 $\\mathbf{v}_{n,s}$，回归距离残差 $\\Delta d_n$，$\\mathbf{p}^*_n=\\mathbf{p}_n+\\Delta d_n\\mathbf{r}_n$，恢复高频细节；由于是射线距离场，可由闭式导数直接得解析法向，避免数值差分噪声。训练两阶段解耦：粗阶段 $\\ell_{coarse}=|\\mathbf{D}_{gt}-\\mathbf{D}|+\\|\\nabla\\mathbf{D}_{gt}-\\nabla\\mathbf{D}\\|$；细阶段对粗预测 stop-gradient，$\\ell_{fine}=|\\mathbf{D}_{gt}-(\\mathrm{sg}(\\mathbf{D})+\\Delta\\mathbf{D})|$，只训 raylet 模块以稳定全局结构。",
+  "key_numbers": [
+   "ScanNet++：ADE 0.132 m（PriorDA 0.198、RayletDF 0.179），RMSE 0.259、AbsRel 0.079、δ 0.910",
+   "7Scenes：ADE 0.123 m（PriorDA 0.154）；MultiScan：0.205 m（RayletDF 0.331）",
+   "Replica：ADE 0.064 m（RayletDF 0.071）、δ 0.981；Tanks&Temples：1.233 m（RayletDF 3.970）",
+   "法向（ScanNet++）：mean 29.83°、med 21.21°，11.25° 内 29.2%（CUT3R 16.8%）；Replica mean 20.72°",
+   "稀疏视角（ScanNet++）：5 视角 ADE 0.370 m（PriorDA 0.635），100 视角 0.121 m（0.180）",
+   "训练成本约 288 A800 GPU 小时；9 个训练数据集、6 个未见解见测试数据集"
+  ],
+  "ablation": "在 MuSHRoom 测试划分（ScanNet 上训练的小规模消融）上：完整 0.331 / 0.538；去 surfel 投票（改逐像素比对）0.341 / 0.550；去层级特征（只用 VGGT 末层）0.369 / 0.575；去局部坐标（改用全局 VGGT 坐标）0.457 / 0.658（影响最大）；去 top-$k$ 参考视图选择 0.372 / 0.577。主表另有 w/o refine 对照：ScanNet++ ADE 0.162→0.132、Replica 0.137→0.064、MuSHRoom 0.350→0.254，说明 raylet 精化主要补高频细节，粗阶段已解决全局拓扑。",
+  "baselines": [
+   "VGGT Projection",
+   "PriorDA",
+   "CUT3R",
+   "FLARE",
+   "RayletDF"
+  ],
+  "datasets": [
+   "训练：ScanNet、GTASfM、ARKitScenes、BlendMVS、WildRGB、HyperSim、MVS-Synth、S3DIS、SceneNN",
+   "测试：ScanNet++、7Scenes、MultiScan、MuSHRoom、Replica、Tanks&Temples"
+  ],
+  "novelty": "相对 DUSt3R/VGGT 系列只给离散 pointmap，FoundSurface 用「pointmap 提供空间锚、射线距离场提供连续表面」的耦合把前馈重建推到连续高保真，并顺带得到解析法向；相对 RayDF/RayletDF 依赖位姿或点云，它把位姿与几何先验换成 VGGT 的估计，可直接在无位姿图像集上前馈推理。surfel 投票式的查询视图选择与逐 raylet 的 anchor 残差回归是两个具体新模块，二者共同解决「直接把 RayletDF 套到 VGGT 点图会初始化不准、出现多表面与空洞」的问题。",
+  "limitations": "强依赖 VGGT pointmap 质量，论文专设敏感性实验说明先验误差会传导（Table 7）。训练需约 288 A800 GPU 小时，消融只能在 ScanNet 上小规模重训，主结果缺少同等预算下的逐组件拆分。评测以室内为主：6 个测试集中 4 个室内，室外仅 Tanks&Temples 且绝对误差仍 1.233 m。单视图设置虽已评测，但 query 取相邻帧，真正单图新视角质量仍受限。",
+  "trl_evidence": "前馈单次推理，无需逐场景优化与相机位姿，代码与数据已在项目页公开，具备工程落地条件；但训练成本约 288 A800 GPU 小时，附录只比较渲染速度与每射线采样数，未给完整推理时延/显存曲线，也无在线系统或产品化证据。",
+  "code": "已开源（\"Code and data are available at https://vlar-group.github.io/FoundSurface.html\"）",
+  "venue": "arXiv preprint",
+  "scores": {
+   "IMP": 4,
+   "NOV": 4,
+   "TEC": 4,
+   "EXP": 5,
+   "PER": 4,
+   "TRL": 3,
+   "REP": 4
+  },
+  "scores_why": "IMP=4：无位姿连续表面重建是真实瓶颈，直接影响具身与 AR 管线。NOV=4：pointmap 与射线距离场的耦合、surfel 投票选视图、raylet 残差精化与解析法向，是成体系的架构新意。TEC=4：方法、两阶段训练与四组消融完整，缺理论分析。EXP=5：9 个训练集、6 个未见测试集，另有视角数、单视图、稀疏与 3D 指标多轴评测。PER=4：ScanNet++ ADE -33%、Replica -10%、Tanks&Temples -69%，落在 10–30% 以上。TRL=3：前馈可落地但训练昂贵、无部署数据。REP=4：代码与数据公开。",
+  "value": 4.07
+ }
+]
