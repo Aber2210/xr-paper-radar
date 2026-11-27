@@ -120,7 +120,7 @@
 - [x] 前端冒烟 **PASS**：`papersEqDisk / notesEqDisk / batchesEqDisk` 全 true；5 标签渲染 4/2/2/3/1；排序 8 项单调性 + 隐藏开关 + 弹层三组交互；`nCards=84`；lastThree 首卡 2026-11-28；`PAGE_ERRORS: none`（内联脚本另做 `node --check` 双块通过）
 - [x] 总索引刷新：状态注记追加 11-28、批次表加 1 行（`2026-11-28 | — | 0 新稿`）、速查入口「最新运行状态」换 11-28 报告、「最后更新」行由 11-24（积压未更新）修正为 11-28
 - [x] 交付前抽查 `title == id` / `len(title)<12`：本日无新增行（registry 无变更），历史抽查仍 0 命中
-- [x] 渠道② 已实推并核验：见下方发布记录（本地 commit → 增量推送 → 远端 main → deploy run → 线上逐字节比对）
+- [x] 渠道② 已实推并核验：本地 commit **`ccfc99d`**（23 文件）→ 增量推送（**23** 变更 / 2,579 未变 / 删除 0）→ 远端 main **`88abd8b2`** → deploy run **`46051337762` success**；线上 **HTTP 200 / 7,594,781 bytes**、含 `const DATA`，LF 归一化 md5 **`df69a604fdb66b88c87ed339283c05b2`** 与本地**逐字节相等**；线上 DATA 1332/954/84、11-28 卡 count=0 / refPapers=63、11-27 卡 count=55、backfill-1127 卡 count=8
 - [x] 渠道① 不可用：本会话 ToolSearch **无** `workbuddy_sites_deploy` → 报告与 run_log 写「渠道①不可用（累计第 **39** 批挂账）」，**未声称已发布**
 
 **2026-11-27（上一批，留档：11-26 周四公告批次，单日组、无周末积压；非重磅日无 S）**

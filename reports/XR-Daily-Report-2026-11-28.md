@@ -194,3 +194,24 @@
 ### 7.4 发布记录
 
 见文末「发布」节与 `STATUS.md` §5 自检清单。
+
+## 八、发布（Step 9）
+
+### 8.1 前端构建
+
+`python scripts/build_frontend.py` → `verified: {'papers': 1332, 'notes': 954, 'batches': 84}`，与磁盘逐项一致；产物 `web/xr-paper-hub.html` 7,417.5 KB；`BATCH_LABELS` 补 `2026-11-28` 中文标签（1 条）。内联脚本两块 `node --check` 通过；CDP 冒烟 **PASS**（84 卡、lastThree 首卡 `2026-11-28`、8 项排序单调性 + 隐藏开关 + 弹层三组交互、`PAGE_ERRORS: none`）。
+
+### 8.2 渠道② GitHub Pages（已完成实推与核验）
+
+| 环节 | 结果 |
+|---|---|
+| 本地提交 | `ccfc99d`（23 文件） |
+| 增量推送 | 变更/新增 **23**、删除 0、未变 2,579（远端 2,583 文件）→ 远端 main **`88abd8b2`** |
+| 部署 | push 事件自动触发 `deploy-pages.yml`，run **`46051337762` success** |
+| 线上核验 | HTTP 200、**7,594,781 bytes**；Range 1 MB 分块重组后与本地 **LF 归一化** 版 md5 **`df69a604fdb66b88c87ed339283c05b2` 完全一致（byte-equal）**；`const DATA` 在场，计数 **1332/954/84**；`2026-11-28` 卡 `count=0 / refPapers=63`、`2026-11-27` 卡 `count=55 / max 4.35`、`backfill-1127` 卡 `count=8 / max 4.43` |
+
+### 8.3 渠道① WorkBuddy 托管（不可用，挂账）
+
+- 本会话 ToolSearch **无** `workbuddy_sites_deploy`（自 2026-10-21 起第 **39** 次不可用）。
+- `https://xr-paper-hub.app.workbuddy.host/` 与 `/xr-paper-hub.html` 均返回 **403 / 3,174 bytes**（curl 实测）。
+- 按任务书口径：**不声称已发布**，记为「渠道①不可用（累计第 39 批挂账）」；恢复后首次运行须先补部署再报成功。
