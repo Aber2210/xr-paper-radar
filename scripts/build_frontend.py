@@ -94,7 +94,8 @@ BATCH_LABELS = {"2026-09-20": "2026-09-20 · 基线建库",
                 "2026-11-26": "2026-11-26 · 11-25 周三公告批次（公告日≠拉取日；单日公告组无周末积压；重磅日授 3 个 S——门③ 4.57 vs 4.432、margin +0.138、blockbuster=true：MoGe-4D 4.57 / A Mesh to Remember 4.40 / AirLeg 4.38；listing 761 槽位 / 624 篇唯一且 100% 被 RSS 921 条覆盖（缺收 0）→ 免 id_list；KW 61 + 标题级补扫 36 → 剔 53 → 44 篇，残差复核 527 判 8（1.52%）采纳 8 + 通读补 3 → 主批 55 篇，Top10 实数 10 篇覆盖 5 赛道（未重筛）；全文 63 篇全 L0/FULL，O-12 守卫已入库）",
                 "backfill-1126": "backfill · 11-25 公告 RSS 混入旧稿 replace 再公告（8 篇：PLANING 3.85 A / Seek-and-View 3.85 A / EgoPathBench 3.77 A / BARISTA 3.72 A / SEER-VAR 3.70 A / QNN-GS 3.62 A / OP2GS 3.50 B / 注视+SoM 2.77 C）",
                 "2026-11-27": "2026-11-27 · 11-26 周四公告批次（公告日≠拉取日；单日公告组；非重磅日无 S——门③ 4.35 vs 4.459、margin −0.109、blockbuster=false，ProManO 4.35 / AnyCam 4.35 / Who Is Ego 4.20 达 S 线按校准关记 A；listing 695 槽位 / 569 篇唯一且 100% 被 RSS 849 条覆盖（缺收 0）→ 免 id_list；KW 67 + 标题级补扫 25 → 剔 49（含 1 篇库内 cross 再公告 2611.30173）→ 43 篇，残差复核 525 判 30（5.71%）采纳 12 → 主批 55 篇，Top10 实数 10 篇覆盖 5 赛道（门② 回补一次）；全文 62 L0/FULL + 1 L1/PARTIAL）",
-                "backfill-1127": "backfill · 11-26 公告 RSS 混入旧稿 replace 再公告（8 篇：G0.7 4.43 A / HPC 4.22 A / ArtMesh 4.15 A / torch-dgx 4.00 A / 3DSS 3.85 A / EgoCaptioner 3.72 A / LightFuse 3.62 A / GazeVLM 3.55 B）"}
+                "backfill-1127": "backfill · 11-26 公告 RSS 混入旧稿 replace 再公告（8 篇：G0.7 4.43 A / HPC 4.22 A / ArtMesh 4.15 A / torch-dgx 4.00 A / 3DSS 3.85 A / EgoCaptioner 3.72 A / LightFuse 3.62 A / GazeVLM 3.55 B）",
+                "2026-11-28": "2026-11-28 · 无新稿（11-27 周五公告组未释放：listing 7/7 分类最新公告日仍 11-26、11-27/11-28 declared=None，缓存穿透/pastweek/跨学科复验一致；API 前沿 11-25 且 [20261126 TO 20261128] 0 篇；RSS 6 分类空源、cs.AI 398 条为陈旧 feed（全部 ⊂ 上批 849 条，cur_only=0）；11-26 公告组 695 槽位 / 569 唯一，未入馆 513 篇摘要覆盖 513/513、命中 47 篇全在 11-27 处置集合 → 0 漏网；门③ 现算 4.465、659 条入窗）"}
 
 
 def read_text(p):

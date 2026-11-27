@@ -1,0 +1,104 @@
+{
+ "run_date": "2026-11-28",
+ "run_type": "status_day_announcement_gap",
+ "registry_total": 1332,
+ "grades": {
+  "S": 21,
+  "A": 671,
+  "B": 496,
+  "C": 144
+ },
+ "notes": 954,
+ "daily_dirs": 83,
+ "moc_files": 70,
+ "gate1": "N/A（0 候选：11-27 周五公告组未释放，listing 最新日组仍为 11-26 且已处理完）",
+ "gate2": "N/A（0 候选；上一批 11-27 定稿 5 赛道）",
+ "gate3": {
+  "window_lo": "2026-10-29",
+  "window_hi": "2026-11-28",
+  "window_excludes_today": true,
+  "window_excludes_this_run_batches": true,
+  "this_run_batches_excluded": [],
+  "in_window": 659,
+  "top10_mean": 4.465,
+  "top10_lib": [
+   {
+    "id": "arXiv:2611.06817",
+    "date": "2026-11-06",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-06"
+   },
+   {
+    "id": "arXiv:2611.11169",
+    "date": "2026-11-11",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-11"
+   },
+   {
+    "id": "arXiv:2611.32198",
+    "date": "2026-11-26",
+    "value": 4.57,
+    "grade": "S",
+    "batch": "2026-11-26"
+   },
+   {
+    "id": "arXiv:2603.01178",
+    "date": "2026-11-14",
+    "value": 4.5,
+    "grade": "A",
+    "batch": "backfill-1114"
+   },
+   {
+    "id": "arXiv:2611.21143",
+    "date": "2026-11-18",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-18"
+   },
+   {
+    "id": "arXiv:2611.26625",
+    "date": "2026-11-21",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "2026-11-21"
+   },
+   {
+    "id": "arXiv:2611.31822",
+    "date": "2026-11-27",
+    "value": 4.43,
+    "grade": "A",
+    "batch": "backfill-1127"
+   },
+   {
+    "id": "arXiv:2611.32445",
+    "date": "2026-11-26",
+    "value": 4.4,
+    "grade": "S",
+    "batch": "2026-11-26"
+   },
+   {
+    "id": "arXiv:2611.32523",
+    "date": "2026-11-26",
+    "value": 4.38,
+    "grade": "S",
+    "batch": "2026-11-26"
+   },
+   {
+    "id": "arXiv:2610.39399",
+    "date": "2026-10-31",
+    "value": 4.37,
+    "grade": "A",
+    "batch": "2026-10-31"
+   }
+  ],
+  "today_max": null,
+  "margin": null,
+  "heavy_day_raw": false,
+  "heavy_day": false,
+  "blockbuster": false,
+  "s_awarded": false,
+  "verdict": "no_candidate_status_day"
+ }
+}
