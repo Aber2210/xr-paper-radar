@@ -72,7 +72,11 @@ def latest_gates(batch=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--record", action="store_true", help="把判决追加到 data/verdicts.jsonl（按批次幂等）")
+    # 默认记账：曾经因为「状态日 N/A 没什么可记的」被漏写，台账断档（2026-11-28）。
+    # 记账成本近零，默认写、需要只读时用 --no-record。
+    ap.add_argument("--record", dest="record", action="store_true", default=True,
+                    help="把判决写入 data/verdicts.jsonl（默认开启，按批次幂等）")
+    ap.add_argument("--no-record", dest="record", action="store_false", help="只打印不记账")
     ap.add_argument("--batch", help="指定批次日 YYYY-MM-DD（默认取最新），用于补记状态日")
     args = ap.parse_args()
     fails = []

@@ -42,6 +42,7 @@
 | C-11 | 残差复核（第 3.5 步，原 O-6）从未真跑 | 11-20 批首次执行：`residual_scan.py dump 1120` 扫描 434 条、判 12 条（2.8%）、逐条写 `verdicts_1120.py` 后 ingest，采纳 3 篇（2611.23417/23534/24193）；`data/residual_1120.json` + `data/verdicts.jsonl` 的 `residual_rate=0.0276` 双留痕，6 处产物均带「残差复核」行 | 11-20 |
 | C-12 | `latest_gates()` 按文件名排序取最后一个，遇到 `gates_YYYY-MM-DD.json` 会永久遮蔽后续 `gates_MMDD.json`（C-10 的根因之一） | 改为遍历全部 `gates_*.json`、按内容 `gate3.window_hi` 取最大；构造 `gates_2099-01-01.json`（window_hi=2099-01-01）验证会正确选中它，删除后回到 1120 | 11-20 |
 | C-14 | 状态日（0 新稿）的 gates 无 `today_max`/`margin`，`check_release` 会误判 G2 FAIL；运行方因此**两天没敢记账**，台账缺 11-22/11-23 | 新增状态日分支（`run_type=status_day` 或 `today_max is None`）：G2 只验窗口字段、G3 标注「本批无新稿」、R 记不适用，判决记 **N/A**（不是 PASS，避免把「没检查」写成「检查过」）；新增 `--batch YYYY-MM-DD` 补记，台账现 7 条完整 | 11-25 |
+| C-16 | 11-28 状态日跑了 `check_release`（run_log 有 N/A），但**没加 `--record`**，台账又断一天——把「记账」交给调用方记性，注定会漏 | 改为**默认记账**（`--record` 默认 True），需要只看不写时用 `--no-record`；补记 11-28，台账现 10 条（11-19~11-28 连续） | 11-28 |
 | C-15 | **O-12**：`fetch_fulltext.py` 缺 landing-page 守卫，ar5iv 摘要落地页（4–5k 字符、含 References）会被判 `FULL`，证据等级系统性虚高 | 已改 `grade_evidence()`：新增 `LANDING_RE`（一级章节标题：Introduction/Method/Results/…），规则改为 `n>=4000 且 has_core 且 not (n<8000 且 not has_body)` → FULL，否则 PARTIAL/ABSTRACT_ONLY；`py_compile` 通过；本批 63 篇最小 24,073 字符、守卫未触发即生效，**63/63 FULL** | 11-26 |
 | C-13 | `MOC-总索引.md` 11-20 明细段缺失（批次表有行、正文无 `### 2026-11-20 新增` 段） | 总索引无法按批次查到该批 Top10 | 11-21 运行补齐该段（10 行 Top10 表 + 门③ 留痕 + 一行「本节为 11-20 运行遗漏、于 11-21 补齐」标注）；后续批次收尾增加「总索引明细段数 = 批次表行数」自检 | 已修；若再出现同类缺段，按此段标注补写 |
 
